@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>TUBAL HUB | Neon Admin</title><link rel="stylesheet" href="../assets/css/admin-neon.css">
+</head>
+<body>
+<div class="admin-shell">
+<aside class="sidebar">
+  <a class="brand" href="../index.html"><img src="../assets/images/tubal-hub-logo.png" alt="TUBAL HUB logo"><b>TUBAL HUB</b></a>
+  <div class="side-label">ADMIN PANEL</div>
+  <nav>
+    <a class="active" href="admin.html">⌁ <span>Dashboard</span></a>
+    <a href="#news">▣ <span>News</span></a>
+    <a href="#announcements">◈ <span>Announcements</span></a>
+    <a href="../pages/shop.html">◇ <span>Shop</span></a>
+    <a href="../pages/chat.html">◉ <span>Global Chat</span></a>
+    <a href="../index.html">↗ <span>Main Website</span></a><a href="login.html">⇥ <span>Admin Login</span></a>
+  </nav>
+  <div class="sidebar-bottom"><div class="online-dot"></div> System Online</div>
+</aside>
+
+<main class="dashboard">
+<header class="topbar">
+  <div><div class="crumb">TUBAL HUB / ADMIN</div><h1>Dashboard</h1></div>
+  <div class="top-actions"><div class="live"><i></i> LIVE</div><a href="../index.html">View Site ↗</a></div>
+</header>
+
+<section class="welcome">
+  <div><small>WELCOME BACK, ADMIN</small><h2>Control your <em>hub.</em></h2><p>Manage content, announcements and the latest updates from one place.</p></div>
+  <div class="scan"><span></span><b>SECURE PANEL</b><small>LOCAL MODE</small></div>
+</section>
+
+<section class="stats">
+  <div class="stat"><span>NEWS</span><strong id="newsCount">0</strong><b>Published items</b></div>
+  <div class="stat"><span>ANNOUNCEMENTS</span><strong id="annCount">0</strong><b>Active updates</b></div>
+  <div class="stat"><span>CONNECTION</span><strong class="green">●</strong><b>Main page linked</b></div>
+  <div class="stat"><span>STATUS</span><strong class="green-text">ONLINE</strong><b>System ready</b></div>
+</section>
+
+<div class="section-grid">
+<section class="panel" id="news">
+  <div class="panel-head"><div><small>CONTENT MANAGEMENT</small><h2>News</h2></div><span>＋ NEW</span></div>
+  <div class="form-grid"><input id="nt" placeholder="News title"><input id="nd" placeholder="Date"><textarea id="nx" placeholder="Write your news content..."></textarea><button id="addNews">Publish News <b>→</b></button></div>
+  <div class="list-title">Published News</div><div id="newsList"></div>
+</section>
+
+<section class="panel" id="announcements">
+  <div class="panel-head"><div><small>PLATFORM UPDATES</small><h2>Announcements</h2></div><span>◈ LIVE</span></div>
+  <div class="form-grid"><input id="at" placeholder="Announcement title"><textarea id="ax" placeholder="Write your announcement..."></textarea><button id="addAnn">Publish Announcement <b>→</b></button></div>
+  <div class="list-title">Current Announcements</div><div id="annList"></div>
+</section>
+</div>
+
+<section class="danger-panel"><div><small>SYSTEM</small><h3>Demo Data Management</h3><p>This frontend version stores content in this browser using localStorage. For production, connect PHP/MySQL and authentication.</p></div><button id="resetData">Reset Demo Data</button></section>
+<footer>© 2026 TUBAL HUB <span>•</span> Neon Admin Interface</footer>
+</main>
+</div>
+<script src="../assets/js/data.js"></script>
+<script>
+const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+function render(){
+ const n=TubalHub.get('news'),a=TubalHub.get('announcements');$('newsCount').textContent=n.length;$('annCount').textContent=a.length;
+ $('newsList').innerHTML=n.length?n.map((x,i)=>`<article class="item"><div><b>${esc(x.title)}</b><p>${esc(x.text)}</p><small>${esc(x.date||'Latest')}</small></div><button onclick="delNews(${i})">×</button></article>`).join(''):'<div class="empty">No news published yet.</div>';
+ $('annList').innerHTML=a.length?a.map((x,i)=>`<article class="item"><div><b>${esc(x.title)}</b><p>${esc(x.text)}</p></div><button onclick="delAnn(${i})">×</button></article>`).join(''):'<div class="empty">No announcements yet.</div>';
+}
+function delNews(i){let n=TubalHub.get('news');n.splice(i,1);TubalHub.set('news',n);render()}
+function delAnn(i){let a=TubalHub.get('announcements');a.splice(i,1);TubalHub.set('announcements',a);render()}
+$('addNews').onclick=()=>{let t=$('nt').value.trim(),x=$('nx').value.trim(),d=$('nd').value.trim();if(!t||!x)return alert('Enter title and content.');let n=TubalHub.get('news');n.unshift({title:t,text:x,date:d||'Latest'});TubalHub.set('news',n);$('nt').value='';$('nx').value='';$('nd').value='';render()};
+$('addAnn').onclick=()=>{let t=$('at').value.trim(),x=$('ax').value.trim();if(!t||!x)return alert('Enter title and content.');let a=TubalHub.get('announcements');a.unshift({title:t,text:x});TubalHub.set('announcements',a);$('at').value='';$('ax').value='';render()};
+$('resetData').onclick=()=>{if(confirm('Reset all demo content?')){localStorage.removeItem('tubal_news');localStorage.removeItem('tubal_announcements');render()}};
+render();
+</script>
+</body></html>
