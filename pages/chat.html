@@ -1,1 +1,61 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Global Chat | TUBAL HUB</title><link rel="stylesheet" href="../assets/css/platform-pages.css"></head><body><header><a class="brand" href="../index.html"><img src="../assets/images/tubal-hub-logo.png" alt="TUBAL HUB"><span>TUBAL HUB<small>THREE BRANDS. ONE HUB.</small></span></a><nav><a class="" href="../index.html">Home</a><a class="" href="payapang-isip.html">Payapang Isip</a><a class="" href="ctrlzone.html">CTRLZONE</a><a class="" href="profiles.html">Profiles</a><a class="" href="news.html">News</a><a class="" href="shop.html">Shop</a><a class="" href="community.html">Community</a><a class="active" href="chat.html">Global Chat</a></nav></header><main><section class="hero"><div><span class="kicker">TUBAL HUB / GLOBAL CHAT</span><h1>Global <em>Chat.</em></h1><p>Meet the community and share conversations in one place.</p></div><div class="symbol">◉</div></section><section class="chat-wrap"><aside class="chat-users"><h3>ONLINE NOW</h3><p>🟢 Alex</p><p>🟢 Mika</p><p>🟢 Jordan</p><p>🟢 Kai</p></aside><div class="chat-box"><div class="chat-head"><b>🌐 TUBAL HUB GLOBAL</b><span>1,245 online</span></div><div class="messages"><div class="message"><b>Alex</b><p>Welcome everyone! 👋</p></div><div class="message me"><b>You</b><p>This is the TUBAL HUB community.</p></div><div class="message"><b>Mika</b><p>Nice to meet you all!</p></div></div><form class="chat-form"><input placeholder="Write a message..."><button>Send →</button></form></div></section></main><footer><div><b>TUBAL HUB</b><span>Three Brands. One Hub.</span></div><nav><a href="../index.html">Home</a><a href="community.html">Community</a><a href="privacy.html">Privacy</a><a href="cookies.html">Cookies</a><a href="terms.html">Terms</a></nav><small>© 2026 TUBAL HUB. All rights reserved.</small></footer><script src="../assets/js/data.js"></script><script src="../assets/js/main.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Global Chat | TUBAL HUB</title>
+<link rel="stylesheet" href="../assets/css/platform-pages.css">
+<style>
+.chat-lock{max-width:760px;margin:55px auto;padding:0 5vw;text-align:center}
+.chat-lock-card{border:1px solid #183125;background:linear-gradient(145deg,#09110c,#050806);border-radius:14px;padding:42px 28px;box-shadow:0 20px 55px #0008}
+.chat-lock-icon{font-size:52px;color:#8fe851;text-shadow:0 0 25px #1dff9155;margin-bottom:12px}
+.chat-lock h2{font-size:28px;margin:8px 0 10px;color:#edf4ee}
+.chat-lock p{font-size:11px;line-height:1.8;color:#7f8e84;max-width:520px;margin:0 auto 22px}
+.chat-lock-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.chat-lock-actions a{display:inline-block;text-decoration:none;border-radius:7px;padding:12px 20px;font-size:9px;font-weight:900}
+.chat-login{background:#8fe851;color:#071007;box-shadow:0 0 22px #1dff9130}
+.chat-signup{border:1px solid #31563e;color:#b9e99d;background:#09140d}
+#chatContent{display:none}
+</style>
+</head>
+<body>
+<header><a class="brand" href="../index.html"><img src="../assets/images/tubal-hub-logo.png" alt="TUBAL HUB"><span>TUBAL HUB<small>THREE BRANDS. ONE HUB.</small></span></a><nav><a href="../index.html">Home</a><a href="payapang-isip.html">Payapang Isip</a><a href="ctrlzone.html">CTRLZONE</a><a href="profiles.html">Profiles</a><a href="news.html">News</a><a href="shop.html">Shop</a><a href="community.html">Community</a><a class="active" href="chat.html">Global Chat</a></nav></header>
+<main>
+<section class="hero"><div><span class="kicker">TUBAL HUB / GLOBAL CHAT</span><h1>Global <em>Chat.</em></h1><p>Meet the community and share conversations in one place.</p></div><div class="symbol">◉</div></section>
+
+<section id="chatLock" class="chat-lock">
+  <div class="chat-lock-card">
+    <div class="chat-lock-icon">🔒</div>
+    <h2>Login Required</h2>
+    <p>You need a TUBAL HUB account to access Global Chat. Log in if you already have an account, or create a new account to join the conversation.</p>
+    <div class="chat-lock-actions">
+      <a class="chat-login" href="login.html?returnTo=chat.html">Login</a>
+      <a class="chat-signup" href="signup.html?returnTo=chat.html">Create Account</a>
+    </div>
+  </div>
+</section>
+
+<section id="chatContent" class="chat-wrap" aria-hidden="true">
+<aside class="chat-users"><h3>ONLINE NOW</h3><p>🟢 Alex</p><p>🟢 Mika</p><p>🟢 Jordan</p><p>🟢 Kai</p></aside>
+<div class="chat-box"><div class="chat-head"><b>🌐 TUBAL HUB GLOBAL</b><span>1,245 online</span></div><div class="messages"><div class="message"><b>Alex</b><p>Welcome everyone! 👋</p></div><div class="message me"><b>You</b><p>This is the TUBAL HUB community.</p></div><div class="message"><b>Mika</b><p>Nice to meet you all!</p></div></div><form class="chat-form"><input placeholder="Write a message..."><button>Send →</button></form></div>
+</section>
+</main>
+<footer><div><b>TUBAL HUB</b><span>Three Brands. One Hub.</span></div><nav><a href="../index.html">Home</a><a href="community.html">Community</a><a href="privacy.html">Privacy</a><a href="cookies.html">Cookies</a><a href="terms.html">Terms</a></nav><small>© 2026 TUBAL HUB. All rights reserved.</small></footer>
+<script type="module">
+import { auth } from "../assets/js/firebase-config.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+
+const lock = document.getElementById("chatLock");
+const content = document.getElementById("chatContent");
+
+onAuthStateChanged(auth, (user) => {
+  // Global Chat requires a real account. Anonymous/Guest users are not allowed.
+  const canChat = !!user && !user.isAnonymous;
+  lock.style.display = canChat ? "none" : "block";
+  content.style.display = canChat ? "grid" : "none";
+  content.setAttribute("aria-hidden", canChat ? "false" : "true");
+});
+</script>
+<script src="../assets/js/data.js"></script><script src="../assets/js/main.js"></script>
+</body>
+</html>
