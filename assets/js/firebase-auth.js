@@ -3,90 +3,168 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   updateProfile,
-  onAuthStateChanged,
-  signOut
+  signInWithPopup,
+  GoogleAuthProvider,
+  signInAnonymously,
+  RecaptchaVerifier,
+  signInWithPhoneNumber
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
-const signupForm = document.getElementById("signupForm");
-const signupMessage = document.getElementById("signupMessage");
+const $ = (id) => document.getElementById(id);
+const message = (id, text) => { const el = $(id); if (el) el.textContent = text; };
 
+function friendlyAuthError(code) {
+  switch (code) {
+    case "auth/invalid-email": return "Please enter a valid email address.";
+    case "auth/invalid-credential": return "Incorrect email or password.";
+    case "auth/email-already-in-use": return "That email is already registered.";
+    case "auth/weak-password": return "Choose a stronger password.";
+    case "auth/popup-closed-by-user": return "Google sign-in was cancelled.";
+    case "auth/popup-blocked": return "Your browser blocked the Google sign-in popup.";
+    case "auth/too-many-requests": return "Too many attempts. Please try again later.";
+    case "auth/invalid-phone-number": return "Enter a valid phone number with country code, e.g. +63...";
+    case "auth/quota-exceeded": return "SMS quota reached. Please try again later.";
+    case "auth/captcha-check-failed": return "reCAPTCHA verification failed. Please try again.";
+    case "auth/missing-phone-number": return "Enter your phone number first.";
+    default: return "Authentication failed. Please try again.";
+  }
+}
+
+// Email / Password sign up
+const signupForm = $("signupForm");
 if (signupForm) {
   signupForm.addEventListener("submit", async (event) => {
     event.preventDefault();
+    const name = $("signupName").value.trim();
+    const email = $("signupEmail").value.trim();
+    const password = $("signupPassword").value;
+    const confirm = $("signupConfirm")?.value;
+    message("signupMessage", "");
 
-    const name = document.getElementById("signupName").value.trim();
-    const email = document.getElementById("signupEmail").value.trim();
-    const password = document.getElementById("signupPassword").value;
-    const confirm = document.getElementById("signupConfirm").value;
-
-    signupMessage.textContent = "";
-
-    if (password !== confirm) {
-      signupMessage.textContent = "Passwords do not match.";
+    if (confirm !== undefined && password !== confirm) {
+      message("signupMessage", "Passwords do not match.");
       return;
     }
-
     if (password.length < 6) {
-      signupMessage.textContent = "Password must be at least 6 characters.";
+      message("signupMessage", "Password must be at least 6 characters.");
       return;
     }
 
     try {
       const credential = await createUserWithEmailAndPassword(auth, email, password);
-
-      if (name) {
-        await updateProfile(credential.user, { displayName: name });
-      }
-
+      if (name) await updateProfile(credential.user, { displayName: name });
       window.location.href = "../index.html";
     } catch (error) {
-      signupMessage.textContent = friendlyAuthError(error.code);
+      message("signupMessage", friendlyAuthError(error.code));
     }
   });
 }
 
-const loginForm = document.getElementById("loginForm");
-const loginMessage = document.getElementById("loginMessage");
-
+// Email / Password login
+const loginForm = $("loginForm");
 if (loginForm) {
   loginForm.addEventListener("submit", async (event) => {
     event.preventDefault();
-
-    const email = document.getElementById("loginEmail").value.trim();
-    const password = document.getElementById("loginPassword").value;
-
-    loginMessage.textContent = "";
+    const email = $("loginEmail").value.trim();
+    const password = $("loginPassword").value;
+    message("loginMessage", "");
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
       window.location.href = "../index.html";
     } catch (error) {
-      loginMessage.textContent = friendlyAuthError(error.code);
+      message("loginMessage", friendlyAuthError(error.code));
     }
   });
 }
 
-const logoutButton = document.getElementById("logoutButton");
-if (logoutButton) {
-  logoutButton.addEventListener("click", async () => {
-    await signOut(auth);
-    window.location.reload();
+// Google
+const googleButtons = document.querySelectorAll("[data-google-login]");
+googleButtons.forEach((button) => {
+  button.addEventListener("click", async () => {
+    message(button.dataset.messageTarget || "loginMessage", "");
+    try {
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
+      window.location.href = "../index.html";
+    } catch (error) {
+      message(button.dataset.messageTarget || "loginMessage", friendlyAuthError(error.code));
+    }
+  });
+});
+
+// Anonymous / Guest
+const guestButtons = document.querySelectorAll("[data-anonymous-login]");
+guestButtons.forEach((button) => {
+  button.addEventListener("click", async () => {
+    message(button.dataset.messageTarget || "loginMessage", "");
+    try {
+      await signInAnonymously(auth);
+      window.location.href = "../index.html";
+    } catch (error) {
+      message(button.dataset.messageTarget || "loginMessage", friendlyAuthError(error.code));
+    }
+  });
+});
+
+// Phone authentication
+let confirmationResult = null;
+let recaptchaVerifier = null;
+
+function setupRecaptcha() {
+  if (recaptchaVerifier) return recaptchaVerifier;
+  const container = $("recaptcha-container");
+  if (!container) return null;
+  recaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha-container", {
+    size: "normal"
+  });
+  return recaptchaVerifier;
+}
+
+const phoneSendButton = $("phoneSendCode");
+if (phoneSendButton) {
+  phoneSendButton.addEventListener("click", async () => {
+    message("phoneMessage", "");
+    const phone = $("phoneNumber").value.trim();
+    if (!phone) {
+      message("phoneMessage", "Enter your phone number first.");
+      return;
+    }
+
+    try {
+      const verifier = setupRecaptcha();
+      confirmationResult = await signInWithPhoneNumber(auth, phone, verifier);
+      $("phoneCodeBox").hidden = false;
+      message("phoneMessage", "Verification code sent by SMS.");
+    } catch (error) {
+      message("phoneMessage", friendlyAuthError(error.code));
+      if (recaptchaVerifier) {
+        try { recaptchaVerifier.clear(); } catch {}
+        recaptchaVerifier = null;
+      }
+    }
   });
 }
 
-function friendlyAuthError(code) {
-  switch (code) {
-    case "auth/invalid-email":
-      return "Please enter a valid email address.";
-    case "auth/invalid-credential":
-      return "Incorrect email or password.";
-    case "auth/email-already-in-use":
-      return "That email is already registered.";
-    case "auth/weak-password":
-      return "Choose a stronger password.";
-    case "auth/too-many-requests":
-      return "Too many attempts. Please try again later.";
-    default:
-      return "Authentication failed. Please try again.";
-  }
+const phoneVerifyButton = $("phoneVerifyCode");
+if (phoneVerifyButton) {
+  phoneVerifyButton.addEventListener("click", async () => {
+    message("phoneMessage", "");
+    const code = $("phoneCode").value.trim();
+    if (!confirmationResult) {
+      message("phoneMessage", "Send the verification code first.");
+      return;
+    }
+    if (!code) {
+      message("phoneMessage", "Enter the verification code.");
+      return;
+    }
+
+    try {
+      await confirmationResult.confirm(code);
+      window.location.href = "../index.html";
+    } catch (error) {
+      message("phoneMessage", friendlyAuthError(error.code));
+    }
+  });
 }
