@@ -14,19 +14,19 @@
   <form id="signupForm" class="auth-form">
     <label for="signupName">Username</label>
     <input id="signupName" type="text" autocomplete="name" required>
-
     <label for="signupEmail">Email</label>
     <input id="signupEmail" type="email" autocomplete="email" required>
-
     <label for="signupPassword">Password</label>
     <input id="signupPassword" type="password" autocomplete="new-password" minlength="6" required>
-
     <label for="signupConfirm">Confirm Password</label>
     <input id="signupConfirm" type="password" autocomplete="new-password" minlength="6" required>
-
-    <button type="submit">Sign Up</button>
+    <button type="submit">Sign Up with Email</button>
     <p id="signupMessage" class="auth-message"></p>
   </form>
+
+  <div class="auth-divider">OR</div>
+  <button class="provider-btn google-btn" type="button" data-google-login data-message-target="signupMessage">Sign Up with Google</button>
+  <button class="provider-btn guest-btn" type="button" data-anonymous-login data-message-target="signupMessage">Continue as Guest</button>
 
   <div class="auth-links">
     <a href="login.html">Already have an account? Login</a>
