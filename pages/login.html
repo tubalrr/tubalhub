@@ -3,32 +3,30 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Log In — TUBAL HUB</title>
-<link rel="stylesheet" href="../assets/css/style.css">
+<title>Login — TUBAL HUB</title>
 <link rel="stylesheet" href="../assets/css/auth.css">
 </head>
-<body class="auth-page">
-<main class="auth-wrap">
-  <section class="auth-card">
-    <a class="auth-logo" href="../index.html">
-      <img src="../assets/images/tubal-hub-logo.png" alt="TUBAL HUB">
-      <span><b>TUBAL HUB</b><small>THREE BRANDS. ONE HUB.</small></span>
-    </a>
-    <div class="auth-heading">
-      <span>WELCOME BACK</span>
-      <h1>Log In</h1>
-      <p>Access your TUBAL HUB account.</p>
-    </div>
-    <form id="loginForm" class="auth-form">
-      <label>Email or Username<input id="loginId" type="text" required autocomplete="username"></label>
-      <label>Password<input id="loginPassword" type="password" required autocomplete="current-password"></label>
-      <button type="submit" class="auth-submit">Log In</button>
-      <p id="loginMessage" class="auth-message"></p>
-    </form>
-    <p class="auth-switch">Don't have an account? <a href="signup.html">Sign Up</a></p>
-    <a class="back-home" href="../index.html">← Back to TUBAL HUB</a>
-  </section>
+<body>
+<main class="auth-card">
+  <h1>TUBAL HUB</h1>
+  <p>Login to your TUBAL HUB account.</p>
+
+  <form id="loginForm" class="auth-form">
+    <label for="loginEmail">Email</label>
+    <input id="loginEmail" type="email" autocomplete="email" required>
+
+    <label for="loginPassword">Password</label>
+    <input id="loginPassword" type="password" autocomplete="current-password" required>
+
+    <button type="submit">Login</button>
+    <p id="loginMessage" class="auth-message"></p>
+  </form>
+
+  <div class="auth-links">
+    <a href="signup.html">Create an account</a>
+    <a href="../index.html">← Back to Home</a>
+  </div>
 </main>
-<script src="../assets/js/auth.js"></script>
+<script type="module" src="../assets/js/firebase-auth.js"></script>
 </body>
 </html>
