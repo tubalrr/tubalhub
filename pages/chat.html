@@ -29,7 +29,7 @@
 <script type="module">
 import { app, auth } from "../assets/js/firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
-import { getFirestore, collection, addDoc, query, orderBy, limit, onSnapshot, doc, setDoc, serverTimestamp, getDocs, where, Timestamp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, query, orderBy, limit, onSnapshot, doc, setDoc, serverTimestamp, where } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
 const db = getFirestore(app);
 const lock = document.getElementById('chatLock');
@@ -56,9 +56,10 @@ function setStatus(text,error=false){statusEl.textContent=text;statusEl.classLis
 
 async function updatePresence(user, online=true){
   if(!user || user.isAnonymous) return;
-  const ref=doc(db,'presence',user.uid);
-  await setDoc(ref,{uid:user.uid,displayName:user.displayName||user.email?.split('@')[0]||'Member',email:user.email||'',photoURL:user.photoURL||'',online,lastSeen:serverTimestamp()},{merge:true});
-  await setDoc(doc(db,'users',user.uid),{uid:user.uid,displayName:user.displayName||user.email?.split('@')[0]||'Member',email:user.email||'',photoURL:user.photoURL||'',lastSeen:serverTimestamp()},{merge:true});
+  const now=Date.now();
+  const profile={uid:user.uid,displayName:user.displayName||user.email?.split('@')[0]||'Member',email:user.email||'',photoURL:user.photoURL||''};
+  await setDoc(doc(db,'presence',user.uid),{...profile,online,lastSeen:now},{merge:true});
+  await setDoc(doc(db,'users',user.uid),{...profile,lastSeen:serverTimestamp()},{merge:true});
 }
 
 function renderMessage(data){
@@ -71,41 +72,58 @@ function renderMessage(data){
 
 function subscribeMessages(){
   if(stopMessages) stopMessages();
-  const q=query(collection(db,'messages'),where('channel','==','global-chat'),orderBy('createdAt','asc'),limit(100));
+  const q=query(collection(db,'globalChats'),orderBy('createdAt','asc'),limit(100));
   stopMessages=onSnapshot(q,(snap)=>{
     messages.innerHTML='';
-    if(snap.empty){messages.innerHTML='<div class="empty-chat"><strong>No messages yet.</strong>Start the first conversation in Global Chat.</div>';}
+    if(snap.empty){
+      messages.innerHTML='<div class="empty-chat"><strong>No messages yet.</strong>Start the first conversation in Global Chat.</div>';
+    }
     snap.forEach(d=>messages.appendChild(renderMessage(d.data())));
     globalMessageCount.textContent=snap.size;
     messages.scrollTop=messages.scrollHeight;
     setStatus(`Live • ${snap.size} message${snap.size===1?'':'s'} loaded from Global Chat`);
-  },(err)=>{console.error(err);setStatus('Could not load Global Chat. Check your Firestore rules.',true);});
+  },(err)=>{
+    console.error('Global Chat error:',err);
+    setStatus('Could not load Global Chat. Check Firestore Rules.',true);
+  });
 }
 
-async function loadPresence(){
-  if(!currentUser)return;
-  try{
-    const snap=await getDocs(collection(db,'presence'));
+function subscribePresence(){
+  if(stopPresence) stopPresence();
+  const q=query(collection(db,'presence'),where('online','==',true));
+  stopPresence=onSnapshot(q,(snap)=>{
     const cutoff=Date.now()-90000;
     const members=[];
-    snap.forEach(d=>{const x=d.data();const last=x.lastSeen?.toDate?.()?.getTime?.()||0;if(x.online&&last>=cutoff)members.push(x);});
-    members.sort((a,b)=>a.displayName.localeCompare(b.displayName));
+    snap.forEach(d=>{
+      const x=d.data();
+      const last=typeof x.lastSeen==='number' ? x.lastSeen : (x.lastSeen?.toDate?.()?.getTime?.()||0);
+      if(last>=cutoff) members.push(x);
+    });
+    members.sort((a,b)=>String(a.displayName||'Member').localeCompare(String(b.displayName||'Member')));
     onlineCount.textContent=members.length;
     onlineMembers.textContent=members.length;
     memberList.innerHTML='';
-    if(!members.length){memberList.innerHTML='<div class="empty-side">No members are online right now.</div>';return;}
+    if(!members.length){
+      memberList.innerHTML='<div class="empty-side">No members are online right now.</div>';
+      return;
+    }
     members.slice(0,10).forEach(x=>{
       const div=document.createElement('div');div.className='member';
-      div.innerHTML=`${avatarHtml(x,'mini')}<div class="member-info"><b>${esc(x.displayName||'Member')}</b><span>● Online</span></div>${x.uid===currentUser.uid?'<span class="crown">YOU</span>':''}`;
+      div.innerHTML=`${avatarHtml(x,'mini')}<div class="member-info"><b>${esc(x.displayName||'Member')}</b><span>● Online</span></div>${x.uid===currentUser?.uid?'<span class="crown">YOU</span>':''}`;
       memberList.appendChild(div);
     });
-  }catch(err){console.error(err);setStatus('Chat works, but online-member status could not be loaded.',true);}
+  },(err)=>{
+    console.error('Presence error:',err);
+    onlineCount.textContent='0';
+    onlineMembers.textContent='0';
+    memberList.innerHTML='<div class="empty-side">Online status unavailable. Check Firestore Rules.</div>';
+  });
 }
 
 onAuthStateChanged(auth, async (user)=>{
   if(!user || user.isAnonymous){
     currentUser=null;lock.style.display='block';content.style.display='none';content.setAttribute('aria-hidden','true');
-    if(stopMessages)stopMessages();if(heartbeatTimer)clearInterval(heartbeatTimer);return;
+    if(stopMessages)stopMessages();if(stopPresence)stopPresence();if(heartbeatTimer)clearInterval(heartbeatTimer);return;
   }
   currentUser=user;lock.style.display='none';content.style.display='grid';content.setAttribute('aria-hidden','false');
   const name=user.displayName||user.email?.split('@')[0]||'Member';
@@ -114,9 +132,9 @@ onAuthStateChanged(auth, async (user)=>{
   document.getElementById('profileAvatar').innerHTML=user.photoURL?`<img src="${esc(user.photoURL)}" alt="">`:esc(initials(name));
   sendButton.disabled=false;input.disabled=false;
   try{await updatePresence(user,true);}catch(e){console.error(e);}
-  subscribeMessages();await loadPresence();
+  subscribeMessages();subscribePresence();
   if(heartbeatTimer)clearInterval(heartbeatTimer);
-  heartbeatTimer=setInterval(async()=>{try{await updatePresence(currentUser,true);await loadPresence();}catch(e){console.error(e)}},30000);
+  heartbeatTimer=setInterval(async()=>{try{await updatePresence(currentUser,true);}catch(e){console.error(e)}},30000);
 });
 
 form.addEventListener('submit',async(e)=>{
@@ -125,7 +143,7 @@ form.addEventListener('submit',async(e)=>{
   const text=input.value.trim();if(!text)return;
   sendButton.disabled=true;
   try{
-    await addDoc(collection(db,'messages'),{channel:'global-chat',uid:currentUser.uid,displayName:currentUser.displayName||currentUser.email?.split('@')[0]||'Member',email:currentUser.email||'',photoURL:currentUser.photoURL||'',text,createdAt:serverTimestamp()});
+    await addDoc(collection(db,'globalChats'),{channel:'global-chat',uid:currentUser.uid,displayName:currentUser.displayName||currentUser.email?.split('@')[0]||'Member',name:currentUser.displayName||currentUser.email?.split('@')[0]||'Member',email:currentUser.email||'',photoURL:currentUser.photoURL||'',text,createdAt:serverTimestamp()});
     input.value='';
   }catch(err){console.error(err);setStatus('Message was not sent. Check your Firestore rules.',true);}finally{sendButton.disabled=false;input.focus();}
 });
