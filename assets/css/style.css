@@ -5,8 +5,9 @@
 @media(max-width:480px){.side-nav{grid-template-columns:1fr}.hero-content h1{font-size:49px;letter-spacing:-3px}.hero-sub{font-size:9px;letter-spacing:2px}.hero-content p{font-size:12px}.video-grid,.feature-links{grid-template-columns:1fr}.cookie span{display:block;margin-top:3px}.cookie{align-items:flex-end}.cookie button{flex:none}}
 
 
-/* TUBAL HUB AUTH BUTTONS — added without changing existing design */
-.tools .auth-btn{
+/* TUBAL HUB LOGIN SIGNUP FIX */
+.top-actions .hub-login-btn,
+.top-actions .hub-signup-btn{
   display:inline-flex;
   align-items:center;
   justify-content:center;
@@ -15,22 +16,31 @@
   margin-left:8px;
   border-radius:999px;
   text-decoration:none;
-  font-weight:800;
   font-size:13px;
+  font-weight:800;
   white-space:nowrap;
+  transition:.2s ease;
 }
-.tools .login-btn{
-  border:1px solid rgba(91,255,130,.7);
+.top-actions .hub-login-btn{
   color:#fff;
-  background:rgba(6,20,12,.72);
+  border:1px solid #35f58a;
+  background:rgba(4,18,11,.78);
 }
-.tools .signup-btn{
-  border:1px solid #72ff45;
-  color:#071108;
-  background:#72ff45;
-  box-shadow:0 0 16px rgba(114,255,69,.18);
+.top-actions .hub-signup-btn{
+  color:#061009;
+  border:1px solid #7cff4d;
+  background:#7cff4d;
+  box-shadow:0 0 18px rgba(124,255,77,.18);
 }
-.tools .auth-btn:hover{transform:translateY(-1px)}
+.top-actions .hub-login-btn:hover,
+.top-actions .hub-signup-btn:hover{
+  transform:translateY(-1px);
+}
 @media(max-width:750px){
-  .tools .auth-btn{padding:0 10px;font-size:12px;margin-left:4px}
+  .top-actions .hub-login-btn,
+  .top-actions .hub-signup-btn{
+    padding:0 10px;
+    font-size:11px;
+    margin-left:4px;
+  }
 }
