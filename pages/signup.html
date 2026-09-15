@@ -7,19 +7,32 @@
 <link rel="stylesheet" href="../assets/css/auth.css">
 </head>
 <body>
-<div class="auth-card">
+<main class="auth-card">
   <h1>TUBAL HUB</h1>
-  <p>Create your account</p>
-  <form id="signupForm">
-    <input id="signupName" type="text" placeholder="Username" required>
-    <input id="signupEmail" type="email" placeholder="Email" required>
-    <input id="signupPassword" type="password" placeholder="Password" required>
+  <p>Create your TUBAL HUB account.</p>
+
+  <form id="signupForm" class="auth-form">
+    <label for="signupName">Username</label>
+    <input id="signupName" type="text" autocomplete="name" required>
+
+    <label for="signupEmail">Email</label>
+    <input id="signupEmail" type="email" autocomplete="email" required>
+
+    <label for="signupPassword">Password</label>
+    <input id="signupPassword" type="password" autocomplete="new-password" minlength="6" required>
+
+    <label for="signupConfirm">Confirm Password</label>
+    <input id="signupConfirm" type="password" autocomplete="new-password" minlength="6" required>
+
     <button type="submit">Sign Up</button>
+    <p id="signupMessage" class="auth-message"></p>
   </form>
-  <p id="signupMessage"></p>
-  <a href="login.html">Already have an account? Login</a>
-  <a href="../index.html">Back to Home</a>
-</div>
-<script src="../assets/js/auth.js"></script>
+
+  <div class="auth-links">
+    <a href="login.html">Already have an account? Login</a>
+    <a href="../index.html">← Back to Home</a>
+  </div>
+</main>
+<script type="module" src="../assets/js/firebase-auth.js"></script>
 </body>
 </html>
