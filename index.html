@@ -39,10 +39,47 @@
     <div class="search-box"><span>⌕</span><input aria-label="Search" placeholder="Search games, stories, news or anything..." type="search"></div>
     <div class="top-actions">
       <button class="icon-btn" type="button">♧</button>
-      <a class="login-btn" href="pages/login.html">Login</a>
-      <a class="signup-btn" href="pages/signup.html">Sign Up</a>
+      <div id="authGuestActions" class="auth-actions">
+        <a class="login-btn" href="pages/login.html">Login</a>
+        <a class="signup-btn" href="pages/signup.html">Sign Up</a>
+      </div>
+      <div id="authUserActions" class="auth-user-actions" hidden>
+        <span id="authUserName" class="auth-user-name"></span>
+        <button id="logoutBtn" class="logout-btn" type="button">Logout</button>
+      </div>
     </div>
   </header>
+
+  <script type="module">
+    import { auth } from "./assets/js/firebase-config.js";
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+
+    const guestActions = document.getElementById("authGuestActions");
+    const userActions = document.getElementById("authUserActions");
+    const userName = document.getElementById("authUserName");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        guestActions.hidden = true;
+        userActions.hidden = false;
+        userName.textContent = user.displayName || user.email || "Guest";
+      } else {
+        guestActions.hidden = false;
+        userActions.hidden = true;
+        userName.textContent = "";
+      }
+    });
+
+    logoutBtn?.addEventListener("click", async () => {
+      try {
+        await signOut(auth);
+        window.location.reload();
+      } catch (error) {
+        console.error("Logout failed:", error);
+      }
+    });
+  </script>
 
   <main>
     <section class="hero-new">
