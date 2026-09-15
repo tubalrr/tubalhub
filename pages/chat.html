@@ -5,14 +5,13 @@
 <title>Global Chat | TUBAL HUB</title>
 <link rel="stylesheet" href="../assets/css/style.css">
 <style>
-*{box-sizing:border-box} body{margin:0;background:#020807;color:#eef5f0;font-family:Arial,Helvetica,sans-serif;min-height:100vh}a{text-decoration:none;color:inherit}
-.topbar{height:72px;background:rgba(2,10,8,.96);border-bottom:1px solid #123a2b;display:flex;align-items:center;padding:0 30px;position:sticky;top:0;z-index:20;box-shadow:0 8px 30px #0008}.brand{display:flex;align-items:center;gap:12px;min-width:255px}.brand img{width:47px;height:47px;object-fit:contain}.brand strong{font-size:23px;letter-spacing:1px}.brand small{display:block;color:#9aa9a1;font-size:8px;letter-spacing:3px;margin-top:3px}.topnav{display:flex;gap:28px;align-items:center;flex:1;justify-content:center}.topnav a{font-size:14px;color:#d5ded9;padding:26px 5px;border-bottom:2px solid transparent}.topnav a.active{color:#fff;border-bottom-color:#26ff72;text-shadow:0 0 12px #25ff7266}.profile{display:flex;align-items:center;gap:10px;min-width:180px;justify-content:flex-end}.avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(145deg,#1b4534,#0a1511);border:1px solid #487a60;display:grid;place-items:center;font-weight:800}.online{color:#63f58a;font-size:11px}.profile-name{font-size:13px;font-weight:700}.hamb{font-size:20px;color:#b8c8bf}
+*{box-sizing:border-box}body{margin:0;background:#020807;color:#eef5f0;font-family:Arial,Helvetica,sans-serif;min-height:100vh}a{text-decoration:none;color:inherit}
+.topbar{height:72px;background:rgba(2,10,8,.96);border-bottom:1px solid #123a2b;display:flex;align-items:center;padding:0 30px;position:sticky;top:0;z-index:20;box-shadow:0 8px 30px #0008}.brand{display:flex;align-items:center;gap:12px;min-width:255px}.brand img{width:47px;height:47px;object-fit:contain}.brand strong{font-size:23px;letter-spacing:1px}.brand small{display:block;color:#9aa9a1;font-size:8px;letter-spacing:3px;margin-top:3px}.topnav{display:flex;gap:28px;align-items:center;flex:1;justify-content:center}.topnav a{font-size:14px;color:#d5ded9;padding:26px 5px;border-bottom:2px solid transparent}.topnav a.active{color:#fff;border-bottom-color:#26ff72;text-shadow:0 0 12px #25ff7266}.profile{display:flex;align-items:center;gap:10px;min-width:190px;justify-content:flex-end}.avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(145deg,#1b4534,#0a1511);border:1px solid #487a60;display:grid;place-items:center;font-weight:800;overflow:hidden}.avatar img,.msg-avatar img,.mini img{width:100%;height:100%;object-fit:cover}.online{color:#63f58a;font-size:11px}.profile-name{font-size:13px;font-weight:700;max-width:110px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hamb{font-size:20px;color:#b8c8bf}
 .layout{display:grid;grid-template-columns:235px 1fr;min-height:calc(100vh - 72px)}.sidebar{background:linear-gradient(180deg,#03110d,#02100c 65%,#041e14);border-right:1px solid #123629;padding:42px 18px;display:flex;flex-direction:column;gap:7px}.side a{display:flex;align-items:center;gap:18px;padding:13px 20px;border-radius:14px;color:#cbd5d0;font-size:16px}.side a:hover,.side a.active{background:linear-gradient(90deg,#0e6f42,#063a27);color:#fff;box-shadow:inset 3px 0 #36ff79,0 0 25px #16e96d1c}.side .ico{width:23px;text-align:center;font-size:21px}.quote{margin:55px 14px 0;color:#aab9b0;font-style:italic;line-height:1.5;font-size:14px}
 .main{padding:0 0 18px;min-width:0}.hero{height:190px;margin:0;border-bottom:1px solid #174735;background:radial-gradient(circle at 70% 20%,#315e3a55,transparent 35%),linear-gradient(100deg,#06130f,#10271d 55%,#263b2d);position:relative;overflow:hidden;padding:25px 64px;display:flex;align-items:center}.hero:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#06110e 0%,transparent 55%,#06110eaa 100%)}.hero>*{position:relative;z-index:1}.kicker{display:inline-block;border:1px solid #b6d7c9;border-radius:20px;padding:6px 15px;font-size:11px;letter-spacing:1px}.hero h1{font-size:55px;line-height:1;margin:10px 0 4px;font-weight:900;font-style:italic;letter-spacing:-2px}.hero h1 em{color:#57f979}.hero p{font-size:17px;margin:0;color:#e0e8e3}.hero-note{margin-left:auto;text-align:right;font-size:23px;font-style:italic;line-height:1.35;color:#fff;max-width:250px}
-.chat-grid{display:grid;grid-template-columns:minmax(0,1fr) 318px;gap:14px;padding:14px 18px 0}.panel{background:linear-gradient(145deg,#061612e8,#03100d);border:1px solid #15744a;border-radius:16px;box-shadow:0 10px 35px #0007}.chat-panel{min-width:0}.chat-head{height:86px;padding:17px 18px;border-bottom:1px solid #14372b;display:flex;align-items:center;justify-content:space-between}.chat-title{display:flex;align-items:center;gap:14px}.globe{width:58px;height:58px;border-radius:16px;border:1px solid #18e76d;background:#073b25;color:#8dffb1;display:grid;place-items:center;font-size:30px;box-shadow:0 0 25px #17e76d22}.chat-title h2{margin:0;font-size:22px}.chat-title p{margin:5px 0 0;color:#9baaa2;font-size:13px}.count{border:1px solid #18b95d;border-radius:16px;padding:11px 15px;color:#72f58f;font-weight:700;white-space:nowrap}.messages{height:520px;overflow:auto;padding:8px 18px}.msg{display:flex;gap:14px;padding:13px 0;border-bottom:1px solid #0d251d}.msg-avatar{width:52px;height:52px;flex:0 0 52px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,#315d7a,#10273b);border:1px solid #77a2c1;font-size:20px}.msg-body{max-width:78%}.msg-meta{display:flex;gap:12px;align-items:center;margin:1px 0 7px}.msg-meta b{font-size:15px}.time{font-size:12px;color:#718078}.bubble{display:inline-block;background:#12242a;border-radius:0 13px 13px 13px;padding:9px 13px;font-size:14px;line-height:1.35}.msg.me .msg-avatar{background:linear-gradient(145deg,#3c7652,#0b321f);border-color:#5df08d}.msg.me .bubble{background:#075d31}.admin{background:#2bf36b;color:#06240f;border-radius:5px;padding:3px 7px;font-size:9px}.composer{display:flex;gap:10px;padding:12px 17px;border-top:1px solid #14372b}.composer-tools{display:flex;gap:5px;align-items:center}.tool{width:45px;height:45px;border:1px solid #1d7550;background:#061713;color:#e3ede7;border-radius:13px;font-size:19px}.composer input{flex:1;background:#061411;border:1px solid #287154;border-radius:13px;color:#fff;padding:0 15px;outline:none;font-size:14px}.send{border:0;border-radius:13px;padding:0 23px;background:#12b957;color:white;font-weight:800;font-size:14px;box-shadow:0 0 20px #15e86b33}
-.right{display:flex;flex-direction:column;gap:13px}.right .panel{padding:17px}.panel-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.panel-title h3{font-size:15px;margin:0}.view{font-size:12px;color:#6dff96}.member{display:flex;align-items:center;gap:10px;padding:7px 0}.mini{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:#173b31;border:1px solid #416d59}.member-info{flex:1}.member-info b{display:block;font-size:13px}.member-info span{font-size:10px;color:#63e783}.crown{color:#f8ce4d}.channels div{display:flex;justify-content:space-between;padding:8px 8px;border-radius:8px;color:#c8d2cc;font-size:13px}.channels div.active{background:#0a8e43;color:#fff}.rules li{font-size:12px;color:#b4c0b9;padding:4px 0}
-.lock-wrap{padding:70px 25px;display:none}.lock-card{max-width:650px;margin:auto;text-align:center;padding:48px 30px;border:1px solid #1c8150;border-radius:18px;background:linear-gradient(145deg,#061711,#020a07);box-shadow:0 20px 55px #0009}.lock-icon{font-size:54px}.lock-card h2{font-size:30px;margin:12px 0 8px}.lock-card p{color:#99aaa1;line-height:1.7;font-size:14px}.lock-actions{display:flex;justify-content:center;gap:12px;margin-top:24px;flex-wrap:wrap}.lock-actions a{padding:13px 22px;border-radius:10px;font-weight:800}.login{background:#49fa73;color:#061108}.signup{border:1px solid #37634d;color:#c6dfcf}
-.footer{border-top:1px solid #123629;margin-top:15px;padding:18px 30px;display:flex;justify-content:space-between;color:#83928b;font-size:11px}.footer b{color:#dff6e6;font-size:16px}.footer span{margin-left:8px}.social{font-size:16px;letter-spacing:12px}
+.chat-grid{display:grid;grid-template-columns:minmax(0,1fr) 318px;gap:14px;padding:14px 18px 0}.panel{background:linear-gradient(145deg,#061612e8,#03100d);border:1px solid #15744a;border-radius:16px;box-shadow:0 10px 35px #0007}.chat-panel{min-width:0}.chat-head{min-height:86px;padding:17px 18px;border-bottom:1px solid #14372b;display:flex;align-items:center;justify-content:space-between}.chat-title{display:flex;align-items:center;gap:14px}.globe{width:58px;height:58px;border-radius:16px;border:1px solid #18e76d;background:#073b25;color:#8dffb1;display:grid;place-items:center;font-size:30px;box-shadow:0 0 25px #17e76d22}.chat-title h2{margin:0;font-size:22px}.chat-title p{margin:5px 0 0;color:#9baaa2;font-size:13px}.count{border:1px solid #18b95d;border-radius:16px;padding:11px 15px;color:#72f58f;font-weight:700;white-space:nowrap}.messages{height:520px;overflow:auto;padding:8px 18px}.msg{display:flex;gap:14px;padding:13px 0;border-bottom:1px solid #0d251d}.msg-avatar{width:52px;height:52px;flex:0 0 52px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,#315d7a,#10273b);border:1px solid #77a2c1;font-size:20px;overflow:hidden}.msg-body{max-width:78%}.msg-meta{display:flex;gap:9px;align-items:center;margin:1px 0 7px;flex-wrap:wrap}.msg-meta b{font-size:15px}.time{font-size:12px;color:#718078}.bubble{display:inline-block;background:#12242a;border-radius:0 13px 13px 13px;padding:9px 13px;font-size:14px;line-height:1.35;white-space:pre-wrap;overflow-wrap:anywhere}.msg.me .msg-avatar{background:linear-gradient(145deg,#3c7652,#0b321f);border-color:#5df08d}.msg.me .bubble{background:#075d31}.admin{background:#2bf36b;color:#06240f;border-radius:5px;padding:3px 7px;font-size:9px}.composer{display:flex;gap:10px;padding:12px 17px;border-top:1px solid #14372b}.composer-tools{display:flex;gap:5px;align-items:center}.tool{width:45px;height:45px;border:1px solid #1d7550;background:#061713;color:#e3ede7;border-radius:13px;font-size:19px}.composer input{flex:1;background:#061411;border:1px solid #287154;border-radius:13px;color:#fff;padding:0 15px;outline:none;font-size:14px}.send{border:0;border-radius:13px;padding:0 23px;background:#12b957;color:white;font-weight:800;font-size:14px;box-shadow:0 0 20px #15e86b33}.send:disabled{opacity:.5;cursor:not-allowed}
+.right{display:flex;flex-direction:column;gap:13px}.right .panel{padding:17px}.panel-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.panel-title h3{font-size:15px;margin:0}.view{font-size:12px;color:#6dff96}.member{display:flex;align-items:center;gap:10px;padding:7px 0}.mini{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:#173b31;border:1px solid #416d59;overflow:hidden}.member-info{flex:1;min-width:0}.member-info b{display:block;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.member-info span{font-size:10px;color:#63e783}.empty-side{color:#7f9188;font-size:12px;padding:10px 0}.channels div{display:flex;justify-content:space-between;padding:8px 8px;border-radius:8px;color:#c8d2cc;font-size:13px}.channels div.active{background:#0a8e43;color:#fff}.rules li{font-size:12px;color:#b4c0b9;padding:4px 0}.empty-chat{text-align:center;padding:100px 20px;color:#82958b}.empty-chat strong{display:block;color:#d9e8df;font-size:18px;margin-bottom:6px}
+.lock-wrap{padding:70px 25px;display:none}.lock-card{max-width:650px;margin:auto;text-align:center;padding:48px 30px;border:1px solid #1c8150;border-radius:18px;background:linear-gradient(145deg,#061711,#020a07);box-shadow:0 20px 55px #0009}.lock-icon{font-size:54px}.lock-card h2{font-size:30px;margin:12px 0 8px}.lock-card p{color:#99aaa1;line-height:1.7;font-size:14px}.lock-actions{display:flex;justify-content:center;gap:12px;margin-top:24px;flex-wrap:wrap}.lock-actions a{padding:13px 22px;border-radius:10px;font-weight:800}.login{background:#49fa73;color:#061108}.signup{border:1px solid #37634d;color:#c6dfcf}.status-msg{padding:9px 18px;color:#8da198;font-size:11px;border-bottom:1px solid #10271f}.status-msg.error{color:#ff8c8c}.footer{border-top:1px solid #123629;margin-top:15px;padding:18px 30px;display:flex;justify-content:space-between;color:#83928b;font-size:11px}.footer b{color:#dff6e6;font-size:16px}.footer span{margin-left:8px}.social{font-size:16px;letter-spacing:12px}
 @media(max-width:1100px){.topnav{gap:12px}.topnav a{font-size:12px}.layout{grid-template-columns:190px 1fr}.hero{padding-left:35px}.hero h1{font-size:45px}.hero-note{display:none}.chat-grid{grid-template-columns:1fr}.right{display:grid;grid-template-columns:1fr 1fr}.messages{height:440px}}
 @media(max-width:760px){.topbar{padding:0 12px}.brand{min-width:auto}.brand strong{font-size:17px}.brand small{display:none}.topnav,.profile-name,.profile .online{display:none}.profile{min-width:auto}.layout{display:block}.sidebar{display:none}.hero{height:170px;padding:22px}.hero h1{font-size:38px}.chat-grid{padding:10px}.right{display:flex}.chat-head{height:auto;gap:10px}.chat-title p{display:none}.count{padding:8px 10px}.messages{height:55vh}.composer{flex-wrap:wrap}.composer input{height:44px;order:2;flex-basis:100%}.send{height:44px}.footer{display:block;text-align:center;line-height:2}.social{margin-top:6px}}
 </style>
@@ -23,15 +22,115 @@
 <main class="main">
 <section class="hero"><div><span class="kicker">COMMUNITY</span><h1>GLOBAL <em>CHAT</em></h1><p>Chat. Share. Meet. Game Together.</p><p style="font-style:italic;margin-top:7px">“Different Worlds, One Community.”</p></div><div class="hero-note">Good<br>Games<br>Good People<br>Brighter Tomorrow</div></section>
 <section id="chatLock" class="lock-wrap"><div class="lock-card"><div class="lock-icon">🔒</div><h2>Login Required</h2><p>You need a TUBAL HUB account to access Global Chat. Log in if you already have an account, or create a new account to join the conversation.</p><div class="lock-actions"><a class="login" href="login.html?returnTo=chat.html">Login</a><a class="signup" href="signup.html?returnTo=chat.html">Create Account</a></div></div></section>
-<section id="chatContent" class="chat-grid" aria-hidden="true"><div class="panel chat-panel"><div class="chat-head"><div class="chat-title"><div class="globe">🌐</div><div><h2>Global Chat</h2><p>Public chat for all members • Be Respectful • No Spamming • Make Friends</p></div></div><div class="count">♟ <span id="onlineCount">128</span> Online</div></div><div class="messages"><div class="msg"><div class="msg-avatar">🌌</div><div class="msg-body"><div class="msg-meta"><b>ShadowPlay</b><span class="time">10:24 AM</span></div><div class="bubble">Good morning sa lahat!<br> Anong game nilalaro niyo ngayon? 🎮</div></div></div><div class="msg"><div class="msg-avatar">🌸</div><div class="msg-body"><div class="msg-meta"><b>LunaX</b><span class="time">10:25 AM</span></div><div class="bubble">ML muna bago matulog 😅<br>Sino g? Rank tayo!</div></div></div><div class="msg"><div class="msg-avatar">🥷</div><div class="msg-body"><div class="msg-meta"><b>Kaizen</b><span class="time">10:26 AM</span></div><div class="bubble">Anyone here playing Honor of Kings?<br>Add me! 👑</div></div></div><div class="msg"><div class="msg-avatar">🏔️</div><div class="msg-body"><div class="msg-meta"><b>TrailBlazer</b><span class="time">10:27 AM</span></div><div class="bubble">Chill lang, enjoy the game!<br>Good vibes everyone! ✨</div></div></div><div class="msg me"><div class="msg-avatar">TH</div><div class="msg-body"><div class="msg-meta"><b id="meName">You</b><span class="admin">MEMBER</span><span class="time">10:28 AM</span></div><div class="bubble">Welcome to TUBAL HUB Global Chat!<br>Play hard, be kind, and respect others. 💚</div></div></div><div class="msg"><div class="msg-avatar">🌙</div><div class="msg-body"><div class="msg-meta"><b>Miyuki</b><span class="time">10:29 AM</span></div><div class="bubble">Ganda ng community dito! 😄<br>Stay active everyone!</div></div></div></div><form class="composer" id="chatForm"><div class="composer-tools"><button type="button" class="tool">▧</button><button type="button" class="tool">GIF</button><button type="button" class="tool">☺</button></div><input id="messageInput" placeholder="Type your message..." autocomplete="off"><button class="send" type="submit">Send ➤</button></form></div>
-<aside class="right"><div class="panel"><div class="panel-title"><h3>Online Members (<span id="onlineMembers">128</span>)</h3><span class="view">View All →</span></div><div class="member"><div class="mini">TH</div><div class="member-info"><b id="memberName">RR_Tubal</b><span>● Online</span></div><span class="crown">♛</span></div><div class="member"><div class="mini">🌸</div><div class="member-info"><b>LunaX</b><span>● Playing Mobile Legends</span></div></div><div class="member"><div class="mini">🥷</div><div class="member-info"><b>ShadowPlay</b><span>● Playing Valorant</span></div></div><div class="member"><div class="mini">🌙</div><div class="member-info"><b>Miyuki</b><span>● Online</span></div></div><div class="member"><div class="mini">🏔️</div><div class="member-info"><b>TrailBlazer</b><span>● Playing ETS2</span></div></div></div><div class="panel channels"><div class="panel-title"><h3>💬 Chat Channels</h3></div><div class="active"><span># &nbsp; global-chat</span><span>128</span></div><div><span># &nbsp; looking-for-game</span><span>43</span></div><div><span># &nbsp; mlbb</span><span>52</span></div><div><span># &nbsp; honor-of-kings</span><span>28</span></div><div><span># &nbsp; off-topic</span><span>36</span></div><div><span># &nbsp; support</span><span>12</span></div></div><div class="panel rules"><div class="panel-title"><h3>🛡 Chat Rules</h3></div><ul><li>Be respectful to everyone</li><li>No spamming or excessive caps</li><li>No hate speech or toxic behavior</li><li>Keep the chat friendly and fun</li></ul></div></aside></section>
+<section id="chatContent" class="chat-grid" aria-hidden="true" style="display:none"><div class="panel chat-panel"><div class="chat-head"><div class="chat-title"><div class="globe">🌐</div><div><h2>Global Chat</h2><p>Live messages from TUBAL HUB members</p></div></div><div class="count">♟ <span id="onlineCount">0</span> Online</div></div><div id="chatStatus" class="status-msg">Connecting to TUBAL HUB...</div><div class="messages" id="messages"><div class="empty-chat"><strong>No messages yet.</strong>Start the first conversation in Global Chat.</div></div><form class="composer" id="chatForm"><div class="composer-tools"><button type="button" class="tool" title="Image upload is not enabled yet">▧</button><button type="button" class="tool" title="GIF support is not enabled yet">GIF</button><button type="button" class="tool" title="Emoji">☺</button></div><input id="messageInput" maxlength="500" placeholder="Type your message..." autocomplete="off"><button class="send" id="sendButton" type="submit">Send ➤</button></form></div>
+<aside class="right"><div class="panel"><div class="panel-title"><h3>Online Members (<span id="onlineMembers">0</span>)</h3><span class="view">Live</span></div><div id="memberList"><div class="empty-side">No other members are online right now.</div></div></div><div class="panel channels"><div class="panel-title"><h3>💬 Chat Channels</h3></div><div class="active"><span># &nbsp; global-chat</span><span id="globalMessageCount">0</span></div></div><div class="panel rules"><div class="panel-title"><h3>🛡 Chat Rules</h3></div><ul><li>Be respectful to everyone</li><li>No spamming or excessive caps</li><li>No hate speech or toxic behavior</li><li>Keep the chat friendly and fun</li></ul></div></aside></section>
 <footer class="footer"><div><b>TUBAL HUB</b><span>YOUR HUB. YOUR COMMUNITY.</span></div><div>© 2026 TUBAL HUB. All rights reserved. &nbsp; | &nbsp; Play • Create • Connect</div><div class="social">● ● ● ●</div></footer>
 </main></div>
 <script type="module">
-import { auth } from "../assets/js/firebase-config.js";
-import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
-const lock=document.getElementById('chatLock'), content=document.getElementById('chatContent');
-onAuthStateChanged(auth,user=>{const ok=!!user&&!user.isAnonymous;lock.style.display=ok?'none':'block';content.style.display=ok?'grid':'none';content.setAttribute('aria-hidden',ok?'false':'true');if(ok){const name=user.displayName||user.email?.split('@')[0]||'Member';document.getElementById('profileName').textContent=name;document.getElementById('profileStatus').textContent='● Online';document.getElementById('profileAvatar').textContent=name.slice(0,2).toUpperCase();document.getElementById('memberName').textContent=name;document.getElementById('meName').textContent=name;}});
-document.getElementById('chatForm').addEventListener('submit',e=>{e.preventDefault();const input=document.getElementById('messageInput');const text=input.value.trim();if(!text)return;const box=document.querySelector('.messages');const row=document.createElement('div');row.className='msg me';row.innerHTML='<div class="msg-avatar">TH</div><div class="msg-body"><div class="msg-meta"><b>You</b><span class="admin">MEMBER</span><span class="time">now</span></div><div class="bubble"></div></div>';row.querySelector('.bubble').textContent=text;box.appendChild(row);box.scrollTop=box.scrollHeight;input.value='';});
+import { app, auth } from "../assets/js/firebase-config.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, query, orderBy, limit, onSnapshot, doc, setDoc, serverTimestamp, getDocs, where, Timestamp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+
+const db = getFirestore(app);
+const lock = document.getElementById('chatLock');
+const content = document.getElementById('chatContent');
+const messages = document.getElementById('messages');
+const form = document.getElementById('chatForm');
+const input = document.getElementById('messageInput');
+const sendButton = document.getElementById('sendButton');
+const statusEl = document.getElementById('chatStatus');
+const memberList = document.getElementById('memberList');
+const onlineCount = document.getElementById('onlineCount');
+const onlineMembers = document.getElementById('onlineMembers');
+const globalMessageCount = document.getElementById('globalMessageCount');
+let currentUser = null;
+let stopMessages = null;
+let heartbeatTimer = null;
+let stopPresence = null;
+
+function esc(value){const d=document.createElement('div');d.textContent=value??'';return d.innerHTML;}
+function initials(name){return (name||'Member').trim().split(/\s+/).slice(0,2).map(x=>x[0]).join('').toUpperCase() || 'M';}
+function avatarHtml(user, cls='msg-avatar'){if(user.photoURL){return `<div class="${cls}"><img src="${esc(user.photoURL)}" alt=""></div>`}return `<div class="${cls}">${esc(initials(user.displayName||user.email))}</div>`;}
+function timeText(ts){if(!ts?.toDate)return '';return ts.toDate().toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});}
+function setStatus(text,error=false){statusEl.textContent=text;statusEl.classList.toggle('error',error);}
+
+async function updatePresence(user, online=true){
+  if(!user || user.isAnonymous) return;
+  const ref=doc(db,'presence',user.uid);
+  await setDoc(ref,{uid:user.uid,displayName:user.displayName||user.email?.split('@')[0]||'Member',email:user.email||'',photoURL:user.photoURL||'',online,lastSeen:serverTimestamp()},{merge:true});
+  await setDoc(doc(db,'users',user.uid),{uid:user.uid,displayName:user.displayName||user.email?.split('@')[0]||'Member',email:user.email||'',photoURL:user.photoURL||'',lastSeen:serverTimestamp()},{merge:true});
+}
+
+function renderMessage(data){
+  const user={displayName:data.displayName,email:data.email,photoURL:data.photoURL};
+  const me=data.uid===currentUser.uid;
+  const row=document.createElement('div');row.className='msg'+(me?' me':'');
+  row.innerHTML=`${avatarHtml(user)}<div class="msg-body"><div class="msg-meta"><b>${esc(data.displayName||data.email?.split('@')[0]||'Member')}</b>${me?'<span class="admin">YOU</span>':''}<span class="time">${esc(timeText(data.createdAt))}</span></div><div class="bubble">${esc(data.text)}</div></div>`;
+  return row;
+}
+
+function subscribeMessages(){
+  if(stopMessages) stopMessages();
+  const q=query(collection(db,'messages'),where('channel','==','global-chat'),orderBy('createdAt','asc'),limit(100));
+  stopMessages=onSnapshot(q,(snap)=>{
+    messages.innerHTML='';
+    if(snap.empty){messages.innerHTML='<div class="empty-chat"><strong>No messages yet.</strong>Start the first conversation in Global Chat.</div>';}
+    snap.forEach(d=>messages.appendChild(renderMessage(d.data())));
+    globalMessageCount.textContent=snap.size;
+    messages.scrollTop=messages.scrollHeight;
+    setStatus(`Live • ${snap.size} message${snap.size===1?'':'s'} loaded from Global Chat`);
+  },(err)=>{console.error(err);setStatus('Could not load Global Chat. Check your Firestore rules.',true);});
+}
+
+async function loadPresence(){
+  if(!currentUser)return;
+  try{
+    const snap=await getDocs(collection(db,'presence'));
+    const cutoff=Date.now()-90000;
+    const members=[];
+    snap.forEach(d=>{const x=d.data();const last=x.lastSeen?.toDate?.()?.getTime?.()||0;if(x.online&&last>=cutoff)members.push(x);});
+    members.sort((a,b)=>a.displayName.localeCompare(b.displayName));
+    onlineCount.textContent=members.length;
+    onlineMembers.textContent=members.length;
+    memberList.innerHTML='';
+    if(!members.length){memberList.innerHTML='<div class="empty-side">No members are online right now.</div>';return;}
+    members.slice(0,10).forEach(x=>{
+      const div=document.createElement('div');div.className='member';
+      div.innerHTML=`${avatarHtml(x,'mini')}<div class="member-info"><b>${esc(x.displayName||'Member')}</b><span>● Online</span></div>${x.uid===currentUser.uid?'<span class="crown">YOU</span>':''}`;
+      memberList.appendChild(div);
+    });
+  }catch(err){console.error(err);setStatus('Chat works, but online-member status could not be loaded.',true);}
+}
+
+onAuthStateChanged(auth, async (user)=>{
+  if(!user || user.isAnonymous){
+    currentUser=null;lock.style.display='block';content.style.display='none';content.setAttribute('aria-hidden','true');
+    if(stopMessages)stopMessages();if(heartbeatTimer)clearInterval(heartbeatTimer);return;
+  }
+  currentUser=user;lock.style.display='none';content.style.display='grid';content.setAttribute('aria-hidden','false');
+  const name=user.displayName||user.email?.split('@')[0]||'Member';
+  document.getElementById('profileName').textContent=name;
+  document.getElementById('profileStatus').textContent='● Online';
+  document.getElementById('profileAvatar').innerHTML=user.photoURL?`<img src="${esc(user.photoURL)}" alt="">`:esc(initials(name));
+  sendButton.disabled=false;input.disabled=false;
+  try{await updatePresence(user,true);}catch(e){console.error(e);}
+  subscribeMessages();await loadPresence();
+  if(heartbeatTimer)clearInterval(heartbeatTimer);
+  heartbeatTimer=setInterval(async()=>{try{await updatePresence(currentUser,true);await loadPresence();}catch(e){console.error(e)}},30000);
+});
+
+form.addEventListener('submit',async(e)=>{
+  e.preventDefault();
+  if(!currentUser||currentUser.isAnonymous)return;
+  const text=input.value.trim();if(!text)return;
+  sendButton.disabled=true;
+  try{
+    await addDoc(collection(db,'messages'),{channel:'global-chat',uid:currentUser.uid,displayName:currentUser.displayName||currentUser.email?.split('@')[0]||'Member',email:currentUser.email||'',photoURL:currentUser.photoURL||'',text,createdAt:serverTimestamp()});
+    input.value='';
+  }catch(err){console.error(err);setStatus('Message was not sent. Check your Firestore rules.',true);}finally{sendButton.disabled=false;input.focus();}
+});
+
+document.addEventListener('visibilitychange',()=>{if(currentUser&&!document.hidden)updatePresence(currentUser,true).catch(()=>{});});
+window.addEventListener('beforeunload',()=>{if(currentUser)updatePresence(currentUser,false).catch(()=>{});});
 </script>
 </body></html>
