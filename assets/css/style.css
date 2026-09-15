@@ -4,43 +4,43 @@
 @media(max-width:760px){.hub-sidebar{position:relative;width:100%;height:auto;min-height:0;padding:14px}.hub-main{margin-left:0}.side-brand{margin-bottom:12px}.side-nav{grid-template-columns:repeat(2,1fr)}.fan-btn{margin-top:12px}.side-connect{display:none}.hub-topbar{padding:0 15px}.search-box{width:100%}.top-actions{display:none}.hero-new{height:560px;padding:35px 7vw;align-items:flex-start}.hero-content{margin-top:235px}.hero-content h1{font-size:58px}.hero-logo-large{right:50%;top:31%;transform:translate(50%,-50%);opacity:.45}.hero-quote{display:none}.brand-strip,.feature-row{grid-template-columns:1fr}.brand-card{height:160px}.feature-row{padding-top:10px}.social-grid{grid-template-columns:repeat(2,1fr)}.video-grid{grid-template-columns:1fr 1fr}.feature-links{grid-template-columns:1fr 1fr}.hub-footer{grid-template-columns:1fr}.footer-links{justify-content:flex-start}.hub-footer p{text-align:left}.cookie{left:8px;right:8px;bottom:8px}}
 @media(max-width:480px){.side-nav{grid-template-columns:1fr}.hero-content h1{font-size:49px;letter-spacing:-3px}.hero-sub{font-size:9px;letter-spacing:2px}.hero-content p{font-size:12px}.video-grid,.feature-links{grid-template-columns:1fr}.cookie span{display:block;margin-top:3px}.cookie{align-items:flex-end}.cookie button{flex:none}}
 
-
-/* TUBAL HUB LOGIN SIGNUP FIX */
-.top-actions .hub-login-btn,
-.top-actions .hub-signup-btn{
+/* TUBAL HUB FIREBASE AUTH BUTTONS */
+.top-actions .login-btn,
+.top-actions .signup-btn{
   display:inline-flex;
   align-items:center;
   justify-content:center;
   min-height:40px;
-  padding:0 16px;
+  padding:0 15px;
   margin-left:8px;
   border-radius:999px;
   text-decoration:none;
-  font-size:13px;
   font-weight:800;
+  font-size:13px;
   white-space:nowrap;
-  transition:.2s ease;
+  transition:transform .2s ease, box-shadow .2s ease;
 }
-.top-actions .hub-login-btn{
+.top-actions .login-btn{
   color:#fff;
-  border:1px solid #35f58a;
-  background:rgba(4,18,11,.78);
+  border:1px solid rgba(76,255,140,.75);
+  background:rgba(4,18,11,.72);
 }
-.top-actions .hub-signup-btn{
-  color:#061009;
+.top-actions .signup-btn{
+  color:#071008;
   border:1px solid #7cff4d;
   background:#7cff4d;
-  box-shadow:0 0 18px rgba(124,255,77,.18);
+  box-shadow:0 0 16px rgba(124,255,77,.18);
 }
-.top-actions .hub-login-btn:hover,
-.top-actions .hub-signup-btn:hover{
+.top-actions .login-btn:hover,
+.top-actions .signup-btn:hover{
   transform:translateY(-1px);
 }
 @media(max-width:750px){
-  .top-actions .hub-login-btn,
-  .top-actions .hub-signup-btn{
+  .top-actions .login-btn,
+  .top-actions .signup-btn{
+    min-height:36px;
     padding:0 10px;
-    font-size:11px;
     margin-left:4px;
+    font-size:11px;
   }
 }
