@@ -25,6 +25,8 @@ function friendlyAuthError(code) {
     case "auth/operation-not-allowed": return "Google sign-in is not enabled in Firebase Console.";
     case "auth/unauthorized-domain": return "This website domain is not authorized in Firebase Authentication.";
     case "auth/invalid-oauth-client-id": return "Google OAuth is not configured correctly in Firebase. Re-enable the Google provider.";
+    case "auth/invalid-action-code": return "The Firebase authentication action is invalid or expired. Please start the sign-in again.";
+    case "auth/internal-error": return "Firebase authentication encountered an internal error. Please try again.";
     case "auth/invalid-phone-number": return "Enter a valid phone number with country code, e.g. +63...";
     case "auth/quota-exceeded": return "SMS quota reached. Please try again later.";
     case "auth/captcha-check-failed": return "reCAPTCHA verification failed. Please try again.";
@@ -88,6 +90,7 @@ googleButtons.forEach((button) => {
     message(button.dataset.messageTarget || "loginMessage", "");
     try {
       const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: "select_account" });
       await signInWithPopup(auth, provider);
       window.location.href = "../index.html";
     } catch (error) {
