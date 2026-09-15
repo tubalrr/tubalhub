@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign Up — TUBAL HUB</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="stylesheet" href="../assets/css/auth.css">
+</head>
+<body class="auth-page">
+<main class="auth-wrap">
+  <section class="auth-card">
+    <a class="auth-logo" href="../index.html">
+      <img src="../assets/images/tubal-hub-logo.png" alt="TUBAL HUB">
+      <span><b>TUBAL HUB</b><small>THREE BRANDS. ONE HUB.</small></span>
+    </a>
+    <div class="auth-heading">
+      <span>JOIN THE HUB</span>
+      <h1>Sign Up</h1>
+      <p>Create your TUBAL HUB member account.</p>
+    </div>
+    <form id="signupForm" class="auth-form">
+      <label>Username<input id="signupUsername" type="text" required minlength="3" autocomplete="username"></label>
+      <label>Email<input id="signupEmail" type="email" required autocomplete="email"></label>
+      <label>Password<input id="signupPassword" type="password" required minlength="6" autocomplete="new-password"></label>
+      <label>Confirm Password<input id="signupConfirm" type="password" required minlength="6" autocomplete="new-password"></label>
+      <button type="submit" class="auth-submit">Create Account</button>
+      <p id="signupMessage" class="auth-message"></p>
+    </form>
+    <p class="auth-switch">Already have an account? <a href="login.html">Log In</a></p>
+    <a class="back-home" href="../index.html">← Back to TUBAL HUB</a>
+  </section>
+</main>
+<script src="../assets/js/auth.js"></script>
+</body>
+</html>
