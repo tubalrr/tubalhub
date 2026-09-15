@@ -20,8 +20,11 @@ function friendlyAuthError(code) {
     case "auth/email-already-in-use": return "That email is already registered.";
     case "auth/weak-password": return "Choose a stronger password.";
     case "auth/popup-closed-by-user": return "Google sign-in was cancelled.";
-    case "auth/popup-blocked": return "Your browser blocked the Google sign-in popup.";
+    case "auth/popup-blocked": return "Google popup was blocked. Allow pop-ups for tubalrr.github.io and try again.";
     case "auth/too-many-requests": return "Too many attempts. Please try again later.";
+    case "auth/operation-not-allowed": return "Google sign-in is not enabled in Firebase Console.";
+    case "auth/unauthorized-domain": return "This website domain is not authorized in Firebase Authentication.";
+    case "auth/invalid-oauth-client-id": return "Google OAuth is not configured correctly in Firebase. Re-enable the Google provider.";
     case "auth/invalid-phone-number": return "Enter a valid phone number with country code, e.g. +63...";
     case "auth/quota-exceeded": return "SMS quota reached. Please try again later.";
     case "auth/captcha-check-failed": return "reCAPTCHA verification failed. Please try again.";
