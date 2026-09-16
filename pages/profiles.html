@@ -3,279 +3,303 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Profiles | TUBAL HUB</title>
+<title>Profile | TUBAL HUB</title>
 <link rel="stylesheet" href="../assets/css/platform-pages.css">
-<style>
-:root{
-  --bg:#020807;--panel:#061510;--panel2:#081c15;--line:#14563b;
-  --green:#26f778;--green2:#0bbf5a;--text:#eef8f2;--muted:#91a69b;
-}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{margin:0;background:
- radial-gradient(circle at 75% 12%,rgba(24,150,80,.14),transparent 28%),
- radial-gradient(circle at 10% 80%,rgba(0,255,120,.07),transparent 25%),
- var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif}
-body:before{content:"";position:fixed;inset:0;pointer-events:none;background:linear-gradient(120deg,transparent 30%,rgba(37,247,120,.025),transparent 70%)}
-header{height:76px;position:sticky;top:0;z-index:50;display:flex;align-items:center;padding:0 34px;
- background:rgba(2,10,8,.94);backdrop-filter:blur(16px);border-bottom:1px solid #123b2b;
- box-shadow:0 12px 35px #0008}
-.brand{display:flex;align-items:center;gap:12px;min-width:265px;text-decoration:none;color:#fff}
-.brand img{width:46px;height:46px;object-fit:contain}
-.brand span{font-size:20px;font-weight:900;letter-spacing:.8px}
-.brand small{display:block;color:#789087;font-size:8px;letter-spacing:2.5px;margin-top:4px}
-header nav{display:flex;align-items:center;justify-content:center;gap:7px;flex:1}
-header nav a{position:relative;color:#c8d5ce;text-decoration:none;font-size:13px;padding:13px 11px;border-radius:9px;transition:.2s}
-header nav a:hover{color:#fff;background:#0a2419}
-header nav a.active{color:#fff;background:linear-gradient(135deg,#0d3c27,#062219);box-shadow:inset 0 0 0 1px #16834e}
-header nav a.active:after{content:"";position:absolute;left:18px;right:18px;bottom:3px;height:2px;background:var(--green);box-shadow:0 0 10px var(--green)}
-
-main{max-width:1450px;margin:auto;padding-bottom:35px}
-.hero{min-height:285px;padding:55px 7%;display:flex;align-items:center;justify-content:space-between;position:relative;overflow:hidden;
- border-bottom:1px solid #123d2c;background:
- radial-gradient(circle at 78% 35%,rgba(39,255,119,.16),transparent 22%),
- linear-gradient(110deg,#04120d,#061a13 55%,#0b261a)}
-.hero:after{content:"";position:absolute;width:420px;height:420px;border:1px solid #1b8d58;border-radius:50%;right:-130px;top:-170px;box-shadow:0 0 80px rgba(28,245,115,.08)}
-.hero>*{position:relative;z-index:1}
-.kicker{display:inline-block;border:1px solid #24734d;border-radius:999px;padding:7px 14px;color:#77ff9c;font-size:10px;letter-spacing:1.7px;background:#061b13}
-.hero h1{font-size:52px;line-height:1.02;margin:14px 0 12px;letter-spacing:-2px}
-.hero h1 em{font-style:normal;color:var(--green)}
-.hero p{max-width:690px;color:#a9bbb2;font-size:15px;line-height:1.7;margin:0}
-.hero-badge{width:108px;height:108px;border:1px solid #27e875;border-radius:28px;display:grid;place-items:center;font-size:54px;color:#6dff99;background:#06291b;box-shadow:0 0 45px rgba(38,247,120,.12);transform:rotate(4deg)}
-
-.content{padding:38px 7%}
-.toolbar{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:24px}
-.eyebrow{font-size:10px;color:#5df38b;letter-spacing:2px;font-weight:800}
-.title-row h2{font-size:28px;margin:6px 0 0}
-.title-row h2 em{font-style:normal;color:var(--green)}
-.search{width:300px;display:flex;align-items:center;gap:9px;padding:11px 14px;border:1px solid #205d43;border-radius:12px;background:#05120e;color:#84988e}
-.search input{width:100%;border:0;outline:0;background:transparent;color:#fff;font-size:13px}
-
-.profile-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
-.profile-card{position:relative;overflow:hidden;padding:24px;border:1px solid #15583c;border-radius:18px;
- background:linear-gradient(145deg,rgba(8,31,22,.97),rgba(3,13,10,.98));box-shadow:0 18px 45px #0007;transition:.25s}
-.profile-card:before{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:linear-gradient(90deg,transparent,var(--green),transparent);opacity:.6}
-.profile-card:hover{transform:translateY(-4px);border-color:#27bd68;box-shadow:0 20px 50px #0009,0 0 25px rgba(38,247,120,.08)}
-.card-top{display:flex;align-items:center;gap:14px}
-.avatar{width:64px;height:64px;border-radius:20px;display:grid;place-items:center;flex:0 0 64px;
- background:linear-gradient(145deg,#164f35,#092016);border:1px solid #32db7a;color:#8affac;font-size:23px;font-weight:900}
-.profile-card h3{margin:0;font-size:18px}
-.handle{display:block;color:#72877d;font-size:12px;margin-top:4px}
-.status{display:inline-flex;align-items:center;gap:5px;color:#69f794;font-size:10px;margin-top:8px}
-.status:before{content:"";width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)}
-.profile-card p{color:#a5b7ae;font-size:13px;line-height:1.55;margin:18px 0}
-.interests{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:18px}
-.interests span{padding:6px 9px;border:1px solid #174c36;border-radius:999px;background:#061a12;color:#91aa9f;font-size:10px}
-.profile-card button{width:100%;border:1px solid #277b50;border-radius:10px;padding:11px;background:#0a2b1d;color:#dff8e8;font-weight:800;cursor:pointer}
-.profile-card button:hover{background:#0c7e43;border-color:#35ff80;color:#fff}
-
-.empty{margin-top:18px;padding:42px 25px;border:1px dashed #236447;border-radius:18px;background:#04120d;text-align:center}
-.empty .icon{font-size:36px;margin-bottom:10px}
-.empty h3{margin:0 0 7px;font-size:18px}
-.empty p{margin:0;color:#82978d;font-size:13px;line-height:1.6}
-
-.notice{margin-top:20px;padding:15px 17px;border:1px solid #174b36;border-radius:12px;background:#061710;color:#82988e;font-size:12px;line-height:1.6}
-.notice strong{color:#bfead0}
-
-footer{border-top:1px solid #123629;padding:25px 7%;display:flex;align-items:center;justify-content:space-between;gap:20px;color:#71857b;font-size:11px;background:#020a07}
-footer b{color:#e8fff0;font-size:17px}
-footer span{margin-left:10px}
-footer nav{display:flex;gap:18px}
-footer nav a{color:#81958b;text-decoration:none}
-footer nav a:hover{color:#6dff99}
-
-@media(max-width:1050px){
- header{padding:0 18px}.brand{min-width:210px}header nav{gap:0}header nav a{padding:11px 7px;font-size:12px}
- .profile-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-}
-@media(max-width:760px){
- header{height:64px}.brand img{width:38px;height:38px}.brand span{font-size:16px}.brand small{display:none}
- header nav{display:none}
- .hero{min-height:245px;padding:38px 22px}.hero h1{font-size:39px}.hero-badge{width:75px;height:75px;font-size:36px;border-radius:20px}
- .content{padding:28px 18px}.toolbar{display:block}.search{width:100%;margin-top:18px}
- .profile-grid{grid-template-columns:1fr}
- footer{display:block;text-align:center;line-height:2.2}footer nav{justify-content:center;flex-wrap:wrap;margin:10px 0}
-}
-</style>
+<link rel="stylesheet" href="../assets/css/profiles.css">
 </head>
 <body>
 
-<header>
+<header class="topbar">
   <a class="brand" href="../index.html">
     <img src="../assets/images/tubal-hub-logo.png" alt="TUBAL HUB">
-    <span>TUBAL HUB<small>THREE BRANDS. ONE HUB.</small></span>
+    <span>TUBAL HUB<small>PLAY • SHARE • CONNECT</small></span>
   </a>
-  <nav>
-    <a href="../index.html">Home</a>
-    <a href="payapang-isip.html">Payapang Isip</a>
-    <a href="ctrlzone.html">CTRLZONE</a>
-    <a class="active" href="profiles.html">Profiles</a>
-    <a href="news.html">News</a>
-    <a href="shop.html">Shop</a>
-    <a href="community.html">Community</a>
-    <a href="chat.html">Global Chat</a>
+  <nav class="topnav">
+    <a href="../index.html">⌂ <span>Home</span></a>
+    <a href="games.html">🎮 <span>Games</span></a>
+    <a href="community.html">👥 <span>Community</span></a>
+    <a href="news.html">▣ <span>News</span></a>
+    <a href="events.html">▧ <span>Events</span></a>
   </nav>
+  <div class="top-user">
+    <div class="top-search">⌕ <span>Search players, posts, or content...</span></div>
+    <span class="bell">♧</span>
+    <div class="top-avatar" id="topAvatar">…</div>
+    <b id="topName">Loading…</b>
+    <span>⌄</span>
+  </div>
 </header>
 
-<main>
-  <section class="hero">
-    <div>
-      <span class="kicker">TUBAL HUB / PROFILES</span>
-      <h1>Meet the <em>Community.</em></h1>
-      <p>Discover the people who join TUBAL HUB. Build your profile, share your interests, and connect with the community.</p>
-    </div>
-    <div class="hero-badge">◎</div>
-  </section>
+<div class="profile-layout">
+  <aside class="sidebar">
+    <a href="../index.html">⌂ <span>Home</span></a>
+    <a href="games.html">🎮 <span>Games</span></a>
+    <a href="community.html">👥 <span>Community</span></a>
+    <a href="news.html">▣ <span>News</span></a>
+    <a href="events.html">▧ <span>Events</span></a>
+    <a href="gallery.html">▧ <span>Gallery</span></a>
+    <a href="live.html">◉ <span>Stream</span></a>
+    <a class="active" href="profiles.html">● <span>Profile</span></a>
+    <a href="chat.html">✉ <span>Messages</span></a>
+    <a href="settings.html">⚙ <span>Settings</span></a>
+    <div class="sidebar-quote">“Good Games<br>Good People<br>Brighter Tomorrow” <i>◆</i></div>
+  </aside>
 
-  <section class="content">
-    <div class="toolbar">
-      <div class="title-row">
-        <div class="eyebrow">USER PROFILES</div>
-        <h2>People of <em>TUBAL HUB.</em></h2>
+  <main class="profile-main">
+    <section class="cover" id="cover">
+      <button class="cover-btn" id="editCover" type="button">▣ &nbsp; Edit Cover</button>
+      <div class="cover-copy"><span>PLAY</span><strong>CREATE</strong><span>CONNECT</span></div>
+    </section>
+
+    <section class="profile-head">
+      <div class="avatar-wrap">
+        <div class="main-avatar" id="mainAvatar">…</div>
+        <button class="camera-btn" id="avatarButton" type="button" title="Edit profile photo">▣</button>
       </div>
-      <label class="search">⌕ <input id="profileSearch" type="search" placeholder="Search profiles..."></label>
+
+      <div class="identity">
+        <h1 id="profileName">Loading…</h1>
+        <div class="handle" id="profileHandle">Loading profile…</div>
+        <p id="profileBio">Loading your profile…</p>
+        <div class="meta">
+          <span>⌖ <b id="profileLocation">Not set</b></span>
+          <span>▣ <b id="joinedDate">Member</b></span>
+        </div>
+      </div>
+
+      <div class="profile-stats">
+        <div><strong id="postCount">0</strong><span>Posts</span></div>
+        <div><strong id="followerCount">0</strong><span>Followers</span></div>
+        <div><strong id="followingCount">0</strong><span>Following</span></div>
+        <div class="views-stat"><strong id="viewCount">0</strong><span>Total Views</span></div>
+      </div>
+
+      <button class="edit-profile" id="editProfile" type="button">✎ &nbsp; Edit Profile</button>
+    </section>
+
+    <nav class="profile-tabs">
+      <a class="active" href="#overview">● &nbsp; Overview</a>
+      <a href="#posts">▤ &nbsp; Posts</a>
+      <a href="#videos">▶ &nbsp; Videos</a>
+      <a href="#gallery">▧ &nbsp; Gallery</a>
+      <a href="#achievements">♕ &nbsp; Achievements</a>
+      <a href="#friends">👥 &nbsp; Friends</a>
+      <a href="#saved">♡ &nbsp; Saved</a>
+    </nav>
+
+    <div class="dashboard-grid" id="overview">
+      <div class="left-column">
+        <section class="panel about">
+          <div class="panel-title">
+            <h2>● &nbsp; About Me</h2>
+            <button id="aboutEdit" type="button">✎ Edit</button>
+          </div>
+          <p id="aboutText">No bio added yet.</p>
+          <div class="info-list">
+            <div><b>Name</b><span id="aboutName">—</span></div>
+            <div><b>Location</b><span id="aboutLocation">—</span></div>
+            <div><b>Interests</b><span id="aboutInterests">—</span></div>
+            <div><b>Favorite Games</b><span id="aboutGames">—</span></div>
+          </div>
+          <div class="quote-card">“<br><em>Play Hard<br>Stay Kind<br>Keep Going</em> <i>◆</i></div>
+        </section>
+
+        <section class="panel" id="posts">
+          <div class="panel-title"><h2>▣ &nbsp; Recent Posts</h2><span class="real-label">REAL DATA</span></div>
+          <div class="empty-content"><span>▤</span><strong id="postEmptyTitle">No posts yet</strong><small>Posts created by this account will appear here.</small></div>
+        </section>
+
+        <section class="panel" id="achievements">
+          <div class="panel-title"><h2>♕ &nbsp; Achievements</h2><span class="real-label">REAL DATA</span></div>
+          <div class="achievement-row"><div class="empty-mini">No achievements recorded yet.</div></div>
+        </section>
+      </div>
+
+      <div class="right-column">
+        <section class="panel gaming">
+          <div class="panel-title"><h2>🎮 &nbsp; Gaming Status</h2><button id="gamingEdit" type="button">✎ Edit</button></div>
+          <div class="game-current">
+            <div class="game-icon">🎮</div>
+            <div><b>Currently Playing</b><span id="currentlyPlaying">Not set</span></div>
+          </div>
+          <div class="favorite-title"><b>Favorite Games</b></div>
+          <div class="game-list" id="gameList"><span>No favorite games added.</span></div>
+        </section>
+
+        <section class="panel social">
+          <div class="panel-title"><h2>● &nbsp; Social Links</h2><button id="socialEdit" type="button">✎ Edit</button></div>
+          <div class="social-list" id="socialList"><div class="social-empty">No social links connected yet.</div></div>
+        </section>
+
+        <section class="panel friends" id="friends">
+          <div class="panel-title"><h2>👥 &nbsp; Friends (<span id="friendCount">0</span>)</h2><span class="real-label">REAL DATA</span></div>
+          <div class="friend-empty">No friends added yet.</div>
+        </section>
+      </div>
     </div>
+  </main>
+</div>
 
-    <div class="profile-grid" id="profileGrid"></div>
-
-    <div class="empty" id="emptyState" hidden>
-      <div class="icon">◎</div>
-      <h3>No profile data yet</h3>
-      <p>Your real Firebase profile will appear here after you complete your profile.</p>
-    </div>
-
-    <div class="notice" id="profileNotice" hidden></div>
-  </section>
-</main>
-
-<footer>
-  <div><b>TUBAL HUB</b><span>Three Brands. One Hub.</span></div>
-  <nav>
-    <a href="../index.html">Home</a>
-    <a href="community.html">Community</a>
-    <a href="privacy.html">Privacy</a>
-    <a href="cookies.html">Cookies</a>
-    <a href="terms.html">Terms</a>
-  </nav>
-  <small>© 2026 TUBAL HUB. All rights reserved.</small>
+<footer class="profile-footer">
+  <div><b>TUBAL HUB</b><small>PLAY • SHARE • CONNECT</small></div>
+  <nav><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="help.html">Help</a><a href="contact.html">Contact</a></nav>
+  <span>© 2026 TUBAL HUB. All rights reserved.</span>
 </footer>
+
+<div class="modal" id="profileModal" aria-hidden="true">
+  <div class="modal-card">
+    <button class="modal-close" id="modalClose" type="button">×</button>
+    <h2>Edit Profile</h2>
+    <p class="modal-note">Changes are saved to your own Firebase account.</p>
+    <label>Display Name</label><input id="editName" maxlength="40">
+    <label>Bio</label><textarea id="editBio" maxlength="180"></textarea>
+    <label>Location</label><input id="editLocation" maxlength="80">
+    <label>Interests</label><input id="editInterests" maxlength="150" placeholder="Gaming, Tech, Nature...">
+    <label>Favorite Games</label><input id="editGames" maxlength="180" placeholder="Mobile Legends, HoK...">
+    <label>Currently Playing</label><input id="editPlaying" maxlength="80" placeholder="Game title">
+    <label>Profile Photo URL</label><input id="editPhoto" type="url" maxlength="500">
+    <label>Cover Photo URL</label><input id="editCoverUrl" type="url" maxlength="500">
+    <label>Facebook</label><input id="editFacebook" type="url" maxlength="500">
+    <label>YouTube</label><input id="editYoutube" type="url" maxlength="500">
+    <label>TikTok</label><input id="editTiktok" type="url" maxlength="500">
+    <div class="modal-status" id="modalStatus"></div>
+    <div class="modal-actions"><button id="cancelEdit" type="button">Cancel</button><button class="save" id="saveProfile" type="button">Save Profile</button></div>
+  </div>
+</div>
 
 <script type="module">
 import { app, auth } from "../assets/js/firebase-config.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+import { onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
 const db = getFirestore(app);
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
-import {
-  doc, getDoc, setDoc, serverTimestamp
-} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
-
-const grid = document.getElementById("profileGrid");
-const emptyState = document.getElementById("emptyState");
-const notice = document.getElementById("profileNotice");
-const search = document.getElementById("profileSearch");
-
+const $ = id => document.getElementById(id);
 let currentUser = null;
-let myProfile = null;
+let profile = {};
 
-const escapeHTML = value => String(value ?? "").replace(/[&<>"']/g, c => ({
-  "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#039;"
-}[c]));
-
-function initials(name) {
-  return (name || "Member").trim().split(/\s+/).slice(0,2)
-    .map(part => part[0]).join("").toUpperCase() || "M";
+function esc(v){return String(v ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));}
+function initials(name){return (name||"Member").trim().split(/\s+/).slice(0,2).map(x=>x[0]).join("").toUpperCase()||"M";}
+function commaList(v){return Array.isArray(v) ? v.join(", ") : String(v || "");}
+function avatar(el,url,name){
+  el.innerHTML = url ? `<img src="${esc(url)}" alt="">` : esc(initials(name));
 }
-
-function profileCard(profile) {
-  const name = profile.displayName || currentUser.displayName || currentUser.email?.split("@")[0] || "Member";
-  const handle = profile.username
-    ? "@" + profile.username.replace(/^@/, "")
-    : currentUser.email
-      ? "@" + currentUser.email.split("@")[0]
-      : "@member";
-
-  const avatar = profile.photoURL
-    ? `<img src="${escapeHTML(profile.photoURL)}" alt="${escapeHTML(name)}">`
-    : escapeHTML(initials(name));
-
-  const interests = (profile.interests || "")
-    .split(",").map(x => x.trim()).filter(Boolean).slice(0,5);
-
-  return `
-    <article class="profile-card" data-name="${escapeHTML((name+" "+handle+" "+(profile.bio||"")).toLowerCase())}">
-      <div class="card-top">
-        <div class="avatar">${avatar}</div>
-        <div>
-          <h3>${escapeHTML(name)}</h3>
-          <span class="handle">${escapeHTML(handle)}</span>
-          <span class="status">Online</span>
-        </div>
-      </div>
-      <p>${escapeHTML(profile.bio || "No bio added yet.")}</p>
-      <div class="interests">
-        ${interests.map(i => `<span>${escapeHTML(i)}</span>`).join("")}
-      </div>
-      <button type="button" data-profile-id="${escapeHTML(currentUser.uid)}">My Profile</button>
-    </article>`;
+function formatDate(v){
+  if(!v) return "Member";
+  const d = typeof v.toDate === "function" ? v.toDate() : new Date(v);
+  return isNaN(d) ? "Member" : "Joined " + d.toLocaleDateString(undefined,{month:"short",year:"numeric"});
 }
+function openModal(){
+  $("editName").value=profile.displayName||currentUser.displayName||"";
+  $("editBio").value=profile.bio||"";
+  $("editLocation").value=profile.location||"";
+  $("editInterests").value=commaList(profile.interests);
+  $("editGames").value=commaList(profile.favoriteGames);
+  $("editPlaying").value=profile.currentlyPlaying||"";
+  $("editPhoto").value=profile.photoURL||currentUser.photoURL||"";
+  $("editCoverUrl").value=profile.coverURL||"";
+  $("editFacebook").value=profile.social?.facebook||"";
+  $("editYoutube").value=profile.social?.youtube||"";
+  $("editTiktok").value=profile.social?.tiktok||"";
+  $("modalStatus").textContent="";
+  $("profileModal").classList.add("open");
+  $("profileModal").setAttribute("aria-hidden","false");
+}
+function closeModal(){ $("profileModal").classList.remove("open"); $("profileModal").setAttribute("aria-hidden","true"); }
 
-async function loadRealProfile(user) {
-  const ref = doc(db, "users", user.uid);
-  const snap = await getDoc(ref);
+function render(){
+  const name=profile.displayName||currentUser.displayName||currentUser.email?.split("@")[0]||"Member";
+  const handle=profile.username ? "@"+String(profile.username).replace(/^@/,"") : "@"+(currentUser.email?.split("@")[0]||"member");
+  $("topName").textContent=name;
+  $("profileName").innerHTML=esc(name)+` <span class="verified">◆</span>`;
+  $("profileHandle").innerHTML=esc(handle)+` <span>•</span> <strong>● Online</strong>`;
+  $("profileBio").textContent=profile.bio||"No bio added yet.";
+  $("aboutText").textContent=profile.bio||"No bio added yet. Edit your profile to tell the community about yourself.";
+  $("profileLocation").textContent=profile.location||"Location not set";
+  $("aboutName").textContent=name;
+  $("aboutLocation").textContent=profile.location||"Not set";
+  $("aboutInterests").textContent=commaList(profile.interests)||"Not set";
+  $("aboutGames").textContent=commaList(profile.favoriteGames)||"Not set";
+  $("currentlyPlaying").textContent=profile.currentlyPlaying||"Not set";
+  $("joinedDate").textContent=formatDate(profile.createdAt||currentUser.metadata?.creationTime);
+  $("postCount").textContent=Number(profile.postCount||0);
+  $("followerCount").textContent=Number(profile.followerCount||0);
+  $("followingCount").textContent=Number(profile.followingCount||0);
+  $("viewCount").textContent=Number(profile.totalViews||0);
+  $("friendCount").textContent=Number(profile.friendCount||0);
+  avatar($("topAvatar"),profile.photoURL||currentUser.photoURL,name);
+  avatar($("mainAvatar"),profile.photoURL||currentUser.photoURL,name);
 
-  if (snap.exists()) {
-    myProfile = { uid: user.uid, ...snap.data() };
-  } else {
-    // Create only the authenticated user's own profile. No fake users.
-    myProfile = {
-      uid: user.uid,
-      email: user.email || "",
-      displayName: user.displayName || user.email?.split("@")[0] || "Member",
-      photoURL: user.photoURL || "",
-      bio: "",
-      interests: "",
-      createdAt: serverTimestamp()
-    };
-    await setDoc(ref, myProfile, { merge: true });
+  const games=commaList(profile.favoriteGames).split(",").map(x=>x.trim()).filter(Boolean);
+  $("gameList").innerHTML=games.length ? games.map(g=>`<span class="game-chip">${esc(g)}</span>`).join("") : `<span>No favorite games added.</span>`;
+
+  const social=profile.social||{};
+  const links=[["facebook","Facebook",social.facebook],["youtube","YouTube",social.youtube],["tiktok","TikTok",social.tiktok],["discord","Discord",social.discord],["website","Website",social.website]].filter(x=>x[2]);
+  $("socialList").innerHTML=links.length ? links.map(x=>`<a class="social-row" href="${esc(x[2])}" target="_blank" rel="noopener"><span>${esc(x[1])}</span><b>↗</b></a>`).join("") : `<div class="social-empty">No social links connected yet.</div>`;
+
+  if(profile.coverURL){
+    $("cover").style.backgroundImage=`linear-gradient(90deg,rgba(2,12,9,.72),rgba(2,12,9,.18)),url("${profile.coverURL.replace(/"/g,'&quot;')}")`;
+    $("cover").classList.add("has-cover");
+  }else{
+    $("cover").style.backgroundImage="";
+    $("cover").classList.remove("has-cover");
   }
-
-  grid.innerHTML = profileCard(myProfile);
-  emptyState.hidden = true;
-  notice.hidden = false;
-  notice.innerHTML = "🔒 <strong>Real profile.</strong> This page is showing the Firebase account currently signed in.";
-
-  const card = grid.querySelector(".profile-card");
-  if (card) card.dataset.name = (
-    myProfile.displayName + " " +
-    (myProfile.username || "") + " " +
-    (myProfile.bio || "")
-  ).toLowerCase();
 }
 
-search.addEventListener("input", () => {
-  const value = search.value.trim().toLowerCase();
-  grid.querySelectorAll(".profile-card").forEach(card => {
-    card.style.display = card.dataset.name.includes(value) ? "" : "none";
-  });
-});
+async function loadProfile(user){
+  const ref=doc(db,"users",user.uid);
+  const snap=await getDoc(ref);
+  if(snap.exists()) profile={uid:user.uid,...snap.data()};
+  else{
+    profile={uid:user.uid,email:user.email||"",displayName:user.displayName||user.email?.split("@")[0]||"Member",photoURL:user.photoURL||"",createdAt:serverTimestamp()};
+    await setDoc(ref,profile,{merge:true});
+  }
+  render();
+}
 
-onAuthStateChanged(auth, async user => {
-  if (!user || user.isAnonymous) {
+$("editProfile").onclick=openModal;
+$("aboutEdit").onclick=openModal;
+$("gamingEdit").onclick=openModal;
+$("socialEdit").onclick=openModal;
+$("avatarButton").onclick=openModal;
+$("editCover").onclick=openModal;
+$("modalClose").onclick=closeModal;
+$("cancelEdit").onclick=closeModal;
+$("profileModal").addEventListener("click",e=>{if(e.target===$("profileModal"))closeModal();});
+
+$("saveProfile").onclick=async()=>{
+  if(!currentUser)return;
+  const status=$("modalStatus");
+  status.textContent="Saving…";
+  const displayName=$("editName").value.trim() || currentUser.email?.split("@")[0] || "Member";
+  const photoURL=$("editPhoto").value.trim();
+  const coverURL=$("editCoverUrl").value.trim();
+  const data={
+    uid:currentUser.uid,email:currentUser.email||"",
+    displayName,bio:$("editBio").value.trim(),location:$("editLocation").value.trim(),
+    interests:$("editInterests").value.trim(),favoriteGames:$("editGames").value.trim(),
+    currentlyPlaying:$("editPlaying").value.trim(),photoURL,coverURL,
+    social:{facebook:$("editFacebook").value.trim(),youtube:$("editYoutube").value.trim(),tiktok:$("editTiktok").value.trim(),...(profile.social||{})},
+    updatedAt:serverTimestamp()
+  };
+  try{
+    await updateProfile(currentUser,{displayName,photoURL:photoURL||null});
+    await setDoc(doc(db,"users",currentUser.uid),data,{merge:true});
+    profile={...profile,...data};
+    render(); status.textContent="Profile saved."; setTimeout(closeModal,500);
+  }catch(err){console.error(err);status.textContent="Save failed: "+(err?.message||"Please try again.");}
+};
+
+onAuthStateChanged(auth,async user=>{
+  if(!user || user.isAnonymous){
     location.replace("./login.html?returnTo=profiles.html");
     return;
   }
-
-  currentUser = user;
-
-  try {
-    await loadRealProfile(user);
-  } catch (error) {
-    console.error("Profile error:", error);
-    grid.innerHTML = "";
-    emptyState.hidden = false;
-    notice.hidden = false;
-    notice.innerHTML = "⚠️ <strong>Profile could not load.</strong> Check that your Firestore rules allow the signed-in user to read/write users/{uid}.";
+  currentUser=user;
+  try{await loadProfile(user);}
+  catch(err){
+    console.error(err);
+    $("profileName").textContent="Profile could not load";
+    $("profileBio").textContent="Check your Firestore rules and try again.";
   }
 });
 </script>
