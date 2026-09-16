@@ -56,9 +56,22 @@ if (signupForm) {
     }
 
     try {
+      // Create the Firebase account first.
       const credential = await createUserWithEmailAndPassword(auth, email, password);
-      if (name) await updateProfile(credential.user, { displayName: name });
-      window.location.href = "../index.html";
+
+      // Updating the display name should never prevent a successful signup
+      // from redirecting on mobile browsers.
+      if (name) {
+        try {
+          await updateProfile(credential.user, { displayName: name });
+        } catch (profileError) {
+          console.warn("Profile update failed after successful signup:", profileError);
+        }
+      }
+
+      // The account is already signed in by createUserWithEmailAndPassword.
+      // Use replace() so the mobile browser does not remain on the signup page.
+      window.location.replace(new URL("../index.html", window.location.href).href);
     } catch (error) {
       message("signupMessage", friendlyAuthError(error.code));
     }
@@ -76,7 +89,7 @@ if (loginForm) {
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      window.location.href = "../index.html";
+      window.location.replace(new URL("../index.html", window.location.href).href);
     } catch (error) {
       message("loginMessage", friendlyAuthError(error.code));
     }
@@ -92,7 +105,7 @@ googleButtons.forEach((button) => {
       const provider = new GoogleAuthProvider();
       provider.setCustomParameters({ prompt: "select_account" });
       await signInWithPopup(auth, provider);
-      window.location.href = "../index.html";
+      window.location.replace(new URL("../index.html", window.location.href).href);
     } catch (error) {
       message(button.dataset.messageTarget || "loginMessage", friendlyAuthError(error.code));
     }
@@ -106,7 +119,7 @@ guestButtons.forEach((button) => {
     message(button.dataset.messageTarget || "loginMessage", "");
     try {
       await signInAnonymously(auth);
-      window.location.href = "../index.html";
+      window.location.replace(new URL("../index.html", window.location.href).href);
     } catch (error) {
       message(button.dataset.messageTarget || "loginMessage", friendlyAuthError(error.code));
     }
@@ -168,7 +181,7 @@ if (phoneVerifyButton) {
 
     try {
       await confirmationResult.confirm(code);
-      window.location.href = "../index.html";
+      window.location.replace(new URL("../index.html", window.location.href).href);
     } catch (error) {
       message("phoneMessage", friendlyAuthError(error.code));
     }
