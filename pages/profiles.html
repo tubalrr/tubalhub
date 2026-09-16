@@ -161,7 +161,10 @@ footer nav a:hover{color:#6dff99}
 </footer>
 
 <script type="module">
-import { auth, db } from "../assets/js/firebase-config.js";
+import { app, auth } from "../assets/js/firebase-config.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+
+const db = getFirestore(app);
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 import {
   doc, getDoc, setDoc, serverTimestamp
