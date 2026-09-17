@@ -22,20 +22,33 @@ generateBtn.addEventListener("click", async () => {
   statusEl.textContent = "Sending your prompt to the AI music backend…";
 
   try {
+    const prompt = promptEl.value.trim();
+    const duration = Number(durationEl.value);
+
+    if (!prompt) throw new Error("Please describe the music first.");
+    if (!Number.isFinite(duration) || duration < 5 || duration > 30) {
+      throw new Error("Duration must be between 5 and 30 seconds.");
+    }
+
     const response = await fetch(ENDPOINT, {
       method: "POST",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({
-        prompt: promptEl.value,
+        prompt,
         mood: moodEl.value,
-        duration: Number(durationEl.value),
+        duration,
         vocals: vocalsEl.value
       })
     });
 
-    const data = await response.json();
+    let data = {};
+    try {
+      data = await response.json();
+    } catch {
+      throw new Error(`Backend returned HTTP ${response.status}.`);
+    }
 
-    if (!response.ok) throw new Error(data.error || "Generation failed.");
+    if (!response.ok) throw new Error(data.error || `Generation failed (HTTP ${response.status}).`);
 
     player.src = data.audioUrl;
     player.hidden = false;
