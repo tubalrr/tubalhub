@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI Music Generator | TUBAL HUB</title><link rel="stylesheet" href="../assets/css/ai-music.css"></head>
+<body>
+<header class="topbar"><a href="../index.html" class="brand">TUBAL <span>HUB</span></a><a href="../index.html" class="back">← Back to Hub</a></header>
+<main class="wrap">
+<section class="hero"><div class="badge">✦ AI AUDIO STUDIO</div><h1>Create Original <span>Music</span></h1><p>Generate original instrumental background music for videos, stories, gaming clips, and nature scenes.</p></section>
+<section class="studio">
+<div class="form-card"><div class="card-head"><h2>🎵 Music Generator</h2><span>AI</span></div>
+<label for="prompt">Describe your music</label>
+<textarea id="prompt">Original whimsical animated-film-inspired instrumental for a peaceful forest morning, gentle piano, warm acoustic guitar, soft strings, subtle woodwinds, light natural ambience, emotional but relaxing, cinematic, no vocals, suitable as background music.</textarea>
+<div class="quick"><button data-prompt="Peaceful forest morning, gentle piano, acoustic guitar, soft strings, birds and light wind, warm cinematic instrumental, no vocals.">🌿 Peaceful Forest</button><button data-prompt="Cozy rainy cabin, soft piano, warm strings, acoustic guitar, gentle rain ambience, emotional and relaxing instrumental, no vocals.">🌧️ Rainy Cabin</button><button data-prompt="Whimsical mountain adventure, orchestral strings, flute, acoustic guitar, gentle percussion, hopeful cinematic instrumental, no vocals.">🏔️ Adventure</button></div>
+<div class="controls"><div><label>Mood</label><select id="mood"><option>Peaceful</option><option>Emotional</option><option>Adventure</option><option>Relaxing</option><option>Dreamy</option></select></div><div><label>Duration</label><select id="duration"><option value="60">1 minute</option><option value="120">2 minutes</option><option value="180" selected>3 minutes</option><option value="240">4 minutes</option><option value="300">5 minutes</option></select></div><div><label>Vocals</label><select id="vocals"><option value="none" selected>No vocals</option><option value="soft">Soft vocal texture</option></select></div></div>
+<button class="generate" id="generate">✦ Generate Music</button><p class="status" id="status">Ready. Connect the secure music-generation backend to enable AI generation.</p></div>
+<aside class="result-card"><div class="card-head"><h2>▶ Your Track</h2><span id="state">READY</span></div><div class="art"><div>♪</div></div><h3 id="trackTitle">TUBAL HUB AI Music</h3><p id="trackInfo">Your generated audio will appear here.</p><audio id="player" controls hidden></audio><a id="download" class="download" hidden>↓ Download Audio</a></aside>
+</section>
+<section class="note"><b>🔐 Secure generation</b><span>The AI provider secret must stay on a server/backend, not inside GitHub Pages JavaScript.</span></section>
+</main><script type="module" src="../assets/js/ai-music.js"></script></body></html>
