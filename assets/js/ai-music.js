@@ -52,8 +52,9 @@ generateBtn.addEventListener("click", async () => {
 
     player.src = data.audioUrl;
     player.hidden = false;
-    download.href = data.audioUrl;
+    download.href = data.downloadUrl || data.audioUrl;
     download.download = `tubal-hub-${String(data.mood).toLowerCase()}.mp3`;
+    download.target = "_self";
     download.hidden = false;
 
     trackTitle.textContent = `TUBAL HUB — ${data.mood} Original`;
