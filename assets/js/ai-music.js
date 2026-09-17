@@ -1,4 +1,4 @@
-const ENDPOINT = "https://YOUR-BACKEND-DOMAIN.example/api/generate";
+const ENDPOINT = "https://tubalhub.onrender.com/api/generate";
 
 const promptEl = document.getElementById("prompt");
 const moodEl = document.getElementById("mood");
