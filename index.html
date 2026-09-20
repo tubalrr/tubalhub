@@ -163,6 +163,27 @@
       </div>
     </section>
 
+    <section class="home-section home-shop-section" aria-label="Shop">
+      <div class="home-heading">
+        <div><h2>TUBAL HUB <em>Shop</em></h2><p>Discover products and creator collections from the Hub.</p></div>
+        <a href="pages/shop.html">View Shop →</a>
+      </div>
+      <div class="shop-preview-grid">
+        <a class="shop-preview-card" href="pages/shop.html">
+          <div class="shop-preview-art">TH</div>
+          <div><small>TUBAL HUB</small><h3>Official Hub Collection</h3><span>Coming Soon →</span></div>
+        </a>
+        <a class="shop-preview-card" href="pages/shop.html">
+          <div class="shop-preview-art">🌿</div>
+          <div><small>PAYAPANG ISIP</small><h3>Peace Collection</h3><span>Coming Soon →</span></div>
+        </a>
+        <a class="shop-preview-card" href="pages/shop.html">
+          <div class="shop-preview-art">⚡</div>
+          <div><small>CTRLZONE</small><h3>Creator Collection</h3><span>Coming Soon →</span></div>
+        </a>
+      </div>
+    </section>
+
     <section class="feature-links">
       <a href="pages/news.html"><b>▣</b><span>Events<small>Join upcoming activities</small></span></a>
       <a href="pages/community.html"><b>♧</b><span>Community<small>Meet fellow members</small></span></a>
@@ -190,6 +211,17 @@ try{
  else{box.innerHTML='<div class="facebook-video-grid">'+items.map(x=>{const u=x.url||"",videoUrl=x.videoUrl||"",thumb=x.thumbnail||"",title=esc(x.title||"Facebook Video"),playUrl=videoUrl||u;let media;if(videoUrl){media='<div class="facebook-video-frame"><video controls playsinline preload="metadata" poster="'+esc(thumb)+'"><source src="'+esc(videoUrl)+'" type="video/mp4">Your browser does not support video playback.</video></div>'}else{media='<a class="facebook-video-placeholder" href="'+esc(u)+'" target="_blank" rel="noopener noreferrer">'+(thumb?'<img src="'+esc(thumb)+'" alt="'+title+'">':'<div class="facebook-placeholder-icon">f</div>')+'<strong>'+title+'</strong><small>Facebook video</small><span>Open Video →</span></a>'}return '<article class="facebook-video-card">'+media+'<div class="facebook-share-info"><h3>'+title+'</h3><a href="'+esc(playUrl)+'" target="_blank" rel="noopener noreferrer">Open Video →</a></div></article>'}).join("")+'</div>'}
 }catch(e){console.error("Facebook videos unavailable:",e);box.innerHTML='<div class="news-empty">Facebook videos are temporarily unavailable. Please refresh the page.</div>'}
 </script>
+<style>
+.home-shop-section{margin-top:48px}
+.shop-preview-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
+.shop-preview-card{display:flex;align-items:center;gap:14px;padding:16px;text-decoration:none;color:inherit;background:linear-gradient(145deg,#09110c,#050806);border:1px solid #183125;border-radius:11px;transition:.25s}
+.shop-preview-card:hover{transform:translateY(-4px);border-color:#1dff91;box-shadow:0 0 24px #1dff9115}
+.shop-preview-art{width:62px;height:62px;flex:0 0 62px;display:grid;place-items:center;border-radius:10px;background:radial-gradient(circle,#22572b,#0a140d 68%);font-size:22px;font-weight:900}
+.shop-preview-card small{font-size:7px;letter-spacing:1.2px;color:#60776a}
+.shop-preview-card h3{font-size:13px;margin:5px 0}
+.shop-preview-card span{font-size:8px;color:#9cff57}
+@media(max-width:800px){.shop-preview-grid{grid-template-columns:1fr}}
+</style>
 <script src="assets/js/app.js"></script>
 </body>
 </html>
