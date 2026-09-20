@@ -1243,3 +1243,14 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
     font-size:14px;
   }
 }
+
+/* TUBAL HUB — ADMIN-MANAGED FACEBOOK VIDEOS */
+.facebook-video-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.facebook-video-card{min-width:0;border:1px solid rgba(73,255,137,.16);border-radius:14px;padding:8px;background:linear-gradient(145deg,#081b11,#030b07);box-shadow:0 13px 30px rgba(0,0,0,.35)}
+.facebook-video-card h3{margin:9px 5px 5px;color:#eef8f2;font-size:12px;line-height:1.35}
+.facebook-video-frame{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;border-radius:10px;background:#020604}
+.facebook-video-frame iframe{display:block;width:100%;height:100%;border:0}
+.fb-video-admin-form{grid-template-columns:1fr 1.5fr 1fr}
+.fb-video-admin-form button{grid-column:1/-1}
+@media(max-width:900px){.facebook-video-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.facebook-video-grid{grid-template-columns:1fr}.fb-video-admin-form{grid-template-columns:1fr}}
