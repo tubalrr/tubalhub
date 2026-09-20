@@ -84,166 +84,120 @@ function cleanupPeer(){
   document.getElementById('vcRemotePlaceholder')?.classList.remove('hide');
 }
 
-async function getCallMedia(wantVideo) {
-  if (!navigator.mediaDevices?.getUserMedia) {
-    throw new Error('MEDIA_NOT_SUPPORTED');
+async function setupPeer(callRef, otherId, wantVideo=true, remoteOffer=null){
+  peer = new RTCPeerConnection({iceServers:ICE});
+
+  // On the callee, apply the caller's offer FIRST. This is important because
+  // a caller without a camera creates a recvonly video m-line; the phone must
+  // reuse that transceiver to send its camera back.
+  if(remoteOffer){
+    await peer.setRemoteDescription(new RTCSessionDescription(remoteOffer));
   }
 
-  // Microphone is required for calls. Camera is optional.
-  if (wantVideo) {
-    try {
-      return await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'user' },
-        audio: true
-      });
-    } catch (e) {
-      // If video permission/device fails but microphone is available,
-      // retry as voice-only instead of incorrectly reporting a mic error.
-      try {
-        const audioOnly = await navigator.mediaDevices.getUserMedia({
-          video: false,
-          audio: true
-        });
-        audioOnly.__videoFallback = true;
-        return audioOnly;
-      } catch (audioError) {
-        const err = new Error('MICROPHONE_FAILED');
-        err.original = audioError;
-        throw err;
-      }
+  localStream = await getCallMedia(wantVideo);
+
+  remoteStream = new MediaStream();
+  const localVideo = document.getElementById('vcLocal');
+  const remoteVideo = document.getElementById('vcRemote');
+  const cameraBtn = document.getElementById('vcCamera');
+
+  localVideo.srcObject = localStream;
+  remoteVideo.srcObject = remoteStream;
+
+  // Add/attach local tracks. When answering an existing offer, reuse the
+  // offered transceivers so video negotiation is symmetric.
+  const audioTrack = localStream.getAudioTracks()[0] || null;
+  const videoTrack = localStream.getVideoTracks()[0] || null;
+
+  if(remoteOffer){
+    const audioTransceiver = peer.getTransceivers().find(
+      tr => tr.receiver?.track?.kind === 'audio'
+    );
+    if(audioTrack && audioTransceiver){
+      await audioTransceiver.sender.replaceTrack(audioTrack);
+      audioTransceiver.direction = 'sendrecv';
+    }else if(audioTrack){
+      peer.addTrack(audioTrack, localStream);
+    }
+
+    const videoTransceiver = peer.getTransceivers().find(
+      tr => tr.receiver?.track?.kind === 'video'
+    );
+    if(videoTrack && videoTransceiver){
+      await videoTransceiver.sender.replaceTrack(videoTrack);
+      videoTransceiver.direction = 'sendrecv';
+    }else if(videoTrack){
+      peer.addTrack(videoTrack, localStream);
+    }
+  }else{
+    if(audioTrack) peer.addTrack(audioTrack, localStream);
+
+    // PC may have no camera. Still request a remote video m-line so the
+    // phone can send its camera to this PC.
+    if(videoTrack){
+      peer.addTrack(videoTrack, localStream);
+    }else{
+      peer.addTransceiver('video', {direction:'recvonly'});
     }
   }
 
-  try {
-    return await navigator.mediaDevices.getUserMedia({
-      video: false,
-      audio: true
-    });
-  } catch (e) {
-    const err = new Error('MICROPHONE_FAILED');
-    err.original = e;
-    throw err;
-  }
-}
+  const hasLocalVideo = !!videoTrack;
+  localVideo.style.display = hasLocalVideo ? 'block' : 'none';
+  cameraBtn.style.display = hasLocalVideo ? 'inline-flex' : 'none';
+  document.getElementById('vcRemotePlaceholder').textContent =
+    'Waiting for video…';
 
-function mediaErrorMessage(e) {
-  if (e?.message === 'MEDIA_NOT_SUPPORTED') {
-    return 'Hindi supported ng browser ang camera/microphone. Gumamit ng Chrome o Edge.';
-  }
-  if (e?.message === 'MICROPHONE_FAILED') {
-    const n = e.original?.name;
-    if (n === 'NotAllowedError' || n === 'SecurityError') {
-      return 'Microphone permission ay blocked. Pumunta sa site settings ng TUBAL HUB at piliin ang Microphone → Allow, pagkatapos i-reload ang page.';
-    }
-    if (n === 'NotFoundError' || n === 'DevicesNotFoundError') {
-      return 'Walang microphone na nakita ng phone/PC. Check ang microphone device at browser permission.';
-    }
-    return 'Hindi ma-access ang microphone. Check ang microphone permission ng TUBAL HUB.';
-  }
-  if (e?.name === 'NotAllowedError') {
-    return 'Camera o microphone permission ay blocked. Check ang browser site permissions.';
-  }
-  return 'Hindi ma-start ang call. Check ang camera/microphone permissions.';
-}
-
-async function setupPeer(callRef, otherId, wantVideo=true){
-  peer=new RTCPeerConnection({iceServers:ICE});
-
-  // WebRTC diagnostics: show the actual ICE/media connection state.
-  peer.oniceconnectionstatechange=()=>{
-    const s=peer?.iceConnectionState || 'unknown';
-    const el=document.getElementById('vcStatus');
-    if(el) el.textContent=`ICE: ${s}`;
-    console.log('[TUBAL HUB] ICE connection state:',s);
-  };
-
-  peer.onconnectionstatechange=()=>{
-    const s=peer?.connectionState || 'unknown';
-    console.log('[TUBAL HUB] WebRTC connection state:',s);
-  };
-
-  peer.onicegatheringstatechange=()=>{
-    console.log('[TUBAL HUB] ICE gathering state:',peer?.iceGatheringState);
-  };
-
-  localStream=await getCallMedia(wantVideo);
-
-  remoteStream=new MediaStream();
-  const localVideo=document.getElementById('vcLocal');
-  const remoteVideo=document.getElementById('vcRemote');
-  const cameraBtn=document.getElementById('vcCamera');
-
-  localVideo.srcObject=localStream;
-  remoteVideo.srcObject=remoteStream;
-
-  // IMPORTANT:
-  // Always create a video transceiver. This lets a PC with no camera
-  // receive the phone's camera video.
-  if(!localStream.getVideoTracks().length){
-    peer.addTransceiver('video', { direction: 'recvonly' });
-  }
-
-  localStream.getTracks().forEach(t=>peer.addTrack(t,localStream));
-
-  const hasLocalVideo=localStream.getVideoTracks().length>0;
-  localVideo.style.display=hasLocalVideo?'block':'none';
-  cameraBtn.style.display=hasLocalVideo?'inline-flex':'none';
-  document.getElementById('vcRemotePlaceholder').textContent='Waiting for video…';
-
-  peer.ontrack=e=>{
-    console.log('[TUBAL HUB] Remote track received:', {
-      kind: e.track?.kind,
-      id: e.track?.id,
-      streams: e.streams?.length || 0
-    });
-    const stream=e.streams?.[0];
-    if(stream){
-      if(e.track && !remoteStream.getTracks().some(t=>t.id===e.track.id)){
-        remoteStream.addTrack(e.track);
-      }
-    }else if(e.track && !remoteStream.getTracks().some(t=>t.id===e.track.id)){
+  peer.ontrack = e => {
+    if(e.track && !remoteStream.getTracks().some(t => t.id === e.track.id)){
       remoteStream.addTrack(e.track);
     }
 
-    remoteVideo.srcObject=remoteStream;
+    remoteVideo.srcObject = remoteStream;
 
-    // Force playback because mobile browsers can keep media paused.
-    remoteVideo.play().catch(()=>{});
+    // Mobile browsers can keep a dynamically attached media element paused.
+    remoteVideo.play().catch(() => {});
 
-    const remoteHasVideo=remoteStream.getVideoTracks().length>0;
-    const remoteHasAudio=remoteStream.getAudioTracks().length>0;
+    const remoteHasVideo = remoteStream.getVideoTracks().length > 0;
+    const remoteHasAudio = remoteStream.getAudioTracks().length > 0;
 
-    remoteVideo.style.display=remoteHasVideo?'block':'none';
-    document.getElementById('vcRemotePlaceholder')?.classList.toggle('hide',remoteHasVideo);
+    remoteVideo.style.display = remoteHasVideo ? 'block' : 'none';
+    document.getElementById('vcRemotePlaceholder')?.classList.toggle(
+      'hide', remoteHasVideo
+    );
 
     if(!remoteHasVideo && remoteHasAudio){
-      document.getElementById('vcRemotePlaceholder').textContent='Voice connected • Waiting for camera…';
+      document.getElementById('vcRemotePlaceholder').textContent =
+        'Voice connected • Waiting for camera…';
     }
   };
 
-  peer.onicecandidate=e=>{
-    if(e.candidate)setDoc(
-      doc(collection(db,'videoCalls',callRef.id,'candidates')),
-      {
-        senderId:user.uid,
-        candidate:e.candidate.toJSON(),
-        createdAt:serverTimestamp()
-      }
-    ).catch(()=>{});
+  peer.onconnectionstatechange = debugConnection;
+  peer.oniceconnectionstatechange = debugConnection;
+
+  peer.onicecandidate = e => {
+    if(e.candidate){
+      setDoc(
+        doc(collection(db,'videoCalls',callRef.id,'candidates')),
+        {
+          senderId:user.uid,
+          candidate:e.candidate.toJSON(),
+          createdAt:serverTimestamp()
+        }
+      ).catch(() => {});
+    }
   };
 
-  stopCandidates=onSnapshot(
+  stopCandidates = onSnapshot(
     collection(db,'videoCalls',callRef.id,'candidates'),
-    snap=>{
-      snap.docChanges().forEach(ch=>{
-        if(ch.type!=='added')return;
-        const c=ch.doc.data();
-        if(c.senderId===user.uid||!c.candidate)return;
+    snap => {
+      snap.docChanges().forEach(ch => {
+        if(ch.type !== 'added') return;
+        const c = ch.doc.data();
+        if(c.senderId === user.uid || !c.candidate) return;
 
-        const ice=new RTCIceCandidate(c.candidate);
-
+        const ice = new RTCIceCandidate(c.candidate);
         if(peer?.remoteDescription){
-          peer.addIceCandidate(ice).catch(()=>{});
+          peer.addIceCandidate(ice).catch(() => {});
         }else{
           pendingCandidates.push(ice);
         }
@@ -258,42 +212,54 @@ async function flushCandidates(){if(!peer?.remoteDescription)return;for(const c 
 
 async function startCall(target){
   if(!isReal() || !target?.uid || target.uid===user.uid || activeCallRef) return;
-  if(!navigator.mediaDevices?.getUserMedia){alert('Your browser does not support microphone access.');return}
+  if(!navigator.mediaDevices?.getUserMedia){
+    alert('Your browser does not support microphone/camera access.');
+    return;
+  }
+
   try{
-    const callRef=doc(collection(db,'videoCalls'));
-    activeCallRef=callRef;
+    const callRef = doc(collection(db,'videoCalls'));
+    activeCallRef = callRef;
     showActive('Calling '+(target.displayName||'Member'),'Requesting microphone…');
 
-    // A PC without a camera automatically becomes a voice-only caller.
-    let wantVideo=true;
+    let hasLocalCamera = false;
     try{
-      const devices=await navigator.mediaDevices.enumerateDevices();
-      wantVideo=devices.some(d=>d.kind==='videoinput');
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      hasLocalCamera = devices.some(d => d.kind === 'videoinput');
     }catch{}
 
-    await setupPeer(callRef,target.uid,wantVideo);
-    const hasVideo=localStream.getVideoTracks().length>0;
-    document.getElementById('vcTitle').textContent=(hasVideo?'Video call to ':'Voice call to ')+(target.displayName||'Member');
-    document.getElementById('vcStatus').textContent=hasVideo?'Creating call…':'Microphone only • Creating call…';
+    // Even when the caller has no camera, this is still a VIDEO call:
+    // the caller asks the other device to send its camera.
+    await setupPeer(callRef, target.uid, hasLocalCamera);
 
-    const offer=await peer.createOffer();
+    const localHasVideo = localStream.getVideoTracks().length > 0;
+    document.getElementById('vcTitle').textContent =
+      'Video call to '+(target.displayName||'Member');
+    document.getElementById('vcStatus').textContent =
+      localHasVideo
+        ? 'Creating video call…'
+        : 'No camera here • Requesting remote video…';
+
+    const offer = await peer.createOffer();
     await peer.setLocalDescription(offer);
+
     await setDoc(callRef,{
       callerId:user.uid,
       calleeId:target.uid,
       callerName:nameOf(user),
       callerPhotoURL:user.photoURL||'',
       calleeName:target.displayName||'Member',
-      media:hasVideo?'video':'audio',
+      media:'video',
       status:'ringing',
       offer:{type:offer.type,sdp:offer.sdp},
       createdAt:serverTimestamp(),
       updatedAt:serverTimestamp()
     });
+
     listenCall(callRef,true,target.displayName||'Member');
     startTimer();
   }catch(e){
-    console.error(e);
+    console.error('Start call error:',e);
     alert(mediaErrorMessage(e));
     await safeDelete(activeCallRef);
     activeCallRef=null;
@@ -322,39 +288,61 @@ function listenCall(callRef,callerSide,otherName){
 
 async function acceptIncoming(){
   if(!incomingId||activeCallRef)return;
-  const callId=incomingId;hideIncoming();incomingId=null;
-  const ref=doc(db,'videoCalls',callId);
+
+  const callId = incomingId;
+  hideIncoming();
+  incomingId = null;
+
+  const ref = doc(db,'videoCalls',callId);
+
   try{
-    const snap=await getDoc(ref);if(!snap.exists())return;const d=snap.data();
-    if(d.calleeId!==user.uid||d.status!=='ringing')return;
+    const snap = await getDoc(ref);
+    if(!snap.exists()) return;
 
-    activeCallRef=ref;
-    const requestedVideo = !!d.offer?.sdp && /(^|\r\n)m=video\s/i.test(d.offer.sdp);
-    showActive((requestedVideo?'Video call with ':'Voice call with ')+(d.callerName||'Member'),'Requesting microphone…');
+    const d = snap.data();
+    if(d.calleeId!==user.uid || d.status!=='ringing') return;
 
-    // The offer determines whether the caller wants to receive video.
-    // If this device has no camera, setupPeer falls back to microphone-only.
-    await setupPeer(ref,d.callerId,requestedVideo);
-    const hasVideo=localStream.getVideoTracks().length>0;
-    document.getElementById('vcTitle').textContent=(hasVideo?'Video call with ':'Voice call with ')+(d.callerName||'Member');
-    await peer.setRemoteDescription(new RTCSessionDescription(d.offer));
-    await flushCandidates();
+    activeCallRef = ref;
 
-    const answer=await peer.createAnswer();
+    // A video m-line in the caller's SDP means the caller wants to
+    // receive the phone's camera, even if the caller itself has no camera.
+    const requestedVideo =
+      !!d.offer?.sdp && /(^|\r\n)m=video\s/i.test(d.offer.sdp);
+
+    showActive(
+      (requestedVideo?'Video call with ':'Voice call with ')+
+        (d.callerName||'Member'),
+      'Requesting microphone…'
+    );
+
+    await setupPeer(ref,d.callerId,requestedVideo,d.offer);
+
+    const hasVideo = localStream.getVideoTracks().length > 0;
+    document.getElementById('vcTitle').textContent =
+      (requestedVideo && hasVideo ? 'Video call with ' :
+       requestedVideo ? 'Video call with ' : 'Voice call with ')+
+      (d.callerName||'Member');
+
+    const answer = await peer.createAnswer();
     await peer.setLocalDescription(answer);
+
     await updateDoc(ref,{
       status:'accepted',
       calleeMedia:hasVideo?'video':'audio',
       answer:{type:answer.type,sdp:answer.sdp},
       updatedAt:serverTimestamp()
     });
-    listenCall(ref,false,d.callerName||'Member');startTimer();
+
+    listenCall(ref,false,d.callerName||'Member');
+    startTimer();
   }catch(e){
-    console.error(e);
+    console.error('Accept call error:',e);
     alert(mediaErrorMessage(e));
-    await safeUpdate(ref,{status:'ended',updatedAt:serverTimestamp()});endLocal()
+    await safeUpdate(ref,{status:'ended',updatedAt:serverTimestamp()});
+    endLocal();
   }
 }
+
 async function declineIncoming(){
   const id=incomingId;hideIncoming();incomingId=null;if(!id)return;
   const ref=doc(db,'videoCalls',id);try{const s=await getDoc(ref);if(s.exists()&&s.data().calleeId===user.uid)await updateDoc(ref,{status:'declined',updatedAt:serverTimestamp()})}catch(e){console.error(e)}
@@ -367,6 +355,22 @@ async function endCall(notify=true){
 function endLocal(){const ref=activeCallRef;activeCallRef=null;cleanupPeer();hideActive();if(ref)setTimeout(()=>safeDelete(ref),10000)}
 async function safeDelete(ref){if(!ref)return;try{const s=await getDoc(ref);if(s.exists()&&(s.data().callerId===user?.uid||s.data().calleeId===user?.uid)&&['ended','declined'].includes(s.data().status))await deleteDoc(ref)}catch{}}
 async function safeUpdate(ref,data){try{await updateDoc(ref,data)}catch{}}
+function debugConnection(){
+  if(!peer) return;
+  console.log('[TUBAL HUB WebRTC]', {
+    connectionState: peer.connectionState,
+    iceConnectionState: peer.iceConnectionState,
+    signalingState: peer.signalingState,
+    senders: peer.getSenders().map(s=>s.track?.kind||'none'),
+    receivers: peer.getReceivers().map(r=>r.track?.kind||'none'),
+    transceivers: peer.getTransceivers().map(t=>({
+      kind:t.receiver?.track?.kind,
+      direction:t.direction,
+      currentDirection:t.currentDirection
+    }))
+  });
+}
+
 function startTimer(){if(callTimer)clearInterval(callTimer);callStartedAt=Date.now();callTimer=setInterval(()=>{const s=Math.floor((Date.now()-callStartedAt)/1000),m=String(Math.floor(s/60)).padStart(2,'0'),sec=String(s%60).padStart(2,'0');const el=document.getElementById('vcStatus');if(el&&!el.textContent.includes('Connected'))el.textContent='Connected';if(el)el.dataset.time=m+':'+sec},1000)}
 function toggleMute(){const t=localStream?.getAudioTracks?.()[0];if(!t)return;t.enabled=!t.enabled;document.getElementById('vcMute').textContent=t.enabled?'🎙 Mute':'🔇 Unmute'}
 function toggleCamera(){const t=localStream?.getVideoTracks?.()[0];if(!t)return;t.enabled=!t.enabled;document.getElementById('vcCamera').textContent=t.enabled?'📷 Camera':'🚫 Camera'}
@@ -386,7 +390,7 @@ function addButtons(){
   const list=document.getElementById('memberList');if(!list||!isReal())return;
   list.querySelectorAll('.member').forEach(div=>{
     const uid=div.dataset.uid;if(!uid||uid===user.uid||div.querySelector('.vc-call-btn'))return;
-    const b=document.createElement('button');b.type='button';b.className='vc-call-btn';b.title='Video / Voice call';b.setAttribute('aria-label','Video / Voice call');b.textContent='📹';
+    const b=document.createElement('button');b.type='button';b.className='vc-call-btn';b.title='Video call';b.setAttribute('aria-label','Video call');b.textContent='📹';
     b.onclick=()=>{const name=div.querySelector('.member-info b')?.textContent||'Member';const img=div.querySelector('.mini img');startCall({uid,displayName:name,photoURL:img?.src||''})};
     div.appendChild(b);
   });
