@@ -1,24 +1,38 @@
-/* TUBAL HUB — Jitsi Meet video/voice calls
-   Actual media is handled by Jitsi Meet.
-   Firebase is used only for the private call invitation/accept/decline signal.
+/* TUBAL HUB — Messenger-style 1-to-1 WebRTC video calls
+   Firebase Firestore = signaling only.
+   Media stays peer-to-peer through WebRTC; no Jitsi and no video storage.
 */
 import { app, auth } from "./firebase-config.js";
 import {
   getFirestore, collection, doc, setDoc, getDoc, updateDoc, deleteDoc,
-  query, where, onSnapshot, serverTimestamp
+  query, where, onSnapshot, serverTimestamp, arrayUnion
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
 const db = getFirestore(app);
-const JITSI_DOMAIN = "meet.jit.si";
+
+const RTC_CONFIG = {
+  iceServers: [
+    { urls: "stun:stun.l.google.com:19302" },
+    { urls: "stun:stun1.l.google.com:19302" }
+  ],
+  bundlePolicy: "balanced"
+};
 
 let user = null;
 let callRef = null;
 let callId = null;
-let jitsiApi = null;
+let peer = null;
+let localStream = null;
+let remoteStream = null;
 let stopIncoming = null;
+let stopCallDoc = null;
 let incomingId = null;
 let incomingData = null;
+let callRole = null;
+let ending = false;
+let remoteCandidateKeys = new Set();
+let remoteDescriptionReady = false;
 
 const $ = id => document.getElementById(id);
 const isReal = () => !!user && !user.isAnonymous;
@@ -26,35 +40,52 @@ const displayName = u => u?.displayName || u?.email?.split("@")[0] || "Member";
 const initials = n => (n || "Member").trim().split(/\s+/).slice(0,2).map(x => x[0]).join("").toUpperCase() || "M";
 
 function injectUI(){
-  if($("videoCallUI")) return;
+  if ($("videoCallUI")) return;
 
   const wrap = document.createElement("div");
   wrap.innerHTML = `
     <div id="videoCallUI" class="vc-overlay" hidden>
-      <div class="vc-card vc-active-card vc-jitsi-card">
-        <div class="vc-head">
-          <div>
-            <strong id="vcTitle">Video Call</strong>
-            <span id="vcStatus">Connecting…</span>
+      <div class="vc-call-window">
+        <div class="vc-call-top">
+          <div class="vc-call-person">
+            <div class="vc-status-dot"></div>
+            <div>
+              <strong id="vcTitle">Video Call</strong>
+              <span id="vcStatus">Connecting…</span>
+            </div>
           </div>
-          <button id="vcCloseTop" class="vc-x" type="button" aria-label="End call">×</button>
+          <button id="vcCloseTop" class="vc-icon-btn" type="button" aria-label="End call">×</button>
         </div>
-        <div id="jitsiContainer" class="jitsi-container"></div>
+
+        <div class="vc-stage" id="vcStage">
+          <video id="vcRemoteVideo" class="vc-remote-video" autoplay playsinline></video>
+          <div id="vcRemoteFallback" class="vc-remote-fallback">
+            <div class="vc-big-avatar" id="vcRemoteAvatar">M</div>
+            <strong id="vcRemoteFallbackName">Member</strong>
+            <span id="vcRemoteFallbackStatus">Connecting…</span>
+          </div>
+          <video id="vcLocalVideo" class="vc-local-video" autoplay muted playsinline></video>
+          <div class="vc-call-badge" id="vcCallBadge">Connecting…</div>
+        </div>
+
         <div class="vc-controls">
-          <button id="vcEnd" class="vc-end" type="button">☎ End Call</button>
+          <button id="vcMute" class="vc-control" type="button" title="Mute microphone">🎤<span>Mute</span></button>
+          <button id="vcCamera" class="vc-control" type="button" title="Turn camera off">📷<span>Camera</span></button>
+          <button id="vcSwitch" class="vc-control" type="button" title="Switch camera">🔄<span>Switch</span></button>
+          <button id="vcEnd" class="vc-control vc-end" type="button" title="End call">☎<span>End</span></button>
         </div>
       </div>
     </div>
 
-    <div id="vcIncoming" class="vc-overlay" hidden>
-      <div class="vc-card vc-incoming-card">
-        <div class="vc-in-avatar" id="vcIncomingAvatar">TH</div>
-        <h3 id="vcIncomingName">Incoming video call</h3>
-        <p id="vcIncomingText">Someone is calling you.</p>
-        <div class="vc-in-actions">
-          <button id="vcDecline" class="vc-decline" type="button">Decline</button>
-          <button id="vcAccept" class="vc-accept" type="button">Accept</button>
+    <div id="vcIncoming" class="vc-incoming" hidden>
+      <div class="vc-incoming-card">
+        <div class="vc-incoming-avatar" id="vcIncomingAvatar">M</div>
+        <div class="vc-incoming-copy">
+          <strong id="vcIncomingName">Incoming call</strong>
+          <span id="vcIncomingText">Incoming video call</span>
         </div>
+        <button id="vcDecline" class="vc-incoming-btn decline" type="button" aria-label="Decline">☎</button>
+        <button id="vcAccept" class="vc-incoming-btn accept" type="button" aria-label="Accept">📹</button>
       </div>
     </div>`;
   document.body.appendChild(wrap);
@@ -63,118 +94,301 @@ function injectUI(){
   $("vcCloseTop").onclick = () => endCall(true);
   $("vcDecline").onclick = declineIncoming;
   $("vcAccept").onclick = acceptIncoming;
+  $("vcMute").onclick = toggleMute;
+  $("vcCamera").onclick = toggleCamera;
+  $("vcSwitch").onclick = switchCamera;
 }
 
-function showActive(title, status){
+function showActive(title, status, otherName){
   injectUI();
   $("vcTitle").textContent = title || "Video Call";
   $("vcStatus").textContent = status || "Connecting…";
+  $("vcCallBadge").textContent = status || "Connecting…";
+  $("vcRemoteFallbackName").textContent = otherName || "Member";
+  $("vcRemoteAvatar").textContent = initials(otherName);
   $("videoCallUI").hidden = false;
 }
 
 function hideActive(){
-  if($("videoCallUI")) $("videoCallUI").hidden = true;
+  if ($("videoCallUI")) $("videoCallUI").hidden = true;
 }
 
 function showIncoming(d){
   injectUI();
-  const n = d.callerName || "Member";
   incomingData = d;
-  showActive("Incoming call from " + n, "Waiting for you to accept…");
+  const n = d.callerName || "Member";
   $("vcIncomingName").textContent = n;
-  $("vcIncomingText").textContent = "Incoming video call from " + n;
+  $("vcIncomingText").textContent = "Incoming video call";
   $("vcIncomingAvatar").textContent = initials(n);
   $("vcIncoming").hidden = false;
 }
 
 function hideIncoming(){
-  if($("vcIncoming")) $("vcIncoming").hidden = true;
+  if ($("vcIncoming")) $("vcIncoming").hidden = true;
 }
 
-function loadJitsi(){
-  return new Promise((resolve,reject)=>{
-    if(window.JitsiMeetExternalAPI) return resolve();
-    const old = document.querySelector('script[data-tubal-jitsi="1"]');
-    if(old){
-      old.addEventListener("load",()=>resolve(),{once:true});
-      old.addEventListener("error",()=>reject(new Error("JITSI_SCRIPT_FAILED")),{once:true});
-      return;
+function setCallStatus(text){
+  if ($("vcStatus")) $("vcStatus").textContent = text;
+  if ($("vcCallBadge")) $("vcCallBadge").textContent = text;
+  if ($("vcRemoteFallbackStatus")) $("vcRemoteFallbackStatus").textContent = text;
+}
+
+function candidateKey(c){
+  return JSON.stringify([
+    c?.candidate || "",
+    c?.sdpMid ?? null,
+    c?.sdpMLineIndex ?? null,
+    c?.usernameFragment ?? null
+  ]);
+}
+
+async function getMedia(){
+  if (!navigator.mediaDevices?.getUserMedia) {
+    throw new Error("MEDIA_UNAVAILABLE");
+  }
+
+  try {
+    return await navigator.mediaDevices.getUserMedia({
+      audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
+      video: { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: "user" }
+    });
+  } catch (e) {
+    if (e?.name === "NotFoundError") {
+      try {
+        const audioOnly = await navigator.mediaDevices.getUserMedia({
+          audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
+          video: false
+        });
+        setCallStatus("Camera unavailable — voice only");
+        return audioOnly;
+      } catch {}
     }
-    const s = document.createElement("script");
-    s.src = "https://" + JITSI_DOMAIN + "/external_api.js";
-    s.async = true;
-    s.dataset.tubalJitsi = "1";
-    s.onload = () => resolve();
-    s.onerror = () => reject(new Error("JITSI_SCRIPT_FAILED"));
-    document.head.appendChild(s);
-  });
+    throw e;
+  }
 }
 
-async function joinJitsi(room, otherName){
-  await loadJitsi();
+function attachLocal(stream){
+  localStream = stream;
+  const v = $("vcLocalVideo");
+  if (!v) return;
+  v.srcObject = stream;
+  v.style.display = stream.getVideoTracks().length ? "block" : "none";
+  v.play?.().catch(()=>{});
+}
 
-  const container = $("jitsiContainer");
-  container.innerHTML = "";
-  jitsiApi?.dispose?.();
-  jitsiApi = null;
+function attachRemote(stream){
+  remoteStream = stream;
+  const v = $("vcRemoteVideo");
+  if (!v) return;
+  v.srcObject = stream;
+  v.play?.().catch(()=>{});
+  const hasVideo = stream.getVideoTracks().length > 0;
+  $("vcRemoteFallback").style.display = hasVideo ? "none" : "grid";
+}
 
-  const options = {
-    roomName: room,
-    parentNode: container,
-    width: "100%",
-    height: "100%",
-    userInfo: { displayName: displayName(user) },
-    configOverwrite: {
-      prejoinConfig: { enabled: true },
-      disableDeepLinking: true,
-      startWithAudioMuted: false,
-      startWithVideoMuted: false,
-      disableThirdPartyRequests: true
-    },
-    interfaceConfigOverwrite: {
-      TOOLBAR_BUTTONS: [
-        "microphone", "camera", "desktop", "fullscreen",
-        "hangup", "chat", "raisehand", "tileview", "settings"
-      ],
-      SHOW_JITSI_WATERMARK: false,
-      SHOW_WATERMARK_FOR_GUESTS: false
+function cleanupPeer(){
+  if (stopCallDoc) {
+    stopCallDoc();
+    stopCallDoc = null;
+  }
+  if (peer) {
+    try { peer.ontrack = null; peer.onicecandidate = null; peer.close(); } catch {}
+    peer = null;
+  }
+  localStream?.getTracks?.().forEach(t => t.stop());
+  remoteStream?.getTracks?.().forEach(t => t.stop());
+  localStream = null;
+  remoteStream = null;
+  remoteDescriptionReady = false;
+  remoteCandidateKeys.clear();
+
+  if ($("vcLocalVideo")) $("vcLocalVideo").srcObject = null;
+  if ($("vcRemoteVideo")) $("vcRemoteVideo").srcObject = null;
+}
+
+function createPeer(){
+  peer = new RTCPeerConnection(RTC_CONFIG);
+  peer.ontrack = event => {
+    const stream = event.streams?.[0] || remoteStream || new MediaStream();
+    if (!event.streams?.[0]) stream.addTrack(event.track);
+    attachRemote(stream);
+    setCallStatus("Connected");
+  };
+
+  peer.onicecandidate = async event => {
+    if (!event.candidate || !callRef || ending) return;
+    const field = callRole === "caller" ? "callerCandidates" : "calleeCandidates";
+    try {
+      await updateDoc(callRef, {
+        [field]: arrayUnion(event.candidate.toJSON()),
+        updatedAt: serverTimestamp()
+      });
+    } catch (e) {
+      console.warn("[TUBAL HUB] ICE signal failed", e);
     }
   };
 
-  jitsiApi = new window.JitsiMeetExternalAPI(JITSI_DOMAIN, options);
+  peer.oniceconnectionstatechange = () => {
+    const state = peer?.iceConnectionState;
+    if (state === "connected" || state === "completed") setCallStatus("Connected");
+    else if (state === "checking") setCallStatus("Connecting…");
+    else if (state === "disconnected") setCallStatus("Connection interrupted…");
+    else if (state === "failed") setCallStatus("Connection failed");
+  };
 
-  jitsiApi.addEventListener("videoConferenceJoined", () => {
-    $("vcStatus").textContent = "Connected";
+  peer.onconnectionstatechange = () => {
+    const state = peer?.connectionState;
+    if (state === "connected") setCallStatus("Connected");
+    if (state === "failed") setCallStatus("Connection failed");
+    if (state === "disconnected") setCallStatus("Connection interrupted…");
+  };
+
+  return peer;
+}
+
+function addLocalTracks(){
+  if (!peer || !localStream) return;
+  localStream.getTracks().forEach(track => peer.addTrack(track, localStream));
+}
+
+async function addRemoteCandidates(list){
+  if (!peer || !remoteDescriptionReady || !Array.isArray(list)) return;
+  for (const c of list) {
+    const key = candidateKey(c);
+    if (remoteCandidateKeys.has(key)) continue;
+    try {
+      await peer.addIceCandidate(new RTCIceCandidate(c));
+      remoteCandidateKeys.add(key);
+    } catch (e) {
+      console.warn("[TUBAL HUB] addIceCandidate", e);
+    }
+  }
+}
+
+function watchCallDocument(ref){
+  if (stopCallDoc) stopCallDoc();
+
+  stopCallDoc = onSnapshot(ref, async snap => {
+    if (!snap.exists() || ending) return;
+    const d = snap.data();
+
+    if (d.status === "declined" || d.status === "ended" || d.status === "missed") {
+      if (!ending) {
+        setCallStatus(d.status === "declined" ? "Call declined" : "Call ended");
+        setTimeout(() => resetCall(), 350);
+      }
+      return;
+    }
+
+    try {
+      if (callRole === "caller") {
+        if (d.status === "accepted" && !peer) {
+          await startCallerConnection(d);
+          return;
+        }
+        if (d.answer && peer && !peer.currentRemoteDescription) {
+          await peer.setRemoteDescription(new RTCSessionDescription(d.answer));
+          remoteDescriptionReady = true;
+          await addRemoteCandidates(d.calleeCandidates || []);
+        } else if (peer && remoteDescriptionReady) {
+          await addRemoteCandidates(d.calleeCandidates || []);
+        }
+      } else if (callRole === "callee") {
+        if (d.offer && peer && !peer.currentRemoteDescription) {
+          await peer.setRemoteDescription(new RTCSessionDescription(d.offer));
+          remoteDescriptionReady = true;
+          await addRemoteCandidates(d.callerCandidates || []);
+          const answer = await peer.createAnswer();
+          await peer.setLocalDescription(answer);
+          await updateDoc(ref, {
+            answer: { type: peer.localDescription.type, sdp: peer.localDescription.sdp },
+            status: "connecting",
+            updatedAt: serverTimestamp()
+          });
+          setCallStatus("Connecting…");
+        } else if (peer && remoteDescriptionReady) {
+          await addRemoteCandidates(d.callerCandidates || []);
+        }
+      }
+    } catch (e) {
+      console.error("[TUBAL HUB] signaling", e);
+      setCallStatus("Call setup error");
+    }
+  }, e => {
+    console.error("[TUBAL HUB] call listener", e);
+    setCallStatus("Call signal unavailable");
+  });
+}
+
+async function startCallerConnection(data){
+  if (!callRef || peer || ending) return;
+
+  setCallStatus("Starting camera…");
+  try {
+    attachLocal(await getMedia());
+  } catch (e) {
+    console.error(e);
+    throwMediaError(e);
+    await updateDoc(callRef, { status: "ended", updatedAt: serverTimestamp() }).catch(()=>{});
+    return;
+  }
+
+  createPeer();
+  addLocalTracks();
+
+  const offer = await peer.createOffer();
+  await peer.setLocalDescription(offer);
+
+  await updateDoc(callRef, {
+    offer: { type: peer.localDescription.type, sdp: peer.localDescription.sdp },
+    status: "connecting",
+    updatedAt: serverTimestamp()
   });
 
-  jitsiApi.addEventListener("videoConferenceLeft", () => {
-    if(callRef) endCall(true);
-  });
+  setCallStatus("Connecting…");
+}
 
-  jitsiApi.addEventListener("readyToClose", () => {
-    if(callRef) endCall(true);
-  });
+async function startCalleeConnection(data){
+  if (!callRef || peer || ending) return;
 
-  jitsiApi.addEventListener("errorOccurred", e => {
-    console.error("[TUBAL HUB Jitsi]", e);
-    $("vcStatus").textContent = "Call service error";
-  });
+  setCallStatus("Starting camera…");
+  try {
+    attachLocal(await getMedia());
+  } catch (e) {
+    console.error(e);
+    throwMediaError(e);
+    await updateDoc(callRef, { status: "ended", updatedAt: serverTimestamp() }).catch(()=>{});
+    return;
+  }
 
-  $("vcTitle").textContent = "Call with " + (otherName || "Member");
-  $("vcStatus").textContent = "Opening secure call…";
+  createPeer();
+  addLocalTracks();
+  setCallStatus("Waiting for caller…");
+}
+
+function throwMediaError(e){
+  const map = {
+    NotAllowedError: "Camera/microphone permission was denied.",
+    NotFoundError: "No camera or microphone was found.",
+    NotReadableError: "Camera or microphone is busy or unavailable.",
+    OverconstrainedError: "The camera does not support the requested settings.",
+    MEDIA_UNAVAILABLE: "This browser does not support camera/microphone access."
+  };
+  alert(map[e?.name] || map[e?.message] || "Could not access the camera or microphone.");
 }
 
 async function startCall(target){
-  if(!isReal() || !target?.uid || target.uid === user.uid || callRef) return;
+  if (!isReal() || !target?.uid || target.uid === user.uid || callRef) return;
 
-  try{
-    const ref = doc(collection(db,"videoCalls"));
+  ending = false;
+  callRole = "caller";
+
+  try {
+    const ref = doc(collection(db, "videoCalls"));
     callRef = ref;
     callId = ref.id;
 
-    const room = "TUBALHUB-" + ref.id;
-
-    await setDoc(ref,{
+    await setDoc(ref, {
       callerId: user.uid,
       calleeId: target.uid,
       callerName: displayName(user),
@@ -182,55 +396,56 @@ async function startCall(target){
       calleeName: target.displayName || "Member",
       media: "video",
       status: "ringing",
-      room,
       createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp()
+      updatedAt: serverTimestamp(),
+      callerCandidates: [],
+      calleeCandidates: []
     });
 
     hideIncoming();
-    showActive("Calling " + (target.displayName || "Member"), "Ringing…");
-
-    // Open Jitsi for the caller immediately. The callee joins only after Accept.
-    await joinJitsi(room, target.displayName || "Member");
-  }catch(e){
-    console.error("[TUBAL HUB] startCall",e);
-    alert("Hindi ma-open ang video call. Subukan ulit.");
+    showActive("Calling " + (target.displayName || "Member"), "Ringing…", target.displayName || "Member");
+    watchCallDocument(ref);
+  } catch (e) {
+    console.error("[TUBAL HUB] startCall", e);
+    alert("Hindi ma-start ang video call. Subukan ulit.");
     await safeDelete(callRef);
     resetCall();
   }
 }
 
 async function acceptIncoming(){
-  if(!incomingId || callRef) return;
+  if (!incomingId || callRef || !isReal()) return;
 
   const id = incomingId;
-  const d0 = incomingData;
-  hideIncoming();
   incomingId = null;
   incomingData = null;
+  hideIncoming();
 
-  const ref = doc(db,"videoCalls",id);
+  const ref = doc(db, "videoCalls", id);
 
-  try{
+  try {
     const snap = await getDoc(ref);
-    if(!snap.exists()) return;
+    if (!snap.exists()) return;
 
     const d = snap.data();
-    if(d.calleeId !== user.uid || d.status !== "ringing" || !d.room) return;
+    if (d.calleeId !== user.uid || d.status !== "ringing") return;
 
+    ending = false;
+    callRole = "callee";
     callRef = ref;
     callId = id;
 
-    await updateDoc(ref,{
-      status:"accepted",
-      updatedAt:serverTimestamp()
+    await updateDoc(ref, {
+      status: "accepted",
+      updatedAt: serverTimestamp()
     });
 
-    showActive("Call with " + (d.callerName || "Member"), "Joining…");
-    await joinJitsi(d.room, d.callerName || "Member");
-  }catch(e){
-    console.error("[TUBAL HUB] acceptIncoming",e);
-    try{ await updateDoc(ref,{status:"ended",updatedAt:serverTimestamp()}); }catch{}
+    showActive("Call with " + (d.callerName || "Member"), "Starting…", d.callerName || "Member");
+    watchCallDocument(ref);
+    await startCalleeConnection(d);
+  } catch (e) {
+    console.error("[TUBAL HUB] acceptIncoming", e);
+    try { await updateDoc(ref, { status: "ended", updatedAt: serverTimestamp() }); } catch {}
     resetCall();
     alert("Hindi ma-open ang video call. Subukan ulit.");
   }
@@ -241,150 +456,185 @@ async function declineIncoming(){
   incomingId = null;
   incomingData = null;
   hideIncoming();
-  hideActive();
+  if (!id) return;
 
-  if(!id) return;
-
-  try{
-    const ref = doc(db,"videoCalls",id);
+  try {
+    const ref = doc(db, "videoCalls", id);
     const snap = await getDoc(ref);
-    if(snap.exists() && snap.data().calleeId === user.uid){
-      await updateDoc(ref,{status:"declined",updatedAt:serverTimestamp()});
-      setTimeout(()=>safeDelete(ref),5000);
+    if (snap.exists() && snap.data().calleeId === user.uid && snap.data().status === "ringing") {
+      await updateDoc(ref, { status: "declined", updatedAt: serverTimestamp() });
+      setTimeout(() => safeDelete(ref), 3000);
     }
-  }catch(e){
-    console.error("[TUBAL HUB] decline",e);
+  } catch (e) {
+    console.error("[TUBAL HUB] decline", e);
   }
 }
 
-async function endCall(notify=true){
+async function endCall(notify = true){
+  if (ending) return;
+  ending = true;
+
   const ref = callRef;
-
-  try{
-    if(notify && ref){
-      await updateDoc(ref,{status:"ended",updatedAt:serverTimestamp()});
+  try {
+    if (notify && ref) {
+      await updateDoc(ref, { status: "ended", updatedAt: serverTimestamp() });
     }
-  }catch(e){
-    console.warn("[TUBAL HUB] end signal",e);
+  } catch (e) {
+    console.warn("[TUBAL HUB] end signal", e);
   }
 
-  if(jitsiApi){
-    try{ jitsiApi.executeCommand("hangup"); }catch{}
-    try{ jitsiApi.dispose(); }catch{}
-  }
-
-  jitsiApi = null;
-  if($("jitsiContainer")) $("jitsiContainer").innerHTML = "";
-
+  cleanupPeer();
   await safeDelete(ref);
   resetCall();
 }
 
 function resetCall(){
+  ending = false;
+  cleanupPeer();
   callRef = null;
   callId = null;
+  callRole = null;
   hideActive();
   hideIncoming();
   incomingId = null;
   incomingData = null;
-  if(jitsiApi){
-    try{jitsiApi.dispose();}catch{}
-    jitsiApi = null;
-  }
-  if($("jitsiContainer")) $("jitsiContainer").innerHTML = "";
 }
 
 async function safeDelete(ref){
-  if(!ref) return;
-  try{
+  if (!ref) return;
+  try {
     const snap = await getDoc(ref);
-    if(snap.exists()) await deleteDoc(ref);
-  }catch(e){}
+    if (snap.exists()) await deleteDoc(ref);
+  } catch {}
 }
 
 function watchIncoming(){
-  if(stopIncoming){ stopIncoming(); stopIncoming=null; }
-  if(!isReal()) return;
+  if (stopIncoming) {
+    stopIncoming();
+    stopIncoming = null;
+  }
+  if (!isReal()) return;
 
   const q = query(
-    collection(db,"videoCalls"),
-    where("calleeId","==",user.uid),
-    where("status","==","ringing")
+    collection(db, "videoCalls"),
+    where("calleeId", "==", user.uid),
+    where("status", "==", "ringing")
   );
 
   stopIncoming = onSnapshot(q, snap => {
-    if(!isReal() || callRef) return;
+    if (!isReal() || callRef) return;
 
     const calls = [];
     snap.forEach(s => {
       const d = s.data();
-      if(d.calleeId === user.uid && d.status === "ringing" && d.room){
-        calls.push({id:s.id,data:d});
+      if (d.calleeId === user.uid && d.status === "ringing") {
+        calls.push({ id: s.id, data: d });
       }
     });
 
-    calls.sort((a,b)=>{
-      const ta=a.data.createdAt?.toMillis?.()||0;
-      const tb=b.data.createdAt?.toMillis?.()||0;
-      return tb-ta;
+    calls.sort((a,b) => {
+      const ta = a.data.createdAt?.toMillis?.() || 0;
+      const tb = b.data.createdAt?.toMillis?.() || 0;
+      return tb - ta;
     });
 
-    if(!calls.length){
+    if (!calls.length) {
       hideIncoming();
-      incomingId=null;
-      incomingData=null;
+      incomingId = null;
+      incomingData = null;
       return;
     }
 
-    const next=calls[0];
-    if(incomingId !== next.id){
-      incomingId=next.id;
+    const next = calls[0];
+    if (incomingId !== next.id) {
+      incomingId = next.id;
       showIncoming(next.data);
     }
   }, e => {
-    console.error("[TUBAL HUB] Incoming call listener",e);
-    hideIncoming();
+    console.error("[TUBAL HUB] incoming call listener", e);
   });
 }
 
 function addButtons(){
-  const list=$("memberList");
-  if(!list || !isReal()) return;
+  const list = $("memberList");
+  if (!list || !isReal()) return;
 
-  list.querySelectorAll(".member").forEach(div=>{
-    const uid=div.dataset.uid;
-    if(!uid || uid===user.uid || div.querySelector(".vc-call-btn")) return;
+  list.querySelectorAll(".member").forEach(div => {
+    const uid = div.dataset.uid;
+    if (!uid || uid === user.uid || div.querySelector(".vc-call-btn")) return;
 
-    const b=document.createElement("button");
-    b.type="button";
-    b.className="vc-call-btn";
-    b.title="Video call";
-    b.textContent="📹";
-    b.onclick=()=>{
-      const name=div.querySelector(".member-info b")?.textContent||"Member";
-      const img=div.querySelector(".mini img");
-      startCall({uid,displayName:name,photoURL:img?.src||""});
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "vc-call-btn";
+    b.title = "Video call";
+    b.textContent = "📹";
+    b.onclick = () => {
+      const name = div.querySelector(".member-info b")?.textContent || "Member";
+      const img = div.querySelector(".mini img");
+      startCall({ uid, displayName: name, photoURL: img?.src || "" });
     };
     div.appendChild(b);
   });
 }
 
+async function toggleMute(){
+  const track = localStream?.getAudioTracks?.()[0];
+  if (!track) return;
+  track.enabled = !track.enabled;
+  $("vcMute").classList.toggle("off", !track.enabled);
+  $("vcMute").querySelector("span").textContent = track.enabled ? "Mute" : "Unmute";
+}
+
+async function toggleCamera(){
+  const track = localStream?.getVideoTracks?.()[0];
+  if (!track) return;
+  track.enabled = !track.enabled;
+  $("vcCamera").classList.toggle("off", !track.enabled);
+  $("vcCamera").querySelector("span").textContent = track.enabled ? "Camera" : "Camera off";
+}
+
+async function switchCamera(){
+  const videoTrack = localStream?.getVideoTracks?.()[0];
+  if (!videoTrack) return;
+  const settings = videoTrack.getSettings?.() || {};
+  const facing = settings.facingMode === "user" ? "environment" : "user";
+
+  try {
+    const next = await navigator.mediaDevices.getUserMedia({
+      audio: false,
+      video: { facingMode: facing }
+    });
+    const nextTrack = next.getVideoTracks()[0];
+    const sender = peer?.getSenders?.().find(s => s.track?.kind === "video");
+    if (sender) await sender.replaceTrack(nextTrack);
+    videoTrack.stop();
+    localStream.removeTrack(videoTrack);
+    localStream.addTrack(nextTrack);
+    attachLocal(localStream);
+  } catch (e) {
+    console.warn("[TUBAL HUB] switch camera", e);
+  }
+}
+
 function observeMembers(){
-  const list=$("memberList");
-  if(!list) return;
-  new MutationObserver(addButtons).observe(list,{childList:true,subtree:true});
+  const list = $("memberList");
+  if (!list) return;
+  new MutationObserver(addButtons).observe(list, { childList:true, subtree:true });
   addButtons();
 }
 
 injectUI();
 observeMembers();
 
-onAuthStateChanged(auth,u=>{
-  user=u||null;
+onAuthStateChanged(auth, u => {
+  user = u || null;
 
-  if(!isReal()){
-    if(stopIncoming){stopIncoming();stopIncoming=null;}
-    if(callRef) endCall(true);
+  if (!isReal()) {
+    if (stopIncoming) {
+      stopIncoming();
+      stopIncoming = null;
+    }
+    if (callRef) endCall(true);
     hideIncoming();
     return;
   }
