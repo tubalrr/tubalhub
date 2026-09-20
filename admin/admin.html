@@ -8,6 +8,16 @@
 <section class="welcome" id="dashboard"><div><small>WELCOME BACK, ADMIN</small><h2>Control your <em>hub.</em></h2><p>Manage content, members and community activity from one protected panel.</p></div><div class="scan"><span></span><b>SECURE PANEL</b><small>FIREBASE AUTH</small></div></section>
 <section class="stats"><div class="stat"><span>NEWS</span><strong id="newsCount">0</strong><b>Firestore items</b></div><div class="stat"><span>ANNOUNCEMENTS</span><strong id="annCount">0</strong><b>Firestore items</b></div><div class="stat"><span>MEMBERS</span><strong id="memberCount">0</strong><b>Registered users</b></div><div class="stat"><span>CHAT</span><strong id="chatCount">0</strong><b>Recent messages</b></div></section>
 
+<section class="panel" id="facebookVideosPanel">
+  <div class="panel-head"><div><small>SOCIAL VIDEO CONTROL</small><h2>Facebook Videos</h2></div><span>ADMIN ONLY</span></div>
+  <div class="form-grid fb-video-admin-form">
+    <input id="fvTitle" placeholder="Video title">
+    <input id="fvUrl" placeholder="Facebook video URL">
+    <input id="fvThumb" placeholder="Thumbnail URL (optional)">
+    <button id="addFbVideo">Add Facebook Video →</button>
+  </div>
+  <div id="fbVideoList"></div>
+</section>
 <section class="panel" id="content"><div class="panel-head"><div><small>CONTENT CONTROL</small><h2>News</h2></div><span>FIRESTORE</span></div><div class="form-grid"><input id="nt" placeholder="News title"><input id="nd" placeholder="Date"><textarea id="nx" placeholder="Write your news content..."></textarea><button id="addNews">Publish News →</button></div><div id="newsList"></div></section>
 <section class="panel"><div class="panel-head"><div><small>PLATFORM CONTROL</small><h2>Announcements</h2></div><span>FIRESTORE</span></div><div class="form-grid"><input id="at" placeholder="Announcement title"><textarea id="ax" placeholder="Write your announcement..."></textarea><button id="addAnn">Publish Announcement →</button></div><div id="annList"></div></section>
 
@@ -20,7 +30,7 @@ import {auth} from "../assets/js/firebase-config.js";
 import {onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 import {getFirestore,collection,getDocs,addDoc,deleteDoc,doc,query,orderBy,limit,serverTimestamp} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 const ADMIN_EMAIL="tubalrr@gmail.com",db=getFirestore(),$=id=>document.getElementById(id);
-let news=[],anns=[],members=[],chats=[];
+let news=[],anns=[],members=[],chats=[],fbVideos=[];
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
 function toast(m){$("toast").textContent=m;$("toast").classList.add("show");setTimeout(()=>$("toast").classList.remove("show"),2600)}
 function render(){
@@ -28,22 +38,25 @@ function render(){
  $("newsList").innerHTML=news.map(x=>'<article class="item"><div><b>'+esc(x.title)+'</b><p>'+esc(x.text)+'</p><small>'+esc(x.date||"Latest")+'</small></div><button data-del-news="'+x.id+'">×</button></article>').join("")||'<div class="empty">No news yet.</div>';
  $("annList").innerHTML=anns.map(x=>'<article class="item"><div><b>'+esc(x.title)+'</b><p>'+esc(x.text)+'</p></div><button data-del-ann="'+x.id+'">×</button></article>').join("")||'<div class="empty">No announcements yet.</div>';
  $("memberList").innerHTML=members.map(x=>'<div class="member-row"><div><b>'+esc(x.displayName||x.email||"Member")+'</b><small>'+esc(x.email||x.uid||"")+'</small></div><span>REGISTERED</span></div>').join("")||'<div class="empty">No member profiles found.</div>';
+ $("fbVideoList").innerHTML=fbVideos.map(x=>'<article class="item"><div><b>'+esc(x.title||"Facebook Video")+'</b><p>'+esc(x.url||"")+'</p></div><button data-del-fb="'+x.id+'">×</button></article>').join("")||'<div class="empty">No Facebook videos yet.</div>';
  $("chatList").innerHTML=chats.map(x=>'<article class="item"><div><b>'+esc(x.displayName||"Member")+'</b><p>'+esc(x.text||"")+'</p></div><button data-del-chat="'+x.id+'">×</button></article>').join("")||'<div class="empty">No chat messages found.</div>';
 }
 async function load(){
  try{
-  const [n,a,u,c]=await Promise.all([
+  const [n,a,u,c,v]=await Promise.all([
    getDocs(query(collection(db,"news"),orderBy("createdAt","desc"),limit(100))),
    getDocs(query(collection(db,"announcements"),orderBy("createdAt","desc"),limit(100))),
    getDocs(query(collection(db,"users"),limit(100))),
-   getDocs(query(collection(db,"globalChats"),orderBy("createdAt","desc"),limit(100)))
+   getDocs(query(collection(db,"globalChats"),orderBy("createdAt","desc"),limit(100))),
+   getDocs(query(collection(db,"facebookVideos"),orderBy("createdAt","desc"),limit(100)))
   ]);
-  news=n.docs.map(d=>({id:d.id,...d.data()}));anns=a.docs.map(d=>({id:d.id,...d.data()}));members=u.docs.map(d=>({id:d.id,...d.data()}));chats=c.docs.map(d=>({id:d.id,...d.data()}));render();
+  news=n.docs.map(d=>({id:d.id,...d.data()}));anns=a.docs.map(d=>({id:d.id,...d.data()}));members=u.docs.map(d=>({id:d.id,...d.data()}));chats=c.docs.map(d=>({id:d.id,...d.data()}));fbVideos=v.map(d=>({id:d.id,...d.data()}));render();
  }catch(e){toast("Firestore error: "+e.message);render()}
 }
 $("addNews").onclick=async()=>{const title=$("nt").value.trim(),text=$("nx").value.trim(),date=$("nd").value.trim()||"Latest";if(!title||!text)return toast("Enter title and content.");try{await addDoc(collection(db,"news"),{title,text,date,createdAt:serverTimestamp(),createdBy:auth.currentUser.uid});$("nt").value=$("nx").value=$("nd").value="";await load();toast("News published.")}catch(e){toast(e.message)}};
+$("addFbVideo").onclick=async()=>{const title=$("fvTitle").value.trim()||"Facebook Video",url=$("fvUrl").value.trim(),thumb=$("fvThumb").value.trim();if(!url)return toast("Enter the Facebook video URL.");if(!/facebook\.com/i.test(url))return toast("Use a Facebook video URL.");try{await addDoc(collection(db,"facebookVideos"),{title,url,thumbnail:thumb,createdAt:serverTimestamp(),createdBy:auth.currentUser.uid});$("fvTitle").value=$("fvUrl").value=$("fvThumb").value="";await load();toast("Facebook video added.")}catch(e){toast(e.message)}};
 $("addAnn").onclick=async()=>{const title=$("at").value.trim(),text=$("ax").value.trim();if(!title||!text)return toast("Enter title and content.");try{await addDoc(collection(db,"announcements"),{title,text,createdAt:serverTimestamp(),createdBy:auth.currentUser.uid});$("at").value=$("ax").value="";await load();toast("Announcement published.")}catch(e){toast(e.message)}};
-document.addEventListener("click",async e=>{const b=e.target.closest("button");if(!b)return;try{if(b.dataset.delNews){await deleteDoc(doc(db,"news",b.dataset.delNews));await load();}if(b.dataset.delAnn){await deleteDoc(doc(db,"announcements",b.dataset.delAnn));await load();}if(b.dataset.delChat){await deleteDoc(doc(db,"globalChats",b.dataset.delChat));await load();}}catch(x){toast(x.message)}});
+document.addEventListener("click",async e=>{const b=e.target.closest("button");if(!b)return;try{if(b.dataset.delNews){await deleteDoc(doc(db,"news",b.dataset.delNews));await load();}if(b.dataset.delAnn){await deleteDoc(doc(db,"announcements",b.dataset.delAnn));await load();}if(b.dataset.delChat){await deleteDoc(doc(db,"globalChats",b.dataset.delChat));await load();}if(b.dataset.delFb){await deleteDoc(doc(db,"facebookVideos",b.dataset.delFb));await load();}}catch(x){toast(x.message)}});
 $("logout").onclick=()=>signOut(auth);
 onAuthStateChanged(auth,async user=>{if(!user||user.email?.toLowerCase()!==ADMIN_EMAIL){location.replace("login.html");return}$("adminEmail").textContent=user.email;$("loading").remove();$("app").hidden=false;await load()});
 </script></body></html>
