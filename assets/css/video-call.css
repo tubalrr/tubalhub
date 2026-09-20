@@ -106,3 +106,24 @@
   .vc-control{min-width:58px;height:54px;padding:7px 9px}
   .vc-incoming{right:10px;left:10px;bottom:10px;width:auto}
 }
+
+/* Draggable self-camera preview */
+.vc-local-video{
+  left:auto;
+  top:auto;
+  right:18px;
+  bottom:18px;
+  cursor:grab;
+  touch-action:none;
+  user-select:none;
+  -webkit-user-select:none;
+  z-index:10;
+}
+.vc-local-video:active{cursor:grabbing}
+@media(max-width:760px){
+  .vc-local-video{
+    right:10px;
+    bottom:12px;
+    touch-action:none;
+  }
+}
