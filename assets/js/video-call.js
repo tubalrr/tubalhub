@@ -84,6 +84,12 @@ function hideActive(){ if($('videoCallUI')) $('videoCallUI').hidden = true; }
 function showIncoming(d){
   injectUI();
   const n = d.callerName || 'Member';
+
+  // Open the video-call window immediately when the call arrives.
+  // The Accept dialog remains on top so the receiver still explicitly
+  // chooses whether to join the call.
+  showActive('Incoming video call from ' + n, 'Waiting for you to accept…');
+
   $('vcIncomingName').textContent = n;
   $('vcIncomingText').textContent = 'Incoming video call from ' + n;
   $('vcIncomingAvatar').textContent = initials(n);
