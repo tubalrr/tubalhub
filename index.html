@@ -154,7 +154,7 @@ import {getFirestore,collection,getDocs} from "https://www.gstatic.com/firebasej
 import {app} from "./assets/js/firebase-config.js";
 const box=document.getElementById("facebookVideoContainer");
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
-const isFacebookShare=u=>/facebook\\.com\\/share\\//i.test(u);
+const isFacebookShare=u=>/facebook\.com\/share\//i.test(u);
 try{
  const snap=await getDocs(collection(getFirestore(app),"facebookVideos"));
  const items=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>{
