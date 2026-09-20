@@ -120,13 +120,10 @@
       <div class="social-card"><h2>Follow on Socials</h2><div class="social-grid"><a class="social-facebook" href="https://www.facebook.com/"><b aria-hidden="true"><img src="https://cdn.simpleicons.org/facebook/ffffff" alt="Facebook"></b><span>Facebook<small>Open App</small></span></a><a class="social-youtube" href="https://www.youtube.com/"><b aria-hidden="true"><img src="https://cdn.simpleicons.org/youtube/ffffff" alt="YouTube"></b><span>YouTube<small>Open App</small></span></a><a class="social-tiktok" href="https://www.tiktok.com/"><b aria-hidden="true"><img src="https://cdn.simpleicons.org/tiktok/ffffff" alt="TikTok"></b><span>TikTok<small>Open App</small></span></a><a class="social-community" href="pages/chat.html"><b aria-hidden="true">◉</b><span>Community<small>Join</small></span></a></div></div>
     </section>
 
-    <section class="home-section">
+    <section class="home-section home-news-section">
       <div class="home-heading"><h2>Latest <em>News</em></h2><a href="pages/news.html">View All →</a></div>
-      <div class="video-grid" data-home-news-list>
-        <a class="video-card" href="pages/news.html"><div class="video-art v1">▣<strong>TUBAL HUB<br>NEWS</strong></div><h3>Welcome to TUBAL HUB</h3><p>Latest platform updates and community stories.</p><small>Loading latest news…</small></a>
-        <a class="video-card" href="pages/news.html"><div class="video-art v2">✦<strong>COMMUNITY<br>UPDATE</strong></div><h3>Big updates are coming</h3><p>New features and content are on the way.</p><small>Open News →</small></a>
-        <a class="video-card" href="pages/news.html"><div class="video-art v3">🌿<strong>COMMUNITY<br>SPOTLIGHT</strong></div><h3>Discover community stories</h3><p>Meet creators and members across TUBAL HUB.</p><small>Open News →</small></a>
-        <a class="video-card" href="pages/news.html"><div class="video-art v4">🎮<strong>CTRLZONE<br>UPDATE</strong></div><h3>Gaming news and highlights</h3><p>Fresh gaming content from the hub.</p><small>Open News →</small></a>
+      <div class="news-grid" data-home-news-list>
+        <div class="news-empty">Loading latest news…</div>
       </div>
     </section>
 
@@ -149,15 +146,18 @@ const homeNews=document.querySelector("[data-home-news-list]");
 const esc=s=>String(s??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[ch]));
 try{
   const snap=await getDocs(query(collection(getFirestore(app),"news"),orderBy("createdAt","desc"),limit(4)));
-  if(!snap.empty){
-    const icons=["▣","✦","🌿","🎮"];
-    const classes=["v1","v2","v3","v4"];
-    homeNews.innerHTML=snap.docs.map((d,i)=>{
+  if(snap.empty){
+    homeNews.innerHTML='<div class="news-empty">No news published yet.</div>';
+  }else{
+    homeNews.innerHTML=snap.docs.map(d=>{
       const x=d.data();
-      return '<a class="video-card" href="pages/news.html"><div class="video-art '+classes[i%4]+'">'+icons[i%4]+'<strong>TUBAL HUB<br>NEWS</strong></div><h3>'+esc(x.title||"Latest Update")+'</h3><p>'+esc(x.text||"New update from TUBAL HUB.")+'</p><small>'+esc(x.date||"Latest")+' • Read more →</small></a>';
+      return '<a class="news-card" href="pages/news.html"><div class="news-card-top"><span class="news-badge">NEWS</span><small>'+esc(x.date||"LATEST")+'</small></div><h3>'+esc(x.title||"Latest News")+'</h3><p>'+esc(x.text||"")+'</p><span class="news-read">Read News →</span></a>';
     }).join("");
   }
-}catch(e){console.warn("Homepage Firestore news unavailable; showing fallback cards.",e);}
+}catch(e){
+  console.warn("Homepage Firestore news unavailable.",e);
+  homeNews.innerHTML='<div class="news-empty">News is temporarily unavailable.</div>';
+}
 </script>
 <script src="assets/js/app.js"></script>
 </body>
