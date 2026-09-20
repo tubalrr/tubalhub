@@ -1,33 +1,94 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
+import helmet from "helmet";
+import { rateLimit } from "express-rate-limit";
 import Replicate from "replicate";
+import { cert, getApps, initializeApp } from "firebase-admin/app";
+import { getAuth } from "firebase-admin/auth";
+import crypto from "node:crypto";
 
 const app = express();
 const port = Number(process.env.PORT || 3000);
 const allowedOrigin = process.env.ALLOWED_ORIGIN || "https://tubalrr.github.io";
 
-if (!process.env.REPLICATE_API_TOKEN) {
-  console.warn("REPLICATE_API_TOKEN is not set.");
-}
-
-const replicate = new Replicate({
-  auth: process.env.REPLICATE_API_TOKEN
-});
+app.disable("x-powered-by");
+app.set("trust proxy", 1);
+app.use(helmet());
 
 app.use(cors({
   origin: allowedOrigin,
-  methods: ["GET", "POST", "OPTIONS"]
+  methods: ["GET", "POST", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
 }));
-app.use(express.json({ limit: "32kb" }));
 
-app.get("/", (_req, res) => {
-  res.json({ ok: true, service: "TUBAL HUB AI Music API", endpoints: ["/api/health", "/api/generate", "/api/download"] });
+app.use(express.json({ limit: "16kb" }));
+
+function requireFirebaseAdmin() {
+  const projectId = process.env.FIREBASE_PROJECT_ID;
+  const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
+  const privateKey = process.env.FIREBASE_PRIVATE_KEY;
+
+  if (!projectId || !clientEmail || !privateKey) {
+    throw new Error("Firebase Admin credentials are not configured.");
+  }
+
+  if (!getApps().length) {
+    initializeApp({
+      credential: cert({
+        projectId,
+        clientEmail,
+        privateKey: privateKey.replace(/\\n/g, "\n")
+      })
+    });
+  }
+}
+
+function getBearerToken(req) {
+  const header = req.get("Authorization") || "";
+  return header.startsWith("Bearer ") ? header.slice(7).trim() : null;
+}
+
+async function authenticate(req, res, next) {
+  try {
+    requireFirebaseAdmin();
+
+    const token = getBearerToken(req);
+    if (!token) return res.status(401).json({ error: "Login required." });
+
+    const decoded = await getAuth().verifyIdToken(token);
+    if (!decoded.uid) return res.status(401).json({ error: "Invalid authentication token." });
+
+    req.user = decoded;
+    next();
+  } catch (error) {
+    console.error("Auth verification failed:", error?.message || error);
+    return res.status(401).json({ error: "Authentication failed. Please sign in again." });
+  }
+}
+
+const generateLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 5,
+  standardHeaders: "draft-8",
+  legacyHeaders: false,
+  keyGenerator: (req) => req.user?.uid || req.ip,
+  handler: (_req, res) => {
+    res.status(429).json({
+      error: "Too many music generations. Please wait and try again later."
+    });
+  }
 });
 
-app.get("/api/health", (_req, res) => {
-  res.json({ ok: true, service: "TUBAL HUB AI Music API" });
-});
+const downloads = new Map();
+const DOWNLOAD_TTL_MS = 60 * 60 * 1000;
+
+setInterval(() => {
+  const now = Date.now();
+  for (const [id, item] of downloads) {
+    if (item.expiresAt <= now) downloads.delete(id);
+  }
+}, 10 * 60 * 1000).unref();
 
 function buildPrompt({ prompt, mood, vocals }) {
   const vocalRule = vocals === "none"
@@ -41,15 +102,37 @@ function isAllowedReplicateUrl(value) {
   try {
     const url = new URL(value);
     return url.protocol === "https:" &&
-      (url.hostname === "replicate.delivery" || url.hostname.endsWith(".replicate.delivery"));
+      (url.hostname === "replicate.delivery" ||
+       url.hostname.endsWith(".replicate.delivery"));
   } catch {
     return false;
   }
 }
 
-app.post("/api/generate", async (req, res) => {
+const replicate = new Replicate({
+  auth: process.env.REPLICATE_API_TOKEN = r8_9mkXj0u1irjIk8OUOpT1OlVNHwQenCW4ALQLW
+});
+
+app.get("/", (_req, res) => {
+  res.json({ ok: true, service: "TUBAL HUB AI Music API" });
+});
+
+app.get("/api/health", (_req, res) => {
+  res.json({ ok: true, service: "TUBAL HUB AI Music API" });
+});
+
+app.post("/api/generate", authenticate, generateLimiter, async (req, res) => {
   try {
-    const { prompt, mood = "Peaceful", duration = 8, vocals = "none" } = req.body || {};
+    if (!process.env.REPLICATE_API_TOKEN) {
+      return res.status(503).json({ error: "AI music provider is not configured." });
+    }
+
+    const {
+      prompt,
+      mood = "Peaceful",
+      duration = 10,
+      vocals = "none"
+    } = req.body || {};
 
     if (typeof prompt !== "string" || prompt.trim().length < 3) {
       return res.status(400).json({ error: "Please describe the music you want." });
@@ -57,15 +140,20 @@ app.post("/api/generate", async (req, res) => {
 
     const seconds = Number(duration);
     if (!Number.isInteger(seconds) || seconds < 5 || seconds > 30) {
-      return res.status(400).json({
-        error: "The current MusicGen backend supports 5–30 seconds per generation."
-      });
+      return res.status(400).json({ error: "Music generation supports 5–30 seconds per track." });
     }
+
+    const allowedMoods = new Set([
+      "Peaceful", "Emotional", "Adventure", "Relaxing", "Dreamy"
+    ]);
+
+    const safeMood = allowedMoods.has(String(mood)) ? String(mood) : "Peaceful";
+    const safeVocals = vocals === "soft" ? "soft" : "none";
 
     const finalPrompt = buildPrompt({
       prompt: prompt.trim().slice(0, 1000),
-      mood: String(mood).slice(0, 40),
-      vocals
+      mood: safeMood,
+      vocals: safeVocals
     });
 
     const output = await replicate.run(
@@ -86,55 +174,63 @@ app.post("/api/generate", async (req, res) => {
       }
     );
 
-    const audioUrl = typeof output?.url === "function"
-      ? output.url()
-      : String(output);
+    const audioUrl = typeof output?.url === "function" ? output.url() : String(output);
 
     if (!isAllowedReplicateUrl(audioUrl)) {
       throw new Error("Unexpected audio output URL.");
     }
 
-    const downloadUrl = `/api/download?url=${encodeURIComponent(audioUrl)}`;
+    const downloadId = crypto.randomUUID();
+
+    downloads.set(downloadId, {
+      uid: req.user.uid,
+      url: audioUrl,
+      expiresAt: Date.now() + DOWNLOAD_TTL_MS
+    });
 
     return res.json({
       ok: true,
-      audioUrl,
-      downloadUrl,
+      streamUrl: `/api/download/${downloadId}`,
+      downloadUrl: `/api/download/${downloadId}`,
       duration: seconds,
-      mood,
-      message: "Original AI music generated successfully."
+      mood: safeMood
     });
   } catch (error) {
     console.error("Generation error:", error);
     return res.status(500).json({
-      error: error?.message || "Music generation failed. Check the server log and API token."
+      error: "Music generation failed. Please try again later."
     });
   }
 });
 
-app.get("/api/download", async (req, res) => {
-  const target = String(req.query.url || "");
+app.get("/api/download/:downloadId", authenticate, async (req, res) => {
+  const item = downloads.get(req.params.downloadId);
 
-  if (!isAllowedReplicateUrl(target)) {
-    return res.status(400).send("Invalid audio URL.");
+  if (!item || item.expiresAt <= Date.now()) {
+    downloads.delete(req.params.downloadId);
+    return res.status(404).send("Audio file expired. Generate the track again.");
+  }
+
+  if (item.uid !== req.user.uid) {
+    return res.status(403).send("You are not allowed to access this audio file.");
   }
 
   try {
-    const upstream = await fetch(target);
+    const upstream = await fetch(item.url);
 
     if (!upstream.ok || !upstream.body) {
       return res.status(502).send("Audio file is no longer available. Generate the track again.");
     }
 
-    const contentType = upstream.headers.get("content-type") || "audio/mpeg";
-    const contentLength = upstream.headers.get("content-length");
-
-    res.setHeader("Content-Type", contentType);
+    res.setHeader("Content-Type", upstream.headers.get("content-type") || "audio/mpeg");
     res.setHeader("Content-Disposition", 'attachment; filename="tubal-hub-ai-music.mp3"');
-    res.setHeader("Cache-Control", "no-store");
+    res.setHeader("Cache-Control", "private, no-store");
+
+    const contentLength = upstream.headers.get("content-length");
     if (contentLength) res.setHeader("Content-Length", contentLength);
 
     const reader = upstream.body.getReader();
+
     try {
       while (true) {
         const { done, value } = await reader.read();
