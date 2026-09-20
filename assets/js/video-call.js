@@ -8,8 +8,42 @@ import {
   query, where, onSnapshot, serverTimestamp, arrayUnion
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-messaging.js";
 
 const db = getFirestore(app);
+
+// FCM Web Push setup. The VAPID key is public and safe to ship in the client.
+const FCM_VAPID_KEY = "BPLp0H7B7rJAM4X9y3tUI6mK25nDfSX4sQNjqGk1P1_6sDiCRG06NZBt8GR_vX3ZraMdCcPBlnpe7xnAaqWslUI";
+let pushReady = false;
+
+async function setupCallPush(){
+  if(!isReal() || pushReady || !("Notification" in window) || !("serviceWorker" in navigator)) return;
+  try{
+    const permission = Notification.permission === "granted"
+      ? "granted"
+      : await Notification.requestPermission();
+    if(permission !== "granted") return;
+
+    const registration = await navigator.serviceWorker.register("/tubalhub/firebase-messaging-sw.js", {scope:"/tubalhub/"});
+    const messaging = getMessaging(app);
+    const token = await getToken(messaging, { vapidKey: FCM_VAPID_KEY, serviceWorkerRegistration: registration });
+    if(!token || !user) return;
+
+    await setDoc(doc(db, "users", user.uid), {
+      uid: user.uid,
+      displayName: displayName(user),
+      email: user.email || "",
+      photoURL: user.photoURL || "",
+      fcmToken: token,
+      fcmUpdatedAt: serverTimestamp()
+    }, {merge:true});
+    pushReady = true;
+    console.log("[TUBAL HUB] FCM call notifications ready");
+  }catch(e){
+    console.warn("[TUBAL HUB] FCM setup unavailable", e);
+  }
+}
+
 
 const RTC_CONFIG = {
   iceServers: [
@@ -91,7 +125,7 @@ function stopCallSound(){
   }
 }
 
-document.addEventListener("pointerdown", ()=>ensureRingtoneAudio(), {once:false, passive:true});
+document.addEventListener("pointerdown", ()=>ensureRingtoneAudio(), {once:false, passive:true});\ndocument.addEventListener("pointerdown", ()=>setupCallPush(), {once:false, passive:true});
 const displayName = u => u?.displayName || u?.email?.split("@")[0] || "Member";
 const initials = n => (n || "Member").trim().split(/\s+/).slice(0,2).map(x => x[0]).join("").toUpperCase() || "M";
 
@@ -776,4 +810,6 @@ onAuthStateChanged(auth, u => {
 
   watchIncoming();
   addButtons();
+  // Notification permission/token setup is triggered by the user interaction above.
+  setupCallPush();
 });
