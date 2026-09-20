@@ -225,3 +225,26 @@ body{background:radial-gradient(circle at 78% 8%,#123a2555,transparent 27%),#020
   .right{display:flex!important}
   .right .panel{padding:13px!important}
 }
+
+/* Compact chat bubbles */
+.msg{padding:6px 0!important;gap:10px!important}
+.msg-avatar{width:38px!important;height:38px!important;flex-basis:38px!important}
+.msg-meta{margin-bottom:3px!important}
+.msg-meta b{font-size:12px!important}
+.bubble{font-size:12px!important;line-height:1.3!important;padding:7px 10px!important;border-radius:4px 12px 12px 12px!important}
+.msg-body{max-width:82%!important}
+.time{font-size:9px!important}
+.message-content .bubble{padding-right:34px!important}
+.inline-react-btn{width:27px!important;height:27px!important;font-size:13px!important}
+.reaction-chip{padding:3px 6px!important;font-size:10px!important}
+.message-actions{margin-top:3px!important}
+.action-btn{padding:4px 7px!important;font-size:10px!important}
+.reply-box{margin-top:6px!important;padding-left:8px!important}
+.reply-item{padding:4px 0!important}
+.reply-text{font-size:11px!important}
+@media(max-width:760px){
+  .msg{padding:5px 0!important;gap:8px!important}
+  .msg-avatar{width:34px!important;height:34px!important;flex-basis:34px!important}
+  .msg-body{max-width:calc(100% - 42px)!important}
+  .bubble{font-size:12px!important;padding:6px 9px!important;line-height:1.28!important}
+}
