@@ -4,8 +4,7 @@ import {
   signInWithEmailAndPassword,
   updateProfile,
   signInWithPopup,
-  signInWithRedirect,
-  getRedirectResult,
+  browserPopupRedirectResolver,
   GoogleAuthProvider,
   signInAnonymously,
   RecaptchaVerifier,
@@ -98,34 +97,48 @@ if (loginForm) {
   });
 }
 
-// Google — use redirect flow for mobile/WebView compatibility.
+// Google — popup flow for the website.
+// The resolver is loaded only when the user taps Google, keeping startup fast.
 const googleButtons = document.querySelectorAll("[data-google-login]");
 if (googleButtons.length) {
-  const googleMessageTarget = googleButtons[0].dataset.messageTarget || "loginMessage";
-
-  // When Google redirects back to this page, finish the Firebase sign-in
-  // before navigating to the homepage.
-  getRedirectResult(auth)
-    .then((result) => {
-      if (result?.user) {
-        window.location.replace(new URL("../index.html", window.location.href).href);
-      }
-    })
-    .catch((error) => {
-      console.error("Google redirect sign-in failed:", error);
-      message(googleMessageTarget, friendlyAuthError(error.code));
-    });
-
   googleButtons.forEach((button) => {
     button.addEventListener("click", async () => {
-      message(button.dataset.messageTarget || "loginMessage", "");
+      const target = button.dataset.messageTarget || "loginMessage";
+      message(target, "");
+
+      // Prevent duplicate taps while the Google window is opening.
+      if (button.dataset.googleBusy === "true") return;
+      button.dataset.googleBusy = "true";
+      const originalText = button.textContent;
+      button.disabled = true;
+
       try {
         const provider = new GoogleAuthProvider();
         provider.setCustomParameters({ prompt: "select_account" });
-        await signInWithRedirect(auth, provider);
+
+        const result = await signInWithPopup(
+          auth,
+          provider,
+          browserPopupRedirectResolver
+        );
+
+        if (result?.user) {
+          window.location.replace(new URL("../index.html", window.location.href).href);
+        }
       } catch (error) {
-        console.error("Google redirect start failed:", error);
-        message(button.dataset.messageTarget || "loginMessage", friendlyAuthError(error.code));
+        console.error("Google sign-in failed:", error);
+
+        if (error.code === "auth/popup-blocked") {
+          message(target, "Google popup was blocked. Please allow pop-ups and try again.");
+        } else if (error.code === "auth/popup-closed-by-user") {
+          message(target, "Google sign-in was cancelled.");
+        } else {
+          message(target, friendlyAuthError(error.code));
+        }
+      } finally {
+        button.dataset.googleBusy = "false";
+        button.disabled = false;
+        button.textContent = originalText;
       }
     });
   });
