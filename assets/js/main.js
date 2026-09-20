@@ -1,16 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // Active navigation works on GitHub Pages project URLs too.
   const current = new URL(window.location.href);
   document.querySelectorAll('header nav a').forEach(link => {
     try {
       const target = new URL(link.href, current.href);
-      if (target.pathname.replace(/\\/+$/, '') === current.pathname.replace(/\\/+$/, '')) {
-        link.classList.add('active');
-      }
+      if (target.pathname.replace(/\\/+$/, '') === current.pathname.replace(/\\/+$/, '')) link.classList.add('active');
     } catch (_) {}
   });
 
-  // Small mobile menu button for the shared template.
   const header = document.querySelector('header');
   const nav = header?.querySelector('nav');
   if (header && nav && !header.querySelector('.mobile-menu')) {
@@ -23,7 +19,6 @@ document.addEventListener('DOMContentLoaded', () => {
     header.appendChild(btn);
   }
 
-  // Demo global chat: messages remain in this browser only.
   const form = document.querySelector('.chat-form');
   const input = form?.querySelector('input');
   const messages = document.querySelector('.messages');
@@ -40,7 +35,6 @@ document.addEventListener('DOMContentLoaded', () => {
     messages.scrollTop = messages.scrollHeight;
   });
 
-  // Render admin-managed demo data on News and Announcements pages.
   if (window.TubalHub) {
     const newsGrid = document.querySelector('[data-news-list]');
     if (newsGrid) {
@@ -58,6 +52,22 @@ document.addEventListener('DOMContentLoaded', () => {
         <a class="community-card" href="#"><b>◈</b><h3>${escapeHtml(x.title)}</h3><p>${escapeHtml(x.text)}</p></a>`).join('');
     }
   }
+
+  applyTubalTheme();
+});
+
+function applyTubalTheme(){
+  const KEY='tubalHubTheme', AUTO='tubalHubAutoTheme';
+  const media=window.matchMedia('(prefers-color-scheme: light)');
+  const saved=localStorage.getItem(KEY)||'galaxy';
+  const chosen=localStorage.getItem(AUTO)==='1' ? (media.matches?'forest':'galaxy') : saved;
+  document.body.classList.remove('theme-forest','theme-galaxy','theme-neon');
+  document.body.classList.add('theme-'+chosen);
+  document.documentElement.dataset.tubalTheme=chosen;
+}
+
+window.addEventListener('storage', e => {
+  if (e.key==='tubalHubTheme' || e.key==='tubalHubAutoTheme') applyTubalTheme();
 });
 
 function escapeHtml(value) {
