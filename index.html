@@ -121,12 +121,12 @@
     </section>
 
     <section class="home-section">
-      <div class="home-heading"><h2>Latest <em>Updates</em></h2><a href="pages/news.html">View All →</a></div>
-      <div class="video-grid">
-        <a class="video-card" href="pages/news.html"><div class="video-art v1">🎮<strong>CTRLZONE<br>HIGHLIGHTS</strong><time>10:24</time></div><h3>New adventures are waiting</h3><p>Gaming, stories, guides, and community moments.</p><small>12K views • 2 days ago</small></a>
-        <a class="video-card" href="pages/news.html"><div class="video-art v2">🌿<strong>PAYAPANG<br>ISIP</strong><time>08:42</time></div><h3>Peaceful moments, fresh ideas</h3><p>Take a pause and discover something meaningful.</p><small>8.4K views • 4 days ago</small></a>
-        <a class="video-card" href="pages/news.html"><div class="video-art v3">✦<strong>COMMUNITY<br>SPOTLIGHT</strong><time>12:10</time></div><h3>Meet the people behind the stories</h3><p>Discover creators, members, and their journeys.</p><small>6.7K views • 6 days ago</small></a>
-        <a class="video-card" href="pages/news.html"><div class="video-art v4">🚍<strong>TUBAL HUB<br>TRAVELS</strong><time>15:42</time></div><h3>Stories from our community</h3><p>Explore places, ideas, and experiences together.</p><small>7.2K views • 1 week ago</small></a>
+      <div class="home-heading"><h2>Latest <em>News</em></h2><a href="pages/news.html">View All →</a></div>
+      <div class="video-grid" data-home-news-list>
+        <a class="video-card" href="pages/news.html"><div class="video-art v1">▣<strong>TUBAL HUB<br>NEWS</strong></div><h3>Welcome to TUBAL HUB</h3><p>Latest platform updates and community stories.</p><small>Loading latest news…</small></a>
+        <a class="video-card" href="pages/news.html"><div class="video-art v2">✦<strong>COMMUNITY<br>UPDATE</strong></div><h3>Big updates are coming</h3><p>New features and content are on the way.</p><small>Open News →</small></a>
+        <a class="video-card" href="pages/news.html"><div class="video-art v3">🌿<strong>COMMUNITY<br>SPOTLIGHT</strong></div><h3>Discover community stories</h3><p>Meet creators and members across TUBAL HUB.</p><small>Open News →</small></a>
+        <a class="video-card" href="pages/news.html"><div class="video-art v4">🎮<strong>CTRLZONE<br>UPDATE</strong></div><h3>Gaming news and highlights</h3><p>Fresh gaming content from the hub.</p><small>Open News →</small></a>
       </div>
     </section>
 
@@ -142,6 +142,23 @@
 </div>
 
 <div class="cookie" id="cookieBox"><div><b>🍪 Cookies</b><span>We use cookies to improve your experience.</span></div><button id="acceptCookie">Accept</button></div>
+<script type="module">
+import {getFirestore,collection,getDocs,query,orderBy,limit} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+import {app} from "./assets/js/firebase-config.js";
+const homeNews=document.querySelector("[data-home-news-list]");
+const esc=s=>String(s??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[ch]));
+try{
+  const snap=await getDocs(query(collection(getFirestore(app),"news"),orderBy("createdAt","desc"),limit(4)));
+  if(!snap.empty){
+    const icons=["▣","✦","🌿","🎮"];
+    const classes=["v1","v2","v3","v4"];
+    homeNews.innerHTML=snap.docs.map((d,i)=>{
+      const x=d.data();
+      return '<a class="video-card" href="pages/news.html"><div class="video-art '+classes[i%4]+'">'+icons[i%4]+'<strong>TUBAL HUB<br>NEWS</strong></div><h3>'+esc(x.title||"Latest Update")+'</h3><p>'+esc(x.text||"New update from TUBAL HUB.")+'</p><small>'+esc(x.date||"Latest")+' • Read more →</small></a>';
+    }).join("");
+  }
+}catch(e){console.warn("Homepage Firestore news unavailable; showing fallback cards.",e);}
+</script>
 <script src="assets/js/app.js"></script>
 </body>
 </html>
