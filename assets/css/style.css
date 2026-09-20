@@ -1254,3 +1254,9 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .fb-video-admin-form button{grid-column:1/-1}
 @media(max-width:900px){.facebook-video-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){.facebook-video-grid{grid-template-columns:1fr}.fb-video-admin-form{grid-template-columns:1fr}}
+
+.facebook-video-placeholder{height:100%;min-height:190px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:22px;background:radial-gradient(circle at center,rgba(33,245,141,.08),transparent 55%),#020604}
+.facebook-video-placeholder strong{font-size:14px;color:#f0fff6}
+.facebook-video-placeholder small{margin:7px 0 14px;color:#789487;font-size:10px;line-height:1.5}
+.facebook-video-placeholder a{padding:9px 13px;border:1px solid #21f58d;border-radius:8px;color:#dffff0;text-decoration:none;font-size:10px;background:#062116}
+.facebook-video-placeholder a:hover{box-shadow:0 0 16px rgba(33,245,141,.18)}
