@@ -5,3 +5,31 @@
 .vc-placeholder{display:grid;place-items:center}
 .vc-call-btn{flex:0 0 auto;border:1px solid #287b55;background:#062017;color:#7dffa4;border-radius:10px;padding:7px 9px;cursor:pointer;font-size:15px}
 .vc-call-btn:hover{border-color:#4dff88;background:#0b3824;box-shadow:0 0 12px #20ed7026}
+
+
+/* Jitsi Meet call frame */
+.jitsi-container{
+  position:relative;
+  width:100%;
+  height:clamp(420px,68vh,720px);
+  background:#010504;
+  border-radius:15px;
+  overflow:hidden;
+  border:1px solid #1b5138;
+}
+.jitsi-container iframe{
+  display:block;
+  width:100%;
+  height:100%;
+  border:0;
+  background:#010504;
+}
+.vc-jitsi-card{
+  width:min(1100px,97vw);
+}
+@media(max-width:760px){
+  .vc-jitsi-card{width:100%;height:calc(100vh - 16px);display:flex;flex-direction:column}
+  .vc-jitsi-card .vc-head{flex:0 0 auto}
+  .jitsi-container{height:auto;flex:1;min-height:0;border-radius:12px}
+  .vc-jitsi-card .vc-controls{flex:0 0 auto}
+}
