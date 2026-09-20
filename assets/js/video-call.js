@@ -83,64 +83,132 @@ function cleanupPeer(){
   document.getElementById('vcRemotePlaceholder')?.classList.remove('hide');
 }
 
+async function getCallMedia(wantVideo) {
+  if (!navigator.mediaDevices?.getUserMedia) {
+    throw new Error('MEDIA_NOT_SUPPORTED');
+  }
+
+  // Microphone is required for calls. Camera is optional.
+  if (wantVideo) {
+    try {
+      return await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'user' },
+        audio: true
+      });
+    } catch (e) {
+      // If video permission/device fails but microphone is available,
+      // retry as voice-only instead of incorrectly reporting a mic error.
+      try {
+        const audioOnly = await navigator.mediaDevices.getUserMedia({
+          video: false,
+          audio: true
+        });
+        audioOnly.__videoFallback = true;
+        return audioOnly;
+      } catch (audioError) {
+        const err = new Error('MICROPHONE_FAILED');
+        err.original = audioError;
+        throw err;
+      }
+    }
+  }
+
+  try {
+    return await navigator.mediaDevices.getUserMedia({
+      video: false,
+      audio: true
+    });
+  } catch (e) {
+    const err = new Error('MICROPHONE_FAILED');
+    err.original = e;
+    throw err;
+  }
+}
+
+function mediaErrorMessage(e) {
+  if (e?.message === 'MEDIA_NOT_SUPPORTED') {
+    return 'Hindi supported ng browser ang camera/microphone. Gumamit ng Chrome o Edge.';
+  }
+  if (e?.message === 'MICROPHONE_FAILED') {
+    const n = e.original?.name;
+    if (n === 'NotAllowedError' || n === 'SecurityError') {
+      return 'Microphone permission ay blocked. Pumunta sa site settings ng TUBAL HUB at piliin ang Microphone → Allow, pagkatapos i-reload ang page.';
+    }
+    if (n === 'NotFoundError' || n === 'DevicesNotFoundError') {
+      return 'Walang microphone na nakita ng phone/PC. Check ang microphone device at browser permission.';
+    }
+    return 'Hindi ma-access ang microphone. Check ang microphone permission ng TUBAL HUB.';
+  }
+  if (e?.name === 'NotAllowedError') {
+    return 'Camera o microphone permission ay blocked. Check ang browser site permissions.';
+  }
+  return 'Hindi ma-start ang call. Check ang camera/microphone permissions.';
+}
+
 async function setupPeer(callRef, otherId, wantVideo=true){
   peer=new RTCPeerConnection({iceServers:ICE});
 
-  // Try video first. If this PC has no camera, automatically fall back to microphone-only.
-  try{
-    localStream=await navigator.mediaDevices.getUserMedia({video:!!wantVideo,audio:true});
-  }catch(e){
-    if(wantVideo && (e.name==='NotFoundError' || e.name==='OverconstrainedError' || e.name==='DevicesNotFoundError')){
-      localStream=await navigator.mediaDevices.getUserMedia({video:false,audio:true});
-      // Keep wantVideo=true: this means "receive remote video", even if
-      // this device itself has no camera.
-
-    }else{
-      throw e;
-    }
-  }
+  localStream=await getCallMedia(wantVideo);
 
   remoteStream=new MediaStream();
   const localVideo=document.getElementById('vcLocal');
   const remoteVideo=document.getElementById('vcRemote');
   const cameraBtn=document.getElementById('vcCamera');
+
   localVideo.srcObject=localStream;
   remoteVideo.srcObject=remoteStream;
 
-  localVideo.style.display=hasVideo?'block':'none';
-  cameraBtn.style.display=hasVideo?'inline-flex':'none';
-  document.getElementById('vcRemotePlaceholder').textContent=hasVideo?'Waiting for video…':'Voice call • Waiting for audio…';
-
-  // Add local media. If this device has no camera but the other side may
-  // send video, explicitly create a recv-only video transceiver. Without
-  // this, an audio-only PC would answer the video m-line as rejected, so
-  // the phone camera would never reach the PC.
-  const hasVideo=localStream.getVideoTracks().length>0;
-  localStream.getTracks().forEach(t=>peer.addTrack(t,localStream));
-  if(wantVideo && !hasVideo){
-    try{ peer.addTransceiver('video',{direction:'recvonly'}); }catch(e){ console.warn('Video recv transceiver failed',e); }
+  // IMPORTANT:
+  // Always create a video transceiver. This lets a PC with no camera
+  // receive the phone's camera video.
+  if(!localStream.getVideoTracks().length){
+    peer.addTransceiver('video', { direction: 'recvonly' });
   }
 
+  localStream.getTracks().forEach(t=>peer.addTrack(t,localStream));
+
+  const hasLocalVideo=localStream.getVideoTracks().length>0;
+  localVideo.style.display=hasLocalVideo?'block':'none';
+  cameraBtn.style.display=hasLocalVideo?'inline-flex':'none';
+  document.getElementById('vcRemotePlaceholder').textContent='Waiting for video…';
+
   peer.ontrack=e=>{
-    if(e.streams?.[0]){
-      remoteVideo.srcObject=e.streams[0];
-      remoteStream=e.streams[0];
-    }else{
+    const stream=e.streams?.[0];
+    if(stream){
+      if(e.track && !remoteStream.getTracks().some(t=>t.id===e.track.id)){
+        remoteStream.addTrack(e.track);
+      }
+    }else if(e.track && !remoteStream.getTracks().some(t=>t.id===e.track.id)){
       remoteStream.addTrack(e.track);
-      remoteVideo.srcObject=remoteStream;
     }
-    const remoteHasVideo=remoteStream.getVideoTracks().some(t=>t.readyState!=='ended');
-    remoteVideo.style.display=remoteHasVideo?'block':'block';
-    document.getElementById('vcRemotePlaceholder')?.classList.toggle('hide',remoteHasVideo);
-    if(!remoteHasVideo)document.getElementById('vcRemotePlaceholder').textContent='Voice call • Audio connected';
+
+    remoteVideo.srcObject=remoteStream;
+
+    // Force playback because mobile browsers can keep media paused.
     remoteVideo.play().catch(()=>{});
+
+    const remoteHasVideo=remoteStream.getVideoTracks().length>0;
+    const remoteHasAudio=remoteStream.getAudioTracks().length>0;
+
+    remoteVideo.style.display=remoteHasVideo?'block':'none';
+    document.getElementById('vcRemotePlaceholder')?.classList.toggle('hide',remoteHasVideo);
+
+    if(!remoteHasVideo && remoteHasAudio){
+      document.getElementById('vcRemotePlaceholder').textContent='Voice connected • Waiting for camera…';
+    }
   };
+
   peer.onicecandidate=e=>{
     if(e.candidate)setDoc(
       doc(collection(db,'videoCalls',callRef.id,'candidates')),
-      {senderId:user.uid,candidate:e.candidate.toJSON(),createdAt:serverTimestamp()}
+      {
+        senderId:user.uid,
+        candidate:e.candidate.toJSON(),
+        createdAt:serverTimestamp()
+      }
     ).catch(()=>{});
   };
+
   stopCandidates=onSnapshot(
     collection(db,'videoCalls',callRef.id,'candidates'),
     snap=>{
@@ -148,14 +216,21 @@ async function setupPeer(callRef, otherId, wantVideo=true){
         if(ch.type!=='added')return;
         const c=ch.doc.data();
         if(c.senderId===user.uid||!c.candidate)return;
+
         const ice=new RTCIceCandidate(c.candidate);
-        if(peer?.remoteDescription)peer.addIceCandidate(ice).catch(()=>{});
-        else pendingCandidates.push(ice);
+
+        if(peer?.remoteDescription){
+          peer.addIceCandidate(ice).catch(()=>{});
+        }else{
+          pendingCandidates.push(ice);
+        }
       });
     }
   );
+
   return peer;
 }
+
 async function flushCandidates(){if(!peer?.remoteDescription)return;for(const c of pendingCandidates.splice(0)){try{await peer.addIceCandidate(c)}catch{}}}
 
 async function startCall(target){
@@ -167,10 +242,11 @@ async function startCall(target){
     showActive('Calling '+(target.displayName||'Member'),'Requesting microphone…');
 
     // A PC without a camera automatically becomes a voice-only caller.
-    // Always negotiate video for this button. If this PC has no camera,
-    // setupPeer falls back to microphone-only while still receiving the
-    // other person's camera feed.
-    const wantVideo=true;
+    let wantVideo=true;
+    try{
+      const devices=await navigator.mediaDevices.enumerateDevices();
+      wantVideo=devices.some(d=>d.kind==='videoinput');
+    }catch{}
 
     await setupPeer(callRef,target.uid,wantVideo);
     const hasVideo=localStream.getVideoTracks().length>0;
@@ -195,9 +271,7 @@ async function startCall(target){
     startTimer();
   }catch(e){
     console.error(e);
-    alert(e.name==='NotAllowedError'
-      ? 'Microphone permission was blocked. Allow microphone access for TUBAL HUB.'
-      : 'Could not start the call. Check your microphone permission.');
+    alert(mediaErrorMessage(e));
     await safeDelete(activeCallRef);
     activeCallRef=null;
     cleanupPeer();
@@ -253,9 +327,7 @@ async function acceptIncoming(){
     listenCall(ref,false,d.callerName||'Member');startTimer();
   }catch(e){
     console.error(e);
-    alert(e.name==='NotAllowedError'
-      ? 'Microphone permission was blocked. Allow microphone access for TUBAL HUB.'
-      : 'Could not accept the call. Check your microphone permission.');
+    alert(mediaErrorMessage(e));
     await safeUpdate(ref,{status:'ended',updatedAt:serverTimestamp()});endLocal()
   }
 }
@@ -290,7 +362,7 @@ function addButtons(){
   const list=document.getElementById('memberList');if(!list||!isReal())return;
   list.querySelectorAll('.member').forEach(div=>{
     const uid=div.dataset.uid;if(!uid||uid===user.uid||div.querySelector('.vc-call-btn'))return;
-    const b=document.createElement('button');b.type='button';b.className='vc-call-btn';b.title='Video call';b.setAttribute('aria-label','Video call');b.textContent='📹';
+    const b=document.createElement('button');b.type='button';b.className='vc-call-btn';b.title='Video / Voice call';b.setAttribute('aria-label','Video / Voice call');b.textContent='📹';
     b.onclick=()=>{const name=div.querySelector('.member-info b')?.textContent||'Member';const img=div.querySelector('.mini img');startCall({uid,displayName:name,photoURL:img?.src||''})};
     div.appendChild(b);
   });
