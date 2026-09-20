@@ -150,37 +150,20 @@
 
 <div class="cookie" id="cookieBox"><div><b>🍪 Cookies</b><span>We use cookies to improve your experience.</span></div><button id="acceptCookie">Accept</button></div>
 <script type="module">
-import {getFirestore,collection,getDocs,query,orderBy,limit} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
-import {app} from "./assets/js/firebase-config.js";
-const homeNews=document.querySelector("[data-home-news-list]");
-const esc=s=>String(s??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[ch]));
-try{
-  const snap=await getDocs(query(collection(getFirestore(app),"news"),orderBy("createdAt","desc"),limit(4)));
-  if(snap.empty){
-    homeNews.innerHTML='<div class="news-empty">No news published yet.</div>';
-  }else{
-    homeNews.innerHTML=snap.docs.map(d=>{
-      const x=d.data();
-      return '<a class="news-card" href="pages/news.html"><div class="news-card-top"><span class="news-badge">NEWS</span><small>'+esc(x.date||"LATEST")+'</small></div><h3>'+esc(x.title||"Latest News")+'</h3><p>'+esc(x.text||"")+'</p><span class="news-read">Read News →</span></a>';
-    }).join("");
-  }
-}catch(e){
-  console.warn("Homepage Firestore news unavailable.",e);
-  homeNews.innerHTML='<div class="news-empty">News is temporarily unavailable.</div>';
-}
-</script>
-<script type="module">
-import {getFirestore,collection,getDocs,query,orderBy,limit} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+import {getFirestore,collection,getDocs} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 import {app} from "./assets/js/firebase-config.js";
 const box=document.getElementById("facebookVideoContainer");
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
 const isShare=u=>/facebook\.com\/share\//i.test(u);
 const embed=u=>"https://www.facebook.com/plugins/video.php?href="+encodeURIComponent(u)+"&show_text=false&width=100%25";
 try{
- const snap=await getDocs(query(collection(getFirestore(app),"facebookVideos"),orderBy("createdAt","desc"),limit(12)));
- if(snap.empty){box.innerHTML='<div class="news-empty">No Facebook videos published yet.</div>'}
- else{box.innerHTML='<div class="facebook-video-grid">'+snap.docs.map(d=>{const x=d.data(),u=x.url||"";if(isShare(u)){return '<article class="facebook-video-card facebook-share-card"><a class="facebook-share-visual" href="'+esc(u)+'" target="_blank" rel="noopener noreferrer">'+(x.thumbnail?'<img src="'+esc(x.thumbnail)+'" alt="'+esc(x.title||"Facebook Video")+'">':'')+'<span>f</span><b>WATCH ON FACEBOOK</b></a><div class="facebook-share-info"><h3>'+esc(x.title||"Facebook Video")+'</h3><a href="'+esc(u)+'" target="_blank" rel="noopener noreferrer">Open Video →</a></div></article>}return '<article class="facebook-video-card"><div class="facebook-video-frame"><iframe title="'+esc(x.title||"Facebook Video")+'" src="'+embed(u)+'" loading="lazy" scrolling="no" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" allowfullscreen></iframe></div><h3>'+esc(x.title||"Facebook Video")+'</h3></article>'}).join("")+'</div>'}
-}catch(e){console.warn("Facebook videos unavailable",e);box.innerHTML='<div class="news-empty">Facebook videos are temporarily unavailable.</div>'}
+ const snap=await getDocs(collection(getFirestore(app),"facebookVideos"));
+ const items=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>{
+   const at=a.createdAt?.seconds??0,bt=b.createdAt?.seconds??0; return bt-at;
+ }).slice(0,12);
+ if(!items.length){box.innerHTML='<div class="news-empty">No Facebook videos published yet.</div>'}
+ else{box.innerHTML='<div class="facebook-video-grid">'+items.map(x=>{const u=x.url||"";if(isShare(u)){return '<article class="facebook-video-card facebook-share-card"><a class="facebook-share-visual" href="'+esc(u)+'" target="_blank" rel="noopener noreferrer">'+(x.thumbnail?'<img src="'+esc(x.thumbnail)+'" alt="'+esc(x.title||"Facebook Video")+'">':'')+'<span>f</span><b>WATCH ON FACEBOOK</b></a><div class="facebook-share-info"><h3>'+esc(x.title||"Facebook Video")+'</h3><a href="'+esc(u)+'" target="_blank" rel="noopener noreferrer">Open Video →</a></div></article>'}return '<article class="facebook-video-card"><div class="facebook-video-frame"><iframe title="'+esc(x.title||"Facebook Video")+'" src="'+embed(u)+'" loading="lazy" scrolling="no" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" allowfullscreen></iframe></div><h3>'+esc(x.title||"Facebook Video")+'</h3></article>'}).join("")+'</div>'}
+}catch(e){console.error("Facebook videos unavailable:",e);box.innerHTML='<div class="news-empty">Facebook videos are temporarily unavailable. Please refresh the page.</div>'}
 </script>
 <script src="assets/js/app.js"></script>
 </body>
