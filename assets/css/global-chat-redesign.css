@@ -361,3 +361,9 @@ body{background:radial-gradient(circle at 78% 8%,#123a2555,transparent 27%),#020
   .msg.selected .message-actions{opacity:1;pointer-events:auto}
   .reply-to-reply{font-size:9px}
 }
+
+.reply-actions{display:flex;gap:5px;margin-top:4px;opacity:.65}
+.reply-react-btn,.reply-to-reply{border:0;background:transparent;color:#79ff9e;font-size:10px;cursor:pointer}
+.reply-react-btn{font-size:13px}
+.reply-react-btn:hover,.reply-to-reply:hover{color:#baffc9}
+.reply-reaction-bar{display:flex;gap:4px;flex-wrap:wrap;margin-top:3px}
