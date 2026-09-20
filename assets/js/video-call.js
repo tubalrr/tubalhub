@@ -63,7 +63,8 @@ function showIncoming(data){
   injectUI();
   const n=data.callerName||'Member';
   document.getElementById('vcIncomingName').textContent=n;
-  document.getElementById('vcIncomingText').textContent=(data.media==='audio'?'Incoming voice call from ':'Incoming video call from ')+n;
+  const hasVideoOffer=!!data.offer?.sdp && /(^|\r\n)m=video\s/i.test(data.offer.sdp);
+   document.getElementById('vcIncomingText').textContent=(hasVideoOffer?'Incoming video call from ':'Incoming voice call from ')+n;
   document.getElementById('vcIncomingAvatar').textContent=initials(n);
   document.getElementById('vcIncoming').hidden=false;
 }
@@ -306,10 +307,11 @@ async function acceptIncoming(){
     if(d.calleeId!==user.uid||d.status!=='ringing')return;
 
     activeCallRef=ref;
-    const requestedVideo=d.media!=='audio';
+    const requestedVideo = !!d.offer?.sdp && /(^|\r\n)m=video\s/i.test(d.offer.sdp);
     showActive((requestedVideo?'Video call with ':'Voice call with ')+(d.callerName||'Member'),'Requesting microphone…');
 
-    // If this device has no camera, automatically answer as microphone-only.
+    // The offer determines whether the caller wants to receive video.
+    // If this device has no camera, setupPeer falls back to microphone-only.
     await setupPeer(ref,d.callerId,requestedVideo);
     const hasVideo=localStream.getVideoTracks().length>0;
     document.getElementById('vcTitle').textContent=(hasVideo?'Video call with ':'Voice call with ')+(d.callerName||'Member');
