@@ -248,3 +248,70 @@ body{background:radial-gradient(circle at 78% 8%,#123a2555,transparent 27%),#020
   .msg-body{max-width:calc(100% - 42px)!important}
   .bubble{font-size:12px!important;padding:6px 9px!important;line-height:1.28!important}
 }
+
+/* Phone: keep online members beside the chat */
+@media(max-width:760px){
+  .chat-grid{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) 112px!important;
+    align-items:start!important;
+    gap:8px!important;
+  }
+  .chat-panel{min-width:0!important}
+  .right{
+    display:flex!important;
+    flex-direction:column!important;
+    min-width:0!important;
+    gap:8px!important;
+  }
+  .right .panel{
+    padding:9px!important;
+    min-width:0!important;
+  }
+  .right .panel:nth-child(2),
+  .right .panel:nth-child(3){
+    display:none!important;
+  }
+  .panel-title{
+    margin-bottom:7px!important;
+  }
+  .panel-title h3{
+    font-size:10px!important;
+    line-height:1.25!important;
+  }
+  .panel-title .view{
+    font-size:9px!important;
+  }
+  .member{
+    padding:6px 2px!important;
+    gap:6px!important;
+  }
+  .mini{
+    width:30px!important;
+    height:30px!important;
+    flex:0 0 30px!important;
+  }
+  .member-info b{
+    font-size:10px!important;
+  }
+  .member-info span,
+  .you-tag{
+    font-size:8px!important;
+  }
+  .onlineCount{font-size:inherit}
+  .messages{
+    height:calc(100dvh - 430px)!important;
+    min-height:330px!important;
+  }
+}
+@media(max-width:430px){
+  .chat-grid{
+    grid-template-columns:minmax(0,1fr) 100px!important;
+  }
+  .right .panel{
+    padding:7px!important;
+  }
+  .member-info b{
+    font-size:9px!important;
+  }
+}
