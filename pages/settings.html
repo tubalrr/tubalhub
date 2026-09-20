@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Settings — TUBAL HUB</title>
+<link rel="stylesheet" href="../assets/css/platform-pages.css">
+<style>
+.settings-page{min-height:100vh;background:radial-gradient(circle at 80% 15%,rgba(117,82,255,.16),transparent 28%),radial-gradient(circle at 20% 70%,rgba(39,214,255,.08),transparent 30%),#03020b}
+.settings-shell{max-width:1180px;margin:0 auto;padding:55px 5vw 80px}
+.settings-title{display:flex;align-items:center;gap:18px;margin-bottom:28px}
+.settings-title .gear{width:64px;height:64px;display:grid;place-items:center;border-radius:18px;background:linear-gradient(145deg,#16102e,#08051a);border:1px solid #3d2a72;font-size:32px;box-shadow:0 0 30px rgba(130,91,255,.15)}
+.settings-title h1{margin:0;font-size:clamp(34px,5vw,52px);letter-spacing:-2px}.settings-title p{margin:6px 0 0;color:#8e87a5;font-size:12px}
+.settings-tabs{display:grid;grid-template-columns:repeat(5,1fr);border:1px solid #302452;border-radius:13px;overflow:hidden;background:#07041a;margin-bottom:22px}
+.settings-tabs button{border:0;border-right:1px solid #302452;background:transparent;color:#a9a2bd;padding:16px 10px;font-weight:800;cursor:pointer}.settings-tabs button:last-child{border-right:0}.settings-tabs button.active{background:linear-gradient(135deg,#9b6cff,#5ee2ff);color:#080414}
+.theme-panel{padding:24px;border:1px solid #302452;border-radius:17px;background:linear-gradient(145deg,rgba(12,8,31,.96),rgba(5,3,15,.98));box-shadow:0 25px 70px #0009}
+.theme-head{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-bottom:22px}.theme-head h2{margin:0;font-size:24px}.theme-head p{margin:6px 0 0;color:#8e89a1;font-size:11px}
+.auto-box{display:flex;align-items:center;gap:13px;border:1px solid #33275a;border-radius:12px;padding:13px 15px;white-space:nowrap}.auto-box strong{font-size:11px}.auto-box small{display:block;color:#77718b;font-size:8px;margin-top:3px}
+.switch{position:relative;width:52px;height:29px}.switch input{opacity:0;width:0;height:0}.slider{position:absolute;inset:0;border-radius:30px;background:#2a2340;border:1px solid #514373;cursor:pointer}.slider:before{content:"";position:absolute;width:21px;height:21px;left:3px;top:3px;border-radius:50%;background:#9a91ac;transition:.25s}.switch input:checked+.slider{background:#68ff58;border-color:#68ff58;box-shadow:0 0 20px rgba(104,255,88,.3)}.switch input:checked+.slider:before{transform:translateX(23px);background:#08200a}
+.theme-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.theme-option{position:relative;overflow:hidden;border:1px solid #302452;border-radius:16px;background:#08051a;padding:10px;cursor:pointer;text-align:left;transition:.25s}.theme-option:hover{transform:translateY(-4px);border-color:#7860c7}.theme-option.selected{border-color:#a56cff;box-shadow:0 0 28px rgba(157,102,255,.22)}.theme-option.selected.neon{border-color:#67ff50;box-shadow:0 0 30px rgba(82,255,76,.22)}.theme-preview{height:220px;border-radius:11px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}.theme-preview:before{content:"";width:82px;height:82px;border-radius:22px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);box-shadow:0 0 35px rgba(255,255,255,.12)}.theme-preview span{position:absolute;font-size:43px;z-index:2}.forest-preview{background:radial-gradient(circle at 50% 25%,#75a65f,#163a25 45%,#07130c 80%)}.galaxy-preview{background:radial-gradient(circle at 30% 30%,#51d8ff22,transparent 22%),radial-gradient(circle at 70% 45%,#b15cff66,transparent 26%),linear-gradient(135deg,#08051a,#28115a,#05030e)}.neon-preview{background:radial-gradient(circle at 50% 50%,#19ff6a22,transparent 25%),linear-gradient(135deg,#03100a,#062313,#010604)}
+.theme-info{padding:12px 5px 6px}.theme-info h3{margin:0 0 5px;font-size:15px;color:#fff}.theme-info p{margin:0;color:#8b8798;font-size:9px}.chips{display:flex;gap:5px;flex-wrap:wrap;margin-top:10px}.chips span{font-size:7px;padding:5px 8px;border-radius:999px;background:#15102d;color:#b9afd0}.theme-radio{width:18px;height:18px;border-radius:50%;border:2px solid #8c849f;margin:8px auto 2px;position:relative}.selected .theme-radio{border-color:#a86dff}.selected .theme-radio:after{content:"";position:absolute;inset:3px;border-radius:50%;background:#a86dff}.selected.neon .theme-radio{border-color:#67ff50}.selected.neon .theme-radio:after{background:#67ff50}
+.preview-row{margin-top:17px;padding:16px;border:1px solid #302452;border-radius:13px;display:flex;align-items:center;justify-content:space-between;gap:15px}.preview-row strong{font-size:12px}.preview-row small{display:block;color:#77718b;font-size:8px;margin-top:4px}.preview-btn{border:1px solid #49366f;background:#0d0820;color:#c8baff;border-radius:9px;padding:10px 14px;font-weight:800;cursor:pointer}
+.settings-actions{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}.settings-actions button{height:56px;border-radius:12px;font-weight:900;font-size:13px;cursor:pointer}.reset{background:#091121;border:1px solid #3a5475;color:#e3e9f5}.save{border:1px solid #67ff50;background:linear-gradient(135deg,#9bff62,#57ed4d);color:#071008;box-shadow:0 0 28px rgba(87,237,77,.2)}
+.settings-note{margin-top:22px;text-align:center;color:#77738b;font-size:9px}.settings-note b{color:#a79cff}
+.toast{position:fixed;right:22px;bottom:22px;z-index:100;padding:12px 16px;border:1px solid #67ff50;border-radius:10px;background:#07150b;color:#dfffd8;box-shadow:0 12px 30px #000b;opacity:0;transform:translateY(12px);pointer-events:none;transition:.25s}.toast.show{opacity:1;transform:none}
+@media(max-width:800px){.theme-head{align-items:flex-start;flex-direction:column}.auto-box{width:100%;justify-content:space-between}.theme-grid{grid-template-columns:1fr}.theme-preview{height:180px}.settings-tabs{grid-template-columns:repeat(2,1fr)}.settings-tabs button{border-bottom:1px solid #302452}.settings-actions{grid-template-columns:1fr}}
+</style>
+</head>
+<body class="settings-page">
+<header>
+<a class="brand" href="../index.html"><img src="../tubal-hub-logo.png" alt="TUBAL HUB"><span><b>TUBAL HUB</b><small>THREE BRANDS. ONE HUB.</small></span></a>
+<nav>
+<a href="../index.html">Home</a><a href="ctrlzone.html">Games</a><a href="shop.html">Shop</a><a href="news.html">News</a><a href="community.html">Community</a><a class="active" href="settings.html">Settings</a>
+</nav>
+</header>
+<main class="settings-shell">
+<div class="settings-title"><div class="gear">⚙</div><div><h1>Settings</h1><p>Customize your TUBAL HUB experience</p></div></div>
+<div class="settings-tabs"><button class="active">🎨 Appearance</button><button>♙ Profile</button><button>♧ Notifications</button><button>🛡 Privacy</button><button>⚙ Account</button></div>
+<section class="theme-panel">
+<div class="theme-head"><div><h2>🎨 Theme Options</h2><p>Choose a visual theme for the Hub. Changes apply instantly across the site.</p></div><div class="auto-box"><div><strong>Auto Theme (System)</strong><small>Follow your device appearance</small></div><label class="switch"><input id="autoTheme" type="checkbox"><span class="slider"></span></label></div></div>
+<div class="theme-grid">
+<button class="theme-option forest" data-theme="forest"><div class="theme-preview forest-preview"><span>🌿</span></div><div class="theme-info"><h3>Forest Theme</h3><p>Calm natural green palette</p><div class="chips"><span>Nature</span><span>Calm</span><span>Clean</span></div></div><div class="theme-radio"></div></button>
+<button class="theme-option galaxy" data-theme="galaxy"><div class="theme-preview galaxy-preview"><span>🪐</span></div><div class="theme-info"><h3>Galaxy Theme</h3><p>Dark cosmic purple-starry</p><div class="chips"><span>Cosmic</span><span>Modern</span><span>Immersive</span></div></div><div class="theme-radio"></div></button>
+<button class="theme-option neon" data-theme="neon"><div class="theme-preview neon-preview"><span>ϟ</span></div><div class="theme-info"><h3>Neon Green Theme</h3><p>High contrast neon green glow</p><div class="chips"><span>Bold</span><span>Gaming</span><span>Original</span></div></div><div class="theme-radio"></div></button>
+</div>
+<div class="preview-row"><div><strong>✨ Theme Preview</strong><small>See how your selected theme looks across the site.</small></div><button class="preview-btn" id="previewBtn">Preview Theme</button></div>
+<div class="settings-actions"><button class="reset" id="resetBtn">↶ &nbsp; Reset to Default</button><button class="save" id="saveBtn">▣ &nbsp; Save Changes</button></div>
+<div class="settings-note">Tip: Themes also affect dashboard widgets, chat, and overlays. <b>Make it yours. Make it TUBAL HUB.</b></div>
+</section>
+</main>
+<div class="toast" id="toast">Theme saved.</div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>
