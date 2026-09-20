@@ -50,7 +50,7 @@ async function load(){
    getDocs(query(collection(db,"globalChats"),orderBy("createdAt","desc"),limit(100))),
    getDocs(query(collection(db,"facebookVideos"),orderBy("createdAt","desc"),limit(100)))
   ]);
-  news=n.docs.map(d=>({id:d.id,...d.data()}));anns=a.docs.map(d=>({id:d.id,...d.data()}));members=u.docs.map(d=>({id:d.id,...d.data()}));chats=c.docs.map(d=>({id:d.id,...d.data()}));fbVideos=v.map(d=>({id:d.id,...d.data()}));render();
+  news=n.docs.map(d=>({id:d.id,...d.data()}));anns=a.docs.map(d=>({id:d.id,...d.data()}));members=u.docs.map(d=>({id:d.id,...d.data()}));chats=c.docs.map(d=>({id:d.id,...d.data()}));fbVideos=v.docs.map(d=>({id:d.id,...d.data()}));render();
  }catch(e){toast("Firestore error: "+e.message);render()}
 }
 $("addNews").onclick=async()=>{const title=$("nt").value.trim(),text=$("nx").value.trim(),date=$("nd").value.trim()||"Latest";if(!title||!text)return toast("Enter title and content.");try{await addDoc(collection(db,"news"),{title,text,date,createdAt:serverTimestamp(),createdBy:auth.currentUser.uid});$("nt").value=$("nx").value=$("nd").value="";await load();toast("News published.")}catch(e){toast(e.message)}};
