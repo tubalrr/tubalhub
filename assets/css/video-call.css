@@ -127,3 +127,44 @@
     touch-action:none;
   }
 }
+
+/* Mobile portrait call layout */
+@media (max-width:760px) and (orientation:portrait){
+  .vc-call-window{
+    width:100vw;
+    height:100dvh;
+    max-height:none;
+    border:0;
+    border-radius:0;
+  }
+  .vc-stage{
+    aspect-ratio:9/16;
+    width:100%;
+    height:auto;
+    flex:1 1 auto;
+    min-height:0;
+    max-height:none;
+  }
+  .vc-remote-video{
+    object-fit:cover;
+  }
+  .vc-local-video{
+    width:31%;
+    min-width:105px;
+    max-width:150px;
+    aspect-ratio:3/4;
+    object-fit:cover;
+    right:12px;
+    bottom:12px;
+  }
+  .vc-controls{
+    height:82px;
+    flex:0 0 82px;
+    padding-bottom:max(8px, env(safe-area-inset-bottom));
+  }
+}
+@media (max-width:760px) and (orientation:landscape){
+  .vc-stage{
+    aspect-ratio:auto;
+  }
+}
