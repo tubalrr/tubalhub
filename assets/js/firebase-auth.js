@@ -96,21 +96,38 @@ if (loginForm) {
   });
 }
 
-// Google
+// Google — use redirect flow for mobile/WebView compatibility.
 const googleButtons = document.querySelectorAll("[data-google-login]");
-googleButtons.forEach((button) => {
-  button.addEventListener("click", async () => {
-    message(button.dataset.messageTarget || "loginMessage", "");
-    try {
-      const provider = new GoogleAuthProvider();
-      provider.setCustomParameters({ prompt: "select_account" });
-      await signInWithPopup(auth, provider);
-      window.location.replace(new URL("../index.html", window.location.href).href);
-    } catch (error) {
-      message(button.dataset.messageTarget || "loginMessage", friendlyAuthError(error.code));
-    }
+if (googleButtons.length) {
+  const googleMessageTarget = googleButtons[0].dataset.messageTarget || "loginMessage";
+
+  // When Google redirects back to this page, finish the Firebase sign-in
+  // before navigating to the homepage.
+  getRedirectResult(auth)
+    .then((result) => {
+      if (result?.user) {
+        window.location.replace(new URL("../index.html", window.location.href).href);
+      }
+    })
+    .catch((error) => {
+      console.error("Google redirect sign-in failed:", error);
+      message(googleMessageTarget, friendlyAuthError(error.code));
+    });
+
+  googleButtons.forEach((button) => {
+    button.addEventListener("click", async () => {
+      message(button.dataset.messageTarget || "loginMessage", "");
+      try {
+        const provider = new GoogleAuthProvider();
+        provider.setCustomParameters({ prompt: "select_account" });
+        await signInWithRedirect(auth, provider);
+      } catch (error) {
+        console.error("Google redirect start failed:", error);
+        message(button.dataset.messageTarget || "loginMessage", friendlyAuthError(error.code));
+      }
+    });
   });
-});
+}
 
 // Anonymous / Guest
 const guestButtons = document.querySelectorAll("[data-anonymous-login]");
