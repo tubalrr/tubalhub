@@ -174,11 +174,12 @@ import {getFirestore,collection,getDocs,query,orderBy,limit} from "https://www.g
 import {app} from "./assets/js/firebase-config.js";
 const box=document.getElementById("facebookVideoContainer");
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
+const isShare=u=>/facebook\.com\/share\//i.test(u);
 const embed=u=>"https://www.facebook.com/plugins/video.php?href="+encodeURIComponent(u)+"&show_text=false&width=100%25";
 try{
  const snap=await getDocs(query(collection(getFirestore(app),"facebookVideos"),orderBy("createdAt","desc"),limit(12)));
  if(snap.empty){box.innerHTML='<div class="news-empty">No Facebook videos published yet.</div>'}
- else{box.innerHTML='<div class="facebook-video-grid">'+snap.docs.map(d=>{const x=d.data();return '<article class="facebook-video-card"><div class="facebook-video-frame"><iframe title="'+esc(x.title||"Facebook Video")+'" src="'+embed(x.url||"")+'" loading="lazy" scrolling="no" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" allowfullscreen></iframe></div><h3>'+esc(x.title||"Facebook Video")+'</h3></article>'}).join("")+'</div>'}
+ else{box.innerHTML='<div class="facebook-video-grid">'+snap.docs.map(d=>{const x=d.data(),u=x.url||"";if(isShare(u)){return '<article class="facebook-video-card facebook-video-unsupported"><div class="facebook-video-placeholder"><strong>Facebook share link</strong><small>This link cannot be embedded as a video.</small><a href="'+esc(u)+'" target="_blank" rel="noopener noreferrer">Open on Facebook →</a></div><h3>'+esc(x.title||"Facebook Video")+'</h3></article>'}return '<article class="facebook-video-card"><div class="facebook-video-frame"><iframe title="'+esc(x.title||"Facebook Video")+'" src="'+embed(u)+'" loading="lazy" scrolling="no" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" allowfullscreen></iframe></div><h3>'+esc(x.title||"Facebook Video")+'</h3></article>'}).join("")+'</div>'}
 }catch(e){console.warn("Facebook videos unavailable",e);box.innerHTML='<div class="news-empty">Facebook videos are temporarily unavailable.</div>'}
 </script>
 <script src="assets/js/app.js"></script>
