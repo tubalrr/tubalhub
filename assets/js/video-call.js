@@ -820,3 +820,8 @@ onAuthStateChanged(auth, u => {
   // Notification permission/token setup is triggered by the user interaction above.
   setupCallPush();
 });
+
+window.addEventListener("tubalhub-private-call", e => {
+  const target = e.detail;
+  if (target?.uid && typeof startCall === "function") startCall(target);
+});
