@@ -125,7 +125,8 @@ function stopCallSound(){
   }
 }
 
-document.addEventListener("pointerdown", ()=>ensureRingtoneAudio(), {once:false, passive:true});\ndocument.addEventListener("pointerdown", ()=>setupCallPush(), {once:false, passive:true});
+document.addEventListener("pointerdown", ()=>ensureRingtoneAudio(), {once:false, passive:true});
+document.addEventListener("pointerdown", ()=>setupCallPush(), {once:false, passive:true});
 const displayName = u => u?.displayName || u?.email?.split("@")[0] || "Member";
 const initials = n => (n || "Member").trim().split(/\s+/).slice(0,2).map(x => x[0]).join("").toUpperCase() || "M";
 
