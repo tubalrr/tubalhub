@@ -31,7 +31,7 @@ function injectUI(){
     <div id="videoCallUI" class="vc-overlay" hidden>
       <div class="vc-card vc-active-card">
         <div class="vc-head"><div><strong id="vcTitle">Call</strong><span id="vcStatus">Connecting…</span></div><button id="vcCloseTop" class="vc-x" type="button" aria-label="Close">×</button></div>
-        <div class="vc-videos"><video id="vcRemote" autoplay playsinline></video><video id="vcLocal" autoplay muted playsinline></video><div id="vcRemotePlaceholder" class="vc-placeholder">Waiting for video…</div></div>
+        <div class="vc-videos"><video id="vcRemote" autoplay playsinline></video><video id="vcLocal" autoplay muted playsinline></video><audio id="vcRemoteAudio" autoplay></audio><div id="vcRemotePlaceholder" class="vc-placeholder">Connecting media…</div></div>
         <div class="vc-controls"><button id="vcMute" type="button">🎙 Mute</button><button id="vcCamera" type="button">📷 Camera</button><button id="vcEnd" class="vc-end" type="button">☎ End Call</button></div>
       </div>
     </div>
@@ -77,8 +77,11 @@ function cleanupPeer(){
   if(localStream){localStream.getTracks().forEach(t=>t.stop());localStream=null}
   if(remoteStream){remoteStream.getTracks().forEach(t=>t.stop());remoteStream=null}
   pendingCandidates=[];
-  const l=document.getElementById('vcLocal'),r=document.getElementById('vcRemote');
-  if(l){l.srcObject=null;l.style.display='block'}if(r){r.srcObject=null;r.style.display='block'}const cb=document.getElementById('vcCamera');if(cb)cb.style.display='inline-flex';
+  const l=document.getElementById('vcLocal'),r=document.getElementById('vcRemote'),a=document.getElementById('vcRemoteAudio');
+  if(l){l.srcObject=null;l.style.display='block'}
+  if(r){r.srcObject=null;r.style.display='block'}
+  if(a){a.pause();a.srcObject=null}
+  const cb=document.getElementById('vcCamera');if(cb)cb.style.display='inline-flex';
   if(callTimer){clearInterval(callTimer);callTimer=null}
   callStartedAt=0;
   document.getElementById('vcRemotePlaceholder')?.classList.remove('hide');
@@ -93,7 +96,7 @@ async function getCallMedia(wantVideo) {
   if (wantVideo) {
     try {
       return await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'user' },
+        video: true,
         audio: true
       });
     } catch (e) {
@@ -147,67 +150,96 @@ function mediaErrorMessage(e) {
 }
 
 async function setupPeer(callRef, otherId, wantVideo=true){
-  peer=new RTCPeerConnection({iceServers:ICE});
+  peer=new RTCPeerConnection({
+    iceServers: ICE,
+    bundlePolicy: 'max-bundle'
+  });
 
   localStream=await getCallMedia(wantVideo);
-
   remoteStream=new MediaStream();
+
   const localVideo=document.getElementById('vcLocal');
   const remoteVideo=document.getElementById('vcRemote');
+  const remoteAudio=document.getElementById('vcRemoteAudio');
   const cameraBtn=document.getElementById('vcCamera');
 
   localVideo.srcObject=localStream;
   remoteVideo.srcObject=remoteStream;
+  remoteAudio.srcObject=remoteStream;
 
-  // IMPORTANT:
-  // Always create a video transceiver. This lets a PC with no camera
-  // receive the phone's camera video.
-  if(!localStream.getVideoTracks().length){
-    peer.addTransceiver('video', { direction: 'recvonly' });
+  // A camera-less caller MUST still negotiate a video receive section.
+  // This is what allows the phone to send its camera to the PC.
+  const hasLocalVideo=localStream.getVideoTracks().length>0;
+
+  if(!hasLocalVideo && wantVideo){
+    peer.addTransceiver('video', {direction:'recvonly'});
   }
 
-  localStream.getTracks().forEach(t=>peer.addTrack(t,localStream));
+  // Send local microphone/camera tracks.
+  for(const track of localStream.getTracks()){
+    peer.addTrack(track, localStream);
+  }
 
-  const hasLocalVideo=localStream.getVideoTracks().length>0;
   localVideo.style.display=hasLocalVideo?'block':'none';
   cameraBtn.style.display=hasLocalVideo?'inline-flex':'none';
-  document.getElementById('vcRemotePlaceholder').textContent='Waiting for video…';
+  document.getElementById('vcRemotePlaceholder').textContent =
+    wantVideo ? 'Connecting video…' : 'Connecting audio…';
 
+  // Receive remote tracks.
   peer.ontrack=e=>{
-    const stream=e.streams?.[0];
-    if(stream){
-      if(e.track && !remoteStream.getTracks().some(t=>t.id===e.track.id)){
-        remoteStream.addTrack(e.track);
-      }
-    }else if(e.track && !remoteStream.getTracks().some(t=>t.id===e.track.id)){
-      remoteStream.addTrack(e.track);
+    const track=e.track;
+
+    if(!remoteStream.getTracks().some(t=>t.id===track.id)){
+      remoteStream.addTrack(track);
     }
 
-    remoteVideo.srcObject=remoteStream;
+    if(track.kind==='video'){
+      remoteVideo.srcObject=remoteStream;
+      remoteVideo.style.display='block';
+      document.getElementById('vcRemotePlaceholder')?.classList.add('hide');
+      remoteVideo.play().catch(()=>{});
+    }
 
-    // Force playback because mobile browsers can keep media paused.
-    remoteVideo.play().catch(()=>{});
+    if(track.kind==='audio'){
+      remoteAudio.srcObject=remoteStream;
+      remoteAudio.muted=false;
+      remoteAudio.volume=1;
+      remoteAudio.play().catch(()=>{});
 
-    const remoteHasVideo=remoteStream.getVideoTracks().length>0;
-    const remoteHasAudio=remoteStream.getAudioTracks().length>0;
+      // Also keep the audio track on the video element as a fallback.
+      remoteVideo.srcObject=remoteStream;
+      remoteVideo.muted=false;
+      remoteVideo.volume=1;
+      remoteVideo.play().catch(()=>{});
 
-    remoteVideo.style.display=remoteHasVideo?'block':'none';
-    document.getElementById('vcRemotePlaceholder')?.classList.toggle('hide',remoteHasVideo);
+      if(!remoteStream.getVideoTracks().length){
+        document.getElementById('vcRemotePlaceholder').textContent='🔊 Audio connected';
+      }
+    }
+  };
 
-    if(!remoteHasVideo && remoteHasAudio){
-      document.getElementById('vcRemotePlaceholder').textContent='Voice connected • Waiting for camera…';
+  peer.onconnectionstatechange=()=>{
+    const state=peer.connectionState;
+    const status=document.getElementById('vcStatus');
+    if(status){
+      if(state==='connected') status.textContent='Connected';
+      else if(state==='connecting') status.textContent='Connecting…';
+      else if(state==='disconnected') status.textContent='Connection interrupted…';
+      else if(state==='failed') status.textContent='Connection failed';
     }
   };
 
   peer.onicecandidate=e=>{
-    if(e.candidate)setDoc(
-      doc(collection(db,'videoCalls',callRef.id,'candidates')),
-      {
-        senderId:user.uid,
-        candidate:e.candidate.toJSON(),
-        createdAt:serverTimestamp()
-      }
-    ).catch(()=>{});
+    if(e.candidate){
+      setDoc(
+        doc(collection(db,'videoCalls',callRef.id,'candidates')),
+        {
+          senderId:user.uid,
+          candidate:e.candidate.toJSON(),
+          createdAt:serverTimestamp()
+        }
+      ).catch(err=>console.warn('ICE candidate write failed',err));
+    }
   };
 
   stopCandidates=onSnapshot(
@@ -215,18 +247,20 @@ async function setupPeer(callRef, otherId, wantVideo=true){
     snap=>{
       snap.docChanges().forEach(ch=>{
         if(ch.type!=='added')return;
+
         const c=ch.doc.data();
-        if(c.senderId===user.uid||!c.candidate)return;
+        if(c.senderId===user.uid || !c.candidate)return;
 
         const ice=new RTCIceCandidate(c.candidate);
 
         if(peer?.remoteDescription){
-          peer.addIceCandidate(ice).catch(()=>{});
+          peer.addIceCandidate(ice).catch(err=>console.warn('ICE add failed',err));
         }else{
           pendingCandidates.push(ice);
         }
       });
-    }
+    },
+    err=>console.error('ICE listener failed',err)
   );
 
   return peer;
