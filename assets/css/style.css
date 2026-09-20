@@ -1130,3 +1130,116 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
     min-height:155px;
   }
 }
+
+
+/* =========================================================
+   TUBAL HUB — FACEBOOK VIDEOS
+   ========================================================= */
+.facebook-video-section{
+  padding-top:10px;
+}
+.facebook-video-subtitle{
+  margin:5px 0 0;
+  color:#7f9287;
+  font-size:9px;
+}
+.fb-open-link{
+  color:var(--green);
+  font-size:10px;
+  font-weight:800;
+  text-decoration:none;
+}
+.facebook-video-container{
+  width:100%;
+  border:1px solid rgba(73,255,137,.16);
+  border-radius:16px;
+  padding:10px;
+  background:
+    radial-gradient(circle at 80% 0,rgba(70,255,137,.08),transparent 35%),
+    linear-gradient(145deg,#07170d,#030a06);
+  box-shadow:0 16px 38px rgba(0,0,0,.38);
+}
+.facebook-video-frame{
+  position:relative;
+  width:100%;
+  min-height:360px;
+  border-radius:12px;
+  overflow:hidden;
+  background:#020604;
+  border:1px solid rgba(73,255,137,.10);
+}
+.facebook-video-frame iframe{
+  display:block;
+  width:100%;
+  min-height:360px;
+  border:0;
+  background:#020604;
+}
+.facebook-video-fallback{
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  padding:25px;
+  text-align:center;
+  pointer-events:none;
+  background:linear-gradient(180deg,rgba(2,7,5,.12),rgba(2,7,5,.94));
+}
+.facebook-video-fallback span{
+  width:52px;
+  height:52px;
+  display:grid;
+  place-items:center;
+  border-radius:14px;
+  background:#1877f2;
+  color:#fff;
+  font-size:30px;
+  font-weight:900;
+}
+.facebook-video-fallback strong{
+  color:#f4faf6;
+  font-size:16px;
+}
+.facebook-video-fallback small{
+  max-width:360px;
+  color:#82958a;
+  font-size:9px;
+  line-height:1.5;
+}
+.facebook-video-fallback a{
+  pointer-events:auto;
+  margin-top:5px;
+  padding:9px 13px;
+  border:1px solid rgba(73,255,137,.45);
+  border-radius:9px;
+  color:#baff9a;
+  text-decoration:none;
+  font-size:10px;
+  font-weight:800;
+  background:#07180d;
+}
+@media(max-width:760px){
+  .facebook-video-section{
+    padding-top:8px;
+  }
+  .facebook-video-container{
+    padding:7px;
+    border-radius:14px;
+  }
+  .facebook-video-frame{
+    min-height:250px;
+    border-radius:11px;
+  }
+  .facebook-video-frame iframe{
+    min-height:250px;
+  }
+  .facebook-video-fallback{
+    padding:18px;
+  }
+  .facebook-video-fallback strong{
+    font-size:14px;
+  }
+}
