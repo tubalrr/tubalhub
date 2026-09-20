@@ -401,13 +401,15 @@ function endLocal(){
   callRef = null;
   cleanup();
   hideActive();
+  // Keep the signaling document briefly so the other device has
+  // time to receive the final status even on a slow connection.
   if(ref) setTimeout(async()=>{
     try{
       const s = await getDoc(ref);
       if(s.exists() && ['ended','declined'].includes(s.data().status))
         await deleteDoc(ref);
     }catch{}
-  },3000);
+  },15000);
 }
 
 function toggleMute(){
@@ -427,22 +429,55 @@ function watchIncoming(){
   if(stopIncoming){stopIncoming(); stopIncoming=null;}
   if(!isReal()) return;
 
-  const q = query(collection(db,'videoCalls'),where('calleeId','==',user.uid));
-  stopIncoming = onSnapshot(q,snap => {
-    snap.docChanges().forEach(ch => {
-      const d = ch.doc.data();
-      if((ch.type==='added'||ch.type==='modified') &&
-         d.status==='ringing' && d.calleeId===user.uid &&
-         !callRef && incomingId!==ch.doc.id){
-        incomingId = ch.doc.id;
-        showIncoming(d);
-      }
-      if(incomingId===ch.doc.id && ['ended','declined'].includes(d.status)){
-        hideIncoming();
-        incomingId=null;
+  // Only watch active ringing calls addressed to this user.
+  // Filtering by status also prevents old ended/declined documents
+  // from interfering with the incoming-call UI.
+  const q = query(
+    collection(db,'videoCalls'),
+    where('calleeId','==',user.uid),
+    where('status','==','ringing')
+  );
+
+  stopIncoming = onSnapshot(q, snap => {
+    if(!isReal()) return;
+
+    const ringing = [];
+    snap.forEach(s => {
+      const d = s.data();
+      if(d.calleeId === user.uid && d.status === 'ringing'){
+        ringing.push({id:s.id, data:d});
       }
     });
-  }, e => console.error('Incoming call listener',e));
+
+    // Prefer the newest ringing call if more than one exists.
+    ringing.sort((a,b) => {
+      const ta = a.data.createdAt?.toMillis?.() || 0;
+      const tb = b.data.createdAt?.toMillis?.() || 0;
+      return tb - ta;
+    });
+
+    if(callRef){
+      hideIncoming();
+      incomingId = null;
+      return;
+    }
+
+    if(ringing.length){
+      const next = ringing[0];
+      if(incomingId !== next.id){
+        incomingId = next.id;
+        showIncoming(next.data);
+        console.log('[TUBAL HUB] Incoming call:', next.id, next.data.callerName || 'Member');
+      }
+    }else{
+      hideIncoming();
+      incomingId = null;
+    }
+  }, e => {
+    console.error('[TUBAL HUB] Incoming call listener', e);
+    hideIncoming();
+    incomingId = null;
+  });
 }
 
 function addButtons(){
