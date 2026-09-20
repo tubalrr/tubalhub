@@ -51,23 +51,49 @@
   </header>
 
   <script type="module">
-    import { auth } from "./assets/js/firebase-config.js";
+    import { auth, app } from "./assets/js/firebase-config.js";
     import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
     const guestActions = document.getElementById("authGuestActions");
     const userActions = document.getElementById("authUserActions");
     const userName = document.getElementById("authUserName");
     const logoutBtn = document.getElementById("logoutBtn");
+    const db = getFirestore(app);
 
-    onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, async (user) => {
       if (user) {
         guestActions.hidden = true;
         userActions.hidden = false;
-        userName.textContent = user.displayName || user.email || "Guest";
+
+        // Never show the user's email as the visible account name.
+        // Prefer the editable Firestore profile name, then Firebase displayName.
+        let name = user.displayName || "";
+        if (!user.isAnonymous) {
+          try {
+            const profileSnap = await getDoc(doc(db, "users", user.uid));
+            if (profileSnap.exists()) {
+              name = String(profileSnap.data().displayName || name || "").trim();
+            }
+          } catch (error) {
+            console.warn("Could not load profile name:", error);
+          }
+        }
+
+        userName.textContent = name || (user.isAnonymous ? "Guest" : "Member");
+        userName.title = user.isAnonymous ? "Guest account" : "Edit your profile name";
+        userName.style.cursor = user.isAnonymous ? "default" : "pointer";
+
+        if (!user.isAnonymous) {
+          userName.onclick = () => {
+            window.location.href = "pages/profiles.html";
+          };
+        }
       } else {
         guestActions.hidden = false;
         userActions.hidden = true;
         userName.textContent = "";
+        userName.onclick = null;
       }
     });
 
