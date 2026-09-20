@@ -4,6 +4,8 @@ import {
   signInWithEmailAndPassword,
   updateProfile,
   signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   GoogleAuthProvider,
   signInAnonymously,
   RecaptchaVerifier,
