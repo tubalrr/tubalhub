@@ -168,3 +168,29 @@
     aspect-ratio:auto;
   }
 }
+
+/* FORCE PHONE PORTRAIT CALL STAGE */
+@media only screen and (max-width:760px){
+  .vc-call-window{
+    width:100vw !important;
+    height:100dvh !important;
+    max-width:none !important;
+    max-height:none !important;
+    border-radius:0 !important;
+  }
+  .vc-stage{
+    position:relative !important;
+    width:100% !important;
+    height:auto !important;
+    aspect-ratio:9 / 16 !important;
+    flex:0 1 auto !important;
+    min-height:0 !important;
+    max-height:calc(100dvh - 146px) !important;
+    margin:auto 0 !important;
+  }
+  .vc-remote-video{
+    width:100% !important;
+    height:100% !important;
+    object-fit:cover !important;
+  }
+}
