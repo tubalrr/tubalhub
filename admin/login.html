@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin Login | TUBAL HUB</title><link rel="stylesheet" href="admin-neon.css"></head>
+<body class="auth-page"><main class="auth-wrap"><form class="auth-card" id="loginForm">
+<img src="../assets/images/tubal-hub-logo.png" alt="TUBAL HUB"><div class="eyebrow">SECURE ACCESS</div><h1>TUBAL HUB <em>ADMIN</em></h1><p>Sign in with the authorized administrator account.</p>
+<label>Email<input id="email" type="email" autocomplete="username" required></label>
+<label>Password<input id="password" type="password" autocomplete="current-password" required></label>
+<button type="submit">SIGN IN <b>→</b></button><div id="status" class="status"></div>
+<a class="back" href="../index.html">← Back to Website</a></form></main>
+<script type="module">
+import {auth} from "../assets/js/firebase-config.js";
+import {signInWithEmailAndPassword,onAuthStateChanged} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+const ADMIN_EMAIL="tubalrr@gmail.com",form=document.getElementById("loginForm"),status=document.getElementById("status");
+onAuthStateChanged(auth,user=>{if(user){if((user.email||"").toLowerCase()===ADMIN_EMAIL){location.replace("admin.html")}else{status.textContent="This account is not authorized.";}}});
+form.addEventListener("submit",async e=>{e.preventDefault();status.textContent="Signing in…";try{const c=await signInWithEmailAndPassword(auth,email.value.trim(),password.value);if((c.user.email||"").toLowerCase()!==ADMIN_EMAIL){await auth.signOut();throw new Error("This account is not authorized.");}location.replace("admin.html")}catch(err){status.textContent=err.message.includes("invalid-credential")?"Invalid email or password.":err.message}});
+</script></body></html>
