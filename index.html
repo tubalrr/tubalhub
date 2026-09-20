@@ -154,14 +154,14 @@ import {getFirestore,collection,getDocs} from "https://www.gstatic.com/firebasej
 import {app} from "./assets/js/firebase-config.js";
 const box=document.getElementById("facebookVideoContainer");
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
-const embed=u=>"https://www.facebook.com/plugins/video.php?href="+encodeURIComponent(u)+"&show_text=false&width=100%25&autoplay=true";
+const isFacebookShare=u=>/facebook\\.com\\/share\\//i.test(u);
 try{
  const snap=await getDocs(collection(getFirestore(app),"facebookVideos"));
  const items=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>{
    const at=a.createdAt?.seconds??0,bt=b.createdAt?.seconds??0; return bt-at;
  }).slice(0,12);
  if(!items.length){box.innerHTML='<div class="news-empty">No Facebook videos published yet.</div>'}
- else{box.innerHTML='<div class="facebook-video-grid">'+items.map(x=>{const u=x.url||"";return '<article class="facebook-video-card"><div class="facebook-video-frame"><iframe title="'+esc(x.title||"Facebook Video")+'" src="'+embed(u)+'" loading="eager" scrolling="no" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" allowfullscreen></iframe></div><div class="facebook-share-info"><h3>'+esc(x.title||"Facebook Video")+'</h3><a href="'+esc(u)+'" target="_blank" rel="noopener noreferrer">Open Video →</a></div></article>'}).join("")+'</div>'}
+ else{box.innerHTML='<div class="facebook-video-grid">'+items.map(x=>{const u=x.url||"",thumb=x.thumbnail||"";const media=isFacebookShare(u)?'<a class="facebook-video-placeholder" href="'+esc(u)+'" target="_blank" rel="noopener noreferrer">'+(thumb?'<img src="'+esc(thumb)+'" alt="'+esc(x.title||"Facebook Video")+'">':'')+'<strong>Facebook video</strong><small>This is a Facebook share link. Open it on Facebook to watch.</small><span>Open Video →</span></a>':'<div class="facebook-video-frame"><iframe title="'+esc(x.title||"Facebook Video")+'" src="https://www.facebook.com/plugins/video.php?href='+encodeURIComponent(u)+'&show_text=false&width=100%25" loading="lazy" scrolling="no" frameborder="0" allow="clipboard-write; encrypted-media; picture-in-picture; web-share" allowfullscreen></iframe></div>';return '<article class="facebook-video-card">'+media+'<div class="facebook-share-info"><h3>'+esc(x.title||"Facebook Video")+'</h3><a href="'+esc(u)+'" target="_blank" rel="noopener noreferrer">Open Video →</a></div></article>'}).join("")+'</div>'}
 }catch(e){console.error("Facebook videos unavailable:",e);box.innerHTML='<div class="news-empty">Facebook videos are temporarily unavailable. Please refresh the page.</div>'}
 </script>
 <script src="assets/js/app.js"></script>
