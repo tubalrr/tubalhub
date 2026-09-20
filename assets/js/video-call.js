@@ -92,7 +92,9 @@ async function setupPeer(callRef, otherId, wantVideo=true){
   }catch(e){
     if(wantVideo && (e.name==='NotFoundError' || e.name==='OverconstrainedError' || e.name==='DevicesNotFoundError')){
       localStream=await navigator.mediaDevices.getUserMedia({video:false,audio:true});
-      wantVideo=false;
+      // Keep wantVideo=true: this means "receive remote video", even if
+      // this device itself has no camera.
+
     }else{
       throw e;
     }
@@ -105,18 +107,33 @@ async function setupPeer(callRef, otherId, wantVideo=true){
   localVideo.srcObject=localStream;
   remoteVideo.srcObject=remoteStream;
 
-  const hasVideo=localStream.getVideoTracks().length>0;
   localVideo.style.display=hasVideo?'block':'none';
   cameraBtn.style.display=hasVideo?'inline-flex':'none';
   document.getElementById('vcRemotePlaceholder').textContent=hasVideo?'Waiting for video…':'Voice call • Waiting for audio…';
 
+  // Add local media. If this device has no camera but the other side may
+  // send video, explicitly create a recv-only video transceiver. Without
+  // this, an audio-only PC would answer the video m-line as rejected, so
+  // the phone camera would never reach the PC.
+  const hasVideo=localStream.getVideoTracks().length>0;
   localStream.getTracks().forEach(t=>peer.addTrack(t,localStream));
+  if(wantVideo && !hasVideo){
+    try{ peer.addTransceiver('video',{direction:'recvonly'}); }catch(e){ console.warn('Video recv transceiver failed',e); }
+  }
+
   peer.ontrack=e=>{
-    e.streams[0]?.getTracks().forEach(t=>remoteStream.addTrack(t));
-    const remoteHasVideo=remoteStream.getVideoTracks().length>0;
-    remoteVideo.style.display=remoteHasVideo?'block':'none';
+    if(e.streams?.[0]){
+      remoteVideo.srcObject=e.streams[0];
+      remoteStream=e.streams[0];
+    }else{
+      remoteStream.addTrack(e.track);
+      remoteVideo.srcObject=remoteStream;
+    }
+    const remoteHasVideo=remoteStream.getVideoTracks().some(t=>t.readyState!=='ended');
+    remoteVideo.style.display=remoteHasVideo?'block':'block';
     document.getElementById('vcRemotePlaceholder')?.classList.toggle('hide',remoteHasVideo);
     if(!remoteHasVideo)document.getElementById('vcRemotePlaceholder').textContent='Voice call • Audio connected';
+    remoteVideo.play().catch(()=>{});
   };
   peer.onicecandidate=e=>{
     if(e.candidate)setDoc(
@@ -150,11 +167,10 @@ async function startCall(target){
     showActive('Calling '+(target.displayName||'Member'),'Requesting microphone…');
 
     // A PC without a camera automatically becomes a voice-only caller.
-    let wantVideo=true;
-    try{
-      const devices=await navigator.mediaDevices.enumerateDevices();
-      wantVideo=devices.some(d=>d.kind==='videoinput');
-    }catch{}
+    // Always negotiate video for this button. If this PC has no camera,
+    // setupPeer falls back to microphone-only while still receiving the
+    // other person's camera feed.
+    const wantVideo=true;
 
     await setupPeer(callRef,target.uid,wantVideo);
     const hasVideo=localStream.getVideoTracks().length>0;
