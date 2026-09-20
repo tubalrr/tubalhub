@@ -176,6 +176,52 @@ function attachLocal(stream){
   v.play?.().catch(()=>{});
 }
 
+function enableLocalVideoDrag(){
+  const v = $("vcLocalVideo");
+  const stage = $("vcStage");
+  if (!v || !stage || v.dataset.dragReady === "1") return;
+  v.dataset.dragReady = "1";
+  let dragging = false, moved = false, offsetX = 0, offsetY = 0;
+
+  const clamp = (n,min,max) => Math.max(min, Math.min(max,n));
+
+  v.addEventListener("pointerdown", e => {
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    const vr = v.getBoundingClientRect();
+    const sr = stage.getBoundingClientRect();
+    offsetX = e.clientX - vr.left;
+    offsetY = e.clientY - vr.top;
+    v.style.left = (vr.left - sr.left) + "px";
+    v.style.top = (vr.top - sr.top) + "px";
+    v.style.right = "auto";
+    v.style.bottom = "auto";
+    dragging = true;
+    moved = false;
+    v.setPointerCapture?.(e.pointerId);
+    e.preventDefault();
+  });
+
+  v.addEventListener("pointermove", e => {
+    if (!dragging) return;
+    const sr = stage.getBoundingClientRect();
+    const maxX = Math.max(0, sr.width - v.offsetWidth);
+    const maxY = Math.max(0, sr.height - v.offsetHeight);
+    const x = clamp(e.clientX - sr.left - offsetX, 0, maxX);
+    const y = clamp(e.clientY - sr.top - offsetY, 0, maxY);
+    if (Math.abs(e.movementX || 0) + Math.abs(e.movementY || 0) > 1) moved = true;
+    v.style.left = x + "px";
+    v.style.top = y + "px";
+  });
+
+  const release = e => {
+    if (!dragging) return;
+    dragging = false;
+    try { v.releasePointerCapture?.(e.pointerId); } catch {}
+  };
+  v.addEventListener("pointerup", release);
+  v.addEventListener("pointercancel", release);
+}
+
 function attachRemote(stream){
   remoteStream = stream;
   const v = $("vcRemoteVideo");
@@ -624,6 +670,7 @@ function observeMembers(){
 }
 
 injectUI();
+enableLocalVideoDrag();
 observeMembers();
 
 onAuthStateChanged(auth, u => {
