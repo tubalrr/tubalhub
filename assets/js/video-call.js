@@ -448,6 +448,10 @@ function watchCallDocument(ref){
 
     try {
       if (callRole === "caller") {
+        if (d.status === "accepted") {
+          // Stop ringing immediately when the callee accepts.
+          stopCallSound();
+        }
         if (d.status === "accepted" && !peer) {
           await startCallerConnection(d);
           return;
@@ -607,6 +611,8 @@ async function acceptIncoming(){
       updatedAt: serverTimestamp()
     });
 
+    // The incoming ringtone must stop the instant the call is accepted.
+    stopCallSound();
     showActive("Call with " + (d.callerName || "Member"), "Starting…", d.callerName || "Member");
     watchCallDocument(ref);
     await startCalleeConnection(d);
