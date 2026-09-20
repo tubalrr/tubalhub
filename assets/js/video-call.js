@@ -137,30 +137,55 @@ function cleanup(){
   if(localStream){localStream.getTracks().forEach(t=>t.stop()); localStream=null;}
   if(remoteStream){remoteStream.getTracks().forEach(t=>t.stop()); remoteStream=null;}
   pendingIce = [];
-  if($('vcLocal')) $('vcLocal').srcObject = null;
-  if($('vcRemote')) $('vcRemote').srcObject = null;
+  if($('vcLocal')){
+    $('vcLocal').pause?.();
+    $('vcLocal').srcObject = null;
+    $('vcLocal').style.display = 'none';
+  }
+  if($('vcRemote')){
+    $('vcRemote').pause?.();
+    $('vcRemote').srcObject = null;
+    $('vcRemote').load?.();
+    $('vcRemote').style.display = 'none';
+  }
+  if($('vcRemotePlaceholder')){
+    $('vcRemotePlaceholder').textContent = 'Waiting for video…';
+    $('vcRemotePlaceholder').classList.remove('hide');
+  }
+  if($('vcMute')) $('vcMute').textContent = '🎙 Mute';
+  if($('vcCamera')) $('vcCamera').textContent = '📷 Camera';
 }
 
 function attachRemote(track, streams){
+  // Always build a fresh stream for the current call. This is important
+  // when the same two users make another call after ending the first one.
   if(!remoteStream) remoteStream = new MediaStream();
-  if(!remoteStream.getTracks().some(t => t.id === track.id))
-    remoteStream.addTrack(track);
+
+  const existing = remoteStream.getTracks().find(t => t.id === track.id);
+  if(!existing) remoteStream.addTrack(track);
 
   const v = $('vcRemote');
-  v.srcObject = streams?.[0] || remoteStream;
-  v.style.display = remoteStream.getVideoTracks().length ? 'block' : 'none';
-  $('vcRemotePlaceholder').classList.toggle('hide',
-    remoteStream.getVideoTracks().length > 0);
+  // Do not keep the previous call's MediaStream object.
+  v.srcObject = remoteStream;
 
-  if(remoteStream.getVideoTracks().length){
-    v.play().catch(()=>{});
+  const hasVideo = remoteStream.getVideoTracks().length > 0;
+  const hasAudio = remoteStream.getAudioTracks().length > 0;
+
+  v.style.display = (hasVideo || hasAudio) ? 'block' : 'none';
+  $('vcRemotePlaceholder').textContent = hasVideo
+    ? 'Connecting video…'
+    : 'Voice connected • Waiting for camera…';
+  $('vcRemotePlaceholder').classList.toggle('hide', hasVideo);
+
+  if(hasVideo){
     $('vcStatus').textContent = 'Video connected';
-  }else if(remoteStream.getAudioTracks().length){
-    $('vcRemotePlaceholder').textContent = 'Voice connected • Waiting for camera…';
-    v.style.display = 'block';
-    v.play().catch(()=>{});
+  }else if(hasAudio){
     $('vcStatus').textContent = 'Voice connected';
   }
+
+  // Force the media element to attach/play again for repeated calls.
+  v.load();
+  v.play().catch(()=>{});
 }
 
 function installPeerEvents(ref){
@@ -268,6 +293,10 @@ async function createCalleePeer(ref, offer){
 
 async function startCall(target){
   if(!isReal() || !target?.uid || target.uid === user.uid || callRef) return;
+
+  // Reset every media element before creating a new peer connection.
+  // This prevents the second call from inheriting the first call's video state.
+  cleanup();
 
   try{
     const ref = doc(collection(db,'videoCalls'));
