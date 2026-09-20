@@ -62,3 +62,146 @@ body.theme-galaxy footer,body.theme-forest footer,body.theme-neon footer{backgro
 body.theme-galaxy .theme-option.selected{border-color:#a56cff!important}
 body.theme-forest .theme-option.selected{border-color:#7edc75!important}
 body.theme-neon .theme-option.selected{border-color:#67ff50!important}
+
+
+/* ULTIMATE WHOLE-SITE THEME — applies the selected theme to every page/component */
+html[data-tubal-theme="galaxy"], html[data-tubal-theme="forest"], html[data-tubal-theme="neon"]{
+  color-scheme:dark;
+}
+body.theme-galaxy,
+body.theme-forest,
+body.theme-neon{
+  --page-bg:var(--site-bg);
+  --page-panel:var(--site-panel);
+  --page-panel2:var(--site-panel2);
+  --page-line:var(--site-line);
+  --page-text:var(--site-text);
+  --page-muted:var(--site-muted);
+  --page-accent:var(--site-accent);
+  --page-accent2:var(--site-accent2);
+  background:var(--page-bg)!important;
+  color:var(--page-text)!important;
+}
+body.theme-galaxy *{scrollbar-color:#7d5cff #070412}
+body.theme-forest *{scrollbar-color:#6fbf5a #07140c}
+body.theme-neon *{scrollbar-color:#58ff4f #020805}
+
+/* Structural elements on ALL pages */
+body.theme-galaxy header,body.theme-forest header,body.theme-neon header,
+body.theme-galaxy footer,body.theme-forest footer,body.theme-neon footer,
+body.theme-galaxy aside,body.theme-forest aside,body.theme-neon aside,
+body.theme-galaxy nav,body.theme-forest nav,body.theme-neon nav,
+body.theme-galaxy main,body.theme-forest main,body.theme-neon main,
+body.theme-galaxy section,body.theme-forest section,body.theme-neon section,
+body.theme-galaxy article,body.theme-forest article,body.theme-neon article,
+body.theme-galaxy .container,body.theme-forest .container,body.theme-neon .container,
+body.theme-galaxy .page-shell,body.theme-forest .page-shell,body.theme-neon .page-shell,
+body.theme-galaxy .page-container,body.theme-forest .page-container,body.theme-neon .page-container,
+body.theme-galaxy .panel,body.theme-forest .panel,body.theme-neon .panel,
+body.theme-galaxy .card,body.theme-forest .card,body.theme-neon .card,
+body.theme-galaxy .modal,body.theme-forest .modal,body.theme-neon .modal{
+  border-color:var(--page-line)!important;
+}
+
+/* Force a consistent surface on common page wrappers */
+body.theme-galaxy .page-shell,body.theme-forest .page-shell,body.theme-neon .page-shell,
+body.theme-galaxy .page-container,body.theme-forest .page-container,body.theme-neon .page-container,
+body.theme-galaxy .panel,body.theme-forest .panel,body.theme-neon .panel,
+body.theme-galaxy .card,body.theme-forest .card,body.theme-neon .card,
+body.theme-galaxy .modal,body.theme-forest .modal,body.theme-neon .modal,
+body.theme-galaxy .content-card,body.theme-forest .content-card,body.theme-neon .content-card,
+body.theme-galaxy .news-card,body.theme-forest .news-card,body.theme-neon .news-card,
+body.theme-galaxy .music-card,body.theme-forest .music-card,body.theme-neon .music-card,
+body.theme-galaxy .product-card,body.theme-forest .product-card,body.theme-neon .product-card,
+body.theme-galaxy .shop-card,body.theme-forest .shop-card,body.theme-neon .shop-card{
+  background:linear-gradient(145deg,var(--page-panel),var(--page-bg))!important;
+  color:var(--page-text)!important;
+}
+
+/* Common text everywhere */
+body.theme-galaxy h1,body.theme-galaxy h2,body.theme-galaxy h3,body.theme-galaxy h4,body.theme-galaxy h5,body.theme-galaxy h6,
+body.theme-forest h1,body.theme-forest h2,body.theme-forest h3,body.theme-forest h4,body.theme-forest h5,body.theme-forest h6,
+body.theme-neon h1,body.theme-neon h2,body.theme-neon h3,body.theme-neon h4,body.theme-neon h5,body.theme-neon h6,
+body.theme-galaxy label,body.theme-forest label,body.theme-neon label,
+body.theme-galaxy strong,body.theme-forest strong,body.theme-neon strong{
+  color:var(--page-text)!important;
+}
+body.theme-galaxy p,body.theme-forest p,body.theme-neon p,
+body.theme-galaxy small,body.theme-forest small,body.theme-neon small,
+body.theme-galaxy li,body.theme-forest li,body.theme-neon li{
+  color:var(--page-muted)!important;
+}
+body.theme-galaxy a{color:#c4b2ff}
+body.theme-forest a{color:#b8ef9b}
+body.theme-neon a{color:#baff86}
+
+/* Inputs, textareas, selects, search and chat controls */
+body.theme-galaxy input,body.theme-galaxy textarea,body.theme-galaxy select,
+body.theme-forest input,body.theme-forest textarea,body.theme-forest select,
+body.theme-neon input,body.theme-neon textarea,body.theme-neon select{
+  background:var(--page-panel)!important;
+  color:var(--page-text)!important;
+  border-color:var(--page-line)!important;
+  caret-color:var(--page-accent)!important;
+}
+body.theme-galaxy input::placeholder,body.theme-forest input::placeholder,body.theme-neon input::placeholder,
+body.theme-galaxy textarea::placeholder,body.theme-forest textarea::placeholder,body.theme-neon textarea::placeholder{
+  color:var(--page-muted)!important;
+}
+
+/* Buttons and interactive controls */
+body.theme-galaxy button,body.theme-forest button,body.theme-neon button{
+  border-color:var(--page-line);
+}
+body.theme-galaxy .btn,body.theme-galaxy button.primary,body.theme-galaxy .primary,
+body.theme-forest .btn,body.theme-forest button.primary,body.theme-forest .primary,
+body.theme-neon .btn,body.theme-neon button.primary,body.theme-neon .primary{
+  background:linear-gradient(135deg,var(--page-accent),var(--page-accent2))!important;
+  color:#061006!important;
+  border-color:transparent!important;
+}
+
+/* Page headers/top bars */
+body.theme-galaxy .topbar,body.theme-forest .topbar,body.theme-neon .topbar,
+body.theme-galaxy .page-header,body.theme-forest .page-header,body.theme-neon .page-header,
+body.theme-galaxy .hub-topbar,body.theme-forest .hub-topbar,body.theme-neon .hub-topbar{
+  background:var(--page-panel)!important;
+  color:var(--page-text)!important;
+  border-color:var(--page-line)!important;
+}
+
+/* Sidebars */
+body.theme-galaxy .sidebar,body.theme-forest .sidebar,body.theme-neon .sidebar,
+body.theme-galaxy .hub-sidebar,body.theme-forest .hub-sidebar,body.theme-neon .hub-sidebar{
+  background:linear-gradient(180deg,var(--page-panel),var(--page-bg))!important;
+  border-color:var(--page-line)!important;
+}
+body.theme-galaxy .sidebar a:hover,body.theme-galaxy .sidebar a.active{background:#7b52ff22!important;color:#d9ceff!important}
+body.theme-forest .sidebar a:hover,body.theme-forest .sidebar a.active{background:#65c75a22!important;color:#d7ffd0!important}
+body.theme-neon .sidebar a:hover,body.theme-neon .sidebar a.active{background:#36ff6d22!important;color:#d5ffd0!important}
+
+/* Tables, lists and common separators */
+body.theme-galaxy table,body.theme-forest table,body.theme-neon table{
+  background:var(--page-panel)!important;
+  color:var(--page-text)!important;
+  border-color:var(--page-line)!important;
+}
+body.theme-galaxy th,body.theme-galaxy td,body.theme-forest th,body.theme-forest td,body.theme-neon th,body.theme-neon td{
+  border-color:var(--page-line)!important;
+}
+
+/* Theme identity: visible glow differs on every page */
+body.theme-galaxy{background-image:radial-gradient(circle at 80% 0,#8b5cff26,transparent 30%),radial-gradient(circle at 10% 80%,#3ad7ff12,transparent 28%)!important}
+body.theme-forest{background-image:radial-gradient(circle at 80% 0,#74d45a22,transparent 30%),radial-gradient(circle at 10% 80%,#38d98a12,transparent 28%)!important}
+body.theme-neon{background-image:radial-gradient(circle at 80% 0,#54ff5a1f,transparent 28%),radial-gradient(circle at 10% 80%,#00ff9d12,transparent 28%)!important}
+
+/* Make page backgrounds transparent where a wrapper would otherwise hide the theme */
+body.theme-galaxy .hub-main,body.theme-forest .hub-main,body.theme-neon .hub-main,
+body.theme-galaxy .main-content,body.theme-forest .main-content,body.theme-neon .main-content{
+  background:transparent!important;
+}
+
+/* Theme transition */
+body.theme-galaxy *,body.theme-forest *,body.theme-neon *{
+  transition:background-color .2s ease,border-color .2s ease,color .2s ease,box-shadow .2s ease;
+}
