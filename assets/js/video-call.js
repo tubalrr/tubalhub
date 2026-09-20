@@ -178,10 +178,37 @@ function showIncoming(d){
   $("vcIncomingAvatar").textContent = initials(n);
   $("vcIncoming").hidden = false;
   startCallSound();
+  showBackgroundCallNotification(n, d);
+}
+
+let callNotification = null;
+function showBackgroundCallNotification(name, data){
+  try{
+    if(!("Notification" in window) || Notification.permission !== "granted") return;
+    if(!document.hidden) return;
+    if(callNotification) callNotification.close();
+    callNotification = new Notification("TUBAL HUB — Incoming Call", {
+      body: name + " is calling you on TUBAL HUB.",
+      tag: "tubalhub-incoming-call-" + (data?.callerId || "call"),
+      requireInteraction: true,
+      vibrate: [300, 120, 300, 120, 600],
+      icon: "/tubalhub/tubal-hub-logo.png",
+      badge: "/tubalhub/tubal-hub-logo.png"
+    });
+    callNotification.onclick = () => {
+      try { window.focus(); } catch {}
+      callNotification?.close();
+      callNotification = null;
+      showIncoming(data);
+    };
+  }catch(e){
+    console.warn("[TUBAL HUB] background call notification unavailable", e);
+  }
 }
 
 function hideIncoming(){
   stopCallSound();
+  if(callNotification){ try{ callNotification.close(); }catch{} callNotification=null; }
   if ($("vcIncoming")) $("vcIncoming").hidden = true;
 }
 
@@ -594,6 +621,7 @@ async function endCall(notify = true){
 }
 
 function resetCall(){
+  if(callNotification){ try{ callNotification.close(); }catch{} callNotification=null; }
   stopCallSound();
   ending = false;
   cleanupPeer();
