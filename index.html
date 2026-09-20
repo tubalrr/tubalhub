@@ -122,29 +122,11 @@
 
     <section class="home-section facebook-video-section" aria-label="Facebook Videos">
       <div class="home-heading">
-        <div>
-          <h2>Facebook <em>Videos</em></h2>
-          <p class="fb-video-subtitle">Latest videos from TUBAL HUB on Facebook</p>
-        </div>
-        <a class="fb-open-link" href="https://www.facebook.com/share/1EkK7ev1Yt/" target="_blank" rel="noopener noreferrer">Open Facebook →</a>
+        <div><h2>Facebook <em>Videos</em></h2><p class="fb-video-subtitle">Videos published by TUBAL HUB admin</p></div>
+        <a class="fb-open-link" href="https://www.facebook.com/share/1EkK7ev1Yt/" target="_blank" rel="noopener noreferrer">Facebook →</a>
       </div>
-      <div class="facebook-video-container">
-        <div class="facebook-video-frame">
-          <iframe
-            title="TUBAL HUB Facebook Video"
-            src="https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1EkK7ev1Yt%2F&show_text=false&width=100%25&autoplay=true&mute=true"
-            scrolling="no"
-            frameborder="0"
-            allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
-            allowfullscreen="true">
-          </iframe>
-          <div class="facebook-video-fallback">
-            <span>f</span>
-            <strong>Facebook video</strong>
-            <small>If Facebook does not allow this shared link to be embedded, open it directly.</small>
-            <a href="https://www.facebook.com/share/1EkK7ev1Yt/" target="_blank" rel="noopener noreferrer">Watch on Facebook →</a>
-          </div>
-        </div>
+      <div class="facebook-video-container" id="facebookVideoContainer">
+        <div class="news-empty">Loading Facebook videos…</div>
       </div>
     </section>
 
@@ -186,6 +168,18 @@ try{
   console.warn("Homepage Firestore news unavailable.",e);
   homeNews.innerHTML='<div class="news-empty">News is temporarily unavailable.</div>';
 }
+</script>
+<script type="module">
+import {getFirestore,collection,getDocs,query,orderBy,limit} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+import {app} from "./assets/js/firebase-config.js";
+const box=document.getElementById("facebookVideoContainer");
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
+const embed=u=>"https://www.facebook.com/plugins/video.php?href="+encodeURIComponent(u)+"&show_text=false&width=100%25";
+try{
+ const snap=await getDocs(query(collection(getFirestore(app),"facebookVideos"),orderBy("createdAt","desc"),limit(12)));
+ if(snap.empty){box.innerHTML='<div class="news-empty">No Facebook videos published yet.</div>'}
+ else{box.innerHTML='<div class="facebook-video-grid">'+snap.docs.map(d=>{const x=d.data();return '<article class="facebook-video-card"><div class="facebook-video-frame"><iframe title="'+esc(x.title||"Facebook Video")+'" src="'+embed(x.url||"")+'" loading="lazy" scrolling="no" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" allowfullscreen></iframe></div><h3>'+esc(x.title||"Facebook Video")+'</h3></article>'}).join("")+'</div>'}
+}catch(e){console.warn("Facebook videos unavailable",e);box.innerHTML='<div class="news-empty">Facebook videos are temporarily unavailable.</div>'}
 </script>
 <script src="assets/js/app.js"></script>
 </body>
