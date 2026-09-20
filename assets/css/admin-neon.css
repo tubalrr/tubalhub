@@ -166,7 +166,7 @@ body{
   border-radius:0 0 13px 13px;
   background:
     linear-gradient(90deg,rgba(1,12,8,.96) 0%,rgba(2,15,10,.67) 47%,rgba(1,10,7,.48) 100%),
-    url('../tubalhub-hero-bg.jpg') center/cover no-repeat;
+    url('../../tubalhub-hero-bg.jpg') center/cover no-repeat;
   box-shadow:0 18px 45px #000b,inset 0 0 45px rgba(25,245,139,.05);
 }
 
