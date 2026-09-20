@@ -1,35 +1,108 @@
-.vc-overlay{position:fixed;inset:0;background:rgba(0,0,0,.78);backdrop-filter:blur(7px);z-index:1000;display:grid;place-items:center;padding:18px}.vc-overlay[hidden]{display:none}.vc-card{width:min(920px,96vw);background:linear-gradient(145deg,#061812,#020907);border:1px solid #22d86b;border-radius:20px;box-shadow:0 25px 80px #000d;color:#eef8f1;overflow:hidden}.vc-active-card{padding:16px}.vc-head{display:flex;justify-content:space-between;align-items:center;padding:4px 4px 12px}.vc-head strong{display:block;font-size:18px}.vc-head span{display:block;color:#7f9b8c;font-size:11px;margin-top:4px}.vc-x{border:1px solid #315b47;background:#06130e;color:#cde2d6;border-radius:9px;width:34px;height:34px;font-size:20px;cursor:pointer}.vc-videos{position:relative;aspect-ratio:16/9;background:#010504;border-radius:15px;overflow:hidden;border:1px solid #1b5138}.vc-videos video{width:100%;height:100%;object-fit:cover;background:#010504}.vc-videos #vcLocal{position:absolute;right:14px;bottom:14px;width:min(30%,260px);height:auto;aspect-ratio:16/9;border:2px solid #7aff9c;border-radius:12px;box-shadow:0 8px 30px #000c}.vc-placeholder{position:absolute;inset:0;display:grid;place-items:center;color:#80958a;font-size:14px;pointer-events:none}.vc-placeholder.hide{display:none}.vc-controls{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;padding:14px 0 2px}.vc-controls button,.vc-in-actions button{border:1px solid #286d4c;background:#071a12;color:#e8f5ed;border-radius:11px;padding:10px 15px;font-weight:700;cursor:pointer}.vc-controls button:hover,.vc-in-actions button:hover{border-color:#4cff86}.vc-controls .vc-end,.vc-in-actions .vc-decline{background:#5d1717;border-color:#a94b4b}.vc-incoming-card{width:min(420px,94vw);text-align:center;padding:30px}.vc-in-avatar{width:72px;height:72px;margin:0 auto 14px;border-radius:50%;display:grid;place-items:center;background:#0c4a2c;border:1px solid #49ee80;font-size:24px;font-weight:800}.vc-incoming-card h3{margin:0;font-size:22px}.vc-incoming-card p{color:#91a39a;font-size:13px;margin:8px 0 22px}.vc-in-actions{display:flex;justify-content:center;gap:10px}.vc-in-actions .vc-accept{background:#10a84e;border-color:#38f276}.vc-call-btn{margin-left:auto;width:34px;height:34px;border-radius:10px;border:1px solid #247a4e;background:#082218;color:#baffca;cursor:pointer;flex:0 0 auto}.vc-call-btn:hover{background:#0d6236;border-color:#54ff8a;box-shadow:0 0 16px #20ed6b33;transform:translateY(-1px)}
-@media(max-width:760px){.vc-overlay{padding:8px}.vc-active-card{padding:10px}.vc-videos{aspect-ratio:9/14}.vc-videos #vcLocal{width:34%;right:9px;bottom:9px}.vc-controls button{padding:10px 11px;font-size:12px}.vc-call-btn{width:32px;height:32px}.member{gap:7px}}
-
-/* Microphone-only fallback */
-.vc-placeholder{display:grid;place-items:center}
-.vc-call-btn{flex:0 0 auto;border:1px solid #287b55;background:#062017;color:#7dffa4;border-radius:10px;padding:7px 9px;cursor:pointer;font-size:15px}
-.vc-call-btn:hover{border-color:#4dff88;background:#0b3824;box-shadow:0 0 12px #20ed7026}
-
-
-/* Jitsi Meet call frame */
-.jitsi-container{
-  position:relative;
-  width:100%;
-  height:clamp(420px,68vh,720px);
-  background:#010504;
-  border-radius:15px;
-  overflow:hidden;
-  border:1px solid #1b5138;
+/* TUBAL HUB — Messenger-style WebRTC call UI */
+.vc-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.82);backdrop-filter:blur(10px);
+  z-index:2000;display:grid;place-items:center;padding:14px
 }
-.jitsi-container iframe{
-  display:block;
-  width:100%;
-  height:100%;
-  border:0;
-  background:#010504;
+.vc-overlay[hidden],.vc-incoming[hidden]{display:none}
+.vc-call-window{
+  width:min(1000px,96vw);height:min(760px,94vh);
+  background:#030807;border:1px solid #21df69;border-radius:22px;
+  box-shadow:0 28px 100px #000e;overflow:hidden;display:flex;flex-direction:column
 }
-.vc-jitsi-card{
-  width:min(1100px,97vw);
+.vc-call-top{
+  height:70px;flex:0 0 70px;padding:12px 16px;display:flex;
+  align-items:center;justify-content:space-between;border-bottom:1px solid #153a2a;
+  background:linear-gradient(180deg,#071b13,#030907)
 }
+.vc-call-person{display:flex;align-items:center;gap:10px}
+.vc-call-person strong{display:block;font-size:16px}
+.vc-call-person span{display:block;color:#8fa39a;font-size:11px;margin-top:3px}
+.vc-status-dot{width:9px;height:9px;border-radius:50%;background:#39f779;box-shadow:0 0 14px #39f779}
+.vc-icon-btn{
+  width:38px;height:38px;border:1px solid #315b47;background:#07130f;
+  color:#dce9e1;border-radius:11px;font-size:23px;cursor:pointer
+}
+.vc-icon-btn:hover{border-color:#57ff91;background:#0b2418}
+.vc-stage{
+  position:relative;flex:1;min-height:0;background:#010403;overflow:hidden
+}
+.vc-remote-video{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#010403
+}
+.vc-remote-fallback{
+  position:absolute;inset:0;display:grid;place-items:center;align-content:center;
+  gap:10px;background:radial-gradient(circle at 50% 38%,#123827,#020706 58%);
+  color:#fff;z-index:2
+}
+.vc-remote-fallback strong{font-size:18px}
+.vc-remote-fallback span{color:#93a69c;font-size:12px}
+.vc-big-avatar{
+  width:110px;height:110px;border-radius:50%;display:grid;place-items:center;
+  background:linear-gradient(145deg,#21764a,#0b2b1c);border:2px solid #5bff91;
+  font-size:38px;font-weight:900;box-shadow:0 0 45px #18ef6b33
+}
+.vc-local-video{
+  position:absolute;right:18px;bottom:18px;width:min(25%,250px);aspect-ratio:16/10;
+  object-fit:cover;border-radius:15px;border:2px solid #8affaa;background:#020605;
+  box-shadow:0 12px 35px #000c;z-index:4
+}
+.vc-call-badge{
+  position:absolute;left:16px;bottom:16px;padding:8px 11px;border-radius:999px;
+  background:#020806cc;border:1px solid #2a6147;color:#c9ddd2;font-size:11px;
+  z-index:5;backdrop-filter:blur(8px)
+}
+.vc-controls{
+  height:92px;flex:0 0 92px;display:flex;align-items:center;justify-content:center;
+  gap:12px;background:linear-gradient(180deg,#07130f,#030806);
+  border-top:1px solid #153a2a
+}
+.vc-control{
+  min-width:68px;height:58px;padding:8px 12px;border:1px solid #285a43;
+  background:#0a1913;color:#eef8f2;border-radius:15px;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  font-size:20px
+}
+.vc-control span{font-size:9px;color:#a7b9af}
+.vc-control:hover{border-color:#52ff8d;background:#0d281b}
+.vc-control.off{background:#3b1a1a;border-color:#9a4a4a}
+.vc-control.vc-end{background:#7b2020;border-color:#bd5555}
+.vc-control.vc-end:hover{background:#a52b2b;border-color:#f47777}
+.vc-incoming{
+  position:fixed;right:22px;bottom:22px;width:min(410px,calc(100vw - 28px));
+  z-index:2100;animation:vcIn .22s ease-out
+}
+@keyframes vcIn{from{transform:translateY(20px) scale(.97);opacity:0}to{transform:none;opacity:1}}
+.vc-incoming-card{
+  display:flex;align-items:center;gap:12px;padding:13px 14px;
+  background:linear-gradient(145deg,#071d14,#03100b);border:1px solid #31ef77;
+  border-radius:18px;box-shadow:0 18px 55px #000c
+}
+.vc-incoming-avatar{
+  width:48px;height:48px;flex:0 0 48px;border-radius:50%;display:grid;place-items:center;
+  background:#1b6440;border:1px solid #65ff9a;font-weight:900;font-size:16px
+}
+.vc-incoming-copy{min-width:0;flex:1}
+.vc-incoming-copy strong{display:block;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vc-incoming-copy span{display:block;color:#91a59b;font-size:11px;margin-top:3px}
+.vc-incoming-btn{
+  width:45px;height:45px;border:0;border-radius:50%;font-size:18px;cursor:pointer;
+  color:#fff;box-shadow:0 5px 18px #0007
+}
+.vc-incoming-btn.decline{background:#a82b2b}
+.vc-incoming-btn.accept{background:#18b957}
+.vc-incoming-btn:hover{transform:scale(1.06);filter:brightness(1.08)}
+.vc-call-btn{
+  margin-left:auto;width:34px;height:34px;border-radius:10px;border:1px solid #247a4e;
+  background:#082218;color:#baffca;cursor:pointer;flex:0 0 auto
+}
+.vc-call-btn:hover{background:#0d6236;border-color:#54ff8a;box-shadow:0 0 16px #20ed6b33;transform:translateY(-1px)}
 @media(max-width:760px){
-  .vc-jitsi-card{width:100%;height:calc(100vh - 16px);display:flex;flex-direction:column}
-  .vc-jitsi-card .vc-head{flex:0 0 auto}
-  .jitsi-container{height:auto;flex:1;min-height:0;border-radius:12px}
-  .vc-jitsi-card .vc-controls{flex:0 0 auto}
+  .vc-overlay{padding:0}
+  .vc-call-window{width:100vw;height:100vh;height:100dvh;border:0;border-radius:0}
+  .vc-call-top{height:64px;flex-basis:64px}
+  .vc-local-video{right:10px;bottom:12px;width:34%;min-width:115px}
+  .vc-call-badge{left:10px;bottom:12px}
+  .vc-controls{height:86px;flex-basis:86px;gap:8px}
+  .vc-control{min-width:58px;height:54px;padding:7px 9px}
+  .vc-incoming{right:10px;left:10px;bottom:10px;width:auto}
 }
