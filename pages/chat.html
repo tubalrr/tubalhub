@@ -4,18 +4,145 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Global Chat | TUBAL HUB</title>
-<link rel="stylesheet" href="./global-chat-live.css">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<!-- FIXED PATHS for GitHub Pages -->
+<link rel="stylesheet" href="../assets/css/global-chat-live.css">
+<style>
+/* INLINE BACKUP - para kahit hindi ma-load yung external CSS, hindi puti */
+
+/* TUBAL HUB Global Chat - Separate CSS - Design based on reference image */
+*{box-sizing:border-box}
+body{margin:0;background:#020807;color:#eef5f0;font-family:'Poppins', Arial, Helvetica, sans-serif;min-height:100vh}
+a{text-decoration:none;color:inherit}
+
+/* Topbar */
+.topbar{height:72px;background:rgba(2,10,8,.96);border-bottom:1px solid #123a2b;display:flex;align-items:center;padding:0 30px;position:sticky;top:0;z-index:20;box-shadow:0 8px 30px #0008}
+.brand{display:flex;align-items:center;gap:12px;min-width:255px}
+.brand img{width:47px;height:47px;object-fit:contain}
+.brand strong{font-size:23px;letter-spacing:1px}
+.brand small{display:block;color:#9aa9a1;font-size:8px;letter-spacing:3px;margin-top:3px}
+.topnav{display:flex;gap:28px;align-items:center;flex:1;justify-content:center}
+.topnav a{font-size:14px;color:#d5ded9;padding:26px 5px;border-bottom:2px solid transparent;transition:.2s}
+.topnav a.active{color:#fff;border-bottom-color:#26ff72;text-shadow:0 0 12px #25ff7266}
+.profile{display:flex;align-items:center;gap:10px;min-width:190px;justify-content:flex-end}
+.avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(145deg,#1b4534,#0a1511);border:1px solid #487a60;display:grid;place-items:center;font-weight:800;overflow:hidden}
+.avatar img,.msg-avatar img,.mini img{width:100%;height:100%;object-fit:cover}
+.online{color:#63f58a;font-size:11px}
+.profile-name{font-size:13px;font-weight:700;max-width:110px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* Main Layout - Left Nav + Main + Right Online (GILID) */
+.layout{display:grid;grid-template-columns:235px 1fr;min-height:calc(100vh - 72px)}
+.sidebar{background:linear-gradient(180deg,#03110d,#02100c 65%,#041e14);border-right:1px solid #123629;padding:42px 18px;display:flex;flex-direction:column;gap:7px}
+.side a{display:flex;align-items:center;gap:18px;padding:13px 20px;border-radius:14px;color:#cbd5d0;font-size:16px;transition:.2s}
+.side a:hover,.side a.active{background:linear-gradient(90deg,#0e6f42,#063a27);color:#fff;box-shadow:inset 3px 0 #36ff79,0 0 25px #16e96d1c}
+.side .ico{width:23px;text-align:center;font-size:21px}
+
+/* Hero - Like picture: sunset mountains + person with dog */
+.main{padding:0 0 18px;min-width:0}
+.hero{height:210px;margin:0;border-bottom:1px solid #174735;position:relative;overflow:hidden;padding:28px 64px;display:flex;align-items:center;background:linear-gradient(100deg,#06130f 0%,#10271d 55%,#2a3f2d 100%)}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(circle at 85% 30%,#ff9a3d55 0%,#ff6a1a33 15%,transparent 40%),linear-gradient(to top,#0a1f14 0%,transparent 60%);pointer-events:none}
+.hero-mountains{position:absolute;bottom:0;left:0;right:0;height:95px;background:linear-gradient(to top,#020807 0%,#0a1f14 100%);clip-path:polygon(0 100%,0 60%,15% 35%,28% 50%,40% 25%,55% 45%,68% 20%,82% 40%,92% 30%,100% 50%,100% 100%);opacity:.9}
+.hero>*{position:relative;z-index:1}
+.kicker{display:inline-block;border:1px solid #3dff8a55;background:#0a281888;border-radius:20px;padding:6px 15px;font-size:11px;letter-spacing:1px;color:#8ffab1}
+.hero h1{font-size:56px;line-height:1;margin:10px 0 4px;font-weight:900;font-style:italic;letter-spacing:-2px;text-shadow:0 2px 20px #000a}
+.hero h1 em{color:#57f979}
+.hero p{font-size:17px;margin:0;color:#e0e8e3}
+.hero-note{margin-left:auto;text-align:right;font-size:22px;font-style:italic;line-height:1.35;color:#e8f5e9;max-width:250px;text-shadow:0 2px 10px #000a}
+.hero-note b{color:#fff;font-weight:800}
+
+/* Rules strip */
+.rules-strip{display:flex;align-items:center;gap:18px;padding:10px 22px;background:#071b14;border-bottom:1px solid #14372b;font-size:12px;color:#9bb9a6}
+.rules-strip span{display:flex;align-items:center;gap:6px}
+.rules-strip .right-online{margin-left:auto;display:flex;align-items:center;gap:6px;color:#63f58a;font-weight:700}
+
+/* Chat Grid - CHAT + ONLINE SA GILID */
+.chat-grid{display:grid;grid-template-columns:minmax(0,1fr) 335px;gap:16px;padding:16px 18px 0;align-items:start}
+.panel{background:linear-gradient(145deg,#061612e8,#03100d);border:1px solid #15744a;border-radius:16px;box-shadow:0 10px 35px #0007;overflow:hidden}
+.chat-panel{min-width:0;display:flex;flex-direction:column}
+.chat-head{min-height:86px;padding:17px 18px;border-bottom:1px solid #14372b;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(90deg,#071b14,#061612)}
+.chat-title{display:flex;align-items:center;gap:14px}
+.globe{width:58px;height:58px;border-radius:16px;border:1px solid #18e76d;background:#073b25;color:#8dffb1;display:grid;place-items:center;font-size:30px;box-shadow:0 0 25px #17e76d22}
+.chat-title h2{margin:0;font-size:22px;display:flex;align-items:center;gap:10px}
+.chat-title h2 .hash{color:#2eff7a}
+.chat-title p{margin:5px 0 0;color:#9baaa2;font-size:13px}
+.count{border:1px solid #18b95d;border-radius:16px;padding:11px 15px;color:#72f58f;font-weight:700;white-space:nowrap;background:#0a2818}
+
+.messages{height:520px;overflow:auto;padding:8px 18px;scrollbar-width:thin;scrollbar-color:#1a5a3a transparent}
+.messages::-webkit-scrollbar{width:6px}
+.messages::-webkit-scrollbar-thumb{background:#1a5a3a;border-radius:10px}
+.msg{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid #0d251d}
+.msg-avatar{width:46px;height:46px;flex:0 0 46px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,#315d7a,#10273b);border:1px solid #77a2c1;font-size:18px;overflow:hidden}
+.msg-body{max-width:86%;min-width:0}
+.msg-meta{display:flex;gap:9px;align-items:center;margin:1px 0 7px;flex-wrap:wrap}
+.msg-meta b{font-size:14px}
+.time{font-size:11px;color:#718078}
+.bubble{display:inline-block;background:#12242a;border-radius:0 14px 14px 14px;padding:9px 14px;font-size:13.5px;line-height:1.4;white-space:pre-wrap;overflow-wrap:anywhere;color:#dfe9e3}
+.msg.me .msg-avatar{background:linear-gradient(145deg,#3c7652,#0b321f);border-color:#5df08d}
+.msg.me .bubble{background:#075d31;color:#e6ffe9}
+.admin{background:#2bf36b;color:#06240f;border-radius:5px;padding:3px 7px;font-size:10px;font-weight:800}
+.media{display:block;max-width:min(420px,100%);max-height:330px;border-radius:12px;border:1px solid #24694b;margin-top:3px;object-fit:contain;background:#020807}
+
+/* Composer */
+.composer{display:flex;gap:10px;padding:12px 17px;border-top:1px solid #14372b;position:relative;background:#061612}
+.composer-tools{display:flex;gap:6px;align-items:center}
+.tool{width:44px;height:44px;border:1px solid #1d7550;background:#061713;color:#e3ede7;border-radius:12px;font-size:18px;cursor:pointer;display:grid;place-items:center;transition:.2s}
+.tool:hover{border-color:#4dff88;box-shadow:0 0 14px #19ed6b2b}
+.composer input{flex:1;background:#061411;border:1px solid #287154;border-radius:12px;color:#fff;padding:0 15px;outline:none;font-size:14px;height:44px}
+.composer input:focus{border-color:#2eff7a;box-shadow:0 0 0 3px #2eff7a22}
+.send{border:0;border-radius:12px;padding:0 22px;background:linear-gradient(90deg,#12b957,#1ae86b);color:white;font-weight:800;font-size:14px;box-shadow:0 0 20px #15e86b33;cursor:pointer;height:44px;transition:.2s}
+.send:hover{transform:translateY(-1px);box-shadow:0 0 25px #15e86b55}
+.send:disabled{opacity:.5;cursor:not-allowed}
+
+/* RIGHT SIDE - ONLINE NASA GILID - FIXED */
+.right{display:flex;flex-direction:column;gap:14px;position:sticky;top:88px}
+.right .panel{padding:0}
+.panel-inner{padding:16px}
+.panel-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;padding:16px 16px 0}
+.panel-title h3{font-size:15px;margin:0;display:flex;align-items:center;gap:8px}
+.panel-title h3 .dot{width:8px;height:8px;background:#2eff7a;border-radius:50%;box-shadow:0 0 8px #2eff7a}
+.view{font-size:12px;color:#6dff96;cursor:pointer}
+.member{display:flex;align-items:center;gap:10px;padding:8px 16px;transition:.15s;border-radius:10px;margin:2px 8px}
+.member:hover{background:#0a2818}
+.mini{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:#173b31;border:1px solid #416d59;overflow:hidden;font-size:14px;flex:0 0 38px}
+.member-info{flex:1;min-width:0}
+.member-info b{display:block;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#e8f0ea}
+.member-info span{font-size:11px;color:#63e783;display:flex;align-items:center;gap:4px}
+.member-info span.playing{color:#9aa9a1}
+.you-tag{color:#6fff95;font-size:10px;font-weight:700;background:#0a3a20;padding:3px 8px;border-radius:20px;border:1px solid #1a7a40}
+.empty-side{color:#7f9188;font-size:12px;padding:14px 16px}
+
+.channels div{display:flex;justify-content:space-between;padding:9px 12px;border-radius:10px;color:#c8d2cc;font-size:13px;margin:2px 8px;transition:.15s;cursor:pointer}
+.channels div:hover{background:#0a2418;color:#fff}
+.channels div.active{background:linear-gradient(90deg,#0a8e43,#12b957);color:#fff;font-weight:700;box-shadow:0 0 15px #12b95733}
+
+.today-quote{margin-top:2px;background:linear-gradient(180deg,#0a1f17,#06120e);border-radius:16px;overflow:hidden;position:relative}
+.today-quote .quote-bg{height:90px;background:linear-gradient(to bottom,transparent,#06120e),radial-gradient(circle at 50% 20%,#1a4a3a,#0a1f17);position:relative}
+.today-quote .quote-text{padding:14px 16px}
+.today-quote .quote-text h4{margin:0 0 6px;font-size:12px;color:#2eff7a;display:flex;align-items:center;gap:6px}
+.today-quote .quote-text p{margin:0;font-size:13px;font-style:italic;color:#cbdad1;line-height:1.5}
+
+/* Responsive */
+@media(max-width:1200px){.chat-grid{grid-template-columns:1fr 300px}}
+@media(max-width:1100px){.layout{grid-template-columns:190px 1fr}.hero{padding:22px 32px}.hero h1{font-size:42px}.hero-note{display:none}.chat-grid{grid-template-columns:1fr}.right{display:grid;grid-template-columns:1fr 1fr;position:static}.messages{height:460px}}
+@media(max-width:760px){.topbar{padding:0 14px}.brand{min-width:auto}.topnav,.profile-name,.profile .online{display:none}.layout{display:block}.sidebar{display:none}.hero{height:160px;padding:18px}.hero h1{font-size:34px}.chat-grid{padding:10px;grid-template-columns:1fr}.right{display:flex;position:static}.messages{height:55vh}}
+
+.live-dot{width:8px;height:8px;background:#2eff7a;border-radius:50%;display:inline-block;box-shadow:0 0 8px #2eff7a;animation:pulse 2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 #2eff7a88}70%{box-shadow:0 0 0 8px #2eff7a00}100%{box-shadow:0 0 0 0 #2eff7a00}}
+.lock-wrap{padding:70px 25px;display:none}.lock-card{max-width:650px;margin:auto;text-align:center;padding:48px 30px;border:1px solid #1c8150;border-radius:18px;background:linear-gradient(145deg,#061711,#020a07);box-shadow:0 20px 55px #0009}.lock-icon{font-size:54px}.lock-card h2{font-size:30px;margin:12px 0 8px}.lock-card p{color:#99aaa1;line-height:1.7;font-size:14px}.lock-actions{display:flex;justify-content:center;gap:12px;margin-top:24px;flex-wrap:wrap}.lock-actions a{padding:13px 22px;border-radius:10px;font-weight:800}.login{background:#49fa73;color:#061108}.signup{border:1px solid #37634d;color:#c6dfcf}
+.status-msg{padding:9px 18px;color:#8da198;font-size:11px;border-top:1px solid #10271f}.status-msg.error{color:#ff8c8c}
+.picker{position:absolute;left:17px;bottom:69px;background:#061713;border:1px solid #1d7550;border-radius:14px;padding:10px;box-shadow:0 18px 45px #000b;z-index:8;display:none}
+.emoji-grid{display:grid;grid-template-columns:repeat(8,34px);gap:4px}.emoji-choice{border:0;background:transparent;color:#fff;font-size:20px;border-radius:7px;padding:5px;cursor:pointer}.emoji-choice:hover{background:#0d3c29}
+.replying{display:none;padding:8px 17px;background:#071b14;border-top:1px solid #153e2d;color:#a8bbb1;font-size:11px}.replying b{color:#fff}.replying button{float:right;border:0;background:transparent;color:#7dfb9b;cursor:pointer}
+.empty-chat{text-align:center;padding:100px 20px;color:#82958b}.empty-chat strong{display:block;color:#d9e8df;font-size:18px;margin-bottom:6px}
+
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
 <header class="topbar">
-  <div class="brand">
-    <img src="../assets/img/logo.png" alt="" onerror="this.style.display='none'">
-    <div><strong>TUBAL <span style="color:#2eff7a">HUB</span></strong><small>PLAY • SHARE • CONNECT</small></div>
-  </div>
+  <div class="brand"><div><strong>TUBAL <span style="color:#2eff7a">HUB</span></strong><small>PLAY • SHARE • CONNECT</small></div></div>
   <nav class="topnav">
-    <a href="/">Home</a><a href="/games">Games</a><a href="/community">Community</a><a href="/news">News</a><a href="/events">Events</a>
-    <a class="active" href="#">Global Chat</a>
+    <a href="../index.html">Home</a><a href="./games.html">Games</a><a href="./community.html">Community</a><a href="./news.html">News</a><a href="./events.html">Events</a>
+    <a class="active" href="./chat.html">Global Chat</a>
   </nav>
   <div class="profile">
     <div class="avatar" id="profileAvatar">T</div>
@@ -26,22 +153,21 @@
 <div class="layout">
   <aside class="sidebar">
     <div class="side">
-      <a href="/"><span class="ico">🏠</span> Home</a>
-      <a href="/games"><span class="ico">🎮</span> Games</a>
-      <a href="/community"><span class="ico">👥</span> Community</a>
-      <a href="/news"><span class="ico">📰</span> News</a>
-      <a href="/events"><span class="ico">📅</span> Events</a>
-      <a href="/gallery"><span class="ico">🖼️</span> Gallery</a>
-      <a href="/stream"><span class="ico">📡</span> Stream</a>
-      <a class="active" href="#"><span class="ico">💬</span> Global Chat</a>
-      <a href="/profile"><span class="ico">👤</span> Profile</a>
-      <a href="/settings"><span class="ico">⚙️</span> Settings</a>
+      <a href="../index.html"><span class="ico">🏠</span> Home</a>
+      <a href="./games.html"><span class="ico">🎮</span> Games</a>
+      <a href="./community.html"><span class="ico">👥</span> Community</a>
+      <a href="./news.html"><span class="ico">📰</span> News</a>
+      <a href="./events.html"><span class="ico">📅</span> Events</a>
+      <a href="./gallery.html"><span class="ico">🖼️</span> Gallery</a>
+      <a href="./stream.html"><span class="ico">📡</span> Stream</a>
+      <a class="active" href="./chat.html"><span class="ico">💬</span> Global Chat</a>
+      <a href="./profile.html"><span class="ico">👤</span> Profile</a>
+      <a href="./settings.html"><span class="ico">⚙️</span> Settings</a>
     </div>
     <div class="quote">Good Games<br>Good People<br>Brighter Tomorrow 🍃</div>
   </aside>
 
   <main class="main">
-    <!-- HERO - Kamukha ng picture mo -->
     <div class="hero">
       <div class="hero-bg"></div>
       <div class="hero-mountains"></div>
@@ -65,20 +191,15 @@
       <div class="right-online"><span class="live-dot"></span> <span id="onlineCount">0</span> Online</div>
     </div>
 
-    <!-- LOGIN LOCK -->
     <div id="lockWrap" class="lock-wrap">
       <div class="lock-card"><div class="lock-icon">🔒</div><h2>Login Required</h2><p>Please login to join TUBAL HUB Global Chat. All messages are live from Firestore.</p>
-      <div class="lock-actions"><a class="login" href="/login">Login</a><a class="signup" href="/signup">Sign Up</a></div></div>
+      <div class="lock-actions"><a class="login" href="./login.html">Login</a><a class="signup" href="./signup.html">Sign Up</a></div></div>
     </div>
 
-    <!-- CONTENT GRID - CHAT LEFT + ONLINE SA GILID RIGHT -->
     <div id="content" class="chat-grid">
       <div class="panel chat-panel">
         <div class="chat-head">
-          <div class="chat-title">
-            <div class="globe" style="width:48px;height:48px;font-size:20px">#</div>
-            <div><h2>Global Chat</h2><p>Talk about anything! Games, life, ideas, or just say hi 👋</p></div>
-          </div>
+          <div class="chat-title"><div class="globe" style="width:48px;height:48px;font-size:20px">#</div><div><h2>Global Chat</h2><p>Talk about anything! Games, life, ideas, or just say hi 👋</p></div></div>
           <div class="count" id="globalMessageCount">0</div>
         </div>
         <div id="messages" class="messages"></div>
@@ -96,14 +217,12 @@
           <div id="emojiPicker" class="picker">
             <div class="emoji-grid">
               <button type="button" class="emoji-choice" data-emoji="😀">😀</button><button type="button" class="emoji-choice" data-emoji="😂">😂</button><button type="button" class="emoji-choice" data-emoji="😍">😍</button><button type="button" class="emoji-choice" data-emoji="🔥">🔥</button><button type="button" class="emoji-choice" data-emoji="👋">👋</button><button type="button" class="emoji-choice" data-emoji="🎮">🎮</button><button type="button" class="emoji-choice" data-emoji="💚">💚</button><button type="button" class="emoji-choice" data-emoji="✨">✨</button>
-              <button type="button" class="emoji-choice" data-emoji="🙏">🙏</button><button type="button" class="emoji-choice" data-emoji="👍">👍</button><button type="button" class="emoji-choice" data-emoji="😎">😎</button><button type="button" class="emoji-choice" data-emoji="🤝">🤝</button><button type="button" class="emoji-choice" data-emoji="🎉">🎉</button><button type="button" class="emoji-choice" data-emoji="❤️">❤️</button><button type="button" class="emoji-choice" data-emoji="GG">GG</button><button type="button" class="emoji-choice" data-emoji="WP">WP</button>
             </div>
           </div>
         </form>
         <div id="statusMsg" class="status-msg">Live • Connecting...</div>
       </div>
 
-      <!-- RIGHT - ONLINE NASA GILID - LIVE DATA -->
       <div class="right">
         <div class="panel">
           <div class="panel-title"><h3><span class="dot"></span> Online Members (<span id="onlineMembers">0</span>)</h3><span class="view">Live</span></div>
@@ -130,205 +249,49 @@
     </div>
   </main>
 </div>
-
-<!-- ORIGINAL FIREBASE LOGIC - NO FAKE -->
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, collection, query, orderBy, limit, onSnapshot, addDoc, serverTimestamp, where, doc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+import { app, auth } from "../assets/js/firebase-config.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, query, orderBy, limit, onSnapshot, doc, setDoc, getDoc, deleteDoc, serverTimestamp, where, updateDoc } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-storage.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyA5Z2vNqQ5Q5Q5Q5Q5Q5Q5Q5Q5Q5Q5Q5Q5Q",
-  authDomain: "tubal-hub.firebaseapp.com",
-  projectId: "tubal-hub",
-  storageBucket: "tubal-hub.appspot.com",
-  messagingSenderId: "123456789",
-  appId: "1:123456789:web:abcdef"
-};
-// NOTE: Palitan mo ng real config mo galing sa original file. Kinopya ko structure lang.
+const db=getFirestore(app), storage=getStorage(app);
+const lock=document.getElementById('chatLock'),content=document.getElementById('chatContent'),messages=document.getElementById('messages'),form=document.getElementById('chatForm'),input=document.getElementById('messageInput'),sendButton=document.getElementById('sendButton'),statusEl=document.getElementById('chatStatus'),memberList=document.getElementById('memberList'),onlineCount=document.getElementById('onlineCount'),onlineMembers=document.getElementById('onlineMembers'),globalMessageCount=document.getElementById('globalMessageCount'),replyingBar=document.getElementById('replyingBar'),replyingName=document.getElementById('replyingName'),cancelReply=document.getElementById('cancelReply'),emojiPicker=document.getElementById('emojiPicker');
+let currentUser=null,stopMessages=null,heartbeatTimer=null,stopPresence=null,stopReactions=null,stopReplies=null,replyTarget=null,lastMessageTime=0,reactionState={};
+const emojis=['😀','😂','😍','🥰','😎','😭','😡','😮','👍','👎','❤️','🔥','💯','🎮','🎉','👏','🤣','🤔','😅','🙌','💚','✨','👀','🙏','🥳','😴','🤝','🚀','💀','😇','😱','🤩','💪','🌿','⭐','🎯','🏆','❤️‍🔥','🫶','😊'];
 
-let app, auth, db, storage;
-try{
-  app = initializeApp(firebaseConfig);
-  auth = getAuth(app);
-  db = getFirestore(app);
-  storage = getStorage(app);
-}catch(e){console.warn("Firebase init - lagay mo real config mo", e);}
-
-const messages = document.getElementById('messages');
-const memberList = document.getElementById('memberList');
-const onlineCount = document.getElementById('onlineCount');
-const onlineMembers = document.getElementById('onlineMembers');
-const globalMessageCount = document.getElementById('globalMessageCount');
-const roomCountGlobal = document.getElementById('roomCountGlobal');
-const statusMsg = document.getElementById('statusMsg');
-const input = document.getElementById('messageInput');
-const sendButton = document.getElementById('sendButton');
-const form = document.getElementById('composerForm');
-const lock = document.getElementById('lockWrap');
-const content = document.getElementById('content');
-const emojiPicker = document.getElementById('emojiPicker');
-const replying = document.getElementById('replying');
-const replyingTo = document.getElementById('replyingTo');
-const replyingText = document.getElementById('replyingText');
-const cancelReply = document.getElementById('cancelReply');
-
-let currentUser=null, stopMessages=null, stopPresence=null, stopReactions=null, stopReplies=null, heartbeatTimer=null, lastMessageTime=0, replyTarget=null;
-
-function esc(s){const d=document.createElement('div');d.textContent=s||'';return d.innerHTML;}
-function initials(n){return (n||'T').split(' ').map(x=>x[0]).join('').slice(0,2).toUpperCase();}
-function timeText(t){try{const d=t?.toDate?t.toDate():new Date(t);return d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}catch{return ''}}
-function isRealUser(){return currentUser && !currentUser.isAnonymous;}
-function setStatus(t,e){if(statusMsg){statusMsg.textContent=t;statusMsg.className=e?'status-msg error':'status-msg';}}
-function avatarHtml(u,cls){const c=cls||'msg-avatar';if(u.photoURL)return `<div class="${c}"><img src="${esc(u.photoURL)}" alt=""></div>`;return `<div class="${c}">${esc(initials(u.displayName||u.name||'M'))}</div>`;}
-function clearReply(){replyTarget=null;replying.style.display='none';}
-function startReply(id,name,text){replyTarget={messageId:id};replyingTo.textContent=name;replyingText.textContent=text.slice(0,80);replying.style.display='block';input.focus();}
-
-async function updatePresence(user,online){
-  if(!db||!user)return;
-  const refDoc=doc(db,'presence',user.uid);
-  if(online){await setDoc(refDoc,{uid:user.uid,displayName:user.displayName||user.email?.split('@')[0]||'Member',photoURL:user.photoURL||'',online:true,lastSeen:Date.now()},{merge:true});}
-  else{try{await deleteDoc(refDoc);}catch{}}
-}
-
+document.getElementById('emojiGrid').innerHTML=emojis.map(e=>`<button type="button" class="emoji-choice" data-emoji="${e}">${e}</button>`).join('');
+function esc(v){const d=document.createElement('div');d.textContent=v??'';return d.innerHTML}function initials(n){return(n||'Member').trim().split(/\s+/).slice(0,2).map(x=>x[0]).join('').toUpperCase()||'M'}function avatarHtml(u,cls='msg-avatar'){return u.photoURL?`<div class="${cls}"><img src="${esc(u.photoURL)}" alt=""></div>`:`<div class="${cls}">${esc(initials(u.displayName||u.email))}</div>`}function timeText(ts){return ts?.toDate?ts.toDate().toLocaleTimeString([], {hour:'numeric',minute:'2-digit'}):'Sending...'}function setStatus(t,error=false){statusEl.textContent=t;statusEl.classList.toggle('error',error)}function isRealUser(u=currentUser){return !!u&&!u.isAnonymous}
+async function updatePresence(user,online=true){if(!isRealUser(user))return;const profile={uid:user.uid,displayName:user.displayName||user.email?.split('@')[0]||'Member',email:user.email||'',photoURL:user.photoURL||''};await setDoc(doc(db,'presence',user.uid),{...profile,online,lastSeen:Date.now()},{merge:true});await setDoc(doc(db,'users',user.uid),{...profile,lastSeen:serverTimestamp()},{merge:true})}
+function setReplyTarget(messageId,name,preview){replyTarget={messageId,name,preview};replyingName.textContent=name;replyingBar.style.display='block';input.focus()}
+function clearReply(){replyTarget=null;replyingBar.style.display='none'}
+function reactionHtml(messageId){const counts=reactionState[messageId]||{};return Object.entries(counts).filter(([,n])=>n>0).map(([e,n])=>`<button type="button" class="reaction-chip" data-message="${esc(messageId)}" data-react="${esc(e)}">${e} ${n}</button>`).join('')}
 function renderMessage(id,data){
-  const div=document.createElement('div');div.className='msg'+(data.uid===currentUser?.uid?' me':'');
-  const isAdmin=(data.displayName||'').toLowerCase().includes('rr_tubal')||data.email?.includes('admin');
-  let mediaHtml='';
-  if(data.mediaUrl){mediaHtml=`<img class="media" src="${esc(data.mediaUrl)}" loading="lazy">`;}
-  div.innerHTML=`
-    ${avatarHtml(data,'msg-avatar')}
-    <div class="msg-body">
-      <div class="msg-meta"><b>${esc(data.displayName||data.name||'Member')}</b> ${isAdmin?'<span class="admin">ADMIN</span>':''} <span class="time">${esc(timeText(data.createdAt))}</span></div>
-      <div class="message-content"><div class="bubble">${esc(data.text||'')}${mediaHtml?'<div style="margin-top:6px">'+mediaHtml+'</div>':''}</div></div>
-      <div class="message-actions"><button class="action-btn" onclick="this.closest('.msg').querySelector('.reply-composer').style.display='flex'">↩ Reply</button></div>
-      <div id="replies-${id}" class="reply-box"></div>
-      <div class="reply-composer" id="composer-${id}" style="display:none"><input placeholder="Write a reply..."><button>Send</button></div>
-    </div>`;
-  const comp=div.querySelector('.reply-composer');
-  comp.querySelector('button').onclick=async()=>{
-    const t=comp.querySelector('input').value.trim();if(!t)return;
-    const { addDoc: add } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
-    await addDoc(collection(db,'globalChatReplies'),{messageId:id,uid:currentUser.uid,displayName:currentUser.displayName||'Member',text:t,createdAt:serverTimestamp()});
-    comp.querySelector('input').value='';comp.style.display='none';
-  };
-  return div;
+ const me=currentUser&&data.uid===currentUser.uid, user={displayName:data.displayName||data.name,email:data.email,photoURL:data.photoURL};const row=document.createElement('div');row.className='msg'+(me?' me':'');row.dataset.id=id;
+ let body='';if(data.type==='image'||data.type==='gif'){body=`<img class="media" src="${esc(data.mediaUrl||'')}" alt="${data.type==='gif'?'GIF':'Image'}" loading="lazy">${data.text?`<div class="file-label">${esc(data.text)}</div>`:''}`}else body=`<div class="bubble">${esc(data.text)}</div>`;
+ row.innerHTML=`${avatarHtml(user)}<div class="msg-body"><div class="msg-meta"><b>${esc(data.displayName||data.name||data.email?.split('@')[0]||'Member')}</b>${me?'<span class="admin">YOU</span>':''}${data.isAdmin?'<span class="admin">ADMIN</span>':''}<span class="time">${esc(timeText(data.createdAt))}</span></div>${data.replyTo?`<div class="file-label">↪ Replying to ${esc(data.replyTo.name||'member')}: ${esc(data.replyTo.preview||'')}</div>`:''}<div class="message-content">${body}<button type="button" class="inline-react-btn" title="React to this message" aria-label="React to this message">😊</button></div><div class="reaction-bar">${reactionHtml(id)}</div><div class="message-actions"><button type="button" class="action-btn reply-btn">↩ Reply</button></div><div class="reply-box" id="replies-${esc(id)}"></div></div>`;
+ row.querySelector('.reply-btn').addEventListener('click',()=>setReplyTarget(id,data.displayName||data.name||'Member',String(data.text||data.type||'').slice(0,100)));
+ row.querySelector('.inline-react-btn').addEventListener('click',e=>openReactionMenu(e.currentTarget,id));
+ row.querySelectorAll('.reaction-chip').forEach(btn=>btn.addEventListener('click',()=>toggleReaction(id,btn.dataset.react)));
+ return row;
 }
+function openReactionMenu(button,messageId){const existing=document.querySelector('.inline-reactions');if(existing)existing.remove();const box=document.createElement('div');box.className='inline-reactions';box.style.cssText='position:fixed;z-index:50;background:#061713;border:1px solid #1d7550;border-radius:12px;padding:7px;box-shadow:0 15px 40px #000b;display:flex;gap:3px;flex-wrap:wrap;max-width:260px';box.innerHTML=emojis.slice(0,18).map(e=>`<button type="button" class="emoji-choice" data-e="${e}">${e}</button>`).join('');document.body.appendChild(box);const r=button.getBoundingClientRect();box.style.left=Math.min(r.left,innerWidth-270)+'px';box.style.top=Math.max(10,r.top-52)+'px';box.querySelectorAll('[data-e]').forEach(b=>b.onclick=()=>{toggleReaction(messageId,b.dataset.e);box.remove()});setTimeout(()=>document.addEventListener('click',function close(ev){if(!box.contains(ev.target)&&ev.target!==button){box.remove();document.removeEventListener('click',close)}},{once:false}),0)}
+async function toggleReaction(messageId,emoji){if(!isRealUser())return;const id=`${messageId}_${currentUser.uid}`;const r=doc(db,'globalChatReactions',id);const snap=await getDoc(r);let arr=snap.exists()?Array.isArray(snap.data().reactions)?snap.data().reactions:[]:[];arr=arr.includes(emoji)?arr.filter(x=>x!==emoji):[...arr,emoji];if(arr.length)await setDoc(r,{messageId,uid:currentUser.uid,reactions:arr,updatedAt:serverTimestamp()},{merge:true});else if(snap.exists())await deleteDoc(r)}
+function subscribeReactions(){if(stopReactions)stopReactions();const q=query(collection(db,'globalChatReactions'),limit(1000));stopReactions=onSnapshot(q,snap=>{reactionState={};snap.forEach(d=>{const x=d.data();if(!reactionState[x.messageId])reactionState[x.messageId]={};(x.reactions||[]).forEach(e=>reactionState[x.messageId][e]=(reactionState[x.messageId][e]||0)+1)});document.querySelectorAll('.msg').forEach(row=>{const id=row.dataset.id;const bar=row.querySelector('.reaction-bar');if(bar)bar.innerHTML=reactionHtml(id);bar?.querySelectorAll('.reaction-chip').forEach(btn=>btn.addEventListener('click',()=>toggleReaction(id,btn.dataset.react)))});},err=>console.error('Reaction error',err))}
+function subscribeReplies(){if(stopReplies)stopReplies();const q=query(collection(db,'globalChatReplies'),orderBy('createdAt','asc'),limit(500));stopReplies=onSnapshot(q,snap=>{document.querySelectorAll('.reply-box').forEach(x=>x.innerHTML='');snap.forEach(d=>{const x=d.data(),box=document.getElementById(`replies-${d.data().messageId}`);if(!box)return;const item=document.createElement('div');item.className='reply-item';item.innerHTML=`<div class="reply-meta">${esc(x.displayName||'Member')} • ${esc(timeText(x.createdAt))}</div><div class="reply-text">${esc(x.text)}</div>`;box.appendChild(item)});},err=>console.error('Reply error',err))}
+function subscribeMessages(){if(stopMessages)stopMessages();const q=query(collection(db,'globalChats'),orderBy('createdAt','asc'),limit(100));stopMessages=onSnapshot(q,snap=>{messages.innerHTML='';if(snap.empty)messages.innerHTML='<div class="empty-chat"><strong>No messages yet.</strong>Start the first conversation in Global Chat.</div>';snap.forEach(d=>messages.appendChild(renderMessage(d.id,d.data())));globalMessageCount.textContent=snap.size;messages.scrollTop=messages.scrollHeight;setStatus(`Live • ${snap.size} message${snap.size===1?'':'s'} loaded from Global Chat`);},err=>{console.error(err);setStatus('Could not load Global Chat. Check Firestore Rules.',true)})}
+function subscribePresence(){if(stopPresence)stopPresence();const q=query(collection(db,'presence'),where('online','==',true));stopPresence=onSnapshot(q,snap=>{const cutoff=Date.now()-90000,m=[];snap.forEach(d=>{const x=d.data(),last=typeof x.lastSeen==='number'?x.lastSeen:(x.lastSeen?.toDate?.()?.getTime?.()||0);if(last>=cutoff)m.push(x)});m.sort((a,b)=>String(a.displayName||'').localeCompare(String(b.displayName||'')));onlineCount.textContent=m.length;onlineMembers.textContent=m.length;memberList.innerHTML='';if(!m.length){memberList.innerHTML='<div class="empty-side">No members are online right now.</div>';return}m.slice(0,20).forEach(x=>{const div=document.createElement('div');div.className='member';div.dataset.uid=x.uid;div.innerHTML=`${avatarHtml(x,'mini')}<div class="member-info"><b>${esc(x.displayName||'Member')}</b><span>● Online</span></div>${x.uid===currentUser?.uid?'<span class="you-tag">YOU</span>':''}`;memberList.appendChild(div)})},err=>{console.error(err);memberList.innerHTML='<div class="empty-side">Online status unavailable. Check Firestore Rules.</div>'})}
+async function uploadMedia(file,type){if(!isRealUser())throw new Error('LOGIN_REQUIRED');if(!file)return;const max=8*1024*1024;if(file.size>max)throw new Error('FILE_TOO_LARGE');const safe=file.name.replace(/[^a-zA-Z0-9._-]/g,'_');const path=`global-chat/${currentUser.uid}/${Date.now()}_${safe}`;const storageRef=ref(storage,path);await uploadBytes(storageRef,file,{contentType:file.type});return {url:await getDownloadURL(storageRef),path}}
+async function sendMessage(payload){if(!isRealUser())throw new Error('LOGIN_REQUIRED');const now=Date.now();if(now-lastMessageTime<1500)throw new Error('RATE_LIMIT');lastMessageTime=now;await addDoc(collection(db,'globalChats'),{channel:'global-chat',uid:currentUser.uid,displayName:currentUser.displayName||currentUser.email?.split('@')[0]||'Member',name:currentUser.displayName||currentUser.email?.split('@')[0]||'Member',email:currentUser.email||'',photoURL:currentUser.photoURL||'',createdAt:serverTimestamp(),...payload})}
+async function sendReply(text){if(!replyTarget||!isRealUser())return;await addDoc(collection(db,'globalChatReplies'),{messageId:replyTarget.messageId,uid:currentUser.uid,displayName:currentUser.displayName||currentUser.email?.split('@')[0]||'Member',email:currentUser.email||'',text,createdAt:serverTimestamp()});clearReply()}
 
-function subscribeReactions(){}
-function subscribeReplies(){
-  if(stopReplies)stopReplies();
-  const q=query(collection(db,'globalChatReplies'),orderBy('createdAt','asc'),limit(500));
-  stopReplies=onSnapshot(q,snap=>{
-    document.querySelectorAll('.reply-box').forEach(x=>x.innerHTML='');
-    snap.forEach(d=>{
-      const x=d.data(),box=document.getElementById(`replies-${x.messageId}`);
-      if(!box)return;
-      const item=document.createElement('div');item.className='reply-item';
-      item.innerHTML=`<div class="reply-meta">${esc(x.displayName)} • ${esc(timeText(x.createdAt))}</div><div class="reply-text">${esc(x.text)}</div>`;
-      box.appendChild(item);
-    });
-  });
-}
-function subscribeMessages(){
-  if(stopMessages)stopMessages();
-  const q=query(collection(db,'globalChats'),orderBy('createdAt','asc'),limit(100));
-  stopMessages=onSnapshot(q,snap=>{
-    messages.innerHTML='';
-    if(snap.empty)messages.innerHTML='<div class="empty-chat"><strong>No messages yet.</strong>Start the first conversation in Global Chat.</div>';
-    snap.forEach(d=>messages.appendChild(renderMessage(d.id,d.data())));
-    globalMessageCount.textContent=snap.size;
-    if(roomCountGlobal)roomCountGlobal.textContent=snap.size;
-    messages.scrollTop=messages.scrollHeight;
-    setStatus(`Live • ${snap.size} message${snap.size===1?'':'s'} loaded from Global Chat`);
-  },err=>{console.error(err);setStatus('Could not load Global Chat. Check Firestore Rules.',true)});
-}
-function subscribePresence(){
-  if(stopPresence)stopPresence();
-  const q=query(collection(db,'presence'),where('online','==',true));
-  stopPresence=onSnapshot(q,snap=>{
-    const cutoff=Date.now()-90000,m=[];
-    snap.forEach(d=>{
-      const x=d.data(),last=typeof x.lastSeen==='number'?x.lastSeen:(x.lastSeen?.toDate?.()?.getTime?.()||0);
-      if(last>=cutoff)m.push(x);
-    });
-    m.sort((a,b)=>String(a.displayName||'').localeCompare(String(b.displayName||'')));
-    onlineCount.textContent=m.length;
-    onlineMembers.textContent=m.length;
-    memberList.innerHTML='';
-    if(!m.length){memberList.innerHTML='<div class="empty-side">No members are online right now.</div>';return;}
-    m.slice(0,50).forEach(x=>{
-      const div=document.createElement('div');div.className='member';div.dataset.uid=x.uid;
-      div.innerHTML=`${avatarHtml(x,'mini')}<div class="member-info"><b>${esc(x.displayName||'Member')}</b><span>● Online</span></div>${x.uid===currentUser?.uid?'<span class="you-tag">YOU</span>':''}`;
-      memberList.appendChild(div);
-    });
-  },err=>{console.error(err);memberList.innerHTML='<div class="empty-side">Online status unavailable. Check Firestore Rules.</div>';});
-}
-async function uploadMedia(file){
-  if(!isRealUser())throw new Error('LOGIN_REQUIRED');
-  const max=8*1024*1024;if(file.size>max)throw new Error('FILE_TOO_LARGE');
-  const safe=file.name.replace(/[^a-zA-Z0-9._-]/g,'_');
-  const path=`global-chat/${currentUser.uid}/${Date.now()}_${safe}`;
-  const storageRef=ref(storage,path);
-  await uploadBytes(storageRef,file,{contentType:file.type});
-  return {url:await getDownloadURL(storageRef),path};
-}
-async function sendMessage(payload){
-  if(!isRealUser())throw new Error('LOGIN_REQUIRED');
-  const now=Date.now();if(now-lastMessageTime<1500)throw new Error('RATE_LIMIT');lastMessageTime=now;
-  await addDoc(collection(db,'globalChats'),{channel:'global-chat',uid:currentUser.uid,displayName:currentUser.displayName||currentUser.email?.split('@')[0]||'Member',name:currentUser.displayName||currentUser.email?.split('@')[0]||'Member',email:currentUser.email||'',photoURL:currentUser.photoURL||'',createdAt:serverTimestamp(),...payload});
-}
+document.getElementById('imageBtn').onclick=()=>document.getElementById('imageInput').click();document.getElementById('gifBtn').onclick=()=>document.getElementById('gifInput').click();document.getElementById('imageInput').onchange=async e=>{const f=e.target.files?.[0];if(!f)return;sendButton.disabled=true;try{const x=await uploadMedia(f,'image');await sendMessage({type:'image',mediaUrl:x.url,storagePath:x.path,text:''})}catch(err){console.error(err);alert(err.message==='FILE_TOO_LARGE'?'Maximum file size is 8 MB.':'Image upload failed. Make sure Firebase Storage is enabled.')}finally{sendButton.disabled=false;e.target.value='';input.focus()}};document.getElementById('gifInput').onchange=async e=>{const f=e.target.files?.[0];if(!f)return;sendButton.disabled=true;try{const x=await uploadMedia(f,'gif');await sendMessage({type:'gif',mediaUrl:x.url,storagePath:x.path,text:''})}catch(err){console.error(err);alert(err.message==='FILE_TOO_LARGE'?'Maximum file size is 8 MB.':'GIF upload failed. Make sure Firebase Storage is enabled.')}finally{sendButton.disabled=false;e.target.value='';input.focus()}};
+document.getElementById('emojiBtn').onclick=()=>{emojiPicker.style.display=emojiPicker.style.display==='block'?'none':'block'};document.querySelectorAll('.emoji-choice').forEach(b=>b.onclick=()=>{input.value+=b.dataset.emoji||b.textContent;input.focus();emojiPicker.style.display='none'});cancelReply.onclick=clearReply;
+form.addEventListener('submit',async e=>{e.preventDefault();const text=input.value.trim();if(!text&&!replyTarget)return;if(!isRealUser()){alert('Please login first.');return}sendButton.disabled=true;try{if(replyTarget)await sendReply(text);else await sendMessage({type:'text',text});input.value='';}catch(err){console.error(err);alert(err.message==='RATE_LIMIT'?'Please wait a moment before sending another message.': 'Message was not sent. Check Firebase Firestore Rules.')}finally{sendButton.disabled=false;input.focus()}});
 
-document.getElementById('imageBtn').onclick=()=>document.getElementById('imageInput').click();
-document.getElementById('gifBtn').onclick=()=>document.getElementById('gifInput').click();
-document.getElementById('imageInput').onchange=async e=>{
-  const f=e.target.files?.[0];if(!f)return;sendButton.disabled=true;
-  try{const x=await uploadMedia(f);await sendMessage({type:'image',mediaUrl:x.url,storagePath:x.path,text:''});}
-  catch(err){alert(err.message==='FILE_TOO_LARGE'?'Max 8MB':'Upload failed');}
-  finally{sendButton.disabled=false;e.target.value='';input.focus();}
-};
-document.getElementById('gifInput').onchange=async e=>{
-  const f=e.target.files?.[0];if(!f)return;sendButton.disabled=true;
-  try{const x=await uploadMedia(f);await sendMessage({type:'gif',mediaUrl:x.url,storagePath:x.path,text:''});}
-  catch(err){alert(err.message==='FILE_TOO_LARGE'?'Max 8MB':'GIF upload failed');}
-  finally{sendButton.disabled=false;e.target.value='';input.focus();}
-};
-document.getElementById('emojiBtn').onclick=()=>{emojiPicker.style.display=emojiPicker.style.display==='block'?'none':'block';};
-document.querySelectorAll('.emoji-choice').forEach(b=>b.onclick=()=>{input.value+=b.dataset.emoji||b.textContent;input.focus();emojiPicker.style.display='none';});
-cancelReply.onclick=clearReply;
-
-form.addEventListener('submit',async e=>{
-  e.preventDefault();const text=input.value.trim();if(!text)return;
-  if(!isRealUser()){alert('Please login first.');return;}
-  sendButton.disabled=true;
-  try{await sendMessage({type:'text',text});input.value='';}
-  catch(err){alert(err.message==='RATE_LIMIT'?'Wait a moment':'Not sent. Check Firestore Rules.');}
-  finally{sendButton.disabled=false;input.focus();}
-});
-
-if(auth){
-onAuthStateChanged(auth,async user=>{
-  if(!user||user.isAnonymous){
-    currentUser=null;lock.style.display='block';content.style.display='none';
-    content.setAttribute('aria-hidden','true');
-    if(stopMessages)stopMessages();if(stopPresence)stopPresence();if(stopReactions)stopReactions();if(stopReplies)stopReplies();
-    if(heartbeatTimer)clearInterval(heartbeatTimer);
-    document.getElementById('profileName').textContent='TUBAL HUB';document.getElementById('profileStatus').textContent='● Login required';return;
-  }
-  currentUser=user;lock.style.display='none';content.style.display='grid';content.setAttribute('aria-hidden','false');
-  const name=user.displayName||user.email?.split('@')[0]||'Member';
-  document.getElementById('profileName').textContent=name;document.getElementById('profileStatus').textContent='● Online';
-  document.getElementById('profileAvatar').innerHTML=user.photoURL?`<img src="${esc(user.photoURL)}" alt="">`:esc(initials(name));
-  sendButton.disabled=false;input.disabled=false;
-  try{await updatePresence(user,true);}catch(e){console.error(e);}
-  subscribeMessages();subscribePresence();subscribeReplies();
-  if(heartbeatTimer)clearInterval(heartbeatTimer);
-  heartbeatTimer=setInterval(()=>updatePresence(currentUser,true).catch(()=>{}),30000);
-});
-document.addEventListener('visibilitychange',()=>{if(currentUser&&!document.hidden)updatePresence(currentUser,true).catch(()=>{});});
-window.addEventListener('beforeunload',()=>{if(currentUser)updatePresence(currentUser,false).catch(()=>{});});
-}
+onAuthStateChanged(auth,async user=>{if(!user||user.isAnonymous){currentUser=null;lock.style.display='block';content.style.display='none';content.setAttribute('aria-hidden','true');if(stopMessages)stopMessages();if(stopPresence)stopPresence();if(stopReactions)stopReactions();if(stopReplies)stopReplies();if(heartbeatTimer)clearInterval(heartbeatTimer);document.getElementById('profileName').textContent='TUBAL HUB';document.getElementById('profileStatus').textContent='● Login required';return}currentUser=user;lock.style.display='none';content.style.display='grid';content.setAttribute('aria-hidden','false');const name=user.displayName||user.email?.split('@')[0]||'Member';document.getElementById('profileName').textContent=name;document.getElementById('profileStatus').textContent='● Online';document.getElementById('profileAvatar').innerHTML=user.photoURL?`<img src="${esc(user.photoURL)}" alt="">`:esc(initials(name));sendButton.disabled=false;input.disabled=false;try{await updatePresence(user,true)}catch(e){console.error(e)}subscribeMessages();subscribePresence();subscribeReactions();subscribeReplies();if(heartbeatTimer)clearInterval(heartbeatTimer);heartbeatTimer=setInterval(()=>updatePresence(currentUser,true).catch(()=>{}),30000)});
+document.addEventListener('visibilitychange',()=>{if(currentUser&&!document.hidden)updatePresence(currentUser,true).catch(()=>{})});window.addEventListener('beforeunload',()=>{if(currentUser)updatePresence(currentUser,false).catch(()=>{})});
 </script>
+<script type="module" src="../assets/js/video-call.js"></script>
 </body>
 </html>
