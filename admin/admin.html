@@ -1,243 +1,49 @@
 <!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>TUBAL ADMIN | Control Center</title>
-<link rel="stylesheet" href="admin-neon.css">
-</head>
-<body>
-<div class="admin-shell" id="app" hidden>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>TUBAL HUB | Admin Control</title><link rel="stylesheet" href="admin-neon.css"></head>
+<body><div class="admin-shell" id="app" hidden>
+<aside class="sidebar"><a class="brand" href="../index.html"><img src="../assets/images/tubal-hub-logo.png" alt=""><b>TUBAL HUB</b></a><div class="side-label">ADMIN CONTROL</div>
+<nav><a class="active" href="#dashboard">⌁ <span>Dashboard</span></a><a href="#content">▣ <span>Content</span></a><a href="#members">♙ <span>Members</span></a><a href="#chat">◉ <span>Global Chat</span></a><a href="../index.html">↗ <span>Main Website</span></a></nav>
+<div class="sidebar-bottom"><div class="online-dot"></div> Firebase Protected</div></aside>
+<main class="dashboard"><header class="topbar"><div><div class="crumb">TUBAL HUB / ADMIN</div><h1>Control Center</h1></div><div class="top-actions"><span id="adminEmail"></span><button id="logout">Sign Out</button></div></header>
+<section class="welcome" id="dashboard"><div><small>WELCOME BACK, ADMIN</small><h2>Control your <em>hub.</em></h2><p>Manage content, members and community activity from one protected panel.</p></div><div class="scan"><span></span><b>SECURE PANEL</b><small>FIREBASE AUTH</small></div></section>
+<section class="stats"><div class="stat"><span>NEWS</span><strong id="newsCount">0</strong><b>Firestore items</b></div><div class="stat"><span>ANNOUNCEMENTS</span><strong id="annCount">0</strong><b>Firestore items</b></div><div class="stat"><span>MEMBERS</span><strong id="memberCount">0</strong><b>Registered users</b></div><div class="stat"><span>CHAT</span><strong id="chatCount">0</strong><b>Recent messages</b></div></section>
 
-  <aside class="sidebar">
-    <a class="brand" href="../index.html">
-      <img src="../tubal-hub-logo.png" alt="TUBAL HUB">
-      <div><strong>TUBAL <em>ADMIN</em></strong><small>Manage • Grow • Community</small></div>
-    </a>
+<section class="panel" id="content"><div class="panel-head"><div><small>CONTENT CONTROL</small><h2>News</h2></div><span>FIRESTORE</span></div><div class="form-grid"><input id="nt" placeholder="News title"><input id="nd" placeholder="Date"><textarea id="nx" placeholder="Write your news content..."></textarea><button id="addNews">Publish News →</button></div><div id="newsList"></div></section>
+<section class="panel"><div class="panel-head"><div><small>PLATFORM CONTROL</small><h2>Announcements</h2></div><span>FIRESTORE</span></div><div class="form-grid"><input id="at" placeholder="Announcement title"><textarea id="ax" placeholder="Write your announcement..."></textarea><button id="addAnn">Publish Announcement →</button></div><div id="annList"></div></section>
 
-    <div class="admin-profile">
-      <img src="../tubal-hub-logo.png" alt="">
-      <div><b>RR_TUBAL</b><span><i></i> Super Admin</span></div>
-    </div>
-
-    <div class="side-label">CONTROL CENTER</div>
-    <nav>
-      <a class="active" href="#dashboard">⌂ <span>Dashboard</span></a>
-      <a href="#content">▤ <span>Posts &amp; Content</span></a>
-      <a href="#members">♙ <span>Users</span></a>
-      <a href="#chat">◉ <span>Global Chat</span></a>
-      <a href="#announcements">⚑ <span>Announcements</span></a>
-      <a href="../pages/news.html">▣ <span>News</span></a>
-      <a href="../index.html">↗ <span>Visit Website</span></a>
-    </nav>
-
-    <div class="sidebar-bottom">
-      <div><i class="online-dot"></i> Firebase Protected</div>
-      <small>TUBAL HUB ADMIN</small>
-    </div>
-  </aside>
-
-  <main class="dashboard">
-    <header class="topbar">
-      <div class="top-search">⌕ <input aria-label="Search" placeholder="Search users, posts, games, or settings..." disabled></div>
-      <div class="top-actions">
-        <a class="visit" href="../index.html">⌂ &nbsp; Visit Site</a>
-        <button id="logout" class="signout">Sign Out</button>
-        <span class="bell">♧</span>
-        <div class="admin-mini"><img src="../tubal-hub-logo.png" alt=""><span><b id="adminName">RR_TUBAL</b><small>● Super Admin</small></span></div>
-      </div>
-    </header>
-
-    <section class="hero-admin" id="dashboard">
-      <div class="hero-copy">
-        <div class="hero-kicker">TUBAL HUB / ADMIN CONTROL</div>
-        <h1>TUBAL <em>ADMIN</em> <span>♛</span></h1>
-        <h2>Control Today <b>•</b> Build a Better Community Tomorrow</h2>
-        <p>Manage your content, members and community activity from one protected workspace.</p>
-        <div class="hero-tags"><span>Manage</span><span>Create</span><span>Support</span><span>Grow</span></div>
-      </div>
-      <div class="hero-side">
-        <div class="date-card"><small>ADMIN PANEL</small><strong>CONTROL CENTER</strong><span><i></i> Firebase Online</span></div>
-        <div class="quote-card">“A better community starts with a better hub.” <b>◆</b></div>
-      </div>
-    </section>
-
-    <section class="stats">
-      <div class="stat stat-users"><div class="stat-icon">●●</div><div><small>Total Users</small><strong id="memberCount">0</strong><span>Registered members</span></div></div>
-      <div class="stat stat-posts"><div class="stat-icon">▤</div><div><small>Total Posts</small><strong id="newsCount">0</strong><span>Published news</span></div></div>
-      <div class="stat stat-comments"><div class="stat-icon">●</div><div><small>Total Comments</small><strong id="chatCount">0</strong><span>Recent chat messages</span></div></div>
-      <div class="stat stat-ann"><div class="stat-icon">⚑</div><div><small>Announcements</small><strong id="annCount">0</strong><span>Platform updates</span></div></div>
-    </section>
-
-    <section class="dashboard-grid">
-      <div class="panel growth-panel">
-        <div class="panel-head"><div><small>OVERVIEW</small><h2>Hub Activity</h2></div><span class="live-pill"><i></i> LIVE</span></div>
-        <div class="activity-bars">
-          <div><b>Members</b><span><i id="memberBar"></i></span><strong id="memberBarText">0</strong></div>
-          <div><b>News</b><span><i id="newsBar"></i></span><strong id="newsBarText">0</strong></div>
-          <div><b>Announcements</b><span><i id="annBar"></i></span><strong id="annBarText">0</strong></div>
-          <div><b>Chat</b><span><i id="chatBar"></i></span><strong id="chatBarText">0</strong></div>
-        </div>
-        <div class="activity-note">Live Firestore totals from your current TUBAL HUB data.</div>
-      </div>
-
-      <div class="panel quick-panel">
-        <div class="panel-head"><div><small>SHORTCUTS</small><h2>Quick Actions</h2></div><span>ADMIN</span></div>
-        <div class="quick-grid">
-          <button onclick="location.hash='content'"><b>▤</b><span>New Post</span></button>
-          <button onclick="location.hash='members'"><b>♙</b><span>Users</span></button>
-          <button onclick="location.hash='announcements'"><b>⚑</b><span>Announcement</span></button>
-          <button onclick="location.hash='chat'"><b>◉</b><span>Global Chat</span></button>
-          <button onclick="location.href='../pages/news.html'"><b>▣</b><span>View News</span></button>
-          <button onclick="location.href='../index.html'"><b>↗</b><span>Edit Website</span></button>
-        </div>
-      </div>
-
-      <div class="panel status-panel">
-        <div class="panel-head"><div><small>SYSTEM</small><h2>System Status</h2></div><span class="online-pill"><i></i> Operational</span></div>
-        <div class="status-row"><b>Website</b><span><i></i> Online</span></div>
-        <div class="status-row"><b>Firebase Auth</b><span><i></i> Online</span></div>
-        <div class="status-row"><b>Firestore</b><span><i></i> Connected</span></div>
-        <div class="status-row"><b>Global Chat</b><span><i></i> Protected</span></div>
-        <div class="status-row"><b>Admin Access</b><span><i></i> Verified</span></div>
-      </div>
-    </section>
-
-    <section class="content-grid" id="content">
-      <section class="panel content-panel">
-        <div class="panel-head"><div><small>CONTENT CONTROL</small><h2>News</h2></div><span>FIRESTORE</span></div>
-        <div class="form-grid">
-          <input id="nt" placeholder="News title">
-          <input id="nd" placeholder="Date">
-          <textarea id="nx" placeholder="Write your news content..."></textarea>
-          <button id="addNews">Publish News <b>→</b></button>
-        </div>
-        <div class="list-title">PUBLISHED NEWS</div>
-        <div id="newsList"></div>
-      </section>
-
-      <section class="panel content-panel" id="announcements">
-        <div class="panel-head"><div><small>PLATFORM CONTROL</small><h2>Announcements</h2></div><span>FIRESTORE</span></div>
-        <div class="form-grid">
-          <input id="at" placeholder="Announcement title">
-          <textarea id="ax" placeholder="Write your announcement..."></textarea>
-          <button id="addAnn">Publish Announcement <b>→</b></button>
-        </div>
-        <div class="list-title">PUBLISHED ANNOUNCEMENTS</div>
-        <div id="annList"></div>
-      </section>
-    </section>
-
-    <section class="panel members-panel" id="members">
-      <div class="panel-head"><div><small>MEMBER CONTROL</small><h2>Registered Members</h2></div><span>READ ONLY</span></div>
-      <div id="memberList" class="table-list"></div>
-    </section>
-
-    <section class="panel chat-panel" id="chat">
-      <div class="panel-head"><div><small>COMMUNITY MODERATION</small><h2>Global Chat</h2></div><span>DELETE CONTROL</span></div>
-      <div id="chatList"></div>
-    </section>
-
-    <div id="toast" class="toast"></div>
-    <footer>© 2026 TUBAL HUB <span>•</span> Admin Control Center <span>•</span> Firebase Protected</footer>
-  </main>
-</div>
-
-<div id="loading" class="loading"><div class="loading-logo">TUBAL <b>ADMIN</b></div><span>Checking administrator access…</span></div>
-
+<section class="panel" id="members"><div class="panel-head"><div><small>MEMBER CONTROL</small><h2>Registered Members</h2></div><span>READ ONLY</span></div><div id="memberList" class="table-list"></div></section>
+<section class="panel" id="chat"><div class="panel-head"><div><small>COMMUNITY MODERATION</small><h2>Global Chat</h2></div><span>DELETE CONTROL</span></div><div id="chatList"></div></section>
+<div id="toast" class="toast"></div><footer>© 2026 TUBAL HUB <span>•</span> Admin Control Center</footer></main></div>
+<div id="loading" class="loading">Checking administrator access…</div>
 <script type="module">
 import {auth} from "../assets/js/firebase-config.js";
 import {onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 import {getFirestore,collection,getDocs,addDoc,deleteDoc,doc,query,orderBy,limit,serverTimestamp} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
-
 const ADMIN_EMAIL="tubalrr@gmail.com",db=getFirestore(),$=id=>document.getElementById(id);
 let news=[],anns=[],members=[],chats=[];
-
-const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[c]));
-
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
 function toast(m){$("toast").textContent=m;$("toast").classList.add("show");setTimeout(()=>$("toast").classList.remove("show"),2600)}
-
-function setBar(id,textId,value,max){
-  $(textId).textContent=value;
-  $(id).style.width=max ? Math.max(5,Math.min(100,(value/max)*100))+"%" : "5%";
-}
-
 function render(){
-  $("newsCount").textContent=news.length;
-  $("annCount").textContent=anns.length;
-  $("memberCount").textContent=members.length;
-  $("chatCount").textContent=chats.length;
-
-  const max=Math.max(news.length,anns.length,members.length,chats.length,1);
-  setBar("memberBar","memberBarText",members.length,max);
-  setBar("newsBar","newsBarText",news.length,max);
-  setBar("annBar","annBarText",anns.length,max);
-  setBar("chatBar","chatBarText",chats.length,max);
-
-  $("newsList").innerHTML=news.map(x=>'<article class="item"><div><b>'+esc(x.title)+'</b><p>'+esc(x.text)+'</p><small>'+esc(x.date||"Latest")+'</small></div><button data-del-news="'+x.id+'">×</button></article>').join("")||'<div class="empty">No news yet.</div>';
-
-  $("annList").innerHTML=anns.map(x=>'<article class="item"><div><b>'+esc(x.title)+'</b><p>'+esc(x.text)+'</p></div><button data-del-ann="'+x.id+'">×</button></article>').join("")||'<div class="empty">No announcements yet.</div>';
-
-  $("memberList").innerHTML=members.map(x=>'<div class="member-row"><div class="member-main"><img src="'+esc(x.photoURL||"../tubal-hub-logo.png")+'" onerror="this.src=\'../tubal-hub-logo.png\'" alt=""><div><b>'+esc(x.displayName||x.email||"Member")+'</b><small>'+esc(x.email||x.uid||"")+'</small></div></div><span>REGISTERED</span></div>').join("")||'<div class="empty">No member profiles found.</div>';
-
-  $("chatList").innerHTML=chats.map(x=>'<article class="item"><div><b>'+esc(x.displayName||"Member")+'</b><p>'+esc(x.text||"")+'</p></div><button data-del-chat="'+x.id+'">×</button></article>').join("")||'<div class="empty">No chat messages found.</div>';
+ $("newsCount").textContent=news.length;$("annCount").textContent=anns.length;$("memberCount").textContent=members.length;$("chatCount").textContent=chats.length;
+ $("newsList").innerHTML=news.map(x=>'<article class="item"><div><b>'+esc(x.title)+'</b><p>'+esc(x.text)+'</p><small>'+esc(x.date||"Latest")+'</small></div><button data-del-news="'+x.id+'">×</button></article>').join("")||'<div class="empty">No news yet.</div>';
+ $("annList").innerHTML=anns.map(x=>'<article class="item"><div><b>'+esc(x.title)+'</b><p>'+esc(x.text)+'</p></div><button data-del-ann="'+x.id+'">×</button></article>').join("")||'<div class="empty">No announcements yet.</div>';
+ $("memberList").innerHTML=members.map(x=>'<div class="member-row"><div><b>'+esc(x.displayName||x.email||"Member")+'</b><small>'+esc(x.email||x.uid||"")+'</small></div><span>REGISTERED</span></div>').join("")||'<div class="empty">No member profiles found.</div>';
+ $("chatList").innerHTML=chats.map(x=>'<article class="item"><div><b>'+esc(x.displayName||"Member")+'</b><p>'+esc(x.text||"")+'</p></div><button data-del-chat="'+x.id+'">×</button></article>').join("")||'<div class="empty">No chat messages found.</div>';
 }
-
 async function load(){
-  try{
-    const [n,a,u,c]=await Promise.all([
-      getDocs(query(collection(db,"news"),orderBy("createdAt","desc"),limit(100))),
-      getDocs(query(collection(db,"announcements"),orderBy("createdAt","desc"),limit(100))),
-      getDocs(query(collection(db,"users"),limit(100))),
-      getDocs(query(collection(db,"globalChats"),orderBy("createdAt","desc"),limit(100)))
-    ]);
-    news=n.docs.map(d=>({id:d.id,...d.data()}));
-    anns=a.docs.map(d=>({id:d.id,...d.data()}));
-    members=u.docs.map(d=>({id:d.id,...d.data()}));
-    chats=c.docs.map(d=>({id:d.id,...d.data()}));
-    render();
-  }catch(e){toast("Firestore error: "+e.message);render()}
+ try{
+  const [n,a,u,c]=await Promise.all([
+   getDocs(query(collection(db,"news"),orderBy("createdAt","desc"),limit(100))),
+   getDocs(query(collection(db,"announcements"),orderBy("createdAt","desc"),limit(100))),
+   getDocs(query(collection(db,"users"),limit(100))),
+   getDocs(query(collection(db,"globalChats"),orderBy("createdAt","desc"),limit(100)))
+  ]);
+  news=n.docs.map(d=>({id:d.id,...d.data()}));anns=a.docs.map(d=>({id:d.id,...d.data()}));members=u.docs.map(d=>({id:d.id,...d.data()}));chats=c.docs.map(d=>({id:d.id,...d.data()}));render();
+ }catch(e){toast("Firestore error: "+e.message);render()}
 }
-
-$("addNews").onclick=async()=>{
-  const title=$("nt").value.trim(),text=$("nx").value.trim(),date=$("nd").value.trim()||"Latest";
-  if(!title||!text)return toast("Enter title and content.");
-  try{
-    await addDoc(collection(db,"news"),{title,text,date,createdAt:serverTimestamp(),createdBy:auth.currentUser.uid});
-    $("nt").value=$("nx").value=$("nd").value="";
-    await load();toast("News published.");
-  }catch(e){toast(e.message)}
-};
-
-$("addAnn").onclick=async()=>{
-  const title=$("at").value.trim(),text=$("ax").value.trim();
-  if(!title||!text)return toast("Enter title and content.");
-  try{
-    await addDoc(collection(db,"announcements"),{title,text,createdAt:serverTimestamp(),createdBy:auth.currentUser.uid});
-    $("at").value=$("ax").value="";
-    await load();toast("Announcement published.");
-  }catch(e){toast(e.message)}
-};
-
-document.addEventListener("click",async e=>{
-  const b=e.target.closest("button");if(!b)return;
-  try{
-    if(b.dataset.delNews){await deleteDoc(doc(db,"news",b.dataset.delNews));await load();toast("News deleted.");}
-    if(b.dataset.delAnn){await deleteDoc(doc(db,"announcements",b.dataset.delAnn));await load();toast("Announcement deleted.");}
-    if(b.dataset.delChat){await deleteDoc(doc(db,"globalChats",b.dataset.delChat));await load();toast("Chat message deleted.");}
-  }catch(x){toast(x.message)}
-});
-
+$("addNews").onclick=async()=>{const title=$("nt").value.trim(),text=$("nx").value.trim(),date=$("nd").value.trim()||"Latest";if(!title||!text)return toast("Enter title and content.");try{await addDoc(collection(db,"news"),{title,text,date,createdAt:serverTimestamp(),createdBy:auth.currentUser.uid});$("nt").value=$("nx").value=$("nd").value="";await load();toast("News published.")}catch(e){toast(e.message)}};
+$("addAnn").onclick=async()=>{const title=$("at").value.trim(),text=$("ax").value.trim();if(!title||!text)return toast("Enter title and content.");try{await addDoc(collection(db,"announcements"),{title,text,createdAt:serverTimestamp(),createdBy:auth.currentUser.uid});$("at").value=$("ax").value="";await load();toast("Announcement published.")}catch(e){toast(e.message)}};
+document.addEventListener("click",async e=>{const b=e.target.closest("button");if(!b)return;try{if(b.dataset.delNews){await deleteDoc(doc(db,"news",b.dataset.delNews));await load();}if(b.dataset.delAnn){await deleteDoc(doc(db,"announcements",b.dataset.delAnn));await load();}if(b.dataset.delChat){await deleteDoc(doc(db,"globalChats",b.dataset.delChat));await load();}}catch(x){toast(x.message)}});
 $("logout").onclick=()=>signOut(auth);
-
-onAuthStateChanged(auth,async user=>{
-  if(!user||user.email?.toLowerCase()!==ADMIN_EMAIL){location.replace("login.html");return}
-  $("adminEmail") && ($("adminEmail").textContent=user.email);
-  $("adminName").textContent=user.email.split("@")[0].toUpperCase();
-  $("loading").remove();
-  $("app").hidden=false;
-  await load();
-});
-</script>
-</body>
-</html>
+onAuthStateChanged(auth,async user=>{if(!user||user.email?.toLowerCase()!==ADMIN_EMAIL){location.replace("login.html");return}$("adminEmail").textContent=user.email;$("loading").remove();$("app").hidden=false;await load()});
+</script></body></html>
