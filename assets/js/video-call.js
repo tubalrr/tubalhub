@@ -36,6 +36,62 @@ let remoteDescriptionReady = false;
 
 const $ = id => document.getElementById(id);
 const isReal = () => !!user && !user.isAnonymous;
+
+// Lightweight Messenger-style call sounds generated locally with Web Audio.
+// No audio file, Firebase Storage, or external asset is required.
+let ringtoneCtx = null;
+let ringtoneTimer = null;
+let ringtoneActive = false;
+
+function ensureRingtoneAudio(){
+  try{
+    if(!ringtoneCtx){
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if(!AC) return null;
+      ringtoneCtx = new AC();
+    }
+    if(ringtoneCtx.state === "suspended") ringtoneCtx.resume().catch(()=>{});
+    return ringtoneCtx;
+  }catch(e){ return null; }
+}
+
+function playCallTone(){
+  const ctx = ensureRingtoneAudio();
+  if(!ctx) return;
+  const now = ctx.currentTime;
+  [0, 0.22].forEach(offset=>{
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(880, now + offset);
+    gain.gain.setValueAtTime(0.0001, now + offset);
+    gain.gain.exponentialRampToValueAtTime(0.16, now + offset + 0.025);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + offset + 0.17);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(now + offset);
+    osc.stop(now + offset + 0.19);
+  });
+}
+
+function startCallSound(){
+  stopCallSound();
+  if(!ensureRingtoneAudio()) return;
+  ringtoneActive = true;
+  playCallTone();
+  ringtoneTimer = setInterval(()=>{
+    if(ringtoneActive) playCallTone();
+  }, 1600);
+}
+
+function stopCallSound(){
+  ringtoneActive = false;
+  if(ringtoneTimer){
+    clearInterval(ringtoneTimer);
+    ringtoneTimer = null;
+  }
+}
+
+document.addEventListener("pointerdown", ()=>ensureRingtoneAudio(), {once:false, passive:true});
 const displayName = u => u?.displayName || u?.email?.split("@")[0] || "Member";
 const initials = n => (n || "Member").trim().split(/\s+/).slice(0,2).map(x => x[0]).join("").toUpperCase() || "M";
 
@@ -121,9 +177,11 @@ function showIncoming(d){
   $("vcIncomingText").textContent = "Incoming video call";
   $("vcIncomingAvatar").textContent = initials(n);
   $("vcIncoming").hidden = false;
+  startCallSound();
 }
 
 function hideIncoming(){
+  stopCallSound();
   if ($("vcIncoming")) $("vcIncoming").hidden = true;
 }
 
@@ -450,6 +508,7 @@ async function startCall(target){
 
     hideIncoming();
     showActive("Calling " + (target.displayName || "Member"), "Ringing…", target.displayName || "Member");
+    startCallSound();
     watchCallDocument(ref);
   } catch (e) {
     console.error("[TUBAL HUB] startCall", e);
@@ -535,6 +594,7 @@ async function endCall(notify = true){
 }
 
 function resetCall(){
+  stopCallSound();
   ending = false;
   cleanupPeer();
   callRef = null;
