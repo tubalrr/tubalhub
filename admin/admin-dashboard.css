@@ -771,6 +771,7 @@ body{
     "stats stats"
     "news ann"
     "members chat"
+    "facebook facebook"
     "footer footer";
   gap:12px;
   align-content:start;
@@ -1033,6 +1034,7 @@ footer{
       "news ann"
       "members members"
       "chat chat"
+      "facebook facebook"
       "footer footer";
   }
   .topbar:before{width:290px}
@@ -1055,6 +1057,7 @@ footer{
       "ann"
       "members"
       "chat"
+      "facebook"
       "footer";
   }
   .topbar{
@@ -1123,3 +1126,31 @@ footer{
     max-height:340px;
   }
 }
+
+/* FACEBOOK VIDEO ADMIN PANEL */
+#facebookVideosPanel{
+  grid-area:facebook;
+  width:auto;
+  float:none;
+  clear:none;
+  margin:0;
+}
+#facebookVideosPanel .fb-video-admin-form{
+  display:grid;
+  grid-template-columns:1fr 1.5fr 1fr;
+  gap:8px;
+}
+#facebookVideosPanel .fb-video-admin-form button{
+  grid-column:1/-1;
+}
+#facebookVideosPanel #fbVideoList{
+  max-height:280px;
+  overflow:auto;
+  margin-top:12px;
+}
+@media(max-width:800px){
+  #facebookVideosPanel .fb-video-admin-form{grid-template-columns:1fr}
+  #facebookVideosPanel .fb-video-admin-form button{grid-column:auto}
+}
+
+.fb-admin-note{display:block;color:#668274;font-size:8px;line-height:1.5}
