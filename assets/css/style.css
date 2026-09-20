@@ -1263,3 +1263,129 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 
 /* Facebook share-link cards */
 .facebook-share-card{overflow:hidden;background:linear-gradient(145deg,#07150d,#030906);border:1px solid #214a32;border-radius:14px;box-shadow:0 15px 35px #0008}.facebook-share-visual{min-height:210px;position:relative;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;text-decoration:none;background:radial-gradient(circle at 50% 35%,#145c36,#06100a 68%);overflow:hidden}.facebook-share-visual img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.72}.facebook-share-visual:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#0002,#0009)}.facebook-share-visual span,.facebook-share-visual b{position:relative;z-index:2}.facebook-share-visual span{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;background:#1877f2;color:#fff;font-size:28px;font-weight:900;box-shadow:0 0 25px #1877f280}.facebook-share-visual b{font-size:10px;letter-spacing:1.5px;color:#fff}.facebook-share-info{padding:13px 15px;display:flex;align-items:center;justify-content:space-between;gap:10px}.facebook-share-info h3{margin:0;font-size:14px}.facebook-share-info a{color:#a8f47a;text-decoration:none;font-size:10px;font-weight:800;white-space:nowrap}.facebook-share-info a:hover{text-decoration:underline}
+
+
+/* =========================================================
+   TUBAL HUB HOME — GALAXY / COSMIC THEME
+   ========================================================= */
+.hub-home{
+  --space:#03020d;
+  --space2:#08051b;
+  --violet:#9b6cff;
+  --cyan:#53d8ff;
+  --pink:#ff69c7;
+  --cosmic-text:#f4f0ff;
+  background:
+    radial-gradient(circle at 75% 8%,rgba(108,70,255,.22),transparent 24%),
+    radial-gradient(circle at 25% 45%,rgba(0,210,255,.10),transparent 28%),
+    radial-gradient(circle at 80% 75%,rgba(255,60,190,.08),transparent 25%),
+    #03020b;
+}
+.hub-home::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;opacity:.65;
+  background-image:
+    radial-gradient(circle at 12% 18%,#fff 0 1px,transparent 1.5px),
+    radial-gradient(circle at 34% 72%,#bfeeff 0 1px,transparent 1.5px),
+    radial-gradient(circle at 67% 28%,#fff 0 1px,transparent 1.5px),
+    radial-gradient(circle at 88% 62%,#d9c6ff 0 1px,transparent 1.5px),
+    radial-gradient(circle at 51% 91%,#fff 0 1px,transparent 1.5px);
+  background-size:173px 151px,211px 193px,257px 221px,191px 247px,313px 271px;
+  animation:cosmicStars 18s linear infinite;
+}
+@keyframes cosmicStars{from{transform:translateY(0)}to{transform:translateY(-30px)}}
+.hub-sidebar{
+  background:linear-gradient(180deg,rgba(8,5,25,.98),rgba(2,2,12,.99));
+  border-right-color:rgba(155,108,255,.25);
+  box-shadow:12px 0 55px rgba(38,20,100,.25);
+}
+.side-brand img{filter:drop-shadow(0 0 15px rgba(122,91,255,.8))}
+.side-nav a{color:#bbb5d0}
+.side-nav a:hover,.side-nav a.active{
+  color:#fff;background:linear-gradient(90deg,rgba(83,47,170,.42),rgba(20,14,50,.65));
+  border-color:rgba(155,108,255,.35);box-shadow:inset 3px 0 var(--violet),0 8px 25px rgba(75,38,160,.16)
+}
+.side-nav a.active b{color:#bda5ff}
+.fan-btn{background:linear-gradient(135deg,#a78bff,#63dfff);box-shadow:0 0 25px rgba(119,91,255,.3)}
+.side-connect strong{color:#ddd5f2}.social-mini a{background:#15102e;border-color:#382b62;color:#c8b8ff}
+.side-connect i,.hub-footer i{color:#b99aff}
+.hub-main{background:transparent}
+.hub-topbar{background:rgba(4,3,15,.78);border-bottom-color:rgba(155,108,255,.18);box-shadow:0 8px 35px rgba(26,10,70,.28)}
+.search-box{border-color:#34275b;background:rgba(10,7,29,.78)}
+.search-box:focus-within{border-color:#9b6cff;box-shadow:0 0 0 3px rgba(155,108,255,.08),0 0 25px rgba(83,216,255,.08)}
+.icon-btn{background:#0c0820;border-color:#3a2b63}.icon-btn:hover{border-color:#9b6cff;color:#bda5ff}
+.login-btn{border-color:#8c68ff;background:#100a2b;box-shadow:0 0 20px rgba(132,93,255,.18)}
+.signup-btn{background:linear-gradient(135deg,#a78bff,#53d8ff)!important;border-color:#a78bff!important;color:#080514!important;box-shadow:0 0 22px rgba(115,98,255,.25)!important}
+
+.hero-new{
+  height:clamp(460px,52vw,590px);min-height:460px;
+  background:
+    radial-gradient(circle at 72% 45%,rgba(100,55,255,.32),transparent 23%),
+    radial-gradient(circle at 48% 25%,rgba(34,193,255,.12),transparent 24%),
+    radial-gradient(circle at 82% 78%,rgba(255,61,192,.13),transparent 22%),
+    linear-gradient(115deg,#050315 0%,#090522 45%,#03020d 100%);
+  border-bottom:1px solid rgba(155,108,255,.18);
+}
+.hero-new::before{
+  content:"";position:absolute;inset:0;opacity:.6;
+  background:
+    radial-gradient(circle at 75% 45%,#fff 0 1px,transparent 2px),
+    radial-gradient(circle at 63% 22%,#aeeeff 0 1px,transparent 2px),
+    radial-gradient(circle at 91% 30%,#fff 0 1px,transparent 2px),
+    radial-gradient(circle at 54% 76%,#d7baff 0 1px,transparent 2px),
+    radial-gradient(ellipse at 72% 48%,transparent 0 16%,rgba(116,65,255,.16) 24%,transparent 43%);
+  background-size:197px 173px,239px 211px,181px 223px,271px 191px,100% 100%;
+  animation:nebulaDrift 14s ease-in-out infinite alternate;
+}
+@keyframes nebulaDrift{from{transform:scale(1);opacity:.48}to{transform:scale(1.05);opacity:.72}}
+.hero-new::after{background:linear-gradient(transparent,rgba(3,2,11,.92))}
+.hero-art{display:none}
+.hero-kicker{color:#d7c8ff;border-color:rgba(171,139,255,.45);background:rgba(21,12,55,.48);box-shadow:0 0 25px rgba(120,80,255,.12)}
+.hero-content h1{text-shadow:0 10px 35px #000,0 0 45px rgba(117,77,255,.25)}
+.hero-content h1 span{background:linear-gradient(135deg,#d2bcff,#6de7ff 55%,#ff83d2);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none}
+.hero-sub{color:#eee9ff}.hero-sub i{color:#8fddff}
+.hero-content p{color:#c6c0d9}
+.hero-green{background:linear-gradient(135deg,#b69aff,#59ddff);color:#080414;box-shadow:0 0 28px rgba(106,114,255,.3)}
+.hero-outline{border-color:#8068bb;background:rgba(11,7,29,.65)}
+.hero-outline:hover{border-color:#63ddff;background:rgba(21,13,50,.85)}
+.hero-logo-large>div{background:#8260ff;filter:blur(85px);opacity:.22}
+.hero-logo-large img{filter:drop-shadow(0 0 24px rgba(119,87,255,.85));animation:cosmicLogo 4s ease-in-out infinite}
+@keyframes cosmicLogo{50%{transform:scale(1.045) rotate(1deg);filter:drop-shadow(0 0 42px rgba(83,216,255,.8))}}
+.hero-quote{color:#d5cdef}.hero-quote b{color:#9fddff}.hero-quote span{color:#c29fff}
+
+.brand-strip{background:radial-gradient(ellipse at 50% 0,rgba(113,76,255,.08),transparent 45%)}
+.brand-card{background:linear-gradient(145deg,#0b0820,#05030e);border-color:#2a2050}
+.brand-card:hover{border-color:#806aff;box-shadow:0 0 30px rgba(123,89,255,.15),0 20px 40px #0008}
+.brand-visual{background:radial-gradient(circle at 50% 35%,#4c3b89,#070412 68%)}
+.brand-game .brand-visual{background:radial-gradient(circle at 50% 35%,#75426e,#070412 70%)}
+.brand-profile .brand-visual{background:radial-gradient(circle at 50% 35%,#315f77,#070412 70%)}
+.brand-card>span{border-color:#7960d0;color:#d4c5ff}.brand-tagline{background:linear-gradient(145deg,#100b25,#05030e);border-color:#2c2250;color:#d8d0e9}.brand-tagline b{color:#8edfff}.brand-tagline i{color:#c19eff}
+
+.feature-row{background:transparent}.live-card,.social-card{background:linear-gradient(145deg,#0b0720,#05030e);border-color:#332458}
+.live-bg{background:radial-gradient(circle at 72% 45%,#b52c9b35,transparent 25%),radial-gradient(circle at 58% 40%,#4755c94c,transparent 32%),linear-gradient(120deg,#08051b,#110a28)}
+.live-bg:after{background:radial-gradient(circle,#63dfff33,transparent 55%)}
+.live-copy h2 em{color:#a58bff}.social-grid a{background:#0b0720;border-color:#2c2250}.social-grid a:hover{border-color:#9b6cff}.social-grid b{background:#1a1239}
+
+.home-section{background:transparent}.home-heading h2 em{color:#a98cff}.home-heading a{color:#8edfff}
+.facebook-video-container,.news-card{background:linear-gradient(145deg,#0a0720,#04030d);border-color:rgba(155,108,255,.2)}
+.news-card:hover{border-color:rgba(155,108,255,.65);box-shadow:0 15px 35px #0008,0 0 25px rgba(120,83,255,.1)}
+.news-badge{border-color:rgba(155,108,255,.4);color:#c9b7ff;background:rgba(71,44,150,.24)}.news-read{color:#8edfff}
+.facebook-video-card{background:linear-gradient(145deg,#0a0720,#04030d);border-color:rgba(155,108,255,.2)}
+.facebook-video-frame,.facebook-video-placeholder{background:#03020b}
+.facebook-video-info a,.facebook-share-info a{color:#8edfff}
+
+.feature-links a{background:linear-gradient(145deg,#0b0720,#05030e);border-color:#2a2050}.feature-links a:hover{border-color:#806aff;background:linear-gradient(145deg,#120a2c,#070411);box-shadow:0 12px 28px #0008,0 0 25px rgba(125,90,255,.1)}
+.feature-links b{background:#171033;color:#c2a9ff}
+.hub-footer{background:radial-gradient(circle at 15% 0,rgba(115,75,255,.09),transparent 25%),#03020b;border-top-color:rgba(155,108,255,.16)}
+.cookie{background:rgba(8,5,23,.94);border-color:rgba(155,108,255,.3)}.cookie button{background:linear-gradient(135deg,#b79cff,#63ddff);color:#080414}
+.hub-ad-container{border-color:rgba(155,108,255,.16);background:linear-gradient(135deg,rgba(12,7,32,.75),rgba(4,3,14,.92)),radial-gradient(circle at 50% 50%,rgba(100,100,255,.07),transparent 60%)}
+.hub-ad-placeholder{border-color:rgba(155,108,255,.22)}
+
+@media(max-width:760px){
+ body.hub-home{background:radial-gradient(circle at 50% 0,rgba(104,71,255,.18),transparent 30%),#03020b}
+ .hub-sidebar{background:linear-gradient(180deg,#09051d,#03020c);border-bottom-color:rgba(155,108,255,.18)}
+ .side-nav a{background:rgba(12,7,29,.82);border-color:rgba(155,108,255,.12)}
+ .hub-topbar{background:rgba(4,3,15,.9);border-bottom-color:rgba(155,108,255,.15)}
+ .hero-new{height:530px;min-height:530px;background:radial-gradient(circle at 50% 28%,rgba(106,69,255,.25),transparent 27%),radial-gradient(circle at 78% 60%,rgba(255,75,191,.11),transparent 23%),linear-gradient(160deg,#050315,#0b0620 55%,#03020b)}
+ .hero-logo-large>div{opacity:.3}.hero-logo-large img{filter:drop-shadow(0 0 28px rgba(113,94,255,.9))}
+ .brand-strip{background:transparent}.live-card,.social-card{background:linear-gradient(145deg,#0b0720,#05030e)}
+}
