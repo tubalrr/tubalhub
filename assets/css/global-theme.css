@@ -27,3 +27,84 @@ body.theme-galaxy a{color:#c4b2ff}body.theme-forest a{color:#b8ef9b}body.theme-n
 .social-facebook b,.social-youtube b,.social-tiktok b{background:transparent!important}
 .social-community{background:#5865F2!important;border-color:#5865F2!important;color:#fff!important}
 .social-community:hover{background:#4752C4!important}
+
+
+/* GLOBAL CHAT — inherit the selected site theme */
+body.theme-galaxy .topbar,body.theme-forest .topbar,body.theme-neon .topbar{
+  background:var(--page-panel)!important;color:var(--page-text)!important;border-color:var(--page-line)!important;
+}
+body.theme-galaxy .topbar .brand strong,body.theme-forest .topbar .brand strong,body.theme-neon .topbar .brand strong,
+body.theme-galaxy .topnav a,body.theme-forest .topnav a,body.theme-neon .topnav a{
+  color:var(--page-text)!important;
+}
+body.theme-galaxy .topnav a.active{border-bottom-color:#a78bff!important}
+body.theme-forest .topnav a.active{border-bottom-color:#5dff9a!important}
+body.theme-neon .topnav a.active{border-bottom-color:#1dff91!important}
+
+body.theme-galaxy .layout,body.theme-forest .layout,body.theme-neon .layout,
+body.theme-galaxy .main,body.theme-forest .main,body.theme-neon .main{
+  background:transparent!important;color:var(--page-text)!important;
+}
+body.theme-galaxy .sidebar,body.theme-forest .sidebar,body.theme-neon .sidebar{
+  background:linear-gradient(180deg,var(--page-panel),var(--page-bg))!important;
+  border-color:var(--page-line)!important;
+}
+body.theme-galaxy .side a,body.theme-forest .side a,body.theme-neon .side a{color:var(--page-muted)!important}
+body.theme-galaxy .side a:hover,body.theme-galaxy .side a.active{background:#7b52ff44!important;color:#fff!important;box-shadow:inset 3px 0 #a78bff,0 0 25px #7b52ff22!important}
+body.theme-forest .side a:hover,body.theme-forest .side a.active{background:#24783b55!important;color:#fff!important;box-shadow:inset 3px 0 #5dff9a,0 0 25px #38d98a22!important}
+body.theme-neon .side a:hover,body.theme-neon .side a.active{background:#14733f55!important;color:#fff!important;box-shadow:inset 3px 0 #1dff91,0 0 25px #1dff9122!important}
+
+body.theme-galaxy .hero,body.theme-forest .hero,body.theme-neon .hero{
+  background:radial-gradient(circle at 70% 20%,color-mix(in srgb,var(--page-accent) 24%,transparent),transparent 35%),linear-gradient(100deg,var(--page-panel),var(--page-bg))!important;
+  border-color:var(--page-line)!important;
+}
+body.theme-galaxy .hero h1 em{color:#b79cff!important}
+body.theme-forest .hero h1 em{color:#a9f27a!important}
+body.theme-neon .hero h1 em{color:#a8ff57!important}
+body.theme-galaxy .hero p,body.theme-forest .hero p,body.theme-neon .hero p{color:var(--page-muted)!important}
+body.theme-galaxy .kicker,body.theme-forest .kicker,body.theme-neon .kicker{border-color:var(--page-line)!important;color:var(--page-accent)!important}
+
+body.theme-galaxy .chat-grid,body.theme-forest .chat-grid,body.theme-neon .chat-grid{background:transparent!important}
+body.theme-galaxy .chat-grid .panel,body.theme-forest .chat-grid .panel,body.theme-neon .chat-grid .panel,
+body.theme-galaxy .lock-card,body.theme-forest .lock-card,body.theme-neon .lock-card{
+  background:linear-gradient(145deg,var(--page-panel),var(--page-bg))!important;
+  border-color:var(--page-line)!important;
+  color:var(--page-text)!important;
+}
+body.theme-galaxy .chat-head,body.theme-forest .chat-head,body.theme-neon .chat-head,
+body.theme-galaxy .composer,body.theme-forest .composer,body.theme-neon .composer,
+body.theme-galaxy .replying,body.theme-forest .replying,body.theme-neon .replying,
+body.theme-galaxy .status-msg,body.theme-forest .status-msg,body.theme-neon .status-msg{
+  background:var(--page-panel)!important;border-color:var(--page-line)!important;color:var(--page-muted)!important;
+}
+body.theme-galaxy .messages,body.theme-forest .messages,body.theme-neon .messages{
+  background:var(--page-bg)!important;
+}
+body.theme-galaxy .msg,body.theme-forest .msg,body.theme-neon .msg{border-color:var(--page-line)!important}
+body.theme-galaxy .bubble,body.theme-forest .bubble,body.theme-neon .bubble{
+  background:var(--page-panel2)!important;color:var(--page-text)!important;border-color:var(--page-line)!important;
+}
+body.theme-galaxy .msg.me .bubble{background:#24144f!important;color:#fff!important}
+body.theme-forest .msg.me .bubble{background:#125a34!important;color:#fff!important}
+body.theme-neon .msg.me .bubble{background:#075d31!important;color:#fff!important}
+body.theme-galaxy .globe,body.theme-forest .globe,body.theme-neon .globe{
+  background:var(--page-panel2)!important;border-color:var(--page-accent2)!important;color:var(--page-accent2)!important;
+}
+body.theme-galaxy .count,body.theme-forest .count,body.theme-neon .count{
+  border-color:var(--page-accent2)!important;color:var(--page-accent2)!important;
+}
+body.theme-galaxy .tool,body.theme-forest .tool,body.theme-neon .tool,
+body.theme-galaxy .composer input,body.theme-forest .composer input,body.theme-neon .composer input{
+  background:var(--page-panel)!important;border-color:var(--page-line)!important;color:var(--page-text)!important;
+}
+body.theme-galaxy .send{background:linear-gradient(135deg,#a78bff,#63dfff)!important}
+body.theme-forest .send{background:linear-gradient(135deg,#a9f27a,#5dff9a)!important}
+body.theme-neon .send{background:linear-gradient(135deg,#a8ff57,#1dff91)!important}
+body.theme-galaxy .channels div.active{background:#5d39a8!important}
+body.theme-forest .channels div.active{background:#168344!important}
+body.theme-neon .channels div.active{background:#078443!important}
+body.theme-galaxy .rules li,body.theme-forest .rules li,body.theme-neon .rules li,
+body.theme-galaxy .member-info span,body.theme-forest .member-info span,body.theme-neon .member-info span{color:var(--page-muted)!important}
+body.theme-galaxy .footer,body.theme-forest .footer,body.theme-neon .footer{
+  background:var(--page-bg)!important;border-color:var(--page-line)!important;color:var(--page-muted)!important;
+}
