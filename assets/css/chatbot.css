@@ -17,3 +17,20 @@
 .tubal-bot-form input{flex:1;min-width:0;border:1px solid var(--theme-line,#38285f);border-radius:12px;background:#0004;color:inherit;padding:11px;font-size:11px;outline:none}
 .tubal-bot-form button{width:42px;border:0;border-radius:12px;background:linear-gradient(135deg,#7c5cff,#27d9ff);color:#fff;cursor:pointer;font-weight:900}
 @media(max-width:600px){.tubal-bot-launch{right:14px;bottom:14px}.tubal-bot-panel{right:14px;bottom:82px;width:calc(100vw - 28px);height:min(560px,calc(100vh - 100px))}}
+
+
+/* DRAGGABLE AI COMPANION */
+.tubal-bot-launch{
+  touch-action:none;
+  user-select:none;
+  -webkit-user-select:none;
+  transition:transform .18s ease,box-shadow .18s ease;
+}
+.tubal-bot-launch.dragging{
+  cursor:grabbing!important;
+  transform:scale(1.08);
+  box-shadow:0 12px 40px #0009,0 0 34px #7c5cff88;
+}
+@media(max-width:600px){
+  .tubal-bot-launch{touch-action:none}
+}
