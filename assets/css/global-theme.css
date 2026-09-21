@@ -108,3 +108,34 @@ body.theme-galaxy .member-info span,body.theme-forest .member-info span,body.the
 body.theme-galaxy .footer,body.theme-forest .footer,body.theme-neon .footer{
   background:var(--page-bg)!important;border-color:var(--page-line)!important;color:var(--page-muted)!important;
 }
+
+
+/* GLOBAL CHAT — MOBILE ONLINE MEMBERS FIX */
+@media (max-width:760px){
+  body:has(.chat-grid) .chat-grid .right{
+    display:flex !important;
+    visibility:visible !important;
+    opacity:1 !important;
+    width:100% !important;
+    max-width:none !important;
+    order:0 !important;
+  }
+  body:has(.chat-grid) .chat-grid .right .panel:first-child{
+    display:block !important;
+    visibility:visible !important;
+    width:100% !important;
+  }
+  body:has(.chat-grid) #memberList{
+    display:block !important;
+    visibility:visible !important;
+    max-height:260px !important;
+    overflow-y:auto !important;
+  }
+  body:has(.chat-grid) #memberList .member{
+    display:flex !important;
+    visibility:visible !important;
+    opacity:1 !important;
+    width:100% !important;
+    min-height:48px !important;
+  }
+}
