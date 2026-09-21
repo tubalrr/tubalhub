@@ -45,11 +45,28 @@ async function setupCallPush(){
 }
 
 
+/* WebRTC ICE configuration.
+   STUN handles direct connections; Open Relay TURN is the fallback when
+   phone/PC networks cannot establish a direct media path. */
 const RTC_CONFIG = {
   iceServers: [
     { urls: "stun:stun.l.google.com:19302" },
-    { urls: "stun:stun1.l.google.com:19302" }
+    { urls: "stun:stun1.l.google.com:19302" },
+    { urls: "stun:stun.cloudflare.com:3478" },
+
+    // Open Relay public TURN fallback.
+    // TURN is only used when direct ICE candidates cannot connect.
+    {
+      urls: [
+        "turn:openrelay.metered.ca:80",
+        "turn:openrelay.metered.ca:443",
+        "turn:openrelay.metered.ca:443?transport=tcp"
+      ],
+      username: "openrelayproject",
+      credential: "openrelayproject"
+    }
   ],
+  iceTransportPolicy: "all",
   bundlePolicy: "balanced"
 };
 
@@ -394,12 +411,20 @@ function createPeer(){
     }
   };
 
+  peer.onicecandidateerror = event => {
+    console.warn("[TUBAL HUB] ICE candidate error", {
+      url: event?.url,
+      code: event?.errorCode,
+      text: event?.errorText
+    });
+  };
+
   peer.oniceconnectionstatechange = () => {
     const state = peer?.iceConnectionState;
     if (state === "connected" || state === "completed") setCallStatus("Connected");
     else if (state === "checking") setCallStatus("Connecting…");
     else if (state === "disconnected") setCallStatus("Connection interrupted…");
-    else if (state === "failed") setCallStatus("Connection failed");
+    else if (state === "failed") setCallStatus("Connection failed — checking relay");
   };
 
   peer.onconnectionstatechange = () => {
