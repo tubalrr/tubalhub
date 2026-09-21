@@ -76,7 +76,9 @@ const RTC_CONFIG = {
     }
   ],
   iceTransportPolicy: "all",
-  bundlePolicy: "max-bundle"
+  bundlePolicy: "max-bundle",
+  iceCandidatePoolSize: 10,
+  rtcpMuxPolicy: "require"
 };
 
 let user = null;
@@ -448,14 +450,62 @@ function createPeer(){
     }
   };
 
-  peer.onconnectionstatechange = () => {
+  peer.onconnectionstatechange = async () => {
     const state = peer?.connectionState;
-    if (state === "connected") setCallStatus("Connected");
-    if (state === "failed") setCallStatus("Connection failed");
+    if (state === "connected") {
+      setCallStatus("Connected");
+      await reportIcePath();
+    }
+    if (state === "failed") {
+      setCallStatus("Connection failed — network/relay unavailable");
+      await reportIcePath();
+    }
     if (state === "disconnected") setCallStatus("Connection interrupted…");
   };
 
   return peer;
+}
+
+async function reportIcePath(){
+  if (!peer) return;
+  try {
+    const stats = await peer.getStats();
+    let selected = null;
+    stats.forEach(s => {
+      if (s.type === "candidate-pair" && (s.selected || s.nominated) && s.state === "succeeded") selected = s;
+    });
+    if (!selected) return;
+    const local = stats.get(selected.localCandidateId);
+    const remote = stats.get(selected.remoteCandidateId);
+    const path = local?.candidateType || "unknown";
+    console.log("[TUBAL HUB] Selected ICE path:", {
+      localType: local?.candidateType,
+      localProtocol: local?.protocol,
+      remoteType: remote?.candidateType,
+      remoteProtocol: remote?.protocol,
+      relayProtocol: local?.relayProtocol || null
+    });
+    if (path === "relay") setCallStatus("Connected • Relay");
+  } catch (e) {
+    console.warn("[TUBAL HUB] ICE stats unavailable", e);
+  }
+}
+
+function startConnectionWatchdog(){
+  const startedAt = Date.now();
+  const timer = setInterval(async () => {
+    if (!peer || ending) { clearInterval(timer); return; }
+    if (peer.connectionState === "connected" || peer.iceConnectionState === "connected" || peer.iceConnectionState === "completed") {
+      clearInterval(timer);
+      await reportIcePath();
+      return;
+    }
+    if (Date.now() - startedAt >= 20000) {
+      clearInterval(timer);
+      await reportIcePath();
+      setCallStatus("Unable to connect — TURN/network blocked");
+    }
+  }, 1000);
 }
 
 function addLocalTracks(){
@@ -562,6 +612,7 @@ async function startCallerConnection(data){
   });
 
   setCallStatus("Connecting…");
+  startConnectionWatchdog();
 }
 
 async function startCalleeConnection(data){
@@ -580,6 +631,7 @@ async function startCalleeConnection(data){
   createPeer();
   addLocalTracks();
   setCallStatus("Waiting for caller…");
+  startConnectionWatchdog();
 }
 
 function throwMediaError(e){
