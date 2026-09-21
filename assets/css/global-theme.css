@@ -205,3 +205,57 @@ body.theme-galaxy .main-content,body.theme-forest .main-content,body.theme-neon 
 body.theme-galaxy *,body.theme-forest *,body.theme-neon *{
   transition:background-color .2s ease,border-color .2s ease,color .2s ease,box-shadow .2s ease;
 }
+
+
+/* v3 — visible global theme layer for EVERY page */
+html[data-tubal-theme="galaxy"] body{--global-bg:#03020b;--global-panel:#0b0720;--global-line:#38285f;--global-text:#f4f0ff;--global-accent:#a78bff}
+html[data-tubal-theme="forest"] body{--global-bg:#06110a;--global-panel:#0c1c11;--global-line:#2a5132;--global-text:#f1faef;--global-accent:#a9f27a}
+html[data-tubal-theme="neon"] body{--global-bg:#020604;--global-panel:#07140d;--global-line:#214a32;--global-text:#f5fff6;--global-accent:#a8ff57}
+
+html[data-tubal-theme] body{
+  background-color:var(--global-bg)!important;
+  color:var(--global-text)!important;
+}
+html[data-tubal-theme] body::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:9998;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 85% 5%,color-mix(in srgb,var(--global-accent) 20%,transparent),transparent 28%),
+    linear-gradient(180deg,transparent 0%,color-mix(in srgb,var(--global-bg) 18%,transparent) 100%);
+  opacity:.72;
+}
+html[data-tubal-theme] .hub-main,
+html[data-tubal-theme] main,
+html[data-tubal-theme] .content,
+html[data-tubal-theme] .main-content{
+  color:var(--global-text)!important;
+}
+html[data-tubal-theme] .card,
+html[data-tubal-theme] article,
+html[data-tubal-theme] .panel,
+html[data-tubal-theme] .box,
+html[data-tubal-theme] .modal,
+html[data-tubal-theme] .form-card,
+html[data-tubal-theme] .auth-card{
+  background-color:var(--global-panel)!important;
+  border-color:var(--global-line)!important;
+  color:var(--global-text)!important;
+}
+html[data-tubal-theme] input,
+html[data-tubal-theme] textarea,
+html[data-tubal-theme] select{
+  background-color:var(--global-panel)!important;
+  color:var(--global-text)!important;
+  border-color:var(--global-line)!important;
+}
+html[data-tubal-theme] h1,
+html[data-tubal-theme] h2,
+html[data-tubal-theme] h3,
+html[data-tubal-theme] h4,
+html[data-tubal-theme] h5,
+html[data-tubal-theme] h6{
+  color:var(--global-text)!important;
+}
