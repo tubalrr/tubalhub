@@ -78,7 +78,7 @@ document.getElementById('closePrivateChat').onclick=closePrivateChat;
 document.getElementById('privateVideoCall').onclick=()=>{if(privateTarget)window.dispatchEvent(new CustomEvent('tubalhub-private-call',{detail:privateTarget}))};
 document.getElementById('privateForm').addEventListener('submit',async e=>{e.preventDefault();const field=document.getElementById('privateInput'),text=field.value.trim();if(!text||!privateTarget)return;const btn=e.submitter||e.currentTarget.querySelector('button[type="submit"]');btn.disabled=true;try{await sendPrivateMessage(text);field.value=''}catch(err){console.error(err);alert(err.message==='RATE_LIMIT'?'Please wait a moment.':'Private message was not sent. Check Firestore Rules.')}finally{btn.disabled=false;field.focus()}});
 async function uploadMedia(file,type){if(!isRealUser())throw new Error('LOGIN_REQUIRED');if(!file)return;const max=8*1024*1024;if(file.size>max)throw new Error('FILE_TOO_LARGE');const safe=file.name.replace(/[^a-zA-Z0-9._-]/g,'_');const path=`global-chat/${currentUser.uid}/${Date.now()}_${safe}`;const storageRef=ref(storage,path);await uploadBytes(storageRef,file,{contentType:file.type});return {url:await getDownloadURL(storageRef),path}}
-const TUBAL_MODERATION_WORDS=[/\\b(fuck|fucking|motherfucker|shit|bitch|asshole|bastard)\\b/i,/\\b(p*tang|putang|gago|tanga|tarantado|ulol|bwisit|leche|lintik)\\b/i];
+const TUBAL_MODERATION_WORDS=[/\b(fuck|fucking|motherfucker|shit|bitch|asshole|bastard)\b/i,/\b(p*tang|putang|gago|tanga|tarantado|ulol|bwisit|leche|lintik)\b/i];
 function moderateText(text){const value=String(text||'');return TUBAL_MODERATION_WORDS.some(rx=>rx.test(value))}
 function moderationWarning(){
  const key='tubalHubModerationWarnings';
