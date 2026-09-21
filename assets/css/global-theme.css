@@ -259,3 +259,92 @@ html[data-tubal-theme] h5,
 html[data-tubal-theme] h6{
   color:var(--global-text)!important;
 }
+
+
+/* FINAL GLOBAL OVERRIDE: theme every page shell */
+html[data-tubal-theme="galaxy"] body,
+body.theme-galaxy{background:#03020b!important;color:#f4f0ff!important}
+html[data-tubal-theme="forest"] body,
+body.theme-forest{background:#06110a!important;color:#f1faef!important}
+html[data-tubal-theme="neon"] body,
+body.theme-neon{background:#020604!important;color:#f5fff6!important}
+
+html[data-tubal-theme="galaxy"] body > header,
+html[data-tubal-theme="galaxy"] body > main,
+html[data-tubal-theme="galaxy"] body > footer,
+html[data-tubal-theme="galaxy"] body > aside,
+html[data-tubal-theme="galaxy"] .page,
+html[data-tubal-theme="galaxy"] .page-container,
+html[data-tubal-theme="galaxy"] .container,
+html[data-tubal-theme="galaxy"] .main,
+html[data-tubal-theme="galaxy"] .content,
+body.theme-galaxy > header,
+body.theme-galaxy > main,
+body.theme-galaxy > footer,
+body.theme-galaxy > aside,
+body.theme-galaxy .page,
+body.theme-galaxy .page-container,
+body.theme-galaxy .container,
+body.theme-galaxy .main,
+body.theme-galaxy .content{background-color:#03020b!important;color:#f4f0ff!important}
+
+html[data-tubal-theme="forest"] body > header,
+html[data-tubal-theme="forest"] body > main,
+html[data-tubal-theme="forest"] body > footer,
+html[data-tubal-theme="forest"] body > aside,
+html[data-tubal-theme="forest"] .page,
+html[data-tubal-theme="forest"] .page-container,
+html[data-tubal-theme="forest"] .container,
+html[data-tubal-theme="forest"] .main,
+html[data-tubal-theme="forest"] .content,
+body.theme-forest > header,
+body.theme-forest > main,
+body.theme-forest > footer,
+body.theme-forest > aside,
+body.theme-forest .page,
+body.theme-forest .page-container,
+body.theme-forest .container,
+body.theme-forest .main,
+body.theme-forest .content{background-color:#06110a!important;color:#f1faef!important}
+
+html[data-tubal-theme="neon"] body > header,
+html[data-tubal-theme="neon"] body > main,
+html[data-tubal-theme="neon"] body > footer,
+html[data-tubal-theme="neon"] body > aside,
+html[data-tubal-theme="neon"] .page,
+html[data-tubal-theme="neon"] .page-container,
+html[data-tubal-theme="neon"] .container,
+html[data-tubal-theme="neon"] .main,
+html[data-tubal-theme="neon"] .content,
+body.theme-neon > header,
+body.theme-neon > main,
+body.theme-neon > footer,
+body.theme-neon > aside,
+body.theme-neon .page,
+body.theme-neon .page-container,
+body.theme-neon .container,
+body.theme-neon .main,
+body.theme-neon .content{background-color:#020604!important;color:#f5fff6!important}
+
+/* Force common full-width page sections to inherit selected theme */
+body.theme-galaxy .hero,
+body.theme-galaxy .hero-new,
+body.theme-galaxy .section,
+body.theme-galaxy .home-section,
+body.theme-galaxy .page-section,
+body.theme-galaxy .dashboard,
+body.theme-galaxy .workspace{background-color:#0b0720!important;color:#f4f0ff!important;border-color:#38285f!important}
+body.theme-forest .hero,
+body.theme-forest .hero-new,
+body.theme-forest .section,
+body.theme-forest .home-section,
+body.theme-forest .page-section,
+body.theme-forest .dashboard,
+body.theme-forest .workspace{background-color:#0c1c11!important;color:#f1faef!important;border-color:#2a5132!important}
+body.theme-neon .hero,
+body.theme-neon .hero-new,
+body.theme-neon .section,
+body.theme-neon .home-section,
+body.theme-neon .page-section,
+body.theme-neon .dashboard,
+body.theme-neon .workspace{background-color:#07140d!important;color:#f5fff6!important;border-color:#214a32!important}
