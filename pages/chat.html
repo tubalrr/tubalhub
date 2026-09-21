@@ -80,7 +80,13 @@ document.getElementById('privateForm').addEventListener('submit',async e=>{e.pre
 async function uploadMedia(file,type){if(!isRealUser())throw new Error('LOGIN_REQUIRED');if(!file)return;const max=8*1024*1024;if(file.size>max)throw new Error('FILE_TOO_LARGE');const safe=file.name.replace(/[^a-zA-Z0-9._-]/g,'_');const path=`global-chat/${currentUser.uid}/${Date.now()}_${safe}`;const storageRef=ref(storage,path);await uploadBytes(storageRef,file,{contentType:file.type});return {url:await getDownloadURL(storageRef),path}}
 const TUBAL_MODERATION_WORDS=[/\\b(fuck|fucking|motherfucker|shit|bitch|asshole|bastard)\\b/i,/\\b(p*tang|putang|gago|tanga|tarantado|ulol|bwisit|leche|lintik)\\b/i];
 function moderateText(text){const value=String(text||'');return TUBAL_MODERATION_WORDS.some(rx=>rx.test(value))}
-function moderationWarning(){alert('⚠️ WARNING — TUBAL HUB AI\\n\\nOffensive or inappropriate language is not allowed in Global Chat. Your message was not sent. Please keep the community respectful.')}
+function moderationWarning(){
+ const key='tubalHubModerationWarnings';
+ const count=Number(localStorage.getItem(key)||0)+1;
+ localStorage.setItem(key,String(count));
+ if(count>=3)alert('🚫 TUBAL HUB AI MODERATION\\n\\nYou have received multiple moderation warnings. Please stop using offensive language. Your chat access may be restricted by an administrator.');
+ else alert('⚠️ WARNING — TUBAL HUB AI\\n\\nOffensive or inappropriate language is not allowed in Global Chat. Your message was not sent. Please keep the community respectful.\\n\\nWarning '+count+'/3');
+}
 async function sendMessage(payload){if(!isRealUser())throw new Error('LOGIN_REQUIRED');const text=payload?.text||'';if(payload?.type==='text'&&moderateText(text)){moderationWarning();throw new Error('MODERATION_BLOCKED')}const now=Date.now();if(now-lastMessageTime<1500)throw new Error('RATE_LIMIT');lastMessageTime=now;await addDoc(collection(db,'globalChats'),{channel:'global-chat',uid:currentUser.uid,displayName:currentUser.displayName||currentUser.email?.split('@')[0]||'Member',name:currentUser.displayName||currentUser.email?.split('@')[0]||'Member',email:currentUser.email||'',photoURL:currentUser.photoURL||'',createdAt:serverTimestamp(),...payload})}
 async function sendReply(text){if(!replyTarget||!isRealUser())return;await addDoc(collection(db,'globalChatReplies'),{messageId:replyTarget.messageId,parentReplyId:replyTarget.parentReplyId||null,uid:currentUser.uid,displayName:currentUser.displayName||currentUser.email?.split('@')[0]||'Member',email:currentUser.email||'',text,createdAt:serverTimestamp()});clearReply()}
 
