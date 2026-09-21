@@ -18,7 +18,7 @@
 @media(max-width:1100px){.topnav{gap:12px}.topnav a{font-size:12px}.layout{grid-template-columns:190px 1fr}.hero{padding-left:35px}.hero h1{font-size:45px}.hero-note{display:none}.chat-grid{grid-template-columns:1fr}.right{display:grid;grid-template-columns:1fr 1fr}.messages{height:440px}}
 @media(max-width:760px){.topbar{padding:0 12px}.brand{min-width:auto}.brand strong{font-size:17px}.brand small{display:none}.topnav,.profile-name,.profile .online{display:none}.profile{min-width:auto}.layout{display:block}.sidebar{display:none}.hero{height:170px;padding:22px}.hero h1{font-size:38px}.chat-grid{padding:10px}.right{display:flex}.chat-head{height:auto;gap:10px}.chat-title p{display:none}.count{padding:8px 10px}.messages{height:55vh}.composer{flex-wrap:wrap}.composer input{height:44px;order:2;flex-basis:100%}.send{height:44px}.footer{display:block;text-align:center;line-height:2}.social{margin-top:6px}.emoji-grid{grid-template-columns:repeat(6,34px)}}
 </style>
-<link rel="stylesheet" href="../assets/css/global-theme.css">
+<link rel="stylesheet" href="../assets/css/global-theme.css?v=20260921">
 </head>
 <body>
 <header class="topbar"><a class="brand" href="../index.html"><img src="../tubal-hub-logo.png" alt="TUBAL HUB"><div><strong>TUBAL HUB</strong><small>PLAY • CREATE • CONNECT</small></div></a><nav class="topnav"><a href="../index.html">⌂ Home</a><a href="games.html">🎮 Games</a><a href="videos.html">▶ Videos</a><a href="community.html">♟ Community</a><a class="active" href="chat.html">💬 Global Chat</a><a href="about.html">ⓘ About</a><a href="contact.html">✉ Contact</a></nav><div class="profile"><div><div class="profile-name" id="profileName">TUBAL HUB</div><div class="online" id="profileStatus">● Checking...</div></div><div class="avatar" id="profileAvatar">TH</div><span class="hamb">⌄</span></div></header>
@@ -89,5 +89,5 @@ onAuthStateChanged(auth,async user=>{if(!user||user.isAnonymous){currentUser=nul
 document.addEventListener('visibilitychange',()=>{if(currentUser&&!document.hidden)updatePresence(currentUser,true).catch(()=>{})});window.addEventListener('beforeunload',()=>{if(currentUser)updatePresence(currentUser,false).catch(()=>{})});
 </script>
 <script type="module" src="../assets/js/video-call.js?v=20260920-webRTC2"></script>
-<script src="../assets/js/theme.js" defer></script>
+<script src="../assets/js/theme.js?v=20260921" defer></script>
 </body></html>
