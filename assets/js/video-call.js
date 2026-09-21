@@ -52,22 +52,31 @@ const RTC_CONFIG = {
   iceServers: [
     { urls: "stun:stun.l.google.com:19302" },
     { urls: "stun:stun1.l.google.com:19302" },
-    { urls: "stun:stun.cloudflare.com:3478" },
+    { urls: "stun:openrelay.metered.ca:80" },
 
-    // Open Relay public TURN fallback.
-    // TURN is only used when direct ICE candidates cannot connect.
     {
-      urls: [
-        "turn:openrelay.metered.ca:80",
-        "turn:openrelay.metered.ca:443",
-        "turn:openrelay.metered.ca:443?transport=tcp"
-      ],
+      urls: "turn:openrelay.metered.ca:80",
+      username: "openrelayproject",
+      credential: "openrelayproject"
+    },
+    {
+      urls: "turn:openrelay.metered.ca:443",
+      username: "openrelayproject",
+      credential: "openrelayproject"
+    },
+    {
+      urls: "turn:openrelay.metered.ca:443?transport=tcp",
+      username: "openrelayproject",
+      credential: "openrelayproject"
+    },
+    {
+      urls: "turns:openrelay.metered.ca:443?transport=tcp",
       username: "openrelayproject",
       credential: "openrelayproject"
     }
   ],
   iceTransportPolicy: "all",
-  bundlePolicy: "balanced"
+  bundlePolicy: "max-bundle"
 };
 
 let user = null;
@@ -419,12 +428,24 @@ function createPeer(){
     });
   };
 
+  peer.onicegatheringstatechange = () => {
+    console.log("[TUBAL HUB] ICE gathering:", peer?.iceGatheringState);
+  };
+
   peer.oniceconnectionstatechange = () => {
     const state = peer?.iceConnectionState;
-    if (state === "connected" || state === "completed") setCallStatus("Connected");
-    else if (state === "checking") setCallStatus("Connecting…");
-    else if (state === "disconnected") setCallStatus("Connection interrupted…");
-    else if (state === "failed") setCallStatus("Connection failed — checking relay");
+    if (state === "connected" || state === "completed") {
+      setCallStatus("Connected");
+    } else if (state === "checking") {
+      setCallStatus("Connecting…");
+    } else if (state === "disconnected") {
+      setCallStatus("Connection interrupted…");
+    } else if (state === "failed") {
+      setCallStatus("Connection failed — retrying ICE…");
+      try {
+        if (peer && peer.signalingState !== "closed") peer.restartIce();
+      } catch {}
+    }
   };
 
   peer.onconnectionstatechange = () => {
