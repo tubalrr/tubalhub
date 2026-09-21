@@ -14,7 +14,7 @@
   document.body.append(panel,launch);
   const messages=panel.querySelector('#tubalBotMessages'),input=panel.querySelector('#tubalBotInput');
   const add=(text,type='bot')=>{const d=document.createElement('div');d.className='tubal-bot-msg '+type;d.textContent=text;messages.appendChild(d);messages.scrollTop=messages.scrollHeight;return d};
-  add('Hi! I’m TUBAL HUB AI. Ask me about the Hub, CTRLZONE, Payapang Isip, profiles, news, community, shop, or anything connected to the website.');
+  add('👋 Welcome to TUBAL HUB! I’m your TUBAL HUB AI assistant. Welcome to the Hub — a place for content, community, creativity, gaming, stories, and more. How can I help you today?');
   const fallback=q=>{
     const s=q.toLowerCase();
     if(s.includes('tubal hub'))return 'TUBAL HUB is the central hub for content, community, creativity, gaming, stories, and creator projects.';
