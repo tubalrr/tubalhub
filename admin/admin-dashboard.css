@@ -1259,3 +1259,92 @@ footer{
 .member-main{
   min-width:0;
 }
+
+
+/* BAN DURATION MODAL */
+.ban-modal{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  display:grid;
+  place-items:center;
+  padding:20px;
+  background:rgba(0,0,0,.72);
+  backdrop-filter:blur(8px);
+}
+.ban-modal[hidden]{display:none}
+.ban-modal-card{
+  width:min(520px,100%);
+  border:1px solid #2b9b69;
+  border-radius:18px;
+  padding:20px;
+  background:linear-gradient(145deg,#092419,#030d08);
+  box-shadow:0 25px 80px rgba(0,0,0,.6);
+}
+.ban-modal-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:15px;
+  margin-bottom:18px;
+}
+.ban-modal-head small{color:#59e7a3;font-size:9px;font-weight:900}
+.ban-modal-head h3{margin:4px 0;font-size:22px}
+.ban-modal-head p{margin:0;color:#9ab9aa;font-size:12px}
+.ban-modal-head>button{
+  border:0;background:transparent;color:#9ab9aa;font-size:26px;cursor:pointer;
+}
+.ban-options{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+}
+.ban-options button{
+  padding:11px 7px;
+  border:1px solid #245b43;
+  border-radius:9px;
+  background:#061b12;
+  color:#c8f7df;
+  font-weight:800;
+  font-size:10px;
+  cursor:pointer;
+}
+.ban-options button:hover,.ban-options button.selected{
+  border-color:#35dc8c;
+  background:#0b3a25;
+  color:#8ff0bd;
+}
+#banReasonInput{
+  width:100%;
+  box-sizing:border-box;
+  margin-top:12px;
+  padding:11px;
+  border:1px solid #245b43;
+  border-radius:9px;
+  background:#04130c;
+  color:#dfffee;
+  outline:0;
+}
+.ban-modal-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:8px;
+  margin-top:12px;
+}
+.ban-modal-actions button{
+  padding:10px 14px;
+  border-radius:9px;
+  border:1px solid #245b43;
+  background:#071a11;
+  color:#c8f7df;
+  font-weight:800;
+  cursor:pointer;
+}
+#confirmBan{
+  border-color:#b04444;
+  background:#481b1b;
+  color:#ffb5b5;
+}
+@media(max-width:560px){
+  .ban-options{grid-template-columns:repeat(2,1fr)}
+}
