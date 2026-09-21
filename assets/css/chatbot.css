@@ -1,0 +1,19 @@
+/* TUBAL HUB AI CHATBOT */
+.tubal-bot-launch{position:fixed;right:22px;bottom:22px;width:58px;height:58px;border:0;border-radius:50%;z-index:9998;cursor:pointer;background:linear-gradient(135deg,#7c5cff,#27d9ff);color:#fff;font-size:25px;box-shadow:0 10px 35px #0008,0 0 28px #7c5cff55}
+.tubal-bot-launch:hover{transform:translateY(-2px)}
+.tubal-bot-panel{position:fixed;right:22px;bottom:92px;width:min(380px,calc(100vw - 28px));height:min(560px,calc(100vh - 120px));z-index:9999;display:none;flex-direction:column;overflow:hidden;border:1px solid var(--theme-line,#38285f);border-radius:20px;background:var(--theme-panel,#0b0720);color:var(--theme-text,#f4f0ff);box-shadow:0 25px 70px #000b}
+.tubal-bot-panel.open{display:flex}
+.tubal-bot-head{display:flex;align-items:center;gap:10px;padding:15px 16px;border-bottom:1px solid var(--theme-line,#38285f);background:linear-gradient(135deg,#7c5cff22,#27d9ff12)}
+.tubal-bot-avatar{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,#7c5cff,#27d9ff);font-size:20px}
+.tubal-bot-title{font-weight:900;font-size:13px}.tubal-bot-status{font-size:9px;color:#72ff9c;margin-top:2px}
+.tubal-bot-close{margin-left:auto;border:0;background:transparent;color:inherit;font-size:22px;cursor:pointer}
+.tubal-bot-messages{flex:1;overflow:auto;padding:14px}
+.tubal-bot-msg{max-width:84%;padding:10px 12px;margin:0 0 10px;border-radius:14px;font-size:11px;line-height:1.5;white-space:pre-wrap}
+.tubal-bot-msg.bot{background:#ffffff0b;border:1px solid #ffffff12}
+.tubal-bot-msg.user{margin-left:auto;background:linear-gradient(135deg,#7c5cff,#27a9ff);color:#fff}
+.tubal-bot-quick{display:flex;gap:6px;overflow:auto;padding:0 12px 10px}
+.tubal-bot-quick button{white-space:nowrap;border:1px solid var(--theme-line,#38285f);border-radius:999px;background:transparent;color:inherit;padding:7px 9px;font-size:9px;cursor:pointer}
+.tubal-bot-form{display:flex;gap:7px;padding:10px;border-top:1px solid var(--theme-line,#38285f)}
+.tubal-bot-form input{flex:1;min-width:0;border:1px solid var(--theme-line,#38285f);border-radius:12px;background:#0004;color:inherit;padding:11px;font-size:11px;outline:none}
+.tubal-bot-form button{width:42px;border:0;border-radius:12px;background:linear-gradient(135deg,#7c5cff,#27d9ff);color:#fff;cursor:pointer;font-weight:900}
+@media(max-width:600px){.tubal-bot-launch{right:14px;bottom:14px}.tubal-bot-panel{right:14px;bottom:82px;width:calc(100vw - 28px);height:min(560px,calc(100vh - 100px))}}
