@@ -13,6 +13,7 @@
   const launch=document.createElement('button');launch.className='tubal-bot-launch';launch.id='tubalBotLaunch';launch.setAttribute('aria-label','Open TUBAL HUB AI');launch.textContent='🤖';
   document.body.append(panel,launch);
   const messages=panel.querySelector('#tubalBotMessages'),input=panel.querySelector('#tubalBotInput');
+  const AI_API_URL=window.TUBAL_AI_API_URL||'/api/chat';
   /* ADMIN MODERATION ACCESS — visible only to the configured admin account. */
   const ADMIN_EMAIL='tubalrr@gmail.com';
   let adminAuth=null,adminDb=null,adminUser=null;
@@ -73,7 +74,7 @@
     add(q,'user');input.value='';
     const thinking=add('Thinking…');
     try{
-      const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:q,page:location.pathname})});
+      const r=await fetch(AI_API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:q,page:location.pathname})});
       if(!r.ok)throw new Error('backend');
       const data=await r.json();thinking.remove();add(String(data.reply||data.message||fallback(q)));
     }catch(e){thinking.remove();add(fallback(q));}
