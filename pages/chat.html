@@ -81,7 +81,7 @@ document.getElementById('privateForm').addEventListener('submit',async e=>{e.pre
 async function uploadMedia(file,type){if(!isRealUser())throw new Error('LOGIN_REQUIRED');if(!file)return;const max=8*1024*1024;if(file.size>max)throw new Error('FILE_TOO_LARGE');const safe=file.name.replace(/[^a-zA-Z0-9._-]/g,'_');const path=`global-chat/${currentUser.uid}/${Date.now()}_${safe}`;const storageRef=ref(storage,path);await uploadBytes(storageRef,file,{contentType:file.type});return {url:await getDownloadURL(storageRef),path}}
 const TUBAL_MODERATION_WORDS=[
   /\b(?:fuck|fucking|fucked|fucker|motherfucker|shit|bullshit|bitch|bitches|asshole|assholes|bastard|dick|dicks|dickhead|piss|pissed|crap|cunt|cock|cocks|slut|whore|hoes|hoe|jerk)\b/i,
-  /\b(?:putangina|putang|tangina|tanginamo|tangina(?:mo|nyo)|pukingina|pakyu|pakyuhin|pakshet|pucha|punyeta|leche|lintik|bwisit|gago|gaga|gagong|tanga|tangahan|tarantado|ulol|hayop|hinayupak|siraulo|bobo|engot|inutil|walanghiya|hudas|peste|bulok|pangit|walangkwenta|walang-silbi|salbahe|mokong|loko|lokong|kupal|hinayupak)\b/i,
+  /\b(?:putangina|putang|tangina|tanginamo|tangina(?:mo|nyo)|pukingina|pakyu|pakyuhin|pakshet|pucha|punyeta|leche|lintik|bwisit|bwesit|buwisit|bwisittt|gago|gaga|gagong|tanga|tangahan|tarantado|ulol|hayop|hinayupak|siraulo|bobo|engot|inutil|walanghiya|hudas|peste|bulok|pangit|walangkwenta|walang-silbi|salbahe|mokong|loko|lokong|kupal|hinayupak)\b/i,
   /\b(?:iyot|umiyot|kantot|kumantot|kinantot|nakakantot|malandi|malibog|jakol|magjakol|bayag|tamod|tamod|puke|pekpek|bilat|burat|iyot)\b/i
 ];
 function normalizeModerationText(text){
