@@ -101,3 +101,20 @@
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
   window.addEventListener('storage',e=>{if(e.key===KEY||e.key===AUTO)apply()});
 })();
+/* v3 — same-tab global synchronization */
+(function(){
+  const KEY='tubalHubTheme', AUTO='tubalHubAutoTheme';
+  const media=window.matchMedia('(prefers-color-scheme: light)');
+  const get=()=>localStorage.getItem(AUTO)==='1'?(media.matches?'forest':'galaxy'):(localStorage.getItem(KEY)||'galaxy');
+  function sync(){
+    const theme=get();
+    document.documentElement.setAttribute('data-tubal-theme',theme);
+    if(document.body){
+      document.body.classList.remove('theme-forest','theme-galaxy','theme-neon');
+      document.body.classList.add('theme-'+theme);
+    }
+  }
+  window.addEventListener('tubalhubthemechange',sync);
+  window.addEventListener('storage',e=>{if(e.key===KEY||e.key===AUTO)sync()});
+  sync();
+})();
