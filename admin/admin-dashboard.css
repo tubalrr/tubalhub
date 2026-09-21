@@ -1348,3 +1348,39 @@ footer{
 @media(max-width:560px){
   .ban-options{grid-template-columns:repeat(2,1fr)}
 }
+
+
+/* BAN DURATION OPTIONS - FORCE VISIBLE */
+#banModal .ban-options{
+  display:grid !important;
+  grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+  gap:10px !important;
+  width:100% !important;
+}
+#banModal .ban-options button{
+  display:flex !important;
+  visibility:visible !important;
+  opacity:1 !important;
+  min-height:44px !important;
+  align-items:center !important;
+  justify-content:center !important;
+  padding:10px 8px !important;
+  border:1px solid #245b43 !important;
+  border-radius:9px !important;
+  background:#061b12 !important;
+  color:#c8f7df !important;
+  font-weight:800 !important;
+  font-size:11px !important;
+  cursor:pointer !important;
+}
+#banModal .ban-options button:hover,
+#banModal .ban-options button.selected{
+  border-color:#35dc8c !important;
+  background:#0b3a25 !important;
+  color:#8ff0bd !important;
+}
+@media(max-width:560px){
+  #banModal .ban-options{
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  }
+}
