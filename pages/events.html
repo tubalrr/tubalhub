@@ -18,7 +18,7 @@
 @media(max-width:900px){.event-list{grid-template-columns:1fr 1fr}}
 @media(max-width:650px){.event-list{grid-template-columns:1fr}}
 </style>
-<link rel="stylesheet" href="../assets/css/global-theme.css">
+<link rel="stylesheet" href="../assets/css/global-theme.css?v=20260921">
 </head>
 <body>
 <header>
@@ -50,6 +50,6 @@ try{
  if(!snap.empty) list.innerHTML=snap.docs.map(d=>{const x=d.data();return '<article class="event-card"><span class="event-date">'+esc(x.date||"UPCOMING EVENT")+'</span><h3>'+esc(x.title||"TUBAL HUB Event")+'</h3><p>'+esc(x.description||x.text||"Community event from TUBAL HUB.")+'</p><div class="event-meta">'+esc(x.location||"TUBAL HUB Community")+'</div></article>';}).join("");
 }catch(e){console.warn("Events unavailable.",e);}
 </script>
-<script src="../assets/js/theme.js" defer></script>
+<script src="../assets/js/theme.js?v=20260921" defer></script>
 </body>
 </html>
