@@ -1,0 +1,35 @@
+// TUBAL HUB — MODERATION RULES TO MERGE INTO FIRESTORE RULES
+// These rules require Firebase Auth custom claim: admin == true.
+// Do NOT replace your whole existing rules file with this snippet unless
+// you also preserve your existing matches for users, messages, news, etc.
+//
+// Helper:
+function isAdmin() {
+  return request.auth != null && request.auth.token.admin == true;
+}
+//
+// User moderation fields:
+// chatStatus: "active" | "muted" | "banned"
+// warnings: number
+// mutedUntil: timestamp or null
+// banReason: string
+//
+// In match /users/{userId}, add:
+// allow update: if isAdmin()
+//   || (request.auth != null && request.auth.uid == userId
+//       && request.resource.data.chatStatus == resource.data.chatStatus
+//       && request.resource.data.warnings == resource.data.warnings
+//       && request.resource.data.banReason == resource.data.banReason
+//       && request.resource.data.mutedUntil == resource.data.mutedUntil);
+//
+// In match /globalChats/{messageId}, require an active chat account:
+// allow create: if request.auth != null
+//   && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.chatStatus == "active"
+//   && (
+//     !('mutedUntil' in get(/databases/$(database)/documents/users/$(request.auth.uid)).data)
+//     || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.mutedUntil == null
+//     || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.mutedUntil <= request.time
+//   );
+//
+// Admins can always manage moderation fields through /users/{userId}.
+// For production, also validate chatStatus, warnings, and banReason types/lengths.
