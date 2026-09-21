@@ -14,15 +14,20 @@ service cloud.firestore {
     function ownsExisting() { return realUser() && resource.data.uid == request.auth.uid; }
 
     function chatAllowed() {
+      let u = get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
       return realUser()
         && (
-          !('chatStatus' in get(/databases/$(database)/documents/users/$(request.auth.uid)).data)
-          || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.chatStatus == 'active'
+          !('chatStatus' in u)
+          || u.chatStatus == 'active'
+          || (u.chatStatus == 'banned'
+              && 'banUntil' in u
+              && u.banUntil != null
+              && u.banUntil <= request.time)
         )
         && (
-          !('mutedUntil' in get(/databases/$(database)/documents/users/$(request.auth.uid)).data)
-          || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.mutedUntil == null
-          || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.mutedUntil <= request.time
+          !('mutedUntil' in u)
+          || u.mutedUntil == null
+          || u.mutedUntil <= request.time
         );
     }
 
@@ -74,7 +79,7 @@ service cloud.firestore {
       allow update: if adminUser()
         || (realUser() && userId == request.auth.uid && request.resource.data.uid == resource.data.uid
           && request.resource.data.diff(resource.data).affectedKeys().hasNone([
-            'chatStatus','warnings','mutedUntil','banReason','moderatedBy','moderatedAt'
+            'chatStatus','warnings','mutedUntil','banReason','moderatedBy','moderatedAt','banned','bannedAt','bannedBy','banUntil'
           ]));
       allow delete: if realUser() && userId == request.auth.uid;
     }
