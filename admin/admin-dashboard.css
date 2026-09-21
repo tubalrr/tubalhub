@@ -1245,3 +1245,17 @@ footer{
   color:#ffb0b0 !important;
   margin-top:3px;
 }
+
+
+.member-name{
+  cursor:pointer;
+  text-decoration:underline;
+  text-decoration-style:dotted;
+  text-underline-offset:3px;
+}
+.member-name:hover{
+  color:#8ff0bd;
+}
+.member-main{
+  min-width:0;
+}
