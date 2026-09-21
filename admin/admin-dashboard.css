@@ -1206,3 +1206,42 @@ footer{
     margin-left:auto;
   }
 }
+
+
+.moderation-toolbar{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+  padding:10px 12px;
+  margin-bottom:12px;
+  border:1px solid #164c36;
+  border-radius:10px;
+  background:rgba(5,24,16,.7);
+}
+.moderation-toolbar label{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:10px;
+  font-weight:800;
+  color:#bcebd6;
+}
+.moderation-toolbar select{
+  border:1px solid #28704f;
+  border-radius:7px;
+  background:#061b12;
+  color:#d9fff0;
+  padding:7px 9px;
+  font:inherit;
+  font-size:10px;
+}
+.moderation-toolbar small{
+  color:#668274;
+  font-size:9px;
+}
+.ban-expiry{
+  display:block;
+  color:#ffb0b0 !important;
+  margin-top:3px;
+}
