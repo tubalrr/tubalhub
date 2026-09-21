@@ -1154,3 +1154,55 @@ footer{
 }
 
 .fb-admin-note{display:block;color:#668274;font-size:8px;line-height:1.5}
+
+
+/* MEMBER MODERATION */
+#members .member-row{
+  gap:10px;
+}
+#members .member-row > div{
+  min-width:0;
+}
+#members .member-row > div small{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.member-status{
+  font-size:9px;
+  font-weight:900;
+  letter-spacing:.08em;
+  white-space:nowrap;
+}
+.member-status.active{color:#59e7a3}
+.member-status.banned{color:#ff7070}
+.member-action{
+  border:1px solid #246c4d;
+  border-radius:8px;
+  padding:7px 10px;
+  font:inherit;
+  font-size:9px;
+  font-weight:900;
+  cursor:pointer;
+  color:#d9fff0;
+  background:#09251a;
+}
+.member-action.ban{
+  border-color:#9d3c3c;
+  color:#ffb0b0;
+}
+.member-action.unban{
+  border-color:#2e9a68;
+  color:#8ff0bd;
+}
+.member-action:hover{
+  filter:brightness(1.2);
+}
+@media(max-width:560px){
+  #members .member-row{
+    flex-wrap:wrap;
+  }
+  .member-action{
+    margin-left:auto;
+  }
+}
