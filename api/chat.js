@@ -28,7 +28,7 @@ export default async function handler(req, res) {
           "x-goog-api-key": apiKey
         },
         body: JSON.stringify({
-          systemInstruction: {
+          system_instruction: {
             parts: [{
               text:
                 "You are TUBAL HUB AI, the helpful assistant for the TUBAL HUB website. " +
