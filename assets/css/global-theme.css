@@ -186,3 +186,120 @@ body.theme-nebula .tubal-bot-panel{background:rgba(5,7,17,.94)!important;border-
 body.theme-nebula .tubal-bot-head{background:linear-gradient(120deg,rgba(109,60,255,.14),rgba(88,166,255,.12))!important;border-color:rgba(157,124,255,.16)!important}
 body.theme-nebula .tubal-bot-launch{background:linear-gradient(135deg,#9d7cff,#58a6ff)!important;box-shadow:0 0 30px rgba(109,60,255,.3)}
 body.theme-nebula .theme-panel{background:rgba(7,10,22,.88)!important;border-color:rgba(157,124,255,.18)!important}
+
+
+/* TUBAL HUB — THEME IDENTITY LAYER: style changes, not colors only */
+body.theme-galaxy{
+  --theme-radius:22px;--theme-shadow:0 20px 70px rgba(90,50,180,.20);
+  font-family:Inter,system-ui,sans-serif;
+}
+body.theme-forest{
+  --theme-radius:14px;--theme-shadow:0 16px 45px rgba(30,90,45,.18);
+  font-family:Georgia,"Times New Roman",serif;
+}
+body.theme-neon{
+  --theme-radius:6px;--theme-shadow:0 0 28px rgba(29,255,145,.13);
+  font-family:"Trebuchet MS",system-ui,sans-serif;
+}
+body.theme-aurora{
+  --theme-radius:20px;--theme-shadow:0 24px 70px rgba(111,255,224,.10);
+  font-family:Inter,system-ui,sans-serif;
+}
+body.theme-nebula{
+  --theme-radius:18px;--theme-shadow:0 24px 80px rgba(88,166,255,.12);
+  font-family:"Segoe UI",system-ui,sans-serif;
+}
+
+/* shared structural transformation */
+body.theme-galaxy .card,body.theme-galaxy .panel,body.theme-galaxy article,
+body.theme-forest .card,body.theme-forest .panel,body.theme-forest article,
+body.theme-neon .card,body.theme-neon .panel,body.theme-neon article,
+body.theme-aurora .card,body.theme-aurora .panel,body.theme-aurora article,
+body.theme-nebula .card,body.theme-nebula .panel,body.theme-nebula article{
+  border-radius:var(--theme-radius)!important;
+  box-shadow:var(--theme-shadow)!important;
+  transition:transform .22s ease,box-shadow .22s ease,border-radius .22s ease,filter .22s ease!important;
+}
+body.theme-galaxy .card:hover,body.theme-galaxy .panel:hover,body.theme-galaxy article:hover,
+body.theme-aurora .card:hover,body.theme-aurora .panel:hover,body.theme-nebula .card:hover,body.theme-nebula .panel:hover{
+  transform:translateY(-3px) scale(1.005);
+}
+body.theme-forest .card:hover,body.theme-forest .panel:hover,body.theme-forest article:hover{
+  transform:translateY(-2px);
+  box-shadow:0 20px 55px rgba(25,80,35,.24)!important;
+}
+body.theme-neon .card:hover,body.theme-neon .panel:hover,body.theme-neon article:hover{
+  transform:translateY(-2px);
+  box-shadow:0 0 35px rgba(29,255,145,.20)!important;
+}
+
+/* Galaxy = futuristic cosmic cards */
+body.theme-galaxy .card,body.theme-galaxy .panel,body.theme-galaxy article{
+  background:linear-gradient(145deg,#0f0925,#09061a)!important;
+  border:1px solid rgba(167,139,255,.25)!important;
+}
+body.theme-galaxy .hero-new{clip-path:polygon(0 0,98% 0,100% 82%,94% 100%,0 100%);}
+
+/* Forest = organic/natural shapes and softer typography */
+body.theme-forest .card,body.theme-forest .panel,body.theme-forest article{
+  background:linear-gradient(145deg,#102318,#0a1710)!important;
+  border:1px solid rgba(169,242,122,.18)!important;
+}
+body.theme-forest .hero-new{border-radius:34px 10px 34px 10px!important;}
+body.theme-forest .hub-sidebar{border-radius:0 24px 24px 0!important;}
+body.theme-forest .home-heading h2,.theme-forest .hero-content h1{letter-spacing:.01em}
+
+/* Neon = sharp arcade/tech geometry */
+body.theme-neon .card,body.theme-neon .panel,body.theme-neon article{
+  background:linear-gradient(135deg,#07140d,#030907)!important;
+  border:1px solid rgba(29,255,145,.28)!important;
+}
+body.theme-neon .hero-new{border-radius:4px!important;clip-path:polygon(0 0,100% 0,100% 88%,96% 100%,0 100%);}
+body.theme-neon button,body.theme-neon .btn,body.theme-neon .hero-green{
+  border-radius:4px!important;text-transform:uppercase;letter-spacing:.08em;
+  box-shadow:0 0 20px rgba(29,255,145,.16)!important;
+}
+body.theme-neon .hub-sidebar{border-right:2px solid rgba(29,255,145,.18)!important;}
+
+/* Aurora = glass UI, blur and floating cards */
+body.theme-aurora .card,body.theme-aurora .panel,body.theme-aurora article{
+  background:linear-gradient(145deg,rgba(17,25,48,.70),rgba(8,12,27,.48))!important;
+  border:1px solid rgba(111,255,224,.18)!important;
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+}
+body.theme-aurora .hero-new{border-radius:28px!important;backdrop-filter:blur(20px);}
+body.theme-aurora button,body.theme-aurora .btn{border-radius:999px!important;}
+body.theme-aurora .home-heading h2{font-weight:500;letter-spacing:.04em;}
+
+/* Nebula = deep-space layered panels and orbit-like accents */
+body.theme-nebula .card,body.theme-nebula .panel,body.theme-nebula article{
+  background:linear-gradient(145deg,rgba(11,14,30,.96),rgba(4,6,15,.94))!important;
+  border:1px solid rgba(157,124,255,.20)!important;
+}
+body.theme-nebula .hero-new{border-radius:18px!important;position:relative;overflow:hidden;}
+body.theme-nebula .hero-new::after{content:"";position:absolute;inset:auto -10% -65% 20%;height:180px;border:1px solid rgba(88,166,255,.13);border-radius:50%;transform:rotate(-8deg);pointer-events:none;box-shadow:0 0 60px rgba(109,60,255,.08);}
+body.theme-nebula button,body.theme-nebula .btn{border-radius:10px!important;box-shadow:0 8px 28px rgba(88,166,255,.10)!important;}
+
+/* Theme-specific headings, labels and micro UI */
+body.theme-galaxy .home-heading h2{font-weight:800;letter-spacing:-.025em}
+body.theme-forest .home-heading h2{font-weight:700;letter-spacing:.02em}
+body.theme-neon .home-heading h2{font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+body.theme-aurora .home-heading h2{font-weight:600;letter-spacing:.015em}
+body.theme-nebula .home-heading h2{font-weight:750;letter-spacing:.03em}
+body.theme-galaxy .kicker{border-radius:999px!important}
+body.theme-forest .kicker{border-radius:10px 3px 10px 3px!important}
+body.theme-neon .kicker{border-radius:3px!important;text-transform:uppercase;letter-spacing:.12em}
+body.theme-aurora .kicker{border-radius:999px!important;backdrop-filter:blur(12px)}
+body.theme-nebula .kicker{border-radius:8px!important;letter-spacing:.08em}
+
+/* prevent hard-coded dark text from becoming unreadable */
+body.theme-galaxy main p,body.theme-galaxy main li,body.theme-galaxy .muted,
+body.theme-forest main p,body.theme-forest main li,body.theme-forest .muted,
+body.theme-neon main p,body.theme-neon main li,body.theme-neon .muted,
+body.theme-aurora main p,body.theme-aurora main li,body.theme-aurora .muted,
+body.theme-nebula main p,body.theme-nebula main li,body.theme-nebula .muted{
+  color:var(--theme-muted)!important;
+}
+body.theme-galaxy strong,body.theme-galaxy b,body.theme-forest strong,body.theme-forest b,
+body.theme-neon strong,body.theme-neon b,body.theme-aurora strong,body.theme-aurora b,
+body.theme-nebula strong,body.theme-nebula b{color:var(--theme-text)!important;}
