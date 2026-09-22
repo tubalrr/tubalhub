@@ -128,5 +128,6 @@ $('.shop-filter').forEach(b=>b.onclick=()=>{$('.shop-filter').forEach(x=>x.class
 $('#shopSearch').oninput=e=>{const q=e.target.value.toLowerCase();$('.shop-live-card').forEach(c=>c.style.display=c.dataset.name.includes(q)?'':'none')};
 $('#openCart').onclick=()=>$('#cartPanel').classList.add('open');$('#closeCart').onclick=()=>$('#cartPanel').classList.remove('open');$('#cartPanel').onclick=e=>{if(e.target.id==='cartPanel')e.currentTarget.classList.remove('open')};render()})();
 </script>
+<script type="module" src="../assets/js/presence.js?v=20260923"></script>
 </body>
 </html>
