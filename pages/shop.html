@@ -6,11 +6,11 @@
 <title>Shop | TUBAL HUB</title>
 <link rel="stylesheet" href="../assets/css/platform-pages.css">
 <style>
-:root{--shop-green:#8cff57;--shop-dark:#050806;--shop-card:#0b120e;--shop-line:#1b3023}
+:root{--shop-green:#8cff57;--shop-cyan:#62f7e1;--shop-purple:#8d7cff;--shop-dark:#050806;--shop-card:#0b120e;--shop-line:#1b3023}
 body{background:radial-gradient(circle at 80% 0%,#17351e 0,transparent 34%),#050806}
-.shop-page{max-width:1180px;margin:auto;padding:28px 22px 70px}
-.shop-hero{position:relative;overflow:hidden;min-height:300px;border:1px solid var(--shop-line);border-radius:22px;padding:42px;display:flex;align-items:center;background:linear-gradient(135deg,#0b1b11,#07100a 55%,#102719);box-shadow:0 20px 70px #0008}
-.shop-hero:after{content:"";position:absolute;width:360px;height:360px;border-radius:50%;right:-100px;top:-120px;background:radial-gradient(circle,#9cff5722,transparent 65%)}
+.shop-page{max-width:1240px;margin:auto;padding:30px 22px 80px}
+.shop-hero{position:relative;overflow:hidden;isolation:isolate;min-height:300px;border:1px solid var(--shop-line);border-radius:22px;padding:42px;display:flex;align-items:center;background:linear-gradient(135deg,#0b1b11,#07100a 55%,#102719);box-shadow:0 20px 70px #0008}
+.shop-hero:before{content:"";position:absolute;inset:-35%;background:radial-gradient(circle at 70% 35%,#8d7cff22,transparent 25%),radial-gradient(circle at 35% 70%,#62f7e11c,transparent 24%);filter:blur(30px);animation:shopGlow 12s ease-in-out infinite alternate;z-index:-1}.shop-hero:after{content:"";position:absolute;width:360px;height:360px;border-radius:50%;right:-100px;top:-120px;background:radial-gradient(circle,#9cff5722,transparent 65%)}
 .shop-kicker{font-size:11px;letter-spacing:3px;color:#88a091}
 .shop-hero h1{font-size:clamp(46px,8vw,88px);margin:8px 0 10px;line-height:.9}.shop-hero h1 em{color:var(--shop-green);font-style:normal}
 .shop-hero p{max-width:570px;color:#9aaa9f;font-size:15px;line-height:1.7}
@@ -22,13 +22,14 @@ body{background:radial-gradient(circle at 80% 0%,#17351e 0,transparent 34%),#050
 .shop-category:hover{transform:translateY(-5px);border-color:#8cff5766;box-shadow:0 16px 45px #0008}
 .shop-category .num{position:absolute;right:18px;top:14px;color:#496051;font-size:11px}.shop-icon{font-size:34px;margin-bottom:25px}.shop-category h3{margin:0 0 7px;font-size:19px}.shop-category p{margin:0;color:#829287;font-size:12px;line-height:1.6}.shop-category b{display:block;margin-top:18px;color:var(--shop-green);font-size:10px}
 .shop-featured{display:grid;grid-template-columns:1.25fr .75fr .75fr;gap:14px}
-.shop-product{min-height:245px;border:1px solid var(--shop-line);border-radius:15px;background:#090f0b;overflow:hidden;display:flex;flex-direction:column}
+.shop-product{min-height:245px;transition:.25s;border:1px solid var(--shop-line);border-radius:15px;background:#090f0b;overflow:hidden;display:flex;flex-direction:column}
 .shop-art{height:125px;display:grid;place-items:center;background:radial-gradient(circle at 50% 30%,#24552d,#08100b 70%);font-size:42px}
 .shop-product:first-child .shop-art{font-size:54px}.shop-product-body{padding:17px}.shop-product-body small{color:#708477;font-size:8px;letter-spacing:1.5px}.shop-product-body h3{margin:7px 0;font-size:16px}.shop-product-body p{font-size:11px;color:#819086;line-height:1.5}.shop-status{display:inline-block;margin-top:7px;padding:5px 8px;border-radius:5px;background:#132017;color:#9cff57;font-size:8px;font-weight:800}
-.shop-note{margin-top:28px;padding:20px;border:1px dashed #294433;border-radius:13px;background:#09110c;color:#839488;font-size:11px;text-align:center}
+.shop-product:hover{transform:translateY(-5px);border-color:#8cff5766;box-shadow:0 18px 50px #0008}.shop-note{margin-top:28px;padding:20px;border:1px dashed #294433;border-radius:13px;background:#09110c;color:#839488;font-size:11px;text-align:center}
+@keyframes shopGlow{from{transform:translate3d(-2%,0,0) scale(1)}to{transform:translate3d(3%,2%,0) scale(1.08)}}
 @media(max-width:800px){.shop-page{padding:16px 13px 50px}.shop-hero{padding:28px 22px;min-height:340px}.shop-orbit{opacity:.35;right:-55px}.shop-categories,.shop-featured{grid-template-columns:1fr}.shop-section-head{align-items:start;flex-direction:column}.shop-product{min-height:220px}}
 </style>
-<link rel="stylesheet" href="../assets/css/global-theme.css?v=20260921">
+<link rel="stylesheet" href="../assets/css/global-theme.css?v=20260922">
 </head>
 <body>
 <header>
@@ -44,6 +45,8 @@ body{background:radial-gradient(circle at 80% 0%,#17351e 0,transparent 34%),#050
 <div class="shop-actions"><a class="primary" href="#categories">Browse Shop</a><a href="../index.html">Back to Hub</a></div>
 </div><div class="shop-orbit"></div>
 </section>
+
+<section class="shop-section"><div class="shop-section-head"><div><span>WHY TUBAL HUB</span><h2>A shop built for <em>creators.</em></h2></div></div><div class="shop-categories"><div class="shop-category"><div class="shop-icon">⚡</div><h3>Simple Access</h3><p>Find downloads and digital content through a clean, focused hub.</p></div><div class="shop-category"><div class="shop-icon">✦</div><h3>Creator First</h3><p>A dedicated space for community-made resources and future collections.</p></div><div class="shop-category"><div class="shop-icon">⌁</div><h3>Growing Library</h3><p>New categories and items can be added as the TUBAL HUB ecosystem grows.</p></div></div></section>
 
 <section class="shop-section" id="categories">
 <div class="shop-section-head"><div><span>EXPLORE</span><h2>Shop <em>Categories</em></h2></div></div>
@@ -66,6 +69,6 @@ body{background:radial-gradient(circle at 80% 0%,#17351e 0,transparent 34%),#050
 </main>
 <footer><div><b>TUBAL HUB</b><span>Three Brands. One Hub.</span></div><nav><a href="../index.html">Home</a><a href="community.html">Community</a><a href="privacy.html">Privacy</a><a href="cookies.html">Cookies</a><a href="terms.html">Terms</a></nav><small>© 2026 TUBAL HUB. All rights reserved.</small></footer>
 <script src="../assets/js/data.js"></script><script src="../assets/js/main.js"></script>
-<script src="../assets/js/theme.js?v=20260921" defer></script>
+<script src="../assets/js/theme.js?v=20260922" defer></script>
 </body>
 </html>
