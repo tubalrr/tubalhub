@@ -303,3 +303,44 @@ body.theme-nebula main p,body.theme-nebula main li,body.theme-nebula .muted{
 body.theme-galaxy strong,body.theme-galaxy b,body.theme-forest strong,body.theme-forest b,
 body.theme-neon strong,body.theme-neon b,body.theme-aurora strong,body.theme-aurora b,
 body.theme-nebula strong,body.theme-nebula b{color:var(--theme-text)!important;}
+
+
+/* HOMEPAGE — make each theme visibly different */
+body.theme-galaxy .hub-home .hero-new{border-radius:28px 28px 80px 28px!important;box-shadow:0 25px 90px rgba(115,70,255,.24)!important}
+body.theme-galaxy .hub-home .brand-card,body.theme-galaxy .hub-home .live-card,body.theme-galaxy .hub-home .social-card,body.theme-galaxy .hub-home .facebook-video-container,body.theme-galaxy .hub-home .news-empty,body.theme-galaxy .hub-home .shop-preview-card{border-radius:24px!important;transform:translateY(0);box-shadow:0 18px 55px rgba(70,40,160,.22)!important}
+body.theme-galaxy .hub-home .brand-card:hover,body.theme-galaxy .hub-home .live-card:hover,body.theme-galaxy .hub-home .social-card:hover,body.theme-galaxy .hub-home .shop-preview-card:hover{transform:translateY(-8px) rotateX(2deg)!important}
+
+body.theme-forest .hub-home .hero-new{border-radius:45px 12px 45px 12px!important;box-shadow:0 22px 55px rgba(30,90,40,.28)!important}
+body.theme-forest .hub-home .brand-card,body.theme-forest .hub-home .live-card,body.theme-forest .hub-home .social-card,body.theme-forest .hub-home .facebook-video-container,body.theme-forest .hub-home .news-empty,body.theme-forest .hub-home .shop-preview-card{border-radius:18px 5px 18px 5px!important;box-shadow:0 14px 38px rgba(25,75,35,.22)!important}
+body.theme-forest .hub-home .brand-card:hover,body.theme-forest .hub-home .live-card:hover,body.theme-forest .hub-home .social-card:hover,body.theme-forest .hub-home .shop-preview-card:hover{transform:translateY(-5px)!important}
+
+body.theme-neon .hub-home .hero-new{border-radius:3px!important;clip-path:polygon(0 0,98% 0,100% 15%,100% 86%,97% 100%,0 100%)!important;box-shadow:0 0 45px rgba(29,255,145,.18)!important}
+body.theme-neon .hub-home .brand-card,body.theme-neon .hub-home .live-card,body.theme-neon .hub-home .social-card,body.theme-neon .hub-home .facebook-video-container,body.theme-neon .hub-home .news-empty,body.theme-neon .hub-home .shop-preview-card{border-radius:3px!important;border-width:1px 1px 1px 3px!important;box-shadow:0 0 22px rgba(29,255,145,.10)!important}
+body.theme-neon .hub-home .brand-card:hover,body.theme-neon .hub-home .live-card:hover,body.theme-neon .hub-home .social-card:hover,body.theme-neon .hub-home .shop-preview-card:hover{transform:translateY(-4px) skewX(-1deg)!important}
+
+body.theme-aurora .hub-home .hero-new{border-radius:32px!important;box-shadow:0 25px 80px rgba(80,255,220,.12)!important;backdrop-filter:blur(24px)!important}
+body.theme-aurora .hub-home .brand-card,body.theme-aurora .hub-home .live-card,body.theme-aurora .hub-home .social-card,body.theme-aurora .hub-home .facebook-video-container,body.theme-aurora .hub-home .news-empty,body.theme-aurora .hub-home .shop-preview-card{border-radius:28px!important;background:rgba(15,23,45,.48)!important;backdrop-filter:blur(22px)!important;box-shadow:inset 0 1px rgba(255,255,255,.09),0 22px 60px rgba(0,0,0,.22)!important}
+body.theme-aurora .hub-home .brand-card:hover,body.theme-aurora .hub-home .live-card:hover,body.theme-aurora .hub-home .social-card:hover,body.theme-aurora .hub-home .shop-preview-card:hover{transform:translateY(-7px) scale(1.015)!important}
+
+body.theme-nebula .hub-home .hero-new{border-radius:18px 18px 90px 18px!important;box-shadow:0 25px 90px rgba(75,55,180,.24)!important}
+body.theme-nebula .hub-home .brand-card,body.theme-nebula .hub-home .live-card,body.theme-nebula .hub-home .social-card,body.theme-nebula .hub-home .facebook-video-container,body.theme-nebula .hub-home .news-empty,body.theme-nebula .hub-home .shop-preview-card{border-radius:16px!important;box-shadow:0 18px 60px rgba(0,0,0,.42),0 0 24px rgba(90,70,200,.07)!important}
+body.theme-nebula .hub-home .brand-card:hover,body.theme-nebula .hub-home .live-card:hover,body.theme-nebula .hub-home .social-card:hover,body.theme-nebula .hub-home .shop-preview-card:hover{transform:translateY(-6px)!important}
+
+/* typography changes per theme */
+body.theme-galaxy .hub-home .hero-content h1{font-weight:900;letter-spacing:-.045em;font-style:normal}
+body.theme-galaxy .hub-home .home-heading h2{font-weight:800;letter-spacing:-.03em}
+body.theme-forest .hub-home .hero-content h1{font-family:Georgia,serif;font-weight:700;letter-spacing:.01em}
+body.theme-forest .hub-home .home-heading h2{font-family:Georgia,serif;font-weight:700}
+body.theme-neon .hub-home .hero-content h1{font-family:"Trebuchet MS",sans-serif;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+body.theme-neon .hub-home .hero-sub,body.theme-neon .hub-home .home-heading h2{letter-spacing:.08em}
+body.theme-aurora .hub-home .hero-content h1{font-weight:500;letter-spacing:.02em}
+body.theme-aurora .hub-home .hero-sub{font-weight:300;letter-spacing:.04em}
+body.theme-nebula .hub-home .hero-content h1{font-weight:800;letter-spacing:.015em}
+body.theme-nebula .hub-home .home-heading h2{font-weight:700;letter-spacing:.035em}
+
+/* theme-specific sidebar/nav shape */
+body.theme-galaxy .hub-home .hub-sidebar{border-radius:0 28px 28px 0!important}
+body.theme-forest .hub-home .hub-sidebar{border-radius:0 22px 22px 0!important}
+body.theme-neon .hub-home .hub-sidebar{border-right:2px solid #1dff91!important;border-radius:0!important}
+body.theme-aurora .hub-home .hub-sidebar{border-radius:0 24px 24px 0!important;backdrop-filter:blur(24px)!important}
+body.theme-nebula .hub-home .hub-sidebar{border-radius:0 18px 18px 0!important}
