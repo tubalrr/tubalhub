@@ -128,6 +128,6 @@ onAuthStateChanged(auth,async user=>{if(!user||user.isAnonymous){currentUser=nul
 document.addEventListener('visibilitychange',()=>{if(currentUser&&!document.hidden){updatePresence(currentUser,true).catch(()=>{});subscribePresence()}});window.addEventListener('pageshow',()=>{if(currentUser)updatePresence(currentUser,true).catch(()=>{})});window.addEventListener('focus',()=>{if(currentUser)updatePresence(currentUser,true).catch(()=>{})});window.addEventListener('beforeunload',()=>{if(currentUser)updatePresence(currentUser,false).catch(()=>{})});
 </script>
 <script type="module" src="../assets/js/video-call.js?v=20260920-webRTC2"></script>
-<script src="../assets/js/chatbot.js?v=20260922" defer></script>
+<script src="../assets/js/chatbot.js?v=20260923" defer></script>
 <script src="../assets/js/theme.js?v=20260921" defer></script>
 </body></html>
