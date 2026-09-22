@@ -14,4 +14,6 @@ try{
  if(!snap.empty) grid.innerHTML=snap.docs.map(d=>{const x=d.data();return `<article class="news-card" data-news-item data-category="${esc(x.category||"platform").toLowerCase()}"><div class="news-art">▣</div><div class="news-card-body"><small>${esc(x.date||"LATEST")}</small><h3>${esc(x.title)}</h3><p>${esc(x.text)}</p><a href="#">Read Article →</a></div></article>`}).join("");
 }catch(e){console.warn("Firestore news unavailable; showing default content.",e);}
 </script><script>(()=>{const bs=[...document.querySelectorAll(".news-filter")],s=document.getElementById("newsSearch");function apply(){const f=document.querySelector(".news-filter.active")?.dataset.filter||"all",q=(s?.value||"").toLowerCase();document.querySelectorAll("[data-news-item]").forEach(x=>x.style.display=(f==="all"||x.dataset.category===f)&&x.textContent.toLowerCase().includes(q)?"":"none")}bs.forEach(b=>b.onclick=()=>{bs.forEach(x=>x.classList.remove("active"));b.classList.add("active");apply()});s?.addEventListener("input",apply)})()</script><script src="../assets/js/theme.js?v=20260922" defer></script>
-</body></html>
+<script type="module" src="../assets/js/presence.js?v=20260923"></script>
+</body>
+</html>
