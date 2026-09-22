@@ -1,7 +1,7 @@
 /* TUBAL HUB AI CHATBOT */
-.tubal-bot-launch{position:fixed;right:22px;bottom:22px;width:58px;height:58px;border:0;border-radius:50%;z-index:9998;cursor:pointer;background:linear-gradient(135deg,#7c5cff,#27d9ff);color:#fff;font-size:25px;box-shadow:0 10px 35px #0008,0 0 28px #7c5cff55}
+.tubal-bot-launch{position:fixed;right:22px;bottom:22px;width:58px;height:58px;border:0;border-radius:50%;z-index:2147483646;cursor:pointer;background:linear-gradient(135deg,#7c5cff,#27d9ff);color:#fff;font-size:25px;box-shadow:0 10px 35px #0008,0 0 28px #7c5cff55}
 .tubal-bot-launch:hover{transform:translateY(-2px)}
-.tubal-bot-panel{position:fixed;right:22px;bottom:92px;width:min(380px,calc(100vw - 28px));height:min(560px,calc(100vh - 120px));z-index:9999;display:none;flex-direction:column;overflow:hidden;border:1px solid var(--theme-line,#38285f);border-radius:20px;background:var(--theme-panel,#0b0720);color:var(--theme-text,#f4f0ff);box-shadow:0 25px 70px #000b}
+.tubal-bot-panel{position:fixed;right:22px;bottom:92px;width:min(380px,calc(100vw - 28px));height:min(560px,calc(100vh - 120px));z-index:2147483647;display:none;flex-direction:column;overflow:hidden;border:1px solid var(--theme-line,#38285f);border-radius:20px;background:var(--theme-panel,#0b0720);color:var(--theme-text,#f4f0ff);box-shadow:0 25px 70px #000b}
 .tubal-bot-panel.open{display:flex}
 .tubal-bot-head{display:flex;align-items:center;gap:10px;padding:15px 16px;border-bottom:1px solid var(--theme-line,#38285f);background:linear-gradient(135deg,#7c5cff22,#27d9ff12)}
 .tubal-bot-avatar{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,#7c5cff,#27d9ff);font-size:20px}
@@ -34,3 +34,5 @@
 @media(max-width:600px){
   .tubal-bot-launch{touch-action:none}
 }
+
+@media(max-width:600px){.tubal-bot-launch{width:62px;height:62px;right:max(14px,env(safe-area-inset-right));bottom:max(14px,env(safe-area-inset-bottom));display:flex!important;align-items:center;justify-content:center;opacity:1!important;visibility:visible!important}.tubal-bot-panel{z-index:2147483647;right:8px;bottom:82px;width:calc(100vw - 16px);height:calc(100dvh - 100px);max-height:620px}}
