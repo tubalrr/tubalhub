@@ -79,7 +79,7 @@
       let data={};
       try{data=raw?JSON.parse(raw):{}}catch{}
       if(!r.ok){
-        const detail=data.error||data.message||('HTTP '+r.status);
+        const detail=data.providerMessage||data.error||data.message||('HTTP '+r.status);
         throw new Error('API '+r.status+': '+detail);
       }
       thinking.remove();
