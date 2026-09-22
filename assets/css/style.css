@@ -1407,3 +1407,153 @@ body.theme-galaxy.hub-home{color:#f4f0ff}
   .top-nav-logo{width:40px;height:40px;flex-basis:40px}
   .top-nav-logo img{width:36px;height:36px}
 }
+
+
+/* =========================================================
+   TUBAL HUB — ACTUAL THEME LAYOUTS
+   Each theme changes composition, not only colors.
+   ========================================================= */
+
+/* GALAXY — centered cinematic portal */
+body.theme-galaxy .hub-main>main{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  gap:30px!important;
+}
+body.theme-galaxy .hub-main>main>.hero-new{min-height:520px!important;border-radius:42px!important}
+body.theme-galaxy .hub-main>main>.brand-strip{
+  display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:18px!important;
+}
+body.theme-galaxy .hub-main>main>.brand-strip .brand-tagline{
+  grid-column:1/-1;text-align:center;font-size:clamp(22px,3vw,38px)!important;letter-spacing:.08em;
+}
+body.theme-galaxy .hub-main>main>.feature-row{display:grid!important;grid-template-columns:1.35fr .65fr!important;gap:22px!important}
+body.theme-galaxy .hub-main>main>.home-section{border-radius:28px!important;padding:8px!important}
+body.theme-galaxy .hub-main>main>.feature-links{display:grid!important;grid-template-columns:repeat(4,1fr)!important;gap:14px!important}
+
+/* FOREST — organic editorial / magazine layout */
+body.theme-forest .hub-main>main{
+  display:grid!important;grid-template-columns:1fr!important;gap:24px!important;
+}
+body.theme-forest .hub-main>main>.hero-new{
+  min-height:460px!important;border-radius:60px 16px 60px 16px!important;
+  padding-left:clamp(24px,7vw,90px)!important;
+}
+body.theme-forest .hub-main>main>.brand-strip{
+  display:grid!important;grid-template-columns:1fr 1fr!important;gap:20px!important;
+  padding:24px!important;border-radius:38px 10px 38px 10px!important;
+}
+body.theme-forest .hub-main>main>.brand-strip .brand-card:first-child{transform:rotate(-1deg)}
+body.theme-forest .hub-main>main>.brand-strip .brand-card:nth-child(2){transform:rotate(1deg)}
+body.theme-forest .hub-main>main>.brand-strip .brand-card:nth-child(3){grid-column:1/-1;max-width:60%;justify-self:center}
+body.theme-forest .hub-main>main>.brand-strip .brand-tagline{grid-column:1/-1;text-align:center;font-family:Georgia,serif}
+body.theme-forest .hub-main>main>.feature-row{display:grid!important;grid-template-columns:1fr 1fr!important;gap:20px!important}
+body.theme-forest .hub-main>main>.home-section{padding:26px!important;border-radius:32px 8px 32px 8px!important}
+body.theme-forest .hub-main>main>.feature-links{display:grid!important;grid-template-columns:repeat(2,1fr)!important;gap:16px!important}
+
+/* NEON — two-column command-center dashboard */
+body.theme-neon .hub-main>main{
+  display:grid!important;grid-template-columns:minmax(0,1.55fr) minmax(280px,.45fr)!important;
+  grid-template-areas:
+    "hero hero"
+    "ad ad"
+    "brands brands"
+    "feature feature"
+    "video news"
+    "shop shop"
+    "links links";
+  gap:18px!important;
+}
+body.theme-neon .hub-main>main>.hero-new{grid-area:hero;min-height:430px!important;border-radius:4px!important}
+body.theme-neon .hub-main>main>.hub-ad-section{grid-area:ad}
+body.theme-neon .hub-main>main>.brand-strip{grid-area:brands;display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:12px!important}
+body.theme-neon .hub-main>main>.feature-row{grid-area:feature;display:grid!important;grid-template-columns:1fr 1fr!important;gap:12px!important}
+body.theme-neon .hub-main>main>.facebook-video-section{grid-area:video}
+body.theme-neon .hub-main>main>.home-news-section{grid-area:news}
+body.theme-neon .hub-main>main>.home-shop-section{grid-area:shop}
+body.theme-neon .hub-main>main>.feature-links{grid-area:links;display:grid!important;grid-template-columns:repeat(4,1fr)!important;gap:10px!important}
+body.theme-neon .hub-main>main>.home-section{padding:18px!important;border-radius:3px!important}
+body.theme-neon .hub-main>main>.brand-strip .brand-tagline{display:none}
+
+/* AURORA — floating glass panels / asymmetric composition */
+body.theme-aurora .hub-main>main{
+  display:grid!important;
+  grid-template-columns:minmax(0,1.7fr) minmax(260px,.8fr)!important;
+  gap:24px!important;align-items:start;
+}
+body.theme-aurora .hub-main>main>.hero-new{grid-column:1/-1;min-height:500px!important;border-radius:38px!important}
+body.theme-aurora .hub-main>main>.hub-ad-section{grid-column:1/-1}
+body.theme-aurora .hub-main>main>.brand-strip{
+  grid-column:1/-1;display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:18px!important;
+}
+body.theme-aurora .hub-main>main>.brand-strip .brand-tagline{grid-column:1/-1;text-align:center}
+body.theme-aurora .hub-main>main>.feature-row{grid-column:1/-1;display:grid!important;grid-template-columns:1.3fr .7fr!important;gap:24px!important}
+body.theme-aurora .hub-main>main>.facebook-video-section{grid-column:1}
+body.theme-aurora .hub-main>main>.home-news-section{grid-column:2}
+body.theme-aurora .hub-main>main>.home-shop-section{grid-column:1/-1}
+body.theme-aurora .hub-main>main>.feature-links{grid-column:1/-1;display:grid!important;grid-template-columns:repeat(4,1fr)!important;gap:16px!important}
+body.theme-aurora .hub-main>main>.home-section{padding:24px!important;border-radius:30px!important}
+
+/* NEBULA — dark space dashboard with layered columns */
+body.theme-nebula .hub-main>main{
+  display:grid!important;
+  grid-template-columns:minmax(0,1.35fr) minmax(300px,.65fr)!important;
+  gap:20px!important;align-items:start;
+}
+body.theme-nebula .hub-main>main>.hero-new{grid-column:1/-1;min-height:500px!important;border-radius:20px 20px 90px 20px!important}
+body.theme-nebula .hub-main>main>.hub-ad-section{grid-column:1/-1}
+body.theme-nebula .hub-main>main>.brand-strip{
+  grid-column:1/-1;display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:14px!important;
+}
+body.theme-nebula .hub-main>main>.brand-strip .brand-tagline{grid-column:1/-1;text-align:center;opacity:.8}
+body.theme-nebula .hub-main>main>.feature-row{grid-column:1/-1;display:grid!important;grid-template-columns:1.6fr .4fr!important;gap:18px!important}
+body.theme-nebula .hub-main>main>.facebook-video-section{grid-column:1}
+body.theme-nebula .hub-main>main>.home-news-section{grid-column:2}
+body.theme-nebula .hub-main>main>.home-shop-section{grid-column:1/-1}
+body.theme-nebula .hub-main>main>.feature-links{grid-column:1/-1;display:grid!important;grid-template-columns:repeat(4,1fr)!important;gap:12px!important}
+body.theme-nebula .hub-main>main>.home-section{padding:22px!important;border-radius:18px!important}
+
+/* Theme-specific navigation geometry */
+body.theme-galaxy .hub-sidebar{width:270px!important}
+body.theme-forest .hub-sidebar{width:250px!important}
+body.theme-neon .hub-sidebar{width:230px!important}
+body.theme-aurora .hub-sidebar{width:260px!important}
+body.theme-nebula .hub-sidebar{width:255px!important}
+
+/* Mobile: every theme becomes a deliberate single-column composition */
+@media(max-width:900px){
+  body.theme-galaxy .hub-main>main,
+  body.theme-forest .hub-main>main,
+  body.theme-neon .hub-main>main,
+  body.theme-aurora .hub-main>main,
+  body.theme-nebula .hub-main>main{
+    display:flex!important;flex-direction:column!important;gap:18px!important;
+  }
+  body.theme-galaxy .hub-main>main>.brand-strip,
+  body.theme-forest .hub-main>main>.brand-strip,
+  body.theme-neon .hub-main>main>.brand-strip,
+  body.theme-aurora .hub-main>main>.brand-strip,
+  body.theme-nebula .hub-main>main>.brand-strip,
+  body.theme-galaxy .hub-main>main>.feature-row,
+  body.theme-forest .hub-main>main>.feature-row,
+  body.theme-neon .hub-main>main>.feature-row,
+  body.theme-aurora .hub-main>main>.feature-row,
+  body.theme-nebula .hub-main>main>.feature-row{
+    display:flex!important;flex-direction:column!important;
+  }
+  body.theme-forest .hub-main>main>.brand-strip .brand-card:nth-child(3){max-width:none!important}
+  body.theme-galaxy .hub-main>main>.feature-links,
+  body.theme-forest .hub-main>main>.feature-links,
+  body.theme-neon .hub-main>main>.feature-links,
+  body.theme-aurora .hub-main>main>.feature-links,
+  body.theme-nebula .hub-main>main>.feature-links{
+    display:grid!important;grid-template-columns:1fr 1fr!important;
+  }
+}
+@media(max-width:520px){
+  body.theme-galaxy .hub-main>main>.feature-links,
+  body.theme-forest .hub-main>main>.feature-links,
+  body.theme-neon .hub-main>main>.feature-links,
+  body.theme-aurora .hub-main>main>.feature-links,
+  body.theme-nebula .hub-main>main>.feature-links{grid-template-columns:1fr!important}
+}
