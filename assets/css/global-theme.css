@@ -164,3 +164,25 @@ body.theme-aurora .tubal-bot-head{background:linear-gradient(120deg,rgba(111,255
 body.theme-aurora .tubal-bot-launch{background:linear-gradient(135deg,#6fffe0,#9b7cff)!important;box-shadow:0 0 28px rgba(111,255,224,.28)}
 body.theme-aurora .theme-panel{background:rgba(10,15,30,.65)!important;border-color:rgba(111,255,224,.18)!important;backdrop-filter:blur(22px)}
 @media(max-width:760px){body.theme-aurora::before{filter:blur(32px);animation-duration:24s}}
+
+
+/* TUBAL HUB — NEBULA DARK */
+html[data-tubal-theme="nebula"]{--theme-bg:#010207;--theme-panel:#080b18;--theme-line:#252c4a;--theme-text:#f5f3ff;--theme-muted:#a8abc2;--theme-accent:#9d7cff;--theme-accent2:#58a6ff}
+body.theme-nebula{background:#010207!important;color:#f5f3ff!important;position:relative;isolation:isolate}
+body.theme-nebula::before{content:"";position:fixed;inset:-15%;z-index:-2;pointer-events:none;background:radial-gradient(circle at 18% 32%,rgba(109,60,255,.23),transparent 24%),radial-gradient(circle at 78% 20%,rgba(227,77,255,.16),transparent 22%),radial-gradient(circle at 62% 78%,rgba(35,109,255,.16),transparent 25%),radial-gradient(circle at 38% 65%,rgba(120,60,255,.09),transparent 28%);filter:blur(55px);animation:tubalNebula 22s ease-in-out infinite alternate}
+body.theme-nebula::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background-image:radial-gradient(circle at 15% 20%,rgba(255,255,255,.8) 0 1px,transparent 1.5px),radial-gradient(circle at 72% 28%,rgba(160,190,255,.65) 0 1px,transparent 1.5px),radial-gradient(circle at 42% 78%,rgba(255,255,255,.55) 0 1px,transparent 1.5px);background-size:280px 260px,340px 310px,420px 380px;opacity:.35}
+@keyframes tubalNebula{0%{transform:translate3d(-1%,0,0) scale(1)}50%{transform:translate3d(2%,-2%,0) scale(1.05)}100%{transform:translate3d(-1%,2%,0) scale(1.02)}}
+body.theme-nebula .hub-sidebar,body.theme-nebula .hub-topbar,body.theme-nebula header{background:rgba(3,5,13,.86)!important;border-color:rgba(88,166,255,.16)!important;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+body.theme-nebula .search-box,body.theme-nebula .icon-btn,body.theme-nebula .brand-card,body.theme-nebula .live-card,body.theme-nebula .social-card,body.theme-nebula .news-card,body.theme-nebula .facebook-video-container,body.theme-nebula .feature-links a,body.theme-nebula .hub-ad-container{background:rgba(7,10,22,.82)!important;border-color:rgba(88,166,255,.14)!important;box-shadow:inset 0 1px rgba(255,255,255,.035),0 18px 55px rgba(0,0,0,.35)}
+body.theme-nebula .side-nav a.active,body.theme-nebula .side-nav a:hover{background:linear-gradient(100deg,rgba(109,60,255,.2),rgba(88,166,255,.12))!important;color:#fff!important;box-shadow:inset 3px 0 #9d7cff,0 0 28px rgba(109,60,255,.1)}
+body.theme-nebula .hero-new{background:radial-gradient(circle at 70% 42%,rgba(109,60,255,.18),transparent 24%),radial-gradient(circle at 35% 55%,rgba(227,77,255,.1),transparent 25%),linear-gradient(120deg,#010207,#080b18 55%,#02030a)!important;border-color:rgba(157,124,255,.16)}
+body.theme-nebula .hero-content h1 span{background:linear-gradient(135deg,#fff,#9d7cff 48%,#58a6ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+body.theme-nebula .hero-green{background:linear-gradient(135deg,#9d7cff,#58a6ff)!important;color:#fff!important;box-shadow:0 0 30px rgba(109,60,255,.22)}
+body.theme-nebula .home-heading h2 em,body.theme-nebula .home-heading a{color:#9d7cff!important}
+body.theme-nebula .top-nav-logo{background:rgba(5,7,17,.75);border-color:rgba(157,124,255,.4)}
+body.theme-nebula .hub-footer{background:#010207!important;border-color:rgba(88,166,255,.14)!important}
+body.theme-nebula input,body.theme-nebula textarea,body.theme-nebula select{background:rgba(7,10,22,.9)!important;color:#f5f3ff!important;border-color:rgba(88,166,255,.16)!important}
+body.theme-nebula .tubal-bot-panel{background:rgba(5,7,17,.94)!important;border-color:rgba(157,124,255,.22)!important;box-shadow:0 25px 80px rgba(0,0,0,.55),0 0 45px rgba(109,60,255,.1)}
+body.theme-nebula .tubal-bot-head{background:linear-gradient(120deg,rgba(109,60,255,.14),rgba(88,166,255,.12))!important;border-color:rgba(157,124,255,.16)!important}
+body.theme-nebula .tubal-bot-launch{background:linear-gradient(135deg,#9d7cff,#58a6ff)!important;box-shadow:0 0 30px rgba(109,60,255,.3)}
+body.theme-nebula .theme-panel{background:rgba(7,10,22,.88)!important;border-color:rgba(157,124,255,.18)!important}
