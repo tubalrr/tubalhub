@@ -1,6 +1,6 @@
-/* TUBAL HUB — AI CHATBOT UI
-   Secure mode: browser sends messages to /api/chat.
-   Keep the AI provider API key on the server, never in this file.
+/* TUBAL HUB — LOCAL WEBSITE ASSISTANT
+   Zero-cost mode: answers are generated from the built-in TUBAL HUB knowledge base.
+   No Gemini/OpenAI API, API key, quota, or external AI request is required.
 */
 (function(){
   if(document.getElementById('tubalAiBot')) return;
@@ -13,7 +13,6 @@
   const launch=document.createElement('button');launch.className='tubal-bot-launch';launch.id='tubalBotLaunch';launch.setAttribute('aria-label','Open TUBAL HUB AI');launch.textContent='🤖';
   document.body.append(panel,launch);
   const messages=panel.querySelector('#tubalBotMessages'),input=panel.querySelector('#tubalBotInput');
-  const AI_API_URL=window.TUBAL_AI_API_URL||'https://tubalhub.vercel.app/api/chat';
   /* ADMIN MODERATION ACCESS — visible only to the configured admin account. */
   const ADMIN_EMAIL='tubalrr@gmail.com';
   let adminAuth=null,adminDb=null,adminUser=null;
@@ -61,36 +60,79 @@
 
   const add=(text,type='bot')=>{const d=document.createElement('div');d.className='tubal-bot-msg '+type;d.textContent=text;messages.appendChild(d);messages.scrollTop=messages.scrollHeight;return d};
   add('👋 Welcome to TUBAL HUB! I’m your TUBAL HUB AI assistant. Welcome to the Hub — a place for content, community, creativity, gaming, stories, and more. How can I help you today?');
-  const fallback=q=>{
-    const s=q.toLowerCase();
-    if(s.includes('tubal hub'))return 'TUBAL HUB is the central hub for content, community, creativity, gaming, stories, and creator projects.';
-    if(s.includes('ctrlzone'))return 'CTRLZONE is the gaming-focused platform inside TUBAL HUB.';
-    if(s.includes('payapang'))return 'Payapang Isip is the nature and peaceful-mind themed platform of TUBAL HUB.';
-    if(s.includes('register')||s.includes('sign up'))return 'You can register through the Sign Up page in the website menu.';
-    return 'I can answer website questions, but the secure AI backend is not connected yet. Your API key should stay on a server, not inside the website.';
+  /* ZERO-QUOTA WEBSITE KNOWLEDGE ENGINE */
+  const normalize=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').trim();
+  const localAnswer=q=>{
+    const s=normalize(q);
+    const has=(...words)=>words.some(w=>s.includes(normalize(w)));
+
+    if(has('hi','hello','hey','kumusta','kamusta','good morning','good afternoon','good evening'))
+      return '👋 Hello! Ako ang TUBAL HUB website assistant. Pwede kitang tulungan hanapin ang platforms, pages at features ng TUBAL HUB.';
+
+    if(has('what is tubal hub','ano ang tubal hub','tubal hub'))
+      return 'TUBAL HUB ang main hub ng website para sa content, community, creativity, gaming at creator projects. Nandito ang CTRLZONE, Payapang Isip, AI Music, Global Chat, Community, Events, Shop, News, Profiles, About, Contact at Settings.';
+
+    if(has('ctrlzone','gaming','games','laro'))
+      return '🎮 CTRLZONE ang gaming platform ng TUBAL HUB. Para sa gaming content, game-related experiences at creator projects. Makikita mo ito sa left navigation.';
+
+    if(has('payapang isip','payapang','nature','peace'))
+      return '🌿 Payapang Isip ang nature at peaceful-mind platform ng TUBAL HUB. May forest/biophilic theme ito at nakatuon sa relaxing nature experience at community content.';
+
+    if(has('global chat','chat','message','messages'))
+      return '💬 Global Chat ang community chat area ng TUBAL HUB. Pumunta sa **Global Chat** sa left navigation para makapasok at makipag-chat sa community.';
+
+    if(has('community','komunidad'))
+      return '👥 Community ang section para sa TUBAL HUB community activities at shared content. Piliin ang **Community** sa left navigation.';
+
+    if(has('event','events','activity'))
+      return '📅 Events ang section para sa TUBAL HUB events at activities. Makikita ito sa left navigation.';
+
+    if(has('shop','benta','products','mods','music media'))
+      return '🛒 Shop ang marketplace-style section ng TUBAL HUB. May categories gaya ng Mods, Products, at Music & Media. Piliin ang **Shop** sa left navigation.';
+
+    if(has('news','balita','latest news'))
+      return '📰 News ang section para sa TUBAL HUB news at updates. Piliin ang **News** sa left navigation.';
+
+    if(has('profile','profiles','account','my account'))
+      return '👤 Profiles ang area para sa user profile. Kapag naka-login ka, puwede mong buksan ang profile at i-edit ang iyong profile information.';
+
+    if(has('ai music','music','song','songs'))
+      return '🎵 AI Music ang music-focused platform ng TUBAL HUB para sa creative music projects. Piliin ang **AI Music** sa left navigation.';
+
+    if(has('settings','theme','appearance','galaxy','forest','neon'))
+      return '⚙️ Settings ang page para sa website appearance at themes. May Auto Theme, Forest, Galaxy at Neon Green options.';
+
+    if(has('about','tungkol'))
+      return 'ℹ️ About ay para sa impormasyon tungkol sa TUBAL HUB. Makikita ito sa left navigation.';
+
+    if(has('contact','kontak','message admin'))
+      return '✉️ Contact ang page para sa contact information at pakikipag-ugnayan sa TUBAL HUB.';
+
+    if(has('register','sign up','signup','mag register','gumawa ng account','account'))
+      return '📝 Para gumawa ng account, gamitin ang **Sign Up** page. Pagkatapos mag-register at mag-login, available ang account-based features ng website.';
+
+    if(has('login','log in','logout','logout'))
+      return '🔐 Gamitin ang **Login** para makapasok sa iyong TUBAL HUB account. Kapag naka-login ka, makikita ang iyong account name sa top bar at available ang profile features.';
+
+    if(has('where','saan','nasaan','location','hanapin','find'))
+      return '🔎 Kung hinahanap mo ang isang platform, tingnan ang left navigation: CTRLZONE, News, Global Chat, Payapang Isip, Profiles, AI Music, Community, Events, Shop, About, Contact at Settings. Sabihin mo lang ang pangalan ng hinahanap mo.';
+
+    if(has('platforms','platform','sections','pages','ano ano'))
+      return '🌐 TUBAL HUB platforms/sections: Home, CTRLZONE, News, Global Chat, Payapang Isip, Profiles, AI Music, Community, Events, Shop, About, Contact at Settings.';
+
+    return 'I can help with TUBAL HUB website information only. Subukan mong itanong: “Saan ang Global Chat?”, “Ano ang CTRLZONE?”, “Ano ang Payapang Isip?”, “Ano ang nasa Shop?”, o “Anong platforms meron sa TUBAL HUB?”';
   };
+
   async function ask(q){
     q=q.trim();if(!q)return;
     add(q,'user');input.value='';
     const thinking=add('Thinking…');
-    try{
-      const r=await fetch(AI_API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:q,page:location.pathname})});
-      const raw=await r.text();
-      let data={};
-      try{data=raw?JSON.parse(raw):{}}catch{}
-      if(!r.ok){
-        const detail=data.providerMessage||data.error||data.message||('HTTP '+r.status);
-        throw new Error('API '+r.status+': '+detail);
-      }
+    setTimeout(()=>{
       thinking.remove();
-      add(String(data.reply||data.message||fallback(q)));
-    }catch(e){
-      thinking.remove();
-      console.error('[TUBAL HUB AI]',e);
-      const msg=String(e?.message||e);
-      add('⚠️ AI connection error: '+msg);
-    }
+      add(localAnswer(q));
+    },180);
   }
+
   /* Draggable AI companion — move the launcher anywhere and remember its position. */
   let dragStart=null, moved=false;
   const savedPos=(()=>{try{return JSON.parse(localStorage.getItem('tubalAiBotPos')||'null')}catch{return null}})();
