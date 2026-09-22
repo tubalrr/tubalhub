@@ -1,16 +1,11 @@
 export default async function handler(req, res) {
-  const requestOrigin = req.headers.origin || "";
-  const allowedOrigins = new Set([
-    "https://tubalrr.github.io",
-    "https://tubalhub.vercel.app"
-  ]);
-  const allowedOrigin = allowedOrigins.has(requestOrigin)
-    ? requestOrigin
-    : (process.env.ALLOWED_ORIGIN || "https://tubalrr.github.io");
-  res.setHeader("Access-Control-Allow-Origin", allowedOrigin);
+  // Public browser endpoint: no cookies/auth credentials are used by the client.
+  // Allow cross-origin requests from GitHub Pages and custom domains.
+  res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Vary", "Origin");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("Access-Control-Max-Age", "86400");
 
   if (req.method === "OPTIONS") return res.status(204).end();
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
