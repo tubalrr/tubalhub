@@ -139,3 +139,28 @@ body.theme-galaxy .footer,body.theme-forest .footer,body.theme-neon .footer{
     min-height:48px !important;
   }
 }
+
+
+/* TUBAL HUB — DARK GLASSMORPHISM + AURORA / MESH GRADIENT */
+html[data-tubal-theme="aurora"]{--theme-bg:#050711;--theme-panel:rgba(12,17,34,.72);--theme-line:rgba(111,255,224,.22);--theme-text:#f4fbff;--theme-muted:#aab9c8;--theme-accent:#6fffe0;--theme-accent2:#9b7cff}
+body.theme-aurora{background:#050711!important;color:#f4fbff!important;position:relative;isolation:isolate}
+body.theme-aurora::before{content:"";position:fixed;inset:-20%;z-index:-2;pointer-events:none;background:radial-gradient(circle at 18% 22%,rgba(65,255,184,.22),transparent 28%),radial-gradient(circle at 82% 18%,rgba(139,92,255,.24),transparent 30%),radial-gradient(circle at 65% 78%,rgba(26,214,255,.18),transparent 27%),radial-gradient(circle at 30% 85%,rgba(255,77,180,.10),transparent 25%);filter:blur(45px);animation:tubalAurora 18s ease-in-out infinite alternate}
+body.theme-aurora::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(125deg,rgba(255,255,255,.025),transparent 35%,rgba(111,255,224,.025) 65%,transparent),radial-gradient(circle at 50% 0,rgba(120,150,255,.06),transparent 40%);mix-blend-mode:screen}
+@keyframes tubalAurora{0%{transform:translate3d(-2%,0,0) scale(1)}50%{transform:translate3d(2%,-1%,0) scale(1.04)}100%{transform:translate3d(0,2%,0) scale(1.02)}}
+body.theme-aurora .hub-sidebar,body.theme-aurora .hub-topbar,body.theme-aurora header{background:rgba(7,10,22,.68)!important;border-color:rgba(111,255,224,.18)!important;backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px)}
+body.theme-aurora .hub-sidebar{box-shadow:inset -1px 0 rgba(111,255,224,.12),10px 0 50px rgba(0,0,0,.18)}
+body.theme-aurora .hub-topbar{box-shadow:0 10px 40px rgba(0,0,0,.18)}
+body.theme-aurora .search-box,body.theme-aurora .icon-btn,body.theme-aurora .brand-card,body.theme-aurora .live-card,body.theme-aurora .social-card,body.theme-aurora .news-card,body.theme-aurora .facebook-video-container,body.theme-aurora .feature-links a,body.theme-aurora .hub-ad-container{background:rgba(10,15,30,.55)!important;border-color:rgba(111,255,224,.16)!important;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:inset 0 1px rgba(255,255,255,.06),0 18px 50px rgba(0,0,0,.18)}
+body.theme-aurora .side-nav a.active,body.theme-aurora .side-nav a:hover{background:linear-gradient(100deg,rgba(111,255,224,.13),rgba(155,124,255,.13))!important;color:#fff!important;box-shadow:inset 3px 0 #6fffe0,0 0 25px rgba(111,255,224,.08)}
+body.theme-aurora .hero-new{background:radial-gradient(circle at 72% 42%,rgba(111,255,224,.16),transparent 24%),radial-gradient(circle at 35% 55%,rgba(155,124,255,.14),transparent 28%),linear-gradient(120deg,rgba(5,7,17,.86),rgba(10,15,30,.68))!important;border-color:rgba(111,255,224,.14)}
+body.theme-aurora .hero-content h1 span{background:linear-gradient(135deg,#fff,#6fffe0 48%,#9b7cff);-webkit-background-clip:text;background-clip:text;color:transparent}
+body.theme-aurora .hero-green{background:linear-gradient(135deg,#6fffe0,#9b7cff)!important;color:#041014!important;box-shadow:0 0 28px rgba(111,255,224,.16)}
+body.theme-aurora .home-heading h2 em,body.theme-aurora .home-heading a{color:#6fffe0!important}
+body.theme-aurora .top-nav-logo{background:rgba(10,15,30,.6);border-color:rgba(111,255,224,.35);backdrop-filter:blur(14px)}
+body.theme-aurora .hub-footer{background:rgba(5,7,17,.78)!important;border-color:rgba(111,255,224,.14)!important;backdrop-filter:blur(20px)}
+body.theme-aurora input,body.theme-aurora textarea,body.theme-aurora select{background:rgba(10,15,30,.62)!important;color:#f4fbff!important;border-color:rgba(111,255,224,.18)!important;backdrop-filter:blur(14px)}
+body.theme-aurora .tubal-bot-panel{background:rgba(8,12,26,.78)!important;border-color:rgba(111,255,224,.22)!important;backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);box-shadow:0 25px 80px rgba(0,0,0,.42),0 0 45px rgba(111,255,224,.08)}
+body.theme-aurora .tubal-bot-head{background:linear-gradient(120deg,rgba(111,255,224,.10),rgba(155,124,255,.13))!important;border-color:rgba(111,255,224,.16)!important}
+body.theme-aurora .tubal-bot-launch{background:linear-gradient(135deg,#6fffe0,#9b7cff)!important;box-shadow:0 0 28px rgba(111,255,224,.28)}
+body.theme-aurora .theme-panel{background:rgba(10,15,30,.65)!important;border-color:rgba(111,255,224,.18)!important;backdrop-filter:blur(22px)}
+@media(max-width:760px){body.theme-aurora::before{filter:blur(32px);animation-duration:24s}}
