@@ -18,7 +18,7 @@ export default async function handler(req, res) {
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) return res.status(503).json({ error: "AI backend is not configured" });
 
-    const model = process.env.GEMINI_MODEL || "gemini-3.8-flash";
+    const model = process.env.GEMINI_MODEL || "gemini-3.7-flash";
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
       {
