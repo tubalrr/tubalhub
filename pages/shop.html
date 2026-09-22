@@ -28,9 +28,28 @@ body{background:radial-gradient(circle at 80% 0%,#17351e 0,transparent 34%),#050
 .shop-product:hover{transform:translateY(-5px);border-color:#8cff5766;box-shadow:0 18px 50px #0008}.shop-note{margin-top:28px;padding:20px;border:1px dashed #294433;border-radius:13px;background:#09110c;color:#839488;font-size:11px;text-align:center}
 @keyframes shopGlow{from{transform:translate3d(-2%,0,0) scale(1)}to{transform:translate3d(3%,2%,0) scale(1.08)}}
 @media(max-width:800px){.shop-page{padding:16px 13px 50px}.shop-hero{padding:28px 22px;min-height:340px}.shop-orbit{opacity:.35;right:-55px}.shop-categories,.shop-featured{grid-template-columns:1fr}.shop-section-head{align-items:start;flex-direction:column}.shop-product{min-height:220px}}
+
+.shop-topbar{display:flex;align-items:center;justify-content:space-between;gap:15px;margin:25px 0 0;padding:12px 14px;border:1px solid var(--shop-line);border-radius:15px;background:#ffffff08;backdrop-filter:blur(16px)}
+.shop-search{flex:1;max-width:560px;display:flex;align-items:center;gap:9px;background:#050a07;border:1px solid var(--shop-line);border-radius:11px;padding:10px 13px}
+.shop-search input{width:100%;border:0;outline:0;background:transparent;color:#eef8f0;font:inherit;font-size:13px}.shop-search span{opacity:.6}
+.shop-cart{border:1px solid #8cff5738;background:#8cff570d;color:#dfffe0;border-radius:11px;padding:10px 14px;font-weight:800;cursor:pointer}
+.shop-cart b{color:var(--shop-green)}
+.shop-toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.shop-filter{border:1px solid var(--shop-line);background:#ffffff06;color:#aebdb2;border-radius:9px;padding:8px 12px;font-size:11px;cursor:pointer}.shop-filter.active{background:#8cff5715;color:var(--shop-green);border-color:#8cff5745}
+.shop-live-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.shop-live-card{position:relative;overflow:hidden;border:1px solid var(--shop-line);border-radius:16px;background:linear-gradient(145deg,#0d1711,#060b08);padding:0;transition:.25s}
+.shop-live-card:hover{transform:translateY(-6px);border-color:#8cff5755;box-shadow:0 20px 50px #0009}
+.shop-live-art{height:145px;display:grid;place-items:center;font-size:48px;background:radial-gradient(circle at 50% 25%,#285c35,#07100a 72%)}
+.shop-live-body{padding:16px}.shop-live-body small{font-size:8px;letter-spacing:1.4px;color:#718177}.shop-live-body h3{font-size:15px;margin:7px 0}.shop-live-body p{font-size:11px;line-height:1.5;color:#819087;margin:0 0 12px}.shop-price{display:flex;align-items:center;justify-content:space-between;gap:8px}.shop-price strong{color:#ecfff0;font-size:15px}.shop-add{border:1px solid #8cff5740;background:#8cff5714;color:var(--shop-green);padding:7px 10px;border-radius:8px;font-weight:800;font-size:10px;cursor:pointer}
+.shop-badge{position:absolute;top:10px;left:10px;z-index:2;padding:5px 7px;border-radius:6px;background:#050806cc;border:1px solid #ffffff12;font-size:8px;font-weight:800;color:#a8b8ad}
+.shop-cart-panel{position:fixed;inset:0;background:#0009;backdrop-filter:blur(8px);z-index:999;display:none;align-items:center;justify-content:center;padding:18px}.shop-cart-panel.open{display:flex}
+.shop-cart-box{width:min(520px,100%);max-height:80vh;overflow:auto;border:1px solid #8cff5735;border-radius:20px;background:#08100bdd;box-shadow:0 30px 100px #000; padding:22px}
+.shop-cart-head{display:flex;justify-content:space-between;align-items:center}.shop-cart-head h3{margin:0}.shop-close{border:0;background:#ffffff0b;color:#fff;border-radius:8px;padding:8px 11px;cursor:pointer}.cart-empty{padding:35px 10px;text-align:center;color:#819087}.cart-row{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid #ffffff0c}.cart-row .cart-emoji{font-size:25px}.cart-row div:nth-child(2){flex:1}.cart-row small{display:block;color:#708078;margin-top:4px}.cart-remove{border:0;background:none;color:#ff9d9d;cursor:pointer}.cart-total{display:flex;justify-content:space-between;padding-top:18px;font-weight:800}.cart-note{font-size:10px;color:#748278;line-height:1.5;margin-top:12px}
+@media(max-width:1000px){.shop-live-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.shop-topbar{align-items:stretch;flex-direction:column}.shop-search{max-width:none}.shop-live-grid{grid-template-columns:1fr}}
 </style>
 <link rel="stylesheet" href="../assets/css/global-theme.css?v=20260922">
-</head>
+<meta name="theme-color" content="#07100a"></head>
 <body>
 <header>
 <a class="brand" href="../index.html"><img src="../tubal-hub-logo.png" loading="eager" decoding="async" fetchpriority="high" width="180" height="180" alt="TUBAL HUB"><span>TUBAL HUB<small>THREE BRANDS. ONE HUB.</small></span></a>
@@ -48,6 +67,12 @@ body{background:radial-gradient(circle at 80% 0%,#17351e 0,transparent 34%),#050
 
 <section class="shop-section"><div class="shop-section-head"><div><span>WHY TUBAL HUB</span><h2>A shop built for <em>creators.</em></h2></div></div><div class="shop-categories"><div class="shop-category"><div class="shop-icon">⚡</div><h3>Simple Access</h3><p>Find downloads and digital content through a clean, focused hub.</p></div><div class="shop-category"><div class="shop-icon">✦</div><h3>Creator First</h3><p>A dedicated space for community-made resources and future collections.</p></div><div class="shop-category"><div class="shop-icon">⌁</div><h3>Growing Library</h3><p>New categories and items can be added as the TUBAL HUB ecosystem grows.</p></div></div></section>
 
+
+<section class="shop-topbar" aria-label="Shop controls">
+<div class="shop-search"><span>⌕</span><input id="shopSearch" type="search" placeholder="Search mods, products, music..." autocomplete="off"></div>
+<button class="shop-cart" id="openCart">🛒 Cart <b id="cartCount">0</b></button>
+</section>
+
 <section class="shop-section" id="categories">
 <div class="shop-section-head"><div><span>EXPLORE</span><h2>Shop <em>Categories</em></h2></div></div>
 <div class="shop-categories">
@@ -57,6 +82,14 @@ body{background:radial-gradient(circle at 80% 0%,#17351e 0,transparent 34%),#050
 </div>
 </section>
 
+<section class="shop-section" id="catalog">
+<div class="shop-section-head"><div><span>CATALOG</span><h2>Explore the <em>collection.</em></h2></div></div>
+<div class="shop-toolbar">
+<button class="shop-filter active" data-filter="all">All</button><button class="shop-filter" data-filter="mods">Mods</button><button class="shop-filter" data-filter="products">Products</button><button class="shop-filter" data-filter="music">Music & Media</button>
+</div>
+<div class="shop-live-grid">
+<article class="shop-live-card" data-category="mods" data-name="ultimate mod pack"><span class="shop-badge">FEATURED</span><div class="shop-live-art">🧩</div><div class="shop-live-body"><small>MODS</small><h3>Ultimate Mod Pack</h3><p>Creator-ready game files and resources.</p><div class="shop-price"><strong>Free</strong><button class="shop-add" data-name="Ultimate Mod Pack" data-price="Free" data-icon="🧩">ADD TO CART</button></div></div></article><article class="shop-live-card" data-category="products" data-name="tubal hub creator kit"><span class="shop-badge">NEW</span><div class="shop-live-art">◈</div><div class="shop-live-body"><small>PRODUCTS</small><h3>TUBAL HUB Creator Kit</h3><p>Digital assets for your next project.</p><div class="shop-price"><strong>Free</strong><button class="shop-add" data-name="TUBAL HUB Creator Kit" data-price="Free" data-icon="◈">ADD TO CART</button></div></div></article><article class="shop-live-card" data-category="music" data-name="ambient creator pack"><span class="shop-badge">AUDIO</span><div class="shop-live-art">♫</div><div class="shop-live-body"><small>MUSIC</small><h3>Ambient Creator Pack</h3><p>Original-style background audio resources.</p><div class="shop-price"><strong>Free</strong><button class="shop-add" data-name="Ambient Creator Pack" data-price="Free" data-icon="♫">ADD TO CART</button></div></div></article><article class="shop-live-card" data-category="products" data-name="tubal hub templates"><span class="shop-badge">HUB</span><div class="shop-live-art">TH</div><div class="shop-live-body"><small>PRODUCTS</small><h3>TUBAL HUB Templates</h3><p>Reusable templates for community creators.</p><div class="shop-price"><strong>Free</strong><button class="shop-add" data-name="TUBAL HUB Templates" data-price="Free" data-icon="TH">ADD TO CART</button></div></div></article>
+</div></section>
 <section class="shop-section">
 <div class="shop-section-head"><div><span>FEATURED</span><h2>Coming to the <em>Hub</em></h2></div></div>
 <div class="shop-featured">
@@ -66,9 +99,18 @@ body{background:radial-gradient(circle at 80% 0%,#17351e 0,transparent 34%),#050
 </div>
 <div class="shop-note">New items will be added here as the TUBAL HUB Shop grows.</div>
 </section>
+<div class="shop-cart-panel" id="cartPanel" role="dialog" aria-modal="true"><div class="shop-cart-box"><div class="shop-cart-head"><h3>Your Cart</h3><button class="shop-close" id="closeCart">✕</button></div><div id="cartItems" class="cart-empty">Your cart is empty.</div><div class="cart-total"><span>Total</span><span id="cartTotal">Free</span></div><div class="cart-note">Cart is currently a local preview. Checkout/payment integration can be connected later.</div></div></div>
 </main>
 <footer><div><b>TUBAL HUB</b><span>Three Brands. One Hub.</span></div><nav><a href="../index.html">Home</a><a href="community.html">Community</a><a href="privacy.html">Privacy</a><a href="cookies.html">Cookies</a><a href="terms.html">Terms</a></nav><small>© 2026 TUBAL HUB. All rights reserved.</small></footer>
 <script src="../assets/js/data.js"></script><script src="../assets/js/main.js"></script>
 <script src="../assets/js/theme.js?v=20260922" defer></script>
+<script>
+(()=>{const cart=[];const $=s=>document.querySelector(s),$=s=>[...document.querySelectorAll(s)];
+function render(){const box=$('#cartItems');$('#cartCount').textContent=cart.length;if(!cart.length){box.className='cart-empty';box.textContent='Your cart is empty.';$('#cartTotal').textContent='Free';return}box.className='';box.innerHTML=cart.map((x,i)=>'<div class="cart-row"><span class="cart-emoji">'+x.icon+'</span><div><b>'+x.name+'</b><small>'+x.price+'</small></div><button class="cart-remove" data-remove="'+i+'">Remove</button></div>').join('');$('#cartTotal').textContent='Free';$('[data-remove]').forEach(b=>b.onclick=()=>{cart.splice(+b.dataset.remove,1);render()})}
+$('.shop-add').forEach(b=>b.onclick=()=>{if(!cart.some(x=>x.name===b.dataset.name)){cart.push({name:b.dataset.name,price:b.dataset.price,icon:b.dataset.icon});render();}});
+$('.shop-filter').forEach(b=>b.onclick=()=>{$('.shop-filter').forEach(x=>x.classList.remove('active'));b.classList.add('active');const f=b.dataset.filter;$('.shop-live-card').forEach(c=>c.style.display=f==='all'||c.dataset.category===f?'':'none')});
+$('#shopSearch').oninput=e=>{const q=e.target.value.toLowerCase();$('.shop-live-card').forEach(c=>c.style.display=c.dataset.name.includes(q)?'':'none')};
+$('#openCart').onclick=()=>$('#cartPanel').classList.add('open');$('#closeCart').onclick=()=>$('#cartPanel').classList.remove('open');$('#cartPanel').onclick=e=>{if(e.target.id==='cartPanel')e.currentTarget.classList.remove('open')};render()})();
+</script>
 </body>
 </html>
