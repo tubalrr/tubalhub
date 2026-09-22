@@ -44,4 +44,4 @@ document.querySelectorAll('header nav a').forEach(a=>{if(a.href===location.href)
 
 
 /* TUBAL HUB — load chatbot globally */
-(function(){const load=()=>{const s=document.createElement('script');s.src='/tubalhub/assets/js/chatbot.js?v=20260923';s.defer=true;document.head.appendChild(s)};window.addEventListener('load',()=>{(window.requestIdleCallback||setTimeout)(load,1200)},{once:true})})();
+(function(){const load=()=>{if(document.querySelector('script[data-tubal-chatbot]'))return;const s=document.createElement('script');s.src='/tubalhub/assets/js/chatbot.js?v=20260923';s.defer=true;s.dataset.tubalChatbot='1';document.head.appendChild(s)};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(load,150),{once:true});else setTimeout(load,150)})();
