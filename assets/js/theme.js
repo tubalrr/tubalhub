@@ -19,7 +19,7 @@
     r.style.setProperty('--theme-text',t[3]);
     r.style.setProperty('--theme-accent',t[4]);
     r.style.setProperty('--theme-accent2',t[5]);
-    if(b){b.classList.remove('theme-galaxy','theme-forest','theme-neon','theme-aurora');b.classList.add('theme-'+n);}
+    if(b){b.classList.remove('theme-galaxy','theme-forest','theme-neon','theme-aurora','theme-nebula');b.classList.add('theme-'+n);}
   }
   function settings(){
     if(!document.body?.classList.contains('settings-page'))return;
