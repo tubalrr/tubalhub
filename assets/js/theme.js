@@ -5,7 +5,8 @@
     galaxy:['#03020b','#0b0720','#38285f','#f4f0ff','#a78bff','#63dfff'],
     forest:['#06110a','#0c1c11','#2a5132','#f1faef','#a9f27a','#5dff9a'],
     neon:['#020604','#07140d','#214a32','#f5fff6','#a8ff57','#1dff91'],
-    aurora:['#050711','#10152a','#33466a','#f4fbff','#6fffe0','#9b7cff']
+    aurora:['#050711','#10152a','#33466a','#f4fbff','#6fffe0','#9b7cff'],
+    nebula:['#010207','#080b18','#252c4a','#f5f3ff','#9d7cff','#58a6ff']
   };
   const system=()=>matchMedia('(prefers-color-scheme:light)').matches?'forest':'galaxy';
   const current=()=>localStorage.getItem(AUTO)==='1'?system():(themes[localStorage.getItem(KEY)]?localStorage.getItem(KEY):'galaxy');
