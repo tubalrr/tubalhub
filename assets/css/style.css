@@ -1557,3 +1557,110 @@ body.theme-nebula .hub-sidebar{width:255px!important}
   body.theme-aurora .hub-main>main>.feature-links,
   body.theme-nebula .hub-main>main>.feature-links{grid-template-columns:1fr!important}
 }
+
+
+/* THEME LAYOUT OVERFLOW / TEXT SAFETY FIX */
+body.theme-galaxy .hub-main>main,
+body.theme-forest .hub-main>main,
+body.theme-neon .hub-main>main,
+body.theme-aurora .hub-main>main,
+body.theme-nebula .hub-main>main{min-width:0;overflow:visible!important}
+
+body.theme-galaxy .hub-main>main>*,
+body.theme-forest .hub-main>main>*,
+body.theme-neon .hub-main>main>*,
+body.theme-aurora .hub-main>main>*,
+body.theme-nebula .hub-main>main>*{min-width:0;max-width:100%;box-sizing:border-box}
+
+body.theme-galaxy .brand-card,body.theme-forest .brand-card,body.theme-neon .brand-card,body.theme-aurora .brand-card,body.theme-nebula .brand-card,
+body.theme-galaxy .feature-links a,body.theme-forest .feature-links a,body.theme-neon .feature-links a,body.theme-aurora .feature-links a,body.theme-nebula .feature-links a,
+body.theme-galaxy .social-card,body.theme-forest .social-card,body.theme-neon .social-card,body.theme-aurora .social-card,body.theme-nebula .social-card,
+body.theme-galaxy .live-card,body.theme-forest .live-card,body.theme-neon .live-card,body.theme-aurora .live-card,body.theme-nebula .live-card,
+body.theme-galaxy .shop-preview-card,body.theme-forest .shop-preview-card,body.theme-neon .shop-preview-card,body.theme-aurora .shop-preview-card,body.theme-nebula .shop-preview-card{
+  min-width:0!important;
+  overflow:hidden!important;
+}
+
+body.theme-galaxy .brand-card h2,body.theme-forest .brand-card h2,body.theme-neon .brand-card h2,body.theme-aurora .brand-card h2,body.theme-nebula .brand-card h2,
+body.theme-galaxy .brand-card p,body.theme-forest .brand-card p,body.theme-neon .brand-card p,body.theme-aurora .brand-card p,body.theme-nebula .brand-card p,
+body.theme-galaxy .feature-links span,body.theme-forest .feature-links span,body.theme-neon .feature-links span,body.theme-aurora .feature-links span,body.theme-nebula .feature-links span,
+body.theme-galaxy .feature-links small,body.theme-forest .feature-links small,body.theme-neon .feature-links small,body.theme-aurora .feature-links small,body.theme-nebula .feature-links small{
+  min-width:0!important;
+  overflow-wrap:anywhere!important;
+  word-break:normal!important;
+}
+
+body.theme-galaxy .home-heading,body.theme-forest .home-heading,body.theme-neon .home-heading,body.theme-aurora .home-heading,body.theme-nebula .home-heading{
+  min-width:0!important;
+  flex-wrap:wrap!important;
+  gap:12px!important;
+}
+body.theme-galaxy .home-heading>div,body.theme-forest .home-heading>div,body.theme-neon .home-heading>div,body.theme-aurora .home-heading>div,body.theme-nebula .home-heading>div{min-width:0!important}
+body.theme-galaxy .home-heading h2,body.theme-forest .home-heading h2,body.theme-neon .home-heading h2,body.theme-aurora .home-heading h2,body.theme-nebula .home-heading h2{
+  font-size:clamp(22px,3vw,34px)!important;
+  line-height:1.15!important;
+  overflow-wrap:anywhere!important;
+}
+
+body.theme-galaxy .hero-content,body.theme-forest .hero-content,body.theme-neon .hero-content,body.theme-aurora .hero-content,body.theme-nebula .hero-content{min-width:0!important;z-index:3!important}
+body.theme-galaxy .hero-content h1,body.theme-forest .hero-content h1,body.theme-neon .hero-content h1,body.theme-aurora .hero-content h1,body.theme-nebula .hero-content h1{
+  line-height:1.05!important;
+  overflow-wrap:anywhere!important;
+}
+body.theme-galaxy .hero-sub,body.theme-forest .hero-sub,body.theme-neon .hero-sub,body.theme-aurora .hero-sub,body.theme-nebula .hero-sub{
+  line-height:1.4!important;
+  white-space:normal!important;
+}
+body.theme-galaxy .hero-logo-large,body.theme-forest .hero-logo-large,body.theme-neon .hero-logo-large,body.theme-aurora .hero-logo-large,body.theme-nebula .hero-logo-large{
+  pointer-events:none;z-index:2!important;
+}
+
+/* Desktop cards never squeeze text into invisible/overlapping areas */
+@media(min-width:901px){
+  body.theme-galaxy .brand-card,body.theme-forest .brand-card,body.theme-neon .brand-card,body.theme-aurora .brand-card,body.theme-nebula .brand-card{
+    min-height:150px!important;
+  }
+  body.theme-neon .hub-main>main>.facebook-video-section,
+  body.theme-neon .hub-main>main>.home-news-section,
+  body.theme-aurora .hub-main>main>.facebook-video-section,
+  body.theme-aurora .hub-main>main>.home-news-section,
+  body.theme-nebula .hub-main>main>.facebook-video-section,
+  body.theme-nebula .hub-main>main>.home-news-section{
+    min-width:0!important;
+  }
+}
+@media(max-width:900px){
+  body.theme-galaxy .hub-main>main>.hero-new,
+  body.theme-forest .hub-main>main>.hero-new,
+  body.theme-neon .hub-main>main>.hero-new,
+  body.theme-aurora .hub-main>main>.hero-new,
+  body.theme-nebula .hub-main>main>.hero-new{
+    min-height:430px!important;
+    clip-path:none!important;
+    overflow:hidden!important;
+  }
+  body.theme-galaxy .hero-logo-large,body.theme-forest .hero-logo-large,body.theme-neon .hero-logo-large,body.theme-aurora .hero-logo-large,body.theme-nebula .hero-logo-large{
+    opacity:.22!important;
+    transform:scale(.72)!important;
+  }
+}
+@media(max-width:560px){
+  body.theme-galaxy .hub-main>main>.hero-new,
+  body.theme-forest .hub-main>main>.hero-new,
+  body.theme-neon .hub-main>main>.hero-new,
+  body.theme-aurora .hub-main>main>.hero-new,
+  body.theme-nebula .hub-main>main>.hero-new{
+    min-height:470px!important;
+    padding:28px 20px!important;
+  }
+  body.theme-galaxy .hero-content h1,body.theme-forest .hero-content h1,body.theme-neon .hero-content h1,body.theme-aurora .hero-content h1,body.theme-nebula .hero-content h1{
+    font-size:clamp(42px,15vw,72px)!important;
+  }
+  body.theme-galaxy .hero-actions,body.theme-forest .hero-actions,body.theme-neon .hero-actions,body.theme-aurora .hero-actions,body.theme-nebula .hero-actions{
+    flex-wrap:wrap!important;
+  }
+  body.theme-galaxy .hero-quote,body.theme-forest .hero-quote,body.theme-neon .hero-quote,body.theme-aurora .hero-quote,body.theme-nebula .hero-quote{
+    max-width:80%!important;
+    line-height:1.35!important;
+  }
+}
