@@ -44,4 +44,4 @@ document.querySelectorAll('header nav a').forEach(a=>{if(a.href===location.href)
 
 
 /* TUBAL HUB — load chatbot globally */
-(function(){const s=document.createElement('script');s.src='/tubalhub/assets/js/chatbot.js?v=20260921';s.defer=true;document.head.appendChild(s)})();
+(function(){const s=document.createElement('script');s.src='/tubalhub/assets/js/chatbot.js?v=20260923';s.defer=true;document.head.appendChild(s)})();
