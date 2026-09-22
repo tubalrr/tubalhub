@@ -75,9 +75,21 @@
     const thinking=add('Thinking…');
     try{
       const r=await fetch(AI_API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:q,page:location.pathname})});
-      if(!r.ok)throw new Error('backend');
-      const data=await r.json();thinking.remove();add(String(data.reply||data.message||fallback(q)));
-    }catch(e){thinking.remove();add(fallback(q));}
+      const raw=await r.text();
+      let data={};
+      try{data=raw?JSON.parse(raw):{}}catch{}
+      if(!r.ok){
+        const detail=data.error||data.message||('HTTP '+r.status);
+        throw new Error('API '+r.status+': '+detail);
+      }
+      thinking.remove();
+      add(String(data.reply||data.message||fallback(q)));
+    }catch(e){
+      thinking.remove();
+      console.error('[TUBAL HUB AI]',e);
+      const msg=String(e?.message||e);
+      add('⚠️ AI connection error: '+msg);
+    }
   }
   /* Draggable AI companion — move the launcher anywhere and remember its position. */
   let dragStart=null, moved=false;
