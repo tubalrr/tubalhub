@@ -755,3 +755,32 @@ body.theme-galaxy.hub-home .hub-main::after{
 @media(prefers-reduced-motion:reduce){
   body.theme-galaxy.hub-home::before,body.theme-galaxy.hub-home::after,body.theme-galaxy.hub-home .hub-main::after{animation:none!important}
 }
+
+
+/* GALAXY HERO PLANET — animated background object */
+body.theme-galaxy .hero-new::after{
+  animation:galaxyPlanetFloat 9s ease-in-out infinite,galaxyPlanetSpin 18s linear infinite!important;
+  transform-origin:50% 50%;
+  will-change:transform,background-position;
+}
+@keyframes galaxyPlanetFloat{
+  0%,100%{transform:translate3d(0,0,0) scale(1)}
+  50%{transform:translate3d(-10px,7px,0) scale(1.025)}
+}
+@keyframes galaxyPlanetSpin{
+  0%{filter:hue-rotate(0deg) brightness(1)}
+  50%{filter:hue-rotate(10deg) brightness(1.08)}
+  100%{filter:hue-rotate(0deg) brightness(1)}
+}
+body.theme-galaxy .hero-new::before{
+  animation:galaxyPlanetRing 16s linear infinite!important;
+  transform-origin:50% 50%;
+}
+@keyframes galaxyPlanetRing{
+  0%{transform:rotate(-17deg) scale(1)}
+  50%{transform:rotate(-14deg) scale(1.025)}
+  100%{transform:rotate(-17deg) scale(1)}
+}
+@media(prefers-reduced-motion:reduce){
+  body.theme-galaxy .hero-new::after,body.theme-galaxy .hero-new::before{animation:none!important}
+}
