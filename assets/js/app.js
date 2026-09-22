@@ -10,7 +10,7 @@ document.querySelectorAll('header nav a').forEach(a=>{if(a.href===location.href)
   const systemTheme=()=>window.matchMedia('(prefers-color-scheme: light)').matches?'forest':'galaxy';
   function applyTheme(theme){
     const chosen=theme==='auto'?systemTheme():(theme||'galaxy');
-    body.classList.remove('theme-forest','theme-galaxy','theme-neon','theme-aurora');
+    body.classList.remove('theme-forest','theme-galaxy','theme-neon','theme-aurora','theme-nebula');
     body.classList.add('theme-'+chosen);
     root.dataset.tubalTheme=chosen;
     window.dispatchEvent(new CustomEvent('tubalhubthemechange',{detail:{theme:chosen}}));
