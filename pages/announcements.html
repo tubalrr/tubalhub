@@ -11,4 +11,6 @@ try{
  if(!snap.empty) grid.innerHTML=snap.docs.map(d=>{const x=d.data();return `<a class="community-card" href="#"><b>◈</b><h3>${esc(x.title)}</h3><p>${esc(x.text)}</p></a>`}).join("");
 }catch(e){console.warn("Firestore announcements unavailable; showing default content.",e);}
 </script><script src="../assets/js/theme.js" defer></script>
-</body></html>
+<script type="module" src="../assets/js/presence.js?v=20260923"></script>
+</body>
+</html>
