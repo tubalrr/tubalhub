@@ -1,6 +1,14 @@
 export default async function handler(req, res) {
-  const allowedOrigin = process.env.ALLOWED_ORIGIN || "*";
+  const requestOrigin = req.headers.origin || "";
+  const allowedOrigins = new Set([
+    "https://tubalrr.github.io",
+    "https://tubalhub.vercel.app"
+  ]);
+  const allowedOrigin = allowedOrigins.has(requestOrigin)
+    ? requestOrigin
+    : (process.env.ALLOWED_ORIGIN || "https://tubalrr.github.io");
   res.setHeader("Access-Control-Allow-Origin", allowedOrigin);
+  res.setHeader("Vary", "Origin");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
