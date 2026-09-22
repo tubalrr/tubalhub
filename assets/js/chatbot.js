@@ -13,7 +13,7 @@
   const launch=document.createElement('button');launch.className='tubal-bot-launch';launch.id='tubalBotLaunch';launch.setAttribute('aria-label','Open TUBAL HUB AI');launch.textContent='🤖';
   document.body.append(panel,launch);
   const messages=panel.querySelector('#tubalBotMessages'),input=panel.querySelector('#tubalBotInput');
-  const AI_API_URL=window.TUBAL_AI_API_URL||'/api/chat';
+  const AI_API_URL=window.TUBAL_AI_API_URL||'https://tubalhub.vercel.app/api/chat';
   /* ADMIN MODERATION ACCESS — visible only to the configured admin account. */
   const ADMIN_EMAIL='tubalrr@gmail.com';
   let adminAuth=null,adminDb=null,adminUser=null;
