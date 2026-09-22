@@ -30,11 +30,7 @@ document.querySelectorAll('header nav a').forEach(a=>{if(a.href===location.href)
   if(localStorage.getItem(AUTO)==='1')auto.checked=true;
   function select(theme){selected=theme;cards.forEach(card=>card.classList.toggle('selected',card.dataset.theme===theme));applyTheme(theme)}
   select(selected);
-  auto?.addEventListener('change',()=>{
-    localStorage.setItem(AUTO,auto.checked?'1':'0');
-    applyTheme(auto.checked?'auto':selected);
-    showToast(auto.checked?'Auto Theme enabled.':'Auto Theme disabled.');
-  });
+  auto?.addEventListener('change',()=>{localStorage.setItem(AUTO,auto.checked?'1':'0');applyTheme(auto.checked?'auto':selected);showToast(auto.checked?'Auto Theme enabled.':'Auto Theme disabled.')});
   cards.forEach(card=>card.addEventListener('click',()=>{auto.checked=false;localStorage.setItem(AUTO,'0');select(card.dataset.theme)}));
   document.getElementById('previewBtn')?.addEventListener('click',()=>showToast('Preview applied instantly.'));
   document.getElementById('saveBtn')?.addEventListener('click',()=>{localStorage.setItem(KEY,selected);localStorage.setItem(AUTO,auto.checked?'1':'0');applyTheme(auto.checked?'auto':selected);showToast('Theme saved successfully.')} );
@@ -42,21 +38,34 @@ document.querySelectorAll('header nav a').forEach(a=>{if(a.href===location.href)
   function showToast(message){if(!toast)return;toast.textContent=message;toast.classList.add('show');clearTimeout(window.__tubalThemeToast);window.__tubalThemeToast=setTimeout(()=>toast.classList.remove('show'),1800)}
 })();
 
-
 /* TUBAL HUB — load chatbot globally */
 (function(){const load=()=>{if(document.querySelector('script[data-tubal-chatbot]'))return;const s=document.createElement('script');s.src='/tubalhub/assets/js/chatbot.js?v=20260923';s.defer=true;s.dataset.tubalChatbot='1';document.head.appendChild(s)};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(load,150),{once:true});else setTimeout(load,150)})();
+
+/* TUBAL HUB — site-wide online presence */
+(function(){
+  const load=()=>{
+    if(document.querySelector('script[data-tubal-presence]'))return;
+    const s=document.createElement('script');
+    s.type='module';
+    s.src='/tubalhub/assets/js/presence.js?v=20260923';
+    s.dataset.tubalPresence='1';
+    document.head.appendChild(s);
+  };
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',load,{once:true});
+  else load();
+})();
 
 /* TUBAL HUB — COPYRIGHT / COPY PROTECTION NOTICE
    Deterrence only: public HTML/CSS/JS can still be inspected or copied.
 */
 (function(){
   const BRAND='TUBAL HUB', LICENSE_URL='/tubalhub/pages/license.html';
-  try{console.warn('%c'+BRAND+' — Protected Website%c\nUnauthorized copying, redistribution, resale, or substantially similar public use may violate the TUBAL HUB License.\nLicense: '+location.origin+LICENSE_URL,'font-weight:900;color:#8b7cff','color:inherit')}catch(_){}
+  try{console.warn('%c'+BRAND+' — Protected Website%c\\nUnauthorized copying, redistribution, resale, or substantially similar public use may violate the TUBAL HUB License.\\nLicense: '+location.origin+LICENSE_URL,'font-weight:900;color:#8b7cff','color:inherit')}catch(_){}
   document.addEventListener('contextmenu',e=>{if(!e.target.closest('input,textarea,[contenteditable="true"]'))e.preventDefault()});
   document.addEventListener('dragstart',e=>{if(e.target.closest('img'))e.preventDefault()});
   document.addEventListener('copy',e=>{
     const sel=window.getSelection?.(); if(!sel||!String(sel).trim())return;
-    try{e.clipboardData.setData('text/plain',String(sel)+'\n\n© 2026 TUBAL HUB — All rights reserved.\n'+location.origin+LICENSE_URL);e.preventDefault()}catch(_){}
+    try{e.clipboardData.setData('text/plain',String(sel)+'\\n\\n© 2026 TUBAL HUB — All rights reserved.\\n'+location.origin+LICENSE_URL);e.preventDefault()}catch(_){}
   });
   window.addEventListener('keydown',e=>{
     const k=String(e.key||'').toLowerCase();
