@@ -41,6 +41,27 @@ document.querySelectorAll('header nav a').forEach(a=>{if(a.href===location.href)
 /* TUBAL HUB — load chatbot globally */
 (function(){const load=()=>{if(document.querySelector('script[data-tubal-chatbot]'))return;const s=document.createElement('script');s.src='/tubalhub/assets/js/chatbot.js?v=20260923';s.defer=true;s.dataset.tubalChatbot='1';document.head.appendChild(s)};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(load,150),{once:true});else setTimeout(load,150)})();
 
+/* TUBAL HUB — site-wide video calling */
+(function(){
+  const load=()=>{
+    if(!document.querySelector('link[data-tubal-video-call-css]')){
+      const css=document.createElement('link');
+      css.rel='stylesheet';
+      css.href='/tubalhub/assets/css/video-call.css?v=20260920-webRTC2';
+      css.dataset.tubalVideoCallCss='1';
+      document.head.appendChild(css);
+    }
+    if(document.querySelector('script[data-tubal-video-call]'))return;
+    const s=document.createElement('script');
+    s.type='module';
+    s.src='/tubalhub/assets/js/video-call.js?v=20260920-webRTC2';
+    s.dataset.tubalVideoCall='1';
+    document.head.appendChild(s);
+  };
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',load,{once:true});
+  else load();
+})();
+
 /* TUBAL HUB — site-wide online presence */
 (function(){
   const load=()=>{
