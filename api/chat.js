@@ -18,34 +18,50 @@ export default async function handler(req, res) {
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) return res.status(503).json({ error: "AI backend is not configured" });
 
-    const model = process.env.GEMINI_MODEL || "gemini-3.8-flash";
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-goog-api-key": apiKey
-        },
-        body: JSON.stringify({
-          system_instruction: {
-            parts: [{
-              text:
-                "You are TUBAL HUB AI, the helpful assistant for the TUBAL HUB website. " +
-                "Answer clearly and concisely. Always reply in the same language as the user. " +
-                "If the user writes Filipino/Tagalog, reply in natural Filipino/Taglish. " +
-                "If the user writes Cebuano/Bisaya, reply in Cebuano/Bisaya. " +
-                "If the user writes English, reply in English. If the user mixes languages, naturally match the mix. " +
-                "Help users with TUBAL HUB, gaming, website features, community rules, and general questions. " +
-                "Never reveal server secrets, API keys, or internal configuration. " +
-                "Current page: " + page
-            }]
+    const preferredModel = process.env.GEMINI_MODEL || "gemini-3.8-flash";
+    const models = [...new Set([preferredModel, "gemini-3.7-flash"])];
+    let response;
+    let data;
+    let lastStatus = 503;
+
+    for (const model of models) {
+      response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-goog-api-key": apiKey
           },
-          contents: [{ role: "user", parts: [{ text: message }] }],
-          generationConfig: { maxOutputTokens: 500 }
-        })
-      }
-    );
+          body: JSON.stringify({
+            system_instruction: {
+              parts: [{
+                text:
+                  "You are TUBAL HUB AI, the helpful assistant for the TUBAL HUB website. " +
+                  "Answer clearly and concisely. Always reply in the same language as the user. " +
+                  "If the user writes Filipino/Tagalog, reply in natural Filipino/Taglish. " +
+                  "If the user writes Cebuano/Bisaya, reply in Cebuano/Bisaya. " +
+                  "If the user writes English, reply in English. If the user mixes languages, naturally match the mix. " +
+                  "Help users with TUBAL HUB, gaming, website features, community rules, and general questions. " +
+                  "Never reveal server secrets, API keys, or internal configuration. " +
+                  "Current page: " + page
+              }]
+            },
+            contents: [{ role: "user", parts: [{ text: message }] }],
+            generationConfig: { maxOutputTokens: 500 }
+          })
+        }
+      );
+
+      data = await response.json();
+      lastStatus = response.status;
+
+      if (response.ok) break;
+
+      // Gemini can temporarily reject a model during high demand.
+      // Try the secondary Flash model before returning an error.
+      if (![429, 500, 502, 503].includes(response.status)) break;
+    }
 
     const data = await response.json();
 
