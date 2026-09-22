@@ -4,7 +4,7 @@
 */
 (function(){
   if(document.getElementById('tubalAiBot')) return;
-  const css=document.createElement('link');css.rel='stylesheet';css.href='/tub alhub/assets/css/chatbot.css'.replace(' ','');document.head.appendChild(css);
+  const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('/tubalhub/assets/css/chatbot.css',window.location.origin).href;document.head.appendChild(css);
   const panel=document.createElement('div');panel.id='tubalAiBot';panel.className='tubal-bot-panel';panel.innerHTML=
     '<div class="tubal-bot-head"><div class="tubal-bot-avatar">🤖</div><div><div class="tubal-bot-title">TUBAL HUB AI</div><div class="tubal-bot-status">● Online assistant</div></div><button class="tubal-bot-close" aria-label="Close">×</button></div>'+
     '<div class="tubal-bot-messages" id="tubalBotMessages"></div>'+
