@@ -4,7 +4,8 @@
   const themes={
     galaxy:['#03020b','#0b0720','#38285f','#f4f0ff','#a78bff','#63dfff'],
     forest:['#06110a','#0c1c11','#2a5132','#f1faef','#a9f27a','#5dff9a'],
-    neon:['#020604','#07140d','#214a32','#f5fff6','#a8ff57','#1dff91']
+    neon:['#020604','#07140d','#214a32','#f5fff6','#a8ff57','#1dff91'],
+    aurora:['#050711','#10152a','#33466a','#f4fbff','#6fffe0','#9b7cff']
   };
   const system=()=>matchMedia('(prefers-color-scheme:light)').matches?'forest':'galaxy';
   const current=()=>localStorage.getItem(AUTO)==='1'?system():(themes[localStorage.getItem(KEY)]?localStorage.getItem(KEY):'galaxy');
@@ -17,7 +18,7 @@
     r.style.setProperty('--theme-text',t[3]);
     r.style.setProperty('--theme-accent',t[4]);
     r.style.setProperty('--theme-accent2',t[5]);
-    if(b){b.classList.remove('theme-galaxy','theme-forest','theme-neon');b.classList.add('theme-'+n);}
+    if(b){b.classList.remove('theme-galaxy','theme-forest','theme-neon','theme-aurora');b.classList.add('theme-'+n);}
   }
   function settings(){
     if(!document.body?.classList.contains('settings-page'))return;
