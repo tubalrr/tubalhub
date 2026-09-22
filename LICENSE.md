@@ -34,13 +34,29 @@ Any downloadable software, digital content, mods, templates, or other files may 
 
 The website and its materials are provided on an “as is” and “as available” basis. TUBAL HUB makes no warranty that the website or its materials will always be available, error-free, or suitable for every purpose.
 
-## 8. Contact
+## 8. Copy Protection and Attribution
 
-For permission requests or licensing questions:
+TUBAL HUB may use technical deterrents, copyright notices, attribution markers, asset identifiers, and other reasonable measures to discourage unauthorized copying. These measures are not intended to guarantee that publicly accessible website code can never be inspected or copied.
+
+## 9. Reporting Unauthorized Use
+
+Suspected unauthorized copies may be reported to **tubalrr@gmail.com** with the relevant URL, original TUBAL HUB page or asset, and supporting evidence. Reports are reviewed manually and do not by themselves establish infringement.
+
+## 10. Monitoring
+
+TUBAL HUB may periodically review public websites, repositories, and other publicly accessible sources for possible unauthorized use. Monitoring is not guaranteed to detect every copy.
+
+## 11. Downloads and License Verification
+
+Downloadable or paid digital products may use separate license terms and, where technically supported, account or purchase verification. A client-side website alone cannot securely enforce a purchase license; secure verification requires a trusted server or payment provider.
+
+## 12. Contact
+
+For permission requests, licensing questions, or copyright reports:
 
 **Email:** tubalrr@gmail.com
 
-## 9. Changes
+## 13. Changes
 
 TUBAL HUB may update this license when the website, content, or distribution model changes.
 
