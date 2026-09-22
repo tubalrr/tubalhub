@@ -156,6 +156,10 @@ Responsive layouts, mobile navigation, touch-friendly controls, and local storag
 - GitHub Pages
 - Android WebView compatibility
 
+## 📱 Google Play Store
+
+[Open Google Play Store](https://play.google.com/store/games?gl=PH)
+
 ## 📜 License
 
 TUBAL HUB is distributed under the custom **TUBAL HUB Website License** in [LICENSE.md](LICENSE.md).
