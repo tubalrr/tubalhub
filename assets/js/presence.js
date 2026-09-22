@@ -7,7 +7,6 @@ import {
   getFirestore,
   doc,
   setDoc,
-  deleteDoc,
   serverTimestamp
 } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
 
@@ -15,7 +14,6 @@ const db = getFirestore();
 
 let currentUser = null;
 let heartbeat = null;
-let leaving = false;
 
 async function setPresence(user) {
   if (!user || user.isAnonymous) return;
@@ -27,15 +25,6 @@ async function setPresence(user) {
     online: true,
     lastSeen: serverTimestamp()
   }, { merge: true });
-}
-
-async function clearPresence(user) {
-  if (!user || user.isAnonymous) return;
-  try {
-    await deleteDoc(doc(db, 'presence', user.uid));
-  } catch (e) {
-    console.warn('[TUBAL HUB presence] cleanup failed:', e);
-  }
 }
 
 onAuthStateChanged(auth, async user => {
@@ -55,7 +44,7 @@ onAuthStateChanged(auth, async user => {
   }
 
   heartbeat = setInterval(() => {
-    if (currentUser && !document.hidden) {
+    if (currentUser) {
       setPresence(currentUser).catch(e =>
         console.warn('[TUBAL HUB presence] heartbeat failed:', e)
       );
@@ -77,11 +66,3 @@ window.addEventListener('focus', () => {
   }
 });
 
-window.addEventListener('beforeunload', () => {
-  if (!currentUser || currentUser.isAnonymous || leaving) return;
-  leaving = true;
-
-  // Best-effort cleanup. The heartbeat timeout also prevents stale users
-  // from being treated as online by the chat UI.
-  clearPresence(currentUser);
-});
