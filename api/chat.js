@@ -71,8 +71,6 @@ export default async function handler(req, res) {
       if (![429, 500, 502, 503].includes(response.status)) break;
     }
 
-    const data = await response.json();
-
     if (!response.ok) {
       console.error("Gemini API error:", data);
       return res.status(502).json({
