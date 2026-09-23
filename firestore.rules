@@ -253,6 +253,11 @@ service cloud.firestore {
             && request.resource.data.senderId == resource.data.senderId
             && request.resource.data.receiverId == resource.data.receiverId
             && request.resource.data.participants == resource.data.participants
+            && request.resource.data.type == resource.data.type
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['text', 'editedAt'])
+            && request.resource.data.text is string
+            && request.resource.data.text.size() > 0
+            && request.resource.data.text.size() <= 500
           )
         );
 
