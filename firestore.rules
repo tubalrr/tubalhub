@@ -271,13 +271,24 @@ service cloud.firestore {
 
     match /messageReactions/{reactionId} {
       allow read: if realUser()
-        && request.auth.uid in get(/databases/$(database)/documents/messages/$(request.resource.data.messageId)).data.participants;
+        && request.auth.uid in get(/databases/$(database)/documents/messages/$(resource.data.messageId)).data.participants;
 
-      allow create, update: if realUser()
+      allow create: if realUser()
         && request.resource.data.uid == request.auth.uid
         && request.resource.data.messageId is string
+        && request.resource.data.participants is list
+        && request.resource.data.participants.size() == 2
+        && request.auth.uid in request.resource.data.participants
         && request.resource.data.reaction in ['👍', '❤️', '😂', '😮', '😢', '😡']
-        && request.resource.data.uid in get(/databases/$(database)/documents/messages/$(request.resource.data.messageId)).data.participants;
+        && request.resource.data.uid in get(/databases/$(database)/documents/messages/$(request.resource.data.messageId)).data.participants
+        && request.resource.data.participants == get(/databases/$(database)/documents/messages/$(request.resource.data.messageId)).data.participants;
+
+      allow update: if realUser()
+        && resource.data.uid == request.auth.uid
+        && request.resource.data.uid == resource.data.uid
+        && request.resource.data.messageId == resource.data.messageId
+        && request.resource.data.participants == resource.data.participants
+        && request.resource.data.reaction in ['👍', '❤️', '😂', '😮', '😢', '😡'];
 
       allow delete: if realUser()
         && resource.data.uid == request.auth.uid;
