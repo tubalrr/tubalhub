@@ -7,6 +7,7 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.view.Gravity
 import android.widget.*
+import android.graphics.Typeface
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -218,10 +219,42 @@ class MainActivity : AppCompatActivity() {
                 messageBox?.removeAllViews()
                 if (items.isEmpty()) messageBox?.addView(text("No messages yet."))
                 items.forEach {
+                    val messageId = it.id
                     val sender = if (it.getString("senderId") == me.uid) "You" else selectedName
-                    messageBox?.addView(text(sender + ": " + (it.getString("text") ?: "")))
+                    val card = LinearLayout(this)
+                    card.orientation = LinearLayout.VERTICAL
+                    card.setPadding(8, 4, 8, 8)
+
+                    val msg = text(sender + ": " + (it.getString("text") ?: ""))
+                    msg.setTypeface(null, Typeface.NORMAL)
+                    card.addView(msg)
+
+                    val reactions = LinearLayout(this)
+                    reactions.orientation = LinearLayout.HORIZONTAL
+                    listOf("👍", "❤️", "😂", "😮", "😢", "😡").forEach { emoji ->
+                        val b = Button(this)
+                        b.text = emoji
+                        b.setPadding(8, 0, 8, 0)
+                        b.setOnClickListener { reactToMessage(messageId, emoji) }
+                        reactions.addView(b, LinearLayout.LayoutParams(0, -2, 1f))
+                    }
+                    card.addView(reactions)
+                    messageBox?.addView(card)
                 }
             }
+    }
+
+    private fun reactToMessage(messageId: String, emoji: String) {
+        val me = auth.currentUser ?: return
+        val id = messageId + "_" + me.uid
+        db.collection("messageReactions").document(id).set(
+            mapOf(
+                "messageId" to messageId,
+                "uid" to me.uid,
+                "reaction" to emoji,
+                "updatedAt" to com.google.firebase.firestore.FieldValue.serverTimestamp()
+            )
+        ).addOnFailureListener { e -> toast(e.localizedMessage ?: "Reaction failed.") }
     }
 
     private fun sendMessage() {
