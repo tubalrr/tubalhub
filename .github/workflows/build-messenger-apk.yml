@@ -34,5 +34,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: TUBAL-HUB-Messenger-debug
-          path: android-messenger/app/build/outputs/apk/debug/app-debug.apk
+          path: android-messenger/app/build/outputs/apk/debug/TUBAL-HUB-Messenger-debug.apk
           if-no-files-found: error
