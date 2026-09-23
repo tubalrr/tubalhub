@@ -26,6 +26,8 @@ class MainActivity : AppCompatActivity() {
     private var messageInput: EditText? = null
     private var videoCallButton: Button? = null
     private var incomingCallListener: com.google.firebase.firestore.ListenerRegistration? = null
+    private var replyToId: String? = null
+    private var replyToText: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -326,6 +328,80 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun showMessageActions(messageId: String, messageText: String, mine: Boolean) {
+        val actions = mutableListOf("Reply", "React")
+        if (mine) {
+            actions.add("Edit")
+            actions.add("Delete")
+        }
+        AlertDialog.Builder(this)
+            .setTitle("Message")
+            .setItems(actions.toTypedArray()) { _, which ->
+                when (actions[which]) {
+                    "Reply" -> startReply(messageId, messageText)
+                    "React" -> showReactionPicker(messageId)
+                    "Edit" -> editMessage(messageId, messageText)
+                    "Delete" -> deleteMessage(messageId)
+                }
+            }
+            .show()
+    }
+
+    private fun startReply(messageId: String, messageText: String) {
+        replyToId = messageId
+        replyToText = messageText
+        messageInput?.hint = "Replying: " + messageText.take(45)
+        messageInput?.requestFocus()
+    }
+
+    private fun showReactionPicker(messageId: String) {
+        val emojis = arrayOf("👍", "❤️", "😂", "😮", "😢", "😡")
+        AlertDialog.Builder(this)
+            .setTitle("React")
+            .setItems(emojis) { _, which -> reactToMessage(messageId, emojis[which]) }
+            .show()
+    }
+
+    private fun editMessage(messageId: String, oldText: String) {
+        val edit = input("Message", false)
+        edit.setText(oldText)
+        edit.setSelection(edit.text.length)
+        AlertDialog.Builder(this)
+            .setTitle("Edit message")
+            .setView(edit)
+            .setNegativeButton("Cancel", null)
+            .setPositiveButton("Save") { _, _ ->
+                val newText = edit.text.toString().trim()
+                if (newText.isEmpty()) {
+                    toast("Message cannot be empty.")
+                    return@setPositiveButton
+                }
+                if (newText.length > 500) {
+                    toast("Message is limited to 500 characters.")
+                    return@setPositiveButton
+                }
+                db.collection("messages").document(messageId).update(
+                    mapOf(
+                        "text" to newText,
+                        "editedAt" to com.google.firebase.firestore.FieldValue.serverTimestamp()
+                    )
+                ).addOnFailureListener { e -> toast(e.localizedMessage ?: "Edit failed.") }
+            }
+            .show()
+    }
+
+    private fun deleteMessage(messageId: String) {
+        AlertDialog.Builder(this)
+            .setTitle("Delete message?")
+            .setMessage("This message will be removed from the chat.")
+            .setNegativeButton("Cancel", null)
+            .setPositiveButton("Delete") { _, _ ->
+                db.collection("messages").document(messageId).delete()
+                    .addOnFailureListener { e -> toast(e.localizedMessage ?: "Delete failed.") }
+            }
+            .show()
+    }
+
     private fun sendMessage() {
         val me = auth.currentUser ?: return
         val target = selectedUid ?: return toast("Select a member first.")
@@ -343,9 +419,16 @@ class MainActivity : AppCompatActivity() {
                 "senderPhotoURL" to (me.photoUrl?.toString() ?: ""),
                 "text" to body,
                 "type" to "text",
-                "createdAt" to com.google.firebase.firestore.FieldValue.serverTimestamp()
+                "createdAt" to com.google.firebase.firestore.FieldValue.serverTimestamp(),
+                "replyToMessageId" to replyToId,
+                "replyToText" to replyToText
             )
-        ).addOnSuccessListener { messageInput?.setText("") }
+        ).addOnSuccessListener {
+            messageInput?.setText("")
+            messageInput?.hint = "Message…"
+            replyToId = null
+            replyToText = null
+        }
             .addOnFailureListener { e -> toast(e.localizedMessage ?: "Send failed.") }
     }
 
