@@ -47,14 +47,14 @@ document.querySelectorAll('header nav a').forEach(a=>{if(a.href===location.href)
     if(!document.querySelector('link[data-tubal-video-call-css]')){
       const css=document.createElement('link');
       css.rel='stylesheet';
-      css.href='/tubalhub/assets/css/video-call.css?v=20260920-webRTC2';
+      css.href='/tubalhub/assets/css/video-call.css?v=20260923-callfix2';
       css.dataset.tubalVideoCallCss='1';
       document.head.appendChild(css);
     }
     if(document.querySelector('script[data-tubal-video-call]'))return;
     const s=document.createElement('script');
     s.type='module';
-    s.src='/tubalhub/assets/js/video-call.js?v=20260920-webRTC2';
+    s.src='/tubalhub/assets/js/video-call.js?v=20260923-callfix2';
     s.dataset.tubalVideoCall='1';
     document.head.appendChild(s);
   };
