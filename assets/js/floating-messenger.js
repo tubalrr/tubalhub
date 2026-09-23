@@ -4,7 +4,7 @@ import { getFirestore, collection, query, where, onSnapshot, addDoc, limit } fro
 const db=getFirestore(app);let me=null,target=null,stopUsers=null,stopMessages=null,stopUnread=null,lastSend=0,incomingReady=false,audioCtx=null;
 const esc=v=>{const d=document.createElement("div");d.textContent=v??"";return d.innerHTML};
 const initials=n=>(n||"Member").trim().split(/\s+/).slice(0,2).map(x=>x[0]).join("").toUpperCase()||"M";
-const presenceOnline=d=>{if(d?.online!==true)return false;const t=d?.lastSeen?.toMillis?.()||d?.lastSeen?.seconds*1000||0;return !!t&&Date.now()-t<90000};
+const presenceOnline=d=>d?.online!==false;
 function playMessageSound(){try{audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==="suspended")audioCtx.resume();const now=audioCtx.currentTime;const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type="sine";o.frequency.setValueAtTime(880,now);o.frequency.exponentialRampToValueAtTime(1320,now+.09);g.gain.setValueAtTime(.0001,now);g.gain.exponentialRampToValueAtTime(.12,now+.015);g.gain.exponentialRampToValueAtTime(.0001,now+.22);o.connect(g);g.connect(audioCtx.destination);o.start(now);o.stop(now+.24)}catch(_){}}
 function ui(){if(document.getElementById("tubalMessenger"))return;document.body.insertAdjacentHTML("beforeend",`
 <button id="tubalMsgLauncher" class="tubal-msg-launcher" aria-label="Messages">💬<span id="tubalMsgBadge" class="tubal-msg-badge" hidden>0</span></button>
