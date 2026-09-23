@@ -239,7 +239,9 @@ service cloud.firestore {
         && request.resource.data.text is string
         && request.resource.data.text.size() > 0
         && request.resource.data.text.size() <= 500
-        && request.resource.data.type == 'text';
+        && request.resource.data.type == 'text'
+        && (!('replyToMessageId' in request.resource.data) || request.resource.data.replyToMessageId is string)
+        && (!('replyToText' in request.resource.data) || (request.resource.data.replyToText is string && request.resource.data.replyToText.size() <= 500));
 
       allow update: if realUser()
         && (
