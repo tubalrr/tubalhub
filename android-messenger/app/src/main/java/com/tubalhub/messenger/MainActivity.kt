@@ -7,6 +7,16 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.view.Gravity
 import android.widget.*
+import android.util.Log
+import androidx.lifecycle.lifecycleScope
+import androidx.credentials.CredentialManager
+import androidx.credentials.Credential
+import androidx.credentials.CustomCredential
+import androidx.credentials.GetCredentialRequest
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+import com.google.firebase.auth.GoogleAuthProvider
+import kotlinx.coroutines.launch
 import android.graphics.Typeface
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -47,19 +57,71 @@ class MainActivity : AppCompatActivity() {
         val email = input("Email", false)
         val password = input("Password", true)
         val login = button("LOGIN")
+        val google = button("CONTINUE WITH GOOGLE")
         val status = text("")
-        root.addView(email); root.addView(password); root.addView(login); root.addView(status)
+        root.addView(email); root.addView(password); root.addView(login); root.addView(google); root.addView(status)
         login.setOnClickListener {
             login.isEnabled = false
+            google.isEnabled = false
             status.text = "Signing in…"
             auth.signInWithEmailAndPassword(email.text.toString().trim(), password.text.toString())
                 .addOnSuccessListener { showMessenger() }
                 .addOnFailureListener { e ->
-                    status.text = e.localizedMessage ?: "Login failed."
+                    status.text = when (e) {
+                        is com.google.firebase.auth.FirebaseAuthInvalidCredentialsException -> "Incorrect email or password."
+                        is com.google.firebase.auth.FirebaseAuthInvalidUserException -> "Account not found or disabled."
+                        else -> e.localizedMessage ?: "Login failed."
+                    }
                     login.isEnabled = true
+                    google.isEnabled = true
                 }
         }
+        google.setOnClickListener {
+            login.isEnabled = false
+            google.isEnabled = false
+            status.text = "Opening Google sign-in…"
+            signInWithGoogle(status, login, google)
+        }
         setContentView(root)
+    }
+
+    private fun signInWithGoogle(status: TextView, login: Button, google: Button) {
+        val credentialManager = CredentialManager.create(this)
+        val googleIdOption = GetGoogleIdOption.Builder()
+            .setServerClientId(getString(com.tubalhub.messenger.R.string.default_web_client_id))
+            .setFilterByAuthorizedAccounts(false)
+            .setAutoSelectEnabled(false)
+            .build()
+        val request = GetCredentialRequest.Builder()
+            .addCredentialOption(googleIdOption)
+            .build()
+
+        lifecycleScope.launch {
+            try {
+                val result = credentialManager.getCredential(this@MainActivity, request)
+                val credential: Credential = result.credential
+                if (credential is CustomCredential && credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
+                    val googleCredential = GoogleIdTokenCredential.createFrom(credential.data)
+                    val firebaseCredential = GoogleAuthProvider.getCredential(googleCredential.idToken, null)
+                    auth.signInWithCredential(firebaseCredential)
+                        .addOnSuccessListener { showMessenger() }
+                        .addOnFailureListener { e ->
+                            status.text = "Google sign-in failed: " + (e.localizedMessage ?: "Invalid credential.")
+                            login.isEnabled = true
+                            google.isEnabled = true
+                        }
+                } else {
+                    status.text = "Google account credential was not recognized."
+                    login.isEnabled = true
+                    google.isEnabled = true
+                }
+            } catch (e: Exception) {
+                Log.e("TUBAL_HUB_AUTH", "Google sign-in failed", e)
+                status.text = "Google sign-in cancelled or unavailable."
+                login.isEnabled = true
+                google.isEnabled = true
+            }
+        }
     }
 
     private fun showMessenger() {
