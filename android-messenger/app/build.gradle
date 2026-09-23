@@ -38,3 +38,9 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.4.0'
     implementation 'io.github.webrtc-sdk:android:144.7559.01'
 }
+
+android.applicationVariants.all { variant ->
+    variant.outputs.all { output ->
+        output.outputFileName = "TUBAL-HUB-Messenger-${variant.name}.apk"
+    }
+}
