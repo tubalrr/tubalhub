@@ -1,7 +1,6 @@
-import { auth } from './firebase-config.js';
+import { app, auth } from './firebase-config.js';
 import {
-  onAuthStateChanged,
-  signOut
+  onAuthStateChanged
 } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js';
 import {
   getFirestore,
@@ -10,7 +9,7 @@ import {
   serverTimestamp
 } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
 
-const db = getFirestore();
+const db = getFirestore(app);
 
 /* TUBAL HUB — load private calling wherever presence is active */
 (function(){
@@ -33,41 +32,45 @@ const db = getFirestore();
   else load();
 })();
 
-
 let currentUser = null;
 let heartbeat = null;
 
-async function setPresence(user) {
+async function setPresence(user, online=true) {
   if (!user || user.isAnonymous) return;
   const ref = doc(db, 'presence', user.uid);
   await setDoc(ref, {
     uid: user.uid,
     displayName: user.displayName || user.email?.split('@')[0] || 'Member',
     photoURL: user.photoURL || '',
-    online: true,
+    online,
     lastSeen: serverTimestamp()
   }, { merge: true });
 }
 
 onAuthStateChanged(auth, async user => {
-  currentUser = user;
-
   if (heartbeat) {
     clearInterval(heartbeat);
     heartbeat = null;
   }
 
+  if (currentUser && (!user || user.uid !== currentUser.uid)) {
+    try { await setPresence(currentUser, false); }
+    catch (e) { console.warn('[TUBAL HUB presence] offline update failed:', e); }
+  }
+
+  currentUser = user;
+
   if (!user || user.isAnonymous) return;
 
   try {
-    await setPresence(user);
+    await setPresence(user, true);
   } catch (e) {
     console.warn('[TUBAL HUB presence] initial update failed:', e);
   }
 
   heartbeat = setInterval(() => {
-    if (currentUser) {
-      setPresence(currentUser).catch(e =>
+    if (currentUser && !currentUser.isAnonymous) {
+      setPresence(currentUser, true).catch(e =>
         console.warn('[TUBAL HUB presence] heartbeat failed:', e)
       );
     }
@@ -76,15 +79,17 @@ onAuthStateChanged(auth, async user => {
 
 document.addEventListener('visibilitychange', () => {
   if (!currentUser || currentUser.isAnonymous) return;
-
-  if (!document.hidden) {
-    setPresence(currentUser).catch(() => {});
-  }
+  if (!document.hidden) setPresence(currentUser, true).catch(() => {});
 });
 
 window.addEventListener('focus', () => {
   if (currentUser && !currentUser.isAnonymous) {
-    setPresence(currentUser).catch(() => {});
+    setPresence(currentUser, true).catch(() => {});
   }
 });
 
+window.addEventListener('beforeunload', () => {
+  if (currentUser && !currentUser.isAnonymous) {
+    setPresence(currentUser, false).catch(() => {});
+  }
+});
