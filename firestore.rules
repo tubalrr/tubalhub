@@ -266,6 +266,24 @@ service cloud.firestore {
     }
 
     // =========================================================
+    // PRIVATE MESSAGE REACTIONS
+    // =========================================================
+
+    match /messageReactions/{reactionId} {
+      allow read: if realUser()
+        && request.auth.uid in get(/databases/$(database)/documents/messages/$(request.resource.data.messageId)).data.participants;
+
+      allow create, update: if realUser()
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.messageId is string
+        && request.resource.data.reaction in ['👍', '❤️', '😂', '😮', '😢', '😡']
+        && request.resource.data.uid in get(/databases/$(database)/documents/messages/$(request.resource.data.messageId)).data.participants;
+
+      allow delete: if realUser()
+        && resource.data.uid == request.auth.uid;
+    }
+
+    // =========================================================
     // VIDEO CALLS
     // =========================================================
 
