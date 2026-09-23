@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "741686139338",
+    "project_id": "tubalhub",
+    "storage_bucket": "tubalhub.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:741686139338:android:9a8788e78fa026afa79733",
+        "android_client_info": {
+          "package_name": "com.tubalhub.messenger"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "741686139338-cmqumkt7av878rae0h5jfu5dgntf0cen.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAIALfS7u-u6QWl-eExEPicwV69ULGY054"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "741686139338-cmqumkt7av878rae0h5jfu5dgntf0cen.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
