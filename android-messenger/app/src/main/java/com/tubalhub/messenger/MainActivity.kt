@@ -216,45 +216,114 @@ class MainActivity : AppCompatActivity() {
                 val items = snap.documents
                     .filter { (it.get("participants") as? List<*>)?.contains(target) == true }
                     .sortedBy { it.getTimestamp("createdAt")?.toDate()?.time ?: 0L }
-                messageBox?.removeAllViews()
-                if (items.isEmpty()) messageBox?.addView(text("No messages yet."))
-                items.forEach {
-                    val messageId = it.id
-                    val sender = if (it.getString("senderId") == me.uid) "You" else selectedName
-                    val card = LinearLayout(this)
-                    card.orientation = LinearLayout.VERTICAL
-                    card.setPadding(8, 4, 8, 8)
-
-                    val msg = text(sender + ": " + (it.getString("text") ?: ""))
-                    msg.setTypeface(null, Typeface.NORMAL)
-                    card.addView(msg)
-
-                    val reactions = LinearLayout(this)
-                    reactions.orientation = LinearLayout.HORIZONTAL
-                    listOf("👍", "❤️", "😂", "😮", "😢", "😡").forEach { emoji ->
-                        val b = Button(this)
-                        b.text = emoji
-                        b.setPadding(8, 0, 8, 0)
-                        b.setOnClickListener { reactToMessage(messageId, emoji) }
-                        reactions.addView(b, LinearLayout.LayoutParams(0, -2, 1f))
-                    }
-                    card.addView(reactions)
-                    messageBox?.addView(card)
-                }
+                loadReactionSummary(items)
             }
+    }
+
+    private fun loadReactionSummary(items: List<com.google.firebase.firestore.DocumentSnapshot>) {
+        val me = auth.currentUser ?: return
+        messageBox?.removeAllViews()
+        if (items.isEmpty()) {
+            messageBox?.addView(text("No messages yet."))
+            return
+        }
+
+        val ids = items.map { it.id }
+        val chunks = ids.chunked(30)
+        val allReactions = mutableListOf<com.google.firebase.firestore.DocumentSnapshot>()
+        var completed = 0
+
+        chunks.forEach { chunk ->
+            db.collection("messageReactions")
+                .whereIn("messageId", chunk)
+                .get()
+                .addOnSuccessListener { snap ->
+                    allReactions.addAll(snap.documents)
+                    completed++
+                    if (completed == chunks.size) renderMessages(items, allReactions, me.uid)
+                }
+                .addOnFailureListener {
+                    completed++
+                    if (completed == chunks.size) renderMessages(items, allReactions, me.uid)
+                }
+        }
+    }
+
+    private fun renderMessages(
+        items: List<com.google.firebase.firestore.DocumentSnapshot>,
+        reactions: List<com.google.firebase.firestore.DocumentSnapshot>,
+        myUid: String
+    ) {
+        val counts = mutableMapOf<String, MutableMap<String, Int>>()
+        val mine = mutableMapOf<String, String>()
+        reactions.forEach { r ->
+            val messageId = r.getString("messageId") ?: return@forEach
+            val emoji = r.getString("reaction") ?: return@forEach
+            val byEmoji = counts.getOrPut(messageId) { mutableMapOf() }
+            byEmoji[emoji] = (byEmoji[emoji] ?: 0) + 1
+            if (r.getString("uid") == myUid) mine[messageId] = emoji
+        }
+
+        messageBox?.removeAllViews()
+        items.forEach {
+            val messageId = it.id
+            val sender = if (it.getString("senderId") == myUid) "You" else selectedName
+            val card = LinearLayout(this)
+            card.orientation = LinearLayout.VERTICAL
+            card.setPadding(8, 4, 8, 8)
+
+            val msg = text(sender + ": " + (it.getString("text") ?: ""))
+            msg.setTypeface(null, Typeface.NORMAL)
+            card.addView(msg)
+
+            val summary = counts[messageId]
+                ?.filterValues { count -> count > 0 }
+                ?.entries
+                ?.joinToString("  ") { entry -> entry.key + " " + entry.value }
+                ?: ""
+            if (summary.isNotEmpty()) {
+                val reactionSummary = text(summary)
+                reactionSummary.textSize = 13f
+                card.addView(reactionSummary)
+            }
+
+            val reactionsRow = LinearLayout(this)
+            reactionsRow.orientation = LinearLayout.HORIZONTAL
+            listOf("👍", "❤️", "😂", "😮", "😢", "😡").forEach { emoji ->
+                val b = Button(this)
+                b.text = if (mine[messageId] == emoji) "✓$emoji" else emoji
+                b.setPadding(6, 0, 6, 0)
+                b.setOnClickListener { reactToMessage(messageId, emoji) }
+                reactionsRow.addView(b, LinearLayout.LayoutParams(0, -2, 1f))
+            }
+            card.addView(reactionsRow)
+            messageBox?.addView(card)
+        }
     }
 
     private fun reactToMessage(messageId: String, emoji: String) {
         val me = auth.currentUser ?: return
         val id = messageId + "_" + me.uid
-        db.collection("messageReactions").document(id).set(
-            mapOf(
-                "messageId" to messageId,
-                "uid" to me.uid,
-                "reaction" to emoji,
-                "updatedAt" to com.google.firebase.firestore.FieldValue.serverTimestamp()
-            )
-        ).addOnFailureListener { e -> toast(e.localizedMessage ?: "Reaction failed.") }
+        val ref = db.collection("messageReactions").document(id)
+        ref.get().addOnSuccessListener { existing ->
+            if (existing.exists() && existing.getString("reaction") == emoji) {
+                ref.delete().addOnFailureListener { e -> toast(e.localizedMessage ?: "Reaction failed.") }
+                return@addOnSuccessListener
+            }
+
+            val target = selectedUid ?: return@addOnSuccessListener
+            ref.set(
+                mapOf(
+                    "messageId" to messageId,
+                    "uid" to me.uid,
+                    "reaction" to emoji,
+                    "participants" to listOf(me.uid, target),
+                    "updatedAt" to com.google.firebase.firestore.FieldValue.serverTimestamp()
+                )
+            ).addOnFailureListener { e -> toast(e.localizedMessage ?: "Reaction failed.") }
+        }.addOnFailureListener { e ->
+            toast(e.localizedMessage ?: "Reaction failed.")
+        }
     }
 
     private fun sendMessage() {
