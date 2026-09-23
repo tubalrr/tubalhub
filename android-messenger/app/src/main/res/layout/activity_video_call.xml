@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:background="#020807">
+    <org.webrtc.SurfaceViewRenderer android:id="@+id/remoteVideo" android:layout_width="match_parent" android:layout_height="match_parent"/>
+    <org.webrtc.SurfaceViewRenderer android:id="@+id/localVideo" android:layout_width="120dp" android:layout_height="170dp" android:layout_gravity="top|end" android:layout_margin="18dp"/>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_gravity="bottom" android:gravity="center" android:orientation="horizontal" android:padding="16dp">
+        <Button android:id="@+id/muteButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Mute"/>
+        <Button android:id="@+id/cameraButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Camera"/>
+        <Button android:id="@+id/switchCameraButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Flip"/>
+        <Button android:id="@+id/endCallButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="End"/>
+    </LinearLayout>
+</FrameLayout>
