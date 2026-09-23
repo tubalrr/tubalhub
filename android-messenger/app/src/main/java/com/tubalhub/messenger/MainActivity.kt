@@ -23,6 +23,8 @@ class MainActivity : AppCompatActivity() {
     private var stopMessages: com.google.firebase.firestore.ListenerRegistration? = null
     private var messageBox: LinearLayout? = null
     private var messageInput: EditText? = null
+    private var videoCallButton: Button? = null
+    private var incomingCallListener: com.google.firebase.firestore.ListenerRegistration? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -108,10 +110,10 @@ class MainActivity : AppCompatActivity() {
         val chatTitle = text("Private Chat")
         chatTitle.textSize = 18f
         chatHeader.addView(chatTitle, LinearLayout.LayoutParams(0, -2, 1f))
-        val callButton = button("VIDEO CALL")
-        callButton.isEnabled = false
-        callButton.setOnClickListener { startVideoCall() }
-        chatHeader.addView(callButton)
+        videoCallButton = button("VIDEO CALL")
+        videoCallButton!!.isEnabled = false
+        videoCallButton!!.setOnClickListener { startVideoCall() }
+        chatHeader.addView(videoCallButton)
         root.addView(chatHeader)
         messageBox = LinearLayout(this)
         messageBox!!.orientation = LinearLayout.VERTICAL
@@ -141,6 +143,7 @@ class MainActivity : AppCompatActivity() {
     private fun openChat(uid: String, name: String) {
         selectedUid = uid
         selectedName = name
+        videoCallButton?.isEnabled = true
         messageBox?.removeAllViews()
         messageBox?.addView(text("Chat with " + name))
         subscribeMessages()
@@ -172,7 +175,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun listenForIncomingCalls(uid: String) {
-        db.collection("videoCalls")
+        incomingCallListener?.remove()
+        incomingCallListener = db.collection("videoCalls")
             .whereEqualTo("calleeId", uid)
             .whereEqualTo("status", "ringing")
             .limit(1)
@@ -276,6 +280,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         stopMessages?.remove()
+        incomingCallListener?.remove()
         super.onDestroy()
     }
 }
