@@ -12,6 +12,28 @@ import {
 
 const db = getFirestore();
 
+/* TUBAL HUB — load private calling wherever presence is active */
+(function(){
+  const load=()=>{
+    if(!document.querySelector('link[data-tubal-video-call-css]')){
+      const css=document.createElement('link');
+      css.rel='stylesheet';
+      css.href='/tubalhub/assets/css/video-call.css?v=20260923-callfix';
+      css.dataset.tubalVideoCallCss='1';
+      document.head.appendChild(css);
+    }
+    if(document.querySelector('script[data-tubal-video-call]')) return;
+    const s=document.createElement('script');
+    s.type='module';
+    s.src='/tubalhub/assets/js/video-call.js?v=20260923-callfix';
+    s.dataset.tubalVideoCall='1';
+    document.head.appendChild(s);
+  };
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',load,{once:true});
+  else load();
+})();
+
+
 let currentUser = null;
 let heartbeat = null;
 
