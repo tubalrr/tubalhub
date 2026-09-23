@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "741686139338-lir93e04jmgrdar752hgghcba037jqq0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tubalhub.messenger",
+            "certificate_hash": "a5a3894226a75bb231eba746f16ec6e5f301ab82"
+          }
+        },
+        {
           "client_id": "741686139338-cmqumkt7av878rae0h5jfu5dgntf0cen.apps.googleusercontent.com",
           "client_type": 3
         }
