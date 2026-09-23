@@ -1,11 +1,16 @@
 package com.tubalhub.messenger
 
 import android.os.Bundle
+import android.Manifest
+import android.content.pm.PackageManager
 import android.view.Gravity
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.messaging.FirebaseMessaging
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 
 class MainActivity : AppCompatActivity() {
     private val auth by lazy { FirebaseAuth.getInstance() }
@@ -23,6 +28,9 @@ class MainActivity : AppCompatActivity() {
         root.setPadding(28, 28, 28, 28)
         root.setBackgroundColor(0xFF020807.toInt())
         if (auth.currentUser == null) showLogin() else showMessenger()
+        if (android.os.Build.VERSION.SDK_INT >= 33 && ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 1001)
+        }
     }
 
     private fun showLogin() {
@@ -59,6 +67,7 @@ class MainActivity : AppCompatActivity() {
         root.addView(header)
         val identity = me.displayName ?: me.email ?: "Member"
         root.addView(text("Signed in as " + identity))
+        registerFcmToken(me.uid)
         logout.setOnClickListener { stopMessages?.remove(); auth.signOut(); showLogin() }
 
         db.collection("users").document(me.uid).set(
@@ -109,6 +118,15 @@ class MainActivity : AppCompatActivity() {
         root.addView(composer)
         send.setOnClickListener { sendMessage() }
         setContentView(root)
+    }
+
+    private fun registerFcmToken(uid: String) {
+        FirebaseMessaging.getInstance().token.addOnSuccessListener { token ->
+            db.collection("users").document(uid).set(
+                mapOf("fcmToken" to token),
+                com.google.firebase.firestore.SetOptions.merge()
+            )
+        }
     }
 
     private fun openChat(uid: String, name: String) {
