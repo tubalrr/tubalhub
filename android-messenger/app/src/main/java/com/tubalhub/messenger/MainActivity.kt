@@ -1,6 +1,8 @@
 package com.tubalhub.messenger
 
 import android.os.Bundle
+import android.content.Intent
+import androidx.appcompat.app.AlertDialog
 import android.Manifest
 import android.content.pm.PackageManager
 import android.view.Gravity
@@ -68,6 +70,7 @@ class MainActivity : AppCompatActivity() {
         val identity = me.displayName ?: me.email ?: "Member"
         root.addView(text("Signed in as " + identity))
         registerFcmToken(me.uid)
+        listenForIncomingCalls(me.uid)
         logout.setOnClickListener { stopMessages?.remove(); auth.signOut(); showLogin() }
 
         db.collection("users").document(me.uid).set(
@@ -101,9 +104,15 @@ class MainActivity : AppCompatActivity() {
             if (users.childCount == 0) users.addView(text("No other members found."))
         }.addOnFailureListener { users.addView(text("Could not load members.")) }
 
+        val chatHeader = LinearLayout(this)
         val chatTitle = text("Private Chat")
         chatTitle.textSize = 18f
-        root.addView(chatTitle)
+        chatHeader.addView(chatTitle, LinearLayout.LayoutParams(0, -2, 1f))
+        val callButton = button("VIDEO CALL")
+        callButton.isEnabled = false
+        callButton.setOnClickListener { startVideoCall() }
+        chatHeader.addView(callButton)
+        root.addView(chatHeader)
         messageBox = LinearLayout(this)
         messageBox!!.orientation = LinearLayout.VERTICAL
         val chatScroll = ScrollView(this)
@@ -135,6 +144,59 @@ class MainActivity : AppCompatActivity() {
         messageBox?.removeAllViews()
         messageBox?.addView(text("Chat with " + name))
         subscribeMessages()
+    }
+
+    private fun startVideoCall() {
+        val me = auth.currentUser ?: return
+        val target = selectedUid ?: return toast("Select a member first.")
+        val callRef = db.collection("videoCalls").document()
+        val data = mapOf(
+            "callerId" to me.uid,
+            "calleeId" to target,
+            "callerName" to (me.displayName ?: me.email?.substringBefore("@") ?: "Member"),
+            "callerPhotoURL" to (me.photoUrl?.toString() ?: ""),
+            "calleeName" to selectedName,
+            "media" to "video",
+            "status" to "ringing",
+            "createdAt" to com.google.firebase.firestore.FieldValue.serverTimestamp(),
+            "updatedAt" to com.google.firebase.firestore.FieldValue.serverTimestamp(),
+            "callerCandidates" to emptyList<Any>(),
+            "calleeCandidates" to emptyList<Any>()
+        )
+        callRef.set(data).addOnSuccessListener {
+            startActivity(Intent(this, VideoCallActivity::class.java).apply {
+                putExtra("callId", callRef.id)
+                putExtra("isCaller", true)
+            })
+        }.addOnFailureListener { e -> toast(e.localizedMessage ?: "Could not start call.") }
+    }
+
+    private fun listenForIncomingCalls(uid: String) {
+        db.collection("videoCalls")
+            .whereEqualTo("calleeId", uid)
+            .whereEqualTo("status", "ringing")
+            .limit(1)
+            .addSnapshotListener { snap, error ->
+                if (error != null || snap == null || snap.isEmpty) return@addSnapshotListener
+                val call = snap.documents.first()
+                val callerName = call.getString("callerName") ?: "Member"
+                AlertDialog.Builder(this)
+                    .setTitle("Incoming video call")
+                    .setMessage(callerName + " is calling you.")
+                    .setPositiveButton("Accept") { _, _ ->
+                        startActivity(Intent(this, VideoCallActivity::class.java).apply {
+                            putExtra("callId", call.id)
+                            putExtra("isCaller", false)
+                        })
+                    }
+                    .setNegativeButton("Decline") { _, _ ->
+                        call.reference.update(
+                            mapOf("status" to "ended", "updatedAt" to com.google.firebase.firestore.FieldValue.serverTimestamp())
+                        )
+                    }
+                    .setOnCancelListener { }
+                    .show()
+            }
     }
 
     private fun subscribeMessages() {
