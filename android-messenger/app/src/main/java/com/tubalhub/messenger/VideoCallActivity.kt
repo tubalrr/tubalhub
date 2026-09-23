@@ -92,15 +92,21 @@ class VideoCallActivity : AppCompatActivity() {
                 val field = if (isCaller) "callerCandidates" else "calleeCandidates"
                 db.collection("videoCalls").document(callId).update(field, FieldValue.arrayUnion(data))
             }
+
             override fun onTrack(t: RtpTransceiver?) {
                 val track = t?.receiver?.track()
                 if (track is VideoTrack) runOnUiThread { track.addSink(remoteView) }
             }
+
             override fun onAddTrack(receiver: RtpReceiver?, streams: Array<out MediaStream>?) {
                 val track = receiver?.track()
                 if (track is VideoTrack) runOnUiThread { track.addSink(remoteView) }
             }
-            override fun onAddStream(stream: MediaStream?) { stream?.videoTracks?.firstOrNull()?.addSink(remoteView) }
+
+            override fun onAddStream(stream: MediaStream?) {
+                stream?.videoTracks?.firstOrNull()?.addSink(remoteView)
+            }
+
             override fun onSignalingChange(p0: PeerConnection.SignalingState?) {}
             override fun onIceConnectionChange(p0: PeerConnection.IceConnectionState?) {}
             override fun onIceConnectionReceivingChange(p0: Boolean) {}
@@ -109,26 +115,34 @@ class VideoCallActivity : AppCompatActivity() {
             override fun onDataChannel(p0: DataChannel?) {}
             override fun onRenegotiationNeeded() {}
             override fun onIceCandidatesRemoved(p0: Array<out IceCandidate>?) {}
+
             override fun onConnectionChange(state: PeerConnection.PeerConnectionState?) {
-                if (state == PeerConnection.PeerConnectionState.FAILED || state == PeerConnection.PeerConnectionState.CLOSED) runOnUiThread { finish() }
+                if (state == PeerConnection.PeerConnectionState.FAILED ||
+                    state == PeerConnection.PeerConnectionState.CLOSED) {
+                    runOnUiThread { finish() }
+                }
             }
-            override fun onStandardizedIceConnectionChange(p0: PeerConnection.IceConnectionState?) {}
-            override fun onSelectedCandidatePairChanged(p0: PeerConnection.CandidatePairChangeEvent?) {}
-            override fun onIceCandidateError(p0: PeerConnection.IceCandidateErrorEvent?) {}
         }) ?: run { finish(); return }
 
         localStream!!.audioTracks.forEach { peer.addTrack(it, listOf(localStream!!.id)) }
         localStream!!.videoTracks.forEach { peer.addTrack(it, listOf(localStream!!.id)) }
         listenToCall()
-        if (isCaller) createOffer() else db.collection("videoCalls").document(callId).update("status", "accepted", "updatedAt", FieldValue.serverTimestamp())
+        if (isCaller) createOffer()
+        else db.collection("videoCalls").document(callId)
+            .update("status", "accepted", "updatedAt", FieldValue.serverTimestamp())
     }
 
     private fun listenToCall() {
         callListener = db.collection("videoCalls").document(callId).addSnapshotListener { snap, error ->
             if (error != null || snap == null || !snap.exists()) return@addSnapshotListener
-            if (snap.getString("status") == "ended") { finish(); return@addSnapshotListener }
+            if (snap.getString("status") == "ended") {
+                finish()
+                return@addSnapshotListener
+            }
+
             val offer = snap.getString("offer")
             val answer = snap.getString("answer")
+
             if (!isCaller && offer != null && peer.remoteDescription == null) {
                 peer.setRemoteDescription(object : SdpObserver {
                     override fun onSetSuccess() { createAnswer() }
@@ -137,15 +151,20 @@ class VideoCallActivity : AppCompatActivity() {
                     override fun onSetFailure(p0: String?) {}
                 }, SessionDescription(SessionDescription.Type.OFFER, offer))
             }
+
             if (isCaller && answer != null && peer.remoteDescription == null) {
                 peer.setRemoteDescription(SimpleSdpObserver(), SessionDescription(SessionDescription.Type.ANSWER, answer))
             }
+
             val field = if (isCaller) "calleeCandidates" else "callerCandidates"
             (snap.get(field) as? List<*>)?.forEach { raw ->
                 val m = raw as? Map<*, *> ?: return@forEach
-                val candidate = IceCandidate(m["sdpMid"] as? String, (m["sdpMLineIndex"] as? Number)?.toInt() ?: 0, m["candidate"] as? String ?: return@forEach)
-                val key = candidate.sdp
-                if (remoteCandidatesSeen.add(key)) peer.addIceCandidate(candidate)
+                val candidate = IceCandidate(
+                    m["sdpMid"] as? String,
+                    (m["sdpMLineIndex"] as? Number)?.toInt() ?: 0,
+                    m["candidate"] as? String ?: return@forEach
+                )
+                if (remoteCandidatesSeen.add(candidate.sdp)) peer.addIceCandidate(candidate)
             }
         }
     }
@@ -153,8 +172,14 @@ class VideoCallActivity : AppCompatActivity() {
     private fun createOffer() {
         peer.createOffer(object : SimpleSdpObserver() {
             override fun onCreateSuccess(desc: SessionDescription) {
-                peer.setLocalDescription(SimpleSdpObserver { 
-                    db.collection("videoCalls").document(callId).update(mapOf("offer" to desc.description, "status" to "ringing", "updatedAt" to FieldValue.serverTimestamp()))
+                peer.setLocalDescription(SimpleSdpObserver {
+                    db.collection("videoCalls").document(callId).update(
+                        mapOf(
+                            "offer" to desc.description,
+                            "status" to "ringing",
+                            "updatedAt" to FieldValue.serverTimestamp()
+                        )
+                    )
                 }, desc)
             }
         }, MediaConstraints())
@@ -164,35 +189,54 @@ class VideoCallActivity : AppCompatActivity() {
         peer.createAnswer(object : SimpleSdpObserver() {
             override fun onCreateSuccess(desc: SessionDescription) {
                 peer.setLocalDescription(SimpleSdpObserver {
-                    db.collection("videoCalls").document(callId).update(mapOf("answer" to desc.description, "status" to "accepted", "updatedAt" to FieldValue.serverTimestamp()))
+                    db.collection("videoCalls").document(callId).update(
+                        mapOf(
+                            "answer" to desc.description,
+                            "status" to "accepted",
+                            "updatedAt" to FieldValue.serverTimestamp()
+                        )
+                    )
                 }, desc)
             }
         }, MediaConstraints())
     }
 
     private fun createCameraCapturer(): VideoCapturer? {
-        val e = Camera2Enumerator(this)
-        e.deviceNames.forEach { if (e.isFrontFacing(it)) e.createCapturer(it, null)?.let { c -> return c } }
-        e.deviceNames.forEach { e.createCapturer(it, null)?.let { c -> return c } }
+        val enumerator = Camera2Enumerator(this)
+        for (name in enumerator.deviceNames) {
+            if (enumerator.isFrontFacing(name)) {
+                enumerator.createCapturer(name, null)?.let { return it }
+            }
+        }
+        for (name in enumerator.deviceNames) {
+            enumerator.createCapturer(name, null)?.let { return it }
+        }
         return null
     }
 
     private fun toggleMic() {
-        localStream?.audioTracks?.forEach { it.setEnabled(!it.enabled) }
+        localStream?.audioTracks?.forEach {
+            it.setEnabled(!it.enabled())
+        }
         micEnabled = !micEnabled
         findViewById<android.widget.Button>(R.id.muteButton).text = if (micEnabled) "Mute" else "Unmute"
     }
 
     private fun toggleCamera() {
-        localStream?.videoTracks?.forEach { it.setEnabled(!it.enabled) }
+        localStream?.videoTracks?.forEach {
+            it.setEnabled(!it.enabled())
+        }
         cameraEnabled = !cameraEnabled
         findViewById<android.widget.Button>(R.id.cameraButton).text = if (cameraEnabled) "Camera" else "Show"
     }
 
-    private fun switchCamera() { (videoCapturer as? CameraVideoCapturer)?.switchCamera(null) }
+    private fun switchCamera() {
+        (videoCapturer as? CameraVideoCapturer)?.switchCamera(null)
+    }
 
     private fun endCall() {
-        db.collection("videoCalls").document(callId).update(mapOf("status" to "ended", "updatedAt" to FieldValue.serverTimestamp()))
+        db.collection("videoCalls").document(callId)
+            .update(mapOf("status" to "ended", "updatedAt" to FieldValue.serverTimestamp()))
         finish()
     }
 
@@ -209,7 +253,7 @@ class VideoCallActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
-    private class SimpleSdpObserver(private val success: (() -> Unit)? = null) : SdpObserver {
+    private open class SimpleSdpObserver(private val success: (() -> Unit)? = null) : SdpObserver {
         override fun onCreateSuccess(p0: SessionDescription?) {}
         override fun onSetSuccess() { success?.invoke() }
         override fun onCreateFailure(p0: String?) {}
