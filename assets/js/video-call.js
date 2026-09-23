@@ -841,11 +841,18 @@ function addButtons(){
     b.className = "vc-call-btn";
     b.title = "Video call";
     b.textContent = "📹";
-    b.onclick = () => {
+    b.addEventListener("click", e => {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
       const name = div.querySelector(".member-info b")?.textContent || "Member";
       const img = div.querySelector(".mini img");
+      console.log("[TUBAL HUB] Video call button clicked:", uid, name);
       startCall({ uid, displayName: name, photoURL: img?.src || "" });
-    };
+    }, {capture:true});
+    b.addEventListener("pointerdown", e => {
+      e.stopPropagation();
+    }, {capture:true});
     div.appendChild(b);
   });
 }
