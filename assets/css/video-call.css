@@ -194,3 +194,25 @@
     object-fit:cover !important;
   }
 }
+
+/* Call buttons must stay above member-row overlays and remain touch/clickable. */
+.member .vc-call-btn{
+  position:relative !important;
+  z-index:50 !important;
+  pointer-events:auto !important;
+  touch-action:manipulation !important;
+  opacity:1 !important;
+  visibility:visible !important;
+}
+.vc-incoming,
+.vc-incoming-card,
+.vc-incoming-btn,
+.vc-overlay,
+.vc-control,
+.vc-icon-btn{
+  pointer-events:auto !important;
+}
+.vc-incoming-btn{
+  position:relative !important;
+  z-index:2201 !important;
+}
