@@ -238,7 +238,7 @@ const io=new IntersectionObserver((entries)=>{if(entries[0].isIntersecting){io.d
 .shop-preview-card span{font-size:8px;color:#9cff57}
 @media(max-width:800px){.shop-preview-grid{grid-template-columns:1fr}}
 </style>
-<script src="assets/js/app.js"></script>
+<script src="assets/js/app.js?v=20260923-callfix"></script>
 <script src="assets/js/theme.js?v=20260921" defer></script>
 <script>(function(){const save='tubalHubLowData';function apply(low){document.body.classList.toggle('low-data',low);localStorage.setItem(save,low?'1':'0');let b=document.getElementById('networkModeBtn');if(b){b.classList.add('show');b.classList.toggle('low',low);b.textContent=low?'⚡ Low Data':'📶 Normal';}}function boot(){const conn=navigator.connection||navigator.mozConnection||navigator.webkitConnection;let low=localStorage.getItem(save)==='1';if(!localStorage.getItem(save)&&conn)low=!!(conn.saveData||/2g/.test(conn.effectiveType||''));const b=document.createElement('button');b.id='networkModeBtn';b.className='network-mode';b.type='button';b.title='Toggle low-data mode';b.onclick=()=>apply(!document.body.classList.contains('low-data'));document.body.appendChild(b);apply(low);}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();})();</script></body>
 </html>
