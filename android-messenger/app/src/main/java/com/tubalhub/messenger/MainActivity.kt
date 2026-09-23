@@ -273,8 +273,14 @@ class MainActivity : AppCompatActivity() {
             val card = LinearLayout(this)
             card.orientation = LinearLayout.VERTICAL
             card.setPadding(8, 4, 8, 8)
+            val messageText = it.getString("text") ?: ""
+            val isMine = it.getString("senderId") == myUid
+            card.setOnLongClickListener {
+                showMessageActions(messageId, messageText, isMine)
+                true
+            }
 
-            val msg = text(sender + ": " + (it.getString("text") ?: ""))
+            val msg = text(sender + ": " + messageText)
             msg.setTypeface(null, Typeface.NORMAL)
             card.addView(msg)
 
