@@ -8,6 +8,7 @@
         android:theme="@style/Theme.TubalHubMessenger"
         android:label="TUBAL HUB Messenger"
         android:allowBackup="true">
+        <activity android:name=".VideoCallActivity" android:exported="false" />
         <activity android:name=".MainActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
