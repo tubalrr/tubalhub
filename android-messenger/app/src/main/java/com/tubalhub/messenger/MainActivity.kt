@@ -18,6 +18,9 @@ import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.coroutines.launch
 import android.graphics.Typeface
+import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -42,8 +45,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         root.orientation = LinearLayout.VERTICAL
-        root.setPadding(28, 28, 28, 28)
-        root.setBackgroundColor(0xFF020807.toInt())
+        root.setPadding(20, 48, 20, 18)
+        root.setBackgroundColor(0xFF03100D.toInt())
+        window.statusBarColor = 0xFF03100D.toInt()
+        window.navigationBarColor = 0xFF020807.toInt()
         if (auth.currentUser == null) showLogin() else showMessenger()
         if (android.os.Build.VERSION.SDK_INT >= 33 && ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 1001)
@@ -52,14 +57,86 @@ class MainActivity : AppCompatActivity() {
 
     private fun showLogin() {
         root.removeAllViews()
-        title("TUBAL HUB Messenger")
-        root.addView(text("Sign in using your existing TUBAL HUB account."))
+        root.setPadding(20, 48, 20, 20)
+
+        val scroll = ScrollView(this)
+        val page = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            gravity = Gravity.CENTER_HORIZONTAL
+            setPadding(4, 12, 4, 20)
+        }
+
+        val logo = TextView(this).apply {
+            text = "TH"
+            textSize = 30f
+            gravity = Gravity.CENTER
+            setTextColor(0xFF9DFFE0.toInt())
+            typeface = Typeface.DEFAULT_BOLD
+            background = rounded(0xFF0D4034.toInt(), 70f)
+        }
+        page.addView(logo, LinearLayout.LayoutParams(86, 86).apply { bottomMargin = 18 })
+
+        val heading = TextView(this).apply {
+            text = "TUBAL HUB"
+            textSize = 28f
+            gravity = Gravity.CENTER
+            setTextColor(0xFFF0FFF8.toInt())
+            typeface = Typeface.DEFAULT_BOLD
+        }
+        page.addView(heading)
+
+        val sub = TextView(this).apply {
+            text = "Messenger"
+            textSize = 21f
+            gravity = Gravity.CENTER
+            setTextColor(0xFF36E6A3.toInt())
+            typeface = Typeface.DEFAULT_BOLD
+        }
+        page.addView(sub)
+
+        page.addView(text("Connect • Chat • Share • Together").apply {
+            gravity = Gravity.CENTER
+            setTextColor(0xFFA9BDB6.toInt())
+            setPadding(0, 4, 0, 26)
+        })
+
+        val card = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(18, 20, 18, 20)
+            background = rounded(0xFF0A1D18.toInt(), 26f)
+        }
+
         val email = input("Email", false)
         val password = input("Password", true)
-        val login = button("LOGIN")
-        val google = button("CONTINUE WITH GOOGLE")
-        val status = text("")
-        root.addView(email); root.addView(password); root.addView(login); root.addView(google); root.addView(status)
+        val login = button("LOGIN").apply {
+            background = rounded(0xFF19D98B.toInt(), 18f)
+            setTextColor(0xFF03100D.toInt())
+            typeface = Typeface.DEFAULT_BOLD
+        }
+        val google = button("CONTINUE WITH GOOGLE").apply {
+            background = rounded(0xFF172A25.toInt(), 18f)
+            setTextColor(0xFFEAF7F0.toInt())
+        }
+        val status = text("").apply {
+            gravity = Gravity.CENTER
+            setPadding(6, 12, 6, 2)
+            setTextColor(0xFFFFB4AB.toInt())
+        }
+
+        card.addView(email)
+        card.addView(password, LinearLayout.LayoutParams(-1, -2).apply { topMargin = 8 })
+        card.addView(login, LinearLayout.LayoutParams(-1, 54).apply { topMargin = 18 })
+        card.addView(google, LinearLayout.LayoutParams(-1, 54).apply { topMargin = 10 })
+        card.addView(status)
+
+        page.addView(card, LinearLayout.LayoutParams(-1, -2))
+        page.addView(text("Sign in using your existing TUBAL HUB account.").apply {
+            gravity = Gravity.CENTER
+            setTextColor(0xFF78918A.toInt())
+            textSize = 12f
+            setPadding(8, 18, 8, 8)
+        })
+
         login.setOnClickListener {
             login.isEnabled = false
             google.isEnabled = false
@@ -82,6 +159,9 @@ class MainActivity : AppCompatActivity() {
             status.text = "Opening Google sign-in…"
             signInWithGoogle(status, login, google)
         }
+
+        scroll.addView(page)
+        root.addView(scroll, LinearLayout.LayoutParams(-1, -1))
         setContentView(root)
     }
 
@@ -131,18 +211,87 @@ class MainActivity : AppCompatActivity() {
 
     private fun showMessenger() {
         root.removeAllViews()
+        root.setPadding(16, 42, 16, 12)
         val me = auth.currentUser ?: return showLogin()
-        val header = LinearLayout(this)
-        val heading = text("TUBAL HUB Messenger")
-        heading.textSize = 22f
-        header.addView(heading, LinearLayout.LayoutParams(0, -2, 1f))
-        val logout = button("LOG OUT")
-        header.addView(logout)
-        root.addView(header)
+
+        val scroll = ScrollView(this)
+        val page = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(4, 8, 4, 18)
+        }
+
+        val header = LinearLayout(this).apply {
+            gravity = Gravity.CENTER_VERTICAL
+        }
+        val logo = TextView(this).apply {
+            text = "TH"
+            textSize = 20f
+            gravity = Gravity.CENTER
+            setTextColor(0xFF9DFFE0.toInt())
+            typeface = Typeface.DEFAULT_BOLD
+            background = rounded(0xFF0D4034.toInt(), 50f)
+        }
+        header.addView(logo, LinearLayout.LayoutParams(58, 58))
+        val brand = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(14, 0, 8, 0)
+        }
+        brand.addView(TextView(this).apply {
+            text = "TUBAL HUB"
+            textSize = 20f
+            setTextColor(0xFFF0FFF8.toInt())
+            typeface = Typeface.DEFAULT_BOLD
+        })
+        brand.addView(TextView(this).apply {
+            text = "Messenger"
+            textSize = 17f
+            setTextColor(0xFF36E6A3.toInt())
+            typeface = Typeface.DEFAULT_BOLD
+        })
+        header.addView(brand, LinearLayout.LayoutParams(0, -2, 1f))
+        val logout = button("LOG OUT").apply {
+            background = rounded(0xFF172A25.toInt(), 16f)
+            setTextColor(0xFFEAF7F0.toInt())
+        }
+        header.addView(logout, LinearLayout.LayoutParams(-2, 50))
+        page.addView(header)
+
+        val identityCard = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(18, 16, 18, 16)
+            background = rounded(0xFF0A1D18.toInt(), 24f)
+        }
         val identity = me.displayName ?: me.email ?: "Member"
-        root.addView(text("Signed in as " + identity))
-        registerFcmToken(me.uid)
-        listenForIncomingCalls(me.uid)
+        identityCard.addView(text(identity).apply {
+            textSize = 20f
+            typeface = Typeface.DEFAULT_BOLD
+            setTextColor(0xFFF0FFF8.toInt())
+            setPadding(0, 0, 0, 2)
+        })
+        identityCard.addView(text("● Online").apply {
+            textSize = 14f
+            setTextColor(0xFF36E6A3.toInt())
+            setPadding(0, 0, 0, 0)
+        })
+        page.addView(identityCard, LinearLayout.LayoutParams(-1, -2).apply { topMargin = 16 })
+
+        val tabs = LinearLayout(this).apply {
+            background = rounded(0xFF0A1D18.toInt(), 22f)
+            setPadding(6, 6, 6, 6)
+        }
+        listOf("CHATS", "MEMBERS", "CALLS", "MORE").forEachIndexed { index, label ->
+            val b = button(label).apply {
+                textSize = 12f
+                setTextColor(if (index == 0) 0xFF03100D.toInt() else 0xFFB8C9C2.toInt())
+                background = rounded(if (index == 0) 0xFF19D98B.toInt() else 0x00172A25, 16f)
+            }
+            tabs.addView(b, LinearLayout.LayoutParams(0, 48, 1f))
+        }
+        page.addView(tabs, LinearLayout.LayoutParams(-1, -2).apply { topMargin = 14 })
+
+        val meUid = me.uid
+        registerFcmToken(meUid)
+        listenForIncomingCalls(meUid)
         logout.setOnClickListener { stopMessages?.remove(); auth.signOut(); showLogin() }
 
         db.collection("users").document(me.uid).set(
@@ -155,49 +304,91 @@ class MainActivity : AppCompatActivity() {
             com.google.firebase.firestore.SetOptions.merge()
         )
 
-        val usersTitle = text("Members")
-        usersTitle.textSize = 18f
-        root.addView(usersTitle)
-        val users = LinearLayout(this)
-        users.orientation = LinearLayout.VERTICAL
+        val usersTitle = text("Members").apply {
+            textSize = 19f
+            typeface = Typeface.DEFAULT_BOLD
+            setTextColor(0xFFF0FFF8.toInt())
+            setPadding(4, 18, 4, 10)
+        }
+        page.addView(usersTitle)
+
+        val users = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+        }
         val usersScroll = ScrollView(this)
         usersScroll.addView(users)
-        root.addView(usersScroll, LinearLayout.LayoutParams(-1, 0, 0.32f))
+        page.addView(usersScroll, LinearLayout.LayoutParams(-1, 230))
 
         db.collection("users").get().addOnSuccessListener { snap ->
             users.removeAllViews()
             snap.documents.forEach { doc ->
                 if (doc.id == me.uid) return@forEach
                 val name = doc.getString("displayName") ?: doc.getString("email")?.substringBefore("@") ?: "Member"
-                val row = button(name)
+                val row = button("●   " + name).apply {
+                    gravity = Gravity.CENTER_VERTICAL
+                    setTextColor(0xFFEAF7F0.toInt())
+                    background = rounded(0xFF10241F.toInt(), 18f)
+                    setPadding(18, 0, 18, 0)
+                }
                 row.setOnClickListener { openChat(doc.id, name) }
-                users.addView(row)
+                users.addView(row, LinearLayout.LayoutParams(-1, 54).apply { bottomMargin = 8 })
             }
             if (users.childCount == 0) users.addView(text("No other members found."))
         }.addOnFailureListener { users.addView(text("Could not load members.")) }
 
-        val chatHeader = LinearLayout(this)
-        val chatTitle = text("Private Chat")
-        chatTitle.textSize = 18f
+        val chatHeader = LinearLayout(this).apply {
+            gravity = Gravity.CENTER_VERTICAL
+        }
+        val chatTitle = text("Private Chat").apply {
+            textSize = 19f
+            typeface = Typeface.DEFAULT_BOLD
+            setTextColor(0xFFF0FFF8.toInt())
+            setPadding(4, 8, 4, 8)
+        }
         chatHeader.addView(chatTitle, LinearLayout.LayoutParams(0, -2, 1f))
-        videoCallButton = button("VIDEO CALL")
-        videoCallButton!!.isEnabled = false
+        videoCallButton = button("VIDEO CALL").apply {
+            background = rounded(0xFF172A25.toInt(), 16f)
+            setTextColor(0xFFEAF7F0.toInt())
+            isEnabled = false
+        }
         videoCallButton!!.setOnClickListener { startVideoCall() }
-        chatHeader.addView(videoCallButton)
-        root.addView(chatHeader)
-        messageBox = LinearLayout(this)
-        messageBox!!.orientation = LinearLayout.VERTICAL
-        val chatScroll = ScrollView(this)
-        chatScroll.addView(messageBox)
-        root.addView(chatScroll, LinearLayout.LayoutParams(-1, 0, 0.55f))
+        chatHeader.addView(videoCallButton, LinearLayout.LayoutParams(-2, 48))
+        page.addView(chatHeader)
 
-        val composer = LinearLayout(this)
-        messageInput = input("Message…", false)
-        composer.addView(messageInput, LinearLayout.LayoutParams(0, -2, 1f))
-        val send = button("SEND")
-        composer.addView(send)
-        root.addView(composer)
+        messageBox = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(4, 4, 4, 4)
+        }
+        val chatScroll = ScrollView(this).apply {
+            background = rounded(0xFF061611.toInt(), 20f)
+            setPadding(8, 8, 8, 8)
+        }
+        chatScroll.addView(messageBox)
+        page.addView(chatScroll, LinearLayout.LayoutParams(-1, 420).apply { bottomMargin = 10 })
+
+        val composer = LinearLayout(this).apply {
+            gravity = Gravity.CENTER_VERTICAL
+            setPadding(8, 4, 8, 4)
+            background = rounded(0xFF10241F.toInt(), 24f)
+        }
+        messageInput = input("Type a message…", false).apply {
+            background = null
+            setPadding(10, 0, 8, 0)
+        }
+        composer.addView(messageInput, LinearLayout.LayoutParams(0, 56, 1f))
+        val send = button("➤").apply {
+            textSize = 22f
+            background = rounded(0xFF19D98B.toInt(), 50f)
+            setTextColor(0xFF03100D.toInt())
+            typeface = Typeface.DEFAULT_BOLD
+        }
+        composer.addView(send, LinearLayout.LayoutParams(56, 56))
+        page.addView(composer)
+
         send.setOnClickListener { sendMessage() }
+
+        scroll.addView(page)
+        root.addView(scroll, LinearLayout.LayoutParams(-1, -1))
         setContentView(root)
     }
 
@@ -505,6 +696,12 @@ class MainActivity : AppCompatActivity() {
             .addOnFailureListener { e -> toast(e.localizedMessage ?: "Send failed.") }
     }
 
+    private fun rounded(color: Int, radius: Float): GradientDrawable =
+        GradientDrawable().apply {
+            setColor(color)
+            cornerRadius = radius
+        }
+
     private fun title(s: String) {
         val v = text(s)
         v.textSize = 28f
@@ -523,6 +720,8 @@ class MainActivity : AppCompatActivity() {
         this.hint = hint
         setTextColor(0xFFFFFFFF.toInt())
         setHintTextColor(0xFF8EA69A.toInt())
+        background = rounded(0xFF10241F.toInt(), 14f)
+        setPadding(14, 0, 14, 0)
         if (password) {
             inputType = android.text.InputType.TYPE_CLASS_TEXT or
                 android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
@@ -532,6 +731,9 @@ class MainActivity : AppCompatActivity() {
     private fun button(label: String): Button = Button(this).apply {
         text = label
         isAllCaps = false
+        minHeight = 0
+        minWidth = 0
+        stateListAnimator = null
     }
 
     private fun toast(s: String) = Toast.makeText(this, s, Toast.LENGTH_SHORT).show()
