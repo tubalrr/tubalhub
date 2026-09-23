@@ -1,14 +1,201 @@
 package com.tubalhub.messenger
 
 import android.os.Bundle
+import android.view.Gravity
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var auth: FirebaseAuth
+    private val auth by lazy { FirebaseAuth.getInstance() }
+    private val db by lazy { FirebaseFirestore.getInstance() }
+    private val root by lazy { LinearLayout(this) }
+    private var selectedUid: String? = null
+    private var selectedName = "Member"
+    private var stopMessages: com.google.firebase.firestore.ListenerRegistration? = null
+    private var messageBox: LinearLayout? = null
+    private var messageInput: EditText? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        auth = FirebaseAuth.getInstance()
-        setContentView(R.layout.activity_main)
+        root.orientation = LinearLayout.VERTICAL
+        root.setPadding(28, 28, 28, 28)
+        root.setBackgroundColor(0xFF020807.toInt())
+        if (auth.currentUser == null) showLogin() else showMessenger()
+    }
+
+    private fun showLogin() {
+        root.removeAllViews()
+        title("TUBAL HUB Messenger")
+        root.addView(text("Sign in using your existing TUBAL HUB account."))
+        val email = input("Email", false)
+        val password = input("Password", true)
+        val login = button("LOGIN")
+        val status = text("")
+        root.addView(email); root.addView(password); root.addView(login); root.addView(status)
+        login.setOnClickListener {
+            login.isEnabled = false
+            status.text = "Signing in…"
+            auth.signInWithEmailAndPassword(email.text.toString().trim(), password.text.toString())
+                .addOnSuccessListener { showMessenger() }
+                .addOnFailureListener { e ->
+                    status.text = e.localizedMessage ?: "Login failed."
+                    login.isEnabled = true
+                }
+        }
+        setContentView(root)
+    }
+
+    private fun showMessenger() {
+        root.removeAllViews()
+        val me = auth.currentUser ?: return showLogin()
+        val header = LinearLayout(this)
+        val heading = text("TUBAL HUB Messenger")
+        heading.textSize = 22f
+        header.addView(heading, LinearLayout.LayoutParams(0, -2, 1f))
+        val logout = button("LOG OUT")
+        header.addView(logout)
+        root.addView(header)
+        val identity = me.displayName ?: me.email ?: "Member"
+        root.addView(text("Signed in as " + identity))
+        logout.setOnClickListener { stopMessages?.remove(); auth.signOut(); showLogin() }
+
+        db.collection("users").document(me.uid).set(
+            mapOf(
+                "uid" to me.uid,
+                "displayName" to (me.displayName ?: me.email?.substringBefore("@") ?: "Member"),
+                "email" to (me.email ?: ""),
+                "photoURL" to (me.photoUrl?.toString() ?: "")
+            ),
+            com.google.firebase.firestore.SetOptions.merge()
+        )
+
+        val usersTitle = text("Members")
+        usersTitle.textSize = 18f
+        root.addView(usersTitle)
+        val users = LinearLayout(this)
+        users.orientation = LinearLayout.VERTICAL
+        val usersScroll = ScrollView(this)
+        usersScroll.addView(users)
+        root.addView(usersScroll, LinearLayout.LayoutParams(-1, 0, 0.32f))
+
+        db.collection("users").get().addOnSuccessListener { snap ->
+            users.removeAllViews()
+            snap.documents.forEach { doc ->
+                if (doc.id == me.uid) return@forEach
+                val name = doc.getString("displayName") ?: doc.getString("email")?.substringBefore("@") ?: "Member"
+                val row = button(name)
+                row.setOnClickListener { openChat(doc.id, name) }
+                users.addView(row)
+            }
+            if (users.childCount == 0) users.addView(text("No other members found."))
+        }.addOnFailureListener { users.addView(text("Could not load members.")) }
+
+        val chatTitle = text("Private Chat")
+        chatTitle.textSize = 18f
+        root.addView(chatTitle)
+        messageBox = LinearLayout(this)
+        messageBox!!.orientation = LinearLayout.VERTICAL
+        val chatScroll = ScrollView(this)
+        chatScroll.addView(messageBox)
+        root.addView(chatScroll, LinearLayout.LayoutParams(-1, 0, 0.55f))
+
+        val composer = LinearLayout(this)
+        messageInput = input("Message…", false)
+        composer.addView(messageInput, LinearLayout.LayoutParams(0, -2, 1f))
+        val send = button("SEND")
+        composer.addView(send)
+        root.addView(composer)
+        send.setOnClickListener { sendMessage() }
+        setContentView(root)
+    }
+
+    private fun openChat(uid: String, name: String) {
+        selectedUid = uid
+        selectedName = name
+        messageBox?.removeAllViews()
+        messageBox?.addView(text("Chat with " + name))
+        subscribeMessages()
+    }
+
+    private fun subscribeMessages() {
+        stopMessages?.remove()
+        val me = auth.currentUser ?: return
+        val target = selectedUid ?: return
+        stopMessages = db.collection("messages")
+            .whereArrayContains("participants", me.uid)
+            .limit(200)
+            .addSnapshotListener { snap, err ->
+                if (err != null || snap == null) return@addSnapshotListener
+                val items = snap.documents
+                    .filter { (it.get("participants") as? List<*>)?.contains(target) == true }
+                    .sortedBy { it.getTimestamp("createdAt")?.toDate()?.time ?: 0L }
+                messageBox?.removeAllViews()
+                if (items.isEmpty()) messageBox?.addView(text("No messages yet."))
+                items.forEach {
+                    val sender = if (it.getString("senderId") == me.uid) "You" else selectedName
+                    messageBox?.addView(text(sender + ": " + (it.getString("text") ?: "")))
+                }
+            }
+    }
+
+    private fun sendMessage() {
+        val me = auth.currentUser ?: return
+        val target = selectedUid ?: return toast("Select a member first.")
+        val body = messageInput?.text?.toString()?.trim().orEmpty()
+        if (body.isEmpty()) return
+        if (body.length > 500) return toast("Message is limited to 500 characters.")
+
+        db.collection("messages").add(
+            mapOf(
+                "uid" to me.uid,
+                "senderId" to me.uid,
+                "receiverId" to target,
+                "participants" to listOf(me.uid, target),
+                "displayName" to (me.displayName ?: me.email?.substringBefore("@") ?: "Member"),
+                "senderPhotoURL" to (me.photoUrl?.toString() ?: ""),
+                "text" to body,
+                "type" to "text",
+                "createdAt" to com.google.firebase.firestore.FieldValue.serverTimestamp()
+            )
+        ).addOnSuccessListener { messageInput?.setText("") }
+            .addOnFailureListener { e -> toast(e.localizedMessage ?: "Send failed.") }
+    }
+
+    private fun title(s: String) {
+        val v = text(s)
+        v.textSize = 28f
+        v.gravity = Gravity.CENTER
+        root.addView(v)
+    }
+
+    private fun text(s: String): TextView = TextView(this).apply {
+        text = s
+        textSize = 15f
+        setTextColor(0xFFEAF7F0.toInt())
+        setPadding(10, 12, 10, 12)
+    }
+
+    private fun input(hint: String, password: Boolean): EditText = EditText(this).apply {
+        this.hint = hint
+        setTextColor(0xFFFFFFFF.toInt())
+        setHintTextColor(0xFF8EA69A.toInt())
+        if (password) {
+            inputType = android.text.InputType.TYPE_CLASS_TEXT or
+                android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
+        }
+    }
+
+    private fun button(label: String): Button = Button(this).apply {
+        text = label
+        isAllCaps = false
+    }
+
+    private fun toast(s: String) = Toast.makeText(this, s, Toast.LENGTH_SHORT).show()
+
+    override fun onDestroy() {
+        stopMessages?.remove()
+        super.onDestroy()
     }
 }
