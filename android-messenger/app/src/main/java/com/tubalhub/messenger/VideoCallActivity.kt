@@ -120,7 +120,7 @@ class VideoCallActivity : AppCompatActivity() {
         localStream!!.audioTracks.forEach { peer.addTrack(it, listOf(localStream!!.id)) }
         localStream!!.videoTracks.forEach { peer.addTrack(it, listOf(localStream!!.id)) }
         listenToCall()
-        if (isCaller) createOffer()
+        if (isCaller) createOffer() else db.collection("videoCalls").document(callId).update("status", "accepted", "updatedAt", FieldValue.serverTimestamp())
     }
 
     private fun listenToCall() {
