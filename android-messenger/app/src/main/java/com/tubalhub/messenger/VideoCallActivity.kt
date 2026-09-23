@@ -171,7 +171,8 @@ class VideoCallActivity : AppCompatActivity() {
 
     private fun createOffer() {
         peer.createOffer(object : SimpleSdpObserver() {
-            override fun onCreateSuccess(desc: SessionDescription) {
+            override fun onCreateSuccess(desc: SessionDescription?) {
+                if (desc == null) return
                 peer.setLocalDescription(SimpleSdpObserver {
                     db.collection("videoCalls").document(callId).update(
                         mapOf(
@@ -187,7 +188,8 @@ class VideoCallActivity : AppCompatActivity() {
 
     private fun createAnswer() {
         peer.createAnswer(object : SimpleSdpObserver() {
-            override fun onCreateSuccess(desc: SessionDescription) {
+            override fun onCreateSuccess(desc: SessionDescription?) {
+                if (desc == null) return
                 peer.setLocalDescription(SimpleSdpObserver {
                     db.collection("videoCalls").document(callId).update(
                         mapOf(
