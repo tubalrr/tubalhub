@@ -117,7 +117,12 @@ class MainActivity : AppCompatActivity() {
                 }
             } catch (e: Exception) {
                 Log.e("TUBAL_HUB_AUTH", "Google sign-in failed", e)
-                status.text = "Google sign-in cancelled or unavailable."
+                val detail = e.message?.trim().orEmpty()
+                status.text = if (detail.isNotEmpty()) {
+                    "Google sign-in error: " + detail
+                } else {
+                    "Google sign-in failed. Check Google provider, SHA-1, and google-services.json."
+                }
                 login.isEnabled = true
                 google.isEnabled = true
             }
