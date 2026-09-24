@@ -1071,21 +1071,29 @@ function bentoMusicCover(track){
   const seed=String(track?.id||track?.title||"music"),hash=[...seed].reduce((n,ch)=>n+ch.charCodeAt(0),0),h1=hash%360,h2=(h1+86)%360;
   return "linear-gradient(135deg,hsl("+h1+" 75% 55%),hsl("+h2+" 65% 42%))";
 }
-function bentoRenderMusic(rows){
-  const box=$("#bentoMusicList");if(!box)return;
-  if(!rows.length){
-    box.innerHTML='<div class="real-empty-card glass"><span class="real-empty-emoji" aria-hidden="true">🎵</span><p>Wala pang saved audio tracks.</p><a class="real-quick-link" href="pages/ai-music.html">Open AI Music →</a></div>';
-    return;
-  }
-  const plays=musicPlays();
-  box.innerHTML=rows.slice(0,3).map(t=>{
-    const src=realAudioSource(t);
-    const audio=src?'<audio class="bento-real-audio" src="'+esc(src)+'" controls preload="metadata" data-real-audio-id="'+esc(t.id)+'"></audio>':"";
-    return '<div class="bento-music-item" data-bento-music-id="'+esc(t.id)+'"><div class="bento-music-cover"><span>🎵</span></div><button class="bento-music-play" data-bento-play="'+esc(t.id)+'" type="button" aria-label="Play '+esc(t.title||"saved track")+'">▶</button><div class="bento-item-copy"><strong>'+esc(t.title||"Saved track")+'</strong><p>'+esc(t.genre||t.prompt||"Saved audio")+'</p>'+audio+'<span data-real-plays="'+esc(t.id)+'" class="real-data-count">'+Number(plays[t.id]||0)+' plays</span></div><div class="bento-music-wave"><i></i><i></i><i></i></div></div>';
-  }).join("");
-  bindRealAudioPlayEvents(box);
-  box.querySelectorAll("[data-bento-play]").forEach(b=>b.addEventListener("click",()=>playMusic(b.dataset.bentoPlay)));
+function getBentoShopCount(key){
+  try{
+    const value=JSON.parse(localStorage.getItem(key)||"[]");
+    return Array.isArray(value)?value.length:0;
+  }catch(_){return 0}
 }
+function bentoRenderShop(){
+  const box=$("#bentoShopList");if(!box)return;
+  const collections=[
+    {id:"th",icon:"◈",title:"TUBAL HUB",sub:"Community collection"},
+    {id:"payapang",icon:"🌿",title:"PAYAPANG ISIP",sub:"Calm collection"},
+    {id:"ctrlzone",icon:"🎮",title:"CTRLZONE",sub:"Gaming collection"}
+  ];
+  box.innerHTML=collections.map(item=>
+    '<a class="bento-shop-collection" href="pages/shop.html#'+item.id+'"><span class="bento-shop-collection-icon">'+item.icon+'</span><div><strong>'+item.title+'</strong><small>'+item.sub+'</small></div><span class="bento-shop-arrow">→</span></a>'
+  ).join("");
+  const cart=getBentoShopCount("tubalhub-shop-cart-v1");
+  const wishlist=getBentoShopCount("tubalhub-shop-wishlist-v1");
+  const cartLabel=cart===1?"1 item":cart+" items";
+  const cartEl=$("#bentoShopCart");if(cartEl)cartEl.textContent=cartLabel;
+  const wishEl=$("#bentoShopWishlist");if(wishEl)wishEl.textContent=String(wishlist);
+}
+
 function bentoRenderFeeds(rows){
   const box=$("#bentoFeedsList");if(!box)return;
   if(!rows.length){
@@ -1117,7 +1125,7 @@ async function renderRealData(){
   const posts=getRealFeeds();
   featuredGames=games;
   bentoRenderJournal();
-  bentoRenderMusic(music);
+  bentoRenderShop();
   bentoRenderGames();
   bentoRenderFeeds(posts);
   renderFeaturedWebsiteData(journals,music,posts,games);
