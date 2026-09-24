@@ -38,8 +38,7 @@ document.querySelectorAll('header nav a').forEach(a=>{if(a.href===location.href)
   function showToast(message){if(!toast)return;toast.textContent=message;toast.classList.add('show');clearTimeout(window.__tubalThemeToast);window.__tubalThemeToast=setTimeout(()=>toast.classList.remove('show'),1800)}
 })();
 
-/* TUBAL HUB — load chatbot globally */
-(function(){const load=()=>{if(document.querySelector('script[data-tubal-chatbot]'))return;const s=document.createElement('script');s.src='/tubalhub/assets/js/chatbot.js?v=20260923';s.defer=true;s.dataset.tubalChatbot='1';document.head.appendChild(s)};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(load,150),{once:true});else setTimeout(load,150)})();
+/* Legacy chatbot loader removed. The working Tubal AI assistant remains on the homepage. */
 
 /* TUBAL HUB — site-wide video calling */
 (function(){
