@@ -126,31 +126,61 @@ function itemHtml(x,index){
   const price=x.kind==="products"&&x.price!==""?'<div class="th-search-result-price">'+(String(x.price).trim().startsWith("₱")?"":"₱")+esc(x.price)+'</div>':"";
   return '<div class="th-search-result" role="option" tabindex="-1" data-index="'+index+'">'+visual(x)+'<div class="th-search-result-copy"><div class="th-search-result-title">'+highlight(title,input.value)+'</div><div class="th-search-result-meta">'+meta+'</div>'+price+'</div><span class="th-search-result-arrow">›</span></div>';
 }
+function renderQuickAccess(){
+  const body=document.getElementById("thSearchBody");if(!body)return;
+  const r=recent();
+  body.innerHTML='<section class="th-search-section"><h3 class="th-search-section-title">Quick Access</h3><div class="th-search-chips">'+
+    ["Feeds","Create Story","CTRLZONE","Shop","Global Chat","News"].map(x=>'<button class="th-search-chip" data-shortcut="'+esc(x)+'">'+esc(x)+'</button>').join("")+
+    '</div></section>'+
+    (r.length?'<section class="th-search-section"><h3 class="th-search-section-title">Recent Searches</h3><div class="th-search-chips">'+r.map(x=>'<button class="th-search-chip" data-chip="'+esc(x)+'">'+esc(x)+'</button>').join("")+'</div></section>':"")+
+    '<section class="th-search-section" id="thSearchTrending"><h3 class="th-search-section-title">Trending</h3><div class="th-search-chips"><span class="th-search-chip" style="cursor:default;opacity:.6">Loading live content…</span></div></section>';
+  bindChips();
+}
 async function render(q){
-  ensureUi();const body=document.getElementById("thSearchBody");if(!body)return;
-  if(!String(q||"").trim()){
-    results=[];activeIndex=0;
-    let trend=[];
-    try{const d=await loadData();trend=[...d.posts,...d.products,...d.games].sort((a,b)=>b.createdAt-a.createdAt).slice(0,6)}catch(_){}
-    const r=recent();
-    body.innerHTML=(r.length?'<section class="th-search-section"><h3 class="th-search-section-title">Recent Searches</h3><div class="th-search-chips">'+r.map(x=>'<button class="th-search-chip" data-chip="'+esc(x)+'">'+esc(x)+'</button>').join("")+'</div></section>':"")+
-      (trend.length?'<section class="th-search-section"><h3 class="th-search-section-title">Trending</h3><div class="th-search-chips">'+trend.map(x=>'<button class="th-search-chip" data-chip="'+esc(x.title)+'">'+esc(x.title).slice(0,42)+'</button>').join("")+'</div></section>':"")+
-      '<section class="th-search-section"><h3 class="th-search-section-title">Shortcuts</h3><div class="th-search-chips">'+["Feeds","Create Story","CTRLZONE","Shop","Global Chat","News"].map(x=>'<button class="th-search-chip" data-shortcut="'+esc(x)+'">'+esc(x)+'</button>').join("")+'</div></section>';
-    bindChips();return;
+  ensureUi();
+  const body=document.getElementById("thSearchBody");if(!body)return;
+  const queryText=String(q||"").trim();
+  if(!queryText){
+    results=[];activeIndex=0;renderQuickAccess();
+    try{
+      const d=await loadData();
+      if(String(input?.value||"").trim())return;
+      const trend=[...d.posts,...d.products,...d.games].sort((a,b)=>b.createdAt-a.createdAt).slice(0,6);
+      const section=document.getElementById("thSearchTrending");
+      if(section){
+        section.innerHTML='<h3 class="th-search-section-title">Trending</h3><div class="th-search-chips">'+
+          (trend.length?trend.map(x=>'<button class="th-search-chip" data-chip="'+esc(x.title)+'">'+esc(x.title).slice(0,42)+'</button>').join(""):'<span class="th-search-chip" style="cursor:default;opacity:.6">No live content yet</span>')+
+          '</div>';
+        bindChips();
+      }
+    }catch(_){}
+    return;
   }
-  const d=await loadData(),groups=makeGroups(d,q);
-  if(!groups.length){
-    results=[];activeIndex=0;
-    body.innerHTML='<div class="th-search-empty"><div class="th-search-empty-icon">⌕</div><strong>No results for “'+esc(q.trim())+'”</strong><span>Try a different search.</span></div>';return;
+  body.innerHTML='<div class="th-search-empty"><div class="th-search-empty-icon">⌕</div><strong>Searching…</strong><span>Finding people, posts, products and pages.</span></div>';
+  try{
+    const d=await loadData(),groups=makeGroups(d,queryText);
+    if(!groups.length){
+      results=[];activeIndex=0;
+      body.innerHTML='<div class="th-search-empty"><div class="th-search-empty-icon">⌕</div><strong>No results for “'+esc(queryText)+'”</strong><span>Try a different search.</span></div>';
+      return;
+    }
+    results=[];let html="";
+    groups.forEach(g=>{
+      html+='<section class="th-search-results-group"><h3 class="th-search-section-title">'+esc(g[0])+'</h3>';
+      g[1].forEach(x=>{const index=results.length;results.push(x);html+=itemHtml(x,index)});
+      html+="</section>";
+    });
+    body.innerHTML=html;activeIndex=0;refreshActive();
+    body.querySelectorAll(".th-search-result").forEach((el,i)=>{
+      el.onmouseenter=()=>{activeIndex=i;refreshActive()};
+      el.onclick=()=>select(i);
+    });
+  }catch(_){
+    results=[];activeIndex=0;renderQuickAccess();
+    const status=document.getElementById("thSearchTrending");
+    if(status)status.innerHTML='<h3 class="th-search-section-title">Search status</h3><div class="th-search-chips"><span class="th-search-chip" style="cursor:default;opacity:.6">Live content unavailable</span></div>';
+    bindChips();
   }
-  results=[];let html="";
-  groups.forEach(g=>{
-    html+='<section class="th-search-results-group"><h3 class="th-search-section-title">'+esc(g[0])+'</h3>';
-    g[1].forEach(x=>{const index=results.length;results.push(x);html+=itemHtml(x,index)});
-    html+="</section>";
-  });
-  body.innerHTML=html;activeIndex=0;refreshActive();
-  body.querySelectorAll(".th-search-result").forEach((el,i)=>{el.onmouseenter=()=>{activeIndex=i;refreshActive()};el.onclick=()=>select(i)});
 }
 function refreshActive(){document.querySelectorAll(".th-search-result").forEach((el,i)=>el.classList.toggle("active",i===activeIndex))}
 function select(i){const x=results[i];if(!x)return;saveRecent(input.value);window.location.href=x.url||"index.html"}
