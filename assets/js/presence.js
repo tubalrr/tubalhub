@@ -11,6 +11,7 @@ import {
 } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
 
 const db = getFirestore();
+const PRESENCE_WINDOW_MS = 45000;
 
 /* TUBAL HUB — load private calling wherever presence is active */
 (function(){
@@ -49,7 +50,8 @@ async function setPresence(user) {
     displayName: user.displayName || user.email?.split('@')[0] || 'Member',
     photoURL: user.photoURL || '',
     online,
-    lastSeen: serverTimestamp()
+    lastSeen: serverTimestamp(),
+    presenceWindowMs: PRESENCE_WINDOW_MS
   }, { merge: true });
 }
 
