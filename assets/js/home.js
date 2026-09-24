@@ -41,6 +41,11 @@ const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
 const isMobileHome=()=>window.innerWidth<=768;
 const homeCardLimit=()=>isMobileHome()?4:6;
 
+function cleanupRemovedCanvaData(){
+  try{["tubalhub_canva_current","tubalhub_canva_designs"].forEach(key=>localStorage.removeItem(key))}catch(_){}
+  try{indexedDB.deleteDatabase("tubalhub_canva_drafts")}catch(_){}
+}
+
 function initSpotlight(){
   if(window.matchMedia?.("(hover: none), (pointer: coarse)").matches)return;
   let frame=0,x=innerWidth/2,y=innerHeight/2;
@@ -848,6 +853,7 @@ function initBento(){
 }
 
 function init(){
+  cleanupRemovedCanvaData();
   initSpotlight();
   initBento();
   initFeaturedWebsiteSlider();
