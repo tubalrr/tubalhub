@@ -408,3 +408,106 @@ body.theme-light .hero-glass-label,.theme-light .product-details,.theme-light .c
 body.theme-light .product-visual,.theme-light .quickview-main{background:#f2f6f3}
 body.theme-light .shop-hero-copy p,.theme-light .quickview-copy>p{color:#66746b}
 body.theme-light .shop-footer{background:rgba(248,250,248,.90)}
+
+/* BRAND IDENTITY — real visual marks instead of plain initials */
+.shop-brand-mark.shop-main-logo{
+  border-radius:14px;
+  padding:2px;
+  border:1px solid rgba(29,255,145,.22);
+  background:linear-gradient(145deg,rgba(29,255,145,.10),rgba(125,90,255,.10));
+  box-shadow:0 0 24px rgba(29,255,145,.13);
+}
+.shop-brand-mark.shop-main-logo img{width:38px;height:38px;object-fit:contain;display:block;border-radius:11px}
+.shop-brand-mark.shop-main-logo i{right:-2px;bottom:0}
+
+.hero-logo-mark{
+  width:34px;height:34px;border-radius:10px;display:grid;place-items:center;
+  border:1px solid rgba(255,255,255,.12);
+  background:linear-gradient(135deg,rgba(29,255,145,.12),rgba(125,90,255,.12));
+  box-shadow:0 0 18px rgba(29,255,145,.12),inset 0 1px rgba(255,255,255,.12);
+}
+.hero-logo-mark img{width:28px;height:28px;object-fit:contain;border-radius:8px}
+.hero-logo-mark.th-mark{padding:2px}
+.hero-glass-label{grid-template-columns:34px 1fr!important}
+.hero-glass-label span{width:34px;height:34px;border-radius:10px!important}
+
+.tab-brand-mark{
+  overflow:hidden!important;
+  position:relative;
+}
+.tab-brand-mark img{
+  width:100%;height:100%;display:block;object-fit:contain;border-radius:8px;
+}
+.payapang-logo svg{width:23px;height:23px;fill:none;stroke:#baff8d;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 7px rgba(142,214,109,.42))}
+.ctrlzone-logo svg{width:25px;height:22px;fill:rgba(125,90,255,.10);stroke:#72ffe0;stroke-width:2;stroke-linejoin:round;stroke-linecap:round;filter:drop-shadow(0 0 7px rgba(125,90,255,.42))}
+.collection-tab.active .payapang-logo{
+  background:linear-gradient(135deg,#8ed66d,#1dff91)!important;
+}
+.collection-tab.active .payapang-logo svg{stroke:#0b2714}
+.collection-tab.active .ctrlzone-logo{
+  background:linear-gradient(135deg,#1dff91,#7d5aff)!important;
+}
+.collection-tab.active .ctrlzone-logo svg{stroke:#07100a;filter:none}
+
+.shop-brand-strip{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+  margin:8px 0 18px;
+}
+.shop-brand-chip{
+  min-height:72px;
+  display:grid;
+  grid-template-columns:42px minmax(0,1fr);
+  grid-template-rows:auto auto;
+  column-gap:10px;
+  align-items:center;
+  padding:9px 12px;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:16px;
+  background:rgba(255,255,255,.035);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  transition:transform .22s cubic-bezier(.16,1,.3,1),border-color .2s ease,box-shadow .2s ease;
+}
+.shop-brand-chip:hover{
+  transform:translateY(-3px);
+  border-color:rgba(29,255,145,.22);
+  box-shadow:0 10px 28px rgba(0,0,0,.20);
+}
+.shop-brand-chip.active{
+  border-color:rgba(29,255,145,.28);
+  background:linear-gradient(135deg,rgba(29,255,145,.10),rgba(125,90,255,.10));
+  box-shadow:0 0 24px rgba(29,255,145,.06);
+}
+.brand-chip-logo{
+  grid-row:span 2;
+  width:42px;height:42px;border-radius:12px;
+  display:grid;place-items:center;
+  border:1px solid rgba(255,255,255,.10);
+  background:linear-gradient(145deg,rgba(255,255,255,.06),rgba(29,255,145,.05));
+  overflow:hidden;
+}
+.brand-chip-logo img{width:36px;height:36px;object-fit:contain;border-radius:9px}
+.brand-chip-logo svg{width:29px;height:29px;fill:none;stroke:#9bff7a;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.brand-chip-logo.cz-logo svg{width:32px;stroke:#8c7cff}
+.shop-brand-chip b{font-size:10px;letter-spacing:.65px}
+.shop-brand-chip small{font-size:8px;color:#6f7e76}
+.shop-brand-chip:nth-child(2) .brand-chip-logo{background:linear-gradient(145deg,rgba(142,214,109,.13),rgba(29,255,145,.06))}
+.shop-brand-chip:nth-child(3) .brand-chip-logo{background:linear-gradient(145deg,rgba(125,90,255,.13),rgba(29,255,145,.06))}
+
+.eyebrow{display:flex;align-items:center;gap:6px}
+.eyebrow-mark{
+  width:17px;height:17px;border-radius:6px;display:grid;place-items:center;
+  font-size:9px;color:#061008;background:linear-gradient(135deg,#1dff91,#7d5aff);
+  box-shadow:0 0 12px rgba(29,255,145,.18);
+}
+@media(max-width:620px){
+  .shop-brand-strip{grid-template-columns:1fr}
+}
+body.theme-light .shop-brand-chip{
+  background:rgba(255,255,255,.72);
+  border-color:#e5e7eb;
+}
+body.theme-light .shop-brand-chip b{color:#1a241d}
+body.theme-light .shop-brand-chip small{color:#718078}
