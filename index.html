@@ -49,6 +49,11 @@
     <a class="top-nav-logo" href="index.html" aria-label="TUBAL HUB Home" title="TUBAL HUB">
       <img src="tubal-hub-logo.png" width="42" height="42" alt="TUBAL HUB">
     </a>
+    <div class="theme-switcher" aria-label="Theme">
+      <button data-theme-btn="midnight" class="theme-btn active" title="Midnight"><span class="dot"></span> Midnight</button>
+      <button data-theme-btn="forest" class="theme-btn" title="Forest"><span class="dot"></span> Forest</button>
+      <button data-theme-btn="light" class="theme-btn" title="Light"><span class="dot"></span> Light</button>
+    </div>
     <div class="search-box"><span>⌕</span><input aria-label="Search" placeholder="Search games, stories, news or anything..." type="search"></div>
     <div class="top-actions">
       <button class="icon-btn" type="button">♧</button>
@@ -241,6 +246,6 @@ const io=new IntersectionObserver((entries)=>{if(entries[0].isIntersecting){io.d
 <link rel="stylesheet" href="assets/css/floating-messenger.css?v=20260923-msg12" data-tubal-floating-msg-css>
 <script type="module" src="assets/js/floating-messenger.js?v=20260923-msg12" data-tubal-floating-msg></script>
 <script src="assets/js/app.js?v=20260923-msg3"></script>
-<script src="assets/js/theme.js?v=20260921" defer></script>
+<script src="assets/js/theme.js"></script>
 </body>
 </html>
