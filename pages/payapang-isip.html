@@ -3,88 +3,149 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Payapang Isip | TUBAL HUB</title>
-<link rel="stylesheet" href="../assets/css/platform-pages.css">
-<link rel="stylesheet" href="../assets/css/global-theme.css?v=20260921">
-  <link rel="stylesheet" href="../assets/css/premium-logos.css?v=20260924-logo1">
-<style>
-/* PAYAPANG ISIP — FOREST AI DASHBOARD */
-:root{--forest:#b9e79b;--forest2:#6fa66b;--ink:#edf7e8;--glass:rgba(12,24,17,.70);--line:rgba(193,231,167,.28)}
-body.payapang-ai{margin:0;min-height:100vh;color:var(--ink);background:#08140d;overflow-x:hidden}
-.payapang-ai:before{content:"";position:fixed;inset:0;z-index:-3;background:
-radial-gradient(circle at 18% 12%,rgba(153,216,118,.20),transparent 23%),
-radial-gradient(circle at 82% 18%,rgba(99,158,101,.18),transparent 25%),
-linear-gradient(145deg,#07130c 0%,#10281a 45%,#06100a 100%)}
-.payapang-ai:after{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;background-image:
-radial-gradient(circle,rgba(210,255,174,.70) 0 1px,transparent 1.7px),
-radial-gradient(circle,rgba(168,224,132,.40) 0 1px,transparent 1.6px);
-background-size:170px 190px,280px 260px;opacity:.22;animation:forestDust 28s linear infinite}
-@keyframes forestDust{to{background-position:170px 190px,-280px -260px}}
-.payapang-wrap{min-height:100vh;display:grid;grid-template-columns:270px 1fr;gap:14px;padding:18px;box-sizing:border-box}
-.payapang-sidebar{position:sticky;top:18px;height:calc(100vh - 36px);box-sizing:border-box;padding:24px 18px;display:flex;flex-direction:column;border:1px solid var(--line);border-radius:28px;background:
-linear-gradient(180deg,rgba(30,49,34,.78),rgba(7,17,11,.78)),radial-gradient(circle at 20% 10%,rgba(177,235,136,.16),transparent 30%);
-backdrop-filter:blur(24px) saturate(125%);box-shadow:0 24px 70px rgba(0,0,0,.35),inset 0 1px rgba(255,255,255,.10)}
-.payapang-brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:#eef9e8;margin:4px 8px 28px}
-.payapang-brand .leaf{width:44px;height:44px;display:grid;place-items:center;border-radius:50%;background:rgba(183,239,151,.15);border:1px solid rgba(203,245,177,.32);font-size:24px;box-shadow:0 0 25px rgba(164,235,123,.16)}
-.payapang-brand strong{font:700 17px Georgia,serif;letter-spacing:2px}.payapang-brand small{display:block;margin-top:3px;color:#a8c09f;font:600 9px Arial;letter-spacing:1.5px}
-.payapang-nav{display:grid;gap:7px}.payapang-nav a{display:flex;align-items:center;gap:13px;padding:13px 14px;border-radius:16px;text-decoration:none;color:#edf5ea;font-weight:700;font-size:14px;transition:.25s}
-.payapang-nav a span{width:24px;text-align:center;font-size:19px}.payapang-nav a:hover{background:rgba(177,232,142,.10);transform:translateX(3px)}.payapang-nav a.active{background:linear-gradient(90deg,rgba(180,233,143,.32),rgba(143,196,112,.13));box-shadow:inset 3px 0 #b9e79b,0 8px 25px rgba(113,174,93,.12)}
-.payapang-spacer{flex:1}
-.payapang-user{padding:14px;border:1px solid var(--line);border-radius:20px;background:rgba(3,10,6,.36);display:flex;align-items:center;gap:11px}
-.payapang-avatar{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,#b9e79b,#527e4c);font-size:20px}.payapang-user b{font-size:12px}.payapang-user small{display:block;color:#a6c0a0;margin-top:3px;font-size:10px}
-.payapang-main{min-width:0;border:1px solid var(--line);border-radius:30px;overflow:hidden;background:linear-gradient(180deg,rgba(8,18,12,.52),rgba(5,12,8,.70));backdrop-filter:blur(20px);box-shadow:0 30px 90px rgba(0,0,0,.32)}
-.payapang-top{height:76px;padding:0 22px;display:flex;align-items:center;gap:14px;border-bottom:1px solid rgba(193,231,167,.20);background:rgba(8,18,12,.45)}
-.payapang-breadcrumb{font-weight:800;font-size:14px;color:#c9e7bd}.payapang-breadcrumb span{color:#88a47f}
-.payapang-top-actions{margin-left:auto;display:flex;align-items:center;gap:10px}.payapang-icon{width:42px;height:42px;border-radius:13px;border:1px solid var(--line);background:rgba(255,255,255,.055);color:#effbe9;font-size:19px;cursor:pointer}
-.payapang-new{border:1px solid rgba(207,245,181,.28);border-radius:15px;padding:12px 18px;background:linear-gradient(135deg,rgba(190,239,150,.32),rgba(104,155,89,.20));color:#f1ffe9;font-weight:800;cursor:pointer}
-.payapang-content{padding:45px 42px 34px}.payapang-heading{max-width:850px;margin-bottom:34px}.payapang-heading .eyebrow{font-size:11px;font-weight:800;letter-spacing:2px;color:#9dc393}.payapang-heading h1{margin:8px 0 10px;font:700 clamp(38px,5vw,68px)/.98 Georgia,serif;color:#e8f8df;text-shadow:0 6px 28px rgba(105,169,91,.18)}.payapang-heading h1 em{font-style:normal;color:#b9e79b}.payapang-heading p{margin:0;color:#c0d5ba;font-size:16px;line-height:1.7}
-.payapang-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.forest-card{min-height:170px;padding:24px;border:1px solid rgba(194,232,169,.28);border-radius:23px;background:linear-gradient(145deg,rgba(38,51,36,.72),rgba(11,20,14,.70));box-shadow:inset 0 1px rgba(255,255,255,.08),0 18px 45px rgba(0,0,0,.24);backdrop-filter:blur(16px);transition:.3s;position:relative;overflow:hidden}.forest-card:before{content:"";position:absolute;width:130px;height:130px;border-radius:50%;right:-45px;bottom:-55px;background:rgba(184,231,155,.11);filter:blur(4px)}.forest-card:hover{transform:translateY(-6px);border-color:rgba(201,244,173,.50);box-shadow:0 25px 60px rgba(77,137,70,.16),inset 0 1px rgba(255,255,255,.10)}
-.forest-card .card-icon{width:54px;height:54px;border-radius:17px;display:grid;place-items:center;background:linear-gradient(145deg,rgba(192,239,160,.23),rgba(79,121,72,.18));border:1px solid rgba(205,242,181,.28);font-size:27px;margin-bottom:18px}.forest-card h3{margin:0 0 9px;color:#edf9e7;font-size:19px}.forest-card p{margin:0;color:#b7cdb2;line-height:1.55;font-size:13px}.forest-card .card-link{display:inline-block;margin-top:15px;color:#c3edaa;text-decoration:none;font-size:12px;font-weight:800}
-.payapang-prompt{margin-top:18px;border:1px solid rgba(194,232,169,.27);border-radius:24px;padding:10px;background:rgba(8,17,11,.62);display:flex;align-items:center;gap:10px;box-shadow:0 16px 45px rgba(0,0,0,.28)}.prompt-icon{width:46px;height:46px;display:grid;place-items:center;font-size:24px}.payapang-prompt input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:#edf9e7;font-size:14px}.payapang-prompt input::placeholder{color:#8ea28a}.prompt-btn{width:48px;height:46px;border:1px solid rgba(202,244,178,.25);border-radius:14px;background:rgba(177,229,142,.10);color:#efffe8;font-size:19px;cursor:pointer}.prompt-btn.send{background:linear-gradient(135deg,#c5f398,#77ad68);color:#0c1a0d;font-weight:900}
-.payapang-footnote{text-align:center;color:#71836d;font-size:10px;margin:18px 0 0}
-@media(max-width:900px){.payapang-wrap{grid-template-columns:1fr;padding:10px}.payapang-sidebar{position:relative;top:auto;height:auto}.payapang-nav{grid-template-columns:repeat(4,1fr)}.payapang-nav a{justify-content:center;padding:10px}.payapang-nav a span{width:auto}.payapang-nav a b{display:none}.payapang-user{display:none}.payapang-main{border-radius:22px}.payapang-content{padding:32px 20px}.payapang-cards{grid-template-columns:1fr}}
-@media(max-width:560px){.payapang-wrap{display:block}.payapang-sidebar{margin-bottom:10px}.payapang-brand{margin-bottom:14px}.payapang-nav{grid-template-columns:repeat(4,1fr)}.payapang-nav a{font-size:0}.payapang-nav a span{font-size:20px}.payapang-top{height:64px;padding:0 14px}.payapang-new{display:none}.payapang-content{padding:28px 14px}.payapang-heading h1{font-size:40px}.payapang-prompt input{font-size:12px}}
-</style>
+<meta name="theme-color" content="#e8f5e8">
+<title>Payapang Isip — Peace, mind, and a better you</title>
+<link rel="icon" type="image/png" href="../tubal-hub-logo.png">
+<link rel="stylesheet" href="../assets/css/global-theme.css?v=20260924">
+<link rel="stylesheet" href="../assets/css/premium-logos.css?v=20260924-logo1">
+<link rel="stylesheet" href="../assets/css/payapang-isip.css?v=20260924-v1">
 </head>
-<body class="payapang-ai">
-<div class="payapang-wrap">
-<aside class="payapang-sidebar">
-<a class="payapang-brand" href="../index.html" aria-label="TUBAL HUB Home"><div class="leaf">🌿</div><div><strong>PAYAPANG ISIP</strong><small>FOREST AI SPACE</small></div></a>
-<nav class="payapang-nav">
-<a class="active" href="payapang-isip.html"><span>⌂</span><b>Home</b></a>
-<a href="#companions"><span>✦</span><b>Companions</b></a>
-<a href="chat.html"><span>▣</span><b>Chats</b></a>
-<a href="#journal"><span>▤</span><b>Journal</b></a>
-<a href="#knowledge"><span>▧</span><b>Knowledge</b></a>
-<a href="#insights"><span>▥</span><b>Insights</b></a>
-<a href="settings.html"><span>⚙</span><b>Settings</b></a>
-<a href="contact.html"><span>?</span><b>Help</b></a>
-</nav>
-<div class="payapang-spacer"></div>
-<div class="payapang-user"><div class="payapang-avatar">🌱</div><div><b>Payapang Isip</b><small>Peaceful space • Online</small></div></div>
-</aside>
-<section class="payapang-main">
-<header class="payapang-top"><div class="payapang-breadcrumb">Dashboard <span>/ Payapang Isip</span></div><div class="payapang-top-actions"><button class="payapang-icon" title="Search">⌕</button><button class="payapang-icon" title="Notifications">♧</button><button class="payapang-icon" title="Settings" onclick="location.href='settings.html'">⚙</button><button class="payapang-new" onclick="location.href='chat.html'">＋ New Chat</button></div></header>
-<main class="payapang-content">
-<div class="payapang-heading"><div class="eyebrow">PAYAPANG ISIP / FOREST AI</div><h1>Meet your <em>peaceful</em> space.</h1><p>A calm digital forest for reflection, creativity, quotes, stories, and quiet moments.</p></div>
-<div class="payapang-cards">
-<article class="forest-card" id="companions"><div class="card-icon">🌿</div><h3>Nature Guide</h3><p>Discover plants, wildlife, and peaceful nature ideas explained simply.</p><a class="card-link" href="#knowledge">Explore Nature →</a></article>
-<article class="forest-card" id="journal"><div class="card-icon">✦</div><h3>Mindful Journal</h3><p>Reflect on your day with gentle prompts and calming thoughts.</p><a class="card-link" href="#insights">Open Journal →</a></article>
-<article class="forest-card" id="knowledge"><div class="card-icon">▧</div><h3>Creative Storytelling</h3><p>Write peaceful stories, forest scenes, quotes, and ideas for your content.</p><a class="card-link" href="chat.html">Create a Story →</a></article>
-<article class="forest-card" id="insights"><div class="card-icon">♧</div><h3>Forest Insights</h3><p>Turn your thoughts into meaningful reflections and simple daily insights.</p><a class="card-link" href="chat.html">Ask the AI →</a></article>
-</div>
-<div class="payapang-prompt"><div class="prompt-icon">🌿</div><input id="forestPrompt" placeholder="Ask me anything about nature, quotes, stories, or peace..."><button class="prompt-btn" title="Voice">♩</button><button class="prompt-btn" title="Attach">⌕</button><button class="prompt-btn send" id="forestSend" title="Send">➤</button></div>
-<div class="payapang-footnote">A quiet corner of TUBAL HUB • breathe, reflect, create.</div>
+<body class="payapang-page theme-forest">
+<header class="payapang-header">
+  <a class="pi-brand" href="../index.html">
+    <span class="pi-brand-mark">🌿</span>
+    <span><strong>PAYAPANG ISIP</strong><small>PEACE • MIND • BETTER YOU</small></span>
+  </a>
+  <nav class="pi-nav">
+    <a href="../index.html">Home</a>
+    <a class="active" href="payapang-isip.html">Payapang Isip</a>
+    <a href="ctrlzone.html">CTRLZONE</a>
+    <a href="shop.html">Shop</a>
+    <a href="chat.html">Global Chat</a>
+  </nav>
+  <div class="pi-theme-switcher" aria-label="Theme">
+    <button data-theme-btn="midnight" class="theme-btn" type="button">Midnight</button>
+    <button data-theme-btn="forest" class="theme-btn active" type="button">Forest</button>
+    <button data-theme-btn="light" class="theme-btn" type="button">Light</button>
+  </div>
+</header>
+
+<main class="pi-wrap">
+  <section class="hero glass-surface">
+    <div class="hero-inner">
+      <div class="hero-kicker"><span>PAYAPANG ISIP / QUIET SPACE</span><i></i><span>TAKE A MOMENT</span></div>
+      <h1>🌿 PAYAPANG ISIP</h1>
+      <p class="hero-subtitle">Peace, mind, and a better you</p>
+      <div id="breathOrbit" class="breathing-orbit" aria-live="polite">
+        <div class="breathing-copy">
+          <span id="breathPhase" class="breathing-phase">Ready</span>
+          <span id="breathCount" class="breathing-count"></span>
+        </div>
+      </div>
+      <div class="hero-actions">
+        <button id="startBreathing" class="primary-btn" type="button">Start Breathing</button>
+        <a class="glass-btn" href="#journal">Open Journal</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="mood">
+    <div class="section-head">
+      <div><span class="section-kicker">MOOD TRACKER</span><h2>How are you <em>today?</em></h2></div>
+      <span class="section-note">Saved privately in this browser</span>
+    </div>
+    <div class="mood-panel glass-surface">
+      <p class="mood-title">Choose the closest feeling.</p>
+      <div id="moodGrid" class="mood-grid" role="group" aria-label="Mood selection"></div>
+      <div class="mood-footer">
+        <div class="mood-streak" id="moodStreak">🔥 0 days calm</div>
+        <div id="moodChart" class="mood-chart" aria-label="Last 7 days mood chart"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="journal">
+    <div class="section-head">
+      <div><span class="section-kicker">JOURNAL GLASS</span><h2>Put it into <em>words.</em></h2></div>
+      <span class="section-note">Your entries stay in local storage</span>
+    </div>
+    <div class="journal-grid">
+      <div class="journal-compose glass-surface">
+        <textarea id="journalInput" placeholder="Ano nararamdaman mo ngayon..." maxlength="2000"></textarea>
+        <div class="journal-actions"><button id="saveJournal" class="primary-btn" type="button">Save Entry</button></div>
+      </div>
+      <div class="journal-list glass-surface">
+        <div id="journalEntries"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="tips">
+    <div class="section-head">
+      <div><span class="section-kicker">QUIET TIPS</span><h2>Small things that can <em>help.</em></h2></div>
+    </div>
+    <div id="tipsGrid" class="tips-grid"></div>
+  </section>
+
+  <section class="section" id="exercises">
+    <div class="section-head">
+      <div><span class="section-kicker">GUIDED EXERCISES</span><h2>Breathe & <em>ground.</em></h2></div>
+    </div>
+    <div class="interactive-grid">
+      <article class="exercise-card glass-surface">
+        <h3>🌿 4–4–6 Breathing</h3>
+        <p>Inhale for 4 seconds, hold for 4, then exhale slowly for 6. Follow the circle and count.</p>
+        <div class="breath-controls"><button id="exerciseStart" class="primary-btn" type="button">Start Cycle</button><span id="exerciseStatus" class="section-note">Ready when you are.</span></div>
+      </article>
+      <article class="exercise-card glass-surface">
+        <h3>🧘 5–4–3–2–1 Grounding</h3>
+        <p>Name what you notice around you. The goal is simple observation, not perfection.</p>
+        <div id="groundingRows" class="grounding-list"></div>
+        <div class="breath-controls"><button id="saveGrounding" class="glass-btn" type="button">Save Grounding</button></div>
+      </article>
+    </div>
+  </section>
+
+  <section class="section" id="support">
+    <div class="section-head">
+      <div><span class="section-kicker">COMMUNITY SUPPORT</span><h2>A softer <em>conversation.</em></h2></div>
+      <span class="section-note">Demo support room</span>
+    </div>
+    <div class="support-chat glass-surface">
+      <div id="supportChatWindow" class="chat-window"></div>
+      <div class="support-reacts">
+        <button type="button">🫶</button><button type="button">❤️</button><button type="button">🙏</button>
+      </div>
+      <div class="chat-compose">
+        <input id="supportChatInput" type="text" maxlength="400" placeholder="Share a kind thought..." autocomplete="off">
+        <button id="supportChatSend" class="primary-btn" type="button">Send</button>
+      </div>
+    </div>
+  </section>
 </main>
-</section>
+
+<div class="meditation-player" role="region" aria-label="Calm audio player">
+  <div class="player-cover">🌿</div>
+  <div class="player-main">
+    <div id="playerTitle" class="player-title">5 min Calm Breathing</div>
+    <div id="playerTrack" class="player-track" role="slider" aria-label="Audio progress" aria-valuemin="0" aria-valuemax="300" aria-valuenow="0"><div id="playerProgress" class="player-progress"></div></div>
+    <div class="player-meta"><span id="playerElapsed">0:00</span><span id="playerDuration">5:00</span></div>
+  </div>
+  <button id="playerToggle" class="player-play" type="button" aria-label="Play calm track">▶</button>
+  <input class="player-volume" type="range" min="0" max="1" step=".01" value=".35" aria-label="Volume">
+  <div id="visualizer" class="visualizer" aria-hidden="true"><i></i><i></i><i></i></div>
 </div>
-<script src="../assets/js/data.js"></script>
-<script src="../assets/js/main.js"></script>
-<script src="../assets/js/theme.js?v=20260923" defer></script>
-<script>
-document.getElementById('forestSend')?.addEventListener('click',()=>{const q=document.getElementById('forestPrompt');if(q?.value.trim())location.href='chat.html';});
-document.getElementById('forestPrompt')?.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();document.getElementById('forestSend')?.click();}});
-</script>
-<script type="module" src="../assets/js/presence.js?v=20260923"></script>
+
+<div id="piToast" class="ctrl-toast" role="status" aria-live="polite"></div>
+<div id="piParticles" class="pi-particles" aria-hidden="true"></div>
+
+<footer class="ctrl-footer" style="margin-top:0">
+  <div><strong>TUBAL HUB / PAYAPANG ISIP</strong><span>Peace • Mind • Better You</span></div>
+  <nav><a href="../index.html">Home</a><a href="ctrlzone.html">CTRLZONE</a><a href="shop.html">Shop</a><a href="chat.html">Global Chat</a></nav>
+  <small>Personal reflection tools are stored locally in this browser. The support room on this page is a demo interface.</small>
+</footer>
+
+<script src="../assets/js/theme.js?v=20260924" defer></script>
+<script type="module" src="../assets/js/payapang-isip.js?v=20260924-v1"></script>
 </body>
 </html>
