@@ -509,7 +509,9 @@ function loadRemoteReactions(){
   try{
     const q=query(collection(db,"feedReactions"),limit(1000));
     stopRemoteReactions=onSnapshot(q,snap=>{
-      for(const postId in state.reactions)for(const k of REACTION_KEYS)state.reactions[postId][k]=[];
+      const remoteTouched=new Set();
+      snap.forEach(s=>{const x=s.data();if(x.postId)remoteTouched.add(x.postId)});
+      remoteTouched.forEach(postId=>{state.reactions[postId]={};for(const k of REACTION_KEYS)state.reactions[postId][k]=[]});
       snap.forEach(s=>{const x=s.data();if(!x.postId||!x.uid||!REACTIONS[x.reaction])return;const d=reactionData(x.postId);if(!d[x.reaction].includes(x.uid))d[x.reaction].push(x.uid)});
       writeLocal("tubalhub-feed-reactions",state.reactions);renderFeed(true);
     },e=>console.warn("[Feeds] feedReactions unavailable",e));
@@ -546,7 +548,7 @@ function setupUI(){
   document.getElementById("shareToHub")?.addEventListener("click",shareToHub);
   if(!navigator.share){const b=document.getElementById("nativeShare");if(b)b.hidden=true}
   document.getElementById("closeComments")?.addEventListener("click",closeComments);
-  document.getElementById("commentForm")?.addEventListener("submit",e=>{e.preventDefault();addComment()});
+  document.getElementById("commentInput")?.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();addComment()}});
   document.getElementById("sendComment")?.addEventListener("click",e=>{e.preventDefault();addComment()});
   document.getElementById("emojiButton")?.addEventListener("click",()=>toggleEmoji(true));
   document.getElementById("emojiSearch")?.addEventListener("input",()=>{state.emojiOffset=0;renderEmojiGrid()});
