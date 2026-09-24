@@ -439,7 +439,7 @@ document.getElementById("quickViewPlus").addEventListener("click",()=>{state.qui
 document.getElementById("quickViewAdd").addEventListener("click",()=>{if(state.current)addToCart(state.current.id,state.quickQty,document.getElementById("quickViewAdd"))});
 document.getElementById("quickViewBuy").addEventListener("click",()=>{if(state.current)buyProduct(state.current,state.quickQty)});
 document.getElementById("checkoutBtn").addEventListener("click",openCheckout);
-document.getElementById("closeCheckout").addEventListener("click",closeCheckout);
+document.getElementById("closeCheckout").addEventListener("click",closeCheckout);\ndocument.getElementById("backCheckout").addEventListener("click",()=>{closeCheckout();burstAt(document.getElementById("backCheckout"),5)});
 document.getElementById("closeCheckoutX").addEventListener("click",closeCheckout);
 document.querySelectorAll(".payment-method").forEach(btn=>btn.addEventListener("click",()=>{
   state.payment=btn.dataset.payment||"card";
