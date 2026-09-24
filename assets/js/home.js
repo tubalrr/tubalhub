@@ -138,9 +138,21 @@ function journalEntries(){
   return raw.map((entry,index)=>({
     id:entry.id||String(index),
     text:String(entry.text||entry.content||entry.body||"").trim(),
-    mood:entry.mood||entry.emoji||"",
+    mood:String(entry.mood||entry.emoji||"").trim(),
     createdAt:entry.createdAt||entry.date||entry.updatedAt||0
   })).filter(entry=>entry.text).slice(0,10);
+}
+function journalStarterCards(){
+  const today=new Date().toLocaleDateString("en-PH",{month:"short",day:"numeric",year:"numeric"});
+  const prompts=[
+    ["🌿","A quiet moment","Isulat ang isang bagay na nagbigay sa iyo ng gaan ngayon."],
+    ["😌","Check in","Ano ang gusto mong maalala tungkol sa araw na ito?"],
+    ["☀️","Small win","Ano ang isang maliit na bagay na nagawa mo ngayong araw?"],
+    ["🌙","Evening note","Ano ang gusto mong bitawan bago magpahinga?"],
+    ["🍃","Gratitude","Anong simpleng bagay ang pinasasalamatan mo ngayon?"],
+    ["💭","Mind dump","Isulat ang nasa isip mo ngayon, kahit isang pangungusap lang."]
+  ];
+  return prompts.map((p,i)=>({id:"starter-"+i,icon:p[0],title:p[1],text:p[2],date:today}));
 }
 
 function renderGameScores(){
@@ -165,24 +177,28 @@ function renderGameScores(){
 function renderJournal(){
   const track=$("#journalTrack");if(!track)return;
   const entries=journalEntries();
-  if(!entries.length){
-    track.innerHTML='<div class="empty-card home-glass"><div><span class="home-emoji" aria-hidden="true">🌿</span><strong>Wala ka pang journal entry.</strong><span>Mag-save muna ng real entry sa Payapang Isip.</span></div></div>';
-    return;
+  if(entries.length){
+    track.innerHTML=entries.map(e=>'<article class="real-data-card journal-real-card data-track-card"><div class="journal-real-top"><span class="journal-real-icon home-emoji" aria-hidden="true">'+esc(e.mood||"📝")+'</span><span class="journal-real-date">'+esc(formatDate(e.createdAt))+'</span></div><div class="journal-real-mood">REAL JOURNAL</div><h3 class="journal-real-title">Saved entry</h3><p class="journal-real-text">'+esc(e.text.slice(0,220))+(e.text.length>220?"…":"")+'</p></article>').join("");
+  }else{
+    track.innerHTML=journalStarterCards().map(e=>'<article class="real-data-card journal-real-card home-starter-card" data-starter="true"><div class="journal-real-top"><span class="journal-real-icon home-emoji" aria-hidden="true">'+e.icon+'</span><span class="journal-real-date">'+esc(e.date)+'</span></div><div class="journal-real-mood">JOURNAL STARTER</div><h3 class="journal-real-title">'+esc(e.title)+'</h3><p class="journal-real-text">'+esc(e.text)+'</p><a class="starter-label" href="pages/payapang-isip.html">Open Journal →</a></article>').join("");
   }
-  track.innerHTML=entries.map(e=>'<article class="journal-card data-track-card home-glass"><div class="journal-card-top"><span class="journal-mood home-emoji">'+esc(e.mood||"📝")+'</span><span class="journal-date">'+esc(formatDate(e.createdAt))+'</span></div><h3>Real journal entry</h3><p>'+esc(e.text.slice(0,260))+(e.text.length>260?"…":"")+'</p></article>').join("");
 }
 
 let musicTracks=[];
+function musicStarterCards(){
+  const names=["Create your first track","Build a night ambience","Try a chill texture","Make a study loop","Explore a new mood","Generate a fresh idea"];
+  return names.map((title,i)=>({title,icon:["🎵","🌌","🌿","📚","🌙","✨"][i],sub:"No saved audio yet"}));
+}
 async function loadMusic(){
-  try{musicTracks=await dbAll()}catch(_){musicTracks=[]}
   const track=$("#musicTrack");if(!track)return;
+  try{musicTracks=await dbAll()}catch(_){musicTracks=[]}
   if(!musicTracks.length){
-    track.innerHTML='<div class="empty-card home-glass"><div><span class="home-emoji" aria-hidden="true">🎵</span><strong>Wala ka pang generated music.</strong><span>Generate a real track sa AI Music Studio.</span></div></div>';
+    track.innerHTML=musicStarterCards().map((t)=>'<article class="real-data-card music-real-card home-starter-card"><div class="music-real-cover"><span class="music-real-emoji home-emoji" aria-hidden="true">'+t.icon+'</span><button class="music-real-play" type="button" disabled aria-label="'+esc(t.title)+' unavailable">▶</button></div><div class="music-mini-wave"><i></i><i></i><i></i></div><div class="music-real-meta"><h3 class="music-real-title">'+esc(t.title)+'</h3><p class="music-real-sub">'+esc(t.sub)+'</p></div><div class="music-starter-actions"><a class="music-starter-link" href="pages/ai-music.html">Open AI Music →</a></div></article>').join("");
     return;
   }
-  const likes=musicLikes(),plays=musicPlays();
-  track.innerHTML=musicTracks.slice(0,10).map(t=>'<article class="ai-card data-track-card home-glass" data-music-id="'+esc(t.id)+'"><div class="ai-cover"><span class="home-emoji" aria-hidden="true">🎵</span></div><div class="ai-mini-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="ai-card-body"><h3>'+esc(t.title||"Untitled track")+'</h3><small>'+esc(t.genre||"AI Music")+' · '+Number(plays[t.id]||0)+' plays</small><div class="ai-card-actions"><button class="ai-play" type="button" data-play-music="'+esc(t.id)+'">▶</button><span class="ai-meta">'+(likes[t.id]===true?"Liked":"Real audio")+'</span></div></div></article>').join("");
-  $$("#musicTrack [data-play-music]").forEach(button=>button.addEventListener("click",()=>playMusic(button.dataset.playMusic)));
+  const plays=musicPlays();
+  track.innerHTML=musicTracks.slice(0,10).map(t=>'<article class="real-data-card music-real-card data-track-card" data-music-id="'+esc(t.id)+'"><div class="music-real-cover"><span class="music-real-emoji home-emoji" aria-hidden="true">🎵</span><button class="music-real-play" type="button" data-play-music="'+esc(t.id)+'" aria-label="Play '+esc(t.title||"saved track")+'">▶</button></div><div class="music-mini-wave"><i></i><i></i><i></i></div><div class="music-real-meta"><h3 class="music-real-title">'+esc(t.title||"Saved track")+'</h3><p class="music-real-sub">'+esc(t.genre||"AI Music")+" · "+Number(plays[t.id]||0)+" plays</p></div></article>').join("");
+  track.querySelectorAll("[data-play-music]").forEach(button=>button.addEventListener("click",()=>playMusic(button.dataset.playMusic)));
 }
 
 async function getMusic(id){try{return musicTracks.find(t=>String(t.id)===String(id))||await (async()=>{const rows=await dbAll();return rows.find(t=>String(t.id)===String(id))})()}catch(_){return null}}
@@ -251,7 +267,16 @@ async function renderFeeds(){
   let posts=parseStoredPosts();
   if(!posts.length)posts=await firestorePosts();
   if(!posts.length){
-    track.innerHTML='<div class="empty-card home-glass"><div><span class="home-emoji" aria-hidden="true">📱</span><strong>Wala pang real posts sa Feeds.</strong><span>Kapag may published content, lalabas dito.</span></div></div>';
+    try{
+      const r=await fetch("version.json?t="+Date.now(),{cache:"no-store"});
+      const data=await r.json();
+      const changes=Array.isArray(data.changelog)?data.changelog.slice(-6).reverse():[];
+      if(changes.length){
+        track.innerHTML=changes.slice(0,6).map((c,i)=>'<article class="real-data-card feed-update-card feed-update-fallback"><div class="feed-update-head"><span class="feed-update-avatar home-emoji" aria-hidden="true">'+esc(c.icon||"📢")+'</span><div class="feed-update-author"><strong>TUBAL HUB Updates</strong><small>'+esc(data.date||"Current release")+'</small></div></div><p class="feed-update-text">'+esc(c.desc||c.title||"Website update")+'</p><div class="feed-update-art"><span class="home-emoji" aria-hidden="true">'+esc(c.icon||"📢")+'</span></div><div class="feed-update-stats"><span>'+esc(c.type||"Update")+'</span><span class="feed-update-source">Real changelog</span></div></article>').join("");
+        return;
+      }
+    }catch(_){}
+    track.innerHTML='<div class="real-data-card feed-update-card"><div class="feed-update-head"><span class="feed-update-avatar home-emoji" aria-hidden="true">📱</span><div class="feed-update-author"><strong>TUBAL HUB Feeds</strong><small>Ready for real posts</small></div></div><p class="feed-update-text">Published community posts will appear here automatically when available.</p><div class="feed-update-art"><span class="home-emoji" aria-hidden="true">📱</span></div><div class="feed-update-stats"><span>Real data only</span></div></div>';
     return;
   }
   const likes=safeJson("tubalhub_home_feed_likes",{});
@@ -261,7 +286,7 @@ async function renderFeeds(){
     const avatar=(p.id===myUid||p.author===auth.currentUser?.displayName)&&myAvatar?myAvatar:p.avatar;
     const liked=likes[p.id]===true;
     const base=Number(p.likes||0);
-    return '<article class="feed-card data-track-card home-glass" data-feed-id="'+esc(p.id)+'" data-base-likes="'+base+'"><div class="feed-head"><div class="feed-avatar">'+(avatar?'<img src="'+esc(avatar)+'" alt="" loading="lazy">':esc((p.author||"M").trim().charAt(0).toUpperCase()))+'</div><div class="feed-author"><strong>'+esc(p.author)+'</strong><small>'+esc(formatDate(p.createdAt))+'</small></div></div><p>'+esc((p.text||"").slice(0,220))+(String(p.text||"").length>220?"…":"")+'</p><div class="feed-stats"><span data-home-like-count="'+esc(p.id)+'">'+(base+(liked?1:0))+' likes</span><span>'+Number(p.comments||0)+' comments</span><button type="button" class="like-btn '+(liked?"liked":"")+'" data-feed-like="'+esc(p.id)+'">'+(liked?"Liked":"Like")+'</button></div></article>';
+    return '<article class="real-data-card feed-update-card data-track-card" data-feed-id="'+esc(p.id)+'" data-base-likes="'+base+'"><div class="feed-update-head"><div class="feed-update-avatar">'+(avatar?'<img class="feed-avatar-img" src="'+esc(avatar)+'" alt="" loading="lazy">':esc((p.author||"M").trim().charAt(0).toUpperCase()))+'</div><div class="feed-update-author"><strong>'+esc(p.author)+'</strong><small>'+esc(formatDate(p.createdAt))+'</small></div></div><p class="feed-update-text">'+esc((p.text||"").slice(0,220))+(String(p.text||"").length>220?"…":"")+'</p><div class="feed-update-art">'+(avatar?'<img class="feed-real-image" src="'+esc(avatar)+'" alt="" loading="lazy">':'<span class="home-emoji" aria-hidden="true">📱</span>')+'</div><div class="feed-update-stats"><span data-home-like-count="'+esc(p.id)+'">'+(base+(liked?1:0))+' likes</span><span>'+Number(p.comments||0)+' comments</span><button type="button" class="like-btn '+(liked?"liked":"")+'" data-feed-like="'+esc(p.id)+'">'+(liked?"Liked":"Like")+'</button></div></article>';
   }).join("");
   $$("#feedTrack [data-feed-like]").forEach(button=>button.addEventListener("click",()=>toggleFeedLike(button)));
 }
@@ -449,27 +474,54 @@ async function initFooter(){
     const storage=$("#homeStorage");if(storage)storage.textContent=(bytes/1024).toFixed(1)+" KB local data";
   }catch(_){}
 }
-function bindSectionSliderButtons(id,step){
-  const track=$("#"+id);if(!track)return;
-  const move=direction=>{
-    const first=track.querySelector(".data-track-card");if(!first)return;
-    const width=first.getBoundingClientRect().width+16;track.scrollBy({left:direction*width*step,behavior:"smooth"});
-  };
-  $("#"+id+"Prev")?.addEventListener("click",()=>move(-1));$("#"+id+"Next")?.addEventListener("click",()=>move(1));
+const sliderTimers=new Map();
+function initAllSliders(){
+  document.querySelectorAll(".slider-track").forEach(track=>{
+    if(track.dataset.sliderReady==="1")return;
+    track.dataset.sliderReady="1";
+    const id=track.id;
+    const prev=$("#"+id+"Prev"),next=$("#"+id+"Next"),cards=()=>Array.from(track.children).filter(el=>el.offsetWidth>0);
+    let startX=0,dragX=0,dragging=false;
+    const scrollByCards=dir=>{
+      const card=cards()[0];if(!card)return;
+      const step=(card.getBoundingClientRect().width+20)*Math.max(1,Math.floor(track.clientWidth/card.getBoundingClientRect().width));
+      track.scrollBy({left:dir*step,behavior:"smooth"});
+    };
+    prev?.addEventListener("click",()=>scrollByCards(-1));
+    next?.addEventListener("click",()=>scrollByCards(1));
+    track.addEventListener("pointerdown",e=>{
+      dragging=true;startX=e.clientX;dragX=0;track.setPointerCapture?.(e.pointerId);
+    });
+    track.addEventListener("pointermove",e=>{if(dragging)dragX=e.clientX-startX});
+    const end=()=>{
+      if(!dragging)return;
+      dragging=false;
+      if(Math.abs(dragX)>=50)track.scrollBy({left:dragX<0?300:-300,behavior:"smooth"});
+      dragX=0;
+    };
+    track.addEventListener("pointerup",end);track.addEventListener("pointercancel",end);
+    let timer=setInterval(()=>{if(document.hidden)return;if(track.matches(":hover"))return;track.scrollBy({left:300,behavior:"smooth"})},5000);
+    sliderTimers.set(id,timer);
+  });
 }
-function initHorizontalSections(){
-  bindSectionSliderButtons("journalTrack",1);
-  bindSectionSliderButtons("musicTrack",2);
-  bindSectionSliderButtons("feedTrack",1);
-}
+function initHorizontalSections(){initAllSliders();}
 function cleanup(){
   if(state.heroTimer)clearInterval(state.heroTimer);
   if(state.musicUrl)URL.revokeObjectURL(state.musicUrl);
   cancelAnimationFrame(state.visualFrame);
   try{state.audioContext?.close()}catch(_){}
 }
+function initScrollReveal(){
+  const items=document.querySelectorAll("#journalTrack > *,#musicTrack > *,#feedTrack > *,#gamesTrack > *");
+  if(!("IntersectionObserver" in window)){items.forEach(el=>el.classList.add("is-revealed"));return}
+  items.forEach((el,i)=>el.style.setProperty("--reveal-delay",(i%10)*.08+"s"));
+  const io=new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add("is-revealed");io.unobserve(entry.target)}})
+  },{threshold:.08});
+  items.forEach(el=>io.observe(el));
+}
 function init(){
-  initSpotlight();initHeroSlider();renderGameScores();renderJournal();loadMusic();renderFeeds();initHorizontalSections();loadFeaturedGames();initFooter();initFooterNewsletter();initFooterSmoothLinks();
+  initSpotlight();initHeroSlider();renderGameScores();renderJournal();loadMusic();renderFeeds();initHorizontalSections();loadFeaturedGames();initFooter();initFooterNewsletter();initFooterSmoothLinks();initScrollReveal();
   $("#homeMusicAudio")?.addEventListener("ended",()=>showHomeToast("Audio finished."));
   addEventListener("beforeunload",cleanup);
   addEventListener("storage",event=>{
