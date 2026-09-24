@@ -33,7 +33,7 @@ function ui(){
   if(document.getElementById("tubalMessenger"))return;
   const markup = [
     '<button id="tubalMsgLauncher" class="tubal-msg-launcher offline" data-online="false" aria-label="Messages">',
-      '<svg class="tubal-msg-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4.5A2.5 2.5 0 0 0 17.5 2h-11A4.5 4.5 0 0 0 2 6.5v6A4.5 4.5 0 0 0 6.5 17H8l-3.5 4 6.3-4H17.5a4.5 4.5 0 0 0 4.5-4.5v-8ZM6.5 7h11a1 1 0 1 1 0 2h-11a1 1 0 0 1 0-2Zm0 4h7a1 1 0 1 1 0 0 2h-7a1 1 0 1 1 0-2Z"/></svg>',
+      '<svg class="tubal-msg-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h4l4 3 4-3h4c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 10H4V6h16v8z"/></svg>',
       '<span id="tubalMsgStatus" class="tubal-msg-status" aria-hidden="true"></span>',
       '<span id="tubalMsgTooltip" class="tubal-msg-tooltip">Messages (0)</span>',
       '<span id="tubalMsgBadge" class="tubal-msg-badge" hidden>0</span>',
