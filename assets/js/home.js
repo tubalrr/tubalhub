@@ -217,6 +217,7 @@ async function playMusic(id){
     document.querySelectorAll(".music-real-card.is-playing,.bento-music-item.is-playing").forEach(card=>card.classList.remove("is-playing"));
     document.querySelector('.music-real-card[data-music-id="'+CSS.escape(String(id))+'"]')?.classList.add("is-playing");
     document.querySelector('.bento-music-item[data-bento-music-id="'+CSS.escape(String(id))+'"]')?.classList.add("is-playing");
+    drawBentoWave();
     const wave=$("#heroMusicWaveform");
     if(wave)wave.hidden=false;
   }catch(_){showHomeToast("Press play again to start the saved audio.")}
@@ -231,7 +232,6 @@ async function ensureAnalyser(audio){
   state.analyser=state.audioContext.createAnalyser();state.analyser.fftSize=128;state.analyser.smoothingTimeConstant=.78;
   state.source=state.audioContext.createMediaElementSource(audio);state.source.connect(state.analyser);state.analyser.connect(state.audioContext.destination);
   drawHeroWave();
-  drawBentoWave();
 }
 function drawHeroWave(){
   const canvas=$("#heroMusicCanvas"),ctx=canvas?.getContext("2d");if(!canvas||!ctx||!state.analyser)return;
