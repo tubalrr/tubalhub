@@ -38,7 +38,7 @@ const formatDate=value=>{
   return date.toLocaleDateString("en-PH",{month:"short",day:"numeric",year:"numeric"});
 };
 const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
-const isMobileHome=()=>window.innerWidth<768;
+const isMobileHome=()=>window.innerWidth<=768;
 const homeCardLimit=()=>isMobileHome()?4:6;
 
 function initSpotlight(){
@@ -646,11 +646,11 @@ function init(){
 }
 
 let homeStarted=false;
-let lastHomeMobile=window.innerWidth<768;
+let lastHomeMobile=window.innerWidth<=768;
 let resizeTimer=0;
 
 function handleHomeBreakpoint(){
-  const nowMobile=window.innerWidth<768;
+  const nowMobile=window.innerWidth<=768;
   if(nowMobile===lastHomeMobile)return;
   lastHomeMobile=nowMobile;
   renderJournal();
