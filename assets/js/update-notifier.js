@@ -84,6 +84,7 @@
       const mod = await import(new URL("assets/js/notifications.js", rootUrl).href);
       if (typeof mod.addNotification === "function") {
         await mod.addNotification({
+          id:"website-update-"+data.version+"-"+(data.time||"latest"),
           type:"system",
           icon:"🚀",
           title:"Website Updated!",
