@@ -1298,7 +1298,8 @@ function initHomeVersionWatcherBridge(){
     window.tubalHubVersionChecker.start();
   }
 }
-function init(){\n  initHomeVersionWatcherBridge();
+function init(){
+  initHomeVersionWatcherBridge();
   initFeedsBodyReal();
   initRealBentoSpotlight();
   initSpotlight();
