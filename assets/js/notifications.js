@@ -110,7 +110,7 @@ function rowHtml(n,i){
   const avatar=n.photoURL?'<img src="'+esc(n.photoURL)+'" alt="">':esc((n.name||"TUBAL HUB").charAt(0).toUpperCase());
   const url=n.url||({shop:"pages/shop.html",game:"pages/ctrlzone.html",comment:"pages/feeds.html",follow:"pages/profiles.html",like:"pages/feeds.html",achievement:"pages/profiles.html",system:"pages/settings.html"}[n.type]||"pages/feeds.html");
   return '<article class="th-notification-row '+(n.read?"is-read":"is-unread")+'" style="--stagger:'+Math.min(i,10)*.04+'s" data-notification-id="'+esc(n.id)+'">'+
-    '<div class="th-notif-avatar-wrap"><div class="th-notif-avatar">'+avatar+'</div><span class="th-notif-status '+(n.online?"online":"offline")+'" title="'+(n.online?"Online":"Offline")+'"></span><span class="th-notif-type type-\${n.type||"system"}">'+(ICONS[n.type]||"🔔")+'</span></div>'+
+    '<div class="th-notif-avatar-wrap"><div class="th-notif-avatar">'+avatar+'</div><span class="th-notif-status '+(n.online?"online":"offline")+'" title="'+(n.online?"Online":"Offline")+'"></span><span class="th-notif-type type-'+esc(n.type||"system")+'">'+(ICONS[n.type]||"🔔")+'</span></div>'+
     '<div class="th-notification-main"><div class="th-notification-copy"><strong>'+esc(n.name||"TUBAL HUB")+'</strong> <span class="th-notification-action">'+esc(ACTIONS[n.type]||"sent you an update")+'</span></div>'+
     '<div class="th-notification-time">'+esc(time(n.time))+'</div><span class="th-notification-preview">'+esc(n.title||"New activity")+'</span>'+
     (n.preview?'<span class="th-notification-preview">'+esc(n.preview)+'</span>':"")+
