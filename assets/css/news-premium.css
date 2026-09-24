@@ -622,3 +622,9 @@ body.theme-light.news-premium .news-comment-bubble{background:#fff;border-color:
   .news-ticker-track,.news-live-dot,.news-author-online,.news-category-pill,.news-card,.news-featured-card{animation:none!important}
   .news-card:hover,.news-featured-card:hover,.news-bookmark:hover{transform:none!important}
 }
+
+.news-bookmark.is-pop{animation:newsBookmarkPop .42s cubic-bezier(.34,1.56,.64,1)}
+@keyframes newsBookmarkPop{0%{transform:scale(1)}30%{transform:scale(.82)}60%{transform:scale(1.24)}100%{transform:scale(1)}}
+.news-bookmark.is-pop::after{content:"";position:absolute;left:50%;top:50%;width:4px;height:4px;border-radius:50%;background:#1dff91;box-shadow:0 0 8px rgba(29,255,145,.55);animation:newsBookmarkBurst .52s ease-out both;pointer-events:none}
+@keyframes newsBookmarkBurst{from{opacity:1;transform:translate(-50%,-50%) scale(1)}to{opacity:0;transform:translate(-50%,-28px) scale(.2)}}
+.news-empty-create{display:inline-flex;align-items:center;justify-content:center;height:34px;padding:0 14px;margin-top:14px;border:0;border-radius:999px;background:linear-gradient(135deg,#1dff91,#7d5aff);color:#06110b;font:850 10px/1 Inter,sans-serif}
