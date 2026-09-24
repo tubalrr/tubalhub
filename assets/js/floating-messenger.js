@@ -239,5 +239,5 @@ onAuthStateChanged(auth,u=>{
     const backdrop=document.getElementById("tubalMsgBackdrop"),panel=document.getElementById("tubalMessenger");
     if(backdrop)backdrop.hidden=true;if(panel){panel.classList.remove("msg-open");panel.hidden=true}return;
   }
-  showLauncher(true);setLauncherOnline(true);watchOwnPresence();watchUsers();watchUnread();updateBadge();
+  if(launcher)launcher.hidden=false;setLauncherOnline(true);watchOwnPresence();watchUsers();watchUnread();updateBadge();
 });
