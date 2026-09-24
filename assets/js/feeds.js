@@ -99,7 +99,7 @@ async function loadPeople(){
 function buildFeed(){
   const raw=[...state.hubPosts.map(hubItem),...state.products,...games.map(gameItem)];
   const seen=new Set();state.items=raw.filter(x=>{const k=contentKey(x);if(seen.has(k))return false;seen.add(k);return true});
-  renderStories();renderFeed(true);renderSponsored();
+  renderStories();renderFeed(true);renderSponsored();renderTrending();
 }
 function visible(){
   let arr=state.items.filter(x=>!state.savedMode||state.saved.has(x.id));
@@ -187,6 +187,23 @@ function renderBirthdays(){
   }).slice(0,6);
   box.innerHTML=items.length?items.map(u=>"<div class='birthday-row'>"+avatarMarkup(u,"contact-avatar")+"<span><b>"+esc(displayName(u))+"</b><small>Birthday today</small></span></div>").join(""):"<strong>No birthdays published.</strong><br>Only real profile birthday data will appear here.";
 }
+function renderTrending(){
+  const box=document.getElementById("trendingNow"); if(!box)return;
+  const items=state.items
+    .map(x=>({x,score:totalPostReactions(x.id,x)+shareTotal(x)}))
+    .filter(v=>v.score>0)
+    .sort((a,b)=>b.score-a.score||millis(b.x.createdAt)-millis(a.x.createdAt))
+    .slice(0,6);
+  if(!items.length){box.innerHTML="<div class='feed-side-meta'>No trending content yet.</div>";return}
+  box.innerHTML=items.map((v,i)=>{
+    const x=v.x, title=x.title||x.description||"TUBAL HUB post";
+    return "<button class='trending-item' type='button' data-trend-id='"+esc(x.id)+"'><span class='trend-rank'>"+(i+1)+"</span><span class='trend-copy'><b>"+esc(title.slice(0,70))+"</b><small>"+esc(x.author||"Member")+" · "+v.score+" reactions/shares</small></span></button>";
+  }).join("");
+  box.querySelectorAll("[data-trend-id]").forEach(b=>b.onclick=()=>{
+    const target=document.querySelector(".post-card[data-id='"+CSS.escape(b.dataset.trendId)+"']");
+    target?.scrollIntoView({behavior:"smooth",block:"center"});
+  });
+}
 function renderSponsored(){
   const box=document.getElementById("sponsoredBox");if(!box)return;
   const p=state.products.find(x=>x.sponsored===true);if(!p){box.innerHTML="<div class='feed-side-meta'>No sponsored product published.</div>";return}
@@ -269,7 +286,7 @@ async function addReact(postId,reaction){
   d[reaction].push(state.auth.uid);writeLocal("tubalhub-feed-reactions",state.reactions);
   const card=document.querySelector(".post-card[data-id='"+CSS.escape(postId)+"']"),btn=card?.querySelector("[data-action='react']");
   if(btn){btn.classList.remove("reacted");void btn.offsetWidth;btn.classList.add("reacted");burst(btn,8);btn.querySelector(".reaction-main-icon")?.classList.add("pop")}
-  refreshPost(postId,before);
+  refreshPost(postId,before);renderTrending();
   const after=totalPostReactions(postId,state.items.find(x=>x.id===postId));if(after>=10&&before<10){const c=document.querySelector(".post-card[data-id='"+CSS.escape(postId)+"']");if(c)burst(c.querySelector("[data-action='react']"),16)}
   try{await setDoc(doc(db,"feedReactions",postId+"_"+state.auth.uid),{postId,uid:state.auth.uid,reaction,updatedAt:serverTimestamp()},{merge:true})}
   catch(e){if(e?.code!=="permission-denied")console.warn("[Feeds] remote reaction unavailable",e)}
@@ -385,7 +402,7 @@ async function copyText(text){try{await navigator.clipboard.writeText(text);retu
 function bumpShareCount(id){
   state.shareCounts[id]=Number(state.shareCounts[id]||0)+1;writeLocal("tubalhub-feed-shares",state.shareCounts);
   const el=document.querySelector(".post-card[data-id='"+CSS.escape(id)+"'] [data-share-count]");
-  if(el){el.textContent=shareTotal(state.items.find(x=>x.id===id))+" shares";el.classList.remove("pop");void el.offsetWidth;el.classList.add("pop")}
+  renderTrending();if(el){el.textContent=shareTotal(state.items.find(x=>x.id===id))+" shares";el.classList.remove("pop");void el.offsetWidth;el.classList.add("pop")}
   else{const stat=document.querySelector(".post-card[data-id='"+CSS.escape(id)+"'] .post-stats");if(stat&&shareTotal(state.items.find(x=>x.id===id)))stat.lastElementChild.innerHTML=(state.items.find(x=>x.id===id)?.comments||"")+" comments · <span class='share-count-pop pop' data-share-count>"+shareTotal(state.items.find(x=>x.id===id))+" shares</span>"}
 }
 async function shareTo(platform){
