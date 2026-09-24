@@ -60,6 +60,6 @@ For permission requests, licensing questions, or copyright reports:
 
 TUBAL HUB may update this license when the website, content, or distribution model changes.
 
-**Last updated:** September 22, 2026
+**Last updated:** September 24, 2026
 
 This is a website-use license draft and should be reviewed for your specific ownership, third-party licenses, and applicable law before being treated as a formal legal instrument.
