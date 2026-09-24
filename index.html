@@ -7,6 +7,7 @@
 <meta name="copyright" content="© 2026 TUBAL HUB — All Rights Reserved.">
 <meta name="tubalhub-build" content="2026.09.22-copy-protection">
 <link rel="canonical" href="https://tubalrr.github.io/tubalhub/index.html">
+<link rel="alternate" type="application/json" href="version.json" data-tubal-version-json>
 <title>TUBAL HUB — Three Brands. One Hub.</title>
 <link rel="icon" type="image/png" href="tubal-hub-logo.png">
 <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
@@ -281,6 +282,7 @@
   <footer class="hub-footer"><div class="footer-brand"><img src="tubal-hub-logo.png" loading="lazy" decoding="async" width="180" height="180" alt="TUBAL HUB"><b>TUBAL HUB</b><span>© 2026 TUBAL HUB. All rights reserved.</span></div><div class="footer-links"><a href="index.html">Home</a><a href="pages/news.html">News</a><a href="pages/shop.html">Shop</a><a href="pages/community.html">Community</a><a href="pages/privacy.html">Privacy</a><a href="pages/cookies.html">Cookies</a><a href="pages/terms.html">Terms</a><a href="pages/license.html">License</a><a href="pages/copyright.html">Copyright</a><a href="pages/contact.html">Contact</a></div><p>Keep Creating &nbsp; / &nbsp; Keep Growing &nbsp; / &nbsp; Keep Going <i>◆</i></p></footer>
 </div>
 
+<div id="update-banner"></div>
 <div class="cookie" id="cookieBox"><div><b>🍪 Cookies</b><span>We use cookies to improve your experience.</span></div><button id="acceptCookie">Accept</button></div>
 <script type="module">
 import {getFirestore,collection,getDocs} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
@@ -314,6 +316,7 @@ const io=new IntersectionObserver((entries)=>{if(entries[0].isIntersecting){io.d
 <script src="assets/js/app.js?v=20260924-top4"></script>
 <script src="assets/js/main.js?v=20260924-main3"></script>
 <script src="assets/js/theme.js"></script>
+<script src="assets/js/update-notifier.js?v=1.0.5" defer></script>
 <script type="module" src="assets/js/notifications.js?v=20260924-ns4"></script>
 <script type="module" src="assets/js/search.js?v=20260924-ns9"></script>
 <script src="assets/js/sidebar-premium.js?v=20260924-v9"></script>
