@@ -27,8 +27,8 @@ const KEYS = {
 const state = { user:null, avatarData:"", currentTheme:"midnight" };
 
 const el = {
-  tabs:$(".settings-tabs [data-tab]"),
-  panels:$(".settings-panel[data-panel]"),
+  tabs:Array.from(document.querySelectorAll(".settings-tabs [data-tab]")),
+  panels:Array.from(document.querySelectorAll(".settings-panel[data-panel]")),
   toast:$("#settingsToast"),
   avatar:$("#avatarPreview"),
   avatarInput:$("#avatarInput"),
@@ -36,7 +36,7 @@ const el = {
   name:$("#profileName"),username:$("#profileUsername"),bio:$("#profileBio"),
   saveProfile:$("#saveProfile"),
   email:$("#accountEmail"),provider:$("#accountProvider"),
-  themeCards:$("[data-theme-choice]"),
+  themeCards:Array.from(document.querySelectorAll("[data-theme-choice]")),
   themeTitle:$("#themePreviewTitle"),themeText:$("#themePreviewText"),
   websiteUpdates:$("#websiteUpdatesToggle"),pushNotifications:$("#pushNotificationsToggle"),
   onlineStatus:$("#onlineStatusToggle"),privacyDot:$("#privacyLiveDot"),privacyTitle:$("#privacyStatusTitle"),privacyText:$("#privacyStatusText"),
