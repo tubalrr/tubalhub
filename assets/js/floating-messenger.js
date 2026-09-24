@@ -1,6 +1,6 @@
 import { app, auth } from "./firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
-import { getFirestore, collection, query, where, onSnapshot, addDoc, limit, doc } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+import { getFirestore, collection, query, where, onSnapshot, addDoc, limit, doc, getDocsFromServer } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
 const db=getFirestore(app);
 let me=null,target=null,stopUsers=null,stopMessages=null,stopUnread=null,stopOwnPresence=null,lastSend=0,incomingReady=false,audioCtx=null;
@@ -120,22 +120,30 @@ function watchUsers(){
   const presenceRef=collection(db,"presence");
   let usersMap=new Map(),presenceMap=new Map();
   let usersLoaded=false,presenceLoaded=false;
-  let timeoutId=null;
+  let stopUsersSnapshot=null,stopPresenceSnapshot=null;
+  let refreshTimer=null,timeoutId=null;
 
   const onlineCutoff=()=>Date.now()-180000;
-  const isOnline=uid=>{
-    const p=presenceMap.get(uid);
-    if(!p||p.online!==true)return false;
-    const last=typeof p.lastSeen==="number"
-      ? p.lastSeen
-      : (p.lastSeen?.toMillis?.()||p.lastSeen?.toDate?.()?.getTime?.()||0);
-    return last>=onlineCutoff();
+  const lastSeenMs=value=>{
+    if(typeof value==="number")return value;
+    return value?.toMillis?.()||value?.toDate?.()?.getTime?.()||0;
+  };
+  const syncMap=(snap,map)=>{
+    map.clear();
+    snap.forEach(d=>{
+      const x=d.data();
+      map.set(x.uid||d.id,{...x,uid:x.uid||d.id});
+    });
   };
 
-  const render=()=>{
+  const render=(errorMessage="")=>{
     const box=document.getElementById("tubalMsgList");
     if(!box)return;
 
+    if(errorMessage&&!usersLoaded&&!presenceLoaded){
+      box.innerHTML='<div class="tubal-msg-empty"><strong>Messages unavailable.</strong><span>'+esc(errorMessage)+'</span></div>';
+      return;
+    }
     if(!usersLoaded&&!presenceLoaded){
       box.innerHTML='<div class="tubal-msg-loading">Loading members…</div>';
       return;
@@ -143,7 +151,11 @@ function watchUsers(){
 
     const list=[...usersMap.values()]
       .filter(u=>u.uid&&u.uid!==me.uid)
-      .map(u=>({...u,online:isOnline(u.uid)}))
+      .map(u=>{
+        const p=presenceMap.get(u.uid);
+        const online=!!p&&p.online===true&&lastSeenMs(p.lastSeen)>=onlineCutoff();
+        return {...u,online};
+      })
       .sort((a,b)=>Number(b.online)-Number(a.online)||String(a.displayName||"").localeCompare(String(b.displayName||"")));
 
     if(!list.length){
@@ -162,43 +174,54 @@ function watchUsers(){
     });
   };
 
-  const stopUsersSnapshot=onSnapshot(query(usersRef,limit(100)),snap=>{
+  const loadInitial=async()=>{
+    try{
+      const [usersSnap,presenceSnap]=await Promise.all([
+        getDocsFromServer(query(usersRef,limit(100))),
+        getDocsFromServer(query(presenceRef,limit(100)))
+      ]);
+      usersLoaded=true;presenceLoaded=true;
+      syncMap(usersSnap,usersMap);syncMap(presenceSnap,presenceMap);
+      render();
+    }catch(err){
+      console.error("[TUBAL HUB] floating Firebase member load",err);
+      render(err?.code==="permission-denied"?"Firestore denied member reads. Check Firestore Rules.":"Firebase member data could not be loaded.");
+    }
+  };
+
+  stopUsersSnapshot=onSnapshot(query(usersRef,limit(100)),snap=>{
     usersLoaded=true;
-    usersMap=new Map();
-    snap.forEach(d=>{
-      const x=d.data();
-      usersMap.set(x.uid||d.id,{...x,uid:x.uid||d.id});
-    });
+    syncMap(snap,usersMap);
     render();
   },err=>{
     usersLoaded=true;
-    console.warn("[TUBAL HUB] floating users unavailable",err);
-    render();
+    console.error("[TUBAL HUB] floating users listener",err);
+    render(err?.code==="permission-denied"?"Firestore denied member reads. Check Firestore Rules.":"Firebase users listener failed.");
   });
 
-  const stopPresenceSnapshot=onSnapshot(query(presenceRef,limit(100)),snap=>{
+  stopPresenceSnapshot=onSnapshot(query(presenceRef,limit(100)),snap=>{
     presenceLoaded=true;
-    presenceMap=new Map();
-    snap.forEach(d=>{
-      const x=d.data();
-      presenceMap.set(x.uid||d.id,{...x,uid:x.uid||d.id});
-    });
+    syncMap(snap,presenceMap);
     render();
   },err=>{
     presenceLoaded=true;
-    console.warn("[TUBAL HUB] floating presence unavailable",err);
-    render();
+    console.error("[TUBAL HUB] floating presence listener",err);
+    render(err?.code==="permission-denied"?"Firestore denied presence reads. Check Firestore Rules.":"Firebase presence listener failed.");
   });
 
   timeoutId=setTimeout(()=>{
-    if(!usersLoaded&&!presenceLoaded){
-      const box=document.getElementById("tubalMsgList");
-      if(box)box.innerHTML='<div class="tubal-msg-empty"><strong>Members are unavailable right now.</strong><span>Check your connection and try again.</span></div>';
-    }
+    if(!usersLoaded&&!presenceLoaded)render("Firebase is not responding. Check your connection or Firestore configuration.");
   },3500);
 
-  const refresh=setInterval(render,30000);
-  stopUsers=()=>{stopUsersSnapshot();stopPresenceSnapshot();clearInterval(refresh);clearTimeout(timeoutId)};
+  refreshTimer=setInterval(render,30000);
+  loadInitial();
+
+  stopUsers=()=>{
+    stopUsersSnapshot?.();
+    stopPresenceSnapshot?.();
+    clearInterval(refreshTimer);
+    clearTimeout(timeoutId);
+  };
 }
 function watchOwnPresence(){
   if(stopOwnPresence)stopOwnPresence();
