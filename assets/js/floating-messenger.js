@@ -113,14 +113,85 @@ function subscribeMessages(){
   },e=>console.error("[TUBAL HUB] message listener",e));
 }
 function watchUsers(){
-  if(stopUsers)stopUsers();
-  const q=query(collection(db,"presence"),limit(50));
-  stopUsers=onSnapshot(q,s=>{
-    const list=[];s.forEach(x=>{const d=x.data();if(d.uid&&d.uid!==me.uid&&d.online===true)list.push({...d,uid:d.uid})});
+  if(stopUsers){stopUsers();stopUsers=null}
+  if(!me)return;
+
+  const presenceRef=collection(db,"presence");
+  const usersRef=collection(db,"users");
+  let presenceMap=new Map(),usersMap=new Map();
+  let presenceLoaded=false,usersLoaded=false;
+
+  const onlineCutoff=()=>Date.now()-180000;
+
+  const render=()=>{
+    const merged=new Map();
+
+    presenceMap.forEach((x,uid)=>merged.set(uid,{...x,uid}));
+    usersMap.forEach((x,uid)=>{
+      const last=typeof x.lastSeen==="number"
+        ? x.lastSeen
+        : (x.lastSeen?.toMillis?.()||x.lastSeen?.toDate?.()?.getTime?.()||0);
+      if(last>=onlineCutoff()){
+        const prev=merged.get(uid)||{};
+        merged.set(uid,{...prev,...x,uid,lastSeen:last,online:true});
+      }
+    });
+
+    const list=[...merged.values()]
+      .filter(x=>x.uid&&x.uid!==me.uid&&x.online===true&&(
+        typeof x.lastSeen==="number"
+          ? x.lastSeen>=onlineCutoff()
+          : (x.lastSeen?.toDate?.()?.getTime?.()||0)>=onlineCutoff()
+      ))
+      .sort((a,b)=>String(a.displayName||"").localeCompare(String(b.displayName||"")));
+
     const box=document.getElementById("tubalMsgList");
-    box.innerHTML=list.length?list.map(u=>'<button type="button" class="tubal-msg-user" data-uid="'+esc(u.uid)+'"><div class="tubal-msg-avatar">'+(u.photoURL?'<img src="'+esc(u.photoURL)+'" alt="">':esc(initials(u.displayName)))+'</div><div class="tubal-msg-user-copy"><b>'+esc(u.displayName||"Member")+'</b><span>● Online · Message</span></div></button>').join(""):'<div style="padding:18px;color:#8fa39a;font-size:12px">No other members online.</div>';
-    box.querySelectorAll(".tubal-msg-user").forEach((b,i)=>{b.onclick=e=>{e.preventDefault();e.stopPropagation();openUser(list[i])}});
-  },e=>console.error("[TUBAL HUB] member list",e));
+    if(!box)return;
+
+    if(!presenceLoaded&&!usersLoaded){
+      box.innerHTML='<div style="padding:18px;color:#8fa39a;font-size:12px">Loading members…</div>';
+      return;
+    }
+
+    box.innerHTML=list.length
+      ? list.map(u=>'<button type="button" class="tubal-msg-user" data-uid="'+esc(u.uid)+'"><div class="tubal-msg-avatar">'+(u.photoURL?'<img src="'+esc(u.photoURL)+'" alt="">':esc(initials(u.displayName)))+'</div><div class="tubal-msg-user-copy"><b>'+esc(u.displayName||"Member")+'</b><span>● Online · Message</span></div></button>').join("")
+      : '<div style="padding:18px;color:#8fa39a;font-size:12px">No other members online.</div>';
+
+    box.querySelectorAll(".tubal-msg-user").forEach((b,i)=>{
+      b.onclick=e=>{e.preventDefault();e.stopPropagation();openUser(list[i])};
+    });
+  };
+
+  const stopPresence=onSnapshot(query(presenceRef,limit(50)),snap=>{
+    presenceLoaded=true;
+    presenceMap=new Map();
+    snap.forEach(d=>{
+      const x=d.data();
+      presenceMap.set(x.uid||d.id,{...x,uid:x.uid||d.id});
+    });
+    render();
+  },err=>{
+    presenceLoaded=true;
+    console.warn("[TUBAL HUB] floating presence unavailable",err);
+    render();
+  });
+
+  const stopUsersPresence=onSnapshot(query(usersRef,limit(100)),snap=>{
+    usersLoaded=true;
+    usersMap=new Map();
+    snap.forEach(d=>{
+      const x=d.data();
+      usersMap.set(x.uid||d.id,{...x,uid:x.uid||d.id});
+    });
+    render();
+  },err=>{
+    usersLoaded=true;
+    console.warn("[TUBAL HUB] floating users presence unavailable",err);
+    render();
+  });
+
+  const refresh=setInterval(render,30000);
+  stopUsers=()=>{stopPresence();stopUsersPresence();clearInterval(refresh)};
 }
 function watchOwnPresence(){
   if(stopOwnPresence)stopOwnPresence();
