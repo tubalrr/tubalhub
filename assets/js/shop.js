@@ -1,0 +1,434 @@
+import {app,auth} from "./firebase-config.js";
+import {getFirestore,collection,addDoc,serverTimestamp} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+import {publishHubPost} from "./hub-content.js";
+
+const db=getFirestore(app);
+const CART_KEY="tubalhub-shop-cart-v1";
+const WISH_KEY="tubalhub-shop-wishlist-v1";
+const THEME_KEY="tubalhub-theme";
+const money=n=>"₱"+Number(n||0).toLocaleString("en-PH",{maximumFractionDigits:0});
+const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
+
+const IMG={
+  tshirt:"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=700&q=84",
+  shirt:"https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=700&q=84",
+  hoodie:"https://images.unsplash.com/photo-1556821840-3a63f95609a7?auto=format&fit=crop&w=700&q=84",
+  cap:"https://images.unsplash.com/photo-1521369909029-2afed882baee?auto=format&fit=crop&w=700&q=84",
+  shoes:"https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=700&q=84",
+  backpack:"https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=700&q=84",
+  mug:"https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?auto=format&fit=crop&w=700&q=84",
+  watch:"https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=700&q=84",
+  keyboard:"https://images.unsplash.com/photo-1511467687858-23d96c32e4ae?auto=format&fit=crop&w=700&q=84",
+  controller:"https://images.unsplash.com/photo-1605901309584-818e25960a8f?auto=format&fit=crop&w=700&q=84",
+  chair:"https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=700&q=84",
+  headphones:"https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=700&q=84",
+  plant:"https://images.unsplash.com/photo-1497250681960-ef046c08a56e?auto=format&fit=crop&w=700&q=84",
+  journal:"https://images.unsplash.com/photo-1517842645767-c639042777db?auto=format&fit=crop&w=700&q=84",
+  candle:"https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&w=700&q=84",
+  notebook:"https://images.unsplash.com/photo-1531346878377-a5be20888e57?auto=format&fit=crop&w=700&q=84",
+  poster:"https://images.unsplash.com/photo-1549490349-8643362247b5?auto=format&fit=crop&w=700&q=84"
+};
+
+const galleryPool=[IMG.tshirt,IMG.hoodie,IMG.cap,IMG.backpack,IMG.mug,IMG.poster];
+
+const products=[
+  {id:"th-hoodie",collection:"th",title:"TH Signature Hoodie",price:1790,original:2290,image:IMG.hoodie,seller:"Rr Studio",sellerInitials:"Rr",online:true,stock:5,rating:4.8,badge:"NEW",description:"Premium-weight community hoodie with a clean TUBAL HUB finish.",details:"Soft-touch hoodie silhouette, relaxed fit, everyday community wear.",sizes:["S","M","L","XL"],colors:["Black","Forest","Stone"]},
+  {id:"th-tee",collection:"th",title:"TUBAL HUB Core Tee",price:790,original:990,image:IMG.tshirt,seller:"Rr Studio",sellerInitials:"Rr",online:true,stock:8,rating:4.8,badge:"HOT",description:"Core TUBAL HUB tee for daily wear and creator sessions.",details:"Lightweight cotton tee with minimalist TH identity.",sizes:["S","M","L","XL"],colors:["Black","White","Green"]},
+  {id:"th-oversized",collection:"th",title:"TH Oversized Tee",price:890,original:1090,image:IMG.shirt,seller:"Rr Studio",sellerInitials:"Rr",online:false,stock:7,rating:4.8,badge:"SALE",description:"Oversized profile tee with clean streetwear proportions.",details:"Relaxed drop-shoulder cut for casual community fits.",sizes:["M","L","XL"],colors:["Black","Grey","Olive"]},
+  {id:"th-cap",collection:"th",title:"TUBAL HUB Mono Cap",price:650,original:780,image:IMG.cap,seller:"TUBAL HUB Goods",sellerInitials:"TH",online:true,stock:9,rating:4.8,badge:"NEW",description:"Low-profile cap with a simple TH badge.",details:"Adjustable strap and structured front.",sizes:["One Size"],colors:["Black","Forest"]},
+  {id:"th-sneaker",collection:"th",title:"Hub Runner Sneaker",price:2490,original:2990,image:IMG.shoes,seller:"TUBAL HUB Goods",sellerInitials:"TH",online:false,stock:5,rating:4.8,badge:"HOT",description:"Everyday runner concept built around the Hub palette.",details:"Mock product listing for the community shop UI.",sizes:["40","41","42","43"],colors:["Black","White"]},
+  {id:"th-pack",collection:"th",title:"Creator Daypack",price:1890,original:2190,image:IMG.backpack,seller:"Rr Studio",sellerInitials:"Rr",online:true,stock:6,rating:4.8,badge:"SALE",description:"Compact backpack for laptop, camera, and creator gear.",details:"Multi-compartment daypack concept for TUBAL HUB members.",sizes:["One Size"],colors:["Black","Green"]},
+  {id:"th-mug",collection:"th",title:"TH Creator Mug",price:520,original:650,image:IMG.mug,seller:"TUBAL HUB Goods",sellerInitials:"TH",online:true,stock:5,rating:4.8,badge:"NEW",description:"Glass-ready desk mug for work, editing, and streams.",details:"Ceramic mug concept with minimalist Hub identity.",sizes:["350ml"],colors:["Black","White"]},
+  {id:"th-watch",collection:"th",title:"Hub Time Watch",price:1590,original:1890,image:IMG.watch,seller:"Rr Studio",sellerInitials:"Rr",online:false,stock:5,rating:4.8,badge:"HOT",description:"Minimal watch concept for the polished TUBAL HUB look.",details:"Clean face, neutral strap, and everyday wear profile.",sizes:["One Size"],colors:["Black","Silver"]},
+  {id:"th-keyboard",collection:"th",title:"Creator Desk Keyboard",price:2190,original:2590,image:IMG.keyboard,seller:"CTRLZONE Supply",sellerInitials:"CZ",online:true,stock:4,rating:4.8,badge:"SALE",description:"Compact keyboard concept for creators and gamers.",details:"Desk accessory concept shown as a premium shop listing.",sizes:["75%"],colors:["Black","White"]},
+  {id:"th-control",collection:"th",title:"Hub Game Controller",price:1990,original:2290,image:IMG.controller,seller:"CTRLZONE Supply",sellerInitials:"CZ",online:true,stock:5,rating:4.8,badge:"HOT",description:"Controller concept styled for the TUBAL HUB gaming shelf.",details:"Wireless-ready controller concept for the catalog UI.",sizes:["Standard"],colors:["Black","Green"]},
+  {id:"th-chair",collection:"th",title:"Creator Lounge Chair",price:4290,original:4990,image:IMG.chair,seller:"Rr Studio",sellerInitials:"Rr",online:false,stock:5,rating:4.8,badge:"NEW",description:"Comfort-first creator chair concept for long sessions.",details:"Premium lounge-chair concept for the shop catalog.",sizes:["Standard"],colors:["Black","Forest"]},
+  {id:"th-headset",collection:"th",title:"Hub Studio Headphones",price:2390,original:2790,image:IMG.headphones,seller:"CTRLZONE Supply",sellerInitials:"CZ",online:true,stock:5,rating:4.8,badge:"SALE",description:"Closed-back headphone concept for editing and gaming.",details:"Over-ear headphone concept used in the premium storefront preview.",sizes:["Standard"],colors:["Black","Silver"]},
+
+  {id:"pi-journal",collection:"payapang",title:"Payapang Journal",price:590,original:740,image:IMG.journal,seller:"Payapang Isip",sellerInitials:"PI",online:true,stock:7,rating:4.8,badge:"NEW",description:"A calm journaling companion for thoughts, plans, and quiet notes.",details:"Minimal journal concept with a soft, nature-first identity.",sizes:["A5"],colors:["Sage","Cream"]},
+  {id:"pi-candle",collection:"payapang",title:"Payapang Candle",price:690,original:850,image:IMG.candle,seller:"Payapang Isip",sellerInitials:"PI",online:true,stock:5,rating:4.8,badge:"HOT",description:"Warm desk candle concept for a slower evening atmosphere.",details:"Decorative candle product concept for the Payapang Isip collection.",sizes:["Single"],colors:["Sage","Sand"]},
+  {id:"pi-notebook",collection:"payapang",title:"Peace Notes Notebook",price:480,original:590,image:IMG.notebook,seller:"Payapang Isip",sellerInitials:"PI",online:false,stock:9,rating:4.8,badge:"SALE",description:"A compact notebook for daily reflections and reminders.",details:"Everyday notebook concept with clean, quiet visual language.",sizes:["A6","A5"],colors:["Green","Natural"]},
+  {id:"pi-plant",collection:"payapang",title:"Quiet Desk Plant",price:790,original:950,image:IMG.plant,seller:"Payapang Isip",sellerInitials:"PI",online:true,stock:5,rating:4.8,badge:"NEW",description:"Nature-forward desk accent for a calmer workspace.",details:"Decorative plant concept for the Payapang Isip collection.",sizes:["Small"],colors:["Sage","Clay"]},
+  {id:"pi-mug",collection:"payapang",title:"Payapang Tea Mug",price:560,original:690,image:IMG.mug,seller:"Payapang Isip",sellerInitials:"PI",online:true,stock:6,rating:4.8,badge:"HOT",description:"A gentle ceramic mug concept for tea and quiet work.",details:"Minimal tableware concept for the calm collection.",sizes:["350ml"],colors:["Cream","Sage"]},
+  {id:"pi-poster",collection:"payapang",title:"Payapang Wall Print",price:620,original:760,image:IMG.poster,seller:"Payapang Isip",sellerInitials:"PI",online:false,stock:5,rating:4.8,badge:"SALE",description:"Minimal wall-art concept inspired by stillness and nature.",details:"Decorative print concept for home or workspace.",sizes:["A4","A3"],colors:["Green","Neutral"]},
+
+  {id:"cz-keyboard",collection:"ctrlzone",title:"CTRLZONE Compact Keyboard",price:2290,original:2790,image:IMG.keyboard,seller:"CTRLZONE Supply",sellerInitials:"CZ",online:true,stock:5,rating:4.8,badge:"HOT",description:"A compact gaming desk concept with a clean CTRLZONE feel.",details:"75% layout concept for modern gaming desks.",sizes:["75%"],colors:["Black","Purple"]},
+  {id:"cz-headset",collection:"ctrlzone",title:"CTRLZONE Headset",price:2590,original:3190,image:IMG.headphones,seller:"CTRLZONE Supply",sellerInitials:"CZ",online:true,stock:5,rating:4.8,badge:"NEW",description:"Immersive headset concept for ranked sessions and streams.",details:"Over-ear gaming audio concept with a premium storefront profile.",sizes:["Standard"],colors:["Black","Purple"]},
+  {id:"cz-controller",collection:"ctrlzone",title:"CTRLZONE Controller",price:2090,original:2490,image:IMG.controller,seller:"CTRLZONE Supply",sellerInitials:"CZ",online:false,stock:8,rating:4.8,badge:"SALE",description:"Controller concept for MOBA, racing, and action sessions.",details:"Modern controller concept with ergonomic shape.",sizes:["Standard"],colors:["Black","Neon"]},
+  {id:"cz-chair",collection:"ctrlzone",title:"CTRLZONE Gaming Chair",price:4690,original:5290,image:IMG.chair,seller:"CTRLZONE Supply",sellerInitials:"CZ",online:true,stock:5,rating:4.8,badge:"HOT",description:"Premium chair concept for long gaming and creator sessions.",details:"High-back gaming chair concept for the CTRLZONE catalog.",sizes:["Standard"],colors:["Black","Purple"]},
+  {id:"cz-pack",collection:"ctrlzone",title:"CTRLZONE Gear Pack",price:1790,original:2090,image:IMG.backpack,seller:"CTRLZONE Supply",sellerInitials:"CZ",online:true,stock:5,rating:4.8,badge:"NEW",description:"Compact gear pack concept for cables, controllers, and extras.",details:"Multi-use gaming carry pack concept.",sizes:["One Size"],colors:["Black","Purple"]},
+  {id:"cz-desk-mat",collection:"ctrlzone",title:"CTRLZONE Desk Mat",price:850,original:990,image:IMG.shirt,seller:"CTRLZONE Supply",sellerInitials:"CZ",online:false,stock:11,rating:4.8,badge:"SALE",description:"Wide desk-mat concept built around the CTRLZONE identity.",details:"Large desk surface concept for keyboard and mouse setups.",sizes:["XL"],colors:["Black","Purple"]}
+];
+
+const state={
+  collection:"th",
+  query:"",
+  stockFilter:"all",
+  priceFilter:"all",
+  cart:[],
+  wishlist:new Set(),
+  current:null,
+  quickQty:1,
+  selectedSize:"",
+  selectedColor:"",
+  filterOpen:false
+};
+
+const els={
+  grid:document.getElementById("productsGrid"),
+  empty:document.getElementById("emptyProducts"),
+  search:document.getElementById("productSearch"),
+  filterBtn:document.getElementById("filterBtn"),
+  filterPanel:document.getElementById("filterPanel"),
+  cartBtn:document.getElementById("cartBtn"),
+  cartBadge:document.getElementById("cartBadge"),
+  cartTitleCount:document.getElementById("cartTitleCount"),
+  cartDrawer:document.getElementById("cartDrawer"),
+  cartBackdrop:document.getElementById("cartBackdrop"),
+  cartList:document.getElementById("cartList"),
+  cartEmpty:document.getElementById("cartEmpty"),
+  cartSubtotal:document.getElementById("cartSubtotal"),
+  cartShipping:document.getElementById("cartShipping"),
+  cartTotal:document.getElementById("cartTotal"),
+  quickLayer:document.getElementById("quickViewLayer"),
+  quickModal:document.querySelector("#quickViewLayer .quickview-modal"),
+  quickImage:document.getElementById("quickViewImage"),
+  quickThumbs:document.getElementById("quickViewThumbs"),
+  quickTitle:document.getElementById("quickViewTitle"),
+  quickShop:document.getElementById("quickViewShop"),
+  quickPrice:document.getElementById("quickViewPrice"),
+  quickOriginal:document.getElementById("quickViewOriginal"),
+  quickDescription:document.getElementById("quickViewDescription"),
+  quickBadge:document.getElementById("quickViewBadge"),
+  quickStock:document.getElementById("quickViewStock"),
+  quickSizes:document.getElementById("quickViewSizes"),
+  quickColors:document.getElementById("quickViewColors"),
+  quickDetails:document.getElementById("quickViewDetails"),
+  quickQty:document.getElementById("quickViewQty"),
+  checkoutLayer:document.getElementById("checkoutLayer"),
+  checkoutTotal:document.getElementById("checkoutTotal"),
+  checkoutCopy:document.getElementById("checkoutCopy"),
+  toast:document.getElementById("filterToast"),
+  particleLayer:document.getElementById("particleLayer")
+};
+
+function readLocal(key,fallback){
+  try{const v=JSON.parse(localStorage.getItem(key)||"null");return v??fallback}catch(_){return fallback}
+}
+function saveLocal(key,value){
+  try{localStorage.setItem(key,JSON.stringify(value))}catch(_){}
+}
+function productById(id){return products.find(p=>p.id===id)}
+function collectionProducts(){return products.filter(p=>p.collection===state.collection)}
+function cartCount(){return state.cart.reduce((n,x)=>n+Number(x.qty||0),0)}
+function subtotal(){return state.cart.reduce((n,x)=>{const p=productById(x.id);return n+(p?Number(p.price)*Number(x.qty||0):0)},0)}
+function shipping(){return cartCount()?120:0}
+function total(){return subtotal()+shipping()}
+function saveCart(){saveLocal(CART_KEY,state.cart)}
+function loadCart(){
+  const raw=readLocal(CART_KEY,null);
+  if(Array.isArray(raw)&&raw.length){state.cart=raw.filter(x=>productById(x.id)&&Number(x.qty)>0).map(x=>({id:x.id,qty:Math.min(10,Math.max(1,Number(x.qty)))}));return}
+  state.cart=[
+    {id:"th-tee",qty:1},
+    {id:"th-cap",qty:1},
+    {id:"pi-journal",qty:1}
+  ];
+  saveCart();
+}
+function loadWishlist(){state.wishlist=new Set(readLocal(WISH_KEY,[]))}
+function saveWishlist(){saveLocal(WISH_KEY,[...state.wishlist])}
+
+function notify(message){
+  els.toast.textContent=message;
+  els.toast.classList.add("open");
+  clearTimeout(notify.t);
+  notify.t=setTimeout(()=>els.toast.classList.remove("open"),2200);
+}
+function burstAt(el,count=8){
+  if(!el)return;
+  const r=el.getBoundingClientRect();
+  for(let i=0;i<count;i++){
+    const dot=document.createElement("i");
+    dot.className="shop-particle";
+    dot.style.left=(r.left+r.width/2)+"px";
+    dot.style.top=(r.top+r.height/2)+"px";
+    const angle=(Math.PI*2/count)*i;
+    const distance=26+Math.random()*34;
+    els.particleLayer.appendChild(dot);
+    dot.animate(
+      [{transform:"translate3d(-50%,-50%,0) scale(.75)",opacity:0},
+       {transform:"translate3d(calc(-50% + "+(Math.cos(angle)*distance*.55)+"px),calc(-50% + "+(Math.sin(angle)*distance*.55)+"px),0) scale(1)",opacity:1},
+       {transform:"translate3d(calc(-50% + "+(Math.cos(angle)*distance)+"px),calc(-50% + "+(Math.sin(angle)*distance)+"px),0) scale(.15)",opacity:0}],
+      {duration:520,fill:"forwards",easing:"cubic-bezier(.16,1,.3,1)"}
+    ).onfinish=()=>dot.remove();
+  }
+}
+function updateSpot(e){
+  const card=e.target.closest?.(".product-card,.glass-surface");
+  if(!card)return;
+  const r=card.getBoundingClientRect();
+  card.style.setProperty("--mx",(e.clientX-r.left)+"px");
+  card.style.setProperty("--my",(e.clientY-r.top)+"px");
+}
+document.addEventListener("pointermove",updateSpot,{passive:true});
+
+function filteredProducts(){
+  const q=state.query.trim().toLowerCase();
+  let list=collectionProducts();
+  if(q)list=list.filter(p=>(p.title+" "+p.seller+" "+p.description).toLowerCase().includes(q));
+  if(state.stockFilter==="in-stock")list=list.filter(p=>p.stock>0);
+  if(state.priceFilter==="under-1000")list=list.filter(p=>p.price<1000);
+  if(state.priceFilter==="1000-2500")list=list.filter(p=>p.price>=1000&&p.price<=2500);
+  if(state.priceFilter==="over-2500")list=list.filter(p=>p.price>2500);
+  return list;
+}
+
+function cardHtml(p,index){
+  const wished=state.wishlist.has(p.id);
+  return '<article class="product-card" data-product-id="'+esc(p.id)+'" style="--stagger:'+(index*.05)+'s">'+
+    '<div class="product-visual">'+
+      '<img src="'+esc(p.image)+'" alt="'+esc(p.title)+'" loading="lazy" decoding="async">'+
+      '<span class="product-badge">'+esc(p.badge)+'</span>'+
+      '<button class="quick-view-btn" data-quick="'+esc(p.id)+'" type="button" aria-label="Quick view '+esc(p.title)+'">◉</button>'+
+    '</div>'+
+    '<div class="product-info">'+
+      '<h3 class="product-title">'+esc(p.title)+'</h3>'+
+      '<div class="product-shop">'+esc(p.seller)+'</div>'+
+      '<div class="product-price-row"><strong class="product-price">'+money(p.price)+'</strong><span class="product-original">'+money(p.original)+'</span></div>'+
+      '<div class="product-rating-row"><span>⭐ '+p.rating.toFixed(1)+'</span><span>Premium listing</span><span class="stock-low">'+p.stock+' left</span></div>'+
+      '<div class="seller-row">'+
+        '<div class="seller-avatar">'+esc(p.sellerInitials)+'<i class="seller-status '+(p.online?"online":"")+'"></i></div>'+
+        '<div class="seller-copy"><strong>'+esc(p.seller)+'</strong><span>'+ (p.online?"Online":"Offline") +'</span></div>'+
+        '<div class="seller-actions"><button class="wishlist-btn '+(wished?"active":"")+'" data-wishlist="'+esc(p.id)+'" type="button" aria-label="'+(wished?"Remove from wishlist":"Add to wishlist")+'">'+(wished?"♥":"♡")+'</button><button class="add-btn" data-add="'+esc(p.id)+'" type="button">Add to Cart</button></div>'+
+      '</div>'+
+    '</div>'+
+  '</article>';
+}
+
+function renderProducts(){
+  const list=filteredProducts();
+  els.grid.innerHTML=list.map(cardHtml).join("");
+  els.empty.hidden=Boolean(list.length);
+  els.grid.hidden=!list.length;
+  document.getElementById("resultCount").textContent=list.length+" "+(list.length===1?"product":"products");
+  document.getElementById("catalogStatus").textContent=state.query?"Filtered results":"Available now";
+}
+function updateCollectionUI(){
+  document.querySelectorAll(".collection-tab").forEach(btn=>{
+    const active=btn.dataset.collection===state.collection;
+    btn.classList.toggle("active",active);
+    btn.setAttribute("aria-selected",active?"true":"false");
+  });
+  const name={th:"TUBAL HUB",payapang:"PAYAPANG ISIP",ctrlzone:"CTRLZONE"}[state.collection];
+  document.getElementById("catalogTitle").textContent=name;
+  renderProducts();
+}
+function updateCounts(){const counts={th:products.filter(p=>p.collection==="th").length,payapang:products.filter(p=>p.collection==="payapang").length,ctrlzone:products.filter(p=>p.collection==="ctrlzone").length};document.getElementById("count-th").textContent=counts.th+" products";document.getElementById("count-payapang").textContent=counts.payapang+" products";document.getElementById("count-ctrlzone").textContent=counts.ctrlzone+" products"}
+
+function updateCartUI(){
+  const count=cartCount();
+  els.cartBadge.textContent=count;
+  els.cartBadge.hidden=!count;
+  els.cartTitleCount.textContent=count+" "+(count===1?"item":"items");
+  els.cartList.innerHTML=state.cart.map(item=>{
+    const p=productById(item.id);if(!p)return"";
+    return '<div class="cart-row">'+
+      '<div class="cart-thumb"><img src="'+esc(p.image)+'" alt=""></div>'+
+      '<div class="cart-row-copy"><strong>'+esc(p.title)+'</strong><small>'+esc(p.seller)+'</small><div class="cart-row-bottom"><div class="qty-stepper"><button data-cart-minus="'+esc(p.id)+'" type="button">−</button><span>'+item.qty+'</span><button data-cart-plus="'+esc(p.id)+'" type="button">+</button></div></div></div>'+
+      '<div><div class="cart-row-price">'+money(p.price*item.qty)+'</div><button class="cart-delete" data-cart-delete="'+esc(p.id)+'" type="button" aria-label="Remove '+esc(p.title)+'">⌫</button></div>'+
+    '</div>';
+  }).join("");
+  const has=Boolean(state.cart.length);
+  els.cartList.hidden=!has;
+  els.cartEmpty.hidden=has;
+  els.cartSubtotal.textContent=money(subtotal());
+  els.cartShipping.textContent=money(shipping());
+  els.cartTotal.textContent=money(total());
+  document.getElementById("checkoutBtn").disabled=!has;
+  document.getElementById("cartTitleCount").textContent=count+" "+(count===1?"item":"items");
+}
+
+async function createShopFeedEvent(p,action){
+  const user=auth.currentUser;
+  if(!user||user.isAnonymous)return;
+  const name=user.displayName||user.email?.split("@")[0]||"Member";
+  try{
+    await publishHubPost({
+      contentType:"product",
+      title:name+" "+(action==="buy"?"bought":"added")+" "+p.title,
+      text:name+" "+(action==="buy"?"bought":"added")+" "+p.title+" in TUBAL HUB Shop.",
+      imageUrl:p.image,
+      productUrl:location.href.split("#")[0]+"#"+encodeURIComponent(p.id),
+      price:p.price,
+      stock:p.stock,
+      authorName:name,
+      authorPhotoURL:user.photoURL||"",
+      sourceCollection:"shop",
+      sourceId:p.id,
+      destinations:["feeds","shop"]
+    });
+  }catch(e){console.warn("[TUBAL HUB Shop] feed event failed",e)}
+}
+async function createShopNotification(p,action){
+  const user=auth.currentUser;
+  if(!user||user.isAnonymous)return;
+  const name=user.displayName||user.email?.split("@")[0]||"Member";
+  try{
+    await addDoc(collection(db,"notifications"),{
+      recipientUid:user.uid,
+      actorUid:user.uid,
+      actorName:name,
+      actorPhotoURL:user.photoURL||"",
+      actorOnline:true,
+      type:"shop",
+      title:action==="buy"?"Shop order created":"Shop cart update",
+      preview:name+" "+(action==="buy"?"bought ":"added ") + p.title,
+      productImage:p.image,
+      url:"pages/shop.html#"+encodeURIComponent(p.id),
+      read:false,
+      createdAt:serverTimestamp()
+    });
+    window.dispatchEvent(new CustomEvent("tubalhub-shop-notification",{detail:{productId:p.id,action}}));
+  }catch(e){console.warn("[TUBAL HUB Shop] notification failed",e)}
+}
+async function recordShopEvent(p,action){
+  await Promise.allSettled([createShopFeedEvent(p,action),createShopNotification(p,action)]);
+}
+
+function addToCart(id,qty=1,trigger=null,action="cart"){
+  const p=productById(id);if(!p)return;
+  const row=state.cart.find(x=>x.id===id);
+  const next=Math.min(10,(row?.qty||0)+Math.max(1,qty));
+  if(row)row.qty=next;else state.cart.push({id,qty:Math.max(1,qty)});
+  saveCart();updateCartUI();
+  if(trigger){trigger.classList.remove("is-pop");void trigger.offsetWidth;trigger.classList.add("is-pop");burstAt(trigger,8)}
+  burstAt(els.cartBtn,6);
+  notify("Added to cart! "+p.title);
+  recordShopEvent(p,action);
+}
+function removeCart(id){state.cart=state.cart.filter(x=>x.id!==id);saveCart();updateCartUI()}
+function stepCart(id,delta){
+  const row=state.cart.find(x=>x.id===id);if(!row)return;
+  row.qty=Math.max(0,Math.min(10,row.qty+delta));if(!row.qty)removeCart(id);else{saveCart();updateCartUI()}
+}
+function toggleWishlist(id,btn){
+  const p=productById(id);if(!p)return;
+  if(state.wishlist.has(id))state.wishlist.delete(id);else state.wishlist.add(id);
+  saveWishlist();
+  btn.classList.toggle("active",state.wishlist.has(id));
+  btn.textContent=state.wishlist.has(id)?"♥":"♡";
+  burstAt(btn,6);
+  notify(state.wishlist.has(id)?"Added to wishlist":"Removed from wishlist");
+}
+
+function openCart(){els.cartBackdrop.hidden=false;requestAnimationFrame(()=>els.cartDrawer.classList.add("open"));els.cartDrawer.setAttribute("aria-hidden","false")}
+function closeCart(){els.cartDrawer.classList.remove("open");els.cartDrawer.setAttribute("aria-hidden","true");setTimeout(()=>{if(!els.cartDrawer.classList.contains("open"))els.cartBackdrop.hidden=true},260)}
+function shopNow(){document.getElementById("catalog").scrollIntoView({behavior:"smooth",block:"start"});burstAt(document.getElementById("heroShopNow"),6)}
+function galleryFor(p){return [p.image,galleryPool[(products.indexOf(p)+1)%galleryPool.length],galleryPool[(products.indexOf(p)+2)%galleryPool.length],galleryPool[(products.indexOf(p)+3)%galleryPool.length]]}
+
+function openQuick(id){
+  const p=productById(id);if(!p)return;
+  state.current=p;state.quickQty=1;state.selectedSize=p.sizes[0]||"";state.selectedColor=p.colors[0]||"";
+  els.quickBadge.textContent=p.badge;
+  els.quickTitle.textContent=p.title;
+  els.quickShop.textContent=p.seller;
+  els.quickPrice.textContent=money(p.price);
+  els.quickOriginal.textContent=money(p.original);
+  els.quickDescription.textContent=p.description;
+  els.quickStock.textContent=p.stock+" left";
+  els.quickDetails.textContent=p.details;
+  els.quickQty.textContent="1";
+  const imgs=galleryFor(p);
+  els.quickImage.src=imgs[0];
+  els.quickImage.alt=p.title;
+  els.quickThumbs.innerHTML=imgs.map((src,i)=>'<button class="'+(i===0?"active":"")+'" data-thumb="'+i+'" type="button"><img src="'+esc(src)+'" alt=""></button>').join("");
+  els.quickSizes.innerHTML=p.sizes.map((v,i)=>'<button class="'+(i===0?"active":"")+'" data-size="'+esc(v)+'" type="button">'+esc(v)+'</button>').join("");
+  els.quickColors.innerHTML=p.colors.map((v,i)=>'<button class="'+(i===0?"active":"")+'" data-color="'+esc(v)+'" type="button">'+esc(v)+'</button>').join("");
+  els.quickLayer.hidden=false;
+  requestAnimationFrame(()=>els.quickLayer.classList.add("is-open"));
+}
+function closeQuick(){els.quickLayer.classList.remove("is-open");setTimeout(()=>{if(!els.quickLayer.classList.contains("is-open"))els.quickLayer.hidden=true},220)}
+function openCheckout(){
+  if(!state.cart.length)return;
+  els.checkoutTotal.textContent=money(total());
+  els.checkoutCopy.textContent=cartCount()+" items are ready for checkout.";
+  els.checkoutLayer.hidden=false;
+  requestAnimationFrame(()=>els.checkoutLayer.classList.add("is-open"));
+}
+function closeCheckout(){els.checkoutLayer.classList.remove("is-open");setTimeout(()=>{if(!els.checkoutLayer.classList.contains("is-open"))els.checkoutLayer.hidden=true},220)}
+async function buyProduct(p,qty=1){
+  addToCart(p.id,qty,document.getElementById("quickViewBuy"),"buy");
+  openCheckout();
+  notify("Buy Now ready for "+p.title);
+}
+
+function shareProduct(p,type){
+  const url=location.origin+location.pathname+"#"+encodeURIComponent(p.id);
+  const text=p.title+" — TUBAL HUB Shop";
+  let target="";
+  if(type==="facebook")target="https://www.facebook.com/sharer/sharer.php?u="+encodeURIComponent(url);
+  if(type==="messenger")target="https://www.facebook.com/dialog/send?link="+encodeURIComponent(url);
+  if(type==="whatsapp")target="https://wa.me/?text="+encodeURIComponent(text+" "+url);
+  if(type==="x")target="https://twitter.com/intent/tweet?text="+encodeURIComponent(text)+"&url="+encodeURIComponent(url);
+  if(type==="copy"){navigator.clipboard?.writeText(url);notify("Product link copied");return}
+  if(target)window.open(target,"_blank","noopener,noreferrer,width=640,height=620");
+}
+
+function setThemeFromStorage(){
+  const theme=localStorage.getItem(THEME_KEY)||"midnight";
+  document.body.classList.remove("theme-midnight","theme-forest","theme-light");
+  document.body.classList.add("theme-"+theme);
+}
+setThemeFromStorage();
+window.addEventListener("tubalhubthemechange",e=>{
+  const t=e.detail?.theme||"midnight";
+  document.body.classList.remove("theme-midnight","theme-forest","theme-light");
+  document.body.classList.add("theme-"+t);
+});
+
+document.addEventListener("click",async e=>{
+  const collectionBtn=e.target.closest?.(".collection-tab");if(collectionBtn){state.collection=collectionBtn.dataset.collection;state.query="";els.search.value="";state.stockFilter="all";state.priceFilter="all";document.querySelectorAll(".filter-chip").forEach(b=>b.classList.remove("active"));document.querySelector('[data-stock-filter="all"]')?.classList.add("active");document.querySelectorAll("[data-price-filter]").forEach(b=>{if(b.dataset.priceFilter==="all")b.classList.add("active")});updateCollectionUI();return}
+  const add=e.target.closest?.("[data-add]");if(add){addToCart(add.dataset.add,1,add);return}
+  const wish=e.target.closest?.("[data-wishlist]");if(wish){toggleWishlist(wish.dataset.wishlist,wish);return}
+  const quick=e.target.closest?.("[data-quick]");if(quick){openQuick(quick.dataset.quick);return}
+  const minus=e.target.closest?.("[data-cart-minus]");if(minus){stepCart(minus.dataset.cartMinus,-1);return}
+  const plus=e.target.closest?.("[data-cart-plus]");if(plus){stepCart(plus.dataset.cartPlus,1);return}
+  const del=e.target.closest?.("[data-cart-delete]");if(del){removeCart(del.dataset.cartDelete);notify("Removed from cart");return}
+  const thumb=e.target.closest?.("[data-thumb]");if(thumb&&state.current){const imgs=galleryFor(state.current);const i=Number(thumb.dataset.thumb)||0;els.quickImage.src=imgs[i];els.quickThumbs.querySelectorAll("button").forEach(b=>b.classList.toggle("active",b===thumb));return}
+  const size=e.target.closest?.("[data-size]");if(size&&state.current){state.selectedSize=size.dataset.size;els.quickSizes.querySelectorAll("button").forEach(b=>b.classList.toggle("active",b===size));return}
+  const color=e.target.closest?.("[data-color]");if(color&&state.current){state.selectedColor=color.dataset.color;els.quickColors.querySelectorAll("button").forEach(b=>b.classList.toggle("active",b===color));return}
+  const share=e.target.closest?.("[data-share]");if(share&&state.current){shareProduct(state.current,share.dataset.share);return}
+  const stock=e.target.closest?.("[data-stock-filter]");if(stock){state.stockFilter=stock.dataset.stockFilter;document.querySelectorAll("[data-stock-filter]").forEach(b=>b.classList.toggle("active",b===stock));renderProducts();return}
+  const price=e.target.closest?.("[data-price-filter]");if(price){state.priceFilter=price.dataset.priceFilter;document.querySelectorAll("[data-price-filter]").forEach(b=>b.classList.toggle("active",b===price));renderProducts();return}
+});
+els.search.addEventListener("input",e=>{state.query=e.target.value;renderProducts()});
+els.filterBtn.addEventListener("click",()=>{state.filterOpen=!state.filterOpen;els.filterPanel.hidden=!state.filterOpen});
+document.querySelectorAll(".collection-tab").forEach(()=>{});
+els.cartBtn.addEventListener("click",openCart);
+document.getElementById("closeCart").addEventListener("click",closeCart);
+els.cartBackdrop.addEventListener("click",closeCart);
+document.getElementById("emptyShopNow").addEventListener("click",()=>{closeCart();shopNow()});
+document.getElementById("heroShopNow").addEventListener("click",shopNow);
+document.getElementById("quickViewClose").addEventListener("click",closeQuick);
+els.quickLayer.addEventListener("click",e=>{if(e.target===els.quickLayer)closeQuick()});
+document.getElementById("quickViewMinus").addEventListener("click",()=>{state.quickQty=Math.max(1,state.quickQty-1);els.quickQty.textContent=state.quickQty});
+document.getElementById("quickViewPlus").addEventListener("click",()=>{state.quickQty=Math.min(10,state.quickQty+1);els.quickQty.textContent=state.quickQty});
+document.getElementById("quickViewAdd").addEventListener("click",()=>{if(state.current)addToCart(state.current.id,state.quickQty,document.getElementById("quickViewAdd"))});
+document.getElementById("quickViewBuy").addEventListener("click",()=>{if(state.current)buyProduct(state.current,state.quickQty)});
+document.getElementById("checkoutBtn").addEventListener("click",openCheckout);
+document.getElementById("closeCheckout").addEventListener("click",closeCheckout);
+els.checkoutLayer.addEventListener("click",e=>{if(e.target===els.checkoutLayer)closeCheckout()});
+document.getElementById("finishCheckout").addEventListener("click",()=>{
+  const orderTotal=total();
+  burstAt(document.getElementById("finishCheckout"),12);
+  state.cart=[];saveCart();updateCartUI();closeCheckout();closeCart();notify("Mock order placed • "+money(orderTotal));
+});
+window.addEventListener("keydown",e=>{
+  if(e.key!=="Escape")return;
+  if(!els.quickLayer.hidden)closeQuick();
+  else if(!els.checkoutLayer.hidden)closeCheckout();
+  else if(els.cartDrawer.classList.contains("open"))closeCart();
+});
+
+loadCart();loadWishlist();updateCounts();updateCartUI();updateCollectionUI();
+setTimeout(()=>burstAt(document.getElementById("heroShopNow"),6),450);
