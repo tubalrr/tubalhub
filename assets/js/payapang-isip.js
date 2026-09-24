@@ -15,12 +15,6 @@ const TIPS=[
   {icon:"📖",title:"Write it down",text:"Put one honest thought on the page without judging it.",link:"Open journal"},
   {icon:"🤝",title:"Stay connected",text:"A trusted person can make a hard day feel a little lighter.",link:"Find support"}
 ];
-const TRACKS=[
-  {title:"5 min Calm Breathing",seconds:300,type:"soft"},
-  {title:"3 min Quiet Reset",seconds:180,type:"reset"},
-  {title:"7 min Evening Wind-down",seconds:420,type:"wind"}
-];
-
 const $=s=>document.querySelector(s);
 const $$=s=>document.querySelectorAll(s);
 const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
@@ -33,20 +27,12 @@ const state={
   entries:[],
   breathing:{running:false,phase:"Ready",count:0,timer:null},
   grounding:["","","","",""],
-  trackIndex:0,
-  playing:false,
-  audio:null,
-  audioGain:null,
-  startedAt:0,
-  elapsed:0,
-  playerTimer:null,
 };
 
 const els={
   moodGrid:$("#moodGrid"),streak:$("#moodStreak"),chart:$("#moodChart"),journal:$("#journalEntries"),journalInput:$("#journalInput"),
   breathOrbit:$("#breathOrbit"),breathPhase:$("#breathPhase"),breathCount:$("#breathCount"),breathStart:$("#startBreathing"),exerciseStart:$("#exerciseStart"),exerciseStatus:$("#exerciseStatus"),
-  grounding:$("#groundingRows"),groundingSave:$("#saveGrounding"),playerTitle:$("#playerTitle"),playerProgress:$("#playerProgress"),playerElapsed:$("#playerElapsed"),playerDuration:$("#playerDuration"),
-  playerBtn:$("#playerToggle"),playerTrack:$("#playerTrack"),visualizer:$("#visualizer"),toast:$("#piToast"),particles:$("#piParticles"),tipGrid:$("#tipsGrid")
+  grounding:$("#groundingRows"),groundingSave:$("#saveGrounding"),toast:$("#piToast"),particles:$("#piParticles"),tipGrid:$("#tipsGrid")
 };
 
 function burstAt(el,count=6){
@@ -161,62 +147,6 @@ function saveGrounding(){
   localStorage.setItem("payapang-grounding",JSON.stringify(values));burstAt(els.groundingSave,6);notify("Grounding notes saved");
 }
 
-let audioCtx=null,masterGain=null;
-function ensureAudio(){
-  if(audioCtx)return;
-  const C=window.AudioContext||window.webkitAudioContext;if(!C)return;
-  audioCtx=new C();masterGain=audioCtx.createGain();masterGain.gain.value=.035;masterGain.connect(audioCtx.destination);
-}
-function stopTone(){
-  if(state.audio){try{state.audio.osc.stop()}catch(_){}state.audio=null}
-}
-function playToneTrack(){
-  ensureAudio();if(!audioCtx)return;
-  stopTone();
-  const osc=audioCtx.createOscillator(),gain=audioCtx.createGain();
-  osc.type="sine";
-  const base=[196,174,220][state.trackIndex];
-  osc.frequency.setValueAtTime(base,audioCtx.currentTime);
-  gain.gain.setValueAtTime(0,audioCtx.currentTime);gain.gain.linearRampToValueAtTime(.14,audioCtx.currentTime+.45);
-  gain.gain.linearRampToValueAtTime(0,audioCtx.currentTime+2.5);
-  osc.connect(gain);gain.connect(masterGain);osc.start();
-  state.audio={osc};setTimeout(()=>{if(state.playing)playToneTrack()},2600);
-}
-function switchTrack(index){
-  state.trackIndex=(index+TRACKS.length)%TRACKS.length;const t=TRACKS[state.trackIndex];
-  els.playerTitle.textContent=t.title;els.playerDuration.textContent=fmtDuration(t.seconds);state.elapsed=0;updatePlayer();
-}
-function fmtDuration(s){return Math.floor(s/60)+":"+String(s%60).padStart(2,"0")}
-function updatePlayer(){
-  const t=TRACKS[state.trackIndex];els.playerElapsed.textContent=fmtDuration(Math.min(state.elapsed,t.seconds));els.playerDuration.textContent=fmtDuration(t.seconds);
-  els.playerProgress.style.width=(t.seconds?Math.min(100,(state.elapsed/t.seconds)*100):0)+"%";
-}
-function togglePlayer(){
-  state.playing=!state.playing;
-  if(state.playing){
-    ensureAudio();audioCtx?.resume();playToneTrack();els.visualizer.classList.add("active");els.playerBtn.textContent="❚❚";
-    state.startedAt=performance.now()-state.elapsed*1000;
-    clearInterval(state.playerTimer);state.playerTimer=setInterval(()=>{
-      state.elapsed=Math.floor((performance.now()-state.startedAt)/1000);
-      const t=TRACKS[state.trackIndex];
-      if(state.elapsed>=t.seconds){state.elapsed=0;switchTrack(state.trackIndex+1);playToneTrack()}
-      updatePlayer();
-    },250);
-  }else{
-    stopTone();els.visualizer.classList.remove("active");els.playerBtn.textContent="▶";clearInterval(state.playerTimer);
-  }
-}
-function bindPlayer(){
-  els.playerBtn.addEventListener("click",togglePlayer);
-  $(".player-volume")?.addEventListener("input",e=>{if(masterGain)masterGain.gain.value=.035*Number(e.target.value)/.35});
-  els.playerTrack.addEventListener("click",e=>{
-    const r=els.playerTrack.getBoundingClientRect(),pct=clamp((e.clientX-r.left)/r.width,0,1);
-    state.elapsed=Math.round(TRACKS[state.trackIndex].seconds*pct);updatePlayer();
-    if(state.playing)state.startedAt=performance.now()-state.elapsed*1000;
-  });
-  els.playerTitle.addEventListener("click",()=>{switchTrack(state.trackIndex+1);notify(TRACKS[state.trackIndex].title)});
-}
-
 function initThemes(){
   const sync=()=>{const t=localStorage.getItem("tubalhub-theme")||"forest";document.body.classList.remove("theme-midnight","theme-forest","theme-light");document.body.classList.add("theme-"+t)};
   sync();window.addEventListener("tubalhubthemechange",sync);
@@ -227,9 +157,9 @@ function bind(){
   els.journal.addEventListener("click",e=>{const edit=e.target.closest("[data-edit-entry]");if(edit)editEntry(edit.dataset.editEntry);const del=e.target.closest("[data-delete-entry]");if(del)deleteEntry(del.dataset.deleteEntry)});
   els.groundingSave.addEventListener("click",saveGrounding);
   $$(".tip-card a").forEach(a=>a.addEventListener("click",()=>notify("Open the "+a.textContent.replace(" →","").toLowerCase()+" section")));
-  bindBreathingButton();els.exerciseStart?.addEventListener("click",()=>{burstAt(els.exerciseStart,6);startBreathing();if(!state.breathing.running&&els.exerciseStatus)els.exerciseStatus.textContent="Ready when you are."});bindPlayer();
+  bindBreathingButton();els.exerciseStart?.addEventListener("click",()=>{burstAt(els.exerciseStart,6);startBreathing();if(!state.breathing.running&&els.exerciseStatus)els.exerciseStatus.textContent="Ready when you are."});
 }
 function init(){
-  state.entries=loadEntries();renderMood();renderEntries();renderTips();initGrounding();initThemes();switchTrack(0);bind();updatePlayer();
+  state.entries=loadEntries();renderMood();renderEntries();renderTips();initGrounding();initThemes();bind();
 }
 init();
