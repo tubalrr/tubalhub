@@ -33,34 +33,109 @@ body{background:radial-gradient(circle at 75% 0%,#17345d55,transparent 30%),radi
 <link rel="stylesheet" href="../assets/css/global-theme.css?v=20260922">
 <link rel="stylesheet" href="../assets/css/global-chat-premium.css?v=20260924-v6">
 <link rel="stylesheet" href="../assets/css/global-chat-emoji.css?v=20260924-v2">
+<link rel="stylesheet" href="../assets/css/global-chat-focus.css?v=20260924-v1">
 </head>
 <body>
-<header class="topbar"><a class="brand" href="../index.html"><img src="../tubal-hub-logo.png" loading="eager" decoding="async" fetchpriority="high" width="180" height="180" alt="TUBAL HUB"><div><strong>TUBAL HUB</strong><small>PLAY • CREATE • CONNECT</small></div></a><nav class="topnav"><a href="../index.html">⌂ Home</a><a href="games.html">🎮 Games</a><a href="videos.html">▶ Videos</a><a href="community.html">♟ Community</a><a class="active" href="chat.html">💬 Global Chat</a><a href="about.html">ⓘ About</a><a href="contact.html">✉ Contact</a></nav><div class="profile"><div><div class="profile-name" id="profileName">TUBAL HUB</div><div class="online" id="profileStatus">● Checking...</div></div><div class="avatar" id="profileAvatar">TH</div><span class="hamb">⌄</span></div></header>
-<div class="layout"><aside class="sidebar"><nav class="side"><a href="../index.html"><span class="ico">⌂</span>Home</a><a href="games.html"><span class="ico">🎮</span>Games</a><a href="videos.html"><span class="ico">▣</span>Videos</a><a href="live.html"><span class="ico">◉</span>Live Streams</a><a class="active" href="chat.html"><span class="ico">💬</span>Global Chat</a><a href="community.html"><span class="ico">♟</span>Community</a><a href="gallery.html"><span class="ico">▧</span>Gallery</a><a href="events.html"><span class="ico">▣</span>Events</a><a href="about.html"><span class="ico">ⓘ</span>About</a><a href="contact.html"><span class="ico">✉</span>Contact</a></nav><div class="quote">“Play Together<br>Grow Together” 🌿</div></aside>
-<main class="main">
-<section class="hero"><div><span class="kicker">COMMUNITY</span><h1>GLOBAL <em>CHAT</em></h1><p>Chat. Share. Meet. Game Together.</p><p style="font-style:italic;margin-top:7px">“Different Worlds, One Community.”</p></div><div class="hero-note">Good<br>Games<br>Good People<br>Brighter Tomorrow</div></section>
+<header class="topbar"><a class="brand" href="../index.html"><img src="../tubal-hub-logo.png" loading="eager" decoding="async" fetchpriority="high" width="180" height="180" alt="TUBAL HUB"><div><strong>TUBAL HUB</strong><small>PLAY • CREATE • CONNECT</small></div></a><nav class="topnav"><a href="../index.html">⌂ Home</a><a href="games.html">🎮 Games</a><a href="videos.html">▶ Videos</a><a href="community.html">♟ Community</a><a class="active" href="chat.html">💬 Global Chat</a><a href="about.html">ⓘ About</a><a href="contact.html">✉ Contact</a></nav><div class="profile"><div><div class="profile-name" id="profileName">TUBAL HUB</div><div class="online" id="profileStatus">● Checking...</div></div><div class="avatar" id="profileAvatar">TH</div><button type="button" class="mobile-rail-toggle topbar-rail-toggle" id="topOpenMembers" aria-label="Online members">☷</button><button type="button" class="mobile-rail-toggle topbar-rail-toggle" id="topOpenDMs" aria-label="Private chats">✉</button></div></header>
+<div class="layout chat-layout">
+<main class="main chat-main">
 <section id="chatLock" class="lock-wrap"><div class="lock-card"><div class="lock-icon">🔐</div><h2>Login Required</h2><p>Global Chat is available to registered TUBAL HUB members. Create an account or log in to join the conversation.</p><div class="lock-actions"><a class="login" href="login.html?returnTo=chat.html">Login</a><a class="signup" href="signup.html?returnTo=chat.html">Create Account</a></div></div></section>
-<section id="chatContent" class="chat-grid" aria-hidden="true" style="display:none"><div class="panel chat-panel"><div class="chat-head"><div class="chat-title"><div class="globe">🌐</div><div><h2>Global Chat</h2><p>Live messages from TUBAL HUB members</p></div></div><div class="count">♟ <span id="onlineCount">0</span> Online</div></div><div id="chatStatus" class="status-msg">Connecting to TUBAL HUB...</div><div id="moderationNotice" class="moderation-notice" role="alert" aria-live="assertive"></div><div class="messages" id="messages"><div class="empty-chat"><strong>No messages yet.</strong>Start the first conversation in Global Chat.</div></div><div id="replyingBar" class="replying"><span>Replying to <b id="replyingName"></b></span><button id="cancelReply" type="button">Cancel</button></div><form class="composer" id="chatForm"><div class="composer-tools"><button type="button" class="tool" id="imageBtn" title="Send image">▧</button><button type="button" class="tool" id="gifBtn" title="Send GIF file">GIF</button><button type="button" class="tool" id="emojiBtn" title="Emoji">☺</button></div><input id="messageInput" maxlength="500" placeholder="Type your message..." autocomplete="off"><button class="send" id="sendButton" type="submit">Send ➤</button><input id="imageInput" type="file" accept="image/png,image/jpeg,image/webp" hidden><input id="gifInput" type="file" accept="image/gif" hidden><div id="emojiPicker" class="emoji-picker" hidden role="dialog" aria-label="Emoji picker">
-  <div class="emoji-picker-head">
-    <div class="emoji-picker-brand"><strong>Emoji</strong><span class="emoji-picker-meta" id="emojiPickerMeta">Loading Unicode emoji…</span></div>
-    <button type="button" class="emoji-tone" id="emojiTone" title="Skin tone" aria-label="Skin tone">🖐️</button>
+
+<section id="chatContent" class="chat-grid chat-focus-grid" aria-hidden="true" style="display:none">
+  <aside class="chat-rail chat-left" id="chatLeftRail" aria-label="Online members">
+    <div class="chat-rail-head">
+      <div>
+        <span class="rail-kicker">COMMUNITY</span>
+        <h2>Online Members <span class="rail-count">(<span id="onlineMembers">0</span>)</span></h2>
+      </div>
+      <span class="live-pill"><i></i>Live</span>
+    </div>
+    <div id="presenceDebug" class="presence-debug">Presence: checking…</div>
+    <div class="rail-search"><span>⌕</span><input id="memberSearch" type="search" autocomplete="off" placeholder="Search members..." aria-label="Search members"></div>
+    <div id="memberList" class="member-list"><div class="empty-side">No members are online right now.</div></div>
+
+    <div class="rail-section channels">
+      <div class="rail-section-head"><h3>Chat Channels</h3></div>
+      <div class="channel-row active"><span># &nbsp;global-chat</span><span id="globalMessageCount">0</span></div>
+    </div>
+
+    <div class="rail-section rules">
+      <div class="rail-section-head"><h3>🛡 Chat Rules</h3></div>
+      <ul>
+        <li>Be respectful to everyone</li>
+        <li>No spamming or excessive caps</li>
+        <li>No hate speech or toxic behavior</li>
+        <li>Keep the chat friendly and fun</li>
+      </ul>
+    </div>
+    <button type="button" class="mobile-rail-close" id="closeLeftRail">Close</button>
+  </aside>
+
+  <div class="chat-center panel chat-panel">
+    <div class="chat-focus-head">
+      <div class="chat-title">
+        <div class="globe">🌐</div>
+        <div><h1>Global Chat</h1><p>Live messages from TUBAL HUB members</p></div>
+      </div>
+      <div class="center-actions">
+        <span class="count"><i></i><span id="onlineCount">0</span> Online</span>
+        <button type="button" class="mobile-rail-toggle" id="openMembers" aria-label="Open online members">☰</button>
+        <button type="button" class="mobile-rail-toggle" id="openDMs" aria-label="Open direct messages">✉</button>
+      </div>
+    </div>
+    <div id="chatStatus" class="status-msg chat-connect"><span class="status-dot"></span>Connecting to TUBAL HUB...</div>
+    <div id="moderationNotice" class="moderation-notice" role="alert" aria-live="assertive"></div>
+    <div class="messages chat-messages" id="messages"><div class="empty-chat"><strong>No messages yet.</strong>Start the first conversation in Global Chat.</div></div>
+    <div id="replyingBar" class="replying"><span>Replying to <b id="replyingName"></b></span><button id="cancelReply" type="button">Cancel</button></div>
+    <form class="composer chat-composer" id="chatForm">
+      <div class="composer-tools"><button type="button" class="tool" id="imageBtn" title="Send image">▧</button><button type="button" class="tool" id="gifBtn" title="Send GIF file">GIF</button><button type="button" class="tool" id="emojiBtn" title="Emoji">☺</button></div>
+      <input id="messageInput" maxlength="500" placeholder="Type your message..." autocomplete="off">
+      <button class="send" id="sendButton" type="submit">Send ➤</button>
+      <input id="imageInput" type="file" accept="image/png,image/jpeg,image/webp" hidden>
+      <input id="gifInput" type="file" accept="image/gif" hidden>
+      <div id="emojiPicker" class="emoji-picker" hidden role="dialog" aria-label="Emoji picker">
+        <div class="emoji-picker-head">
+          <div class="emoji-picker-brand"><strong>Emoji</strong><span class="emoji-picker-meta" id="emojiPickerMeta">Loading Unicode emoji…</span></div>
+          <button type="button" class="emoji-tone" id="emojiTone" title="Skin tone" aria-label="Skin tone">🖐️</button>
+        </div>
+        <div class="emoji-search-wrap"><input id="emojiSearch" class="emoji-search" type="search" autocomplete="off" placeholder="Search emoji..." aria-label="Search emoji"></div>
+        <div class="emoji-tabs" id="emojiTabs" role="tablist" aria-label="Emoji categories"></div>
+        <div class="emoji-stage">
+          <div class="emoji-section-title" id="emojiSectionTitle">Smileys &amp; Emotion</div>
+          <div class="emoji-grid" id="emojiGrid" role="grid" aria-label="Emoji"></div>
+        </div>
+        <div class="emoji-tone-menu" id="emojiToneMenu" hidden></div>
+        <div class="emoji-variation" id="emojiVariation" hidden>
+          <div class="emoji-variation-label" id="emojiVariationLabel">Skin tones &amp; variations</div>
+          <div class="emoji-variation-grid" id="emojiVariationGrid"></div>
+        </div>
+      </div>
+    </form>
   </div>
-  <div class="emoji-search-wrap"><input id="emojiSearch" class="emoji-search" type="search" autocomplete="off" placeholder="Search emoji..." aria-label="Search emoji"></div>
-  <div class="emoji-tabs" id="emojiTabs" role="tablist" aria-label="Emoji categories"></div>
-  <div class="emoji-stage">
-    <div class="emoji-section-title" id="emojiSectionTitle">Smileys &amp; Emotion</div>
-    <div class="emoji-grid" id="emojiGrid" role="grid" aria-label="Emoji"></div>
-  </div>
-  <div class="emoji-tone-menu" id="emojiToneMenu" hidden></div>
-  <div class="emoji-variation" id="emojiVariation" hidden>
-    <div class="emoji-variation-label" id="emojiVariationLabel">Skin tones &amp; variations</div>
-    <div class="emoji-variation-grid" id="emojiVariationGrid"></div>
-  </div>
-</div></form></div>
-<aside class="right"><div class="panel"><div class="panel-title"><h3>Online Members (<span id="onlineMembers">0</span>)</h3><span class="view">Live</span></div><div id="presenceDebug" style="font-size:11px;opacity:.7;padding:6px 0">Presence: checking…</div><div id="memberList"><div class="empty-side">No members are online right now.</div></div></div><div class="panel channels"><div class="panel-title"><h3>💬 Chat Channels</h3></div><div class="active"><span># &nbsp; global-chat</span><span id="globalMessageCount">0</span></div></div><div class="panel rules"><div class="panel-title"><h3>🛡 Chat Rules</h3></div><ul><li>Be respectful to everyone</li><li>No spamming or excessive caps</li><li>No hate speech or toxic behavior</li><li>Keep the chat friendly and fun</li></ul></div></aside></section>
-<section id="privateChatPanel" class="private-chat-panel" hidden><div class="private-chat-head"><button type="button" id="closePrivateChat" class="private-back">←</button><div id="privateChatAvatar" class="private-avatar">M</div><div class="private-person"><b id="privateChatName">Member</b><span id="privateChatStatus">● Online</span></div><button type="button" id="privateVideoCall" class="private-call" title="Video call">📹</button></div><div id="privateMessages" class="private-messages"><div class="private-empty">Select an online member to start a private conversation.</div></div><form id="privateForm" class="private-composer"><input id="privateInput" maxlength="500" placeholder="Message..." autocomplete="off"><button type="submit">Send ➤</button></form></section><footer class="footer"><div><b>TUBAL HUB</b><span>YOUR HUB. YOUR COMMUNITY.</span></div><div>© 2026 TUBAL HUB. All rights reserved. &nbsp; | &nbsp; Play • Create • Connect</div><div class="social">● ● ● ●</div></footer>
-</main></div>
-<script src="../assets/js/global-chat-emoji.js?v=20260924-v2"></script>
+
+  <aside class="chat-rail chat-right" id="chatRightRail" aria-label="Private chats">
+    <div class="dm-head">
+      <div>
+        <span class="rail-kicker">DIRECT</span>
+        <h2>Private Chats</h2>
+      </div>
+      <button type="button" class="new-chat-btn" id="newDmButton">＋ New chat</button>
+    </div>
+    <div class="rail-search"><span>⌕</span><input id="dmSearch" type="search" autocomplete="off" placeholder="Search private chats..." aria-label="Search private chats"></div>
+    <div id="dmList" class="dm-list"><div class="dm-empty"><strong>No private chats yet.</strong><span>Start a private conversation with an online member.</span></div></div>
+
+    <div class="invite-card">
+      <div class="invite-icon">✦</div>
+      <div><strong>Invite friends</strong><span>Share TUBAL HUB with people you play with.</span></div>
+      <button type="button" id="inviteFriendsBtn">Invite</button>
+    </div>
+    <button type="button" class="mobile-rail-close" id="closeRightRail">Close</button>
+  </aside>
+
+  <div class="chat-drawer-backdrop" id="chatDrawerBackdrop" hidden></div>
+</section>
+
+<section id="privateChatPanel" class="private-chat-panel" hidden><div class="private-chat-head"><button type="button" id="closePrivateChat" class="private-back">←</button><div id="privateChatAvatar" class="private-avatar">M</div><div class="private-person"><b id="privateChatName">Member</b><span id="privateChatStatus">● Online</span></div><button type="button" id="privateVideoCall" class="private-call" title="Video call">📹</button></div><div id="privateMessages" class="private-messages"><div class="private-empty">Select an online member to start a private conversation.</div></div><form id="privateForm" class="private-composer"><input id="privateInput" maxlength="500" placeholder="Message..." autocomplete="off"><button type="submit">Send ➤</button></form></section><footer class="footer chat-footer"><div><b>TUBAL HUB</b><span>YOUR HUB. YOUR COMMUNITY.</span></div><div>© 2026 TUBAL HUB. All rights reserved. &nbsp; | &nbsp; Play • Create • Connect</div><div class="social">● ● ● ●</div></main></div>
 <script type="module">
 import { app, auth } from "../assets/js/firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
