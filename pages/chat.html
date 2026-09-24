@@ -393,49 +393,80 @@ function dmPreview(d){
 }
 function renderDmList(list){
   const box=document.getElementById('dmList');
-  const query=(document.getElementById('dmSearch')?.value||'').trim().toLowerCase();
-  const filtered=list.filter(x=>(x.displayName||'').toLowerCase().includes(query)||(dmPreview(x.data)||'').toLowerCase().includes(query));
+  const queryText=(document.getElementById('dmSearch')?.value||'').trim().toLowerCase();
+  const filtered=list.filter(x=>(x.displayName||'').toLowerCase().includes(queryText)||(dmPreview(x.data)||'').toLowerCase().includes(queryText));
   box.innerHTML='';
   if(!filtered.length){
     const empty=document.createElement('div');
     empty.className='dm-empty';
     const strong=document.createElement('strong');
-    strong.textContent=query?'No matching private chats.':'No private chats yet.';
+    strong.textContent=queryText?'No matching private chats.':'No private chats yet.';
     const span=document.createElement('span');
-    span.textContent=query?'Try another member name or message.':'Start a private conversation with an online member.';
-    empty.append(strong,span);
-    box.appendChild(empty);
-    return;
+    span.textContent=queryText?'Try another member name or message.':'Start a private conversation with an online member.';
+    empty.append(strong,span);box.appendChild(empty);return;
   }
-  filtered.forEach((x)=>{
+
+  const openDm=(row,x)=>{
+    if(!x||!x.uid)return;
+    privateTarget={uid:x.uid,displayName:x.displayName||'Member',photoURL:x.photoURL||''};
+    openPrivateChat(privateTarget);
+    box.querySelectorAll('.dm-row.active').forEach(r=>r.classList.remove('active'));
+    row.classList.add('active');
+  };
+
+  filtered.forEach(x=>{
     const row=document.createElement('div');
     row.className='dm-row'+((privateTarget?.uid===x.uid)?' active':'')+(document.querySelector('.member[data-uid="'+CSS.escape(String(x.uid))+'"]')?' online':'');
     row.dataset.uid=x.uid;
+    row.setAttribute('role','button');
+    row.setAttribute('tabindex','0');
+    row.setAttribute('aria-label','Open private chat with '+(x.displayName||'Member'));
+
     const avatar=document.createElement('div');
     avatar.className='dm-avatar';
-    if(x.photoURL){
-      const img=document.createElement('img');img.src=x.photoURL;img.alt='';avatar.appendChild(img);
-    }else avatar.textContent=initials(x.displayName||'Member');
+    if(x.photoURL){const img=document.createElement('img');img.src=x.photoURL;img.alt='';avatar.appendChild(img)}
+    else avatar.textContent=initials(x.displayName||'Member');
+
     const copy=document.createElement('div');copy.className='dm-copy';
-    const name=document.createElement('strong');name.textContent=x.displayName||'Member';
+    const name=document.createElement('button');
+    name.type='button';name.className='dm-name';
+    name.textContent=x.displayName||'Member';
+    name.setAttribute('aria-label','Open chat with '+(x.displayName||'Member'));
     const preview=document.createElement('span');preview.textContent=dmPreview(x.data)||'Private conversation';
     copy.append(name,preview);
+
     const side=document.createElement('div');side.className='dm-side';
-    const time=document.createElement('span');time.className='dm-time';time.textContent=dmTime(x.data.createdAt);
-    side.appendChild(time);
+    const time=document.createElement('span');time.className='dm-time';time.textContent=dmTime(x.data.createdAt);side.appendChild(time);
     const unread=Number(x.data.unreadCount);
-    if(Number.isFinite(unread)&&unread>0){
-      const pill=document.createElement('span');pill.className='unread-pill';pill.textContent=unread>99?'99+':String(unread);side.appendChild(pill);
-    }
+    if(Number.isFinite(unread)&&unread>0){const pill=document.createElement('span');pill.className='unread-pill';pill.textContent=unread>99?'99+':unread;side.appendChild(pill)}
+
     row.append(avatar,copy,side);
-    row.addEventListener('click',()=>{
-      openPrivateChat({uid:x.uid,displayName:x.displayName||'Member',photoURL:x.photoURL||''});
-      box.querySelectorAll('.dm-row').forEach(r=>r.classList.remove('active'));
-      row.classList.add('active');
+
+    let pointerOpened=false;
+    const openFromPointer=e=>{
+      if(e.pointerType==='mouse'&&e.button!==0)return;
+      pointerOpened=true;
+      e.preventDefault();e.stopPropagation();
+      openDm(row,x);
+      requestAnimationFrame(()=>{pointerOpened=false});
+    };
+    row.addEventListener('pointerdown',openFromPointer,{passive:false});
+    row.addEventListener('click',e=>{
+      if(pointerOpened)return;
+      if(e.target.closest('.dm-name'))return;
+      openDm(row,x);
     });
+    row.addEventListener('keydown',e=>{
+      if(e.key==='Enter'||e.key===' '){e.preventDefault();openDm(row,x)}
+    });
+    name.addEventListener('pointerdown',openFromPointer,{passive:false});
+    name.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();openDm(row,x)});
+    avatar.addEventListener('pointerdown',openFromPointer,{passive:false});
+
     box.appendChild(row);
   });
 }
+
 function refreshDmOnlineStates(){
   document.querySelectorAll('.dm-row').forEach(row=>{
     row.classList.toggle('online',!!document.querySelector('.member[data-uid="'+CSS.escape(row.dataset.uid||'')+'"]'));
