@@ -14,10 +14,10 @@ const games=[
 {id:"lol",name:"League of Legends",short:"LOL",logo:LOGO_BASE+"League_of_Legends.png",cover:"https://images.unsplash.com/photo-1603481546238-487240415921?auto=format&fit=crop&w=1200&q=88",genre:"MOBA",dev:"Riot Games",officialUrl:"https://www.leagueoflegends.com",description:"Classic 5v5 MOBA strategy with champions, objectives, and ranked competition."}
 ];
 
-const state={genre:"All",query:"",favorites:new Set(),featuredId:"mlbb",liveMembers:0};
+const state={genre:"All",query:"",favorites:new Set(),featuredId:"mlbb",liveMembers:0,featuredTimer:null,featuredBusy:false};
 const els={
   grid:document.getElementById("gamesGrid"),filters:document.getElementById("genreFilters"),search:document.getElementById("gameSearch"),
-  count:document.getElementById("gameCount"),empty:document.getElementById("gameEmpty"),featured:document.getElementById("featuredGame"),
+  count:document.getElementById("gameCount"),empty:document.getElementById("gameEmpty"),featured:document.getElementById("featuredGame"),featuredStage:document.getElementById("featuredStage"),featuredPrev:document.getElementById("featuredPrev"),featuredNext:document.getElementById("featuredNext"),featuredDots:document.getElementById("featuredDots"),
   toast:document.getElementById("ctrlToast"),particles:document.getElementById("ctrlParticles")
 };
 
@@ -107,11 +107,43 @@ function wireSpotlights(){
     },{passive:true})
   })
 }
+function featuredIndex(){return Math.max(0,games.findIndex(x=>x.id===state.featuredId))}
+function renderFeaturedDots(){
+  if(!els.featuredDots)return;
+  els.featuredDots.innerHTML=games.map((g,i)=>'<button class="'+(i===featuredIndex()?"active":"")+'" data-feature-dot="'+i+'" type="button" aria-label="Show '+esc(g.name)+'"></button>').join("");
+}
 function renderFeatured(){
   const g=games.find(x=>x.id===state.featuredId)||games[0];
   els.featured.innerHTML='<div class="featured-cover"><img src="'+esc(g.cover)+'" alt="'+esc(g.name)+' featured cover"></div><div class="featured-copy"><img class="feature-logo" src="'+esc(g.logo)+'" alt="'+esc(g.name)+' official logo"><div class="featured-live"><span class="mini-online-dot"></span> TUBAL HUB LIVE • <strong id="featuredLiveCount">…</strong> MEMBERS</div><h3>'+esc(g.name)+'</h3><p class="featured-desc">'+esc(g.description)+'</p><div class="featured-members" aria-live="polite"><span id="featuredMemberCopy">Checking live members…</span></div><div class="featured-actions"><button class="join-party" data-featured-play="'+esc(g.id)+'" type="button">Join Party →</button><button class="watch-stream" data-featured-stream="'+esc(g.id)+'" type="button">Watch Stream</button></div></div>';
+  renderFeaturedDots();
   wireSpotlights();
+  const copy=document.getElementById("featuredMemberCopy");
+  const live=document.getElementById("featuredLiveCount");
+  if(copy&&state.liveMembers>=0)copy.textContent=state.liveMembers===1?"1 member is online now.":state.liveMembers+" members are online now.";
+  if(live&&state.liveMembers>=0)live.textContent=String(state.liveMembers);
 }
+function slideFeatured(direction=1){
+  if(state.featuredBusy)return;
+  state.featuredBusy=true;
+  const current=els.featured;
+  current.classList.remove("slide-next","slide-prev","slide-enter-next","slide-enter-prev");
+  current.classList.add(direction>0?"slide-leave-next":"slide-leave-prev");
+  setTimeout(()=>{
+    const index=featuredIndex();
+    state.featuredId=games[(index+direction+games.length)%games.length].id;
+    renderFeatured();
+    els.featured.classList.add(direction>0?"slide-enter-next":"slide-enter-prev");
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      els.featured.classList.remove("slide-enter-next","slide-enter-prev");
+      state.featuredBusy=false;
+    }));
+  },220);
+}
+function startFeaturedAuto(){
+  clearInterval(state.featuredTimer);
+  state.featuredTimer=setInterval(()=>slideFeatured(1),6500);
+}
+function stopFeaturedAuto(){clearInterval(state.featuredTimer);state.featuredTimer=null}
 function playGame(g,button){
   burstAt(button,6);button.classList.remove("is-pop");void button.offsetWidth;button.classList.add("is-pop");
   notify("Opening "+g.name+" official website…");window.open(g.officialUrl,"_blank","noopener,noreferrer")
@@ -128,6 +160,24 @@ els.filters.addEventListener("click",e=>{
   const b=e.target.closest("[data-genre]");if(!b)return;state.genre=b.dataset.genre;renderFilters();renderGames()
 });
 els.search.addEventListener("input",debounce(()=>{state.query=els.search.value;renderGames()},200));
+document.getElementById("featuredPrev")?.addEventListener("click",()=>{stopFeaturedAuto();slideFeatured(-1);startFeaturedAuto()});
+document.getElementById("featuredNext")?.addEventListener("click",()=>{stopFeaturedAuto();slideFeatured(1);startFeaturedAuto()});
+els.featuredDots?.addEventListener("click",e=>{
+  const dot=e.target.closest?.("[data-feature-dot]");
+  if(!dot)return;
+  stopFeaturedAuto();
+  const target=Number(dot.dataset.featureDot);
+  const current=featuredIndex();
+  if(target===current){startFeaturedAuto();return}
+  const direction=((target-current+games.length)%games.length)<=games.length/2?1:-1;
+  const distance=direction>0?(target-current+games.length)%games.length:(current-target+games.length)%games.length;
+  let steps=0;
+  const tick=()=>{if(steps>=distance){startFeaturedAuto();return}steps++;slideFeatured(direction);setTimeout(tick,270)};
+  tick();
+});
+els.featuredStage?.addEventListener("mouseenter",stopFeaturedAuto);
+els.featuredStage?.addEventListener("mouseleave",startFeaturedAuto);
+
 document.addEventListener("click",e=>{
   const fav=e.target.closest?.("[data-favorite]");if(fav){const id=fav.dataset.favorite;if(state.favorites.has(id))state.favorites.delete(id);else state.favorites.add(id);saveFavs();const active=state.favorites.has(id);fav.classList.toggle("active",active);fav.textContent=active?"♥":"♡";burstAt(fav,6);notify(active?"Added to favorites":"Removed from favorites");return}
   const play=e.target.closest?.("[data-play]");if(play){const g=games.find(x=>x.id===play.dataset.play);if(g)playGame(g,play);return}
@@ -140,7 +190,7 @@ document.getElementById("playNowBtn")?.addEventListener("click",()=>{
   const g=games.find(x=>x.id===state.featuredId)||games[0];const b=document.getElementById("playNowBtn");playGame(g,b);
 });
 
-readFavs();const sg=document.getElementById("statGameCount");if(sg)sg.textContent=String(games.length);const sn=document.getElementById("statGenreCount");if(sn)sn.textContent=String(new Set(games.map(g=>g.genre)).size);const so=document.getElementById("statOfficialCount");if(so)so.textContent=String(games.filter(g=>g.officialUrl).length);renderFilters();renderFeatured();initRealPresence();
+readFavs();const sg=document.getElementById("statGameCount");if(sg)sg.textContent=String(games.length);const sn=document.getElementById("statGenreCount");if(sn)sn.textContent=String(new Set(games.map(g=>g.genre)).size);const so=document.getElementById("statOfficialCount");if(so)so.textContent=String(games.filter(g=>g.officialUrl).length);renderFilters();renderFeatured();initRealPresence();startFeaturedAuto();
 els.grid.innerHTML=Array.from({length:8},(_,i)=>'<div class="game-card" style="--stagger:'+(i*.06)+'s"><div class="game-cover"><span class="logo-skeleton" style="inset:0"></span></div><div class="game-body"><div class="game-body-top"><span class="game-mini-logo"><span class="logo-skeleton"></span></span><div class="game-meta"><div style="height:18px;width:68%;border-radius:7px;background:rgba(255,255,255,.06)"></div><div style="height:9px;width:35%;margin-top:8px;border-radius:5px;background:rgba(255,255,255,.04)"></div></div></div><div style="height:10px;width:92%;margin-top:15px;border-radius:5px;background:rgba(255,255,255,.04)"></div><div style="height:10px;width:68%;margin-top:7px;border-radius:5px;background:rgba(255,255,255,.04)"></div></div></div>').join("");
 setTimeout(renderGames,650);
 
