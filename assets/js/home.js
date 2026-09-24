@@ -1,7 +1,7 @@
 import { app, auth } from "./firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 import {
-  getFirestore, collection, query, orderBy, limit, getDocs
+  getFirestore, collection, query, orderBy, limit, getDocs, onSnapshot
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
 const db = getFirestore(app);
@@ -16,6 +16,10 @@ const MUSIC_DB = "tubalhub-ai-music";
 const MUSIC_STORE = "tracks";
 const LIKES_KEY = "tubalhub_real_likes";
 const PLAYS_KEY = "tubalhub_real_plays";
+let livePresenceUnsubscribe=null;
+let livePresenceDocs=[];
+let liveStatsTimer=null;
+
 const state = {
   heroIndex:0,
   selectedMusic:null,
@@ -998,7 +1002,23 @@ async function bentoReadMusicDb(name){
 async function bentoMusicRows(){
   return getRealMusic();
 }
+function countFreshPresence(){
+  const now=Date.now();
+  const ONLINE_WINDOW_MS=45000;
+  const online=new Set();
+  livePresenceDocs.forEach(row=>{
+    const x=row?.data||{};
+    const lastSeenMs=typeof x.lastSeen?.toMillis==="function"
+      ? x.lastSeen.toMillis()
+      : Number.isFinite(Number(x.lastSeen)) ? Number(x.lastSeen) : 0;
+    if(x.online===true && lastSeenMs>0 && (now-lastSeenMs)<=ONLINE_WINDOW_MS){
+      online.add(row.id||x.uid);
+    }
+  });
+  return online.size;
+}
 async function bentoOnlineCount(){
+  if(livePresenceDocs.length)return countFreshPresence();
   try{
     const snap=await getDocs(query(collection(db,"presence"),limit(500)));
     const now=Date.now();
@@ -1015,6 +1035,31 @@ async function bentoOnlineCount(){
     });
     return online.size;
   }catch(_){return null}
+}
+function renderLiveOnlineCount(){
+  const count=countFreshPresence();
+  const el=$("#bentoOnlineUsers");
+  if(el)el.textContent=String(count);
+  const live=$("#bentoSystemNote");
+  if(live){
+    const now=new Date();
+    const stamp=now.toLocaleTimeString("en-PH",{hour:"numeric",minute:"2-digit",second:"2-digit"});
+    live.textContent="LIVE • Firebase presence • Updated "+stamp;
+  }
+}
+function startLivePresence(){
+  if(livePresenceUnsubscribe)return;
+  const presenceQuery=query(collection(db,"presence"),limit(500));
+  livePresenceUnsubscribe=onSnapshot(presenceQuery,snap=>{
+    livePresenceDocs=snap.docs.map(docSnap=>({id:docSnap.id,data:docSnap.data()||{}}));
+    renderLiveOnlineCount();
+  },error=>{
+    console.warn("[TUBAL HUB live presence]",error);
+    livePresenceDocs=[];
+    const live=$("#bentoSystemNote");
+    if(live)live.textContent="LIVE • Presence unavailable";
+  });
+  renderLiveOnlineCount();
 }
 function bentoJournalItems(){
   return getRealJournalViews().slice(0,3);
@@ -1105,6 +1150,12 @@ function initBento(){
   const refresh=()=>renderRealData().catch(e=>console.warn("[TUBAL HUB real data]",e));
   refresh();
   loadBentoVersion();
+  startLivePresence();
+  clearInterval(liveStatsTimer);
+  liveStatsTimer=setInterval(()=>{
+    renderLiveOnlineCount();
+    refresh();
+  },5000);
   window.addEventListener("tubalhub-real-data-update",refresh);
   window.addEventListener("storage",event=>{
     const key=event.key||"";
@@ -1141,7 +1192,12 @@ function init(){
     });
   }
 
-  addEventListener("beforeunload",cleanup);
+  addEventListener("beforeunload",()=>{
+    clearInterval(liveStatsTimer);
+    livePresenceUnsubscribe?.();
+    livePresenceUnsubscribe=null;
+    cleanup();
+  });
   runRealDataAudit().catch(()=>{});
 
   document.addEventListener("click",event=>{
