@@ -231,6 +231,41 @@
         <div id="bentoFeedsList" class="bento-feed-scroll bento-feeds-list" aria-live="polite"></div>
       </section>
 
+      <section id="tubalFeedsSection" class="tubal-feeds-section" aria-labelledby="tubalFeedsTitle">
+        <div class="tubal-feeds-main">
+          <div class="tubal-feeds-header">
+            <div>
+              <span class="tubal-feeds-kicker"><span class="tubal-feeds-live-dot" aria-hidden="true"></span> LIVE COMMUNITY</span>
+              <h2 id="tubalFeedsTitle">📱 Community Feed</h2>
+              <p>Real posts saved from TUBAL HUB Feeds.</p>
+            </div>
+            <div class="tubal-feeds-header-actions">
+              <span id="feedsCount" class="tubal-feeds-count">0 posts real</span>
+              <a class="tubal-feeds-open-btn" href="pages/feeds.html">Open Feeds</a>
+            </div>
+          </div>
+          <div id="feedsInsideTrack" class="feeds-inside-track" aria-live="polite" tabindex="0"></div>
+        </div>
+
+        <aside class="tubal-feeds-quick-post glass" aria-labelledby="quickPostTitle">
+          <div class="quick-post-head">
+            <div>
+              <span class="tubal-feeds-kicker">QUICK POST</span>
+              <h3 id="quickPostTitle">Share something real</h3>
+            </div>
+            <span aria-hidden="true">✦</span>
+          </div>
+          <form id="tubalQuickFeedForm">
+            <label for="tubalQuickFeedText">Your post</label>
+            <textarea id="tubalQuickFeedText" name="feedText" maxlength="5000" placeholder="Isulat ang totoong post..." required></textarea>
+            <label class="quick-post-file" for="tubalQuickFeedImage">Add image <span id="tubalQuickFeedFileName">optional</span></label>
+            <input id="tubalQuickFeedImage" name="feedImage" type="file" accept="image/*">
+            <button type="submit">Save real post</button>
+            <small>Saved only in this browser using <code>tubalhub_feeds</code>.</small>
+          </form>
+        </aside>
+      </section>
+
       <section class="bento-card bento-games" aria-labelledby="bentoGamesTitle">
         <div class="bento-games-atmosphere" aria-hidden="true"></div>
         <div class="bento-section-head">
