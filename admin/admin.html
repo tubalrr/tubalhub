@@ -7,6 +7,7 @@
 <main class="dashboard"><header class="topbar"><div><div class="crumb">TUBAL HUB / ADMIN</div><h1>Control Center</h1></div><div class="top-actions"><span id="adminEmail"></span><button id="logout">Sign Out</button></div></header>
 <section class="welcome" id="dashboard"><div><small>WELCOME BACK, ADMIN</small><h2>Control your <em>hub.</em></h2><p>Manage content, members and community activity from one protected panel.</p></div><div class="scan"><span></span><b>SECURE PANEL</b><small>FIREBASE AUTH</small></div></section>
 <section class="stats"><div class="stat"><span>NEWS</span><strong id="newsCount">0</strong><b>Firestore items</b></div><div class="stat"><span>ANNOUNCEMENTS</span><strong id="annCount">0</strong><b>Firestore items</b></div><div class="stat"><span>MEMBERS</span><strong id="memberCount">0</strong><b>Registered users</b></div><div class="stat"><span>CHAT</span><strong id="chatCount">0</strong><b>Recent messages</b></div></section>
+<section class="panel hub-distribution-note"><div class="panel-head"><div><small>CONTENT DISTRIBUTION</small><h2>One Publish → Multiple Hub Surfaces</h2></div><span>HUB POSTS</span></div><p>New content published from Admin is mirrored into the shared hubPosts stream. Feeds receives every published item; News, Shop, Games and other sections receive items matching their content type.</p></section>
 
 <section class="panel" id="facebookVideosPanel">
   <div class="panel-head"><div><small>SOCIAL VIDEO CONTROL</small><h2>Facebook Videos</h2></div><span>ADMIN ONLY</span></div>
@@ -29,10 +30,31 @@
 <script type="module">
 import {auth} from "../assets/js/firebase-config.js";
 import {onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
-import {getFirestore,collection,getDocs,addDoc,deleteDoc,doc,query,orderBy,limit,serverTimestamp,updateDoc,Timestamp} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+import {getFirestore,collection,getDocs,addDoc,deleteDoc,doc,query,orderBy,limit,serverTimestamp,updateDoc,Timestamp,writeBatch} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 const ADMIN_EMAIL="tubalrr@gmail.com",db=getFirestore(),$=id=>document.getElementById(id);
 let news=[],anns=[],members=[],chats=[],fbVideos=[],shopProducts=[];
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
+function mirrorHubPost(batch,sourceRef,data){
+  batch.set(doc(db,"hubPosts",sourceRef.id),{
+    contentType:data.contentType||"post",
+    title:String(data.title||"").slice(0,240),
+    text:String(data.text||"").slice(0,4000),
+    imageUrl:String(data.imageUrl||"").slice(0,3000),
+    mediaUrl:String(data.mediaUrl||"").slice(0,3000),
+    productUrl:String(data.productUrl||"").slice(0,3000),
+    category:String(data.category||"").slice(0,80),
+    price:String(data.price??"").slice(0,100),
+    stock:String(data.stock??"").slice(0,80),
+    authorName:String(data.authorName||"TUBAL HUB").slice(0,120),
+    authorPhotoURL:String(data.authorPhotoURL||"").slice(0,3000),
+    createdBy:auth.currentUser.uid,
+    sourceCollection:String(data.sourceCollection||"admin").slice(0,80),
+    sourceId:sourceRef.id,
+    destinations:Array.isArray(data.destinations)?data.destinations.slice(0,10):["feeds"],
+    status:"published",
+    createdAt:serverTimestamp()
+  });
+}
 function toast(m){$("toast").textContent=m;$("toast").classList.add("show");setTimeout(()=>$("toast").classList.remove("show"),2600)}
 function render(){
  $("newsCount").textContent=news.length;$("annCount").textContent=anns.length;$("memberCount").textContent=members.length;$("chatCount").textContent=chats.length;
@@ -56,9 +78,51 @@ async function load(){
   news=n.docs.map(d=>({id:d.id,...d.data()}));anns=a.docs.map(d=>({id:d.id,...d.data()}));members=u.docs.map(d=>({id:d.id,...d.data()}));chats=c.docs.map(d=>({id:d.id,...d.data()}));fbVideos=v.docs.map(d=>({id:d.id,...d.data()}));shopProducts=p.docs.map(d=>({id:d.id,...d.data()}));render();
  }catch(e){toast("Firestore error: "+e.message);render()}
 }
-$("addShopProduct").onclick=async()=>{const name=$("spName").value.trim(),category=$("spCategory").value,price=$("spPrice").value.trim()||"Free",icon=$("spIcon").value.trim()||"◈",badge=$("spBadge").value.trim(),imageUrl=$("spImage").value.trim(),productUrl=$("spUrl").value.trim(),description=$("spDescription").value.trim();if(!name||!description)return toast("Enter product name and description.");try{await addDoc(collection(db,"products"),{name,category,price,icon,badge,imageUrl,productUrl,description,createdAt:serverTimestamp(),createdBy:auth.currentUser.uid});["spName","spPrice","spIcon","spBadge","spImage","spUrl","spDescription"].forEach(id=>$(id).value="");await load();toast("Shop product added.")}catch(e){toast(e.message)}};
-$("addNews").onclick=async()=>{const title=$("nt").value.trim(),text=$("nx").value.trim(),date=$("nd").value.trim()||"Latest",category=$("nc").value,articleUrl=$("na").value.trim(),imageUrl=$("ni").value.trim();if(!title||!text)return toast("Enter title and content.");try{await addDoc(collection(db,"news"),{title,text,date,category,articleUrl,imageUrl,createdAt:serverTimestamp(),createdBy:auth.currentUser.uid});["nt","nx","nd","na","ni"].forEach(id=>$(id).value="");$("nc").value="platform";await load();toast("News published.")}catch(e){toast(e.message)}};
-$("addFbVideo").onclick=async()=>{const title=$("fvTitle").value.trim()||"Facebook Video",url=$("fvUrl").value.trim(),videoUrl=$("fvVideoUrl").value.trim(),thumb=$("fvThumb").value.trim();if(!url&&!videoUrl)return toast("Enter a Facebook URL or Video File URL.");if(url){let parsed;try{parsed=new URL(url)}catch{return toast("Enter a valid Facebook URL.")}if(!/(^|\\.)facebook\\.com$/i.test(parsed.hostname))return toast("Facebook URL must use facebook.com.");}if(videoUrl){let vp;try{vp=new URL(videoUrl)}catch{return toast("Enter a valid Video File URL.")}if(vp.protocol!=="https:")return toast("Video File URL must use HTTPS.");}try{await addDoc(collection(db,"facebookVideos"),{title,url,videoUrl,thumbnail:thumb,createdAt:serverTimestamp(),createdBy:auth.currentUser.uid});$("fvTitle").value=$("fvUrl").value=$("fvVideoUrl").value=$("fvThumb").value="";await load();toast("Facebook video added.")}catch(e){console.error("Facebook video write failed:",e);toast("Facebook Videos: "+(e.code==="permission-denied"?"Permission denied. Publish Firestore Rules and re-login.":e.message))}};$("addAnn").onclick=async()=>{const title=$("at").value.trim(),text=$("ax").value.trim();if(!title||!text)return toast("Enter title and content.");try{await addDoc(collection(db,"announcements"),{title,text,createdAt:serverTimestamp(),createdBy:auth.currentUser.uid});$("at").value=$("ax").value="";await load();toast("Announcement published.")}catch(e){toast(e.message)}};
+$("addShopProduct").onclick=async()=>{
+ const name=$("spName").value.trim(),category=$("spCategory").value,price=$("spPrice").value.trim()||"Free",icon=$("spIcon").value.trim()||"◈",badge=$("spBadge").value.trim(),imageUrl=$("spImage").value.trim(),productUrl=$("spUrl").value.trim(),description=$("spDescription").value.trim();
+ if(!name||!description)return toast("Enter product name and description.");
+ try{
+  const batch=writeBatch(db),ref=doc(collection(db,"products"));
+  batch.set(ref,{name,category,price,icon,badge,imageUrl,productUrl,description,createdAt:serverTimestamp(),createdBy:auth.currentUser.uid});
+  mirrorHubPost(batch,ref,{contentType:"product",title:name,text:description,imageUrl,productUrl,category,price,authorName:"TUBAL HUB Shop",destinations:["feeds","shop"]});
+  await batch.commit();
+  ["spName","spPrice","spIcon","spBadge","spImage","spUrl","spDescription"].forEach(id=>$(id).value="");await load();toast("Shop product published to Shop + Feeds.");
+ }catch(e){toast(e.message)}
+};
+$("addNews").onclick=async()=>{
+ const title=$("nt").value.trim(),text=$("nx").value.trim(),date=$("nd").value.trim()||"Latest",category=$("nc").value,articleUrl=$("na").value.trim(),imageUrl=$("ni").value.trim();
+ if(!title||!text)return toast("Enter title and content.");
+ try{
+  const batch=writeBatch(db),ref=doc(collection(db,"news"));
+  batch.set(ref,{title,text,date,category,articleUrl,imageUrl,createdAt:serverTimestamp(),createdBy:auth.currentUser.uid});
+  mirrorHubPost(batch,ref,{contentType:"news",title,text,imageUrl,category,authorName:"TUBAL HUB News",destinations:["feeds","news"]});
+  await batch.commit();
+  ["nt","nx","nd","na","ni"].forEach(id=>$(id).value="");$("nc").value="platform";await load();toast("News published to News + Feeds.");
+ }catch(e){toast(e.message)}
+};
+$("addFbVideo").onclick=async()=>{
+ const title=$("fvTitle").value.trim()||"Facebook Video",url=$("fvUrl").value.trim(),videoUrl=$("fvVideoUrl").value.trim(),thumb=$("fvThumb").value.trim();
+ if(!url&&!videoUrl)return toast("Enter a Facebook URL or Video File URL.");
+ if(url){let parsed;try{parsed=new URL(url)}catch{return toast("Enter a valid Facebook URL.")}if(!/(^|\\.)facebook\\.com$/i.test(parsed.hostname))return toast("Facebook URL must use facebook.com.")}
+ if(videoUrl){let vp;try{vp=new URL(videoUrl)}catch{return toast("Enter a valid Video File URL.")}if(vp.protocol!=="https:")return toast("Video File URL must use HTTPS.")}
+ try{
+  const batch=writeBatch(db),ref=doc(collection(db,"facebookVideos"));
+  batch.set(ref,{title,url,videoUrl,thumbnail:thumb,createdAt:serverTimestamp(),createdBy:auth.currentUser.uid});
+  mirrorHubPost(batch,ref,{contentType:"video",title,text:title,imageUrl:thumb,mediaUrl:videoUrl,productUrl:url,authorName:"TUBAL HUB Video",destinations:["feeds","news"]});
+  await batch.commit();
+  $("fvTitle").value=$("fvUrl").value=$("fvVideoUrl").value=$("fvThumb").value="";await load();toast("Video published to Feeds + News.");
+ }catch(e){toast(e.code==="permission-denied"?"Permission denied. Publish the updated Firestore rules first.":e.message)}
+};
+$("addAnn").onclick=async()=>{
+ const title=$("at").value.trim(),text=$("ax").value.trim();if(!title||!text)return toast("Enter title and content.");
+ try{
+  const batch=writeBatch(db),ref=doc(collection(db,"announcements"));
+  batch.set(ref,{title,text,createdAt:serverTimestamp(),createdBy:auth.currentUser.uid});
+  mirrorHubPost(batch,ref,{contentType:"announcement",title,text,authorName:"TUBAL HUB",destinations:["feeds","news","community"]});
+  await batch.commit();
+  $("at").value=$("ax").value="";await load();toast("Announcement published across Feeds + News + Community.");
+ }catch(e){toast(e.message)}
+};
 document.addEventListener("click",async e=>{const name=e.target.closest("[data-member-ban]");if(name){const uid=name.dataset.memberBan;if(uid===auth.currentUser?.uid)return;const member=members.find(x=>(x.uid||x.id)===uid);window.__banTargetUid=uid;window.__banTargetName=member?.displayName||member?.email||"Member";window.__banDuration=null;$("banTargetName").textContent=window.__banTargetName;$("banReasonInput").value="";document.querySelectorAll(".ban-options button").forEach(x=>x.classList.remove("selected"));$("banModal").hidden=false;return}const b=e.target.closest("button");if(!b)return;try{if(b.dataset.delNews){if(!confirm("Delete this news article?"))return;await deleteDoc(doc(db,"news",b.dataset.delNews));await load();}if(b.dataset.editNews){const x=news.find(n=>n.id===b.dataset.editNews);if(!x)return;const title=prompt("News title:",x.title||"");if(title===null)return;const text=prompt("News content:",x.text||"");if(text===null)return;const date=prompt("Date:",x.date||"Latest");if(date===null)return;const category=prompt("Category (platform/community/creator):",x.category||"platform");if(category===null)return;await updateDoc(doc(db,"news",x.id),{title:title.trim(),text:text.trim(),date:date.trim()||"Latest",category:category.trim().toLowerCase()||"platform",updatedAt:serverTimestamp(),updatedBy:auth.currentUser.uid});await load();toast("News updated.");}if(b.dataset.delAnn){await deleteDoc(doc(db,"announcements",b.dataset.delAnn));await load();}if(b.dataset.delChat){await deleteDoc(doc(db,"globalChats",b.dataset.delChat));await load();}if(b.dataset.delFb){await deleteDoc(doc(db,"facebookVideos",b.dataset.delFb));await load();}if(b.dataset.delProduct){await deleteDoc(doc(db,"products",b.dataset.delProduct));await load();}if(b.dataset.ban){const reason=prompt("Ban reason (optional):","Violation of Global Chat rules");if(reason===null)return;const duration=b.dataset.banDuration||$("banDuration").value;let banUntil=null;if(duration!=="permanent"){const hours={"1h":1,"6h":6,"12h":12,"1d":24,"3d":72,"7d":168,"30d":720}[duration];banUntil=Timestamp.fromDate(new Date(Date.now()+hours*60*60*1000));}await updateDoc(doc(db,"users",b.dataset.ban),{chatStatus:"banned",banned:true,banReason:reason.trim()||"Global Chat rules violation",bannedAt:serverTimestamp(),bannedBy:auth.currentUser.uid,banUntil});await load();toast(duration==="permanent"?"Member permanently banned.":"Member banned until "+banUntil.toDate().toLocaleString()+".")}if(b.dataset.unban){if(!confirm("Unban this member from Global Chat?"))return;await updateDoc(doc(db,"users",b.dataset.unban),{chatStatus:"active",banned:false,banReason:null,bannedAt:null,bannedBy:null});await load();toast("Member unbanned.")}}catch(x){toast(x.message)}});
 document.querySelectorAll(".ban-options button").forEach(btn=>btn.onclick=()=>{window.__banDuration=btn.dataset.duration;document.querySelectorAll(".ban-options button").forEach(x=>x.classList.remove("selected"));btn.classList.add("selected")});$("closeBanModal").onclick=$("cancelBan").onclick=()=>{$("banModal").hidden=true};$("confirmBan").onclick=async()=>{const uid=window.__banTargetUid,duration=window.__banDuration;if(!uid||!duration)return toast("Select a ban duration.");let banUntil=null;if(duration!=="permanent"){const hours={"1h":1,"6h":6,"12h":12,"1d":24,"3d":72,"7d":168,"30d":720}[duration];banUntil=Timestamp.fromDate(new Date(Date.now()+hours*60*60*1000));}try{await updateDoc(doc(db,"users",uid),{chatStatus:"banned",banned:true,banReason:$("banReasonInput").value.trim()||"Global Chat rules violation",bannedAt:serverTimestamp(),bannedBy:auth.currentUser.uid,banUntil});$("banModal").hidden=true;await load();toast(duration==="permanent"?"Member permanently banned.":"Member banned until "+banUntil.toDate().toLocaleString()+".")}catch(e){toast(e.message)}};$("logout").onclick=()=>signOut(auth);
 onAuthStateChanged(auth,async user=>{if(!user||user.email?.toLowerCase()!==ADMIN_EMAIL){location.replace("login.html");return}$("adminEmail").textContent=user.email;$("loading").remove();$("app").hidden=false;await load()});
