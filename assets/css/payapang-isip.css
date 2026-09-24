@@ -69,14 +69,14 @@ body.payapang-page:before{
 .hero h1{margin:12px 0 8px;font-size:clamp(42px,6vw,64px);font-weight:800;letter-spacing:-2.8px}
 .hero-subtitle{margin:0;color:#708178;font-size:18px;line-height:1.5}
 .breathing-orbit{margin-top:34px;position:relative;width:200px;height:200px;border:2px solid rgba(120,255,170,.30);border-radius:50%;background:rgba(255,255,255,.25);display:grid;place-items:center;box-shadow:0 0 45px rgba(142,214,109,.12),inset 0 0 30px rgba(142,214,109,.08);transform:translate3d(0,0,0);will-change:transform,box-shadow}
-.breathing-orbit.is-active{animation:breatheCircle 10s ease-in-out infinite}
+.breathing-orbit.is-active{animation:breatheCircle 14s ease-in-out infinite}
 .breathing-orbit:before,.breathing-orbit:after{content:"";position:absolute;border-radius:50%;pointer-events:none}
 .breathing-orbit:before{inset:16px;border:1px dashed rgba(142,214,109,.24)}
 .breathing-orbit:after{inset:34px;border:1px solid rgba(29,255,145,.12)}
 .breathing-copy{position:relative;z-index:2;display:grid;gap:6px}
 .breathing-phase{font-size:12px;font-weight:900;color:#2d4d35}
 .breathing-count{font-size:24px;font-weight:900;color:#6d9d70}
-@keyframes breatheCircle{0%,100%{transform:scale(1);box-shadow:0 0 28px rgba(142,214,109,.10),inset 0 0 25px rgba(142,214,109,.07)}40%{transform:scale(1.2);box-shadow:0 0 48px rgba(142,214,109,.18),inset 0 0 34px rgba(142,214,109,.12)}70%{transform:scale(1.2)}}
+@keyframes breatheCircle{0%{transform:scale(1);box-shadow:0 0 28px rgba(142,214,109,.10),inset 0 0 25px rgba(142,214,109,.07)}28.57%{transform:scale(1.2);box-shadow:0 0 48px rgba(142,214,109,.18),inset 0 0 34px rgba(142,214,109,.12)}57.14%{transform:scale(1.2)}100%{transform:scale(1);box-shadow:0 0 28px rgba(142,214,109,.10),inset 0 0 25px rgba(142,214,109,.07)}}
 .primary-btn,.glass-btn{height:44px;border-radius:999px;padding:0 17px;display:inline-flex;align-items:center;justify-content:center;gap:8px;font:900 9px Inter,sans-serif;cursor:pointer}
 .primary-btn{border:0;color:#12311d;background:linear-gradient(135deg,var(--pi-sage),var(--pi-green));box-shadow:0 0 24px rgba(142,214,109,.18)}
 .primary-btn:hover{transform:scale(1.02)}
@@ -205,3 +205,8 @@ body.theme-forest .mood-btn small,body.theme-forest .journal-time,body.theme-for
 @media(prefers-reduced-motion:reduce){
   *,*:before,*:after{scroll-behavior:auto!important;animation-duration:.001ms!important;transition-duration:.001ms!important}
 }
+/* PAYAPANG TOAST */
+#piToast.ctrl-toast{position:fixed;left:50%;bottom:108px;z-index:350;transform:translate(-50%,18px);opacity:0;pointer-events:none;min-width:220px;max-width:min(92vw,460px);padding:11px 14px;border:1px solid rgba(142,214,109,.28);border-radius:999px;background:rgba(255,255,255,.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:0 16px 45px rgba(55,88,63,.16);color:#385340;font-size:9px;text-align:center;transition:.24s ease}
+#piToast.ctrl-toast.open{opacity:1;transform:translate(-50%,0)}
+body.theme-midnight #piToast.ctrl-toast{background:rgba(5,12,8,.92);color:#dbe9df;border-color:rgba(142,214,109,.18)}
+body.theme-forest #piToast.ctrl-toast{background:rgba(9,28,16,.92);color:#e3f0df}
