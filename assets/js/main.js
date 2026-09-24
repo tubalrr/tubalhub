@@ -79,3 +79,32 @@ document.addEventListener('DOMContentLoaded', () => {
 function escapeHtml(value) {
   return String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
 }
+
+
+// Premium homepage micro-interactions
+document.addEventListener('DOMContentLoaded',()=>{
+  const home=document.body.classList.contains('hub-home');
+  if(!home) return;
+
+  document.querySelectorAll('.brand-card,.live-card,.social-card,.facebook-video-card,.news-card,.game-preview-card,.shop-preview-card').forEach(el=>{
+    el.addEventListener('pointermove',e=>{
+      const r=el.getBoundingClientRect();
+      el.style.setProperty('--mx',((e.clientX-r.left)/r.width*100)+'%');
+      el.style.setProperty('--my',((e.clientY-r.top)/r.height*100)+'%');
+    },{passive:true});
+  });
+
+  const reveal=document.querySelectorAll('.brand-card,.live-card,.social-card,.facebook-video-card,.news-card,.game-preview-card,.shop-preview-card');
+  if('IntersectionObserver' in window){
+    reveal.forEach(el=>el.classList.add('reveal-ready'));
+    const io=new IntersectionObserver(entries=>{
+      entries.forEach(entry=>{
+        if(entry.isIntersecting){
+          entry.target.classList.add('reveal-in');
+          io.unobserve(entry.target);
+        }
+      });
+    },{threshold:.08});
+    reveal.forEach(el=>io.observe(el));
+  }
+});
