@@ -1272,7 +1272,12 @@ function initFeedsBodyReal(){
   });
   renderFeedsBodyReal();
 }
-function init(){
+function initHomeVersionWatcherBridge(){
+  if(window.tubalHubVersionChecker?.start){
+    window.tubalHubVersionChecker.start();
+  }
+}
+function init(){\n  initHomeVersionWatcherBridge();
   initFeedsBodyReal();
   initSpotlight();
   initBento();
