@@ -287,7 +287,6 @@ function render(){
   animateNumber($("followerCount"),profile.followerCount||0);
   animateNumber($("followingCount"),profile.followingCount||0);
   $("viewCount").textContent=Number(profile.totalViews||0);
-  $("friendCount").textContent=Number(profile.friendCount||0);
   $("friendCountLabel").textContent=Number(profile.friendCount||0)+" friends";
   const friends=Array.isArray(profile.friends)?profile.friends.filter(Boolean):[];
   $("friendStack").innerHTML=friends.length
