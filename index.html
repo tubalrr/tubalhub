@@ -15,6 +15,7 @@
 <link rel="stylesheet" href="assets/css/global-theme.css?v=20260924">
 <link rel="stylesheet" href="assets/css/home-premium.css?v=20260924">
 <link rel="stylesheet" href="assets/css/sidebar-premium.css?v=20260924-v9">
+<link rel="stylesheet" href="assets/css/home-agency.css?v=20260924-v1">
 <style>.home-games-section{margin-top:24px}.games-preview-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.game-preview-card{display:flex;align-items:center;gap:12px;padding:18px;border:1px solid rgba(139,124,255,.22);border-radius:18px;background:rgba(17,20,38,.62);color:inherit;text-decoration:none;transition:.2s}.game-preview-card:hover{transform:translateY(-4px);border-color:#8b7cff}.game-preview-card>span{font-size:32px}.game-preview-card .game-logo{width:64px;height:64px;object-fit:contain;flex:0 0 64px;border-radius:10px;background:rgba(255,255,255,.06);padding:5px}.game-preview-card .game-logo-ml{display:flex;align-items:center;justify-content:center;padding:0;background:linear-gradient(145deg,#1a65d8,#071a4b);color:#fff;font-weight:900;font-size:20px;letter-spacing:-1px;text-shadow:0 2px 4px rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.2)}.game-preview-card div{min-width:0;flex:1}.game-preview-card small{font-size:10px;opacity:.65}.game-preview-card h3{margin:4px 0;font-size:15px}.game-preview-card p{margin:0;font-size:11px;opacity:.65}.game-preview-card>b{font-size:18px}@media(max-width:900px){.games-preview-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:560px){.games-preview-grid{grid-template-columns:1fr}}</style></head>
 <body class="hub-home">
 
@@ -88,7 +89,8 @@
 <div class="hub-main">
   <header class="hub-topbar">
     <a class="top-nav-logo" href="index.html" aria-label="TUBAL HUB Home" title="TUBAL HUB">
-      <img src="tubal-hub-logo.png" width="42" height="42" alt="TUBAL HUB">
+      <img src="tubal-hub-logo.png" width="46" height="46" alt="TUBAL HUB">
+      <i class="top-logo-status" aria-hidden="true"></i>
     </a>
     <div class="theme-switcher" aria-label="Theme">
       <button data-theme-btn="midnight" class="theme-btn active" title="Midnight"><span class="dot"></span> Midnight</button>
@@ -97,7 +99,9 @@
     </div>
     <div class="search-box"><span>⌕</span><input aria-label="Search" placeholder="Search games, stories, news or anything..." type="search"></div>
     <div class="top-actions">
-      <button class="icon-btn" type="button">♧</button>
+      <button class="icon-btn notification-btn" type="button" aria-label="Notifications" title="Notifications">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg>
+</button>
       <div id="authGuestActions" class="auth-actions">
         <a class="login-btn" href="pages/login.html">Login</a>
         <a class="signup-btn" href="pages/signup.html">Sign Up</a>
@@ -215,7 +219,7 @@
 
     <section class="feature-row">
       <div class="live-card">
-        <div class="live-bg"></div><div class="live-copy"><span class="live-now">● LIVE NOW</span><h2>TUBAL HUB<br><em>IS LIVE!</em></h2><p>Catch the latest updates and community action.</p><a href="pages/chat.html">◉ &nbsp; Join Live</a></div>
+        <div class="live-bg"></div><div class="live-waveform" aria-hidden="true"><i style="--bar:3px;--delay:0s"></i><i style="--bar:10px;--delay:0.09s"></i><i style="--bar:6px;--delay:0.18s"></i><i style="--bar:13px;--delay:0.27s"></i><i style="--bar:9px;--delay:0.36s"></i><i style="--bar:5px;--delay:0.44999999999999996s"></i><i style="--bar:12px;--delay:0.54s"></i><i style="--bar:8px;--delay:0s"></i><i style="--bar:4px;--delay:0.09s"></i><i style="--bar:11px;--delay:0.18s"></i><i style="--bar:7px;--delay:0.27s"></i><i style="--bar:3px;--delay:0.36s"></i><i style="--bar:10px;--delay:0.44999999999999996s"></i><i style="--bar:6px;--delay:0.54s"></i><i style="--bar:13px;--delay:0s"></i><i style="--bar:9px;--delay:0.09s"></i><i style="--bar:5px;--delay:0.18s"></i><i style="--bar:12px;--delay:0.27s"></i><i style="--bar:8px;--delay:0.36s"></i><i style="--bar:4px;--delay:0.44999999999999996s"></i></div><div class="live-copy"><span class="live-now">● LIVE NOW</span><h2>TUBAL HUB<br><em>IS LIVE!</em></h2><p>Catch the latest updates and community action.</p><a href="pages/chat.html">◉ &nbsp; Join Live</a></div>
       </div>
       <div class="social-card"><h2>Follow on Socials</h2><div class="social-grid"><a class="social-facebook" href="https://www.facebook.com/"><b aria-hidden="true"><img src="https://cdn.simpleicons.org/facebook/ffffff" alt="Facebook" loading="lazy" decoding="async"></b><span>Facebook<small>Open App</small></span></a><a class="social-youtube" href="https://www.youtube.com/"><b aria-hidden="true"><img src="https://cdn.simpleicons.org/youtube/ffffff" alt="YouTube" loading="lazy" decoding="async"></b><span>YouTube<small>Open App</small></span></a><a class="social-tiktok" href="https://www.tiktok.com/"><b aria-hidden="true"><img src="https://cdn.simpleicons.org/tiktok/ffffff" alt="TikTok" loading="lazy" decoding="async"></b><span>TikTok<small>Open App</small></span></a><a class="social-community" href="pages/chat.html"><b aria-hidden="true">◉</b><span>Community<small>Join</small></span></a></div></div>
     </section>
@@ -306,5 +310,6 @@ const io=new IntersectionObserver((entries)=>{if(entries[0].isIntersecting){io.d
 <script src="assets/js/main.js?v=20260924"></script>
 <script src="assets/js/theme.js"></script>
 <script src="assets/js/sidebar-premium.js?v=20260924-v9"></script>
+<script src="assets/js/home-agency.js?v=20260924-v1"></script>
 </body>
 </html>
