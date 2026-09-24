@@ -153,7 +153,15 @@ function setupUI(){
  document.getElementById("closeShare")?.addEventListener("click",()=>document.getElementById("shareSheet").classList.remove("open"));
  document.getElementById("copyShare")?.addEventListener("click",async()=>{const i=document.getElementById("shareUrl");try{await navigator.clipboard.writeText(i.value);showNotice("Link copied.")}catch(_){i.select();document.execCommand("copy");showNotice("Link copied.")}});
  document.getElementById("savedMenu")?.addEventListener("click",()=>{state.savedMode=true;state.filter="all";document.querySelectorAll(".feed-filter").forEach(x=>x.classList.remove("active"));renderFeed(true)});
- window.addEventListener("scroll",()=>{if(window.innerHeight+window.scrollY>document.body.offsetHeight-700&&!state.loading){const max=Math.ceil(visible().length/state.pageSize);if(state.page<max)renderFeed(false)}},{passive:true});
+ const sentinel=document.getElementById("feedSentinel");
+ if(sentinel&&"IntersectionObserver" in window){
+   const observer=new IntersectionObserver(entries=>{
+     if(!entries[0].isIntersecting||state.loading)return;
+     const max=Math.ceil(visible().length/state.pageSize);
+     if(state.page<max)renderFeed(false);
+   },{rootMargin:"700px 0px"});
+   observer.observe(sentinel);
+ }
  document.getElementById("postModal")?.addEventListener("click",e=>{if(e.target.id==="postModal")closePostModal()});
  document.getElementById("commentModal")?.addEventListener("click",e=>{if(e.target.id==="commentModal")closeComments()});
  document.getElementById("closeComments")?.addEventListener("click",closeComments);
