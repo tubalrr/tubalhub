@@ -67,6 +67,40 @@ const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
 const isMobileHome=()=>window.innerWidth<=768;
 const homeCardLimit=()=>isMobileHome()?4:6;
 
+
+let hubMessageTimer=null;
+const HUB_HERO_MESSAGES=[
+  ["Three Brands. One Hub.","TUBAL HUB brings Payapang Isip, AI Music and CTRLZONE together in one central home."],
+  ["Payapang Isip","A calm space for journals and personal thoughts, with your saved entries kept in your real site data."],
+  ["AI Music","Explore the TUBAL HUB AI Music area, listen to available tracks and manage real audio content."],
+  ["CTRLZONE","Your gaming area for the real CTRLZONE catalog, game pages and gaming-related features."],
+  ["Feeds & Community","See community posts, share real content and stay connected with what is happening inside TUBAL HUB."],
+  ["Shop & Profiles","Explore the Hub shop and creator/profile features while keeping the experience connected in one place."],
+  ["One Connected Hub","Use the sidebar to move between Home, Feeds, Chat, Brands, Community, Shop and other TUBAL HUB features."]
+];
+function initHubHeroMessages(){
+  const box=$("#bentoHeroMessage"),title=$("#bentoHeroMessageTitle"),textEl=$("#bentoHeroMessageText"),dots=$("#bentoHeroMessageDots");
+  if(!box||!title||!textEl)return;
+  clearInterval(hubMessageTimer);
+  let index=0;
+  if(dots)dots.innerHTML=HUB_HERO_MESSAGES.map((_,i)=>'<i class="'+(i===0?"active":"")+'"></i>').join("");
+  const show=()=>{
+    const item=HUB_HERO_MESSAGES[index];
+    box.classList.add("is-changing");
+    setTimeout(()=>{
+      title.textContent=item[0];
+      textEl.textContent=item[1];
+      dots?.querySelectorAll("i").forEach((dot,i)=>dot.classList.toggle("active",i===index));
+      box.classList.remove("is-changing");
+    },180);
+  };
+  show();
+  hubMessageTimer=setInterval(()=>{
+    index=(index+1)%HUB_HERO_MESSAGES.length;
+    show();
+  },5000);
+}
+
 function initSpotlight(){
   if(window.matchMedia?.("(hover: none), (pointer: coarse)").matches)return;
   let frame=0,x=innerWidth/2,y=innerHeight/2;
@@ -1206,8 +1240,6 @@ async function renderRealData(){
   loadRealPageTitle("pages/ai-music.html","#featuredMusicTitle");
   loadRealPageTitle("pages/ctrlzone.html","#featuredGamesTitle");
   loadRealPageTitle("pages/feeds.html","#featuredFeedsTitle");
-  const stats=$("#bentoHeroStats");
-  if(stats)stats.innerHTML='<div class="bento-hero-stat"><small>Journal</small><strong>'+journals.length+'</strong></div><div class="bento-hero-stat"><small>Audio Tracks</small><strong>'+music.length+'</strong></div><div class="bento-hero-stat"><small>Online Users</small><strong>'+(online===null?"—":online)+'</strong></div>';
   const setText=(sel,value)=>{const el=$(sel);if(el)el.textContent=String(value)};
   setText("#bentoOnlineUsers",online===null?"—":online);
   setText("#bentoJournalCount",journals.length);
@@ -1335,6 +1367,7 @@ function initHomeVersionWatcherBridge(){
 function init(){
   initHomeVersionWatcherBridge();
   initFeedsBodyReal();
+  initHubHeroMessages();
   startHomeCommunityFeed();
   initRealBentoSpotlight();
   initSpotlight();
@@ -1370,6 +1403,7 @@ function init(){
     livePresenceUnsubscribe=null;
     liveHubPostsUnsubscribe?.();
     liveHubPostsUnsubscribe=null;
+    clearInterval(hubMessageTimer);
     cleanup();
   });
   runRealDataAudit().catch(()=>{});
