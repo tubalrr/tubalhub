@@ -64,6 +64,7 @@ export function createSlider(trackId,prevId,nextId,dotsId){
     $$(".hero-dot",dots).forEach((dot,i)=>dot.addEventListener("click",()=>go(i,true)));
   };
   const render=()=>{
+    track.style.width=horizontal?"100%": "100%";
     if(horizontal){
       const card=track.firstElementChild;if(card)track.scrollTo({left:index*card.getBoundingClientRect().width+(index*16),behavior:"smooth"});
     }else{
@@ -82,6 +83,7 @@ export function createSlider(trackId,prevId,nextId,dotsId){
   prev?.addEventListener("click",()=>{go(index-1);startAuto()});
   next?.addEventListener("click",()=>{go(index+1);startAuto()});
   renderDots();render();
+  track.setAttribute("data-slide-count",String(slides.length));
   track.addEventListener("pointerdown",e=>{
     dragging=true;startX=e.clientX;deltaX=0;track.classList.add("is-dragging");track.setPointerCapture?.(e.pointerId);
   });
