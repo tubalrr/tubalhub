@@ -1,20 +1,10 @@
 /* TUBAL HUB — Notification Center */
-let db=null,auth=null,authListener=null,firestoreApi=null;
-async function initFirebase(){
-  if(db||authListener)return;
-  try{
-    const cfg=await import("./firebase-config.js");
-    const authApi=await import("https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js");
-    const fs=await import("https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js");
-    auth=cfg.auth;db=fs.getFirestore(cfg.app);firestoreApi=fs;
-    authListener=authApi.onAuthStateChanged;
-    authListener(auth,u=>{
-      me=u&&!u.isAnonymous?u:null;
-      if(me)watchRemote();else{if(stopRemote){stopRemote();stopRemote=null}if(!items.some(x=>x.remote)){items=DEMO_MODE?demoLoad():[];render()}
-      }
-    });
-  }catch(e){console.warn("[TUBAL HUB] Firebase notifications unavailable",e)}
-}
+import {app,auth} from "./firebase-config.js";
+import {onAuthStateChanged} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+import {getFirestore,collection,query,where,limit,onSnapshot,doc,writeBatch} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+
+const db=getFirestore(app);
+
 const DEMO_MODE=true;
 const KEY="tubalhub.notifications.v1";
 const esc=v=>{const d=document.createElement("div");d.textContent=String(v??"");return d.innerHTML};
