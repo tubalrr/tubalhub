@@ -685,7 +685,7 @@ const CANVA_STUDIO_VERSION="1.0.0";
 const CANVA_DESIGN_KEY="tubalhub_canva_current";
 const CANVA_DRAFT_DB="tubalhub_canva_drafts";
 const CANVA_DRAFT_STORE="drafts";
-const CANVA_W=600;
+const CANVA_W=700;
 const CANVA_H=400;
 const canvaStudioState={
   canvas:null,ctx:null,objects:[],background:{type:"transparent"},selectedId:null,activeTool:"",
@@ -1068,7 +1068,7 @@ function init(){
   initFooterSmoothLinks();
   initScrollReveal();
   $("#homeMusicAudio")?.addEventListener("ended",()=>{
-    document.querySelectorAll(".music-real-card.is-playing").forEach(card=>card.classList.remove("is-playing"));
+    document.querySelectorAll(".music-real-card.is-playing,.bento-music-item.is-playing").forEach(card=>card.classList.remove("is-playing"));
     showHomeToast("Audio finished.");
   });
   addEventListener("beforeunload",cleanup);
