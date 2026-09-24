@@ -1203,7 +1203,80 @@ function initBento(){
   window.addEventListener("focus",refresh,{passive:true});
   document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")refresh()});
 }
-function init(){
+
+
+/* =========================================================
+   TUBAL HUB FEEDS BODY — REAL RENDER
+   ========================================================= */
+function renderFeedsBodyReal(){
+  const real=getRealFeeds();
+  const track=document.getElementById("feedsInsideTrack");
+  const countEl=document.getElementById("feedsCount");
+  if(!track)return;
+  if(countEl)countEl.textContent=real.length+" "+(real.length===1?"post":"posts")+" real";
+  if(real.length===0){
+    track.innerHTML='<div class="empty-feed glass"><span aria-hidden="true">📱</span><p>Wala pa real post</p><small>Real posts mo dito lalabas</small><button type="button" onclick="location.href=\'pages/feeds.html\'">Mag post ng real</button></div>';
+    return;
+  }
+  track.innerHTML=real.map(p=>{
+    const avatar=String(p.avatarReal||p.avatar||"").trim();
+    const user=String(p.userReal||p.author||"Ikaw").trim()||"Ikaw";
+    const created=p.createdAtReal||p.createdAt;
+    const text=String(p.textReal||p.text||"").trim();
+    const image=p.imgReal||p.image||"";
+    const likes=Number(p.likesReal??p.likes??0);
+    return '<article class="feed-card glass"><div class="head">'+
+      (avatar?'<img src="'+esc(avatar)+'" alt="" loading="lazy">':'<span aria-hidden="true" style="width:40px;height:40px;border-radius:50%;display:block;background:linear-gradient(135deg,#1dff91,#7d5aff);"></span>')+
+      '<b>'+esc(user)+'</b><small>'+esc(created?new Date(created).toLocaleDateString("en-PH"):"")+'</small></div>'+
+      '<p>'+esc(text)+'</p>'+
+      (image?'<img src="'+esc(image)+'" alt="" loading="lazy">':"")+
+      '<div>❤️ '+(Number.isFinite(likes)?Math.max(0,likes):0)+'</div></article>';
+  }).join("");
+}
+async function saveFeedsBodyQuickPostReal(event){
+  event.preventDefault();
+  const form=event.currentTarget;
+  const text=String(form.elements.feedText?.value||"").trim();
+  const file=form.elements.feedImage?.files?.[0]||null;
+  if(!text){showHomeToast("Lagyan muna ng totoong post.");return}
+  if(file&&file.size>8*1024*1024){showHomeToast("Image must be 8 MB or smaller.");return}
+  try{
+    const user=auth.currentUser;
+    const image=await saveRealFeedImage(file);
+    const real=getRealFeeds();
+    real.unshift({
+      id:window.crypto?.randomUUID?window.crypto.randomUUID():"local-"+Date.now(),
+      author:user?.displayName||user?.email||"Ikaw",
+      avatar:user?.photoURL||"",
+      text,
+      image,
+      likes:0,
+      comments:0,
+      createdAt:new Date().toISOString()
+    });
+    localStorage.setItem("tubalhub_feeds",JSON.stringify(real));
+    form.reset();
+    const fileName=document.getElementById("tubalQuickFeedFileName");
+    if(fileName)fileName.textContent="optional";
+    renderFeedsBodyReal();
+    renderRealData();
+    emitRealDataUpdate();
+    showHomeToast("Real post saved.");
+  }catch(error){
+    console.warn("[TUBAL HUB quick feed]",error);
+    showHomeToast("Hindi na-save ang real post.");
+  }
+}
+function initFeedsBodyReal(){
+  const form=document.getElementById("tubalQuickFeedForm");
+  const file=document.getElementById("tubalQuickFeedImage");
+  const fileName=document.getElementById("tubalQuickFeedFileName");
+  form?.addEventListener("submit",saveFeedsBodyQuickPostReal);
+  file?.addEventListener("change",()=>{if(fileName)fileName.textContent=file.files?.[0]?.name||"optional"});
+  renderFeedsBodyReal();
+}
+\nfunction init(){
+  initFeedsBodyReal();
   initSpotlight();
   initBento();
   initFeaturedWebsiteSlider();
