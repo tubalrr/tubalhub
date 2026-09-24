@@ -1,3 +1,16 @@
+
+(function forceRealLayout(){
+  document.body.style.overflowX='hidden';
+  const main=document.getElementById('mainContent')||document.querySelector('main');
+  if(main){
+    main.style.marginLeft='auto';
+    main.style.marginRight='auto';
+    main.style.width='100%';
+    main.style.maxWidth='1280px';
+    main.style.left='auto';
+    main.style.transform='none';
+  }
+})();
 import { app, auth } from "./firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 import {
@@ -1120,7 +1133,7 @@ function bentoRenderGames(){
   const countEl=$("#bentoGamesLiveCount");
   if(countEl)countEl.textContent=featuredGames.length+" "+(featuredGames.length===1?"game":"games");
   if(!rows.length){
-    box.innerHTML='<div class="real-empty-card glass"><span class="real-empty-emoji" aria-hidden="true">🎮</span><p>No games are currently listed in the real CTRLZONE catalog.</p><a class="real-quick-link" href="pages/ctrlzone.html">Open CTRLZONE →</a></div>';
+    box.innerHTML='<div class="real-bento-empty"><div class="empty-icon">🎮</div><p>No games are currently listed in the real CTRLZONE catalog.</p><small>Real data source: /data/games.json</small><a class="real-quick-link" href="pages/ctrlzone.html">Open CTRLZONE →</a></div>';
     return;
   }
   box.innerHTML=rows.map((g,i)=>{
@@ -1520,3 +1533,38 @@ if(document.readyState==="loading"){
   }
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init,{once:true});else init();
 })();
+
+function getRealFeedsCompat(){
+  try{return JSON.parse(localStorage.getItem('tubalhub_feeds')||'[]')}catch{return []}
+}
+function getRealCartCompat(){
+  try{return JSON.parse(localStorage.getItem('tubalhub_cart_real')||'[]')}catch{return []}
+}
+function renderAllReal(){
+  const journals=getRealJournals();
+  const jEmpty=document.getElementById('journalEmptyReal');
+  if(jEmpty)jEmpty.style.display=journals.length?'none':'flex';
+
+  const feeds=getRealFeedsCompat();
+  document.querySelectorAll('#feedCountReal,#latestCount,#bentoFeedsLiveCount').forEach(el=>{
+    el.textContent=feeds.length+' '+(feeds.length===1?'post':'posts');
+  });
+
+  const cart=getRealCartCompat();
+  const cartEl=document.getElementById('cartCountReal');
+  if(cartEl)cartEl.textContent=cart.length+' '+(cart.length===1?'item':'items')+' real';
+
+  fetch('data/games.json?update='+Date.now(),{cache:'no-store'})
+    .then(r=>{if(!r.ok)throw new Error('games.json '+r.status);return r.json()})
+    .then(games=>{
+      const rows=Array.isArray(games)?games:(Array.isArray(games.games)?games.games:[]);
+      const el=document.getElementById('currentCatalogCount')||document.getElementById('bentoGamesLiveCount');
+      if(el)el.textContent=rows.length+' '+(rows.length===1?'game':'games')+' real';
+    })
+    .catch(()=>{
+      const el=document.getElementById('currentCatalogCount')||document.getElementById('bentoGamesLiveCount');
+      if(el)el.textContent='0 games real — add to /data/games.json';
+    });
+}
+
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',renderAllReal,{once:true});}else{renderAllReal();}
