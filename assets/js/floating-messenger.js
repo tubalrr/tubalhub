@@ -12,7 +12,7 @@ function loadPremiumCss(){
   if(document.querySelector('link[data-tubal-floating-premium]'))return;
   const css=document.createElement("link");
   css.rel="stylesheet";css.dataset.tubalFloatingPremium="";
-  css.href=new URL("/tubalhub/assets/css/floating-messenger-premium.css?v=20260924-msg1",window.location.origin).href;
+  css.href=new URL("/tubalhub/assets/css/floating-messenger-premium.css?v=20260924-msg2",window.location.origin).href;
   document.head.appendChild(css);
 }
 function setLauncherOnline(online){
@@ -59,6 +59,7 @@ function ui(){
   backdrop.onclick=closeDrawer;
 
   panel.addEventListener("pointermove",e=>{const r=panel.getBoundingClientRect();panel.style.setProperty("--mx",e.clientX-r.left+"px");panel.style.setProperty("--my",e.clientY-r.top+"px")},{passive:true});
+  window.addEventListener("tubalhubfloatingseen",()=>{if(typeof window.__tubalFloatingRender==="function")window.__tubalFloatingRender()});
   document.getElementById("tubalMsgWindowClose").onclick=()=>{target=null;if(stopMessages){stopMessages();stopMessages=null}document.getElementById("tubalMsgWindow").hidden=true};
   document.getElementById("tubalMsgProfile").onclick=e=>{e.preventDefault();e.stopPropagation();if(target)openUser(target)};
   document.getElementById("tubalMsgCall").onclick=e=>{e.preventDefault();e.stopPropagation();if(target)window.dispatchEvent(new CustomEvent("tubalhub-private-call",{detail:target}))};
@@ -71,7 +72,7 @@ function ui(){
     catch(err){console.error("[TUBAL HUB] floating message",err);alert("Message was not sent. Check Firestore Rules.")}
   };
 }
-function markSeen(uid,ms){try{localStorage.setItem("tubalMsgSeen:"+uid,String(ms||Date.now()));localStorage.removeItem("tubalMsgUnread:"+uid)}catch(_){}updateBadge()}
+function markSeen(uid,ms){try{localStorage.setItem("tubalMsgSeen:"+uid,String(ms||Date.now()));localStorage.removeItem("tubalMsgUnread:"+uid)}catch(_){}updateBadge();window.dispatchEvent(new CustomEvent("tubalhubfloatingseen",{detail:{uid}}))}
 function updateBadge(){
   const badge=document.getElementById("tubalMsgBadge"),tip=document.getElementById("tubalMsgTooltip"),launcher=document.getElementById("tubalMsgLauncher");
   if(!badge||!tip||!launcher)return 0;
@@ -172,6 +173,7 @@ function watchUsers(){
         '<div class="tubal-msg-row-meta">'+(time?'<time>'+esc(time)+'</time>':'')+(unread?'<strong class="tubal-msg-unread">'+(unread>99?"99+":unread)+'</strong>':'')+'</div></button>';
     }).join("");
 
+    window.__tubalFloatingRender=render;
     box.querySelectorAll(".tubal-msg-user").forEach(button=>{
       const chat=list.find(x=>x.uid===button.dataset.uid);
       button.onclick=e=>{
