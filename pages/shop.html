@@ -3,133 +3,96 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#050a08">
 <title>Shop | TUBAL HUB</title>
-<link rel="stylesheet" href="../assets/css/platform-pages.css">
-<style>
-:root{--shop-green:#8cff57;--shop-cyan:#62f7e1;--shop-purple:#8d7cff;--shop-dark:#050806;--shop-card:#0b120e;--shop-line:#1b3023}
-body{background:radial-gradient(circle at 80% 0%,#17351e 0,transparent 34%),#050806}
-.shop-page{max-width:1240px;margin:auto;padding:30px 22px 80px}
-.shop-hero{position:relative;overflow:hidden;isolation:isolate;min-height:300px;border:1px solid var(--shop-line);border-radius:22px;padding:42px;display:flex;align-items:center;background:linear-gradient(135deg,#0b1b11,#07100a 55%,#102719);box-shadow:0 20px 70px #0008}
-.shop-hero:before{content:"";position:absolute;inset:-35%;background:radial-gradient(circle at 70% 35%,#8d7cff22,transparent 25%),radial-gradient(circle at 35% 70%,#62f7e11c,transparent 24%);filter:blur(30px);animation:shopGlow 12s ease-in-out infinite alternate;z-index:-1}.shop-hero:after{content:"";position:absolute;width:360px;height:360px;border-radius:50%;right:-100px;top:-120px;background:radial-gradient(circle,#9cff5722,transparent 65%)}
-.shop-kicker{font-size:11px;letter-spacing:3px;color:#88a091}
-.shop-hero h1{font-size:clamp(46px,8vw,88px);margin:8px 0 10px;line-height:.9}.shop-hero h1 em{color:var(--shop-green);font-style:normal}
-.shop-hero p{max-width:570px;color:#9aaa9f;font-size:15px;line-height:1.7}
-.shop-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}.shop-actions a{padding:11px 17px;border-radius:9px;text-decoration:none;font-weight:800;font-size:12px;border:1px solid var(--shop-line);color:#dce8df}.shop-actions a.primary{background:var(--shop-green);color:#071007;border-color:var(--shop-green)}
-.shop-orbit{position:absolute;right:8%;width:180px;height:180px;border:1px solid #8cff5730;border-radius:50%}.shop-orbit:before{content:"◇";position:absolute;inset:30px;border:1px solid #8cff5730;border-radius:50%;display:grid;place-items:center;font-size:50px;color:#9cff57}
-.shop-section{margin-top:42px}.shop-section-head{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:18px}.shop-section-head span{font-size:9px;letter-spacing:2px;color:#72877a}.shop-section-head h2{margin:5px 0 0;font-size:28px}.shop-section-head em{font-style:normal;color:var(--shop-green)}
-.shop-categories{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-.shop-category{position:relative;min-height:180px;padding:23px;border:1px solid var(--shop-line);border-radius:15px;text-decoration:none;color:inherit;background:linear-gradient(145deg,#0d1711,#070c08);transition:.25s;overflow:hidden}
-.shop-category:hover{transform:translateY(-5px);border-color:#8cff5766;box-shadow:0 16px 45px #0008}
-.shop-category .num{position:absolute;right:18px;top:14px;color:#496051;font-size:11px}.shop-icon{font-size:34px;margin-bottom:25px}.shop-category h3{margin:0 0 7px;font-size:19px}.shop-category p{margin:0;color:#829287;font-size:12px;line-height:1.6}.shop-category b{display:block;margin-top:18px;color:var(--shop-green);font-size:10px}
-.shop-featured{display:grid;grid-template-columns:1.25fr .75fr .75fr;gap:14px}
-.shop-product{min-height:245px;transition:.25s;border:1px solid var(--shop-line);border-radius:15px;background:#090f0b;overflow:hidden;display:flex;flex-direction:column}
-.shop-art{height:125px;display:grid;place-items:center;background:radial-gradient(circle at 50% 30%,#24552d,#08100b 70%);font-size:42px}
-.shop-product:first-child .shop-art{font-size:54px}.shop-product-body{padding:17px}.shop-product-body small{color:#708477;font-size:8px;letter-spacing:1.5px}.shop-product-body h3{margin:7px 0;font-size:16px}.shop-product-body p{font-size:11px;color:#819086;line-height:1.5}.shop-status{display:inline-block;margin-top:7px;padding:5px 8px;border-radius:5px;background:#132017;color:#9cff57;font-size:8px;font-weight:800}
-.shop-product:hover{transform:translateY(-5px);border-color:#8cff5766;box-shadow:0 18px 50px #0008}.shop-note{margin-top:28px;padding:20px;border:1px dashed #294433;border-radius:13px;background:#09110c;color:#839488;font-size:11px;text-align:center}
-@keyframes shopGlow{from{transform:translate3d(-2%,0,0) scale(1)}to{transform:translate3d(3%,2%,0) scale(1.08)}}
-@media(max-width:800px){.shop-page{padding:16px 13px 50px}.shop-hero{padding:28px 22px;min-height:340px}.shop-orbit{opacity:.35;right:-55px}.shop-categories,.shop-featured{grid-template-columns:1fr}.shop-section-head{align-items:start;flex-direction:column}.shop-product{min-height:220px}}
-
-.shop-topbar{display:flex;align-items:center;justify-content:space-between;gap:15px;margin:25px 0 0;padding:12px 14px;border:1px solid var(--shop-line);border-radius:15px;background:#ffffff08;backdrop-filter:blur(16px)}
-.shop-search{flex:1;max-width:560px;display:flex;align-items:center;gap:9px;background:#050a07;border:1px solid var(--shop-line);border-radius:11px;padding:10px 13px}
-.shop-search input{width:100%;border:0;outline:0;background:transparent;color:#eef8f0;font:inherit;font-size:13px}.shop-search span{opacity:.6}
-.shop-cart{border:1px solid #8cff5738;background:#8cff570d;color:#dfffe0;border-radius:11px;padding:10px 14px;font-weight:800;cursor:pointer}
-.shop-cart b{color:var(--shop-green)}
-.shop-toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:16px}
-.shop-filter{border:1px solid var(--shop-line);background:#ffffff06;color:#aebdb2;border-radius:9px;padding:8px 12px;font-size:11px;cursor:pointer}.shop-filter.active{background:#8cff5715;color:var(--shop-green);border-color:#8cff5745}
-.shop-live-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
-.shop-live-card{position:relative;overflow:hidden;border:1px solid var(--shop-line);border-radius:16px;background:linear-gradient(145deg,#0d1711,#060b08);padding:0;transition:.25s}
-.shop-live-card:hover{transform:translateY(-6px);border-color:#8cff5755;box-shadow:0 20px 50px #0009}
-.shop-live-art{height:145px;display:grid;place-items:center;font-size:48px;background:radial-gradient(circle at 50% 25%,#285c35,#07100a 72%)}
-.shop-live-body{padding:16px}.shop-live-body small{font-size:8px;letter-spacing:1.4px;color:#718177}.shop-live-body h3{font-size:15px;margin:7px 0}.shop-live-body p{font-size:11px;line-height:1.5;color:#819087;margin:0 0 12px}.shop-price{display:flex;align-items:center;justify-content:space-between;gap:8px}.shop-price strong{color:#ecfff0;font-size:15px}.shop-add{border:1px solid #8cff5740;background:#8cff5714;color:var(--shop-green);padding:7px 10px;border-radius:8px;font-weight:800;font-size:10px;cursor:pointer}
-.shop-badge{position:absolute;top:10px;left:10px;z-index:2;padding:5px 7px;border-radius:6px;background:#050806cc;border:1px solid #ffffff12;font-size:8px;font-weight:800;color:#a8b8ad}
-.shop-cart-panel{position:fixed;inset:0;background:#0009;backdrop-filter:blur(8px);z-index:999;display:none;align-items:center;justify-content:center;padding:18px}.shop-cart-panel.open{display:flex}
-.shop-cart-box{width:min(520px,100%);max-height:80vh;overflow:auto;border:1px solid #8cff5735;border-radius:20px;background:#08100bdd;box-shadow:0 30px 100px #000; padding:22px}
-.shop-cart-head{display:flex;justify-content:space-between;align-items:center}.shop-cart-head h3{margin:0}.shop-close{border:0;background:#ffffff0b;color:#fff;border-radius:8px;padding:8px 11px;cursor:pointer}.cart-empty{padding:35px 10px;text-align:center;color:#819087}.cart-row{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid #ffffff0c}.cart-row .cart-emoji{font-size:25px}.cart-row div:nth-child(2){flex:1}.cart-row small{display:block;color:#708078;margin-top:4px}.cart-remove{border:0;background:none;color:#ff9d9d;cursor:pointer}.cart-total{display:flex;justify-content:space-between;padding-top:18px;font-weight:800}.cart-note{font-size:10px;color:#748278;line-height:1.5;margin-top:12px}
-@media(max-width:1000px){.shop-live-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:560px){.shop-topbar{align-items:stretch;flex-direction:column}.shop-search{max-width:none}.shop-live-grid{grid-template-columns:1fr}}
-</style>
-<link rel="stylesheet" href="../assets/css/global-theme.css?v=20260922">
-<meta name="theme-color" content="#07100a">  <link rel="stylesheet" href="../assets/css/premium-logos.css?v=20260924-logo1">
+<link rel="icon" type="image/png" href="../tubal-hub-logo.png">
+<link rel="stylesheet" href="../assets/css/style.css?v=20260924">
+<link rel="stylesheet" href="../assets/css/global-theme.css?v=20260924">
+<link rel="stylesheet" href="../assets/css/premium-logos.css?v=20260924-logo1">
+<link rel="stylesheet" href="../assets/css/shop.css?v=20260924-v3">
 </head>
-<body>
-<header>
-<a class="brand" href="../index.html"><img src="../tubal-hub-logo.png" loading="eager" decoding="async" fetchpriority="high" width="180" height="180" alt="TUBAL HUB"><span>TUBAL HUB<small>THREE BRANDS. ONE HUB.</small></span></a>
-<nav><a href="../index.html">Home</a><a href="payapang-isip.html">Payapang Isip</a><a href="ctrlzone.html">CTRLZONE</a><a href="profiles.html">Profiles</a><a href="news.html">News</a><a class="active" href="shop.html">Shop</a><a href="community.html">Community</a><a href="chat.html">Global Chat</a></nav>
+<body class="shop-page theme-midnight">
+<header class="shop-topbar">
+  <a class="shop-brand" href="../index.html">
+    <span class="shop-brand-mark shop-main-logo"><img src="../tubal-hub-logo.png" width="42" height="42" alt="TUBAL HUB"><i></i></span>
+    <span><strong>TUBAL HUB</strong><small>SHOP • COLLECT • CONNECT</small></span>
+  </a>
+  <div class="shop-top-actions">
+    <div class="shop-search"><span class="shop-search-icon">⌕</span><input id="productSearch" type="search" placeholder="Search products..." autocomplete="off" aria-label="Search products"><button id="filterBtn" class="shop-filter-btn" type="button" aria-label="Filters">☷</button></div>
+    <div class="shop-theme-switcher">
+      <button data-theme-btn="midnight" class="theme-btn active" type="button">Midnight</button>
+      <button data-theme-btn="forest" class="theme-btn" type="button">Forest</button>
+      <button data-theme-btn="light" class="theme-btn" type="button">Light</button>
+    </div>
+    <button id="cartBtn" class="shop-cart-btn" type="button" aria-label="Open cart">🛒<b id="cartBadge">0</b></button>
+  </div>
 </header>
-<main class="shop-page">
-<section class="shop-hero">
-<div>
-<span class="shop-kicker">TUBAL HUB / DIGITAL STORE</span>
-<h1>Shop <em>Hub.</em></h1>
-<p>Mods, digital products, creator resources and future collections — all in one place.</p>
-<div class="shop-actions"><a class="primary" href="#categories">Browse Shop</a><a href="../index.html">Back to Hub</a></div>
-</div><div class="shop-orbit"></div>
-</section>
 
-<section class="shop-section"><div class="shop-section-head"><div><span>WHY TUBAL HUB</span><h2>A shop built for <em>creators.</em></h2></div></div><div class="shop-categories"><div class="shop-category"><div class="shop-icon">⚡</div><h3>Simple Access</h3><p>Find downloads and digital content through a clean, focused hub.</p></div><div class="shop-category"><div class="shop-icon">✦</div><h3>Creator First</h3><p>A dedicated space for community-made resources and future collections.</p></div><div class="shop-category"><div class="shop-icon">⌁</div><h3>Growing Library</h3><p>New categories and items can be added as the TUBAL HUB ecosystem grows.</p></div></div></section>
+<main class="shop-main">
+  <section class="shop-hero glass-surface">
+    <div class="shop-hero-copy"><span class="eyebrow">OFFICIAL MARKETPLACE</span><h1>Official Hub <em>Collection</em></h1><p>Premium drops for TUBAL HUB, Payapang Isip, and CTRLZONE.</p><button id="heroShopNow" class="gradient-btn hero-shop-btn" type="button">Shop Now <span>→</span></button></div>
+    <div class="shop-hero-image-wrap"><img id="heroCollectionImage" src="https://images.unsplash.com/photo-1607083206968-13611e3d76db?auto=format&fit=crop&w=1280&q=86" alt="Official Hub Collection"><div class="hero-glass-label"><span class="hero-logo-mark th-mark"><img src="../tubal-hub-logo.png" width="26" height="26" alt="TUBAL HUB"></span><b>OFFICIAL DROP</b><small>New arrivals</small></div></div>
+  </section>
 
+  <section class="collection-tabs-wrap">
+    <div class="collection-tabs" role="tablist">
+      <button class="collection-tab active" data-collection="th" type="button"><span class="tab-brand-mark th-logo"><img src="../tubal-hub-logo.png" width="28" height="28" alt="TUBAL HUB"></span><span>TUBAL HUB</span><small id="count-th">12 products</small></button>
+      <button class="collection-tab" data-collection="payapang" type="button"><span class="tab-brand-mark payapang-logo"><svg viewBox="0 0 40 40"><path d="M31 6C19 6 10 12 10 22c0 7 5 12 12 12 9 0 12-10 9-28Z"/><path d="M8 33c4-7 10-12 18-16"/></svg></span><span>PAYAPANG ISIP</span><small id="count-payapang">6 products</small></button>
+      <button class="collection-tab" data-collection="ctrlzone" type="button"><span class="tab-brand-mark ctrlzone-logo"><svg viewBox="0 0 44 34"><path d="M8 11h28a8 8 0 0 1 7.1 11.2l-3.6 7.3a4 4 0 0 1-7.2.2l-3-5.5H14.7l-3 5.5a4 4 0 0 1-7.2-.2L1 22.2A8 8 0 0 1 8 11Z"/><path d="M12 17v7M8.5 20.5h7M31 17.5h.01M35 21.5h.01"/></svg></span><span>CTRLZONE</span><small id="count-ctrlzone">6 products</small></button>
+    </div>
+  </section>
 
-<section class="shop-topbar" aria-label="Shop controls">
-<div class="shop-search"><span>⌕</span><input id="shopSearch" type="search" placeholder="Search mods, products, music..." autocomplete="off"></div>
-<button class="shop-cart" id="openCart">🛒 Cart <b id="cartCount">0</b></button>
-</section>
-
-<section class="shop-section" id="categories">
-<div class="shop-section-head"><div><span>EXPLORE</span><h2>Shop <em>Categories</em></h2></div></div>
-<div class="shop-categories">
-<a class="shop-category" href="#mods"><span class="num">01</span><div class="shop-icon">🧩</div><h3>Mods</h3><p>Game mods, skins, maps, templates and downloadable files.</p><b>Browse Mods →</b></a>
-<a class="shop-category" href="#products"><span class="num">02</span><div class="shop-icon">🛒</div><h3>Products</h3><p>Digital and physical products from TUBAL HUB creators.</p><b>Browse Products →</b></a>
-<a class="shop-category" href="#music"><span class="num">03</span><div class="shop-icon">♫</div><h3>Music & Media</h3><p>Creator music, sounds, audio packs and digital media.</p><b>Explore Media →</b></a>
-</div>
-</section>
-
-<section class="shop-section" id="catalog">
-<div class="shop-section-head"><div><span>CATALOG</span><h2>Explore the <em>collection.</em></h2></div></div>
-<div class="shop-toolbar">
-<button class="shop-filter active" data-filter="all">All</button><button class="shop-filter" data-filter="mods">Mods</button><button class="shop-filter" data-filter="products">Products</button><button class="shop-filter" data-filter="music">Music & Media</button>
-</div>
-<div class="shop-live-grid" id="shopProductGrid"></div></section>
-<section class="shop-section">
-<div class="shop-section-head"><div><span>FEATURED</span><h2>Coming to the <em>Hub</em></h2></div></div>
-<div class="shop-featured">
-<article class="shop-product" id="mods"><div class="shop-art">🧩</div><div class="shop-product-body"><small>DOWNLOADS</small><h3>Game Mods Collection</h3><p>Mods and creator files will appear here when published.</p><span class="shop-status">COMING SOON</span></div></article>
-<article class="shop-product" id="products"><div class="shop-art">TH</div><div class="shop-product-body"><small>TUBAL HUB</small><h3>Official Products</h3><p>Hub merchandise and digital products.</p><span class="shop-status">COMING SOON</span></div></article>
-<article class="shop-product" id="music"><div class="shop-art">♫</div><div class="shop-product-body"><small>CREATOR MEDIA</small><h3>Music & Sounds</h3><p>Original creator audio and media packs.</p><span class="shop-status">COMING SOON</span></div></article>
-</div>
-<div class="shop-note"><strong style="display:block;color:#dfffe8;margin-bottom:7px">🔐 Protected Digital Content</strong> Downloads and paid items may have separate license terms. Unauthorized redistribution, resale, or public reposting is not permitted. <a href="license.html" style="color:#9cff57">View License →</a> &nbsp; <a href="copyright.html" style="color:#62f7e1">Copyright Policy →</a></div>
-</section>
-<div class="shop-cart-panel" id="cartPanel" role="dialog" aria-modal="true"><div class="shop-cart-box"><div class="shop-cart-head"><h3>Your Cart</h3><button class="shop-close" id="closeCart">✕</button></div><div id="cartItems" class="cart-empty">Your cart is empty.</div><div class="cart-total"><span>Total</span><span id="cartTotal">Free</span></div><a class="shop-cart" id="checkoutBtn" href="checkout.html" style="display:block;text-align:center;text-decoration:none;margin-top:15px">CHECKOUT →</a></div></div>
+  <section class="shop-catalog" id="catalog">
+    <div class="shop-brand-strip">
+      <div class="shop-brand-chip active"><span class="brand-chip-logo th-logo"><img src="../tubal-hub-logo.png" width="36" height="36" alt="TUBAL HUB"></span><b>TUBAL HUB</b><small>Community Goods</small></div>
+      <div class="shop-brand-chip"><span class="brand-chip-logo pi-logo"><svg viewBox="0 0 44 44"><path d="M34 6C20 6 10 13 10 24c0 8 6 14 14 14 10 0 14-11 10-32Z"/><path d="M8 37c5-9 12-15 22-20"/></svg></span><b>PAYAPANG ISIP</b><small>Calm Collection</small></div>
+      <div class="shop-brand-chip"><span class="brand-chip-logo cz-logo"><svg viewBox="0 0 48 38"><path d="M9 11h30a8 8 0 0 1 7.3 11.1l-4 8a4 4 0 0 1-7.3.1l-3-5.8H16l-3 5.8a4 4 0 0 1-7.3-.1l-4-8A8 8 0 0 1 9 11Z"/><path d="M13 16v9M8.5 20.5h9M34 17h.01M39 21h.01"/></svg></span><b>CTRLZONE</b><small>Gaming Gear</small></div>
+    </div>
+    <div class="catalog-head"><div><span class="eyebrow"><span class="eyebrow-mark">✦</span> CURATED PRODUCTS</span><h2 id="catalogTitle">TUBAL HUB</h2></div><div class="catalog-meta"><span id="resultCount">12 products</span><span class="catalog-dot"></span><span id="catalogStatus">Available now</span></div></div>
+    <div id="filterPanel" class="filter-panel glass-surface" hidden>
+      <button class="filter-chip active" data-stock-filter="all" type="button">All products</button><button class="filter-chip" data-stock-filter="in-stock" type="button">In stock</button><button class="filter-chip" data-price-filter="under-1000" type="button">Under ₱1,000</button><button class="filter-chip" data-price-filter="1000-2500" type="button">₱1,000–₱2,500</button><button class="filter-chip" data-price-filter="over-2500" type="button">₱2,500+</button>
+    </div>
+    <div id="productsGrid" class="products-grid"></div>
+    <div id="emptyProducts" class="shop-empty glass-surface" hidden><div class="empty-icon">⌕</div><strong>No products found</strong><span>Try another search or collection.</span></div>
+  </section>
 </main>
-<footer><div><b>TUBAL HUB</b><span>Three Brands. One Hub.</span></div><nav><a href="../index.html">Home</a><a href="community.html">Community</a><a href="privacy.html">Privacy</a><a href="cookies.html">Cookies</a><a href="terms.html">Terms</a><a href="license.html">License</a></nav><small>© 2026 TUBAL HUB. All rights reserved.</small></footer>
-<script src="../assets/js/data.js"></script><script src="../assets/js/main.js"></script>
-<script src="../assets/js/theme.js?v=20260922" defer></script>
-<script type="module">
-import {getFirestore,collection,getDocs,query,orderBy,limit,onSnapshot} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
-import {app} from "../assets/js/firebase-config.js";
-import {subscribeHubPosts} from "../assets/js/hub-content.js";
-const db=getFirestore(app),grid=document.getElementById("shopProductGrid");
-const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
-const state={direct:[],hub:[],cart:[]};
-function normalizeDirect(d){const x=d.data();return{id:"product-"+d.id,sourceId:d.id,sourceCollection:"products",name:x.name||x.title||"Product",category:x.category||"products",description:x.description||"",price:x.price||"Free",icon:x.icon||"◈",badge:x.badge||"",image:x.imageUrl||"",productUrl:x.productUrl||"",createdAt:x.createdAt||0}}
-function normalizeHub(x){return{id:"hub-"+x.id,sourceId:x.sourceId||x.id,sourceCollection:x.sourceCollection||"hubPosts",name:x.title||"Product",category:x.category||"products",description:x.text||"",price:x.price||"Free",icon:"◈",badge:"HUB",image:x.imageUrl||"",productUrl:x.productUrl||"",createdAt:x.createdAt||0}}
-function sameKey(x){return x.sourceCollection+":"+x.sourceId}
-function merged(){const all=[...state.hub.filter(x=>Array.isArray(x.destinations)?x.destinations.includes("shop"):true),...state.direct],seen=new Set();return all.filter(x=>{const k=sameKey(x);if(seen.has(k))return false;seen.add(k);return true}).sort((a,b)=>(b.createdAt?.toMillis?.()||b.createdAt?.seconds*1000||0)-(a.createdAt?.toMillis?.()||a.createdAt?.seconds*1000||0))}
-function card(x){return '<article class="shop-live-card" data-category="'+esc(x.category)+'" data-name="'+esc(x.name.toLowerCase())+'">'+(x.badge?'<span class="shop-badge">'+esc(x.badge)+'</span>':'')+'<div class="shop-live-art">'+(x.image?'<img src="'+esc(x.image)+'" alt="" loading="lazy">':esc(x.icon))+'</div><div class="shop-live-body"><small>'+esc(x.category.toUpperCase())+'</small><h3>'+esc(x.name)+'</h3><p>'+esc(x.description)+'</p><div class="shop-price"><strong>'+esc(x.price)+'</strong><button class="shop-add" data-name="'+esc(x.name)+'" data-price="'+esc(x.price)+'" data-icon="'+esc(x.icon)+'" data-url="'+esc(x.productUrl)+'">ADD TO CART</button></div></div></article>'}
-function render(){grid.innerHTML=merged().length?merged().map(card).join(""):'<div class="shop-note">No published products yet.</div>';bindCards()}
-function bindCards(){
- grid.querySelectorAll(".shop-add").forEach(b=>b.onclick=()=>{const item={name:b.dataset.name,price:b.dataset.price,icon:b.dataset.icon,url:b.dataset.url};if(item.url){location.href=item.url;return}if(!state.cart.some(x=>x.name===item.name))state.cart.push(item);renderCart()});
- document.querySelectorAll(".shop-filter").forEach(b=>b.onclick=()=>{document.querySelectorAll(".shop-filter").forEach(x=>x.classList.remove("active"));b.classList.add("active");const f=b.dataset.filter;grid.querySelectorAll(".shop-live-card").forEach(c=>c.style.display=f==="all"||c.dataset.category===f?"":"none")});
- document.getElementById("shopSearch")?.addEventListener("input",e=>{const q=e.target.value.toLowerCase();grid.querySelectorAll(".shop-live-card").forEach(c=>c.style.display=c.dataset.name.includes(q)?"":"none")});
-}
-function renderCart(){const box=document.getElementById("cartItems");document.getElementById("cartCount").textContent=state.cart.length;if(!state.cart.length){box.className="cart-empty";box.textContent="Your cart is empty.";document.getElementById("cartTotal").textContent="Free";return}box.className="";box.innerHTML=state.cart.map((x,i)=>'<div class="cart-row"><span class="cart-emoji">'+esc(x.icon)+'</span><div><b>'+esc(x.name)+'</b><small>'+esc(x.price)+'</small></div><button class="cart-remove" data-remove="'+i+'">Remove</button></div>').join("");document.getElementById("cartTotal").textContent="Free";box.querySelectorAll("[data-remove]").forEach(b=>b.onclick=()=>{state.cart.splice(Number(b.dataset.remove),1);renderCart()})}
-async function loadDirect(){try{const snap=await getDocs(query(collection(db,"products"),orderBy("createdAt","desc"),limit(100)));state.direct=snap.docs.map(normalizeDirect);render()}catch(e){console.warn("[Shop] products",e);state.direct=[];render()}}
-subscribeHubPosts(items=>{state.hub=items.filter(x=>x.contentType==="product");render()});
-document.getElementById("openCart")?.addEventListener("click",()=>document.getElementById("cartPanel").classList.add("open"));
-document.getElementById("closeCart")?.addEventListener("click",()=>document.getElementById("cartPanel").classList.remove("open"));
-document.getElementById("cartPanel")?.addEventListener("click",e=>{if(e.target.id==="cartPanel")e.currentTarget.classList.remove("open")});
-loadDirect();renderCart();
-</script>
 
-<script type="module" src="../assets/js/presence.js?v=20260923"></script>
+<aside id="cartDrawer" class="cart-drawer" aria-hidden="true">
+  <div class="cart-head"><div><span class="eyebrow">TUBAL HUB SHOP</span><h2>Cart <span id="cartTitleCount">0 items</span></h2></div><button id="closeCart" class="glass-close" type="button">×</button></div>
+  <div id="cartList" class="cart-list"></div>
+  <div id="cartEmpty" class="cart-empty" hidden><div class="cart-empty-icon">🛒</div><strong>No items</strong><span>Your cart is ready for something worth adding.</span><button id="emptyShopNow" class="gradient-btn" type="button">Shop Now</button></div>
+  <footer class="cart-footer"><div class="totals"><div><span>Subtotal</span><b id="cartSubtotal">₱0</b></div><div><span>Shipping</span><b id="cartShipping">₱0</b></div><div class="total-row"><span>Total</span><strong id="cartTotal">₱0</strong></div></div><button id="checkoutBtn" class="gradient-btn checkout-btn" type="button">Continue Payment <span>→</span></button><div class="pay-icons"><span>GCash</span><span>Maya</span><span>PayPal</span><b>🔒 Secure</b></div></footer>
+</aside>
+<div id="cartBackdrop" class="shop-backdrop" hidden></div>
+
+<div id="quickViewLayer" class="quickview-layer" hidden>
+  <section class="quickview-modal glass-surface" role="dialog" aria-modal="true">
+    <button id="quickViewClose" class="glass-close quickview-close" type="button">×</button>
+    <div class="quickview-gallery"><div class="quickview-main"><img id="quickViewImage" alt=""></div><div class="quickview-thumbs" id="quickViewThumbs"></div></div>
+    <div class="quickview-copy"><span id="quickViewBadge" class="product-badge">NEW</span><h2 id="quickViewTitle">Product</h2><div class="quickview-shop" id="quickViewShop">TUBAL HUB Shop</div><div class="quickview-price"><strong id="quickViewPrice">₱0</strong><span id="quickViewOriginal">₱0</span></div><p id="quickViewDescription"></p><div class="variant-block"><b>Size</b><div id="quickViewSizes" class="variant-row"></div></div><div class="variant-block"><b>Color</b><div id="quickViewColors" class="variant-row"></div></div><div class="quickview-stock" id="quickViewStock"></div><div class="quickview-actions"><div class="qty-stepper"><button id="quickViewMinus" type="button">−</button><span id="quickViewQty">1</span><button id="quickViewPlus" type="button">+</button></div><button id="quickViewAdd" class="gradient-btn" type="button">Add to Cart</button><button id="quickViewBuy" class="buy-now-btn" type="button">Buy Now</button></div><div class="share-row"><button data-share="facebook" type="button">f</button><button data-share="messenger" type="button">⌁</button><button data-share="whatsapp" type="button">◔</button><button data-share="x" type="button">X</button><button data-share="copy" type="button">⌘</button></div><details class="product-details"><summary>Product details <span>+</span></summary><div id="quickViewDetails"></div></details></div>
+  </section>
+</div>
+
+<div id="checkoutLayer" class="quickview-layer" hidden>
+  <section class="checkout-modal glass-surface payment-modal" role="dialog" aria-modal="true" aria-labelledby="checkoutTitle">
+    <button id="closeCheckoutX" class="glass-close payment-close" type="button" aria-label="Close payment">×</button>
+    <span class="eyebrow">SECURE PAYMENT</span><h2 id="checkoutTitle">Choose payment method</h2><p id="checkoutCopy">Select how you want to continue.</p>
+    <div class="payment-methods">
+      <button class="payment-method active" data-payment="card" type="button"><span class="payment-method-icon">▣</span><span><b>Card</b><small>Visa / Mastercard</small></span><i>✓</i></button>
+      <button class="payment-method" data-payment="bank" type="button"><span class="payment-method-icon">▤</span><span><b>Bank Transfer</b><small>Online banking</small></span><i>✓</i></button>
+      <button class="payment-method" data-payment="paypal" type="button"><span class="payment-method-icon paypal-icon">P</span><span><b>PayPal</b><small>Pay with PayPal</small></span><i>✓</i></button>
+    </div>
+    <div class="payment-summary"><span>Total to pay</span><strong id="checkoutTotal">₱0</strong></div>
+    <div id="paymentFields" class="payment-fields"><label>Payment details<input id="paymentReference" type="text" inputmode="numeric" placeholder="Card ending or reference" autocomplete="off"></label></div>
+    <div class="checkout-note">Demo checkout only. No real payment is processed or charged.</div>
+    <button id="finishCheckout" class="gradient-btn checkout-confirm" type="button">Continue Payment →</button>
+    <button id="closeCheckout" class="ghost-btn" type="button">Back to Shop</button>
+  </section>
+</div>
+
+<div id="filterToast" class="shop-toast" role="status" aria-live="polite"></div><div id="particleLayer" class="particle-layer" aria-hidden="true"></div>
+<footer class="shop-footer"><div><strong>TUBAL HUB</strong><span>YOUR HUB. YOUR COMMUNITY.</span></div><nav><a href="../index.html">Home</a><a href="feeds.html">Feeds</a><a class="active" href="shop.html">Shop</a><a href="chat.html">Global Chat</a></nav><small>© 2026 TUBAL HUB • Play • Create • Connect</small></footer>
+<script src="../assets/js/theme.js?v=20260922" defer></script>
+<script type="module" src="../assets/js/shop.js?v=20260924-v2"></script>
 </body>
 </html>
