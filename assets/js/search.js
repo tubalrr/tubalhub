@@ -41,6 +41,7 @@ function ensureUi(){
   document.getElementById("thSearchClear").onclick=()=>{input.value="";render("")};
   input.oninput=()=>{clearTimeout(debounceId);const q=input.value;debounceId=setTimeout(()=>render(q),200)};
   input.onkeydown=onKey;
+  modal.style.display="none";modal.style.pointerEvents="none";
   window.__tubalOpenSearch=()=>open("");
 }
 async function docs(name,count){
@@ -87,14 +88,14 @@ async function loadData(){
   cache=out;cacheAt=now;return out;
 }
 function open(q){
-  ensureUi();modal.hidden=false;
+  ensureUi();modal.hidden=false;modal.style.display="grid";modal.style.pointerEvents="auto";
   document.querySelector(".search-box")?.classList.add("is-open");
   requestAnimationFrame(()=>{modal.classList.add("is-open");input.value=q||"";render(q||"");input.focus({preventScroll:true})});
 }
 function close(){
   if(!modal)return;
   modal.classList.remove("is-open");document.querySelector(".search-box")?.classList.remove("is-open");
-  setTimeout(()=>{if(!modal.classList.contains("is-open"))modal.hidden=true},230);
+  setTimeout(()=>{if(!modal.classList.contains("is-open")){modal.hidden=true;modal.style.display="none";modal.style.pointerEvents="none"}},230);
 }
 function score(x,q){
   const terms=norm(q).split(/\s+/).filter(Boolean),hay=norm([x.title,x.name,x.handle,x.author,x.shop,x.meta].join(" "));
