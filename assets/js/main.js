@@ -56,19 +56,25 @@ document.addEventListener('DOMContentLoaded', () => {
   applyTubalTheme();
 });
 
-function applyTubalTheme(){
-  const KEY='tubalHubTheme', AUTO='tubalHubAutoTheme';
-  const media=window.matchMedia('(prefers-color-scheme: light)');
-  const saved=localStorage.getItem(KEY)||'galaxy';
-  const chosen=localStorage.getItem(AUTO)==='1' ? (media.matches?'forest':'galaxy') : saved;
-  document.body.classList.remove('theme-forest','theme-galaxy','theme-neon');
-  document.body.classList.add('theme-'+chosen);
-  document.documentElement.dataset.tubalTheme=chosen;
-}
-
-window.addEventListener('storage', e => {
-  if (e.key==='tubalHubTheme' || e.key==='tubalHubAutoTheme') applyTubalTheme();
-});
+// TUBAL HUB - Theme System - FINAL
+(function(){
+  const THEMES = ['midnight','forest','light'];
+  const STORAGE_KEY = 'tubalhub-theme';
+  const getSaved = ()=> localStorage.getItem(STORAGE_KEY) || 'midnight';
+  const apply = (theme)=>{
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem(STORAGE_KEY, theme);
+    document.querySelectorAll('[data-theme-btn]').forEach(b=>{
+      b.classList.toggle('active', b.dataset.themeBtn===theme);
+    });
+  };
+  window.setTubalTheme = apply;
+  apply(getSaved());
+  document.addEventListener('click', (e)=>{
+    const btn = e.target.closest('[data-theme-btn]');
+    if(btn) apply(btn.dataset.themeBtn);
+  });
+})();
 
 function escapeHtml(value) {
   return String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
