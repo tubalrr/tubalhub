@@ -51,26 +51,27 @@ function initSpotlight(){
   },{passive:true});
 }
 
-export function createSlider(trackId,prevId,nextId,dotsId){
+export function createSlider(trackId,prevId,nextId,dotsId,slideSelector=".hero-slide"){
   const track=$("#"+trackId);if(!track)return null;
   const prev=$("#"+prevId),next=$("#"+nextId),dots=$("#"+dotsId);
-  const slides=Array.from(track.querySelectorAll(".hero-slide"));
-  if(!slides.length)return null;
   const horizontal=track.dataset.horizontal==="true";
+  const slides=Array.from(track.querySelectorAll(slideSelector));
+  if(!slides.length)return null;
   let index=0,startX=0,deltaX=0,dragging=false,autoTimer=null;
+  const gap=()=>horizontal?(parseFloat(getComputedStyle(track).columnGap||getComputedStyle(track).gap)||0):0;
   const renderDots=()=>{
     if(!dots)return;
     dots.innerHTML=slides.map((_,i)=>'<button class="hero-dot '+(i===index?"active":"")+'" type="button" aria-label="Go to slide '+(i+1)+'"></button>').join("");
-    $$(".hero-dot",dots).forEach((dot,i)=>dot.addEventListener("click",()=>go(i,true)));
+    $(".hero-dot",dots).forEach((dot,i)=>dot.addEventListener("click",()=>go(i)));
   };
   const render=()=>{
-    track.style.width=horizontal?"100%": "100%";
     if(horizontal){
-      const card=track.firstElementChild;if(card)track.scrollTo({left:index*card.getBoundingClientRect().width+(index*16),behavior:"smooth"});
+      const card=slides[index];
+      if(card)track.scrollTo({left:card.offsetLeft,behavior:"smooth"});
     }else{
       track.style.transform="translate3d("+(-index*100)+"%,0,0)";
     }
-    $$(".hero-dot",dots).forEach((dot,i)=>dot.classList.toggle("active",i===index));
+    $(".hero-dot",dots).forEach((dot,i)=>dot.classList.toggle("active",i===index));
   };
   const go=nextIndex=>{
     index=(nextIndex+slides.length)%slides.length;
@@ -79,7 +80,9 @@ export function createSlider(trackId,prevId,nextId,dotsId){
   const startAuto=()=>{
     clearInterval(autoTimer);autoTimer=setInterval(()=>go(index+1),horizontal?4000:5000);
   };
-  const stopAuto=()=>clearInterval(autoTimer);
+  const stopAuto=()=>{
+    clearInterval(autoTimer);autoTimer=null;
+  };
   prev?.addEventListener("click",()=>{go(index-1);startAuto()});
   next?.addEventListener("click",()=>{go(index+1);startAuto()});
   renderDots();render();
@@ -89,15 +92,14 @@ export function createSlider(trackId,prevId,nextId,dotsId){
   });
   track.addEventListener("pointermove",e=>{if(dragging)deltaX=e.clientX-startX});
   const end=()=>{
-    if(!dragging)return;dragging=false;track.classList.remove("is-dragging");
+    if(!dragging)return;
+    dragging=false;track.classList.remove("is-dragging");
     if(Math.abs(deltaX)>=50)go(index+(deltaX<0?1:-1));else render();
     deltaX=0;startAuto();
   };
   track.addEventListener("pointerup",end);track.addEventListener("pointercancel",end);
   track.addEventListener("mouseenter",stopAuto);track.addEventListener("mouseleave",startAuto);
-  track.setAttribute("aria-label", "TUBAL HUB featured slider with "+slides.length+" slides");
-  track.addEventListener("touchstart",()=>{stopAuto()},{passive:true});
-  track.addEventListener("touchend",()=>{startAuto()},{passive:true});
+  track.addEventListener("touchstart",stopAuto,{passive:true});track.addEventListener("touchend",startAuto,{passive:true});
   startAuto();
   return {go,stopAuto,startAuto,get index(){return index}};
 }
@@ -281,6 +283,112 @@ function showHomeToast(message){
   toast.textContent=message;toast.classList.add("open");clearTimeout(showHomeToast.timer);
   showHomeToast.timer=setTimeout(()=>toast.classList.remove("open"),2000);
 }
+const GAMES_URL="data/games.json";
+const GAMES_KEY="tubalhub_ctrlzone_games";
+const GAME_STATS_KEY="tubalhub_ctrlzone_game_stats";
+let featuredGames=[];
+let gamesSlider=null;
+
+function readObject(key){
+  try{const value=JSON.parse(localStorage.getItem(key)||"{}");return value&&typeof value==="object"&&!Array.isArray(value)?value:{}}
+  catch(_){return {}}
+}
+function readGamesFromStorage(){
+  try{
+    const value=JSON.parse(localStorage.getItem(GAMES_KEY)||"null");
+    return Array.isArray(value)?value:[];
+  }catch(_){return []}
+}
+async function loadFeaturedGames(){
+  let list=readGamesFromStorage();
+  if(!list.length){
+    try{
+      const r=await fetch(GAMES_URL+"?t="+Date.now(),{cache:"no-store"});
+      if(!r.ok)throw new Error("games.json "+r.status);
+      const data=await r.json();
+      list=Array.isArray(data)?data:Array.isArray(data.games)?data.games:[];
+    }catch(error){
+      console.warn("[TUBAL HUB featured games]",error);
+      list=[];
+    }
+  }
+  featuredGames=list.filter(g=>g&&g.id&&g.title&&g.emoji&&g.description&&g.officialUrl).slice(0,12);
+  renderFeaturedGames();
+}
+function gameStats(game){
+  const all=readObject(GAME_STATS_KEY),s=(all[game.id]&&typeof all[game.id]==="object")?all[game.id]:{};
+  const players=Number.isFinite(Number(s.players))?Number(s.players):Number.isFinite(Number(game.players))?Number(game.players):null;
+  const rating=Number.isFinite(Number(s.rating))?Number(s.rating):Number.isFinite(Number(game.rating))?Number(game.rating):null;
+  const lastPlayed=Number(s.lastPlayed||game.lastPlayed||0);
+  return {players:Number.isFinite(players)?players:null,rating:Number.isFinite(rating)?rating:null,lastPlayed:Number.isFinite(lastPlayed)?lastPlayed:0};
+}
+function formatLastPlayed(value){
+  if(!value)return "Never";
+  const d=new Date(value);if(Number.isNaN(d.getTime()))return "—";
+  return d.toLocaleString("en-PH",{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"});
+}
+function gameStatMarkup(game){
+  const s=gameStats(game);
+  return '<div class="game-feature-stat"><span class="home-emoji" aria-hidden="true">👥</span><strong title="Saved local player count">'+esc(s.players===null?"—":s.players)+'</strong></div>'+
+         '<div class="game-feature-stat"><span class="home-emoji" aria-hidden="true">⭐</span><strong title="Saved local rating">'+esc(s.rating===null?"—":s.rating)+'</strong></div>'+
+         '<div class="game-feature-stat"><span class="home-emoji" aria-hidden="true">⏱️</span><strong title="Last played on this device">'+esc(formatLastPlayed(s.lastPlayed))+'</strong></div>';
+}
+function featuredGameMarkup(game){
+  const safeA=game.colorA||"#173b2a",safeB=game.colorB||"#07100b";
+  const category=["New","Hot","Trending"].includes(game.category)?game.category:"Featured";
+  return '<article class="game-feature-card" data-game-id="'+esc(game.id)+'" style="--game-a:'+esc(safeA)+';--game-b:'+esc(safeB)+'">'+
+    '<div class="game-feature-cover"><span class="game-feature-emoji" aria-hidden="true">'+esc(game.emoji)+'</span><button class="game-feature-play" type="button" data-feature-play="'+esc(game.id)+'" aria-label="Play '+esc(game.title)+'">▶️</button></div>'+
+    '<div class="game-feature-body"><div class="game-feature-top"><h3>'+esc(game.title)+'</h3><span class="game-category" data-category="'+esc(category)+'">'+esc(category)+'</span></div>'+
+    '<p class="game-feature-desc">'+esc(game.description)+'</p><div class="game-feature-stats">'+gameStatMarkup(game)+'</div></div>'+
+    '<div class="game-feature-footer"><button class="game-feature-playnow" type="button" data-feature-play="'+esc(game.id)+'">Play Now</button></div>'+
+    '</article>';
+}
+function renderFeaturedGames(){
+  const track=$("#gamesTrack");if(!track)return;
+  if(!featuredGames.length){
+    track.innerHTML='<div class="empty-card home-glass"><div><span class="home-emoji" aria-hidden="true">🎮</span><strong>No real featured games are available yet.</strong><span>Add games to data/games.json or tubalhub_ctrlzone_games.</span></div></div>';
+    if(gamesSlider)gamesSlider.stopAuto();
+    return;
+  }
+  track.innerHTML=featuredGames.map(featuredGameMarkup).join("");
+  track.querySelectorAll(".game-feature-card").forEach(card=>{
+    card.addEventListener("pointermove",e=>{
+      const r=card.getBoundingClientRect(),px=(e.clientX-r.left)/r.width,py=(e.clientY-r.top)/r.height;
+      const rx=clamp((.5-py)*10,-10,10),ry=clamp((px-.5)*10,-10,10);
+      card.style.setProperty("--rx",rx+"deg");card.style.setProperty("--ry",ry+"deg");
+    },{passive:true});
+    card.addEventListener("pointerleave",()=>{
+      card.style.setProperty("--rx","0deg");card.style.setProperty("--ry","0deg");
+    });
+  });
+  gamesSlider?.stopAuto();
+  gamesSlider=createSlider("gamesTrack","gamesPrev","gamesNext","gamesDots",".game-feature-card");
+}
+function saveGameStats(all){
+  try{localStorage.setItem(GAME_STATS_KEY,JSON.stringify(all))}catch(_){}
+}
+function playFeaturedGame(id,button){
+  const game=featuredGames.find(g=>String(g.id)===String(id));if(!game)return;
+  const all=readObject(GAME_STATS_KEY),current=(all[game.id]&&typeof all[game.id]==="object")?all[game.id]:{};
+  const players=Number.isFinite(Number(current.players))?Number(current.players):Number.isFinite(Number(game.players))?Number(game.players):0;
+  all[game.id]={...current,players:players+1,lastPlayed:Date.now()};
+  saveGameStats(all);
+  burstGameButton(button,6);
+  button?.classList.remove("is-pop");void button?.offsetWidth;button?.classList.add("is-pop");
+  renderFeaturedGames();
+  window.location.href="pages/ctrlzone.html?game="+encodeURIComponent(game.id);
+}
+function burstGameButton(button,count=6){
+  if(!button)return;
+  const r=button.getBoundingClientRect();
+  for(let i=0;i<count;i++){
+    const dot=document.createElement("i");dot.className="game-burst-dot";
+    const angle=(Math.PI*2/count)*i,dx=Math.cos(angle)*(26+i*3),dy=Math.sin(angle)*(26+i*3);
+    dot.style.left=(r.left+r.width/2)+"px";dot.style.top=(r.top+r.height/2)+"px";
+    document.body.appendChild(dot);
+    dot.animate([{transform:"translate(-50%,-50%) scale(1)",opacity:1},{transform:"translate(calc(-50% + "+dx+"px),calc(-50% + "+dy+"px)) scale(.2)",opacity:0}],{duration:480,fill:"forwards",easing:"cubic-bezier(.16,1,.3,1)"}).onfinish=()=>dot.remove();
+  }
+}
 async function initFooter(){
   try{
     const r=await fetch("version.json?t="+Date.now(),{cache:"no-store"});if(!r.ok)throw new Error();
@@ -313,17 +421,22 @@ function cleanup(){
   try{state.audioContext?.close()}catch(_){}
 }
 function init(){
-  initSpotlight();initHeroSlider();renderGameScores();renderJournal();loadMusic();renderFeeds();initHorizontalSections();initFooter();
+  initSpotlight();initHeroSlider();renderGameScores();renderJournal();loadMusic();renderFeeds();initHorizontalSections();loadFeaturedGames();initFooter();
   $("#homeMusicAudio")?.addEventListener("ended",()=>showHomeToast("Audio finished."));
   addEventListener("beforeunload",cleanup);
   addEventListener("storage",event=>{
     if(JOURNAL_KEYS.includes(event.key))renderJournal();
     if(event.key==="tubalhub_home_feed_likes"||FEED_KEYS.includes(event.key))renderFeeds();
     if(event.key==="ctrlzone_kills"||event.key==="ctrlzone_wins"||event.key==="ctrlzone_rank")renderGameScores();
+    if(event.key===GAME_STATS_KEY||event.key===GAMES_KEY)loadFeaturedGames();
   });
 }
 onAuthStateChanged(auth,user=>{
   const nameEl=$("#homeAuthName");
   if(nameEl)nameEl.textContent=user?(user.displayName||user.email?.split("@")[0]||"Member"):"";
+});
+document.addEventListener("click",e=>{
+  const play=e.target.closest?.("[data-feature-play]");
+  if(play){playFeaturedGame(play.dataset.featurePlay,play)}
 });
 init();
