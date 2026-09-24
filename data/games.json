@@ -1,0 +1,105 @@
+{
+  "source": "TUBAL HUB CTRLZONE catalog",
+  "updated": "2026-09-24",
+  "games": [
+    {
+      "id": "mlbb",
+      "title": "Mobile Legends: Bang Bang",
+      "emoji": "🎮",
+      "category": "Hot",
+      "genre": "MOBA",
+      "description": "Fast 5v5 MOBA sessions built around heroes, lanes, and team play.",
+      "officialUrl": "https://www.mobilelegends.com",
+      "colorA": "#0d5bd7",
+      "colorB": "#031a4b"
+    },
+    {
+      "id": "hok",
+      "title": "Honor of Kings",
+      "emoji": "⚔️",
+      "category": "Hot",
+      "genre": "MOBA",
+      "description": "Competitive 5v5 mobile action with quick team fights and ranked play.",
+      "officialUrl": "https://www.honorofkings.com",
+      "colorA": "#4e2d9e",
+      "colorB": "#11142c"
+    },
+    {
+      "id": "minecraft",
+      "title": "Minecraft",
+      "emoji": "🧱",
+      "category": "New",
+      "genre": "Sandbox",
+      "description": "Build, explore, survive, and create worlds with no single path.",
+      "officialUrl": "https://www.minecraft.net",
+      "colorA": "#2b8a3e",
+      "colorB": "#0d2915"
+    },
+    {
+      "id": "apex",
+      "title": "Apex Legends",
+      "emoji": "🔥",
+      "category": "Trending",
+      "genre": "Battle Royale",
+      "description": "Hero-based battle royale built around movement, squads, and clutch plays.",
+      "officialUrl": "https://www.ea.com/games/apex-legends",
+      "colorA": "#8d2f4c",
+      "colorB": "#24101a"
+    },
+    {
+      "id": "valorant",
+      "title": "VALORANT",
+      "emoji": "🎯",
+      "category": "Trending",
+      "genre": "FPS",
+      "description": "Precision tactical FPS action with agent abilities and round strategy.",
+      "officialUrl": "https://playvalorant.com",
+      "colorA": "#b92b4d",
+      "colorB": "#2a0b19"
+    },
+    {
+      "id": "roblox",
+      "title": "Roblox",
+      "emoji": "🧩",
+      "category": "New",
+      "genre": "Sandbox",
+      "description": "A huge player-made universe of experiences, creators, and communities.",
+      "officialUrl": "https://www.roblox.com",
+      "colorA": "#5d5d67",
+      "colorB": "#16161b"
+    },
+    {
+      "id": "warzone",
+      "title": "Call of Duty: Warzone",
+      "emoji": "💥",
+      "category": "Hot",
+      "genre": "Battle Royale",
+      "description": "Large-scale online combat with squad play, movement, and seasonal content.",
+      "officialUrl": "https://www.callofduty.com/warzone",
+      "colorA": "#70734c",
+      "colorB": "#181b14"
+    },
+    {
+      "id": "genshin",
+      "title": "Genshin Impact",
+      "emoji": "🌌",
+      "category": "Trending",
+      "genre": "Action",
+      "description": "Open-world action RPG exploration with elemental combat and a large world.",
+      "officialUrl": "https://genshin.hoyoverse.com",
+      "colorA": "#477dca",
+      "colorB": "#18243d"
+    },
+    {
+      "id": "lol",
+      "title": "League of Legends",
+      "emoji": "🏹",
+      "category": "Hot",
+      "genre": "MOBA",
+      "description": "Classic 5v5 MOBA strategy with champions, objectives, and ranked competition.",
+      "officialUrl": "https://www.leagueoflegends.com",
+      "colorA": "#8b6b29",
+      "colorB": "#241b0a"
+    }
+  ]
+}
