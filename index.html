@@ -18,7 +18,7 @@
 <link rel="stylesheet" href="assets/css/home-premium.css?v=20260924">
 <link rel="stylesheet" href="assets/css/sidebar-premium.css?v=20260924-v9">
 <link rel="stylesheet" href="assets/css/home-agency.css?v=20260924-v2">
-<link rel="stylesheet" href="assets/css/home.css?v=20260925-feeds1">
+<link rel="stylesheet" href="assets/css/home.css?v=20260925-games1">
 <link rel="stylesheet" href="assets/css/notification-search.css?v=20260924-ns9">
 <style>
 .hub-home .search-box{position:relative!important;z-index:200!important;pointer-events:auto!important}
@@ -232,9 +232,21 @@
       </section>
 
       <section class="bento-card bento-games" aria-labelledby="bentoGamesTitle">
+        <div class="bento-games-atmosphere" aria-hidden="true"></div>
         <div class="bento-section-head">
-          <div><div class="bento-games-title"><span class="home-emoji" aria-hidden="true">🎮</span><h2 id="bentoGamesTitle">FEATURED GAMES</h2><span class="bento-hot-badge"><i>🔥</i> LIVE</span></div><span class="bento-subline">Real games from the CTRLZONE catalog</span></div>
-          <a class="bento-viewall" href="pages/ctrlzone.html">View All CTRLZONE →</a>
+          <div>
+            <div class="bento-games-title">
+              <span class="bento-games-icon home-emoji" aria-hidden="true">🎮</span>
+              <div><span class="bento-kicker">CTRLZONE</span><h2 id="bentoGamesTitle">Featured Games</h2></div>
+              <span class="bento-hot-badge"><i>●</i> LIVE CATALOG</span>
+            </div>
+            <span class="bento-subline">A premium window into the real CTRLZONE game catalog.</span>
+          </div>
+          <a class="bento-viewall" href="pages/ctrlzone.html">Open CTRLZONE →</a>
+        </div>
+        <div class="bento-games-toolbar">
+          <span><i></i> CURRENT CATALOG</span>
+          <strong id="bentoGamesLiveCount">0 games</strong>
         </div>
         <div id="bentoGamesGrid" class="bento-games-grid" aria-live="polite"></div>
       </section>
