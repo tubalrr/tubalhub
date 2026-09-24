@@ -1,9 +1,10 @@
 import {app,auth} from "./firebase-config.js";
 import {onAuthStateChanged} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 import {getFirestore,collection,getDocs,query,orderBy,limit,onSnapshot} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+import {publishHubPost,subscribeHubPosts} from "./hub-content.js";
 
 const db=getFirestore(app);
-const state={auth:null,items:[],products:[],users:[],localPosts:readLocal("tubalhub-feed-posts",[]),saved:new Set(readLocal("tubalhub-feed-saved",[])),likes:readLocal("tubalhub-feed-likes",{}),comments:readLocal("tubalhub-feed-comments",{}),currentCommentId:null,filter:"all",query:"",sort:"latest",page:0,pageSize:5,loading:false,savedMode:false};
+const state={auth:null,items:[],products:[],hubPosts:[],users:[],saved:new Set(readLocal("tubalhub-feed-saved",[])),likes:readLocal("tubalhub-feed-likes",{}),comments:readLocal("tubalhub-feed-comments",{}),currentCommentId:null,filter:"all",query:"",sort:"latest",page:0,pageSize:5,loading:false,savedMode:false};
 
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
 function readLocal(k,f){try{const v=JSON.parse(localStorage.getItem(k)||"null");return v??f}catch(_){return f}}
@@ -32,13 +33,23 @@ function normalizeProduct(docSnap){
  return {id:"product-"+docSnap.id,type:"product",title:x.name||x.title||"Product",description:x.description||x.excerpt||"",image:x.imageURL||x.imageUrl||x.image||x.thumbnailUrl||"",price:x.price??x.cost??"",stock:x.stock??x.inventory??"",createdAt:x.createdAt||0,author:x.shopName||x.authorName||"TUBAL HUB Shop",sponsored:x.sponsored===true,likes:Number(x.likes||0)}
 }
 function gameItem(g){return{id:"game-"+g[0].toLowerCase().replace(/[^a-z0-9]+/g,"-"),type:"game",title:g[0],description:g[1]+" • "+g[2],image:g[4],url:g[3],createdAt:0,author:"CTRLZONE",likes:0}}
-function localItem(x){return{...x,type:"text",author:x.author||displayName(state.auth),photo:x.photo||photoOf(state.auth),createdAt:x.createdAt||Date.now(),likes:Number(x.likes||0)}}
+function hubItem(x){
+ const kind=x.contentType||"post";
+ const type=kind==="product"?"product":kind==="game"?"game":kind==="video"?"video":"text";
+ return {id:"hub-"+x.id,type,title:x.title||"",description:x.text||"",text:x.text||"",image:x.imageUrl||"",mediaUrl:x.mediaUrl||"",url:x.productUrl||"",productUrl:x.productUrl||"",price:x.price??"",stock:x.stock??"",author:x.authorName||"Member",photo:x.authorPhotoURL||"",createdAt:x.createdAt||0,likes:Number(x.likes||0),comments:Number(x.comments||0),shares:Number(x.shares||0),sponsored:x.sponsored===true,sourceCollection:x.sourceCollection||"",sourceId:x.sourceId||x.id,destinations:Array.isArray(x.destinations)?x.destinations:[],contentType:kind};
+}
+function contentKey(x){return x.sourceCollection&&x.sourceId?x.sourceCollection+":"+x.sourceId:x.type+":"+x.id}
 
 async function loadProducts(){
  try{const snap=await getDocs(query(collection(db,"products"),orderBy("createdAt","desc"),limit(100)));state.products=snap.docs.map(normalizeProduct)}
  catch(e){console.warn("[Feeds] products unavailable",e);state.products=[]}
 }
-function buildFeed(){state.items=[...state.localPosts.map(localItem),...state.products,...games.map(gameItem)];renderStories();renderFeed(true);renderSponsored();renderContacts()}
+function buildFeed(){
+ const raw=[...state.hubPosts.map(hubItem),...state.products,...games.map(gameItem)];
+ const seen=new Set();
+ state.items=raw.filter(x=>{const k=contentKey(x);if(seen.has(k))return false;seen.add(k);return true});
+ renderStories();renderFeed(true);renderSponsored();renderContacts();
+}
 
 function visible(){
  let arr=state.items.filter(x=>!state.savedMode||(state.saved.has(x.id)));
@@ -88,7 +99,12 @@ function renderPost(x,i){
  const liked=Number(state.likes[x.id]||0)>0;
  const likes=Number(x.likes||0)+(liked?Number(state.likes[x.id]||0):0);
  const caption=x.text||x.description||"";
- const body=x.type==="product"?productMarkup(x):x.type==="game"?gameMarkup(x):x.image?"<img class='post-media' src='"+esc(x.image)+"' alt='' loading='lazy'>":"";
+ let body="";
+ if(x.type==="product")body=productMarkup(x);
+ else if(x.type==="game")body=gameMarkup(x);
+ else if(x.type==="video"&&x.mediaUrl)body="<video class='post-media feed-video' controls preload='metadata' src='"+esc(x.mediaUrl)+"'></video>";
+ else if(x.image)body="<img class='post-media' src='"+esc(x.image)+"' alt='' loading='lazy'>";
+ else if(x.title)body="<div class='feed-article-content'><h3>"+esc(x.title)+"</h3><p>"+esc(x.description||x.text||"")+"</p></div>";
  return "<article class='post-card' data-id='"+esc(x.id)+"' style='animation-delay:"+Math.min(i,12)*.08+"s'><div class='post-head'>"+avatarHtml(x)+"<div class='post-meta'><b>"+esc(x.author||"Member")+"</b><span>"+esc(timeLabel(x.createdAt))+" · Everyone</span></div>"+(x.sponsored?"<span class='post-sponsor'>Sponsored</span>":"")+"<span class='post-status "+(x.online===true?"online":"")+"' aria-label='"+(x.online===true?"Online":"Offline")+"'></span></div><div class='post-body'>"+(caption?"<p class='post-caption'>"+esc(caption)+"</p>":"")+body+"</div><div class='post-footer'><div class='post-stats'><span class='like-stat'>"+(likes?likes+" likes":"No reactions yet")+"</span><span>"+(x.comments?x.comments+" comments":"")+(x.shares?" · "+x.shares+" shares":"")+"</span></div><div class='post-actions'><button class='post-action "+(liked?"liked":"")+"' data-action='like'>❤️ Like</button><button class='post-action' data-action='comment'>💬 Comment</button><button class='post-action' data-action='share'>↗ Share</button></div></div></article>";
 }
 function renderFeed(reset){
@@ -128,12 +144,16 @@ function openShare(id){const s=document.getElementById("shareSheet");if(!s)retur
 function showNotice(message){const n=document.getElementById("feedNotice");if(!n)return;n.textContent=message;n.classList.add("open");setTimeout(()=>n.classList.remove("open"),2200)}
 function openPostModal(){document.getElementById("postModal").classList.add("open");document.getElementById("postText").focus()}
 function closePostModal(){document.getElementById("postModal").classList.remove("open")}
-function publishLocalPost(e){
+async function publishLocalPost(e){
  e.preventDefault();
  if(!state.auth){showNotice("Sign in to create a post.");return}
  const text=document.getElementById("postText").value.trim();if(!text)return;
- const item={id:"local-"+Date.now(),text,author:displayName(state.auth),photo:photoOf(state.auth),createdAt:Date.now(),likes:0};
- state.localPosts.unshift(item);writeLocal("tubalhub-feed-posts",state.localPosts);document.getElementById("postText").value="";closePostModal();buildFeed();
+ const button=e.submitter;button?.setAttribute("disabled","true");
+ try{
+  await publishHubPost({contentType:"post",text,sourceCollection:"feeds",destinations:["feeds","community"]});
+  document.getElementById("postText").value="";closePostModal();showNotice("Post published to TUBAL HUB.");
+ }catch(err){console.error("[Feeds] publish failed",err);showNotice(err.code==="permission-denied"?"Publishing is blocked by Firestore Rules.":"Could not publish the post.")}
+ finally{button?.removeAttribute("disabled")}
 }
 function setupComposer(){
  const trigger=document.getElementById("createPostTrigger");
@@ -174,6 +194,11 @@ function setupUI(){
   writeLocal("tubalhub-feed-comments",state.comments);input.value="";renderComments(id);
  });
 }
+function setupHubContent(){
+ try{
+  subscribeHubPosts(items=>{state.hubPosts=items;buildFeed()});
+ }catch(e){console.warn("[Feeds] hub content subscription",e)}
+}
 function setupContacts(){
  try{
   const q=query(collection(db,"presence"),limit(100));
@@ -183,5 +208,5 @@ function setupContacts(){
 function bindUserAvatar(){const a=document.getElementById("createAvatar");if(a){a.innerHTML=photoOf(state.auth)?"<img src='"+esc(photoOf(state.auth))+"' alt=''>":esc(initials(displayName(state.auth)))}}
 onAuthStateChanged(auth,async user=>{
  state.auth=user&&!user.isAnonymous?user:null;
- bindUserAvatar();setupComposer();setupUI();setupContacts();await loadProducts();buildFeed();
+ bindUserAvatar();setupComposer();setupUI();setupContacts();setupHubContent();await loadProducts();buildFeed();
 });
