@@ -184,7 +184,8 @@ function pop(){
     o.connect(g);g.connect(audioCtx.destination);o.start(n);o.stop(n+.2);
   }catch(_){}
 }
-function signalNew(){const b=document.querySelector(".notification-btn");if(!b)return;b.classList.remove("has-new");void b.offsetWidth;b.classList.add("has-new");pop();setBadge()}
+function notificationSoundEnabled(){try{return localStorage.getItem("tubalhub_notif_sound")==="1"}catch(_){return false}}
+function signalNew(){const b=document.querySelector(".notification-btn");if(!b)return;b.classList.remove("has-new");void b.offsetWidth;b.classList.add("has-new");if(notificationSoundEnabled())pop();setBadge()}
 function watchRemote(){
   if(stopRemote){stopRemote();stopRemote=null}
   if(!me)return;
