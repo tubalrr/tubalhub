@@ -502,3 +502,8 @@ body.theme-light .reaction-confetti i:nth-child(3n){
     opacity:1!important;
   }
 }
+
+/* Quick reactions stay hidden until the message's React button is pressed. */
+.quick-reaction-bar{display:none!important;}
+.msg.reaction-open .quick-reaction-bar{display:flex!important;}
+.msg.selected .quick-reaction-bar{display:none!important;}
