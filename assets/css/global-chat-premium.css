@@ -507,3 +507,7 @@ body.theme-light .reaction-confetti i:nth-child(3n){
 .quick-reaction-bar{display:none!important;}
 .msg.reaction-open .quick-reaction-bar{display:flex!important;}
 .msg.selected .quick-reaction-bar{display:none!important;}
+
+/* Final reaction visibility rule: no five-button bar until React is clicked. */
+.msg .quick-reaction-bar{display:none!important;opacity:0!important;visibility:hidden!important;pointer-events:none!important;}
+.msg.reaction-open .quick-reaction-bar{display:flex!important;opacity:1!important;visibility:visible!important;pointer-events:auto!important;}
