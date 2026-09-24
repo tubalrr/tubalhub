@@ -3589,3 +3589,166 @@ body.theme-light .real-quick-form select{
   .bento-game-card{min-height:154px}
   .bento-footer .footer-site-status-grid{grid-template-columns:1fr}
 }
+
+
+/* =========================================================
+   TUBAL HUB FEEDS BODY — REAL VISIBLE
+   Desktop-first; existing mobile rules remain isolated below.
+   ========================================================= */
+#tubalFeedsSection.tubal-feeds-section{
+  width:100%;
+  max-width:1280px;
+  margin:0 auto 40px;
+  padding:24px;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 360px;
+  gap:20px;
+  border:1px solid rgba(120,255,170,.14);
+  border-radius:32px;
+  background:rgba(8,18,15,.58);
+  -webkit-backdrop-filter:blur(20px);
+  backdrop-filter:blur(20px);
+  box-shadow:0 20px 70px rgba(0,0,0,.18);
+  min-width:0;
+}
+#tubalFeedsSection .tubal-feeds-main,
+#tubalFeedsSection .tubal-feeds-quick-post{min-width:0}
+#tubalFeedsSection .tubal-feeds-header{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:18px;
+  margin-bottom:18px;
+}
+#tubalFeedsSection .tubal-feeds-kicker{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  color:#86ffb8;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+}
+#tubalFeedsSection .tubal-feeds-live-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:#1dff91;
+  box-shadow:0 0 0 0 rgba(29,255,145,.55);
+  animation:tubalFeedsPulse 1.8s infinite;
+}
+@keyframes tubalFeedsPulse{
+  0%{box-shadow:0 0 0 0 rgba(29,255,145,.55)}
+  70%{box-shadow:0 0 0 9px rgba(29,255,145,0)}
+  100%{box-shadow:0 0 0 0 rgba(29,255,145,0)}
+}
+#tubalFeedsSection h2,#tubalFeedsSection h3{margin:6px 0 0;color:inherit}
+#tubalFeedsSection .tubal-feeds-header p{
+  margin:6px 0 0;
+  color:rgba(255,255,255,.62);
+  font-size:13px;
+}
+#tubalFeedsSection .tubal-feeds-header-actions{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end;
+}
+#tubalFeedsSection .tubal-feeds-count{
+  padding:9px 12px;border:1px solid rgba(120,255,170,.14);
+  border-radius:999px;color:rgba(255,255,255,.72);font-size:12px;
+  background:rgba(255,255,255,.035);
+}
+#tubalFeedsSection .tubal-feeds-open-btn,
+#tubalFeedsSection .tubal-feeds-quick-post button{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-height:40px;padding:10px 16px;border:0;border-radius:20px;
+  background:linear-gradient(135deg,#1dff91,#7d5aff);
+  color:#020604;font-weight:800;text-decoration:none;cursor:pointer;
+}
+#tubalFeedsSection .feeds-inside-track{
+  display:flex;gap:20px;width:100%;min-height:280px;
+  overflow-x:auto;overflow-y:hidden;
+  scroll-snap-type:x mandatory;
+  scroll-behavior:smooth;
+  padding:2px 2px 12px;
+  scrollbar-width:thin;
+  -webkit-overflow-scrolling:touch;
+}
+#tubalFeedsSection .feeds-inside-track > .feed-card{
+  flex:0 0 320px;width:320px;height:280px;
+  scroll-snap-align:start;
+  padding:20px;border:1px solid rgba(120,255,170,.12);
+  border-radius:24px;background:rgba(255,255,255,.045);
+  box-shadow:0 14px 35px rgba(0,0,0,.15);
+  transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease;
+  overflow:hidden;
+}
+#tubalFeedsSection .feeds-inside-track > .feed-card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 20px 42px rgba(0,0,0,.22);
+  border-color:rgba(120,255,170,.24);
+}
+#tubalFeedsSection .feed-card .head{
+  display:grid;grid-template-columns:40px minmax(0,1fr);column-gap:10px;align-items:center;
+}
+#tubalFeedsSection .feed-card .head img{
+  grid-row:span 2;width:40px;height:40px;border-radius:50%;object-fit:cover;
+}
+#tubalFeedsSection .feed-card .head b{font-size:14px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#tubalFeedsSection .feed-card .head small{color:rgba(255,255,255,.5);font-size:11px}
+#tubalFeedsSection .feed-card > p{
+  margin:16px 0 12px;color:rgba(255,255,255,.84);line-height:1.55;
+  display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden;
+}
+#tubalFeedsSection .feed-card > img{display:block;width:100%;height:120px;object-fit:cover;border-radius:16px;margin:0 0 12px}
+#tubalFeedsSection .feed-card > div:last-child{color:rgba(255,255,255,.62);font-size:12px}
+#tubalFeedsSection .empty-feed{
+  width:100%;min-width:100%;height:200px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:12px;border-radius:24px;
+  border:1px solid rgba(120,255,170,.12);background:rgba(255,255,255,.035);
+}
+#tubalFeedsSection .empty-feed span{font-size:48px}
+#tubalFeedsSection .empty-feed p{margin:0;font-weight:800}
+#tubalFeedsSection .empty-feed small{color:rgba(255,255,255,.58)}
+#tubalFeedsSection .empty-feed button{
+  background:linear-gradient(135deg,#1dff91,#7d5aff);padding:10px 20px;
+  border-radius:20px;border:none;color:#020604;font-weight:700;cursor:pointer;
+}
+#tubalFeedsSection .tubal-feeds-quick-post{
+  padding:20px;border-radius:24px;border:1px solid rgba(120,255,170,.12);
+  background:rgba(255,255,255,.035);
+  align-self:stretch;
+}
+#tubalFeedsSection .quick-post-head{display:flex;justify-content:space-between;gap:12px;margin-bottom:18px}
+#tubalFeedsSection .quick-post-head > span{font-size:24px;color:#86ffb8}
+#tubalFeedsSection #tubalQuickFeedForm{display:grid;gap:10px}
+#tubalFeedsSection #tubalQuickFeedForm label{font-size:12px;font-weight:700;color:rgba(255,255,255,.72)}
+#tubalFeedsSection #tubalQuickFeedText{
+  width:100%;min-height:150px;resize:vertical;padding:14px;border-radius:18px;
+  border:1px solid rgba(120,255,170,.13);background:rgba(0,0,0,.18);
+  color:inherit;outline:none;font:inherit;
+}
+#tubalFeedsSection #tubalQuickFeedText:focus{border-color:rgba(29,255,145,.5);box-shadow:0 0 0 3px rgba(29,255,145,.08)}
+#tubalFeedsSection .quick-post-file{
+  display:flex;justify-content:space-between;gap:10px;cursor:pointer;
+  padding:11px 13px;border:1px dashed rgba(120,255,170,.18);border-radius:16px;
+}
+#tubalFeedsSection .quick-post-file span{font-weight:400;color:rgba(255,255,255,.45);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#tubalFeedsSection #tubalQuickFeedImage{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+#tubalFeedsSection .tubal-feeds-quick-post button{width:100%}
+#tubalFeedsSection .tubal-feeds-quick-post small{color:rgba(255,255,255,.45);line-height:1.45}
+#tubalFeedsSection .tubal-feeds-quick-post code{font-size:10px;color:#9dffc7}
+
+@media (max-width:768px){
+  #tubalFeedsSection.tubal-feeds-section{
+    grid-template-columns:1fr;
+    margin-bottom:24px;padding:16px;border-radius:24px;
+  }
+  #tubalFeedsSection .tubal-feeds-header{flex-direction:column}
+  #tubalFeedsSection .tubal-feeds-header-actions{justify-content:flex-start}
+  #tubalFeedsSection .feeds-inside-track{
+    gap:14px;scroll-snap-type:x mandatory;
+    padding-bottom:10px;
+  }
+  #tubalFeedsSection .feeds-inside-track > .feed-card{
+    flex-basis:calc(100% - 20px);width:calc(100% - 20px);
+    scroll-snap-align:center;
+  }
+}
