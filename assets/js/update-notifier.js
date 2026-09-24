@@ -4,7 +4,8 @@
 
   const script = document.currentScript;
   const scriptUrl = script ? new URL(script.src, document.baseURI) : new URL("assets/js/update-notifier.js", document.baseURI);
-  const rootUrl = new URL("../../", scriptUrl);
+  const rootPath = scriptUrl.pathname.replace(/\/assets\/js\/update-notifier\.js$/,"/");
+  const rootUrl = new URL(rootPath || "./", scriptUrl.origin + "/");
   const versionUrl = new URL("version.json", rootUrl).href;
   const componentUrl = new URL("components/update-modal.html", rootUrl).href;
   const cssUrl = new URL("assets/css/update-notifier.css", rootUrl).href;
@@ -15,7 +16,7 @@
   const EVENT_KEY = "tubalhub_update_event";
   const NATIVE_EVENT_KEY = "tubalhub_last_native_update";
   const UPDATES_ENABLED_KEY = "tubalhub_notif_website_updates";
-  const POLL_MS = 30000;
+  const POLL_MS = 10000;
   const TOAST_MS = 6000;
 
   let loadedUi = false;
@@ -48,6 +49,33 @@
     document.head.appendChild(link);
   }
 
+  function ensureFallbackUi() {
+    if ($("thUpdateToast") || $("thUpdateModal")) return;
+    let holder = $("update-banner");
+    if (!holder) {
+      holder = document.createElement("div");
+      holder.id = "update-banner";
+      document.body.prepend(holder);
+    }
+    holder.innerHTML =
+      '<div class="th-update-system" id="thUpdateSystemFallback" aria-live="polite">' +
+        '<div class="th-update-toast" id="thUpdateToast" hidden>' +
+          '<div class="th-update-toast-icon" aria-hidden="true"><span>✨</span></div>' +
+          '<div class="th-update-toast-copy"><strong id="thUpdateToastTitle">May bago!</strong><span id="thUpdateToastMessage"></span></div>' +
+          '<button class="th-update-toast-close" id="thUpdateToastClose" type="button" aria-label="Close update notice">×</button>' +
+          '<div class="th-update-toast-progress" aria-hidden="true"><i id="thUpdateToastProgress"></i></div>' +
+        '</div>' +
+        '<div class="th-update-overlay" id="thUpdateOverlay" hidden>' +
+          '<section class="th-update-modal" id="thUpdateModal" role="dialog" aria-modal="true" aria-labelledby="thUpdateTitle">' +
+            '<header class="th-update-modal-header"><div><span class="th-update-kicker">🎉 TUBAL HUB UPDATE</span><h2 id="thUpdateTitle">Ano Bago sa Update</h2><p id="thUpdateDate">Date unavailable</p></div><button class="th-update-close" id="thUpdateClose" type="button" aria-label="Close update">×</button></header>' +
+            '<main class="th-update-modal-body"><div class="th-update-intro"><span class="th-update-version" id="thUpdateVersion">v—</span><span id="thUpdateIntroText">Real changes from the current TUBAL HUB release.</span></div><div class="th-update-changelog" id="thUpdateChangelog"></div></main>' +
+            '<footer class="th-update-modal-footer"><button class="th-update-primary" id="thUpdateWhatsNew" type="button">What\'s New</button><button class="th-update-secondary" id="thUpdateDismiss" type="button">Dismiss</button></footer>' +
+          '</section>' +
+        '</div>' +
+        '<div class="th-version-badge" id="thVersionBadge"><span class="th-version-dot" aria-hidden="true"></span><span id="thVersionText">v—</span></div>' +
+      '</div>';
+  }
+
   async function loadUi() {
     ensureCss();
     ensureVersionLink();
@@ -63,9 +91,14 @@
       holder.id = "update-banner";
       document.body.prepend(holder);
     }
-    const response = await fetch(componentUrl, {cache:"no-store"});
-    if (!response.ok) throw new Error("Update modal unavailable: " + response.status);
-    holder.innerHTML = await response.text();
+    try {
+      const response = await fetch(componentUrl, {cache:"no-store"});
+      if (!response.ok) throw new Error("Update modal unavailable: " + response.status);
+      holder.innerHTML = await response.text();
+    } catch (error) {
+      console.warn("[TUBAL HUB update notifier] component load failed, using fallback:", error);
+      ensureFallbackUi();
+    }
     loadedUi = true;
     ensureBell();
     bindUi();
@@ -412,6 +445,7 @@
       listenServiceWorker();
       if (updatesEnabled()) {
         await poll();
+        clearInterval(pollTimer);
         pollTimer=setInterval(poll,POLL_MS);
       } else {
         hideAllUi();
