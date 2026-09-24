@@ -1096,14 +1096,28 @@ function bentoRenderShop(){
 
 function bentoRenderFeeds(rows){
   const box=$("#bentoFeedsList");if(!box)return;
+  const countEl=$("#bentoFeedsLiveCount");
+  if(countEl)countEl.textContent=rows.length+" "+(rows.length===1?"post":"posts");
   if(!rows.length){
     renderRealFeedsEmptyState(box);
     return;
   }
-  box.innerHTML=rows.slice(0,4).map(p=>{
-    const avatar=p.avatar||"",image=p.image||"";
-    return '<article class="bento-feed-card"><div class="bento-feed-head"><span class="bento-feed-avatar">'+(avatar?'<img src="'+esc(avatar)+'" alt="" loading="lazy">':"")+'</span><div class="bento-feed-author"><strong>'+esc(p.author||"")+'</strong><small>'+esc(formatDate(p.createdAt))+'</small></div></div><p class="bento-feed-text">'+esc(p.text||"")+'</p>'+(image?'<img class="bento-feed-image" src="'+esc(image)+'" alt="" loading="lazy">':"")+'<div class="bento-feed-foot"><span class="bento-like-value">'+Math.max(0,Number(p.likes||0))+' likes</span><a class="bento-viewall" href="pages/feeds.html">Open →</a></div></article>';
-  }).join("");
+  const first=rows[0],rest=rows.slice(1,4);
+  const avatarMarkup=p=>{
+    const avatar=p.avatar||"";
+    const letter=String(p.author||"U").trim().charAt(0).toUpperCase()||"U";
+    return '<span class="bento-feed-avatar">'+(avatar?'<img src="'+esc(avatar)+'" alt="" loading="lazy">':esc(letter))+'</span>';
+  };
+  const imageMarkup=p=>p.image?'<img class="bento-feed-image" src="'+esc(p.image)+'" alt="" loading="lazy">':"";
+  const featured='<article class="bento-feed-featured">'+
+    '<div class="bento-feed-head">'+avatarMarkup(first)+'<div class="bento-feed-author"><strong>'+esc(first.author||"Member")+'</strong><small>'+esc(formatDate(first.createdAt))+'</small></div><span class="bento-feed-real-badge">REAL</span></div>'+
+    '<p class="bento-feed-featured-text">'+esc(first.text||"")+'</p>'+imageMarkup(first)+
+    '<div class="bento-feed-foot"><span class="bento-like-value">'+Math.max(0,Number(first.likes||0))+' likes • '+Math.max(0,Number(first.comments||0))+' comments</span><a class="bento-feed-open" href="pages/feeds.html">View post →</a></div></article>';
+  const compact=rest.map(p=>'<article class="bento-feed-compact">'+
+    avatarMarkup(p)+'<div class="bento-feed-compact-copy"><div class="bento-feed-compact-top"><strong>'+esc(p.author||"Member")+'</strong><small>'+esc(formatDate(p.createdAt))+'</small></div>'+
+    '<p>'+esc(String(p.text||"").slice(0,120))+(String(p.text||"").length>120?"…":"")+'</p>'+
+    '<span>'+Math.max(0,Number(p.likes||0))+' likes • '+Math.max(0,Number(p.comments||0))+' comments</span></div></article>').join("");
+  box.innerHTML=featured+(compact?'<div class="bento-feed-more-list">'+compact+'</div>':"");
 }
 function bentoRenderGames(){
   const box=$("#bentoGamesGrid");if(!box)return;
