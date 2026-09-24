@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="../assets/css/profiles.css">
 <link rel="stylesheet" href="../assets/css/global-theme.css?v=20260921">
   <link rel="stylesheet" href="../assets/css/premium-logos.css?v=20260924-logo1">
+<link rel="stylesheet" href="../assets/css/profile-premium.css?v=20260924-p1">
 </head>
 <body>
 
@@ -49,23 +50,32 @@
 
   <main class="profile-main">
     <section class="cover" id="cover">
-      <button class="cover-btn" id="editCover" type="button">▣ &nbsp; Edit Cover</button>
-      <div class="cover-copy"><span>PLAY</span><strong>CREATE</strong><span>CONNECT</span></div>
+      <button class="cover-btn" id="editCover" type="button" aria-label="Edit cover" title="Edit cover">✎</button>
+      <div class="cover-copy"><span>PLAY</span><strong>CREATE</strong><span>CONNECT</span></div><div class="cover-glass"></div>
     </section>
 
     <section class="profile-head">
-      <div class="avatar-wrap">
+      <div class="avatar-wrap" id="avatarWrap">
         <div class="main-avatar" id="mainAvatar">…</div>
-        <button class="camera-btn" id="avatarButton" type="button" title="Edit profile photo">▣</button>
+        <span class="avatar-status offline" id="profileStatusDot" aria-label="Offline"></span>
+        <button class="camera-btn" id="avatarButton" type="button" title="Edit profile photo">✎</button>
+        <span class="level-badge" id="profileLevel" hidden>♛ Lv.—</span>
       </div>
 
       <div class="identity">
+        <div class="identity-kicker">TUBAL HUB PROFILE</div>
         <h1 id="profileName">Loading…</h1>
         <div class="handle" id="profileHandle">Loading profile…</div>
         <p id="profileBio">Loading your profile…</p>
         <div class="meta">
           <span>⌖ <b id="profileLocation">Not set</b></span>
-          <span>▣ <b id="joinedDate">Member</b></span>
+          <span>◷ <b id="joinedDate">Member</b></span>
+          <span id="profileOnlineText">○ Offline</span>
+        </div>
+        <div class="profile-actions">
+          <button class="edit-profile" id="editProfile" type="button">✎ <span>Edit Profile</span></button>
+          <button class="share-profile" id="shareProfile" type="button">↗ <span>Share</span></button>
+          <button class="message-profile" id="messageProfile" type="button">💬 <span>Message</span><i id="messageStatusMini"></i></button>
         </div>
       </div>
 
@@ -76,26 +86,20 @@
         <div class="views-stat"><strong id="viewCount">0</strong><span>Total Views</span></div>
       </div>
 
-      <button class="edit-profile" id="editProfile" type="button">✎ &nbsp; Edit Profile</button>
     </section>
 
-    <nav class="profile-tabs">
-      <a class="active" href="#overview">● &nbsp; Overview</a>
-      <a href="#posts">▤ &nbsp; Posts</a>
-      <a href="#videos">▶ &nbsp; Videos</a>
-      <a href="#gallery">▧ &nbsp; Gallery</a>
-      <a href="#achievements">♕ &nbsp; Achievements</a>
-      <a href="#friends">👥 &nbsp; Friends</a>
-      <a href="#saved">♡ &nbsp; Saved</a>
+    <nav class="profile-tabs" id="profileTabs">
+      <a class="active" href="#overview">Posts</a>
+      <a href="#media">Media</a>
+      <a href="#likes">Likes</a>
+      <a href="#aboutSection">About</a>
+      <a href="#achievements">Achievements</a>
     </nav>
 
     <div class="dashboard-grid" id="overview">
       <div class="left-column">
-        <section class="panel about">
-          <div class="panel-title">
-            <h2>● &nbsp; About Me</h2>
-            <button id="aboutEdit" type="button">✎ Edit</button>
-          </div>
+        <section class="panel profile-about-card" id="aboutSection">
+          <div class="panel-title"><div><span class="panel-kicker">IDENTITY</span><h2>About me</h2></div><button id="aboutEdit" type="button">Edit</button></div>
           <p id="aboutText">No bio added yet.</p>
           <div class="info-list">
             <div><b>Name</b><span id="aboutName">—</span></div>
@@ -103,42 +107,68 @@
             <div><b>Interests</b><span id="aboutInterests">—</span></div>
             <div><b>Favorite Games</b><span id="aboutGames">—</span></div>
           </div>
-          <div class="quote-card">“<br><em>Play Hard<br>Stay Kind<br>Keep Going</em> <i>◆</i></div>
+          <div class="profile-quote">“<span>Play • Share • Connect</span>”</div>
         </section>
 
-        <section class="panel" id="posts">
-          <div class="panel-title"><h2>▣ &nbsp; Recent Posts</h2><span class="real-label">REAL DATA</span></div>
-          <div class="empty-content"><span>▤</span><strong id="postEmptyTitle">No posts yet</strong><small>Posts created by this account will appear here.</small></div>
+        <section class="panel content-panel" id="posts">
+          <div class="panel-title"><div><span class="panel-kicker">ACTIVITY</span><h2>Recent posts</h2></div><span class="real-label">REAL DATA</span></div>
+          <div class="empty-content premium-empty"><div class="empty-orbit">✦</div><strong id="postEmptyTitle">No posts yet</strong><small>Posts created by this account will appear here.</small></div>
         </section>
 
-        <section class="panel" id="achievements">
-          <div class="panel-title"><h2>♕ &nbsp; Achievements</h2><span class="real-label">REAL DATA</span></div>
-          <div class="achievement-row"><div class="empty-mini">No achievements recorded yet.</div></div>
+        <section class="panel content-panel" id="media">
+          <div class="panel-title"><div><span class="panel-kicker">MEDIA</span><h2>Media</h2></div><span class="real-label">REAL DATA</span></div>
+          <div class="empty-content premium-empty"><div class="empty-orbit">◉</div><strong>No media yet</strong><small>Uploaded images and videos will appear here.</small></div>
+        </section>
+
+        <section class="panel content-panel" id="likes">
+          <div class="panel-title"><div><span class="panel-kicker">SAVED ACTIVITY</span><h2>Likes</h2></div><span class="real-label">REAL DATA</span></div>
+          <div class="empty-content premium-empty"><div class="empty-orbit">♡</div><strong>No liked content yet</strong><small>Liked posts will appear here when available.</small></div>
+        </section>
+
+        <section class="panel achievements-panel" id="achievements">
+          <div class="panel-title"><div><span class="panel-kicker">PROGRESS</span><h2>Achievements</h2></div><span class="real-label">REAL DATA</span></div>
+          <div class="badges-row" id="badgeRow"></div>
+          <div class="achievement-progress"><div class="progress-label"><span>Achievement progress</span><b id="achievementProgressText">0%</b></div><div class="progress-track"><span id="achievementProgressBar"></span></div></div>
         </section>
       </div>
 
-      <div class="right-column">
+      <aside class="right-column">
+        <section class="panel profile-side-card">
+          <div class="panel-title"><div><span class="panel-kicker">PROFILE</span><h2>Details</h2></div></div>
+          <div class="side-detail"><span>Joined</span><b id="sideJoinedDate">—</b></div>
+          <div class="side-detail"><span>Location</span><b id="sideLocation">—</b></div>
+          <div class="side-detail"><span>Website</span><a id="sideWebsite" href="#" target="_blank" rel="noopener" hidden>tubalrr.github.io</a><b id="sideWebsiteEmpty">Not set</b></div>
+          <div class="side-status"><span id="sideStatusDot"></span><b id="sideStatusText">Offline</b></div>
+        </section>
+
         <section class="panel gaming">
-          <div class="panel-title"><h2>🎮 &nbsp; Gaming Status</h2><button id="gamingEdit" type="button">✎ Edit</button></div>
+          <div class="panel-title"><div><span class="panel-kicker">GAMING</span><h2>Currently playing</h2></div><button id="gamingEdit" type="button">Edit</button></div>
           <div class="game-current">
             <div class="game-icon">🎮</div>
-            <div><b>Currently Playing</b><span id="currentlyPlaying">Not set</span></div>
+            <div><b>Now playing</b><span id="currentlyPlaying">Not set</span></div>
           </div>
-          <div class="favorite-title"><b>Favorite Games</b></div>
+          <div class="favorite-title"><b>Favorite games</b></div>
           <div class="game-list" id="gameList"><span>No favorite games added.</span></div>
         </section>
 
-        <section class="panel social">
-          <div class="panel-title"><h2>● &nbsp; Social Links</h2><button id="socialEdit" type="button">✎ Edit</button></div>
-          <div class="social-list" id="socialList"><div class="social-empty">No social links connected yet.</div></div>
+        <section class="panel profile-side-card">
+          <div class="panel-title"><div><span class="panel-kicker">COMMUNITY</span><h2>Friends</h2></div><span class="real-label">REAL DATA</span></div>
+          <div class="friend-stack" id="friendStack"><span class="friend-placeholder">No friends added yet.</span></div>
+          <div class="friend-countline"><span id="friendCountLabel">0 friends</span></div>
         </section>
 
-        <section class="panel friends" id="friends">
-          <div class="panel-title"><h2>👥 &nbsp; Friends (<span id="friendCount">0</span>)</h2><span class="real-label">REAL DATA</span></div>
-          <div class="friend-empty">No friends added yet.</div>
+        <section class="panel activity-card">
+          <div class="panel-title"><div><span class="panel-kicker">ACTIVITY</span><h2>Activity graph</h2></div></div>
+          <div class="activity-grid" id="activityGrid"></div>
+          <small class="activity-note">Based on recorded account activity.</small>
         </section>
-      </div>
-    </div>
+
+        <section class="panel social">
+          <div class="panel-title"><div><span class="panel-kicker">CONNECT</span><h2>Social links</h2></div><button id="socialEdit" type="button">Edit</button></div>
+          <div class="social-list" id="socialList"><div class="social-empty">No social links connected yet.</div></div>
+        </section>
+      </aside>
+    </div></div>
   </main>
 </div>
 
@@ -185,6 +215,26 @@ function commaList(v){return Array.isArray(v) ? v.join(", ") : String(v || "");}
 function avatar(el,url,name){
   el.innerHTML = url ? `<img src="${esc(url)}" alt="">` : esc(initials(name));
 }
+function setOnlineState(online){
+  const dot=$("profileStatusDot"),mini=$("messageStatusMini"),sideDot=$("sideStatusDot"),sideText=$("sideStatusText"),onlineText=$("profileOnlineText");
+  [dot,mini,sideDot].forEach(x=>x?.classList.toggle("online",!!online));
+  [dot,mini,sideDot].forEach(x=>x?.classList.toggle("offline",!online));
+  if(dot)dot.setAttribute("aria-label",online?"Online":"Offline");
+  if(sideText)sideText.textContent=online?"Online":"Offline";
+  if(onlineText)onlineText.textContent=online?"● Online":"○ Offline";
+}
+function setupProfileInteractions(){
+  const root=document.querySelector(".profile-main");
+  root?.addEventListener("pointermove",e=>{const r=root.getBoundingClientRect();root.style.setProperty("--profile-mx",e.clientX-r.left+"px");root.style.setProperty("--profile-my",e.clientY-r.top+"px")},{passive:true});
+  $("avatarWrap")?.addEventListener("click",()=>{const a=$("mainAvatar");a.classList.remove("avatar-pop");void a.offsetWidth;a.classList.add("avatar-pop");const burst=document.createElement("span");burst.className="avatar-particle-burst";for(let i=0;i<6;i++){const p=document.createElement("i");p.style.setProperty("--a",(i*60)+"deg");burst.appendChild(p)}$("avatarWrap").appendChild(burst);setTimeout(()=>burst.remove(),620)});
+  $("shareProfile")?.addEventListener("click",async()=>{
+    const url=location.href;try{if(navigator.share)await navigator.share({title:$("profileName").textContent,text:$("profileBio").textContent,url});else{await navigator.clipboard.writeText(url);$("shareProfile").classList.add("is-pop");setTimeout(()=>$("shareProfile").classList.remove("is-pop"),450)}}catch(_){}
+  });
+  $("messageProfile")?.addEventListener("click",()=>{location.href="chat.html"});
+  document.querySelectorAll(".profile-tabs a").forEach(a=>a.addEventListener("click",()=>{document.querySelectorAll(".profile-tabs a").forEach(x=>x.classList.remove("active"));a.classList.add("active")}));
+  document.querySelectorAll(".profile-stats div").forEach(card=>card.addEventListener("click",()=>{card.classList.remove("is-pop");void card.offsetWidth;card.classList.add("is-pop");setTimeout(()=>card.classList.remove("is-pop"),450)}));
+}
+
 function formatDate(v){
   if(!v) return "Member";
   const d = typeof v.toDate === "function" ? v.toDate() : new Date(v);
@@ -228,6 +278,22 @@ function render(){
   $("followingCount").textContent=Number(profile.followingCount||0);
   $("viewCount").textContent=Number(profile.totalViews||0);
   $("friendCount").textContent=Number(profile.friendCount||0);
+  $("friendCountLabel").textContent=Number(profile.friendCount||0)+" friends";
+  $("sideJoinedDate").textContent=formatDate(profile.createdAt||currentUser.metadata?.creationTime).replace(/^Joined\s+/,"");
+  $("sideLocation").textContent=profile.location||"Not set";
+  const website=profile.social?.website||profile.website||"";
+  if(website){$("sideWebsite").href=website;$("sideWebsite").hidden=false;$("sideWebsiteEmpty").hidden=true}else{$("sideWebsite").hidden=true;$("sideWebsiteEmpty").hidden=false}
+  const level=Number(profile.level);
+  if(Number.isFinite(level)){ $("profileLevel").hidden=false;$("profileLevel").textContent="♛ Lv."+level } else $("profileLevel").hidden=true;
+  $("messageStatusMini").classList.toggle("online",false);
+  $("messageStatusMini").classList.toggle("offline",true);
+  const badges=Array.isArray(profile.badges)?profile.badges:[];
+  $("badgeRow").innerHTML=badges.length?badges.slice(0,8).map((b,i)=>'<span class="profile-badge earned" title="'+esc(b.name||b.title||"Badge")+'">'+esc(b.icon||["🎮","💬","🌿","🏆"][i%4])+'</span>').join(""):'<div class="badge-empty">No badges recorded yet.</div>';
+  const ach=Number(profile.achievementProgress);
+  if(Number.isFinite(ach)){const pct=Math.max(0,Math.min(100,ach));$("achievementProgressText").textContent=pct+"%";$("achievementProgressBar").style.width=pct+"%"}else{$("achievementProgressText").textContent="0%";$("achievementProgressBar").style.width="0%";}
+  const activity=Array.isArray(profile.activity)?profile.activity.slice(-35):[];
+  $("activityGrid").innerHTML=activity.length?activity.map(v=>'<span style="--a:'+Math.max(0,Math.min(4,Number(v)||0))+'"></span>').join(""):'<div class="activity-empty">No activity recorded yet.</div>';
+
   avatar($("topAvatar"),profile.photoURL||currentUser.photoURL,name);
   avatar($("mainAvatar"),profile.photoURL||currentUser.photoURL,name);
 
@@ -291,13 +357,18 @@ $("saveProfile").onclick=async()=>{
   }catch(err){console.error(err);status.textContent="Save failed: "+(err?.message||"Please try again.");}
 };
 
+setupProfileInteractions();
 onAuthStateChanged(auth,async user=>{
   if(!user || user.isAnonymous){
     location.replace("./login.html?returnTo=profiles.html");
     return;
   }
   currentUser=user;
-  try{await loadProfile(user);}
+  try{
+    const presenceModule="https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+    const {onSnapshot}=await import(presenceModule);
+    onSnapshot(doc(db,"presence",user.uid),snap=>setOnlineState(snap.exists()&&snap.data()?.online===true),()=>setOnlineState(false));
+    await loadProfile(user);
   catch(err){
     console.error(err);
     $("profileName").textContent="Profile could not load";
