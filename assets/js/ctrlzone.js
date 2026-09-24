@@ -14,10 +14,10 @@ const games=[
 {id:"lol",name:"League of Legends",short:"LOL",logo:LOGO_BASE+"League_of_Legends.png",cover:"https://images.unsplash.com/photo-1603481546238-487240415921?auto=format&fit=crop&w=1200&q=88",genre:"MOBA",dev:"Riot Games",officialUrl:"https://www.leagueoflegends.com",description:"Classic 5v5 MOBA strategy with champions, objectives, and ranked competition."}
 ];
 
-const state={genre:"All",query:"",favorites:new Set(),featuredId:"mlbb",liveMembers:0,featuredTimer:null,featuredBusy:false};
+const state={genre:"All",query:"",favorites:new Set(),featuredId:"mlbb",liveMembers:0,featuredTimer:null,featuredIndex:0};
 const els={
   grid:document.getElementById("gamesGrid"),filters:document.getElementById("genreFilters"),search:document.getElementById("gameSearch"),
-  count:document.getElementById("gameCount"),empty:document.getElementById("gameEmpty"),featured:document.getElementById("featuredGame"),featuredStage:document.getElementById("featuredStage"),featuredPrev:document.getElementById("featuredPrev"),featuredNext:document.getElementById("featuredNext"),featuredDots:document.getElementById("featuredDots"),
+  count:document.getElementById("gameCount"),empty:document.getElementById("gameEmpty"),featuredTrack:document.getElementById("featuredTrack"),featuredStage:document.getElementById("featuredStage"),featuredPrev:document.getElementById("featuredPrev"),featuredNext:document.getElementById("featuredNext"),featuredDots:document.getElementById("featuredDots"),
   toast:document.getElementById("ctrlToast"),particles:document.getElementById("ctrlParticles")
 };
 
@@ -45,8 +45,7 @@ function updateLiveUI(count){
   const copy=document.getElementById("featuredMemberCopy");
   const dot=document.querySelector(".ctrl-header-live .live-dot");
   if(header)header.textContent=String(count);
-  if(featured)featured.textContent=String(count);
-  if(copy)copy.textContent=count===1?"1 member is online now.":count+" members are online now.";
+  updateFeaturedLiveUI();
   dot?.classList.toggle("is-offline",count===0);
 }
 function initRealPresence(){
@@ -107,37 +106,51 @@ function wireSpotlights(){
     },{passive:true})
   })
 }
-function featuredIndex(){return Math.max(0,games.findIndex(x=>x.id===state.featuredId))}
+function featuredIndex(){return state.featuredIndex}
 function renderFeaturedDots(){
   if(!els.featuredDots)return;
   els.featuredDots.innerHTML=games.map((g,i)=>'<button class="'+(i===featuredIndex()?"active":"")+'" data-feature-dot="'+i+'" type="button" aria-label="Show '+esc(g.name)+'"></button>').join("");
 }
+function featuredSlideMarkup(g){
+  return '<article class="featured-card spotlight-card">'+
+    '<div class="featured-cover"><img src="'+esc(g.cover)+'" alt="'+esc(g.name)+' featured cover"></div>'+
+    '<div class="featured-copy"><img class="feature-logo" src="'+esc(g.logo)+'" alt="'+esc(g.name)+' official logo">'+
+    '<div class="featured-live"><span class="mini-online-dot"></span> TUBAL HUB LIVE • <strong data-featured-live-count>…</strong> MEMBERS</div>'+
+    '<h3>'+esc(g.name)+'</h3><p class="featured-desc">'+esc(g.description)+'</p>'+
+    '<div class="featured-members" aria-live="polite"><span data-featured-live-copy>Checking live members…</span></div>'+
+    '<div class="featured-actions"><button class="join-party" data-featured-play="'+esc(g.id)+'" type="button">Join Party →</button><button class="watch-stream" data-featured-stream="'+esc(g.id)+'" type="button">Watch Stream</button></div></div>'+
+  '</article>';
+}
 function renderFeatured(){
-  const g=games.find(x=>x.id===state.featuredId)||games[0];
-  els.featured.innerHTML='<div class="featured-cover"><img src="'+esc(g.cover)+'" alt="'+esc(g.name)+' featured cover"></div><div class="featured-copy"><img class="feature-logo" src="'+esc(g.logo)+'" alt="'+esc(g.name)+' official logo"><div class="featured-live"><span class="mini-online-dot"></span> TUBAL HUB LIVE • <strong id="featuredLiveCount">…</strong> MEMBERS</div><h3>'+esc(g.name)+'</h3><p class="featured-desc">'+esc(g.description)+'</p><div class="featured-members" aria-live="polite"><span id="featuredMemberCopy">Checking live members…</span></div><div class="featured-actions"><button class="join-party" data-featured-play="'+esc(g.id)+'" type="button">Join Party →</button><button class="watch-stream" data-featured-stream="'+esc(g.id)+'" type="button">Watch Stream</button></div></div>';
+  if(!els.featuredTrack)return;
+  state.featuredIndex=Math.max(0,games.findIndex(x=>x.id===state.featuredId));
+  els.featuredTrack.innerHTML=games.map(featuredSlideMarkup).join("");
+  updateFeaturedLiveUI();
+  updateFeaturedPosition(false);
   renderFeaturedDots();
-  wireSpotlights();
-  const copy=document.getElementById("featuredMemberCopy");
-  const live=document.getElementById("featuredLiveCount");
-  if(copy&&state.liveMembers>=0)copy.textContent=state.liveMembers===1?"1 member is online now.":state.liveMembers+" members are online now.";
-  if(live&&state.liveMembers>=0)live.textContent=String(state.liveMembers);
+  els.featuredTrack.querySelectorAll(".spotlight-card").forEach(card=>{
+    card.addEventListener("pointermove",e=>{
+      const r=card.getBoundingClientRect();
+      card.style.setProperty("--mx",(e.clientX-r.left)+"px");
+      card.style.setProperty("--my",(e.clientY-r.top)+"px");
+    },{passive:true});
+  });
+}
+function updateFeaturedLiveUI(){
+  els.featuredTrack?.querySelectorAll("[data-featured-live-count]").forEach(x=>x.textContent=String(state.liveMembers));
+  els.featuredTrack?.querySelectorAll("[data-featured-live-copy]").forEach(x=>x.textContent=state.liveMembers===1?"1 member is online now.":state.liveMembers+" members are online now.");
+}
+function updateFeaturedPosition(animate=true){
+  if(!els.featuredTrack)return;
+  els.featuredTrack.style.transition=animate?"transform .55s cubic-bezier(.16,1,.3,1)":"none";
+  els.featuredTrack.style.transform="translate3d(-"+(state.featuredIndex*100)+"%,0,0)";
+  state.featuredId=games[state.featuredIndex].id;
+  renderFeaturedDots();
 }
 function slideFeatured(direction=1){
-  if(state.featuredBusy)return;
-  state.featuredBusy=true;
-  const current=els.featured;
-  current.classList.remove("slide-next","slide-prev","slide-enter-next","slide-enter-prev");
-  current.classList.add(direction>0?"slide-leave-next":"slide-leave-prev");
-  setTimeout(()=>{
-    const index=featuredIndex();
-    state.featuredId=games[(index+direction+games.length)%games.length].id;
-    renderFeatured();
-    els.featured.classList.add(direction>0?"slide-enter-next":"slide-enter-prev");
-    requestAnimationFrame(()=>requestAnimationFrame(()=>{
-      els.featured.classList.remove("slide-enter-next","slide-enter-prev");
-      state.featuredBusy=false;
-    }));
-  },220);
+  const next=(state.featuredIndex+direction+games.length)%games.length;
+  state.featuredIndex=next;
+  updateFeaturedPosition(true);
 }
 function startFeaturedAuto(){
   clearInterval(state.featuredTimer);
@@ -163,17 +176,12 @@ els.search.addEventListener("input",debounce(()=>{state.query=els.search.value;r
 document.getElementById("featuredPrev")?.addEventListener("click",()=>{stopFeaturedAuto();slideFeatured(-1);startFeaturedAuto()});
 document.getElementById("featuredNext")?.addEventListener("click",()=>{stopFeaturedAuto();slideFeatured(1);startFeaturedAuto()});
 els.featuredDots?.addEventListener("click",e=>{
-  const dot=e.target.closest?.("[data-feature-dot]");
-  if(!dot)return;
+  const dot=e.target.closest?.("[data-feature-dot]");if(!dot)return;
   stopFeaturedAuto();
-  const target=Number(dot.dataset.featureDot);
-  const current=featuredIndex();
-  if(target===current){startFeaturedAuto();return}
-  const direction=((target-current+games.length)%games.length)<=games.length/2?1:-1;
-  const distance=direction>0?(target-current+games.length)%games.length:(current-target+games.length)%games.length;
-  let steps=0;
-  const tick=()=>{if(steps>=distance){startFeaturedAuto();return}steps++;slideFeatured(direction);setTimeout(tick,270)};
-  tick();
+  const target=Number(dot.dataset.featureDot);if(!Number.isInteger(target))return;
+  state.featuredIndex=((target%games.length)+games.length)%games.length;
+  updateFeaturedPosition(true);
+  startFeaturedAuto();
 });
 els.featuredStage?.addEventListener("mouseenter",stopFeaturedAuto);
 els.featuredStage?.addEventListener("mouseleave",startFeaturedAuto);
