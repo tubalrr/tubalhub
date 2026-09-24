@@ -92,7 +92,7 @@ function initHubHeroMessages(){
       textEl.textContent=item[1];
       dots?.querySelectorAll("i").forEach((dot,i)=>dot.classList.toggle("active",i===index));
       box.classList.remove("is-changing");
-    },180);
+    },560);
   };
   show();
   hubMessageTimer=setInterval(()=>{
