@@ -13,6 +13,7 @@
 })();
 import { app, auth } from "./firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+import { subscribeHubPosts } from "./hub-content.js";
 import {
   getFirestore, collection, query, orderBy, limit, getDocs, onSnapshot
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
@@ -31,6 +32,8 @@ const LIKES_KEY = "tubalhub_real_likes";
 const PLAYS_KEY = "tubalhub_real_plays";
 let livePresenceUnsubscribe=null;
 let livePresenceDocs=[];
+let liveHubPosts=[];
+let liveHubPostsUnsubscribe=null;
 let liveStatsTimer=null;
 
 const state = {
@@ -1102,6 +1105,37 @@ function bentoRenderShop(){
   const wishEl=$("#bentoShopWishlist");if(wishEl)wishEl.textContent=String(getBentoShopCount("tubalhub-shop-wishlist-v1"));
 }
 
+function normalizeHomeHubPost(p){
+  return {
+    id:String(p?.id||""),
+    author:String(p?.authorName||"Member"),
+    avatar:String(p?.authorPhotoURL||""),
+    text:String(p?.text||p?.title||"").trim(),
+    image:String(p?.imageUrl||""),
+    likes:Number(p?.likes||0),
+    comments:Number(p?.comments||0),
+    createdAt:p?.createdAt?.toMillis?.()||p?.createdAt?.seconds*1000||Date.now()
+  };
+}
+function startHomeCommunityFeed(){
+  if(liveHubPostsUnsubscribe)return;
+  try{
+    liveHubPostsUnsubscribe=subscribeHubPosts(items=>{
+      liveHubPosts=items
+        .filter(p=>p?.status!=="draft")
+        .map(normalizeHomeHubPost)
+        .filter(p=>p.text||p.image)
+        .slice(0,20);
+      bentoRenderFeeds(liveHubPosts);
+      const countEl=$("#bentoFeedsCount");
+      if(countEl)countEl.textContent=String(liveHubPosts.length);
+      const heroCount=$("#bentoFeedsLiveCount");
+      if(heroCount)heroCount.textContent=liveHubPosts.length+" "+(liveHubPosts.length===1?"post":"posts");
+    });
+  }catch(error){
+    console.warn("[TUBAL HUB community feed]",error);
+  }
+}
 function bentoRenderFeeds(rows){
   const box=$("#bentoFeedsList");if(!box)return;
   const countEl=$("#bentoFeedsLiveCount");
@@ -1161,7 +1195,7 @@ async function renderRealData(){
   clearRealAudioUrls();
   const [music,games,online]=await Promise.all([getRealMusic(),getRealGames(),bentoOnlineCount()]);
   const journals=getRealJournalViews();
-  const posts=getRealFeeds();
+  const posts=liveHubPosts.length?liveHubPosts:getRealFeeds();
   featuredGames=games;
   bentoRenderJournal();
   bentoRenderShop();
@@ -1301,6 +1335,7 @@ function initHomeVersionWatcherBridge(){
 function init(){
   initHomeVersionWatcherBridge();
   initFeedsBodyReal();
+  startHomeCommunityFeed();
   initRealBentoSpotlight();
   initSpotlight();
   initBento();
@@ -1333,6 +1368,8 @@ function init(){
     clearInterval(liveStatsTimer);
     livePresenceUnsubscribe?.();
     livePresenceUnsubscribe=null;
+    liveHubPostsUnsubscribe?.();
+    liveHubPostsUnsubscribe=null;
     cleanup();
   });
   runRealDataAudit().catch(()=>{});
