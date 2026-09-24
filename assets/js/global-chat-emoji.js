@@ -316,7 +316,9 @@
     const pr=picker.getBoundingClientRect();
     const br=button.getBoundingClientRect();
     variation.style.left=Math.max(6,Math.min(br.left-pr.left,pr.width-230))+'px';
-    variation.style.top=Math.max(6,br.bottom-pr.top+4)+'px';
+    const desiredTop=Math.max(6,br.bottom-pr.top+4);
+    const maxTop=Math.max(6,pr.height-96);
+    variation.style.top=Math.min(desiredTop,maxTop)+'px';
     variation.hidden=false;
   }
 
