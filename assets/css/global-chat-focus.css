@@ -679,3 +679,5 @@ body.theme-light .invite-card span{color:#788980}
   .dm-row,
   .chat-rail,.chat-center{transition:none!important}
 }
+
+.dm-name{appearance:none;border:0;padding:0;margin:0;min-width:0;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:transparent;color:#eff8f3;font:750 12px/1.15 Inter,system-ui,sans-serif;text-align:left;cursor:pointer;pointer-events:auto;touch-action:manipulation}.dm-name:hover{text-decoration:underline;text-decoration-color:rgba(29,255,145,.55);text-underline-offset:3px}.dm-row{user-select:none;-webkit-user-select:none;touch-action:manipulation}.dm-row:focus-visible{outline:2px solid rgba(29,255,145,.48);outline-offset:-2px}.dm-row .dm-avatar,.dm-row .dm-copy,.dm-row .dm-side{pointer-events:none}.dm-row .dm-name{pointer-events:auto}.
