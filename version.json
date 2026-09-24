@@ -1,38 +1,32 @@
 {
-  "version": "1.2.2",
+  "version": "1.2.3",
   "date": "2026-09-25",
-  "time": "2026-09-25T00:30:00+08:00",
-  "message": "TUBAL HUB homepage refresh: fully branded hero, softer premium visual design, live Quick Stats, and improved real-time presence.",
+  "time": "2026-09-25T00:45:00+08:00",
+  "message": "TUBAL HUB update system refresh: improved update detection and a reliable notification fallback.",
   "changelog": [
-    {
-      "type": "Improved",
-      "icon": "◈",
-      "title": "TUBAL HUB Homepage",
-      "desc": "The homepage hero is now fully branded as TUBAL HUB with the official TUBAL HUB logo."
-    },
-    {
-      "type": "Improved",
-      "icon": "🌙",
-      "title": "Softer Hero Design",
-      "desc": "The bright green hero was replaced with a darker premium palette that is easier on the eyes."
-    },
-    {
-      "type": "New",
-      "icon": "📊",
-      "title": "Live Stats",
-      "desc": "Quick Stats now shows live site data, including fresh Firebase presence and real content counts."
-    },
-    {
-      "type": "Fixed",
-      "icon": "👥",
-      "title": "Real Online Presence",
-      "desc": "Online users are counted from fresh Firebase presence heartbeats instead of stale online records."
-    },
     {
       "type": "Fixed",
       "icon": "🔔",
-      "title": "Update Notifications",
-      "desc": "The website update notifier now has a new release version so the latest changes can surface in the update notification."
+      "title": "Update Notification Restored",
+      "desc": "The website update checker now loads its update UI more reliably and can fall back to an internal notification panel."
+    },
+    {
+      "type": "Improved",
+      "icon": "⚡",
+      "title": "Faster Update Detection",
+      "desc": "The live update checker now checks for a new published version every 10 seconds while enabled."
+    },
+    {
+      "type": "Improved",
+      "icon": "◈",
+      "title": "Reliable Asset Paths",
+      "desc": "The notifier now resolves the TUBAL HUB project path directly instead of depending on a relative path assumption."
+    },
+    {
+      "type": "New",
+      "icon": "🌙",
+      "title": "TUBAL HUB v1.2.3",
+      "desc": "This release contains the notification reliability fixes and the latest homepage improvements."
     }
   ]
 }
