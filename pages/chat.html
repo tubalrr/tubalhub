@@ -144,12 +144,13 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstati
 
 const db=getFirestore(app), storage=getStorage(app);
 const lock=document.getElementById('chatLock'),content=document.getElementById('chatContent'),messages=document.getElementById('messages'),form=document.getElementById('chatForm'),input=document.getElementById('messageInput'),sendButton=document.getElementById('sendButton'),statusEl=document.getElementById('chatStatus'),memberList=document.getElementById('memberList'),onlineCount=document.getElementById('onlineCount'),onlineMembers=document.getElementById('onlineMembers'),globalMessageCount=document.getElementById('globalMessageCount'),replyingBar=document.getElementById('replyingBar'),replyingName=document.getElementById('replyingName'),cancelReply=document.getElementById('cancelReply'),emojiPicker=document.getElementById('emojiPicker');
-let currentUser=null,stopMessages=null,heartbeatTimer=null,stopPresence=null,stopUsersPresence=null,heartbeatPresenceRefresh=null,stopBanStatus=null,stopReactions=null,stopReplies=null,replyTarget=null,lastMessageTime=0,reactionState={};
+let currentUser=null,stopMessages=null,heartbeatTimer=null,stopPresence=null,stopUsersPresence=null,heartbeatPresenceRefresh=null,stopBanStatus=null,stopReactions=null,stopReplies=null,stopDmList=null,replyTarget=null,lastMessageTime=0,reactionState={};
 let privateTarget=null,stopPrivateMessages=null,privateLastMessageTime=0;
 const emojis=['😀','😂','😍','🥰','😎','😭','😡','😮','👍','👎','❤️','🔥','💯','🎮','🎉','👏','🤣','🤔','😅','🙌','💚','✨','👀','🙏','🥳','😴','🤝','🚀','💀','😇','😱','🤩','💪','🌿','⭐','🎯','🏆','❤️‍🔥','🫶','😊'];
 function enableMemberNameClick(){if(!memberList||memberList.dataset.privateClickReady)return;memberList.dataset.privateClickReady='1';memberList.addEventListener('click',e=>{const nameBtn=e.target.closest?.('.private-member-name');if(!nameBtn)return;const member=nameBtn.closest?.('.member');if(!member)return;const uid=member.dataset.uid;if(!uid||uid===currentUser?.uid)return;const name=nameBtn.textContent||'Member';const img=member.querySelector('.mini img');e.preventDefault();e.stopPropagation();openPrivateChat({uid,displayName:name,photoURL:img?.src||''})},true)}
 
 enableMemberNameClick();
+setupChatFocusUi();
 function esc(v){const d=document.createElement('div');d.textContent=v??'';return d.innerHTML}function initials(n){return(n||'Member').trim().split(/\s+/).slice(0,2).map(x=>x[0]).join('').toUpperCase()||'M'}function avatarHtml(u,cls='msg-avatar'){return u.photoURL?`<div class="${cls}"><img src="${esc(u.photoURL)}" alt=""></div>`:`<div class="${cls}">${esc(initials(u.displayName||u.email))}</div>`}function timeText(ts){return ts?.toDate?ts.toDate().toLocaleTimeString([], {hour:'numeric',minute:'2-digit'}):'Sending...'}function setStatus(t,error=false){statusEl.textContent=t;statusEl.classList.toggle('error',error)}function isRealUser(u=currentUser){return !!u&&!u.isAnonymous}
 async function updatePresence(user,online=true){if(!isRealUser(user))return;const profile={uid:user.uid,displayName:user.displayName||user.email?.split('@')[0]||'Member',email:user.email||'',photoURL:user.photoURL||''};await setDoc(doc(db,'presence',user.uid),{...profile,online,lastSeen:Date.now(),presenceUpdatedAt:serverTimestamp()},{merge:true});await setDoc(doc(db,'users',user.uid),{...profile,lastSeen:serverTimestamp()},{merge:true})}
 function setReplyTarget(messageId,name,preview,parentReplyId=null){replyTarget={messageId,name,preview,parentReplyId};replyingName.textContent=name;replyingBar.style.display='block';input.focus()}
@@ -344,6 +345,162 @@ function subscribeReactions(){
 function subscribeReplies(){if(stopReplies)stopReplies();const q=query(collection(db,'globalChatReplies'),orderBy('createdAt','asc'),limit(500));stopReplies=onSnapshot(q,snap=>{document.querySelectorAll('.reply-box').forEach(x=>x.innerHTML='');snap.forEach(d=>{const x=d.data(),root=x.messageId,box=document.getElementById(`replies-${root}`);if(!box)return;const item=document.createElement('div');item.className='reply-item'+(x.parentReplyId?' nested-reply':'');item.dataset.replyId=d.id;item.innerHTML=`<div class="reply-meta"><b class="private-member-name">${esc(x.displayName||'Member')}</b> • ${esc(timeText(x.createdAt))}</div><div class="reply-text">${esc(x.text)}</div><div class="reply-actions"><button type="button" class="reply-react-btn" title="React">😊</button><button type="button" class="reply-to-reply">↩ Reply</button></div><div class="reply-reaction-bar"></div>`;item.querySelector('.reply-to-reply').onclick=e=>{e.stopPropagation();setReplyTarget(root,x.displayName||'Member',String(x.text||'').slice(0,100),d.id)};item.querySelector('.reply-react-btn').onclick=e=>{e.stopPropagation();openReplyReactionMenu(e.currentTarget,d.id)};renderReplyReactions(item,d.id);box.appendChild(item)});},err=>console.error('Reply error',err))}
 function subscribeMessages(){if(stopMessages)stopMessages();const q=query(collection(db,'globalChats'),orderBy('createdAt','asc'),limit(100));stopMessages=onSnapshot(q,snap=>{messages.innerHTML='';if(snap.empty)messages.innerHTML='<div class="empty-chat"><strong>No messages yet.</strong>Start the first conversation in Global Chat.</div>';snap.forEach(d=>messages.appendChild(renderMessage(d.id,d.data())));globalMessageCount.textContent=snap.size;messages.scrollTop=messages.scrollHeight;setStatus(`Live • ${snap.size} message${snap.size===1?'':'s'} loaded from Global Chat`);},err=>{console.error(err);setStatus('Could not load Global Chat. Check Firestore Rules.',true)})}
 async function subscribePresence(){if(stopPresence)stopPresence();if(stopUsersPresence)stopUsersPresence();if(heartbeatPresenceRefresh)clearInterval(heartbeatPresenceRefresh);const presenceRef=collection(db,'presence'),usersRef=collection(db,'users');let presenceMap=new Map(),usersMap=new Map();const onlineCutoff=()=>Date.now()-180000;const render=()=>{const merged=new Map();presenceMap.forEach((x,uid)=>merged.set(uid,{...x,uid}));usersMap.forEach((x,uid)=>{const last=(typeof x.lastSeen==='number'?x.lastSeen:(x.lastSeen?.toMillis?.()||x.lastSeen?.toDate?.()?.getTime?.()||0));if(last>=onlineCutoff()){const prev=merged.get(uid)||{};merged.set(uid,{...prev,...x,uid,online:true,lastSeen:last})}});const m=[...merged.values()].filter(x=>x.online===true&&((typeof x.lastSeen==='number'?x.lastSeen:(x.lastSeen?.toDate?.()?.getTime?.()||0))>=onlineCutoff()));m.sort((a,b)=>String(a.displayName||'').localeCompare(String(b.displayName||'')));const debug=document.getElementById('presenceDebug');if(debug)debug.textContent=`Presence: ${presenceMap.size} • Users: ${usersMap.size} • Online: ${m.length} • Shown: ${Math.min(m.length,20)}`;onlineCount.textContent=m.length;onlineMembers.textContent=m.length;memberList.innerHTML='';if(!m.length){memberList.innerHTML='<div class="empty-side">No members are online right now.</div>';return}m.slice(0,20).forEach(x=>{const div=document.createElement('div');div.className='member';div.dataset.uid=x.uid;div.innerHTML=`${avatarHtml(x,'mini')}<div class="member-info"><button type="button" class="private-member-name" data-private-uid="${esc(x.uid)}">${esc(x.displayName||'Member')}</button><span>● Online</span></div>${x.uid===currentUser?.uid?'<span class="you-tag">YOU</span>':''}`;memberList.appendChild(div);if(x.uid!==currentUser?.uid){div.title='Open private chat';div.style.cursor='pointer';div.addEventListener('click',e=>{if(e.target.closest('.video-call-btn,.member-call-btn,.private-call'))return;e.preventDefault();e.stopPropagation();openPrivateChat(x)});const nameEl=div.querySelector('.private-member-name');nameEl.style.cursor='pointer';nameEl.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();openPrivateChat(x)})}})};const readPresence=snap=>{presenceMap=new Map();snap.forEach(d=>{const x=d.data();presenceMap.set(x.uid||d.id,{...x,uid:x.uid||d.id})});render()};const readUsers=snap=>{usersMap=new Map();snap.forEach(d=>{const x=d.data();if(x.uid||d.id)usersMap.set(x.uid||d.id,{...x,uid:x.uid||d.id})});render()};try{const [freshPresence,freshUsers]=await Promise.all([getDocsFromServer(query(presenceRef)),getDocsFromServer(query(usersRef))]);readPresence(freshPresence);readUsers(freshUsers);console.log('[TUBAL HUB presence] fresh server:',freshPresence.size,'presence,',freshUsers.size,'users')}catch(e){console.error('[TUBAL HUB presence] fresh server read failed',e)}stopPresence=onSnapshot(query(presenceRef),readPresence,err=>console.error('[TUBAL HUB presence]',err));stopUsersPresence=onSnapshot(query(usersRef),readUsers,err=>console.error('[TUBAL HUB users presence]',err));heartbeatPresenceRefresh=setInterval(async()=>{try{const fresh=await getDocsFromServer(query(usersRef));readUsers(fresh)}catch(e){console.warn('[TUBAL HUB users refresh]',e)}},30000)}
+function dmTime(ts){
+  const d=ts?.toDate?ts.toDate():(typeof ts==='number'?new Date(ts):null);
+  if(!d)return '';
+  const now=new Date();
+  const same=now.toDateString()===d.toDateString();
+  return same?d.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'}):d.toLocaleDateString([], {month:'short',day:'numeric'});
+}
+function deriveDmConversations(snapshot){
+  const me=currentUser?.uid;
+  if(!me)return [];
+  const map=new Map();
+  snapshot.forEach(s=>{
+    const d=s.data();
+    const participants=Array.isArray(d.participants)?d.participants:[];
+    const otherId=String(d.senderId||'')===String(me)
+      ? (d.receiverId||participants.find(x=>x!==me))
+      : (d.senderId||participants.find(x=>x!==me));
+    if(!otherId||otherId===me)return;
+    const ts=d.createdAt?.toMillis?.()||0;
+    const prev=map.get(otherId);
+    if(!prev || ts>prev.ts)map.set(otherId,{uid:otherId,data:d,ts});
+    if(!map.has(otherId)||(!map.get(otherId).displayName && d.displayName)){
+      const cur=map.get(otherId)||{uid:otherId,data:d,ts};
+      cur.displayName=d.displayName||cur.displayName;
+      cur.photoURL=d.senderPhotoURL||d.photoURL||cur.photoURL;
+      map.set(otherId,cur);
+    }
+  });
+  // Second pass fills profile data from any actual message sent by the other participant.
+  snapshot.forEach(s=>{
+    const d=s.data();
+    const senderId=String(d.senderId||'');
+    if(!senderId||senderId===String(me))return;
+    const cur=map.get(senderId);
+    if(cur){
+      cur.displayName=cur.displayName||d.displayName||d.name||'';
+      cur.photoURL=cur.photoURL||d.senderPhotoURL||d.photoURL||'';
+    }
+  });
+  return [...map.values()].sort((a,b)=>b.ts-a.ts);
+}
+function dmPreview(d){
+  if(d.type==='image')return 'Sent an image';
+  if(d.type==='gif')return 'Sent a GIF';
+  return String(d.text||'').replace(/\s+/g,' ').trim().slice(0,72);
+}
+function renderDmList(list){
+  const box=document.getElementById('dmList');
+  const query=(document.getElementById('dmSearch')?.value||'').trim().toLowerCase();
+  const filtered=list.filter(x=>(x.displayName||'').toLowerCase().includes(query)||(dmPreview(x.data)||'').toLowerCase().includes(query));
+  box.innerHTML='';
+  if(!filtered.length){
+    const empty=document.createElement('div');
+    empty.className='dm-empty';
+    const strong=document.createElement('strong');
+    strong.textContent=query?'No matching private chats.':'No private chats yet.';
+    const span=document.createElement('span');
+    span.textContent=query?'Try another member name or message.':'Start a private conversation with an online member.';
+    empty.append(strong,span);
+    box.appendChild(empty);
+    return;
+  }
+  filtered.forEach((x)=>{
+    const row=document.createElement('div');
+    row.className='dm-row'+((privateTarget?.uid===x.uid)?' active':'')+(document.querySelector('.member[data-uid="'+CSS.escape(String(x.uid))+'"]')?' online':'');
+    row.dataset.uid=x.uid;
+    const avatar=document.createElement('div');
+    avatar.className='dm-avatar';
+    if(x.photoURL){
+      const img=document.createElement('img');img.src=x.photoURL;img.alt='';avatar.appendChild(img);
+    }else avatar.textContent=initials(x.displayName||'Member');
+    const copy=document.createElement('div');copy.className='dm-copy';
+    const name=document.createElement('strong');name.textContent=x.displayName||'Member';
+    const preview=document.createElement('span');preview.textContent=dmPreview(x.data)||'Private conversation';
+    copy.append(name,preview);
+    const side=document.createElement('div');side.className='dm-side';
+    const time=document.createElement('span');time.className='dm-time';time.textContent=dmTime(x.data.createdAt);
+    side.appendChild(time);
+    const unread=Number(x.data.unreadCount);
+    if(Number.isFinite(unread)&&unread>0){
+      const pill=document.createElement('span');pill.className='unread-pill';pill.textContent=unread>99?'99+':String(unread);side.appendChild(pill);
+    }
+    row.append(avatar,copy,side);
+    row.addEventListener('click',()=>{
+      openPrivateChat({uid:x.uid,displayName:x.displayName||'Member',photoURL:x.photoURL||''});
+      box.querySelectorAll('.dm-row').forEach(r=>r.classList.remove('active'));
+      row.classList.add('active');
+    });
+    box.appendChild(row);
+  });
+}
+function refreshDmOnlineStates(){
+  document.querySelectorAll('.dm-row').forEach(row=>{
+    row.classList.toggle('online',!!document.querySelector('.member[data-uid="'+CSS.escape(row.dataset.uid||'')+'"]'));
+  });
+}
+function subscribeDirectMessages(){
+  if(stopDmList)stopDmList();
+  if(!currentUser||!isRealUser())return;
+  const q=query(collection(db,'messages'),where('participants','array-contains',currentUser.uid),limit(200));
+  stopDmList=onSnapshot(q,snap=>{
+    const list=deriveDmConversations(snap);
+    window.__tubalDmList=list;
+    renderDmList(list);
+  },err=>{
+    console.error('[TUBAL HUB DMs]',err);
+    const box=document.getElementById('dmList');
+    if(box)box.innerHTML='<div class="dm-empty"><strong>Private chats unavailable.</strong><span>Check your connection or Firebase rules.</span></div>';
+  });
+}
+function privateDmListRefresh(){
+  renderDmList(window.__tubalDmList||[]);
+  refreshDmOnlineStates();
+}
+function setupChatFocusUi(){
+  const left=document.getElementById('chatLeftRail');
+  const right=document.getElementById('chatRightRail');
+  const backdrop=document.getElementById('chatDrawerBackdrop');
+  const memberSearch=document.getElementById('memberSearch');
+  const dmSearch=document.getElementById('dmSearch');
+  const closeLeft=document.getElementById('closeLeftRail');
+  const closeRight=document.getElementById('closeRightRail');
+  const openMembers=document.getElementById('openMembers');
+  const openDMs=document.getElementById('openDMs');
+  const topOpenMembers=document.getElementById('topOpenMembers');
+  const topOpenDMs=document.getElementById('topOpenDMs');
+  const newDm=document.getElementById('newDmButton');
+  const invite=document.getElementById('inviteFriendsBtn');
+  const openLeft=()=>{left?.classList.add('drawer-open');right?.classList.remove('drawer-open');if(backdrop)backdrop.hidden=false};
+  const openRight=()=>{right?.classList.add('drawer-open');left?.classList.remove('drawer-open');if(backdrop)backdrop.hidden=false};
+  const close=()=>{left?.classList.remove('drawer-open');right?.classList.remove('drawer-open');if(backdrop)backdrop.hidden=true};
+  openMembers?.addEventListener('click',openLeft);
+  openDMs?.addEventListener('click',openRight);
+  topOpenMembers?.addEventListener('click',openLeft);
+  topOpenDMs?.addEventListener('click',openRight);
+  closeLeft?.addEventListener('click',close);
+  closeRight?.addEventListener('click',close);
+  backdrop?.addEventListener('click',close);
+  memberSearch?.addEventListener('input',()=>{
+    const q=memberSearch.value.trim().toLowerCase();
+    document.querySelectorAll('#memberList .member').forEach(row=>{
+      const name=row.querySelector('.private-member-name')?.textContent?.toLowerCase()||'';
+      row.style.display=!q||name.includes(q)?'flex':'none';
+    });
+  });
+  dmSearch?.addEventListener('input',privateDmListRefresh);
+  newDm?.addEventListener('click',()=>{openLeft();requestAnimationFrame(()=>memberSearch?.focus())});
+  invite?.addEventListener('click',async()=>{
+    const shareData={title:'TUBAL HUB',text:'Join me on TUBAL HUB — Play • Create • Connect',url:location.href};
+    try{
+      if(navigator.share)await navigator.share(shareData);
+      else if(navigator.clipboard){await navigator.clipboard.writeText(location.href);invite.textContent='Copied';setTimeout(()=>{invite.textContent='Invite'},1300);}
+    }catch(_){}
+  });
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')close()});
+}
 function privateAvatarHtml(target){return target?.photoURL?`<img src="${esc(target.photoURL)}" alt="">`:esc(initials(target?.displayName||'Member'))}
 function privateTime(ts){return ts?.toDate?ts.toDate().toLocaleTimeString([], {hour:'numeric',minute:'2-digit'}):'Sending...'}
 function renderPrivateMessage(id,d){const me=d.senderId===currentUser?.uid;const row=document.createElement('div');row.className='private-msg '+(me?'mine':'theirs');row.dataset.id=id;row.innerHTML=`<div class="private-bubble">${esc(d.text||'')}</div><span class="private-time">${esc(privateTime(d.createdAt))}</span>`;return row}
@@ -400,7 +557,7 @@ document.getElementById('imageBtn').onclick=()=>document.getElementById('imageIn
 document.getElementById('emojiBtn').onclick=e=>{e.preventDefault();e.stopPropagation();window.tubalEmojiPicker?.toggle()};cancelReply.onclick=clearReply;
 form.addEventListener('submit',async e=>{e.preventDefault();const text=input.value.trim();if(!text&&!replyTarget)return;if(!isRealUser()){alert('Please login first.');return}sendButton.disabled=true;try{if(replyTarget)await sendReply(text);else {await sendMessage({type:'text',text});window.tubalBotReply?.(text);}input.value='';}catch(err){console.error(err);alert(err.message==='RATE_LIMIT'?'Please wait a moment before sending another message.':err.message==='MODERATION_BLOCKED'?'Message blocked by TUBAL HUB AI moderation.':'Message was not sent. Check Firebase Firestore Rules.')}finally{sendButton.disabled=false;input.focus()}});
 
-onAuthStateChanged(auth,async user=>{if(!user||user.isAnonymous){currentUser=null;lock.style.display='block';content.style.display='none';content.setAttribute('aria-hidden','true');if(stopMessages)stopMessages();if(stopPresence)stopPresence();if(stopReactions)stopReactions();if(stopReplies)stopReplies();reactionSnapshotReady=false;reactionState={};reactionUsersState={};if(stopBanStatus)stopBanStatus();if(window.__banPollTimer)clearInterval(window.__banPollTimer);if(stopPrivateMessages)stopPrivateMessages();privateTarget=null;document.getElementById('privateChatPanel').hidden=true;if(heartbeatTimer)clearInterval(heartbeatTimer);document.getElementById('profileName').textContent='TUBAL HUB';document.getElementById('profileStatus').textContent='● Login required';return}currentUser=user;lock.style.display='none';content.style.display='grid';content.setAttribute('aria-hidden','false');const name=user.displayName||user.email?.split('@')[0]||'Member';document.getElementById('profileName').textContent=name;document.getElementById('profileStatus').textContent='● Online';document.getElementById('profileAvatar').innerHTML=user.photoURL?`<img src="${esc(user.photoURL)}" alt="">`:esc(initials(name));sendButton.disabled=false;input.disabled=false;try{await updatePresence(user,true)}catch(e){console.error(e)}if(stopBanStatus)stopBanStatus();let chatAccessActive=false;const applyBanStatus=d=>{const until=d.banUntil?.toMillis?.()||d.banUntil?.toDate?.()?.getTime?.()||0;const banned=d.chatStatus==='banned'&&(until===0||until>Date.now());if(banned){input.disabled=true;sendButton.disabled=true;const banMessage='🚫 GLOBAL CHAT ACCESS BANNED'+(d.banReason?'\nReason: '+d.banReason+'.':'')+(until?'\nBan ends: '+new Date(until).toLocaleString()+'.':'\nPermanent ban.');const notice=document.getElementById('moderationNotice');if(notice){notice.textContent=banMessage;notice.className='moderation-notice show danger';clearTimeout(window.__moderationNoticeTimer);}setStatus('Chat access blocked while your ban is active.',true);if(stopMessages){stopMessages();stopMessages=null}if(stopReactions){stopReactions();stopReactions=null}if(stopReplies){stopReplies();stopReplies=null}chatAccessActive=false}else{input.disabled=false;sendButton.disabled=false;document.getElementById('moderationNotice').classList.remove('show');setStatus('Connected to TUBAL HUB');if(!chatAccessActive){subscribeMessages();subscribePresence();subscribeReactions();subscribeReplies();chatAccessActive=true}}};stopBanStatus=onSnapshot(doc(db,'users',user.uid),snap=>applyBanStatus(snap.exists()?snap.data():{}),err=>console.error('Ban status listener failed:',err));const checkBanStatus=async()=>{try{const snap=await getDoc(doc(db,'users',user.uid));applyBanStatus(snap.exists()?snap.data():{});}catch(e){console.error('Ban status check failed:',e)}};await checkBanStatus();if(window.__banPollTimer)clearInterval(window.__banPollTimer);window.__banPollTimer=setInterval(checkBanStatus,3000);if(heartbeatTimer)clearInterval(heartbeatTimer);heartbeatTimer=setInterval(()=>updatePresence(currentUser,true).catch(()=>{}),20000)});
+onAuthStateChanged(auth,async user=>{if(!user||user.isAnonymous){currentUser=null;lock.style.display='block';content.style.display='none';content.setAttribute('aria-hidden','true');if(stopMessages)stopMessages();if(stopPresence)stopPresence();if(stopReactions)stopReactions();if(stopReplies)stopReplies();if(stopDmList)stopDmList();window.__tubalDmList=[];renderDmList([]);reactionSnapshotReady=false;reactionState={};reactionUsersState={};if(stopBanStatus)stopBanStatus();if(window.__banPollTimer)clearInterval(window.__banPollTimer);if(stopPrivateMessages)stopPrivateMessages();privateTarget=null;document.getElementById('privateChatPanel').hidden=true;if(heartbeatTimer)clearInterval(heartbeatTimer);document.getElementById('profileName').textContent='TUBAL HUB';document.getElementById('profileStatus').textContent='● Login required';return}currentUser=user;lock.style.display='none';content.style.display='grid';content.setAttribute('aria-hidden','false');const name=user.displayName||user.email?.split('@')[0]||'Member';document.getElementById('profileName').textContent=name;document.getElementById('profileStatus').textContent='● Online';document.getElementById('profileAvatar').innerHTML=user.photoURL?`<img src="${esc(user.photoURL)}" alt="">`:esc(initials(name));sendButton.disabled=false;input.disabled=false;try{await updatePresence(user,true)}catch(e){console.error(e)}if(stopBanStatus)stopBanStatus();let chatAccessActive=false;const applyBanStatus=d=>{const until=d.banUntil?.toMillis?.()||d.banUntil?.toDate?.()?.getTime?.()||0;const banned=d.chatStatus==='banned'&&(until===0||until>Date.now());if(banned){input.disabled=true;sendButton.disabled=true;const banMessage='🚫 GLOBAL CHAT ACCESS BANNED'+(d.banReason?'\nReason: '+d.banReason+'.':'')+(until?'\nBan ends: '+new Date(until).toLocaleString()+'.':'\nPermanent ban.');const notice=document.getElementById('moderationNotice');if(notice){notice.textContent=banMessage;notice.className='moderation-notice show danger';clearTimeout(window.__moderationNoticeTimer);}setStatus('Chat access blocked while your ban is active.',true);if(stopMessages){stopMessages();stopMessages=null}if(stopReactions){stopReactions();stopReactions=null}if(stopReplies){stopReplies();stopReplies=null}chatAccessActive=false}else{input.disabled=false;sendButton.disabled=false;document.getElementById('moderationNotice').classList.remove('show');setStatus('Connected to TUBAL HUB');if(!chatAccessActive){subscribeMessages();subscribePresence();subscribeReactions();subscribeReplies();subscribeDirectMessages();chatAccessActive=true}}};stopBanStatus=onSnapshot(doc(db,'users',user.uid),snap=>applyBanStatus(snap.exists()?snap.data():{}),err=>console.error('Ban status listener failed:',err));const checkBanStatus=async()=>{try{const snap=await getDoc(doc(db,'users',user.uid));applyBanStatus(snap.exists()?snap.data():{});}catch(e){console.error('Ban status check failed:',e)}};await checkBanStatus();if(window.__banPollTimer)clearInterval(window.__banPollTimer);window.__banPollTimer=setInterval(checkBanStatus,3000);if(heartbeatTimer)clearInterval(heartbeatTimer);heartbeatTimer=setInterval(()=>updatePresence(currentUser,true).catch(()=>{}),20000)});
 document.addEventListener('visibilitychange',()=>{if(currentUser&&!document.hidden){updatePresence(currentUser,true).catch(()=>{});subscribePresence()}});window.addEventListener('pageshow',()=>{if(currentUser)updatePresence(currentUser,true).catch(()=>{})});window.addEventListener('focus',()=>{if(currentUser)updatePresence(currentUser,true).catch(()=>{})});window.addEventListener('beforeunload',()=>{if(currentUser)updatePresence(currentUser,false).catch(()=>{})});
 </script>
 
@@ -411,3 +568,7 @@ document.addEventListener('visibilitychange',()=>{if(currentUser&&!document.hidd
 <script src="../assets/js/theme.js?v=20260922" defer></script>
 <script src="../assets/js/global-chat-premium.js?v=20260924-v3" defer></script>
 </body></html>
+
+<script>
+(()=>{const list=document.getElementById('memberList');if(!list)return;const obs=new MutationObserver(()=>{if(window.privateDmListRefresh)window.privateDmListRefresh()});obs.observe(list,{childList:true,subtree:true});window.privateDmListRefresh=()=>{try{const box=document.getElementById('dmList');if(!box)return;document.querySelectorAll('.dm-row').forEach(row=>row.classList.toggle('online',!!document.querySelector('.member[data-uid="'+CSS.escape(row.dataset.uid||'')+'"]')))}catch(_){} };})();
+</script>
