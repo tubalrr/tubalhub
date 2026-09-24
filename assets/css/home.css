@@ -4304,3 +4304,28 @@ body > div[style*="60px"],.left-rail,.narrow-col{
 .bento-games-grid .premium-game-card:nth-child(2){animation-delay:.05s}
 .bento-games-grid .premium-game-card:nth-child(3){animation-delay:.1s}
 .bento-games-grid .premium-game-card:nth-child(4){animation-delay:.15s}
+
+/* FEATURED GAMES — REAL LOGO ONLY */
+#ctrlzoneCard.ctrlzone-featured-real{width:100%!important;min-width:0!important;box-sizing:border-box!important}
+.ctrlzone-featured-header{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:16px}
+.ctrlzone-featured-brand{display:flex;align-items:center;gap:10px;min-width:0}
+.ctrlzone-featured-brand>img{width:32px;height:32px;flex:0 0 32px;border-radius:8px;object-fit:contain;background:rgba(0,0,0,.3)}
+.ctrlzone-featured-kicker{display:block;font-size:10px;letter-spacing:2px;opacity:.6}
+.ctrlzone-featured-brand h3{margin:0;font-size:20px;line-height:1.2}
+.ctrlzone-live-catalog{background:rgba(29,255,145,.15);border:1px solid #1dff91;padding:4px 8px;border-radius:20px;font-size:10px;color:#1dff91;white-space:nowrap}
+.ctrlzone-open-link{font-size:11px;white-space:nowrap;color:inherit;text-decoration:none}
+.featured-games-track-real{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;width:100%;min-width:0}
+.game-card-real-logo{position:relative;min-width:0;display:block;box-sizing:border-box;padding:12px;border-radius:20px;background:rgba(0,0,0,.3);border:1px solid rgba(125,90,255,.14);color:inherit;text-decoration:none;overflow:hidden;cursor:pointer;transition:transform .3s ease,border-color .3s ease,box-shadow .3s ease}
+.game-card-real-logo:hover{transform:translateY(-4px);border-color:rgba(125,90,255,.38);box-shadow:0 10px 30px rgba(125,90,255,.2)}
+.game-real-logo-box{width:100%;aspect-ratio:1;background:rgba(255,255,255,.04);border-radius:16px;display:flex;align-items:center;justify-content:center;overflow:hidden;margin-bottom:10px}
+.game-card-real-logo-img{width:80%;height:80%;object-fit:contain;image-rendering:auto;filter:drop-shadow(0 4px 12px rgba(0,0,0,.5))}
+.game-real-initials{display:flex;align-items:center;justify-content:center;width:72px;height:72px;border-radius:18px;background:rgba(125,90,255,.12);border:1px solid rgba(125,90,255,.24);font-size:26px;font-weight:900;letter-spacing:.04em}
+.game-card-real-logo>b{display:block;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.game-card-real-logo>small{display:block;margin-top:3px;font-size:10px;opacity:.6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.real-logo-badge{position:absolute;top:8px;right:8px;background:#1dff91;color:#020604;font-size:8px;font-weight:800;padding:2px 6px;border-radius:20px}
+.empty-games-real{grid-column:1/-1;min-height:180px;border:1px dashed rgba(125,90,255,.2);border-radius:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;padding:20px}
+.empty-real-mark{width:48px;height:48px;display:flex;align-items:center;justify-content:center;border-radius:12px;background:rgba(125,90,255,.1);color:#a99bff;font-size:9px;font-weight:900;letter-spacing:.08em}
+.empty-games-real p,.empty-games-real small{margin:0;font-size:12px}.empty-games-real small{font-size:10px;opacity:.5;max-width:520px}
+.current-catalog-count{margin-top:12px;font-size:11px;opacity:.6}
+@media(max-width:900px){.featured-games-track-real{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){#ctrlzoneCard.ctrlzone-featured-real{padding:18px!important;border-radius:24px!important}.ctrlzone-featured-header{align-items:flex-start}.ctrlzone-featured-brand h3{font-size:17px}.ctrlzone-open-link{font-size:10px}.featured-games-track-real{grid-template-columns:repeat(2,minmax(0,1fr))}.ctrlzone-live-catalog{display:none}}
