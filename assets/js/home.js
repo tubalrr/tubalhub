@@ -478,46 +478,106 @@ async function initFooter(){
   }catch(_){}
 }
 const sliderTimers=new Map();
+
 function renderAllSliderDots(){
   document.querySelectorAll(".slider-track").forEach(track=>{
     const cards=[...track.children].filter(el=>el.offsetWidth>0);
     if(!cards.length)return;
     let dots=track.parentElement.querySelector(".auto-slider-dots");
     if(!dots){
-      dots=document.createElement("div");dots.className="auto-slider-dots";track.parentElement.appendChild(dots);
+      dots=document.createElement("div");
+      dots.className="auto-slider-dots";
+      track.parentElement.appendChild(dots);
     }
-    dots.innerHTML=cards.map((_,i)=>'<button type="button" data-slider-index="'+i+'" aria-label="Go to card '+(i+1)+'"></button>').join("");
-    dots.querySelectorAll("button").forEach((b,i)=>b.addEventListener("click",()=>cards[i]&&track.scrollTo({left:cards[i].offsetLeft,behavior:"smooth"})));
-    const active=()=>{let best=0,min=Infinity;cards.forEach((c,i)=>{const d=Math.abs(track.scrollLeft-c.offsetLeft);if(d<min){min=d;best=i}});dots.querySelectorAll("button").forEach((b,i)=>b.classList.toggle("active",i===best))};
-    track.addEventListener("scroll",active,{passive:true});active();
+    if(dots.dataset.count!==String(cards.length)){
+      dots.dataset.count=String(cards.length);
+      dots.innerHTML=cards.map((_,i)=>'<button type="button" data-slider-index="'+i+'" aria-label="Go to card '+(i+1)+'"></button>').join("");
+      dots.querySelectorAll("button").forEach((b,i)=>b.addEventListener("click",()=>cards[i]&&track.scrollTo({left:cards[i].offsetLeft,behavior:"smooth"})));
+    }
+    const active=()=>{
+      let best=0,min=Infinity;
+      cards.forEach((c,i)=>{const d=Math.abs(track.scrollLeft-c.offsetLeft);if(d<min){min=d;best=i}});
+      dots.querySelectorAll("button").forEach((b,i)=>b.classList.toggle("active",i===best));
+    };
+    if(track.dataset.dotsScrollReady!=="1"){
+      track.dataset.dotsScrollReady="1";
+      track.addEventListener("scroll",active,{passive:true});
+    }
+    active();
   });
 }
+
 function initAllSliders(){
   document.querySelectorAll(".slider-track").forEach(track=>{
     if(track.dataset.sliderReady==="1")return;
     track.dataset.sliderReady="1";
     const id=track.id;
-    const prev=$("#"+id+"Prev"),next=$("#"+id+"Next"),cards=()=>Array.from(track.children).filter(el=>el.offsetWidth>0);
-    let startX=0,dragX=0,dragging=false;
+    const prev=$("#"+id+"Prev"),next=$("#"+id+"Next");
+    const cards=()=>Array.from(track.children).filter(el=>el.offsetWidth>0);
+    let startX=0,dragX=0,dragging=false,touchStartX=0;
+
+    const cardStep=()=>{
+      const card=cards()[0];
+      return card?card.getBoundingClientRect().width+(isMobileHome()?12:20):0;
+    };
     const scrollByCards=dir=>{
-      const card=cards()[0];if(!card)return;
-      const step=(card.getBoundingClientRect().width+20)*Math.max(1,Math.floor(track.clientWidth/card.getBoundingClientRect().width));
-      track.scrollBy({left:dir*step,behavior:"smooth"});
+      const step=cardStep();
+      if(!step)return;
+      const visible=Math.max(1,Math.floor(track.clientWidth/Math.max(step,1)));
+      track.scrollBy({left:dir*step*visible,behavior:"smooth"});
     };
     prev?.addEventListener("click",()=>scrollByCards(-1));
     next?.addEventListener("click",()=>scrollByCards(1));
+
+    // Desktop pointer drag.
     track.addEventListener("pointerdown",e=>{
-      dragging=true;startX=e.clientX;dragX=0;track.setPointerCapture?.(e.pointerId);
+      if(e.pointerType==="touch")return;
+      dragging=true;startX=e.clientX;dragX=0;
+      track.classList.add("is-dragging");
+      track.setPointerCapture?.(e.pointerId);
     });
-    track.addEventListener("pointermove",e=>{if(dragging)dragX=e.clientX-startX});
-    const end=()=>{
+    track.addEventListener("pointermove",e=>{
+      if(dragging)dragX=e.clientX-startX;
+    });
+    const endPointer=()=>{
       if(!dragging)return;
       dragging=false;
-      if(Math.abs(dragX)>=50)track.scrollBy({left:dragX<0?300:-300,behavior:"smooth"});
+      track.classList.remove("is-dragging");
+      if(Math.abs(dragX)>=50)track.scrollBy({left:dragX<0?cardStep()||300:-(cardStep()||300),behavior:"smooth"});
       dragX=0;
     };
-    track.addEventListener("pointerup",end);track.addEventListener("pointercancel",end);
-    let timer=setInterval(()=>{if(document.hidden)return;if(track.matches(":hover"))return;track.scrollBy({left:300,behavior:"smooth"})},5000);
+    track.addEventListener("pointerup",endPointer);
+    track.addEventListener("pointercancel",endPointer);
+
+    // Mobile touch swipe: threshold 50px, then snap one card.
+    track.addEventListener("touchstart",e=>{
+      if(!e.touches?.length)return;
+      touchStartX=e.touches[0].clientX;
+    },{passive:true});
+    track.addEventListener("touchmove",e=>{
+      if(!e.touches?.length)return;
+      const delta=e.touches[0].clientX-touchStartX;
+      if(Math.abs(delta)>10)track.classList.add("is-touching");
+    },{passive:true});
+    track.addEventListener("touchend",e=>{
+      const touch=e.changedTouches?.[0];
+      if(!touch)return;
+      const delta=touch.clientX-touchStartX;
+      if(Math.abs(delta)>=50){
+        const step=cardStep()||300;
+        track.scrollBy({left:delta<0?step:-step,behavior:"smooth"});
+      }
+      track.classList.remove("is-touching");
+      touchStartX=0;
+    },{passive:true});
+
+    const timer=setInterval(()=>{
+      if(document.hidden)return;
+      if(isMobileHome() && track.classList.contains("is-touching"))return;
+      if(track.matches(":hover"))return;
+      const step=cardStep()||300;
+      track.scrollBy({left:step,behavior:"smooth"});
+    },5000);
     sliderTimers.set(id,timer);
   });
 }
@@ -550,7 +610,19 @@ function initScrollReveal(){
   }
 }
 function init(){
-  initSpotlight();initHeroSlider();renderGameScores();renderJournal();loadMusic();renderFeeds();initHorizontalSections();renderAllSliderDots();loadFeaturedGames();initFooter();initFooterNewsletter();initFooterSmoothLinks();initScrollReveal();
+  initSpotlight();
+  initHeroSlider();
+  renderGameScores();
+  renderJournal();
+  loadMusic();
+  renderFeeds();
+  initHorizontalSections();
+  renderAllSliderDots();
+  loadFeaturedGames();
+  initFooter();
+  initFooterNewsletter();
+  initFooterSmoothLinks();
+  initScrollReveal();
   $("#homeMusicAudio")?.addEventListener("ended",()=>{
     document.querySelectorAll(".music-real-card.is-playing").forEach(card=>card.classList.remove("is-playing"));
     showHomeToast("Audio finished.");
@@ -563,12 +635,43 @@ function init(){
     if(event.key===GAME_STATS_KEY||event.key===GAMES_KEY)loadFeaturedGames();
   });
 }
-onAuthStateChanged(auth,user=>{
-  const nameEl=$("#homeAuthName");
-  if(nameEl)nameEl.textContent=user?(user.displayName||user.email?.split("@")[0]||"Member"):"";
-});
-document.addEventListener("click",e=>{
-  const play=e.target.closest?.("[data-feature-play]");
-  if(play){playFeaturedGame(play.dataset.featurePlay,play)}
-});
-init();
+
+let homeStarted=false;
+let lastHomeMobile=window.innerWidth<768;
+let resizeTimer=0;
+
+function handleHomeBreakpoint(){
+  const nowMobile=window.innerWidth<768;
+  if(nowMobile===lastHomeMobile)return;
+  lastHomeMobile=nowMobile;
+  renderJournal();
+  loadMusic();
+  renderFeeds();
+  loadFeaturedGames();
+  requestAnimationFrame(renderAllSliderDots);
+}
+
+addEventListener("resize",()=>{
+  clearTimeout(resizeTimer);
+  resizeTimer=setTimeout(handleHomeBreakpoint,140);
+},{passive:true});
+
+function startHome(){
+  if(homeStarted)return;
+  homeStarted=true;
+  onAuthStateChanged(auth,user=>{
+    const nameEl=$("#homeAuthName");
+    if(nameEl)nameEl.textContent=user?(user.displayName||user.email?.split("@")[0]||"Member"):"";
+  });
+  document.addEventListener("click",e=>{
+    const play=e.target.closest?.("[data-feature-play]");
+    if(play)playFeaturedGame(play.dataset.featurePlay,play);
+  });
+  init();
+}
+
+if(document.readyState==="loading"){
+  document.addEventListener("DOMContentLoaded",startHome,{once:true});
+}else{
+  startHome();
+}
