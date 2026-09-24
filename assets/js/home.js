@@ -54,7 +54,8 @@ function initSpotlight(){
 export function createSlider(trackId,prevId,nextId,dotsId){
   const track=$("#"+trackId);if(!track)return null;
   const prev=$("#"+prevId),next=$("#"+nextId),dots=$("#"+dotsId);
-  const slides=$$(".hero-slide",track);
+  const slides=$(".hero-slide",track);
+  if(!slides.length)return null;
   const horizontal=track.dataset.horizontal==="true";
   let index=0,startX=0,deltaX=0,dragging=false,autoTimer=null;
   const renderDots=()=>{
@@ -92,6 +93,7 @@ export function createSlider(trackId,prevId,nextId,dotsId){
   };
   track.addEventListener("pointerup",end);track.addEventListener("pointercancel",end);
   track.addEventListener("mouseenter",stopAuto);track.addEventListener("mouseleave",startAuto);
+  track.setAttribute("aria-label", "TUBAL HUB featured slider with "+slides.length+" slides");
   track.addEventListener("touchstart",()=>{stopAuto()},{passive:true});
   track.addEventListener("touchend",()=>{startAuto()},{passive:true});
   startAuto();
