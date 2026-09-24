@@ -460,7 +460,7 @@ function renderDmList(list){
       if(e.key==='Enter'||e.key===' '){e.preventDefault();openDm(row,x)}
     });
     name.addEventListener('pointerdown',openFromPointer,{passive:false});
-    name.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();openDm(row,x)});
+    name.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();if(pointerOpened)return;openDm(row,x)});
     avatar.addEventListener('pointerdown',openFromPointer,{passive:false});
 
     box.appendChild(row);
