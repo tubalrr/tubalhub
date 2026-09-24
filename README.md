@@ -8,6 +8,45 @@ TUBAL HUB is a modern gaming, creative, community, and digital-content platform 
 
 https://tubalrr.github.io/tubalhub/
 
+## 📰 TUBAL HUB Feeds
+
+The Feeds page is the main social-content stream for published TUBAL HUB content.
+
+### Features
+- Premium original TUBAL HUB social-feed design
+- Glassmorphism with 20px blur and neon green `#1dff91` + purple `#7d5aff`
+- Midnight, Forest, and Light visual themes with distinct styles
+- Real published content from the shared `hubPosts` stream
+- Search, filters, latest/popular sorting, saved-feed mode, and progressive loading
+- Reactions: Like, Love, Haha, Wow, Sad, and Angry
+- Reaction picker with hover/long-press behavior, haptic feedback, animated bursts, reaction summaries, and reactor list
+- Nested comments and replies with edit/delete controls
+- Emoji picker, photo/GIF attachment preview, typing indicator, and comment reactions
+- Share sheet for Facebook, Messenger, WhatsApp, X/Twitter, Instagram, Telegram, Email, Discord, and Copy Link
+- Native Web Share API support when available
+- Mouse spotlight effects and GPU-friendly interaction animations
+- Real online/offline status indicators where presence data is available
+- Trending Now, Active in Games, and Suggested for you sidebar sections
+- No placeholder members, fake engagement totals, or invented published content
+
+## 🔁 Unified Content Distribution
+
+TUBAL HUB uses a shared `hubPosts` content stream so a single publication can appear in the appropriate hub surfaces.
+
+### Routing
+- **Post** → Feeds + Community
+- **Product** → Feeds + Shop
+- **Game** → Feeds + Games
+- **News** → Feeds + News
+- **Video** → Feeds + News
+- **Event** → Feeds + Events
+- **Announcement** → Feeds + News + Community
+- **Story** → Feeds + News
+
+Admin publishing tools can create and mirror content into the shared stream. Firestore rules validate allowed content types, destinations, titles, text, and authenticated ownership.
+
+> Firestore rules stored in the repository must still be deployed to the Firebase project before rule changes become active in production.
+
 ## 🎮 CTRLZONE — Games Library
 
 CTRLZONE now includes a full **Games Library** instead of featured games only.
