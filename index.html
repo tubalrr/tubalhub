@@ -14,34 +14,68 @@
 <link rel="stylesheet" href="assets/css/style.css?v=20260924">
 <link rel="stylesheet" href="assets/css/global-theme.css?v=20260924">
 <link rel="stylesheet" href="assets/css/home-premium.css?v=20260924">
+<link rel="stylesheet" href="assets/css/sidebar-premium.css?v=20260924">
 <style>.home-games-section{margin-top:24px}.games-preview-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.game-preview-card{display:flex;align-items:center;gap:12px;padding:18px;border:1px solid rgba(139,124,255,.22);border-radius:18px;background:rgba(17,20,38,.62);color:inherit;text-decoration:none;transition:.2s}.game-preview-card:hover{transform:translateY(-4px);border-color:#8b7cff}.game-preview-card>span{font-size:32px}.game-preview-card .game-logo{width:64px;height:64px;object-fit:contain;flex:0 0 64px;border-radius:10px;background:rgba(255,255,255,.06);padding:5px}.game-preview-card .game-logo-ml{display:flex;align-items:center;justify-content:center;padding:0;background:linear-gradient(145deg,#1a65d8,#071a4b);color:#fff;font-weight:900;font-size:20px;letter-spacing:-1px;text-shadow:0 2px 4px rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.2)}.game-preview-card div{min-width:0;flex:1}.game-preview-card small{font-size:10px;opacity:.65}.game-preview-card h3{margin:4px 0;font-size:15px}.game-preview-card p{margin:0;font-size:11px;opacity:.65}.game-preview-card>b{font-size:18px}@media(max-width:900px){.games-preview-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:560px){.games-preview-grid{grid-template-columns:1fr}}</style></head>
 <body class="hub-home">
 
-<aside class="hub-sidebar">
-  <a class="side-brand" href="index.html">
-    <img src="tubal-hub-logo.png" loading="eager" decoding="async" width="180" height="180" alt="TUBAL HUB">
-    <span>TUBAL HUB<small>THREE BRANDS. ONE HUB.</small></span>
-  </a>
-  <nav class="side-nav">
-    <a class="active" href="index.html"><b>⌂</b>Home</a>
-    <a href="pages/ctrlzone.html"><b>🎮</b>CTRLZONE</a>
-    <a href="pages/news.html"><b>▣</b>News</a>
-    <a href="pages/chat.html"><b>◉</b>Global Chat</a>
-    <a href="pages/payapang-isip.html"><b>◈</b>Payapang Isip</a>
-    <a href="pages/profiles.html"><b>♙</b>Profiles</a>
-    <a href="pages/ai-music.html"><b>♫</b>AI Music</a>
-    <a href="pages/community.html"><b>♧</b>Community</a>
-    <a href="pages/events.html"><b>◈</b>Events</a>
-    <a href="pages/shop.html"><b>◇</b>Shop</a>
-    <a href="pages/contact.html"><b>ⓘ</b>About</a>
-    <a href="pages/contact.html"><b>✉</b>Contact</a>
-    <a href="pages/settings.html"><b>⚙</b>Settings</a>
-  </nav>
-  <a class="fan-btn" href="pages/community.html">♛ &nbsp; Join Fan Club</a>
-  <div class="side-connect">
-    <strong>Stay Connected</strong>
-    <div class="social-mini"><a href="https://www.facebook.com/" aria-label="Facebook"><img src="https://cdn.simpleicons.org/facebook/ffffff" alt="Facebook" loading="lazy" decoding="async"></a><a href="https://www.youtube.com/" aria-label="YouTube"><img src="https://cdn.simpleicons.org/youtube/ffffff" alt="YouTube" loading="lazy" decoding="async"></a><a href="https://www.tiktok.com/" aria-label="TikTok"><img src="https://cdn.simpleicons.org/tiktok/ffffff" alt="TikTok" loading="lazy" decoding="async"></a><a href="pages/chat.html" aria-label="Community">◉</a></div>
-    <p>“Good Ideas.<br>Better Stories.” <i>◆</i></p>
+<aside class="hub-sidebar" aria-label="TUBAL HUB navigation">
+  <div class="sidebar-shell">
+    <a class="side-brand" href="index.html" aria-label="TUBAL HUB Home">
+      <span class="side-logo-wrap">
+        <img src="tubal-hub-logo.png" loading="eager" decoding="async" width="56" height="56" alt="TUBAL HUB">
+        <i class="side-status-dot" aria-hidden="true"></i>
+      </span>
+      <span class="side-brand-copy"><strong>TUBAL HUB</strong><small>THREE BRANDS. ONE HUB.</small></span>
+    </a>
+    <div class="side-divider"></div>
+
+    <nav class="side-nav" aria-label="Main navigation">
+      <div class="side-group">
+        <div class="side-group-label">Explore</div>
+        <a class="active" href="index.html" data-label="Home" title="Home"><b>⌂</b><span>Home</span></a>
+        <a href="pages/ctrlzone.html" data-label="CTRLZONE" title="CTRLZONE"><b>🎮</b><span>CTRLZONE</span></a>
+        <a href="pages/news.html" data-label="News" title="News"><b>▣</b><span>News</span></a>
+        <a href="pages/chat.html" data-label="Global Chat" title="Global Chat"><b>◉</b><span>Global Chat</span></a>
+      </div>
+
+      <div class="side-group">
+        <div class="side-group-label">Brands</div>
+        <a href="pages/payapang-isip.html" data-label="Payapang Isip" title="Payapang Isip"><b>🌿</b><span>Payapang Isip</span></a>
+        <a href="pages/profiles.html" data-label="Profiles" title="Profiles"><b>♙</b><span>Profiles</span></a>
+        <a href="pages/ai-music.html" data-label="AI Music" title="AI Music"><b>♫</b><span>AI Music</span></a>
+      </div>
+
+      <div class="side-group">
+        <div class="side-group-label">Community</div>
+        <a href="pages/community.html" data-label="Community" title="Community"><b>♧</b><span>Community</span></a>
+        <a href="pages/events.html" data-label="Events" title="Events"><b>◈</b><span>Events</span></a>
+        <a href="pages/shop.html" data-label="Shop" title="Shop"><b>◇</b><span>Shop</span></a>
+      </div>
+
+      <div class="side-group">
+        <div class="side-group-label">System</div>
+        <a href="pages/contact.html" data-label="About" title="About"><b>ⓘ</b><span>About</span></a>
+        <a href="pages/contact.html" data-label="Contact" title="Contact"><b>✉</b><span>Contact</span></a>
+        <a href="pages/settings.html" data-label="Settings" title="Settings"><b>⚙</b><span>Settings</span></a>
+      </div>
+    </nav>
+
+    <div class="side-footer">
+      <a class="fan-btn" href="pages/community.html"><b>♛</b><span>Join Fan Club</span></a>
+      <div class="side-connect">
+        <strong>Stay Connected</strong>
+        <div class="social-mini">
+          <a href="https://www.facebook.com/" aria-label="Facebook" title="Facebook"><img src="https://cdn.simpleicons.org/facebook/ffffff" alt="Facebook" loading="lazy" decoding="async"></a>
+          <a href="https://www.youtube.com/" aria-label="YouTube" title="YouTube"><img src="https://cdn.simpleicons.org/youtube/ffffff" alt="YouTube" loading="lazy" decoding="async"></a>
+          <a href="https://www.tiktok.com/" aria-label="TikTok" title="TikTok"><img src="https://cdn.simpleicons.org/tiktok/ffffff" alt="TikTok" loading="lazy" decoding="async"></a>
+          <a href="pages/chat.html" aria-label="Community" title="Community">◉</a>
+        </div>
+      </div>
+      <a class="sidebar-user" id="sidebarUser" href="pages/profiles.html" hidden>
+        <span class="sidebar-user-avatar" id="sidebarUserAvatar">U</span>
+        <span class="sidebar-user-copy"><strong id="sidebarUserName">Member</strong><small>Signed in</small></span>
+      </a>
+    </div>
   </div>
 </aside>
 
@@ -101,6 +135,20 @@
 
         userName.textContent = name || (user.isAnonymous ? "Guest" : "Member");
         userName.title = user.isAnonymous ? "Guest account" : "Edit your profile name";
+
+        const sidebarUser = document.getElementById("sidebarUser");
+        const sidebarUserName = document.getElementById("sidebarUserName");
+        const sidebarUserAvatar = document.getElementById("sidebarUserAvatar");
+        if (sidebarUser && sidebarUserName && sidebarUserAvatar) {
+          const sidebarName = name || (user.isAnonymous ? "Guest" : "Member");
+          sidebarUser.hidden = false;
+          sidebarUserName.textContent = sidebarName;
+          sidebarUserAvatar.textContent = (sidebarName.trim().charAt(0) || "U").toUpperCase();
+          if (user.photoURL) {
+            sidebarUserAvatar.style.backgroundImage = 'url("' + user.photoURL.replace(/"/g, '&quot;') + '")';
+            sidebarUserAvatar.classList.add("has-photo");
+          }
+        }
         userName.style.cursor = user.isAnonymous ? "default" : "pointer";
 
         if (!user.isAnonymous) {
@@ -113,6 +161,8 @@
         userActions.hidden = true;
         userName.textContent = "";
         userName.onclick = null;
+        const sidebarUser = document.getElementById("sidebarUser");
+        if (sidebarUser) sidebarUser.hidden = true;
       }
     });
 
