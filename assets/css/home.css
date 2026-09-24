@@ -353,3 +353,67 @@ body.theme-light .games-control{background:rgba(255,255,255,.76);color:#304239;b
 @media(prefers-reduced-motion:reduce){
   .featured-hot-badge{animation:none}.game-feature-card{transition:none}.games-track{scroll-behavior:auto}
 }
+
+
+/* PREMIUM REAL FOOTER */
+.home-premium-footer{
+  position:relative;overflow:hidden;margin-top:80px;padding:34px 34px 22px;
+  border-top:1px solid rgba(120,255,170,.14);border-left:0;border-right:0;border-bottom:0;
+  border-radius:32px 32px 0 0;background:#020604;
+  backdrop-filter:blur(24px) saturate(125%);-webkit-backdrop-filter:blur(24px) saturate(125%);
+  box-shadow:0 -24px 80px rgba(0,0,0,.26),inset 0 1px rgba(255,255,255,.03);
+  transform:translateZ(0);will-change:transform;
+}
+.home-premium-footer::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle 400px at var(--mx) var(--my),rgba(29,255,145,.12),transparent 72%)}
+.footer-top-row,.footer-bottom-row{position:relative;z-index:1}
+.footer-top-row{display:grid;grid-template-columns:1.05fr 1fr 1.15fr;gap:28px;align-items:start}
+.footer-brand-column,.footer-links-column,.footer-newsletter-column{min-width:0}
+.footer-brand-lockup{display:inline-flex;text-decoration:none;align-items:center}
+.footer-brand-neon{font-size:24px;font-weight:950;letter-spacing:-1.1px;color:#eafff2;text-shadow:0 0 14px rgba(29,255,145,.56),0 0 32px rgba(29,255,145,.18)}
+.footer-tagline{margin:9px 0 15px;color:#93a59b;font-size:13px;line-height:1.5}
+.footer-socials{display:flex;gap:8px}
+.footer-social{width:36px;height:36px;border:1px solid rgba(255,255,255,.10);border-radius:50%;display:grid;place-items:center;text-decoration:none;color:#c9d8d0;background:rgba(255,255,255,.045);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);transform:translate3d(0,0,0);transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease,color .2s ease}
+.footer-social:hover{transform:scale(1.1);color:#effff5;border-color:rgba(29,255,145,.42);box-shadow:0 0 24px rgba(29,255,145,.18)}
+.footer-column-label{display:block;color:#6f8378;font-size:8px;font-weight:900;letter-spacing:1.5px;margin-bottom:10px}
+.footer-quick-links{display:flex;flex-wrap:wrap;gap:8px}
+.footer-quick-pill{display:inline-flex;align-items:center;gap:6px;min-height:34px;padding:0 11px;border:1px solid rgba(255,255,255,.09);border-radius:999px;background:rgba(255,255,255,.045);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);color:#bdcbc4;text-decoration:none;font-size:9px;font-weight:800;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease,color .2s ease}
+.footer-quick-pill:hover{transform:translateY(-2px);border-color:rgba(29,255,145,.30);box-shadow:0 0 20px rgba(29,255,145,.11);color:#eafff2}
+.footer-newsletter{display:flex;gap:7px;padding:5px;border:1px solid rgba(255,255,255,.09);border-radius:999px;background:rgba(255,255,255,.045);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.footer-newsletter input{min-width:0;flex:1;height:38px;padding:0 13px;border:0;outline:0;background:transparent;color:#edf8f1;font:600 10px Inter,Arial,sans-serif}
+.footer-newsletter input::placeholder{color:#65776e}
+.footer-newsletter button{flex:0 0 auto;height:38px;padding:0 16px;border:0;border-radius:999px;cursor:pointer;color:#031008;font:900 9px Inter,Arial,sans-serif;background:linear-gradient(135deg,#1dff91,#7d5aff);box-shadow:0 10px 24px rgba(29,255,145,.16);transition:transform .2s ease,box-shadow .2s ease}
+.footer-newsletter button:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(29,255,145,.22)}
+.footer-newsletter button.is-pop{animation:footerSendPop .48s cubic-bezier(.34,1.56,.64,1)}
+@keyframes footerSendPop{0%{transform:scale(1)}40%{transform:scale(.92)}68%{transform:scale(1.06)}100%{transform:scale(1)}}
+.footer-newsletter-status{display:block;min-height:14px;margin-top:7px;color:#6f8378;font-size:9px}
+.footer-newsletter-status.is-ok{color:#9ce8b3}.footer-newsletter-status.is-error{color:#ff9b9b}
+.footer-bottom-row{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-top:24px;padding-top:16px;border-top:1px solid rgba(255,255,255,.07)}
+.footer-meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap;color:#71837a;font-size:8px}
+.home-premium-footer .footer-version{color:#d5e2db;font-weight:800}
+.home-premium-footer .footer-online{display:inline-flex;align-items:center;gap:6px;color:#8ea198}
+.footer-storage{color:#5e7168;font-size:8px}
+.home-premium-footer .footer-status-dot{width:8px;height:8px;border-radius:50%;background:#ff1a1a;box-shadow:0 0 12px rgba(255,26,26,.84);animation:footerRedPulse 1.35s ease-in-out infinite}
+.home-premium-footer .footer-status-dot.offline{background:#6b7871;box-shadow:none;animation:none}
+body.theme-light.hub-home .home-premium-footer{background:#f8faf8;border-top-color:rgba(120,160,135,.18);box-shadow:0 -24px 70px rgba(55,80,60,.08)}
+body.theme-light .footer-brand-neon{color:#173323;text-shadow:0 0 14px rgba(29,255,145,.28)}
+body.theme-light .footer-tagline{color:#697a71}
+body.theme-light .footer-social{color:#506159;background:rgba(255,255,255,.66);border-color:#e1e8e3}
+body.theme-light .footer-quick-pill{color:#52635a;background:rgba(255,255,255,.66);border-color:#e1e8e3}
+body.theme-light .footer-newsletter{background:rgba(255,255,255,.68);border-color:#e0e7e2}
+body.theme-light .footer-newsletter input{color:#23372b}
+body.theme-light .footer-bottom-row{border-top-color:#e5ebe7}
+body.theme-light .footer-meta{color:#718078}
+body.theme-light .footer-storage{color:#7a8881}
+.footer-send-dot{position:fixed;z-index:1210;width:5px;height:5px;border-radius:50%;background:#1dff91;box-shadow:0 0 10px rgba(29,255,145,.6);pointer-events:none;will-change:transform,opacity}
+@media(max-width:900px){
+  .home-premium-footer{padding:30px 26px 20px}
+  .footer-top-row{grid-template-columns:1fr 1fr}
+  .footer-newsletter-column{grid-column:1/-1}
+}
+@media(max-width:680px){
+  .home-premium-footer{margin-top:62px;padding:26px 18px 18px;border-radius:26px 26px 0 0}
+  .footer-top-row{grid-template-columns:1fr;gap:22px}
+  .footer-newsletter-column{grid-column:auto}
+  .footer-bottom-row{align-items:flex-start;flex-direction:column;gap:8px}
+}
+@media(prefers-reduced-motion:reduce){.footer-social,.footer-quick-pill,.footer-newsletter button{transition:none}.footer-newsletter button.is-pop{animation:none}.footer-send-dot{display:none}}
