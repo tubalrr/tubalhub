@@ -46,8 +46,7 @@
     border-color .35s ease!important;
 }
 
-.hub-home .hub-sidebar:hover,
-.hub-home .hub-sidebar.is-pinned{
+.hub-home .hub-sidebar:hover{
   width:var(--sb-expanded)!important;
   box-shadow:18px 0 58px rgba(0,0,0,.34)!important;
 }
@@ -142,8 +141,7 @@
   transition:opacity .18s ease,transform .3s var(--sb-ease)!important;
 }
 
-.hub-home .hub-sidebar:hover .side-brand-copy,
-.hub-home .hub-sidebar.is-pinned .side-brand-copy{
+.hub-home .hub-sidebar:hover .side-brand-copy .side-brand-copy{
   opacity:1;
   transform:none;
 }
@@ -164,6 +162,8 @@
 }
 
 .hub-home .side-expand-toggle{
+  display:none!important;
+
   position:absolute!important;
   top:19px!important;
   right:7px!important;
@@ -181,8 +181,7 @@
   transition:opacity .2s ease,background .2s ease,color .2s ease,transform .35s var(--sb-ease)!important;
 }
 
-.hub-home .hub-sidebar:hover .side-expand-toggle,
-.hub-home .hub-sidebar.is-pinned .side-expand-toggle{
+.hub-home .hub-sidebar:hover .side-expand-toggle .side-expand-toggle{
   opacity:1;
 }
 
@@ -196,10 +195,6 @@
   font-size:18px!important;
   line-height:1!important;
   transform:translateX(-1px);
-}
-
-.hub-home .hub-sidebar.is-pinned .side-expand-toggle{
-  transform:rotate(180deg);
 }
 
 .hub-home .side-divider{
@@ -260,8 +255,7 @@
   transition:opacity .18s ease,transform .3s var(--sb-ease)!important;
 }
 
-.hub-home .hub-sidebar:hover .side-group-label,
-.hub-home .hub-sidebar.is-pinned .side-group-label{
+.hub-home .hub-sidebar:hover .side-group-label .side-group-label{
   opacity:1;
   transform:none;
 }
@@ -383,14 +377,13 @@
   transition:max-width .32s var(--sb-ease),opacity .18s ease,transform .3s var(--sb-ease)!important;
 }
 
-.hub-home .hub-sidebar:hover .side-nav a span,
-.hub-home .hub-sidebar.is-pinned .side-nav a span{
+.hub-home .hub-sidebar:hover .side-nav a span .side-nav a span{
   max-width:175px;
   opacity:1;
   transform:none;
 }
 
-.hub-home .hub-sidebar:not(:hover):not(.is-pinned) .side-nav a[title]::after{
+.hub-home .hub-sidebar:not(:hover) .side-nav a[title]::after{
   content:attr(data-label);
   position:absolute;
   left:calc(100% + 11px);
@@ -411,12 +404,12 @@
   transition:opacity .14s ease,transform .14s ease;
 }
 
-.hub-home .hub-sidebar:not(:hover):not(.is-pinned) .side-nav a:hover::after{
+.hub-home .hub-sidebar:not(:hover) .side-nav a:hover::after{
   opacity:1;
   transform:translate(0,-50%);
 }
 
-.hub-home .hub-sidebar:not(:hover):not(.is-pinned) .side-nav a[title]:hover{
+.hub-home .hub-sidebar:not(:hover) .side-nav a[title]:hover{
   z-index:30;
 }
 
@@ -452,8 +445,7 @@
   transition:width .35s var(--sb-ease),transform .2s ease,box-shadow .2s ease!important;
 }
 
-.hub-home .hub-sidebar:hover .fan-btn,
-.hub-home .hub-sidebar.is-pinned .fan-btn{
+.hub-home .hub-sidebar:hover .fan-btn .fan-btn{
   width:90%!important;
   padding:0 12px!important;
 }
@@ -480,8 +472,7 @@
   transition:max-width .32s var(--sb-ease),opacity .18s ease!important;
 }
 
-.hub-home .hub-sidebar:hover .fan-btn span,
-.hub-home .hub-sidebar.is-pinned .fan-btn span{
+.hub-home .hub-sidebar:hover .fan-btn span .fan-btn span{
   max-width:140px!important;
   opacity:1!important;
 }
@@ -518,8 +509,7 @@
   transition:opacity .18s ease!important;
 }
 
-.hub-home .hub-sidebar:hover .side-connect strong,
-.hub-home .hub-sidebar.is-pinned .side-connect strong{
+.hub-home .hub-sidebar:hover .side-connect strong .side-connect strong{
   opacity:1;
 }
 
@@ -560,7 +550,7 @@
   height:14px!important;
 }
 
-.hub-home .hub-sidebar:not(:hover):not(.is-pinned) .side-connect{
+.hub-home .hub-sidebar:not(:hover) .side-connect{
   display:none!important;
 }
 
@@ -611,8 +601,7 @@
   transition:opacity .18s ease,transform .3s var(--sb-ease)!important;
 }
 
-.hub-home .hub-sidebar:hover .sidebar-user-copy,
-.hub-home .hub-sidebar.is-pinned .sidebar-user-copy{
+.hub-home .hub-sidebar:hover .sidebar-user-copy .sidebar-user-copy{
   opacity:1;
   transform:none;
 }
@@ -786,7 +775,7 @@ html[data-theme="light"] .hub-home .side-nav a.active b{
   box-shadow:0 0 16px rgba(105,199,122,.17)!important;
 }
 
-html[data-theme="light"] .hub-home .hub-sidebar:not(:hover):not(.is-pinned) .side-nav a[title]::after{
+html[data-theme="light"] .hub-home .hub-sidebar:not(:hover) .side-nav a[title]::after{
   color:#17301f!important;
   background:rgba(255,255,255,.98)!important;
   border-color:rgba(24,71,39,.11)!important;
@@ -820,8 +809,7 @@ html[data-theme="light"] .hub-home .sidebar-user{
    legacy sidebar rules from re-introducing the clipped 70px/84px rail. */
 @media(max-width:1050px){
   .hub-home .hub-sidebar{width:72px!important}
-  .hub-home .hub-sidebar:hover,
-  .hub-home .hub-sidebar.is-pinned{width:72px!important}
+  .hub-home .hub-sidebar:hover{width:72px!important}
   .hub-home .hub-main{margin-left:72px!important}
   .hub-home .hub-sidebar .side-brand-copy,
   .hub-home .hub-sidebar .side-group-label,
