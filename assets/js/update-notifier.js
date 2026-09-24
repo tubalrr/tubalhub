@@ -111,7 +111,7 @@
   }
 
   function showRealUpdateNotify(data, source="poll") {
-    if (!data || !data.version || applying) return;
+    if (!updatesEnabled() || !data || !data.version || applying) return;
     const eventKey = String(data.version) + "|" + String(data.time || "");
     if (localStorage.getItem(LAST_EVENT_KEY) === eventKey && source === "poll") return;
     localStorage.setItem(UPDATE_KEY, "true");
