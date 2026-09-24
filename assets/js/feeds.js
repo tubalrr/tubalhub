@@ -93,13 +93,13 @@ async function loadPeople(){
     usersSnap.forEach(s=>{const x=s.data();state.userMap.set(s.id,{uid:s.id,...x})});
     presenceSnap.forEach(s=>{const x=s.data();if(x.uid)state.presence.set(x.uid,{uid:x.uid,...x})});
     state.users=[...new Map([...state.userMap.values(),...state.presence.values()].map(u=>[u.uid,u])).values()];
-    renderContacts();renderBirthdays();updateAvatarStatus();
+    renderContacts();renderBirthdays?.();updateAvatarStatus();renderActiveGames();renderSuggested();
   }catch(e){console.warn("[Feeds] people unavailable",e)}
 }
 function buildFeed(){
   const raw=[...state.hubPosts.map(hubItem),...state.products,...games.map(gameItem)];
   const seen=new Set();state.items=raw.filter(x=>{const k=contentKey(x);if(seen.has(k))return false;seen.add(k);return true});
-  renderStories();renderFeed(true);renderSponsored();renderTrending();
+  renderStories();renderFeed(true);renderSponsored();renderTrending();renderActiveGames();renderSuggested();
 }
 function visible(){
   let arr=state.items.filter(x=>!state.savedMode||state.saved.has(x.id));
@@ -202,6 +202,29 @@ function renderTrending(){
   box.querySelectorAll("[data-trend-id]").forEach(b=>b.onclick=()=>{
     const target=document.querySelector(".post-card[data-id='"+CSS.escape(b.dataset.trendId)+"']");
     target?.scrollIntoView({behavior:"smooth",block:"center"});
+  });
+}
+function renderActiveGames(){
+  const box=document.getElementById("activeGames"); if(!box)return;
+  const active=[...state.presence.values()].filter(u=>u.uid&&u.online===true&&(u.game||u.currentGame||u.gameTitle||u.playing));
+  const unique=[...new Map(active.map(u=>[(u.game||u.currentGame||u.gameTitle||u.playing),u])).values()].slice(0,8);
+  if(!unique.length){box.innerHTML="<div class='feed-side-meta'>No live game activity yet.</div>";return}
+  box.innerHTML=unique.map(u=>{
+    const game=u.game||u.currentGame||u.gameTitle||u.playing;
+    return "<div class='active-game-row'>"+avatarMarkup(u,"contact-avatar")+"<div class='active-game-copy'><b>"+esc(displayName(u))+"</b><span>Playing "+esc(game)+"</span></div><span class='contact-dot online' aria-label='Online'></span></div>";
+  }).join("");
+}
+function renderSuggested(){
+  const box=document.getElementById("suggestedForYou"); if(!box)return;
+  const candidates=state.users.filter(u=>u.uid&&u.uid!==state.auth?.uid)
+    .sort((a,b)=>Number(onlineOf(b.uid))-Number(onlineOf(a.uid)))
+    .slice(0,6);
+  if(!candidates.length){box.innerHTML="<div class='feed-side-meta'>No member suggestions yet.</div>";return}
+  box.innerHTML=candidates.map(u=>"<button class='suggested-row' type='button' data-suggested-uid='"+esc(u.uid)+"'>"+avatarMarkup(u,"contact-avatar")+"<span class='suggested-copy'><b>"+esc(displayName(u))+"</b><small>"+(onlineOf(u.uid)?"Online member":"TUBAL HUB member")+"</small></span><span class='suggested-plus'>+</span></button>").join("");
+  box.querySelectorAll("[data-suggested-uid]").forEach(b=>b.onclick=()=>{
+    const u=userRecord(b.dataset.suggestedUid);
+    if(!u)return;
+    showNotice("Member profile: "+displayName(u));
   });
 }
 function renderSponsored(){
@@ -539,7 +562,7 @@ function setupHubContent(){
 }
 function setupPresence(){
   try{
-    onSnapshot(query(collection(db,"presence"),limit(200)),snap=>{state.presence.clear();snap.forEach(s=>{const x=s.data();if(x.uid)state.presence.set(x.uid,{uid:x.uid,...x})});renderContacts();updateAvatarStatus()},e=>console.warn("[Feeds] presence unavailable",e))
+    onSnapshot(query(collection(db,"presence"),limit(200)),snap=>{state.presence.clear();snap.forEach(s=>{const x=s.data();if(x.uid)state.presence.set(x.uid,{uid:x.uid,...x})});renderContacts();updateAvatarStatus();renderActiveGames();renderSuggested()},e=>console.warn("[Feeds] presence unavailable",e))
   }catch(e){console.warn(e)}
 }
 function setupUI(){
