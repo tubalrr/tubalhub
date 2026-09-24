@@ -14,7 +14,7 @@
 <link rel="stylesheet" href="assets/css/style.css?v=20260924">
 <link rel="stylesheet" href="assets/css/global-theme.css?v=20260924">
 <link rel="stylesheet" href="assets/css/home-premium.css?v=20260924">
-<link rel="stylesheet" href="assets/css/sidebar-premium.css?v=20260924">
+<link rel="stylesheet" href="assets/css/sidebar-premium.css?v=20260924-v2">
 <style>.home-games-section{margin-top:24px}.games-preview-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.game-preview-card{display:flex;align-items:center;gap:12px;padding:18px;border:1px solid rgba(139,124,255,.22);border-radius:18px;background:rgba(17,20,38,.62);color:inherit;text-decoration:none;transition:.2s}.game-preview-card:hover{transform:translateY(-4px);border-color:#8b7cff}.game-preview-card>span{font-size:32px}.game-preview-card .game-logo{width:64px;height:64px;object-fit:contain;flex:0 0 64px;border-radius:10px;background:rgba(255,255,255,.06);padding:5px}.game-preview-card .game-logo-ml{display:flex;align-items:center;justify-content:center;padding:0;background:linear-gradient(145deg,#1a65d8,#071a4b);color:#fff;font-weight:900;font-size:20px;letter-spacing:-1px;text-shadow:0 2px 4px rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.2)}.game-preview-card div{min-width:0;flex:1}.game-preview-card small{font-size:10px;opacity:.65}.game-preview-card h3{margin:4px 0;font-size:15px}.game-preview-card p{margin:0;font-size:11px;opacity:.65}.game-preview-card>b{font-size:18px}@media(max-width:900px){.games-preview-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:560px){.games-preview-grid{grid-template-columns:1fr}}</style></head>
 <body class="hub-home">
 
@@ -22,62 +22,63 @@
   <div class="sidebar-shell">
     <a class="side-brand" href="index.html" aria-label="TUBAL HUB Home">
       <span class="side-logo-wrap">
-        <img src="tubal-hub-logo.png" loading="eager" decoding="async" width="56" height="56" alt="TUBAL HUB">
+        <img src="tubal-hub-logo.png" loading="eager" decoding="async" width="48" height="48" alt="TUBAL HUB">
         <i class="side-status-dot" aria-hidden="true"></i>
       </span>
-      <span class="side-brand-copy"><strong>TUBAL HUB</strong><small>THREE BRANDS. ONE HUB.</small></span>
+      <span class="side-brand-copy"><strong>TUBAL HUB</strong><small>THREE BRANDS • ONE HUB</small></span>
     </a>
+    <button class="side-expand-toggle" type="button" aria-expanded="false" aria-pressed="false" aria-label="Expand sidebar" title="Expand sidebar"><span>›</span></button>
     <div class="side-divider"></div>
 
     <nav class="side-nav" aria-label="Main navigation">
       <div class="side-group">
         <div class="side-group-label">Explore</div>
-        <a class="active" href="index.html" data-label="Home" title="Home"><b>⌂</b><span>Home</span></a>
-        <a href="pages/ctrlzone.html" data-label="CTRLZONE" title="CTRLZONE"><b>🎮</b><span>CTRLZONE</span></a>
-        <a href="pages/news.html" data-label="News" title="News"><b>▣</b><span>News</span></a>
-        <a href="pages/chat.html" data-label="Global Chat" title="Global Chat"><b>◉</b><span>Global Chat</span></a>
+        <a class="active" href="index.html" data-label="Home" title="Home" aria-label="Home"><b class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V21h13V9.5"/><path d="M9.5 21v-6h5v6"/></svg></b><span>Home</span></a>
+        <a  href="pages/ctrlzone.html" data-label="CTRLZONE" title="CTRLZONE" aria-label="CTRLZONE"><b class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 9.5h11a4 4 0 0 1 3.8 5.2l-1.2 3.4a2.6 2.6 0 0 1-4.8.4L14 16H10l-1.3 2.5a2.6 2.6 0 0 1-4.8-.4l-1.2-3.4A4 4 0 0 1 6.5 9.5Z"/><path d="M7 7.5V5.8M5.3 6.65h3.4"/><circle cx="17" cy="12.5" r="1"/><circle cx="19.2" cy="10.3" r="1"/></svg></b><span>CTRLZONE</span></a>
+        <a  href="pages/news.html" data-label="News" title="News" aria-label="News"><b class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v16H5z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></b><span>News</span></a>
+        <a  href="pages/chat.html" data-label="Global Chat" title="Global Chat" aria-label="Global Chat"><b class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A3.5 3.5 0 0 1 7.5 2h9A3.5 3.5 0 0 1 20 5.5v6A3.5 3.5 0 0 1 16.5 15H11l-4.5 4v-4.3A3.5 3.5 0 0 1 4 11.5z"/><path d="M8 8h8M8 11h5"/></svg></b><span>Global Chat</span></a>
       </div>
 
       <div class="side-group">
         <div class="side-group-label">Brands</div>
-        <a href="pages/payapang-isip.html" data-label="Payapang Isip" title="Payapang Isip"><b>🌿</b><span>Payapang Isip</span></a>
-        <a href="pages/profiles.html" data-label="Profiles" title="Profiles"><b>♙</b><span>Profiles</span></a>
-        <a href="pages/ai-music.html" data-label="AI Music" title="AI Music"><b>♫</b><span>AI Music</span></a>
+        <a  href="pages/payapang-isip.html" data-label="Payapang Isip" title="Payapang Isip" aria-label="Payapang Isip"><b class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4C12 4 6 7.7 6 14.2 6 17.7 8.4 20 12 20c6.3 0 8-7.1 8-16Z"/><path d="M5 20c2.6-4.2 6.1-6.9 10.5-9.5"/></svg></b><span>Payapang Isip</span></a>
+        <a  href="pages/profiles.html" data-label="Profiles" title="Profiles" aria-label="Profiles"><b class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.8-4 3.1-6 7-6s6.2 2 7 6"/></svg></b><span>Profiles</span></a>
+        <a  href="pages/ai-music.html" data-label="AI Music" title="AI Music" aria-label="AI Music"><b class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg></b><span>AI Music</span></a>
       </div>
 
       <div class="side-group">
         <div class="side-group-label">Community</div>
-        <a href="pages/community.html" data-label="Community" title="Community"><b>♧</b><span>Community</span></a>
-        <a href="pages/events.html" data-label="Events" title="Events"><b>◈</b><span>Events</span></a>
-        <a href="pages/shop.html" data-label="Shop" title="Shop"><b>◇</b><span>Shop</span></a>
+        <a  href="pages/community.html" data-label="Community" title="Community" aria-label="Community"><b class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="10" r="2.5"/><path d="M3 20c.7-4 2.7-6 6-6s5.3 2 6 6M14 16c.6-.4 1.5-.6 2.4-.6 2.6 0 4 1.6 4.6 4.6"/></svg></b><span>Community</span></a>
+        <a  href="pages/events.html" data-label="Events" title="Events" aria-label="Events"><b class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16M8 14h3M8 17h6"/></svg></b><span>Events</span></a>
+        <a  href="pages/shop.html" data-label="Shop" title="Shop" aria-label="Shop"><b class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h16l-1.2 11H5.2z"/><path d="M8 9a4 4 0 0 1 8 0"/><path d="M8 13h.01M12 13h.01M16 13h.01"/></svg></b><span>Shop</span></a>
       </div>
 
       <div class="side-group">
         <div class="side-group-label">System</div>
-        <a href="pages/contact.html" data-label="About" title="About"><b>ⓘ</b><span>About</span></a>
-        <a href="pages/contact.html" data-label="Contact" title="Contact"><b>✉</b><span>Contact</span></a>
-        <a href="pages/settings.html" data-label="Settings" title="Settings"><b>⚙</b><span>Settings</span></a>
+        <a  href="pages/contact.html" data-label="About" title="About" aria-label="About"><b class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 10v6M12 7h.01"/></svg></b><span>About</span></a>
+        <a  href="pages/contact.html" data-label="Contact" title="Contact" aria-label="Contact"><b class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="14" rx="2"/><path d="m5 7 7 5 7-5"/></svg></b><span>Contact</span></a>
+        <a  href="pages/settings.html" data-label="Settings" title="Settings" aria-label="Settings"><b class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2.2M12 18.8V21M3 12h2.2M18.8 12H21M5.6 5.6l1.6 1.6M16.8 16.8l1.6 1.6M18.4 5.6l-1.6 1.6M7.2 16.8l-1.6 1.6"/><circle cx="12" cy="12" r="4.2"/></svg></b><span>Settings</span></a>
       </div>
     </nav>
 
     <div class="side-footer">
-      <a class="fan-btn" href="pages/community.html"><b>♛</b><span>Join Fan Club</span></a>
+      <a class="fan-btn" href="pages/community.html" aria-label="Join Fan Club" title="Join Fan Club"><b aria-hidden="true">♛</b><span>Join Fan Club</span></a>
       <div class="side-connect">
         <strong>Stay Connected</strong>
         <div class="social-mini">
           <a href="https://www.facebook.com/" aria-label="Facebook" title="Facebook"><img src="https://cdn.simpleicons.org/facebook/ffffff" alt="Facebook" loading="lazy" decoding="async"></a>
           <a href="https://www.youtube.com/" aria-label="YouTube" title="YouTube"><img src="https://cdn.simpleicons.org/youtube/ffffff" alt="YouTube" loading="lazy" decoding="async"></a>
           <a href="https://www.tiktok.com/" aria-label="TikTok" title="TikTok"><img src="https://cdn.simpleicons.org/tiktok/ffffff" alt="TikTok" loading="lazy" decoding="async"></a>
-          <a href="pages/chat.html" aria-label="Community" title="Community">◉</a>
+          <a href="pages/chat.html" aria-label="Community" title="Community"><span aria-hidden="true">◉</span></a>
         </div>
       </div>
       <a class="sidebar-user" id="sidebarUser" href="pages/profiles.html" hidden>
         <span class="sidebar-user-avatar" id="sidebarUserAvatar">U</span>
-        <span class="sidebar-user-copy"><strong id="sidebarUserName">Member</strong><small>Signed in</small></span>
+        <span class="sidebar-user-copy"><strong id="sidebarUserName">Member</strong><small>Logged in</small></span>
       </a>
     </div>
   </div>
-</aside>
+</aside>>
 
 <div class="hub-main">
   <header class="hub-topbar">
@@ -299,5 +300,6 @@ const io=new IntersectionObserver((entries)=>{if(entries[0].isIntersecting){io.d
 <script src="assets/js/app.js?v=20260923-msg3"></script>
 <script src="assets/js/main.js?v=20260924"></script>
 <script src="assets/js/theme.js"></script>
+<script src="assets/js/sidebar-premium.js?v=20260924-v2"></script>
 </body>
 </html>
