@@ -295,22 +295,31 @@ function getRealGamePlayCount(id){
   return Number.isFinite(n)&&n>=0?n:0;
 }
 async function getRealGames(){
-  let realGames=[];
   try{
-    const response=await fetch(GAMES_URL,{cache:"no-store"});
-    if(!response.ok)throw new Error("games.json "+response.status);
+    const response=await fetch('/data/games.json?t='+Date.now(),{cache:'no-store'});
+    if(!response.ok)throw new Error('games.json '+response.status);
     const data=await response.json();
-    realGames=Array.isArray(data)?data:(Array.isArray(data.games)?data.games:[]);
+    const rows=Array.isArray(data)?data:(Array.isArray(data?.games)?data.games:[]);
+    return rows.filter(g=>g&&g.idReal&&g.titleReal).map(g=>({
+      ...g,
+      id:String(g.id||g.idReal.replace(/_real$/,'')),
+      title:String(g.title||g.titleReal),
+      idReal:String(g.idReal),
+      titleReal:String(g.titleReal),
+      logoReal:String(g.logoReal||''),
+      logoRealHD:String(g.logoRealHD||''),
+      bannerReal:String(g.bannerReal||''),
+      devReal:String(g.devReal||g.dev||''),
+      linkReal:String(g.linkReal||('ctrlzone.html?game='+(g.id||''))),
+      genre:String(g.genre||g.category||'Game'),
+      category:String(g.category||g.genre||'Game'),
+      description:String(g.description||''),
+      officialUrl:String(g.officialUrl||'')
+    }));
   }catch(error){
-    console.warn("[TUBAL HUB real games]",error);
+    console.warn('[TUBAL HUB real games]',error);
+    return [];
   }
-  let local=[];
-  try{
-    const value=JSON.parse(localStorage.getItem("tubalhub_ctrlzone_games")||"[]");
-    local=Array.isArray(value)?value:[];
-  }catch(_){}
-  const merged=realGames.length?realGames:local;
-  return merged.filter(game=>game&&game.id&&game.title);
 }
 function playRealGame(id){
   const game=featuredGames.find(item=>String(item.id)===String(id));
@@ -1195,34 +1204,54 @@ function bentoRenderFeeds(rows){
     '<span>'+Math.max(0,Number(p.likes||0))+' likes • '+Math.max(0,Number(p.comments||0))+' comments</span></div></article>').join("");
   box.innerHTML=featured+(compact?'<div class="bento-feed-more-list">'+compact+'</div>':"");
 }
-function bentoRenderGames(){
-  const box=$("#bentoGamesGrid");if(!box)return;
-  const rows=featuredGames.slice(0,4);
-  const countEl=$("#bentoGamesLiveCount");
-  if(countEl)countEl.textContent=featuredGames.length+" "+(featuredGames.length===1?"game":"games");
-  if(!rows.length){
-    box.innerHTML='<div class="real-bento-empty"><div class="empty-icon">🎮</div><p>No games are currently listed in the real CTRLZONE catalog.</p><small>Real data source: /data/games.json</small><a class="real-quick-link" href="pages/ctrlzone.html">Open CTRLZONE →</a></div>';
+function getRealGameInitials(game){
+  const source=String(game.titleReal||game.title||'Game').trim();
+  const words=source.split(/\s+/).filter(Boolean);
+  return (words.length>1?words.slice(0,2).map(w=>w[0]).join(''):source.slice(0,2)).toUpperCase();
+}
+function realGameLogoMarkup(game){
+  const logo=String(game.logoReal||'').trim();
+  const hd=String(game.logoRealHD||'').trim();
+  if(logo){
+    return '<img class="game-card-real-logo-img" src="'+esc(logo)+'"'+(hd?' srcset="'+esc(hd)+' 2x"':'')+' alt="'+esc(game.titleReal)+' official logo" loading="lazy" decoding="async" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><span class="game-real-initials" hidden>'+esc(getRealGameInitials(game))+'</span>';
+  }
+  return '<span class="game-real-initials">'+esc(getRealGameInitials(game))+'</span>';
+}
+function getRealGameHref(game){
+  const link=String(game.linkReal||'').trim();
+  return link?link:'pages/ctrlzone.html?game='+encodeURIComponent(String(game.id||''));
+}
+let realFeaturedGames=[];
+let realFeaturedIndex=0;
+let realFeaturedTimer=null;
+function renderFeaturedGamesRealLogo(games=featuredGames){
+  const track=document.getElementById('featuredGamesTrackReal');
+  const countEl=document.getElementById('currentCatalogCount');
+  if(!track)return;
+  realFeaturedGames=Array.isArray(games)?games.filter(g=>g&&g.idReal&&g.titleReal):[];
+  if(countEl)countEl.textContent=realFeaturedGames.length+' '+(realFeaturedGames.length===1?'game':'games')+' real';
+  if(!realFeaturedGames.length){
+    track.innerHTML='<div class="empty-games-real"><div class="empty-real-mark" aria-hidden="true">NO LOGO</div><p>Wala pang real games na may logo file.</p><small>Mag-upload ng official PNG sa /assets/games/logos/ at ilagay ang logoReal path sa /data/games.json.</small></div>';
+    clearInterval(realFeaturedTimer);
     return;
   }
-  box.innerHTML=rows.map((g,i)=>{
-    const plays=getRealGamePlayCount(g.id);
-    const category=String(g.category||g.genre||"GAME");
-    const genre=String(g.genre||"Game");
-    const official=g.officialUrl?'<a class="bento-game-official" href="'+esc(g.officialUrl)+'" target="_blank" rel="noopener noreferrer">Official site ↗</a>':"";
-    return '<article class="bento-game-card premium-game-card" style="--game-a:'+esc(g.colorA||"#283247")+';--game-b:'+esc(g.colorB||"#0d1220")+'">'+
-      '<div class="bento-game-cover premium-game-cover">'+
-        '<div class="bento-game-cover-top"><span class="bento-game-rank">0'+(i+1)+'</span><span class="bento-game-category">'+esc(category)+'</span></div>'+
-        '<div class="bento-game-emblem"><span>'+esc(g.emoji||"🎮")+'</span></div>'+
-        '<div class="bento-game-cover-shine" aria-hidden="true"></div>'+
-      '</div>'+
-      '<div class="bento-game-body premium-game-body">'+
-        '<div class="bento-game-title-row"><div><span class="bento-game-genre">'+esc(genre)+'</span><h3 class="bento-game-title">'+esc(g.title)+'</h3></div><span class="bento-game-local">REAL</span></div>'+
-        '<p class="bento-game-description">'+esc(g.description||"")+'</p>'+
-        '<div class="bento-game-footer-row"><span class="bento-game-plays">▶ '+plays+' local plays</span><a class="bento-play-btn" href="pages/ctrlzone.html?game='+encodeURIComponent(g.id)+'" data-real-game-play="'+esc(g.id)+'">Play Now <span>→</span></a></div>'+
-        official+
-      '</div>'+
-    '</article>';
-  }).join("");
+  const visible=realFeaturedGames.slice(0,4).map((_,i)=>realFeaturedGames[(realFeaturedIndex+i)%realFeaturedGames.length]);
+  track.innerHTML=visible.map(game=>{
+    const href=getRealGameHref(game);
+    return '<a class="game-card-real-logo" href="'+esc(href)+'"><div class="game-real-logo-box">'+realGameLogoMarkup(game)+'</div><b>'+esc(game.titleReal)+'</b><small>'+esc(game.devReal||'')+'</small><span class="real-logo-badge">REAL LOGO</span></a>';
+  }).join('');
+}
+function startFeaturedGamesRealRotation(){
+  clearInterval(realFeaturedTimer);
+  if(realFeaturedGames.length<=4)return;
+  realFeaturedTimer=setInterval(()=>{
+    realFeaturedIndex=(realFeaturedIndex+1)%realFeaturedGames.length;
+    renderFeaturedGamesRealLogo(realFeaturedGames);
+  },4500);
+}
+function bentoRenderGames(){
+  renderFeaturedGamesRealLogo(featuredGames);
+  startFeaturedGamesRealRotation();
 }
 async function renderRealData(){
   migrateRealJournalStorage();
