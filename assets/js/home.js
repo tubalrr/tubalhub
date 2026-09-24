@@ -683,6 +683,7 @@ function initScrollReveal(){
    ========================================================= */
 const CANVA_STUDIO_VERSION="1.0.0";
 const CANVA_DESIGN_KEY="tubalhub_canva_current";
+const CANVA_DESIGNS_KEY="tubalhub_canva_designs";
 const CANVA_DRAFT_DB="tubalhub_canva_drafts";
 const CANVA_DRAFT_STORE="drafts";
 const CANVA_W=700;
@@ -814,7 +815,13 @@ function canvaRender(){
 function canvaRequestRender(){if(canvaStudioState.renderQueued)return;canvaStudioState.renderQueued=true;requestAnimationFrame(()=>{canvaStudioState.renderQueued=false;canvaRender()})}
 function canvaSaveCurrent(){
   const payload={version:CANVA_STUDIO_VERSION,updatedAt:Date.now(),background:canvaClone(canvaStudioState.background),objects:canvaClone(canvaStudioState.objects)};
-  try{localStorage.setItem(CANVA_DESIGN_KEY,JSON.stringify(payload));canvaStatus("Saved locally")}catch(_){canvaStatus("Local save unavailable")}
+  try{
+    localStorage.setItem(CANVA_DESIGN_KEY,JSON.stringify(payload));
+    const saved=Array.isArray(JSON.parse(localStorage.getItem(CANVA_DESIGNS_KEY)||"[]"))?JSON.parse(localStorage.getItem(CANVA_DESIGNS_KEY)||"[]"):[];
+    saved.unshift(payload);
+    localStorage.setItem(CANVA_DESIGNS_KEY,JSON.stringify(saved.slice(0,20)));
+    canvaStatus("Saved locally");
+  }catch(_){canvaStatus("Local save unavailable")}
 }
 function canvaLoadCurrent(){
   try{const raw=localStorage.getItem(CANVA_DESIGN_KEY);if(!raw)return;const data=JSON.parse(raw);if(!data||!Array.isArray(data.objects)||!data.background)return;canvaStudioState.objects=data.objects;canvaStudioState.background=data.background;canvaStudioState.objects.filter(o=>o.type==="image"&&o.src).forEach(o=>canvaLoadImage(o.src,img=>canvaStudioState.imageCache.set(o.id,img)));canvaStatus("Loaded saved design")}catch(_){canvaStatus("New canvas")}
