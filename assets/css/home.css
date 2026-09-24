@@ -3821,3 +3821,48 @@ body.theme-light .real-quick-form select{
   .ad-card{width:280px;height:320px;scroll-snap-align:center}.ad-video{width:320px;height:180px;scroll-snap-align:center}.tubal-ad-controls{gap:12px}
 }
 @media(prefers-reduced-motion:reduce){.tubal-ad-sponsored{animation:none}.ad-banner,.ad-card,.ad-video{transition:none}}
+
+
+/* =========================================================
+   ADVERTISEMENT HARD FIX — never inherit bento/sidebar positioning
+   ========================================================= */
+#advertisement{
+  position:relative !important;
+  z-index:1 !important;
+  left:0 !important;
+  right:auto !important;
+  top:auto !important;
+  bottom:auto !important;
+  width:100% !important;
+  max-width:1280px !important;
+  margin-left:auto !important;
+  margin-right:auto !important;
+  transform:none !important;
+  float:none !important;
+  clear:both !important;
+  display:block !important;
+  box-sizing:border-box !important;
+  grid-column:1 / -1 !important;
+  grid-row:auto !important;
+  justify-self:stretch !important;
+  align-self:stretch !important;
+  min-height:0 !important;
+}
+#advertisement .ads-header{position:relative !important; width:100% !important; box-sizing:border-box !important;}
+#advertisement .ads-controls{display:flex !important; align-items:center !important; gap:8px !important; flex:0 0 auto !important;}
+#advertisement .glass-circle{width:36px !important;height:36px !important;border-radius:50% !important;display:grid !important;place-items:center !important;cursor:pointer !important;}
+#advertisement .ads-track-wrapper{position:relative !important; width:100% !important; max-width:none !important; min-width:0 !important; overflow:hidden !important; box-sizing:border-box !important; border-radius:24px !important; border:1px solid rgba(120,255,170,.14) !important; background:rgba(2,6,4,.35) !important; backdrop-filter:blur(20px) !important; -webkit-backdrop-filter:blur(20px) !important;}
+#adsTrack{width:100% !important; max-width:none !important; min-width:0 !important; min-height:220px !important; box-sizing:border-box !important; display:flex !important; gap:20px !important; overflow-x:auto !important; overflow-y:hidden !important; padding:10px !important; scroll-snap-type:x mandatory !important; scrollbar-width:none !important; touch-action:pan-x !important; transform:none !important;}
+#adsTrack::-webkit-scrollbar{display:none !important;}
+#adsTrack > .ad-card{min-width:360px !important;max-width:360px !important;width:360px !important;height:200px !important;flex:0 0 360px !important;box-sizing:border-box !important;scroll-snap-align:center !important;}
+#advertisement .ads-dots{position:relative !important; left:auto !important; right:auto !important; width:100% !important; min-height:8px !important; box-sizing:border-box !important;}
+#advertisement .ads-dots .ads-dot{flex:0 0 auto !important;}
+.ads-left-mini,.a-sidebar{display:none !important;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.55;transform:scale(1.18)}}
+@media(max-width:768px){
+  #advertisement{padding:16px !important;}
+  #advertisement .ads-header{gap:10px !important;}
+  #advertisement .ads-header h2{font-size:19px !important;flex-wrap:wrap !important;}
+  #adsTrack{min-height:180px !important;padding:8px !important;gap:14px !important;}
+  #adsTrack > .ad-card{min-width:280px !important;max-width:280px !important;width:280px !important;height:180px !important;flex-basis:280px !important;}
+}
