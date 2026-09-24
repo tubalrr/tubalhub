@@ -2106,3 +2106,637 @@ body.theme-forest.hub-home #mainFooter.glass-footer::before{
   .canva-properties-panel{left:8px;right:8px}
   .canva-export-btn{font-size:8px}
 }
+
+
+/* =========================================================
+   HOMEPAGE BENTO SYSTEM — replaces the old slider-first shell
+   ========================================================= */
+body.hub-home .home-page.bento-home-page{
+  width:100%;
+  max-width:none;
+  min-width:0;
+  margin:0;
+  padding:0;
+}
+body.hub-home .home-page.bento-home-page .home-shell{
+  width:100%;
+  max-width:none;
+  margin:0;
+  padding:0 0 94px;
+}
+#mainContent.bento-grid{
+  width:100%;
+  max-width:1280px;
+  margin:0 auto;
+  padding:24px;
+  display:grid;
+  grid-template-columns:repeat(12,minmax(0,1fr));
+  gap:20px;
+  box-sizing:border-box;
+  align-items:start;
+}
+.bento-card,
+#canvaStudio.bento-canva,
+#mainFooter.bento-footer{
+  position:relative;
+  min-width:0;
+  border:1px solid rgba(120,255,170,.14);
+  border-radius:32px;
+  background:
+    radial-gradient(400px circle at var(--mx,50%) var(--my,20%),rgba(29,255,145,.08),transparent 68%),
+    rgba(2,6,4,.78);
+  backdrop-filter:blur(20px) saturate(125%);
+  -webkit-backdrop-filter:blur(20px) saturate(125%);
+  box-shadow:0 20px 40px rgba(0,0,0,.22),inset 0 1px rgba(255,255,255,.03);
+  overflow:hidden;
+}
+.bento-card::before,
+#mainFooter.bento-footer::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:radial-gradient(600px circle at 20% 10%,rgba(29,255,145,.08),transparent 70%);
+}
+.bento-card h2,.bento-card h3{margin:0}
+.bento-kicker{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  color:rgba(225,247,234,.63);
+  font-size:9px;
+  font-weight:900;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+}
+.bento-section-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:14px;
+  position:relative;
+  z-index:2;
+}
+.bento-head-title{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  min-width:0;
+}
+.bento-head-title h2{font-size:20px;letter-spacing:-.025em}
+.bento-head-title span:not(.home-emoji){display:block;margin-top:3px;color:#74867c;font-size:9px}
+.bento-viewall{
+  flex:0 0 auto;
+  color:#a8ef9b;
+  text-decoration:none;
+  font-size:9px;
+  font-weight:900;
+  white-space:nowrap;
+}
+.bento-viewall:hover{text-decoration:underline}
+.bento-subline{display:block;margin-top:6px;color:#708178;font-size:9px}
+
+.bento-hero{
+  grid-column:span 8;
+  min-height:460px;
+  padding:34px;
+  display:flex;
+  align-items:center;
+  isolation:isolate;
+  background:
+    radial-gradient(260px circle at 84% 32%,rgba(255,255,255,.2),transparent 60%),
+    linear-gradient(135deg,#8ed66d 0%,#1dff91 52%,#7d5aff 100%);
+  color:#061009;
+  box-shadow:0 26px 70px rgba(29,255,145,.12),0 20px 40px rgba(0,0,0,.24);
+}
+.bento-hero::before{
+  background:
+    radial-gradient(600px 420px at 18% 20%,rgba(255,255,255,.18),transparent 64%),
+    radial-gradient(380px 300px at 88% 80%,rgba(125,90,255,.18),transparent 70%);
+}
+.bento-hero-copy{
+  position:relative;
+  z-index:3;
+  width:min(66%,640px);
+}
+.bento-hero .bento-kicker{color:rgba(4,20,10,.72)}
+.bento-hero h1{
+  margin:10px 0 10px;
+  font-size:36px;
+  line-height:1;
+  font-weight:800;
+  letter-spacing:-.04em;
+}
+.bento-hero p{
+  margin:0;
+  max-width:560px;
+  color:rgba(4,24,13,.72);
+  font-size:13px;
+  line-height:1.65;
+}
+.bento-hero-stats{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:18px;
+}
+.bento-hero-stat{
+  min-width:90px;
+  padding:9px 11px;
+  border:1px solid rgba(4,24,13,.12);
+  border-radius:14px;
+  background:rgba(255,255,255,.22);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+}
+.bento-hero-stat small{display:block;font-size:7px;text-transform:uppercase;letter-spacing:.08em;color:rgba(4,24,13,.6)}
+.bento-hero-stat strong{display:block;margin-top:2px;font-size:15px;color:#05140b}
+.bento-cta-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px}
+.bento-primary-btn,.bento-secondary-btn{
+  min-height:42px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  padding:0 14px;
+  border-radius:14px;
+  text-decoration:none;
+  font-size:10px;
+  font-weight:900;
+  transition:transform .18s ease,box-shadow .18s ease,background .18s ease;
+}
+.bento-primary-btn{
+  background:#020604;
+  color:#eaffef;
+  box-shadow:0 12px 28px rgba(0,0,0,.18);
+}
+.bento-secondary-btn{
+  background:rgba(255,255,255,.18);
+  color:#06150b;
+  border:1px solid rgba(4,24,13,.14);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+}
+.bento-primary-btn:hover,.bento-secondary-btn:hover{transform:translateY(-3px);box-shadow:0 15px 34px rgba(0,0,0,.16)}
+.bento-breathing-wrap{
+  position:absolute;
+  right:8%;
+  top:50%;
+  width:170px;
+  height:170px;
+  transform:translateY(-50%);
+  display:grid;
+  place-items:center;
+  pointer-events:none;
+  z-index:2;
+}
+.bento-breathing-circle{
+  width:100px;
+  height:100px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  align-content:center;
+  gap:2px;
+  color:#063114;
+  border:1px solid rgba(255,255,255,.5);
+  background:rgba(255,255,255,.24);
+  box-shadow:0 0 40px rgba(255,255,255,.24),inset 0 0 28px rgba(255,255,255,.16);
+  animation:bentoBreath 8s ease-in-out infinite;
+}
+.bento-breathing-circle span,.bento-breathing-circle small{font-size:7px;font-weight:900;text-transform:uppercase;letter-spacing:.1em}
+.bento-breathing-circle b{font-size:24px}
+@keyframes bentoBreath{0%,100%{transform:scale(.92)}50%{transform:scale(1.22)}}
+.bento-hero-orbit{
+  position:absolute;
+  right:-50px;
+  bottom:-50px;
+  width:220px;
+  height:220px;
+  border-radius:50%;
+  border:1px solid rgba(255,255,255,.22);
+  box-shadow:0 0 0 26px rgba(255,255,255,.045),0 0 0 52px rgba(255,255,255,.025);
+}
+.bento-quick-stats{
+  grid-column:span 4;
+  min-height:220px;
+  padding:22px;
+}
+.bento-quick-stats .bento-section-head h2{margin-top:2px;font-size:20px}
+.bento-live-dot{
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  background:#ff1a1a;
+  box-shadow:0 0 14px rgba(255,26,26,.82);
+  animation:bentoRedPulse 1.25s ease-in-out infinite;
+}
+@keyframes bentoRedPulse{50%{transform:scale(1.16);box-shadow:0 0 22px rgba(255,26,26,.98)}}
+.bento-quick-stack{display:grid;gap:10px;margin-top:18px}
+.bento-mini-stat{
+  display:flex;
+  align-items:center;
+  gap:11px;
+  min-height:68px;
+  padding:10px 12px;
+  border:1px solid rgba(255,255,255,.075);
+  border-radius:18px;
+  background:rgba(255,255,255,.035);
+}
+.bento-mini-icon{width:34px;height:34px;display:grid;place-items:center;border-radius:11px;background:rgba(29,255,145,.08);font-size:18px}
+.bento-mini-stat small{display:block;color:#718178;font-size:8px}
+.bento-mini-stat strong{display:block;margin-top:3px;color:#ebf6ef;font-size:17px}
+.bento-data-note{display:block;margin-top:10px;color:#63756c;font-size:8px;line-height:1.4}
+
+.bento-journal,.bento-music{
+  grid-column:span 6;
+  min-height:380px;
+  padding:22px;
+}
+.bento-list{display:grid;gap:9px;margin-top:16px}
+.bento-journal-item,.bento-music-item{
+  display:flex;
+  align-items:center;
+  gap:11px;
+  min-height:76px;
+  padding:10px;
+  border:1px solid rgba(255,255,255,.07);
+  border-left:2px solid transparent;
+  border-radius:17px;
+  background:rgba(255,255,255,.03);
+  text-decoration:none;
+  color:inherit;
+  transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease;
+}
+.bento-journal-item:hover,.bento-music-item:hover{
+  transform:translateY(-4px);
+  border-color:rgba(120,255,170,.28);
+  border-left-color:#1dff91;
+  box-shadow:0 14px 30px rgba(0,0,0,.18);
+}
+.bento-journal-mood{
+  width:40px;height:40px;display:grid;place-items:center;border-radius:13px;
+  background:rgba(29,255,145,.06);font-size:24px;flex:0 0 40px;
+}
+.bento-item-copy{min-width:0;flex:1}
+.bento-item-copy strong{display:block;font-size:11px;color:#e9f4ed;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bento-item-copy p{margin:5px 0 0;color:#7b8b83;font-size:9px;line-height:1.45;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+.bento-item-date{color:#64746c;font-size:7px;white-space:nowrap}
+.bento-empty{
+  padding:28px 12px;
+  border:1px dashed rgba(120,255,170,.13);
+  border-radius:18px;
+  color:#6e8178;
+  text-align:center;
+  font-size:9px;
+}
+.bento-music-item{position:relative}
+.bento-music-cover{
+  width:54px;height:54px;flex:0 0 54px;display:grid;place-items:center;border-radius:16px;
+  color:#fff;font-size:22px;
+  background:linear-gradient(135deg,#1dff91,#7d5aff);
+  border:1px solid rgba(255,255,255,.12);
+}
+.bento-music-play{
+  width:40px;height:40px;border-radius:50%;
+  display:grid;place-items:center;
+  border:1px solid rgba(255,255,255,.16);
+  background:rgba(2,6,4,.28);
+  color:#f4fff7;
+  cursor:pointer;
+  transition:transform .18s ease,box-shadow .18s ease;
+}
+.bento-music-play:hover{transform:scale(1.06);box-shadow:0 0 22px rgba(29,255,145,.24)}
+.bento-music-wave{
+  display:flex;
+  align-items:center;
+  gap:3px;
+  width:28px;
+  height:28px;
+  margin-right:3px;
+}
+.bento-music-wave i{
+  width:4px;
+  height:8px;
+  border-radius:999px;
+  background:#1dff91;
+  box-shadow:0 0 8px rgba(29,255,145,.25);
+}
+.bento-music-item.is-playing .bento-music-wave i:nth-child(1){animation:bentoWaveA .55s ease-in-out infinite alternate}
+.bento-music-item.is-playing .bento-music-wave i:nth-child(2){animation:bentoWaveB .45s ease-in-out infinite alternate}
+.bento-music-item.is-playing .bento-music-wave i:nth-child(3){animation:bentoWaveA .62s ease-in-out infinite alternate}
+@keyframes bentoWaveA{to{height:20px}}
+@keyframes bentoWaveB{to{height:14px}}
+.bento-music-item .bento-item-copy strong{font-size:11px}
+.bento-wave-summary{display:none}
+
+.bento-feeds{
+  grid-column:span 4;
+  min-height:500px;
+  padding:22px;
+}
+.bento-feed-scroll{
+  display:grid;
+  gap:10px;
+  margin-top:15px;
+  max-height:420px;
+  overflow:auto;
+  padding-right:3px;
+  scrollbar-width:thin;
+}
+.bento-feed-card{
+  padding:10px;
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:18px;
+  background:rgba(255,255,255,.03);
+  transition:transform .2s ease,border-color .2s ease;
+}
+.bento-feed-card:hover{transform:translateY(-3px);border-color:rgba(120,255,170,.24)}
+.bento-feed-head{display:flex;align-items:center;gap:8px}
+.bento-feed-avatar{
+  width:36px;height:36px;flex:0 0 36px;display:grid;place-items:center;
+  overflow:hidden;border-radius:50%;background:rgba(29,255,145,.08);border:1px solid rgba(120,255,170,.13);
+  color:#dff7e8;font-weight:900;font-size:9px;
+}
+.bento-feed-avatar img{width:100%;height:100%;object-fit:cover}
+.bento-feed-author{min-width:0}
+.bento-feed-author strong{display:block;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bento-feed-author small{display:block;margin-top:2px;color:#64766d;font-size:7px}
+.bento-feed-text{
+  margin:9px 0;
+  color:#93a098;
+  font-size:9px;
+  line-height:1.45;
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+  overflow:hidden;
+}
+.bento-feed-image{
+  width:100%;
+  height:120px;
+  object-fit:cover;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.07);
+  background:rgba(255,255,255,.02);
+}
+.bento-feed-image-placeholder{
+  height:120px;
+  display:grid;
+  place-items:center;
+  border-radius:16px;
+  border:1px dashed rgba(120,255,170,.11);
+  color:#587067;
+  font-size:22px;
+}
+.bento-feed-foot{display:flex;align-items:center;justify-content:space-between;margin-top:8px;color:#687970;font-size:7px}
+.bento-like-value{color:#9caea4}
+
+.bento-games{
+  grid-column:span 8;
+  min-height:500px;
+  padding:22px;
+}
+.bento-games-title{display:flex;align-items:center;gap:8px}
+.bento-games-title h2{font-size:20px}
+.bento-hot-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  padding:5px 8px;
+  color:#ffeef0;
+  border:1px solid rgba(255,26,26,.35);
+  background:rgba(255,26,26,.09);
+  border-radius:999px;
+  font-size:8px;
+  font-weight:900;
+  box-shadow:0 0 18px rgba(255,26,26,.08);
+}
+.bento-hot-badge i{font-style:normal;animation:bentoRedPulse 1.25s ease-in-out infinite}
+.bento-games-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:14px;
+  margin-top:18px;
+}
+.bento-game-card{
+  min-height:180px;
+  border:1px solid rgba(120,255,170,.12);
+  border-radius:24px;
+  overflow:hidden;
+  background:linear-gradient(135deg,var(--game-a,#07100b),var(--game-b,#173b2a));
+  box-shadow:0 14px 34px rgba(0,0,0,.2);
+  transform:perspective(900px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translateY(0);
+  transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease;
+  will-change:transform;
+}
+.bento-game-card:hover{transform:perspective(900px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translateY(-6px);border-color:rgba(29,255,145,.32);box-shadow:0 20px 45px rgba(0,0,0,.24)}
+.bento-game-cover{
+  height:92px;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  padding:15px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+  background:radial-gradient(180px 90px at 75% 35%,rgba(255,255,255,.13),transparent 70%);
+}
+.bento-game-emoji{font-size:32px;filter:drop-shadow(0 8px 15px rgba(0,0,0,.24))}
+.bento-game-local{
+  padding:5px 7px;
+  border-radius:999px;
+  color:#ccefd7;
+  background:rgba(2,6,4,.3);
+  border:1px solid rgba(255,255,255,.1);
+  font-size:7px;
+  font-weight:900;
+}
+.bento-game-body{padding:12px 13px}
+.bento-game-title{font-size:12px;color:#eef7f0;font-weight:800;line-height:1.2}
+.bento-game-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:8px;color:#9eb0a7;font-size:8px}
+.bento-play-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-height:30px;padding:0 10px;border-radius:10px;
+  color:#041009;font-size:8px;font-weight:900;text-decoration:none;
+  background:linear-gradient(135deg,#1dff91,#7d5aff);
+}
+
+#canvaStudio.bento-canva{
+  grid-column:span 12;
+  min-height:640px;
+  padding:28px;
+}
+#canvaStudio.bento-canva .canva-studio-head{margin-bottom:20px}
+#canvaStudio.bento-canva .canva-canvas-shell{
+  width:min(700px,100%);
+  max-width:700px;
+  aspect-ratio:7/4;
+}
+#canvaStudio.bento-canva #designCanvas{width:100%;height:100%}
+#canvaStudio.bento-canva .canva-template-strip{grid-template-columns:repeat(6,minmax(140px,1fr))}
+#canvaStudio.bento-canva .canva-template-card{min-height:100px}
+#canvaStudio.bento-canva .canva-template-card .canva-template-thumb{height:62px}
+#canvaStudio.bento-canva .canva-quick-template{flex-basis:140px;min-height:100px}
+#canvaStudio.bento-canva .canva-quick-template .canva-template-thumb{height:48px}
+#canvaStudio.bento-canva .canva-studio-workspace{grid-template-columns:80px minmax(0,1fr) 280px}
+#canvaStudio.bento-canva .canva-toolbar{width:80px;min-height:400px}
+#canvaStudio.bento-canva .canva-properties-panel{width:280px}
+
+#mainFooter.bento-footer{
+  grid-column:span 12;
+  margin:0;
+  padding:28px;
+  background:
+    radial-gradient(600px circle at 20% 10%,rgba(29,255,145,.07),transparent 70%),
+    #020604;
+}
+.bento-footer-row{position:relative;z-index:2;display:grid;gap:26px}
+.bento-footer-row-1{grid-template-columns:repeat(4,minmax(0,1fr))}
+.bento-footer-row-2{grid-template-columns:repeat(3,minmax(0,1fr));margin-top:24px;padding-top:24px;border-top:1px solid rgba(255,255,255,.07)}
+.bento-footer-row-3{grid-template-columns:1fr 1.2fr 1.8fr;align-items:center;margin-top:24px;padding-top:20px;border-top:1px solid rgba(255,255,255,.07)}
+.bento-footer .footer-column h3,.bento-footer .footer-service-column h3{margin:0 0 10px;font-size:12px;color:#edf7f0}
+.bento-footer .footer-link-list{display:grid;gap:7px}
+.bento-footer .footer-link-list a{color:#81938a;text-decoration:none;font-size:9px}
+.bento-footer .footer-link-list a:hover{color:#1dff91}
+.bento-footer .footer-service-note{color:#6f8178;font-size:9px;line-height:1.5}
+.bento-planned-row{display:flex;flex-wrap:wrap;gap:7px;margin:8px 0}
+.bento-planned-row span{
+  min-width:60px;height:36px;display:grid;place-items:center;
+  padding:0 10px;border-radius:10px;border:1px solid rgba(0,0,0,.08);
+  background:#fff;color:#26352d;font-size:8px;font-weight:900;
+}
+.bento-footer .footer-access-links{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.bento-footer .app-badge{
+  min-height:36px;display:inline-flex;align-items:center;justify-content:center;padding:0 11px;
+  border:1px solid rgba(120,255,170,.13);border-radius:11px;background:rgba(255,255,255,.04);
+  color:#dcebe3;text-decoration:none;font-size:8px;font-weight:800;
+}
+.bento-footer .app-badge:hover{border-color:rgba(29,255,145,.46);box-shadow:0 0 18px rgba(29,255,145,.1)}
+.bento-footer .footer-access-cards{display:grid;gap:7px}
+.bento-footer .footer-access-cards a{
+  display:flex;align-items:center;gap:7px;min-height:34px;padding:0 9px;border-radius:11px;
+  border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.025);color:#81928a;text-decoration:none;font-size:8px;
+}
+.bento-footer .footer-access-cards a:hover{border-color:rgba(29,255,145,.32);color:#1dff91}
+.bento-footer .footer-site-status-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin-top:10px}
+.bento-footer .footer-site-status-grid>span{
+  min-height:48px;padding:7px;border:1px solid rgba(255,255,255,.07);border-radius:10px;
+  display:grid;align-content:center;gap:2px;background:rgba(255,255,255,.025);color:#71837a;font-size:7px;
+}
+.bento-footer .footer-site-status-grid>span b{color:#1dff91;font-size:9px}
+.bento-footer .verification-qr{display:grid;place-items:center;overflow:hidden}
+.bento-footer .verification-qr img{width:44px;height:44px}
+.bento-footer .footer-ph-circle{
+  width:28px;height:28px;border-radius:50%;display:grid;place-items:center;
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);font-size:18px;
+}
+.bento-footer .footer-country{display:flex;align-items:center;gap:8px;color:#90a199;font-size:9px;font-weight:800}
+.bento-footer .footer-follow{display:flex;align-items:center;gap:10px}
+.bento-footer .footer-follow>strong{font-size:9px;color:#90a199}
+.bento-footer .footer-follow-icons{display:flex;gap:7px}
+.bento-footer .footer-follow-icons a{
+  width:36px;height:36px;display:grid;place-items:center;border-radius:11px;
+  background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.075);
+  color:#a9b7b0;text-decoration:none;font-size:13px;font-weight:900;
+  transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease,color .18s ease;
+}
+.bento-footer .footer-follow-icons a:hover{transform:translateY(-3px);color:#1dff91;border-color:rgba(29,255,145,.32);box-shadow:0 0 18px rgba(29,255,145,.1)}
+.bento-footer .footer-copyright{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap;color:#718078;font-size:8px}
+
+body.theme-light.hub-home #mainContent.bento-grid{color:#17231d}
+body.theme-light.hub-home .bento-card,
+body.theme-light.hub-home #mainFooter.bento-footer{
+  background:rgba(248,250,248,.88);
+  border-color:#e1e9e3;
+  box-shadow:0 18px 50px rgba(48,69,57,.08);
+}
+body.theme-light.hub-home .bento-hero{background:linear-gradient(135deg,#8ed66d,#1dff91 52%,#7d5aff);color:#061009}
+body.theme-light.hub-home .bento-mini-stat,
+body.theme-light.hub-home .bento-journal-item,
+body.theme-light.hub-home .bento-music-item,
+body.theme-light.hub-home .bento-feed-card{background:rgba(255,255,255,.7);border-color:#e5ece7}
+body.theme-light.hub-home .bento-head-title h2,
+body.theme-light.hub-home .bento-games-title h2,
+body.theme-light.hub-home .bento-quick-stats .bento-section-head h2{color:#1d2a23}
+body.theme-light.hub-home .bento-item-copy strong,.theme-light.hub-home .bento-mini-stat strong{color:#24332b}
+body.theme-light.hub-home .bento-item-copy p,.theme-light.hub-home .bento-feed-text{color:#68786f}
+body.theme-light.hub-home .bento-footer .footer-link-list a{color:#61736a}
+body.theme-light.hub-home .bento-footer .footer-service-note{color:#788a81}
+body.theme-light.hub-home .bento-footer .app-badge{color:#36463e;background:rgba(255,255,255,.7);border-color:#e0e8e2}
+body.theme-light.hub-home .bento-footer .footer-access-cards a,.theme-light.hub-home .bento-footer .footer-follow-icons a{color:#607169;background:rgba(255,255,255,.7);border-color:#e0e8e2}
+
+@media(max-width:1100px){
+  #mainContent.bento-grid{grid-template-columns:repeat(6,minmax(0,1fr));}
+  .bento-hero,.bento-games{grid-column:span 4}
+  .bento-quick-stats{grid-column:span 2}
+  .bento-journal,.bento-music{grid-column:span 3}
+  .bento-feeds{grid-column:span 2}
+  #canvaStudio.bento-canva,#mainFooter.bento-footer{grid-column:span 6}
+  .bento-footer-row-1{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .bento-footer-row-2{grid-template-columns:1fr 1fr}
+  .bento-footer-row-3{grid-template-columns:1fr 1fr}
+}
+
+@media(max-width:768px){
+  body.hub-home .home-page.bento-home-page .home-shell{padding-bottom:88px}
+  #mainContent.bento-grid{
+    width:100%;
+    max-width:none;
+    padding:12px 10px calc(90px + env(safe-area-inset-bottom));
+    grid-template-columns:1fr;
+    gap:12px;
+  }
+  .bento-card,#canvaStudio.bento-canva,#mainFooter.bento-footer,
+  .bento-hero,.bento-quick-stats,.bento-journal,.bento-music,.bento-feeds,.bento-games{
+    grid-column:1 / -1;
+    min-height:0;
+    border-radius:24px;
+  }
+  .bento-card,#canvaStudio.bento-canva{backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+  .bento-hero{height:340px;padding:22px}
+  .bento-hero-copy{width:100%}
+  .bento-hero h1{font-size:28px}
+  .bento-hero p{font-size:11px;max-width:92%}
+  .bento-breathing-wrap{right:14px;top:auto;bottom:20px;transform:none;width:120px;height:120px}
+  .bento-breathing-circle{width:100px;height:100px}
+  .bento-hero-orbit{right:-70px;bottom:-85px;width:200px;height:200px}
+  .bento-quick-stats{padding:18px}
+  .bento-journal,.bento-music,.bento-feeds,.bento-games{padding:18px}
+  .bento-games-grid{grid-template-columns:1fr 1fr;gap:10px}
+  .bento-game-card{min-height:168px;border-radius:20px}
+  .bento-game-cover{height:82px}
+  #canvaStudio.bento-canva{min-height:0;padding:16px;padding-bottom:236px}
+  #canvaStudio.bento-canva .canva-studio-workspace{display:flex;flex-direction:column;gap:10px}
+  #canvaStudio.bento-canva .canva-canvas-column{order:1}
+  #canvaStudio.bento-canva .canva-toolbar{
+    order:2;width:100%;height:60px;min-height:60px;padding:6px;overflow-x:auto;overflow-y:hidden;
+    flex-direction:row;justify-content:flex-start;border-radius:18px;position:sticky;bottom:210px;z-index:900;
+  }
+  #canvaStudio.bento-canva .canva-tool{flex:0 0 48px}
+  #canvaStudio.bento-canva .canva-properties-panel{
+    order:3;position:fixed;left:8px;right:8px;bottom:8px;width:auto;height:200px;min-height:200px;z-index:900;overflow:auto;border-radius:20px;
+  }
+  #canvaStudio.bento-canva .canva-canvas-shell{width:min(320px,100%);height:320px;aspect-ratio:1/1}
+  #canvaStudio.bento-canva #designCanvas{width:100%;height:100%}
+  #canvaStudio.bento-canva .canva-template-library{display:none}
+  #canvaStudio.bento-canva .canva-export-bar{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+  #canvaStudio.bento-canva .canva-export-btn{min-height:38px;padding:0 8px;font-size:8px}
+  .bento-footer{padding:22px!important}
+  .bento-footer-row-1,.bento-footer-row-2,.bento-footer-row-3{grid-template-columns:1fr}
+  .bento-footer-row-3{align-items:start}
+  .bento-footer .footer-site-status-grid{grid-template-columns:1fr 1fr}
+  .bento-footer .footer-follow{align-items:flex-start;flex-direction:column}
+  .bento-footer .footer-copyright{justify-content:flex-start}
+}
+@media(max-width:480px){
+  #mainContent.bento-grid{padding-left:8px;padding-right:8px}
+  .bento-hero{height:340px;padding:18px}
+  .bento-cta-row{display:grid;grid-template-columns:1fr 1fr}
+  .bento-primary-btn,.bento-secondary-btn{font-size:9px;padding:0 9px}
+  .bento-hero-stats{gap:5px}
+  .bento-hero-stat{min-width:78px;padding:7px 8px}
+  .bento-hero-stat strong{font-size:13px}
+  .bento-feeds .bento-feed-scroll{max-height:470px}
+  .bento-games-grid{grid-template-columns:1fr}
+  #canvaStudio.bento-canva{padding-left:11px;padding-right:11px}
+  .bento-footer .footer-link-list a{font-size:8px}
+}
