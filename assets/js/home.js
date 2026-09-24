@@ -585,10 +585,6 @@ function formatLastPlayed(value){
   if(!value)return "Never";
   const d=new Date(value);if(Number.isNaN(d.getTime()))return "—";
   return d.toLocaleString("en-PH",{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"});
-}(value){
-  if(!value)return "Never";
-  const d=new Date(value);if(Number.isNaN(d.getTime()))return "—";
-  return d.toLocaleString("en-PH",{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"});
 }
 function gameStatMarkup(game){
   const plays=getRealGamePlayCount(game.id);
