@@ -1,3 +1,4 @@
+.th-overlay[hidden]{display:none!important;pointer-events:none!important}
 /* TUBAL HUB — Notification Center + Spotlight Search */
 :root{--th-green:#1dff91;--th-purple:#7d5aff;--th-red:#ff1a1a;--th-blue:#5aa7ff;--th-gold:#ffc857}
 .hub-home .notification-btn{position:relative!important;width:40px!important;height:40px!important;min-width:40px!important;border-radius:50%!important;background:rgba(255,255,255,.06)!important;border:1px solid rgba(120,255,170,.14)!important;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important;transition:transform .22s cubic-bezier(.16,1,.3,1),background .22s ease,box-shadow .22s ease,border-color .22s ease!important}
