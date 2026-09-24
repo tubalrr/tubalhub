@@ -211,6 +211,8 @@ async function playMusic(id){
   try{
     await ensureAnalyser(audio);
     await audio.play();
+    document.querySelectorAll(".music-real-card.is-playing").forEach(card=>card.classList.remove("is-playing"));
+    document.querySelector('.music-real-card[data-music-id="'+CSS.escape(String(id))+'"]')?.classList.add("is-playing");
     const wave=$("#heroMusicWaveform");
     if(wave)wave.hidden=false;
   }catch(_){showHomeToast("Press play again to start the saved audio.")}
@@ -387,7 +389,8 @@ function renderFeaturedGames(){
     });
   });
   gamesSlider?.stopAuto();
-  gamesSlider=createSlider("gamesTrack","gamesPrev","gamesNext","gamesDots",".game-feature-card");
+  gamesSlider=null;
+  renderAllSliderDots();
 }
 function saveGameStats(all){
   try{localStorage.setItem(GAME_STATS_KEY,JSON.stringify(all))}catch(_){}
@@ -475,6 +478,20 @@ async function initFooter(){
   }catch(_){}
 }
 const sliderTimers=new Map();
+function renderAllSliderDots(){
+  document.querySelectorAll(".slider-track").forEach(track=>{
+    const cards=[...track.children].filter(el=>el.offsetWidth>0);
+    if(!cards.length)return;
+    let dots=track.parentElement.querySelector(".auto-slider-dots");
+    if(!dots){
+      dots=document.createElement("div");dots.className="auto-slider-dots";track.parentElement.appendChild(dots);
+    }
+    dots.innerHTML=cards.map((_,i)=>'<button type="button" data-slider-index="'+i+'" aria-label="Go to card '+(i+1)+'"></button>').join("");
+    dots.querySelectorAll("button").forEach((b,i)=>b.addEventListener("click",()=>cards[i]&&track.scrollTo({left:cards[i].offsetLeft,behavior:"smooth"})));
+    const active=()=>{let best=0,min=Infinity;cards.forEach((c,i)=>{const d=Math.abs(track.scrollLeft-c.offsetLeft);if(d<min){min=d;best=i}});dots.querySelectorAll("button").forEach((b,i)=>b.classList.toggle("active",i===best))};
+    track.addEventListener("scroll",active,{passive:true});active();
+  });
+}
 function initAllSliders(){
   document.querySelectorAll(".slider-track").forEach(track=>{
     if(track.dataset.sliderReady==="1")return;
@@ -512,17 +529,32 @@ function cleanup(){
   try{state.audioContext?.close()}catch(_){}
 }
 function initScrollReveal(){
-  const items=document.querySelectorAll("#journalTrack > *,#musicTrack > *,#feedTrack > *,#gamesTrack > *");
-  if(!("IntersectionObserver" in window)){items.forEach(el=>el.classList.add("is-revealed"));return}
-  items.forEach((el,i)=>el.style.setProperty("--reveal-delay",(i%10)*.08+"s"));
-  const io=new IntersectionObserver(entries=>{
-    entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add("is-revealed");io.unobserve(entry.target)}})
-  },{threshold:.08});
-  items.forEach(el=>io.observe(el));
+  const animate=(el,i=0)=>{
+    if(el.dataset.revealed==="1")return;
+    el.dataset.revealed="1";
+    if(!el.animate){el.style.opacity="1";return}
+    el.animate(
+      [{opacity:0,transform:"translate3d(0,18px,0)"},{opacity:1,transform:"translate3d(0,0,0)"}],
+      {duration:600,delay:(i%10)*80,easing:"cubic-bezier(.16,1,.3,1)",fill:"none"}
+    ).onfinish=()=>{el.style.opacity="1";el.style.removeProperty("transform")}
+  };
+  const scan=()=>{
+    document.querySelectorAll("#journalTrack > *,#musicTrack > *,#feedTrack > *,#gamesTrack > *").forEach((el,i)=>animate(el,i));
+  };
+  scan();
+  if("MutationObserver" in window){
+    const mo=new MutationObserver(()=>scan());
+    ["journalTrack","musicTrack","feedTrack","gamesTrack"].forEach(id=>{
+      const node=$("#"+id);if(node)mo.observe(node,{childList:true});
+    });
+  }
 }
 function init(){
-  initSpotlight();initHeroSlider();renderGameScores();renderJournal();loadMusic();renderFeeds();initHorizontalSections();loadFeaturedGames();initFooter();initFooterNewsletter();initFooterSmoothLinks();initScrollReveal();
-  $("#homeMusicAudio")?.addEventListener("ended",()=>showHomeToast("Audio finished."));
+  initSpotlight();initHeroSlider();renderGameScores();renderJournal();loadMusic();renderFeeds();initHorizontalSections();renderAllSliderDots();loadFeaturedGames();initFooter();initFooterNewsletter();initFooterSmoothLinks();initScrollReveal();
+  $("#homeMusicAudio")?.addEventListener("ended",()=>{
+    document.querySelectorAll(".music-real-card.is-playing").forEach(card=>card.classList.remove("is-playing"));
+    showHomeToast("Audio finished.");
+  });
   addEventListener("beforeunload",cleanup);
   addEventListener("storage",event=>{
     if(JOURNAL_KEYS.includes(event.key))renderJournal();
