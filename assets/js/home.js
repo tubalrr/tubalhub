@@ -1211,53 +1211,48 @@ function initBento(){
 function renderFeedsBodyReal(){
   const real=getRealFeeds();
   const track=document.getElementById("feedsInsideTrack");
-  const countEl=document.getElementById("feedsCount");
+  const count=document.getElementById("feedCountReal");
+  const quickCount=document.getElementById("quickPostCount");
+  if(count)count.textContent=real.length+" "+(real.length===1?"post":"posts");
+  if(quickCount)quickCount.textContent=real.length+" posts real";
   if(!track)return;
-  if(countEl)countEl.textContent=real.length+" "+(real.length===1?"post":"posts")+" real";
   if(real.length===0){
-    track.innerHTML='<div class="empty-feed glass"><span aria-hidden="true">📱</span><p>Wala pa real post</p><small>Real posts mo dito lalabas</small><button type="button" onclick="location.href=\'pages/feeds.html\'">Mag post ng real</button></div>';
+    track.innerHTML='<div class="real-empty-feed">Wala pa real post — mag post sa kanan</div>';
     return;
   }
-  track.innerHTML=real.map(p=>{
-    const avatar=String(p.avatarReal||p.avatar||"").trim();
+  track.innerHTML=real.slice(0,10).map(p=>{
+    const image=String(p.imageReal||p.imgReal||p.image||"").trim();
     const user=String(p.userReal||p.author||"Ikaw").trim()||"Ikaw";
-    const created=p.createdAtReal||p.createdAt;
     const text=String(p.textReal||p.text||"").trim();
-    const image=p.imgReal||p.image||"";
-    const likes=Number(p.likesReal??p.likes??0);
-    return '<article class="feed-card glass"><div class="head">'+
-      (avatar?'<img src="'+esc(avatar)+'" alt="" loading="lazy">':'<span aria-hidden="true" style="width:40px;height:40px;border-radius:50%;display:block;background:linear-gradient(135deg,#1dff91,#7d5aff);"></span>')+
-      '<b>'+esc(user)+'</b><small>'+esc(created?new Date(created).toLocaleDateString("en-PH"):"")+'</small></div>'+
-      '<p>'+esc(text)+'</p>'+
-      (image?'<img src="'+esc(image)+'" alt="" loading="lazy">':"")+
-      '<div>❤️ '+(Number.isFinite(likes)?Math.max(0,likes):0)+'</div></article>';
+    const created=p.createdAtReal||p.createdAt||"";
+    const date=created?new Date(created):null;
+    const dateText=date&&!Number.isNaN(date.getTime())?date.toLocaleDateString("en-PH"):"";
+    const avatar=String(p.avatarReal||p.avatar||"").trim();
+    return '<div class="feed-item glass">'+
+      (avatar?'<img src="'+esc(avatar)+'" alt="" loading="lazy">':(image?'<img src="'+esc(image)+'" alt="" loading="lazy">':'<span aria-hidden="true" style="width:32px;height:32px;min-width:32px;border-radius:50%;display:block;background:linear-gradient(135deg,#1dff91,#7d5aff);"></span>'))+
+      '<div class="feed-copy"><b>'+esc(user)+'</b><p>'+esc(text)+'</p><small>'+esc(dateText)+'</small></div>'+
+    '</div>';
   }).join("");
 }
-async function saveFeedsBodyQuickPostReal(event){
-  event.preventDefault();
-  const form=event.currentTarget;
-  const text=String(form.elements.feedText?.value||"").trim();
-  const file=form.elements.feedImage?.files?.[0]||null;
-  if(!text){showHomeToast("Lagyan muna ng totoong post.");return}
+async function saveFeedsBodyQuickPostReal(){
+  const input=document.getElementById("realPostInput");
+  const fileInput=document.getElementById("realPostImage");
+  const text=String(input?.value||"").trim();
+  const file=fileInput?.files?.[0]||null;
+  if(!text){showHomeToast("Lagyan muna ng totoong post.");input?.focus();return}
   if(file&&file.size>8*1024*1024){showHomeToast("Image must be 8 MB or smaller.");return}
   try{
     const user=auth.currentUser;
-    const image=await saveRealFeedImage(file);
-    const real=getRealFeeds();
-    real.unshift({
-      id:window.crypto?.randomUUID?window.crypto.randomUUID():"local-"+Date.now(),
-      author:user?.displayName||user?.email||"Ikaw",
-      avatar:user?.photoURL||"",
-      text,
-      image,
-      likes:0,
-      comments:0,
-      createdAt:new Date().toISOString()
+    const imageReal=await saveRealFeedImage(file);
+    const feeds=getRealFeeds();
+    feeds.unshift({
+      idReal:window.crypto?.randomUUID?window.crypto.randomUUID():"local-"+Date.now(),
+      textReal:text,imageReal:imageReal||"",createdAtReal:new Date().toISOString(),
+      userReal:user?.displayName||user?.email||localStorage.getItem("tubal_username")||"Ikaw",likesReal:0
     });
-    localStorage.setItem("tubalhub_feeds",JSON.stringify(real));
-    form.reset();
-    const fileName=document.getElementById("tubalQuickFeedFileName");
-    if(fileName)fileName.textContent="optional";
+    localStorage.setItem("tubalhub_feeds",JSON.stringify(feeds));
+    if(input)input.value="";
+    if(fileInput)fileInput.value="";
     renderFeedsBodyReal();
     renderRealData();
     emitRealDataUpdate();
@@ -1268,14 +1263,16 @@ async function saveFeedsBodyQuickPostReal(event){
   }
 }
 function initFeedsBodyReal(){
-  const form=document.getElementById("tubalQuickFeedForm");
-  const file=document.getElementById("tubalQuickFeedImage");
-  const fileName=document.getElementById("tubalQuickFeedFileName");
-  form?.addEventListener("submit",saveFeedsBodyQuickPostReal);
-  file?.addEventListener("change",()=>{if(fileName)fileName.textContent=file.files?.[0]?.name||"optional"});
+  const save=document.getElementById("saveRealPostBtn");
+  const file=document.getElementById("realPostImage");
+  save?.addEventListener("click",saveFeedsBodyQuickPostReal);
+  file?.addEventListener("change",()=>{
+    const label=file.closest("label")?.querySelector("span:last-of-type");
+    if(label)label.textContent=file.files?.[0]?.name||"optional";
+  });
   renderFeedsBodyReal();
 }
-\nfunction init(){
+function init(){
   initFeedsBodyReal();
   initSpotlight();
   initBento();
