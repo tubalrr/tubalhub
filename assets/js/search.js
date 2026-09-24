@@ -77,7 +77,7 @@ async function loadData(){
     const title=String(x.title||x.text||"").trim();if(!title)return;
     const base={id:d.id,title,author:x.authorName||"TUBAL HUB",image:x.imageUrl||x.image||"",createdAt:ms(x.createdAt)};
     if(type==="post"&&(dest.length===0||dest.includes("feeds")))out.posts.push({...base,kind:"posts",meta:"by "+base.author,url:"pages/feeds.html"});
-    if(type==="game"&&(dest.length===0||dest.includes("games")))out.games.push({...base,kind:"games",meta:"CTRLZONE",url:"pages/ctrlzone.html"});
+    if(type==="game"&&(dest.length===0||dest.includes("games"))){const count=Number.isFinite(Number(x.playersOnline))?Number(x.playersOnline):(Number.isFinite(Number(x.onlineCount))?Number(x.onlineCount):null);out.games.push({...base,kind:"games",meta:count!==null?"Players online: "+count:"CTRLZONE",onlineCount:count,url:"pages/ctrlzone.html"});}
     if(type==="event"&&(dest.length===0||dest.includes("events")))out.events.push({...base,kind:"events",meta:"Events",url:"pages/events.html"});
     if(type==="news")out.posts.push({...base,kind:"posts",meta:"News · "+base.author,url:"pages/news.html"});
   });
@@ -114,6 +114,7 @@ function makeGroups(data,q){
   return groups.filter(g=>g[1].length);
 }
 function visual(x){
+  if(x.kind==="people")return '<div class="th-search-person"><div class="th-search-thumb"><img src="'+esc(x.photo||"tubal-hub-logo.png")+'" alt=""></div><span class="th-search-person-dot '+(x.online?"online":"offline")+'"></span></div>';
   if(x.photo||x.image)return '<div class="th-search-thumb"><img src="'+esc(x.photo||x.image)+'" alt=""></div>';
   return '<div class="th-search-icon-box">'+esc(x.icon||"⌕")+'</div>';
 }
@@ -168,5 +169,5 @@ function onKey(e){
 onAuthStateChanged(auth,u=>{readyUser=!!u&&!u.isAnonymous;cache=null;cacheAt=0});
 ensureUi();
 document.querySelector(".search-box")?.addEventListener("click",e=>{e.preventDefault();open("")});
-document.querySelector(".search-box input")?.addEventListener("focus",()=>open(""));
-document.addEventListener("keydown",e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==="k"){e.preventDefault();open("")}});
+document.querySelector(".search-box input")?.addEventListener("focus",()=>open(""));\ndocument.querySelector(".search-box")?.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();open("")}});
+document.addEventListener("keydown",e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==="k"){e.preventDefault();open("");return}if(e.key==="Tab"&&modal&&!modal.hidden){const focusables=[...modal.querySelectorAll("input,button,[href],[tabindex]:not([tabindex=\"-1\"])")];if(!focusables.length)return;const first=focusables[0],last=focusables[focusables.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}});
