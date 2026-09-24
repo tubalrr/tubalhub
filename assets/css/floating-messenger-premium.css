@@ -365,3 +365,6 @@ body.theme-light .tubal-msg-close{background:rgba(39,74,51,.04)!important;border
   .tubal-msg-panel,
   .tubal-msg-user{transition:none!important}
 }
+
+.tubal-msg-loading{padding:18px;color:#8fa39a;font-size:12px}
+.tubal-msg-empty{display:flex;flex-direction:column;gap:4px;padding:22px 18px;color:#8fa39a;font-size:11px;line-height:1.45}.tubal-msg-empty strong{color:#dbeae2;font-size:12px}.tubal-msg-user-status{color:#71847c!important}.tubal-msg-user.is-online .tubal-msg-user-status{color:#6dffab!important}
