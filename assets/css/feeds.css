@@ -23,3 +23,132 @@ body.theme-light.feeds-page{--fd-bg:#f2f6f3;--fd-panel:rgba(248,250,248,.88);--f
 body.theme-midnight.feeds-page .comment-bubble,body.theme-midnight.feeds-page .feed-notice{border-radius:10px;background:#020604e8}.body.theme-light.feeds-page .comment-bubble{background:#fff;border-color:#e5e7eb;color:#58695f}.body.theme-light.feeds-page .comment-bubble b{color:#26372d}.body.theme-light.feeds-page .feed-notice{background:rgba(255,255,255,.92);color:#26372d;border-color:#e5e7eb}
 .game-online{display:flex;align-items:center;gap:6px;margin:7px 0 0;color:#7f9288!important;font-size:9px!important}.game-online .contact-dot{width:8px;height:8px;flex:0 0 8px}.load-more-skeleton{display:grid;gap:0}.load-more-skeleton .skeleton{margin:12px 0}.create-action:focus-visible,.feed-filter:focus-visible,.feed-menu-item:focus-visible,.post-action:focus-visible,.buy-btn:focus-visible,.story-card:focus-visible{outline:2px solid rgba(29,255,145,.55);outline-offset:2px}
 body.theme-light.feeds-page .post-card,body.theme-light.feeds-page .product-card,body.theme-light.feeds-page .game-card{color:#26372d}body.theme-light.feeds-page .post-meta b,body.theme-light.feeds-page .product-info h3,body.theme-light.feeds-page .game-info h3{color:#26372d}
+/* TUBAL HUB ORIGINAL FEEDS — visual system v4 */
+.feeds-panel,.post-card,.feed-toolbar,.share-sheet,.feed-modal-card{
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+}
+.feed-menu-icon,.action-icon{
+  display:grid;
+  place-items:center;
+  flex:0 0 auto;
+}
+.feed-menu-icon svg,.action-icon svg{width:16px;height:16px;display:block}
+.feed-menu-icon{font-size:0}
+.feed-menu-item:hover .feed-menu-icon{transform:scale(1.06) rotate(-2deg)}
+.feed-menu-item.active .feed-menu-icon{color:#07110b}
+.create-action{display:flex;align-items:center;justify-content:center;gap:7px}
+.action-icon{width:24px;height:24px;border-radius:8px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.08)}
+.live-pulse{
+  width:9px;height:9px;border-radius:50%;background:#ff1a1a;
+  box-shadow:0 0 0 0 rgba(255,26,26,.45);
+  animation:fdLivePulse 1.35s ease-out infinite;
+}
+@keyframes fdLivePulse{
+  70%{box-shadow:0 0 0 8px rgba(255,26,26,0)}
+  100%{box-shadow:0 0 0 0 rgba(255,26,26,0)}
+}
+.post-card:before,.feeds-panel:before,.feed-toolbar:before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(260px 150px at var(--fd-card-mx,50%) var(--fd-card-my,0%),rgba(29,255,145,.10),transparent 72%);
+  opacity:.75;transition:opacity .2s ease;
+}
+.post-card,.feeds-panel,.feed-toolbar{isolation:isolate}
+.post-card>*,.feeds-panel>* ,.feed-toolbar>*{position:relative;z-index:1}
+.post-card .post-action{
+  position:relative;overflow:visible;transform-origin:center;
+}
+.react-pop-layer{position:absolute;inset:-38px -22px;pointer-events:none;overflow:visible;z-index:15}
+.react-pop{
+  position:absolute;left:50%;top:50%;font-size:18px;line-height:1;
+  filter:drop-shadow(0 0 8px rgba(29,255,145,.22));
+  animation:fdReactPop .72s cubic-bezier(.16,1,.3,1) both;
+}
+@keyframes fdReactPop{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(.25) rotate(0)}
+  22%{opacity:1;transform:translate(-50%,-50%) scale(1.35) rotate(-8deg)}
+  100%{opacity:0;transform:translate(calc(-50% + var(--rx)),calc(-50% + var(--ry))) scale(.72) rotate(var(--rr))}
+}
+.react-ring{
+  position:absolute;left:50%;top:50%;width:12px;height:12px;border-radius:50%;
+  border:2px solid rgba(29,255,145,.8);transform:translate(-50%,-50%) scale(.2);
+  animation:fdReactRing .55s ease-out both;pointer-events:none;
+}
+@keyframes fdReactRing{
+  to{opacity:0;transform:translate(-50%,-50%) scale(4.3)}
+}
+/* Midnight: sharp cyber terminal */
+body.theme-midnight.feeds-page{
+  --fd-bg:#010403;--fd-panel:rgba(3,9,7,.82);--fd-panel-2:rgba(2,7,5,.90);
+  background:
+    linear-gradient(rgba(29,255,145,.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(125,90,255,.02) 1px,transparent 1px),
+    radial-gradient(700px 500px at 74% -10%,rgba(29,255,145,.09),transparent 65%),
+    #010403;
+  background-size:18px 18px,18px 18px,auto,auto;
+}
+body.theme-midnight.feeds-page .feeds-panel,
+body.theme-midnight.feeds-page .post-card,
+body.theme-midnight.feeds-page .feed-toolbar,
+body.theme-midnight.feeds-page .story-card,
+body.theme-midnight.feeds-page .create-post,
+body.theme-midnight.feeds-page .product-card,
+body.theme-midnight.feeds-page .game-card{
+  border-radius:10px;
+  border-color:rgba(29,255,145,.17);
+  box-shadow:0 18px 60px rgba(0,0,0,.46),inset 0 1px rgba(255,255,255,.03),0 0 24px rgba(29,255,145,.035);
+}
+body.theme-midnight.feeds-page .post-card:after{
+  content:"";position:absolute;inset:0;pointer-events:none;z-index:0;
+  background:repeating-linear-gradient(180deg,transparent 0 5px,rgba(29,255,145,.018) 6px);
+}
+/* Forest: soft organic dashboard */
+body.theme-forest.feeds-page{
+  --fd-bg:#0a2013;--fd-panel:rgba(14,39,23,.77);--fd-panel-2:rgba(12,34,20,.84);
+  background:
+    radial-gradient(500px 420px at 8% 0%,rgba(142,214,109,.11),transparent 68%),
+    radial-gradient(600px 500px at 92% 18%,rgba(29,255,145,.07),transparent 68%),
+    #0a2013;
+}
+body.theme-forest.feeds-page .feeds-panel,
+body.theme-forest.feeds-page .post-card,
+body.theme-forest.feeds-page .feed-toolbar,
+body.theme-forest.feeds-page .story-card,
+body.theme-forest.feeds-page .create-post,
+body.theme-forest.feeds-page .product-card,
+body.theme-forest.feeds-page .game-card{
+  border-radius:26px;
+  border-color:rgba(142,214,109,.22);
+  box-shadow:0 18px 45px rgba(0,0,0,.23),0 0 26px rgba(142,214,109,.045);
+}
+body.theme-forest.feeds-page .feeds-panel:after,
+body.theme-forest.feeds-page .post-card:after{
+  content:"";position:absolute;right:-30px;bottom:-35px;width:120px;height:120px;border-radius:62% 38% 57% 43%;
+  background:rgba(142,214,109,.055);filter:blur(8px);transform:rotate(22deg);pointer-events:none;
+}
+/* Light: quiet editorial luxury */
+body.theme-light.feeds-page{
+  --fd-bg:#eef4ef;--fd-panel:rgba(255,255,255,.76);--fd-panel-2:rgba(255,255,255,.88);
+  background:radial-gradient(540px 380px at 15% 0%,rgba(29,255,145,.11),transparent 70%),linear-gradient(180deg,#f8fbf9,#edf3ee);
+}
+body.theme-light.feeds-page .feeds-panel,
+body.theme-light.feeds-page .post-card,
+body.theme-light.feeds-page .feed-toolbar,
+body.theme-light.feeds-page .story-card,
+body.theme-light.feeds-page .create-post,
+body.theme-light.feeds-page .product-card,
+body.theme-light.feeds-page .game-card{
+  border-radius:16px;
+  border-color:rgba(59,92,70,.12);
+  box-shadow:0 18px 50px rgba(66,89,72,.08);
+}
+body.theme-light.feeds-page .post-card:before,
+body.theme-light.feeds-page .feeds-panel:before,
+body.theme-light.feeds-page .feed-toolbar:before{background:radial-gradient(250px 130px at var(--fd-card-mx,50%) var(--fd-card-my,0%),rgba(29,255,145,.07),transparent 72%)}
+body.theme-light.feeds-page .post-action{background:rgba(36,61,47,.035)}
+@media(max-width:900px){
+  .feeds-shell{padding-top:12px}
+  .feeds-stories{padding-bottom:10px}
+  .story-card{flex-basis:112px;height:158px}
+  .create-actions{grid-template-columns:1fr}
+}
