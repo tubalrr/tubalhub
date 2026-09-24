@@ -5,8 +5,13 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
 const db = getFirestore(app);
-const JOURNAL_KEYS = ["tubalhub_journal","payapang-isip-journal-v1","payapang-journal"];
-const FEED_KEYS = ["tubalhub_feeds","tubalhub-feed"];
+const REAL_JOURNAL_KEY = "tubalhub_journal";
+const REAL_FEED_KEY = "tubalhub_feeds";
+const LEGACY_JOURNAL_KEY = "payapang-isip-journal-v1";
+const JOURNAL_KEYS = [REAL_JOURNAL_KEY,LEGACY_JOURNAL_KEY,"payapang-journal"];
+const FEED_KEYS = [REAL_FEED_KEY];
+const REAL_MUSIC_DB = "tubalhub_db";
+const REAL_MUSIC_STORE = "music";
 const MUSIC_DB = "tubalhub-ai-music";
 const MUSIC_STORE = "tracks";
 const LIKES_KEY = "tubalhub_real_likes";
@@ -20,7 +25,8 @@ const state = {
   source:null,
   visualFrame:0,
   heroTimer:null,
-  dragging:false
+  dragging:false,
+  realAudioUrls:new Map()
 };
 
 const $=(s,r=document)=>r.querySelector(s);
@@ -41,14 +47,6 @@ const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
 const isMobileHome=()=>window.innerWidth<=768;
 const homeCardLimit=()=>isMobileHome()?4:6;
 
-function purgeLegacyStudioData(){
-  try{
-    const legacyKeys=["tubalhub_"+["canva","current"].join("_"),"tubalhub_"+["canva","designs"].join("_")];
-    legacyKeys.forEach(key=>localStorage.removeItem(key));
-  }catch(_){}
-  try{indexedDB.deleteDatabase("tubalhub_"+["canva","drafts"].join("_"))}catch(_){}
-}
-
 function initSpotlight(){
   if(window.matchMedia?.("(hover: none), (pointer: coarse)").matches)return;
   let frame=0,x=innerWidth/2,y=innerHeight/2;
@@ -60,6 +58,272 @@ function initSpotlight(){
       frame=0;
     });
   },{passive:true});
+}
+
+/* =========================================================
+   PURE REAL DATA — browser storage for homepage content
+   ========================================================= */
+function parseRealArray(key){
+  try{
+    const raw=localStorage.getItem(key);
+    const value=raw?JSON.parse(raw):[];
+    return Array.isArray(value)?value:[];
+  }catch(_){return []}
+}
+function hasFakeFlag(rows){
+  return Array.isArray(rows)&&rows.some(row=>row&&(
+    row.fake===true||row.mock===true||row.dummy===true||row.isFake===true||row.test===true
+  ));
+}
+function getRealJournals(){
+  const data=localStorage.getItem("tubalhub_journal");
+  if(!data)return [];
+  try{
+    const parsed=JSON.parse(data);
+    return Array.isArray(parsed)?parsed:[];
+  }catch{
+    return [];
+  }
+}
+function migrateRealJournalStorage(){
+  if(localStorage.getItem(REAL_JOURNAL_KEY))return;
+  const legacy=parseRealArray(LEGACY_JOURNAL_KEY);
+  if(!legacy.length)return;
+  try{
+    const normalized=legacy.map(entry=>({
+      ...entry,
+      titleReal:entry?.titleReal??entry?.title??"",
+      contentReal:entry?.contentReal??entry?.text??entry?.content??entry?.body??"",
+      moodEmoji:entry?.moodEmoji??entry?.mood??entry?.emoji??"",
+      createdAtReal:entry?.createdAtReal??entry?.createdAt??entry?.updatedAt??0
+    }));
+    localStorage.setItem(REAL_JOURNAL_KEY,JSON.stringify(normalized));
+  }catch(_){}
+}
+function normalizeRealJournal(entry,index=0){
+  return {
+    id:entry?.id??String(index),
+    title:String(entry?.titleReal??entry?.title??"").trim(),
+    content:String(entry?.contentReal??entry?.text??entry?.content??entry?.body??"").trim(),
+    mood:String(entry?.moodEmoji??entry?.mood??entry?.emoji??"").trim(),
+    createdAt:entry?.createdAtReal??entry?.createdAt??entry?.updatedAt??0
+  };
+}
+function getRealJournalViews(){
+  return getRealJournals().map(normalizeRealJournal).filter(entry=>entry.title||entry.content);
+}
+function saveRealJournal(event){
+  event.preventDefault();
+  const form=event.currentTarget;
+  const title=String(form.elements.titleReal?.value||"").trim();
+  const content=String(form.elements.contentReal?.value||"").trim();
+  const moodEmoji=String(form.elements.moodEmoji?.value||"").trim();
+  if(!title||!content){
+    showHomeToast("Lagyan muna ng real title at journal.");
+    return;
+  }
+  const real=getRealJournals();
+  real.push({
+    id:Date.now(),
+    titleReal:title,
+    contentReal:content,
+    moodEmoji:moodEmoji||"🌿",
+    createdAtReal:new Date().toISOString()
+  });
+  try{
+    localStorage.setItem(REAL_JOURNAL_KEY,JSON.stringify(real));
+    emitRealDataUpdate();
+  }catch(_){
+    showHomeToast("Hindi na-save ang journal sa browser.");
+  }
+}
+function renderPayapangIsip(){
+  const track=document.querySelector("#payapangIsipTrack")||
+    document.querySelector("#bentoJournalList")||
+    document.querySelector("#journalTrack");
+  if(!track)return;
+  const real=getRealJournalViews();
+  if(real.length===0){
+    track.innerHTML='<div class="real-empty-card glass"><span class="real-empty-emoji" aria-hidden="true">🌿</span><p>Wala pa journal</p><form id="realJournalForm" class="real-quick-form"><input name="titleReal" type="text" maxlength="100" placeholder="Real journal title" required><textarea name="contentReal" maxlength="5000" placeholder="Isulat ang totoong journal mo..." required></textarea><select name="moodEmoji" aria-label="Mood"><option value="🌿">🌿</option><option value="😌">😌</option><option value="☀️">☀️</option><option value="🌙">🌙</option><option value="🍃">🍃</option><option value="💭">💭</option></select><div class="real-quick-form-actions"><button type="submit">Gumawa ng Real</button><a class="real-quick-link" href="pages/payapang-isip.html">Open Payapang Isip →</a></div></form></div>';
+    $("#realJournalForm")?.addEventListener("submit",saveRealJournal,{once:true});
+    return;
+  }
+  track.innerHTML=real.slice(0,homeCardLimit()).map(entry=>'<article class="real-data-card journal-real-card"><div class="journal-real-top"><span class="journal-real-icon home-emoji" aria-hidden="true">'+esc(entry.mood||"🌿")+'</span><span class="journal-real-date">'+esc(formatDate(entry.createdAt))+'</span></div><div class="journal-real-mood">REAL JOURNAL</div><h3 class="journal-real-title">'+esc(entry.title||"Untitled")+'</h3><p class="journal-real-text">'+esc(entry.content.slice(0,220))+(entry.content.length>220?"…":"")+'</p></article>').join("");
+}
+function getRealMusicDatabaseExists(name){
+  if(!window.indexedDB)return Promise.resolve(false);
+  if(typeof indexedDB.databases!=="function")return Promise.resolve(true);
+  return indexedDB.databases().then(rows=>rows.some(item=>item?.name===name)).catch(()=>true);
+}
+async function readRealMusicStore(dbName,storeName){
+  const exists=await getRealMusicDatabaseExists(dbName);
+  if(!exists)return [];
+  return new Promise(resolve=>{
+    let database=null;
+    try{
+      const request=indexedDB.open(dbName);
+      request.onupgradeneeded=()=>{try{request.transaction?.abort()}catch(_){}};
+      request.onsuccess=()=>{
+        database=request.result;
+        if(!database.objectStoreNames.contains(storeName)){
+          database.close();resolve([]);return;
+        }
+        const req=database.transaction(storeName,"readonly").objectStore(storeName).getAll();
+        req.onsuccess=()=>{const rows=Array.isArray(req.result)?req.result:[];database.close();resolve(rows)};
+        req.onerror=()=>{database.close();resolve([])};
+      };
+      request.onerror=()=>resolve([]);
+    }catch(_){resolve([])}
+  });
+}
+async function getRealMusic(){
+  let rows=await readRealMusicStore(REAL_MUSIC_DB,REAL_MUSIC_STORE);
+  if(!rows.length)rows=await readRealMusicStore(MUSIC_DB,MUSIC_STORE);
+  return rows.sort((a,b)=>Number(b.createdAt||0)-Number(a.createdAt||0));
+}
+function getRealFeeds(){
+  try{
+    const value=JSON.parse(localStorage.getItem("tubalhub_feeds")||"[]");
+    return Array.isArray(value)?value:[];
+  }catch{
+    return [];
+  }
+}
+function saveRealFeedImage(file){
+  return new Promise((resolve,reject)=>{
+    if(!file){resolve("");return}
+    const reader=new FileReader();
+    reader.onload=()=>resolve(String(reader.result||""));
+    reader.onerror=()=>reject(reader.error||new Error("FileReader failed."));
+    reader.readAsDataURL(file);
+  });
+}
+async function saveRealFeed(event){
+  event.preventDefault();
+  const form=event.currentTarget;
+  const text=String(form.elements.feedText?.value||"").trim();
+  const file=form.elements.feedImage?.files?.[0]||null;
+  if(!text){
+    showHomeToast("Lagyan muna ng totoong post.");
+    return;
+  }
+  if(file&&file.size>8*1024*1024){
+    showHomeToast("Image must be 8 MB or smaller.");
+    return;
+  }
+  try{
+    const user=auth.currentUser;
+    const image=await saveRealFeedImage(file);
+    const real=getRealFeeds();
+    real.unshift({
+      id:window.crypto?.randomUUID?window.crypto.randomUUID():"local-"+Date.now(),
+      author:user?.displayName||user?.email||"You",
+      avatar:user?.photoURL||"",
+      text,
+      image,
+      likes:0,
+      comments:0,
+      createdAt:new Date().toISOString()
+    });
+    localStorage.setItem(REAL_FEED_KEY,JSON.stringify(real));
+    emitRealDataUpdate();
+  }catch(_){
+    showHomeToast("Hindi na-save ang real post.");
+  }
+}
+function renderRealFeedsEmptyState(box){
+  box.innerHTML='<div class="real-empty-card glass"><span class="real-empty-emoji" aria-hidden="true">📱</span><p>Wala pang real posts</p><form id="realFeedForm" class="real-quick-form"><textarea name="feedText" maxlength="5000" placeholder="Isulat ang totoong post..." required></textarea><input name="feedImage" type="file" accept="image/*"><span id="realFeedFileName" class="real-feed-file-name">Walang image na pinili</span><div class="real-quick-form-actions"><button type="submit">Mag post ng real</button><a class="real-quick-link" href="pages/feeds.html">Open Feeds →</a></div></form></div>';
+  $("#realFeedForm")?.addEventListener("submit",saveRealFeed,{once:true});
+  $("#realFeedForm input[type=file]")?.addEventListener("change",event=>{
+    const name=event.target.files?.[0]?.name||"Walang image na pinili";
+    const target=$("#realFeedFileName");if(target)target.textContent=name;
+  },{once:true});
+}
+function getRealGamePlayCount(id){
+  const raw=localStorage.getItem("play_"+id+"_real")||"0";
+  const n=parseInt(raw,10);
+  return Number.isFinite(n)&&n>=0?n:0;
+}
+async function getRealGames(){
+  let realGames=[];
+  try{
+    const response=await fetch(GAMES_URL,{cache:"no-store"});
+    if(!response.ok)throw new Error("games.json "+response.status);
+    const data=await response.json();
+    realGames=Array.isArray(data)?data:(Array.isArray(data.games)?data.games:[]);
+  }catch(error){
+    console.warn("[TUBAL HUB real games]",error);
+  }
+  let local=[];
+  try{
+    const value=JSON.parse(localStorage.getItem("tubalhub_ctrlzone_games")||"[]");
+    local=Array.isArray(value)?value:[];
+  }catch(_){}
+  const merged=realGames.length?realGames:local;
+  return merged.filter(game=>game&&game.id&&game.title);
+}
+function playRealGame(id){
+  const game=featuredGames.find(item=>String(item.id)===String(id));
+  if(!game)return;
+  const key="play_"+game.id+"_real";
+  const count=getRealGamePlayCount(game.id)+1;
+  localStorage.setItem(key,String(count));
+  emitRealDataUpdate();
+  location.href="pages/ctrlzone.html?game="+encodeURIComponent(game.id);
+}
+function emitRealDataUpdate(){
+  window.dispatchEvent(new Event("tubalhub-real-data-update"));
+}
+function incrementRealMusicPlay(id){
+  const plays=musicPlays();
+  plays[id]=Number.isFinite(Number(plays[id]))?Number(plays[id])+1:1;
+  localStorage.setItem(PLAYS_KEY,JSON.stringify(plays));
+  updateRealMusicPlayCounts();
+}
+function updateRealMusicPlayCounts(){
+  const plays=musicPlays();
+  document.querySelectorAll("[data-real-plays]").forEach(el=>{
+    const id=String(el.dataset.realPlays||"");
+    el.textContent=(Number(plays[id]||0))+" plays";
+  });
+}
+function realAudioSource(track){
+  if(track?.blobUrlReal)return String(track.blobUrlReal);
+  if(track?.fileUrlReal)return String(track.fileUrlReal);
+  if(track?.blob instanceof Blob){
+    const key=String(track.id??"");
+    const current=state.realAudioUrls.get(key);
+    if(current)return current;
+    const url=URL.createObjectURL(track.blob);
+    state.realAudioUrls.set(key,url);
+    return url;
+  }
+  return "";
+}
+function clearRealAudioUrls(){
+  state.realAudioUrls.forEach(url=>{try{URL.revokeObjectURL(url)}catch(_){}});
+  state.realAudioUrls.clear();
+}
+function bindRealAudioPlayEvents(root=document){
+  root.querySelectorAll("[data-real-audio-id]").forEach(audio=>{
+    audio.addEventListener("play",()=>{
+      if(audio.dataset.playCounted==="1")return;
+      audio.dataset.playCounted="1";
+      incrementRealMusicPlay(audio.dataset.realAudioId);
+    });
+    audio.addEventListener("ended",()=>{audio.dataset.playCounted="";});
+  });
+}
+window.getRealJournals=getRealJournals;
+window.getRealMusic=getRealMusic;
+window.getRealFeeds=getRealFeeds;
+window.getRealGames=getRealGames;
+async function runRealDataAudit(){
+  console.log("REAL Journals:",getRealJournals().length,"fake?",hasFakeFlag(getRealJournals())?"FAKE DETECTED":"REAL OK");
+  const [music,feeds,games]=await Promise.all([getRealMusic(),Promise.resolve(getRealFeeds()),getRealGames()]);
+  console.log("REAL Music:",music.length,"fake?",hasFakeFlag(music)?"FAKE DETECTED":"REAL OK");
+  console.log("REAL Feeds:",feeds.length,"fake?",hasFakeFlag(feeds)?"FAKE DETECTED":"REAL OK");
+  console.log("REAL Games:",games.length,"fake?",hasFakeFlag(games)?"FAKE DETECTED":"REAL OK");
 }
 
 export function createSlider(trackId,prevId,nextId,dotsId,slideSelector=".hero-slide"){
@@ -144,28 +408,7 @@ function audioExt(type){
 function musicLikes(){return safeJson(LIKES_KEY,{})}
 function musicPlays(){return safeJson(PLAYS_KEY,{})}
 
-function journalEntries(){
-  const raw=readFirstArray(JOURNAL_KEYS);
-  return raw.map((entry,index)=>({
-    id:entry.id||String(index),
-    text:String(entry.text||entry.content||entry.body||"").trim(),
-    mood:String(entry.mood||entry.emoji||"").trim(),
-    createdAt:entry.createdAt||entry.date||entry.updatedAt||0
-  })).filter(entry=>entry.text).slice(0,homeCardLimit());
-}
-function journalStarterCards(){
-  const today=new Date().toLocaleDateString("en-PH",{month:"short",day:"numeric",year:"numeric"});
-  const prompts=[
-    ["🌿","A quiet moment","Isulat ang isang bagay na nagbigay sa iyo ng gaan ngayon."],
-    ["😌","Check in","Ano ang gusto mong maalala tungkol sa araw na ito?"],
-    ["☀️","Small win","Ano ang isang maliit na bagay na nagawa mo ngayong araw?"],
-    ["🌙","Evening note","Ano ang gusto mong bitawan bago magpahinga?"],
-    ["🍃","Gratitude","Anong simpleng bagay ang pinasasalamatan mo ngayon?"],
-    ["💭","Mind dump","Isulat ang nasa isip mo ngayon, kahit isang pangungusap lang."]
-  ];
-  return prompts.slice(0,homeCardLimit()).map((p,i)=>({id:"starter-"+i,icon:p[0],title:p[1],text:p[2],date:today}));
-}
-
+function journalEntries(){return getRealJournalViews().slice(0,homeCardLimit())}
 function renderGameScores(){
   const box=$("#gameScoreStack");if(!box)return;
   const readNumber=(keys)=>{
@@ -187,38 +430,34 @@ function renderGameScores(){
 
 function renderJournal(){
   const track=$("#journalTrack");if(!track)return;
-  const entries=journalEntries();
-  if(entries.length){
-    track.innerHTML=entries.map(e=>'<article class="real-data-card journal-real-card data-track-card"><div class="journal-real-top"><span class="journal-real-icon home-emoji" aria-hidden="true">'+esc(e.mood||"📝")+'</span><span class="journal-real-date">'+esc(formatDate(e.createdAt))+'</span></div><div class="journal-real-mood">REAL JOURNAL</div><h3 class="journal-real-title">Saved entry</h3><p class="journal-real-text">'+esc(e.text.slice(0,220))+(e.text.length>220?"…":"")+'</p></article>').join("");
-  }else{
-    track.innerHTML=journalStarterCards().map(e=>'<article class="real-data-card journal-real-card home-starter-card" data-starter="true"><div class="journal-real-top"><span class="journal-real-icon home-emoji" aria-hidden="true">'+e.icon+'</span><span class="journal-real-date">'+esc(e.date)+'</span></div><div class="journal-real-mood">JOURNAL STARTER</div><h3 class="journal-real-title">'+esc(e.title)+'</h3><p class="journal-real-text">'+esc(e.text)+'</p><a class="starter-label" href="pages/payapang-isip.html">Open Journal →</a></article>').join("");
-  }
+  renderPayapangIsip();
 }
 
 let musicTracks=[];
-function musicStarterCards(){
-  const names=["Create your first track","Build a night ambience","Try a chill texture","Make a study loop","Explore a new mood","Generate a fresh idea"];
-  return names.slice(0,homeCardLimit()).map((title,i)=>({title,icon:["🎵","🌌","🌿","📚","🌙","✨"][i],sub:"No saved audio yet"}));
-}
 async function loadMusic(){
   const track=$("#musicTrack");if(!track)return;
-  try{musicTracks=await dbAll()}catch(_){musicTracks=[]}
+  musicTracks=await getRealMusic();
   if(!musicTracks.length){
-    track.innerHTML=musicStarterCards().map((t)=>'<article class="real-data-card music-real-card home-starter-card"><div class="music-real-cover"><span class="music-real-emoji home-emoji" aria-hidden="true">'+t.icon+'</span><button class="music-real-play" type="button" disabled aria-label="'+esc(t.title)+' unavailable">▶</button></div><div class="music-mini-wave"><i></i><i></i><i></i></div><div class="music-real-meta"><h3 class="music-real-title">'+esc(t.title)+'</h3><p class="music-real-sub">'+esc(t.sub)+'</p></div><div class="music-starter-actions"><a class="music-starter-link" href="pages/ai-music.html">Open AI Music →</a></div></article>').join("");
+    track.innerHTML='<div class="real-empty-card glass"><span class="real-empty-emoji" aria-hidden="true">🎵</span><p>Wala pang saved audio tracks.</p><a class="real-quick-link" href="pages/ai-music.html">Open AI Music →</a></div>';
     return;
   }
   const plays=musicPlays();
-  track.innerHTML=musicTracks.slice(0,homeCardLimit()).map(t=>'<article class="real-data-card music-real-card data-track-card" data-music-id="'+esc(t.id)+'"><div class="music-real-cover"><span class="music-real-emoji home-emoji" aria-hidden="true">🎵</span><button class="music-real-play" type="button" data-play-music="'+esc(t.id)+'" aria-label="Play '+esc(t.title||"saved track")+'">▶</button></div><div class="music-mini-wave"><i></i><i></i><i></i></div><div class="music-real-meta"><h3 class="music-real-title">'+esc(t.title||"Saved track")+'</h3><p class="music-real-sub">'+esc(t.genre||"AI Music")+" · "+Number(plays[t.id]||0)+" plays</p></div></article>').join("");
+  track.innerHTML=musicTracks.slice(0,homeCardLimit()).map(t=>{
+    const src=realAudioSource(t);
+    const audio=src?'<audio class="bento-real-audio" src="'+esc(src)+'" controls preload="metadata" data-real-audio-id="'+esc(t.id)+'"></audio>':"";
+    return '<article class="real-data-card music-real-card data-track-card" data-music-id="'+esc(t.id)+'"><div class="music-real-cover"><span class="music-real-emoji home-emoji" aria-hidden="true">🎵</span><button class="music-real-play" type="button" data-play-music="'+esc(t.id)+'" aria-label="Play '+esc(t.title||"saved track")+'">▶</button></div><div class="music-mini-wave"><i></i><i></i><i></i></div><div class="music-real-meta"><h3 class="music-real-title">'+esc(t.title||"Saved track")+'</h3><p class="music-real-sub">'+esc(t.genre||t.prompt||"Saved audio")+'</p>'+audio+'<span data-real-plays="'+esc(t.id)+'" class="real-data-count">'+Number(plays[t.id]||0)+' plays</span></div></article>';
+  }).join("");
+  bindRealAudioPlayEvents(track);
   track.querySelectorAll("[data-play-music]").forEach(button=>button.addEventListener("click",()=>playMusic(button.dataset.playMusic)));
 }
 
 async function getMusic(id){try{return musicTracks.find(t=>String(t.id)===String(id))||await (async()=>{const rows=await dbAll();return rows.find(t=>String(t.id)===String(id))})()}catch(_){return null}}
 async function playMusic(id){
-  const track=await getMusic(id);if(!track||!track.blob)return;
-  const audio=$("#homeMusicAudio");
-  if(!audio)return;
-  if(state.musicUrl)URL.revokeObjectURL(state.musicUrl);
-  state.musicUrl=URL.createObjectURL(track.blob);state.selectedMusic=track;audio.src=state.musicUrl;
+  const track=await getMusic(id);if(!track)return;
+  const audio=$("#homeMusicAudio");if(!audio)return;
+  const source=realAudioSource(track);if(!source)return;
+  state.selectedMusic=track;
+  audio.src=source;
   try{
     await ensureAnalyser(audio);
     await audio.play();
@@ -229,9 +468,9 @@ async function playMusic(id){
     $("#featuredTrack > .featured-slide:nth-child(2)")?.classList.add("is-playing");
     drawFeaturedMusicWave();
     drawBentoWave();
-    const wave=$("#heroMusicWaveform");
-    if(wave)wave.hidden=false;
-  }catch(_){showHomeToast("Press play again to start the saved audio.")}
+  }catch(_){
+    showHomeToast("Press play again to start the saved audio.");
+  }
 }
 async function ensureAnalyser(audio){
   if(state.analyser){
@@ -280,47 +519,34 @@ function storageAvatar(){
 }
 
 function parseStoredPosts(){
-  return readFirstArray(FEED_KEYS).map((post,index)=>({
-    id:post.id||String(index),author:post.author||post.authorName||post.userName||"Member",
-    avatar:post.avatar||post.authorPhotoURL||post.photoURL||"",image:post.image||post.imageUrl||post.mediaUrl||"",text:String(post.text||post.content||post.message||"").trim(),
-    likes:Number(post.likes||0),comments:Number(post.comments||0),createdAt:post.createdAt||post.date||0
-  })).filter(post=>post.text||post.title);
+  return getRealFeeds().map((post,index)=>({
+    id:post.id||String(index),
+    author:post.author||"",
+    avatar:post.avatar||"",
+    image:post.image||post.imageUrl||post.mediaUrl||"",
+    text:String(post.text||post.content||post.message||"").trim(),
+    likes:Number(post.likes||0),
+    comments:Number(post.comments||0),
+    createdAt:post.createdAt||post.date||0
+  })).filter(post=>post.text);
 }
-async function firestorePosts(){
-  try{
-    const snap=await getDocs(query(collection(db,"hubPosts"),orderBy("createdAt","desc"),limit(10)));
-    return snap.docs.map(d=>{const x=d.data();return{id:d.id,author:x.authorName||"Member",avatar:x.authorPhotoURL||"",image:x.imageUrl||x.image||x.mediaUrl||"",text:String(x.text||x.title||"").trim(),likes:Number(x.likes||0),comments:Number(x.comments||0),createdAt:x.createdAt?.toMillis?.()||x.createdAt?.seconds*1000||0}}).filter(x=>x.text);
-  }catch(_){return[]}
-}
+async function firestorePosts(){return[]}
 async function renderFeeds(){
   const track=$("#feedTrack");if(!track)return;
-  let posts=parseStoredPosts();
-  if(!posts.length)posts=await firestorePosts();
+  const posts=parseStoredPosts();
   if(!posts.length){
-    try{
-      const r=await fetch("version.json?t="+Date.now(),{cache:"no-store"});
-      const data=await r.json();
-      const changes=Array.isArray(data.changelog)?data.changelog.slice(-6).reverse():[];
-      if(changes.length){
-        track.innerHTML=changes.slice(0,homeCardLimit()).map((c,i)=>'<article class="real-data-card feed-update-card feed-update-fallback"><div class="feed-update-head"><span class="feed-update-avatar home-emoji" aria-hidden="true">'+esc(c.icon||"📢")+'</span><div class="feed-update-author"><strong>TUBAL HUB Updates</strong><small>'+esc(data.date||"Current release")+'</small></div></div><p class="feed-update-text">'+esc(c.desc||c.title||"Website update")+'</p><div class="feed-update-art"><span class="home-emoji" aria-hidden="true">'+esc(c.icon||"📢")+'</span></div><div class="feed-update-stats"><span>'+esc(c.type||"Update")+'</span><span class="feed-update-source">Real changelog</span></div></article>').join("");
-        return;
-      }
-    }catch(_){}
-    track.innerHTML='<div class="real-data-card feed-update-card"><div class="feed-update-head"><span class="feed-update-avatar home-emoji" aria-hidden="true">📱</span><div class="feed-update-author"><strong>TUBAL HUB Feeds</strong><small>Ready for real posts</small></div></div><p class="feed-update-text">Published community posts will appear here automatically when available.</p><div class="feed-update-art"><span class="home-emoji" aria-hidden="true">📱</span></div><div class="feed-update-stats"><span>Real data only</span></div></div>';
+    renderRealFeedsEmptyState(track);
     return;
   }
   const likes=safeJson("tubalhub_home_feed_likes",{});
-  const myAvatar=storageAvatar();
-  const myUid=auth.currentUser?.uid||"";
   track.innerHTML=posts.slice(0,homeCardLimit()).map(p=>{
-    const avatar=(p.id===myUid||p.author===auth.currentUser?.displayName)&&myAvatar?myAvatar:p.avatar;
+    const avatar=p.avatar||"";
+    const base=Math.max(0,Number(p.likes||0));
     const liked=likes[p.id]===true;
-    const base=Number(p.likes||0);
-    return '<article class="real-data-card feed-update-card data-track-card" data-feed-id="'+esc(p.id)+'" data-base-likes="'+base+'"><div class="feed-update-head"><div class="feed-update-avatar">'+(avatar?'<img class="feed-avatar-img" src="'+esc(avatar)+'" alt="" loading="lazy">':esc((p.author||"M").trim().charAt(0).toUpperCase()))+'</div><div class="feed-update-author"><strong>'+esc(p.author)+'</strong><small>'+esc(formatDate(p.createdAt))+'</small></div></div><p class="feed-update-text">'+esc((p.text||"").slice(0,220))+(String(p.text||"").length>220?"…":"")+'</p><div class="feed-update-art">'+(p.image?'<img class="feed-real-image" src="'+esc(p.image)+'" alt="" loading="lazy">':avatar?'<img class="feed-real-image" src="'+esc(avatar)+'" alt="" loading="lazy">':'<span class="home-emoji" aria-hidden="true">📱</span>')+'</div><div class="feed-update-stats"><span data-home-like-count="'+esc(p.id)+'">'+(base+(liked?1:0))+' likes</span><span>'+Number(p.comments||0)+' comments</span><button type="button" class="like-btn '+(liked?"liked":"")+'" data-feed-like="'+esc(p.id)+'">'+(liked?"Liked":"Like")+'</button></div></article>';
+    return '<article class="real-data-card feed-update-card data-track-card" data-feed-id="'+esc(p.id)+'" data-base-likes="'+base+'"><div class="feed-update-head"><div class="feed-update-avatar">'+(avatar?'<img class="feed-avatar-img" src="'+esc(avatar)+'" alt="" loading="lazy">':"")+'</div><div class="feed-update-author"><strong>'+esc(p.author||"")+'</strong><small>'+esc(formatDate(p.createdAt))+'</small></div></div><p class="feed-update-text">'+esc((p.text||"").slice(0,220))+(String(p.text||"").length>220?"…":"")+'</p>'+(p.image?'<img class="feed-real-image" src="'+esc(p.image)+'" alt="" loading="lazy">':"")+'<div class="feed-update-stats"><span data-home-like-count="'+esc(p.id)+'">'+(base+(liked?1:0))+' likes</span><span>'+Number(p.comments||0)+' comments</span><button type="button" class="like-btn '+(liked?"liked":"")+'" data-feed-like="'+esc(p.id)+'">'+(liked?"Liked":"Like")+'</button></div></article>';
   }).join("");
-  $$("#feedTrack [data-feed-like]").forEach(button=>button.addEventListener("click",()=>toggleFeedLike(button)));
+  $("#feedTrack [data-feed-like]").forEach(button=>button.addEventListener("click",()=>toggleFeedLike(button)));
 }
-
 function toggleFeedLike(button){
   const id=button.dataset.feedLike;
   const key="tubalhub_home_feed_likes",likes=safeJson(key,{});
@@ -338,103 +564,74 @@ function showHomeToast(message){
   toast.textContent=message;toast.classList.add("open");clearTimeout(showHomeToast.timer);
   showHomeToast.timer=setTimeout(()=>toast.classList.remove("open"),2000);
 }
-const GAMES_URL="data/games.json";
+const GAMES_URL=new URL("data/games.json",document.baseURI).href;
 const GAMES_KEY="tubalhub_ctrlzone_games";
-const GAME_STATS_KEY="tubalhub_ctrlzone_game_stats";
 let featuredGames=[];
 let gamesSlider=null;
 
 function readObject(key){
-  try{const value=JSON.parse(localStorage.getItem(key)||"{}");return value&&typeof value==="object"&&!Array.isArray(value)?value:{}}
-  catch(_){return {}}
+  try{const value=JSON.parse(localStorage.getItem(key)||"{}");return value&&typeof value==="object"&&!Array.isArray(value)?value:{}}catch(_){return {}}
 }
-function readGamesFromStorage(){
-  try{
-    const value=JSON.parse(localStorage.getItem(GAMES_KEY)||"null");
-    return Array.isArray(value)?value:[];
-  }catch(_){return []}
-}
+function readGamesFromStorage(){return parseRealArray(GAMES_KEY)}
 async function loadFeaturedGames(){
-  let list=readGamesFromStorage();
-  if(!list.length){
-    try{
-      const r=await fetch(GAMES_URL+"?t="+Date.now(),{cache:"no-store"});
-      if(!r.ok)throw new Error("games.json "+r.status);
-      const data=await r.json();
-      list=Array.isArray(data)?data:Array.isArray(data.games)?data.games:[];
-    }catch(error){
-      console.warn("[TUBAL HUB featured games]",error);
-      list=[];
-    }
-  }
-  featuredGames=list.filter(g=>g&&g.id&&g.title&&g.emoji&&g.description&&g.officialUrl).slice(0,isMobileHome()?4:12);
+  featuredGames=await getRealGames();
   renderFeaturedGames();
+  renderFeaturedGamesPreview();
 }
 function gameStats(game){
-  const all=readObject(GAME_STATS_KEY),s=(all[game.id]&&typeof all[game.id]==="object")?all[game.id]:{};
-  const players=Number.isFinite(Number(s.players))?Number(s.players):Number.isFinite(Number(game.players))?Number(game.players):null;
-  const rating=Number.isFinite(Number(s.rating))?Number(s.rating):Number.isFinite(Number(game.rating))?Number(game.rating):null;
-  const lastPlayed=Number(s.lastPlayed||game.lastPlayed||0);
-  return {players:Number.isFinite(players)?players:null,rating:Number.isFinite(rating)?rating:null,lastPlayed:Number.isFinite(lastPlayed)?lastPlayed:0};
+  return {players:getRealGamePlayCount(game.id),rating:null,lastPlayed:0};
 }
 function formatLastPlayed(value){
   if(!value)return "Never";
   const d=new Date(value);if(Number.isNaN(d.getTime()))return "—";
   return d.toLocaleString("en-PH",{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"});
+}(value){
+  if(!value)return "Never";
+  const d=new Date(value);if(Number.isNaN(d.getTime()))return "—";
+  return d.toLocaleString("en-PH",{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"});
 }
 function gameStatMarkup(game){
-  const s=gameStats(game);
-  return '<div class="game-feature-stat"><span class="home-emoji" aria-hidden="true">👥</span><strong title="Saved local player count">'+esc(s.players===null?"—":s.players)+'</strong></div>'+
-         '<div class="game-feature-stat"><span class="home-emoji" aria-hidden="true">⭐</span><strong title="Saved local rating">'+esc(s.rating===null?"—":s.rating)+'</strong></div>'+
-         '<div class="game-feature-stat"><span class="home-emoji" aria-hidden="true">⏱️</span><strong title="Last played on this device">'+esc(formatLastPlayed(s.lastPlayed))+'</strong></div>';
+  const plays=getRealGamePlayCount(game.id);
+  return '<div class="game-feature-stat"><span class="home-emoji" aria-hidden="true">▶</span><strong title="Real local play count">'+esc(plays)+'</strong><span>local plays</span></div>';
 }
 function featuredGameMarkup(game){
   const safeA=game.colorA||"#173b2a",safeB=game.colorB||"#07100b";
-  const category=["New","Hot","Trending"].includes(game.category)?game.category:"Featured";
+  const category=game.category||game.genre||"Game";
   return '<article class="game-feature-card" data-game-id="'+esc(game.id)+'" style="--game-a:'+esc(safeA)+';--game-b:'+esc(safeB)+'">'+
-    '<div class="game-feature-cover"><span class="game-feature-emoji" aria-hidden="true">'+esc(game.emoji)+'</span><button class="game-feature-play" type="button" data-feature-play="'+esc(game.id)+'" aria-label="Play '+esc(game.title)+'">▶️</button></div>'+
-    '<div class="game-feature-body"><div class="game-feature-top"><h3>'+esc(game.title)+'</h3><span class="game-category" data-category="'+esc(category)+'">'+esc(category)+'</span></div>'+
-    '<p class="game-feature-desc">'+esc(game.description)+'</p><div class="game-feature-stats">'+gameStatMarkup(game)+'</div></div>'+
-    '<div class="game-feature-footer"><button class="game-feature-playnow" type="button" data-feature-play="'+esc(game.id)+'">Play Now</button></div>'+
+    '<div class="game-feature-cover"><span class="game-feature-emoji" aria-hidden="true">'+esc(game.emoji||"🎮")+'</span><button class="game-feature-play" type="button" data-real-game-play="'+esc(game.id)+'" aria-label="Play '+esc(game.title)+'">▶️</button></div>'+
+    '<div class="game-feature-body"><div class="game-feature-top"><h3>'+esc(game.title)+'</h3><span class="game-category">'+esc(category)+'</span></div>'+
+    '<p class="game-feature-desc">'+esc(game.description||"")+'</p><div class="game-feature-stats">'+gameStatMarkup(game)+'</div></div>'+
+    '<div class="game-feature-footer"><button class="game-feature-playnow" type="button" data-real-game-play="'+esc(game.id)+'">Play Now</button></div>'+
     '</article>';
 }
 function renderFeaturedGames(){
   const track=$("#gamesTrack");if(!track)return;
   if(!featuredGames.length){
-    track.innerHTML='<div class="empty-card home-glass"><div><span class="home-emoji" aria-hidden="true">🎮</span><strong>No real featured games are available yet.</strong><span>Add games to data/games.json or tubalhub_ctrlzone_games.</span></div></div>';
-    if(gamesSlider)gamesSlider.stopAuto();
+    track.innerHTML='<div class="real-empty-card glass"><span class="real-empty-emoji" aria-hidden="true">🎮</span><p>Wala pa games, upload real</p><a class="real-quick-link" href="pages/ctrlzone.html">Open CTRLZONE →</a></div>';
+    gamesSlider?.stopAuto?.();
     return;
   }
   track.innerHTML=featuredGames.map(featuredGameMarkup).join("");
+  gamesSlider?.stopAuto?.();
+  gamesSlider=null;
+  renderAllSliderDots();
   if(!window.matchMedia?.("(hover: none), (pointer: coarse)").matches){
     track.querySelectorAll(".game-feature-card").forEach(card=>{
       card.addEventListener("pointermove",e=>{
         const r=card.getBoundingClientRect(),px=(e.clientX-r.left)/r.width,py=(e.clientY-r.top)/r.height;
-        const rx=clamp((.5-py)*10,-10,10),ry=clamp((px-.5)*10,-10,10);
-        card.style.setProperty("--rx",rx+"deg");card.style.setProperty("--ry",ry+"deg");
+        card.style.setProperty("--rx",clamp((.5-py)*10,-10,10)+"deg");
+        card.style.setProperty("--ry",clamp((px-.5)*10,-10,10)+"deg");
       },{passive:true});
       card.addEventListener("pointerleave",()=>{
         card.style.setProperty("--rx","0deg");card.style.setProperty("--ry","0deg");
       });
     });
   }
-  gamesSlider?.stopAuto();
-  gamesSlider=null;
-  renderAllSliderDots();
 }
-function saveGameStats(all){
-  try{localStorage.setItem(GAME_STATS_KEY,JSON.stringify(all))}catch(_){}
-}
+function saveGameStats(){}
 function playFeaturedGame(id,button){
-  const game=featuredGames.find(g=>String(g.id)===String(id));if(!game)return;
-  const all=readObject(GAME_STATS_KEY),current=(all[game.id]&&typeof all[game.id]==="object")?all[game.id]:{};
-  const players=Number.isFinite(Number(current.players))?Number(current.players):Number.isFinite(Number(game.players))?Number(game.players):0;
-  all[game.id]={...current,players:players+1,lastPlayed:Date.now()};
-  saveGameStats(all);
   burstGameButton(button,6);
-  button?.classList.remove("is-pop");void button?.offsetWidth;button?.classList.add("is-pop");
-  renderFeaturedGames();
-  window.location.href="pages/ctrlzone.html?game="+encodeURIComponent(game.id);
+  playRealGame(id);
 }
 function burstGameButton(button,count=6){
   if(!button)return;
@@ -728,31 +925,69 @@ function initFeaturedWebsiteSlider(){
   renderFeaturedWebsiteSlide();restartFeaturedWebsiteAuto();
 }
 function renderFeaturedJournalPreview(entries){
-  const box=$("#featuredJournalPreview"),count=$("#featuredJournalCount");if(!box)return;if(count)count.textContent=String(entries.length);
-  if(!entries.length){box.innerHTML="<div class=\"featured-empty\">Wala pang saved journal entries.</div>";return}
-  box.innerHTML=entries.slice(0,3).map(e=>"<div class=\"featured-preview-item\"><span class=\"featured-preview-mood\">"+esc(e.mood||"📝")+"</span><div><strong>Saved entry</strong><small>"+esc(formatDate(e.createdAt))+"</small><p>"+esc(e.text)+"</p></div></div>").join("");
+  const box=$("#featuredJournalPreview"),count=$("#featuredJournalCount");if(!box)return;
+  if(count)count.textContent=String(entries.length);
+  if(!entries.length){box.innerHTML='<div class="featured-empty">Wala pang saved journal entries.</div>';return}
+  box.innerHTML=entries.slice(0,3).map(e=>'<div class="featured-preview-item"><span class="featured-preview-mood">'+esc(e.mood||"🌿")+'</span><div><strong>'+esc(e.title||"Untitled")+'</strong><small>'+esc(formatDate(e.createdAt))+'</small><p>'+esc(e.content)+'</p></div></div>').join("");
 }
-function renderFeaturedMusicPreview(rows){
+async function renderFeaturedMusicPreview(rows){
   const box=$("#featuredMusicTracks"),count=$("#featuredMusicCount"),wave=$("#featuredMusicWave");if(!box)return;
   if(count)count.textContent=String(rows.length);
   if(wave&&!wave.childElementCount)wave.innerHTML=Array.from({length:12},(_,i)=>"<i style=\"--bar-delay:"+i*45+"ms\"></i>").join("");
-  if(!rows.length){box.innerHTML="<div class=\"featured-empty\">Wala pang saved audio tracks.</div>";return}
-  box.innerHTML=rows.slice(0,3).map(t=>"<div class=\"featured-preview-item featured-track-item\" data-featured-music-id=\""+esc(t.id)+"\"><span class=\"featured-track-play-wrap\"><button class=\"featured-track-play\" type=\"button\" data-featured-play=\""+esc(t.id)+"\" aria-label=\"Play "+esc(t.title||"saved track")+"\">▶</button></span><div><strong>"+esc(t.title||"Saved track")+"</strong><small>"+esc(t.genre||t.prompt||"AI Music")+"</small></div></div>").join("");
-  box.querySelectorAll("[data-featured-play]").forEach(b=>b.addEventListener("click",e=>{e.stopPropagation();playMusic(b.dataset.featuredPlay)}));
-  if(state.analyser)drawFeaturedMusicWave();
+  if(!rows.length){box.innerHTML='<div class="featured-empty">Wala pang saved audio tracks.</div>';return}
+  const plays=musicPlays();
+  box.innerHTML=rows.slice(0,3).map(t=>{
+    const src=realAudioSource(t);
+    const audio=src?'<audio class="featured-real-audio" src="'+esc(src)+'" controls preload="metadata" data-real-audio-id="'+esc(t.id)+'"></audio>':"";
+    return '<div class="featured-preview-item featured-track-item" data-featured-music-id="'+esc(t.id)+'"><span class="featured-track-play-wrap"><button class="featured-track-play" type="button" data-featured-play="'+esc(t.id)+'" aria-label="Play '+esc(t.title||"saved track")+'">▶</button></span><div style="min-width:0;flex:1"><strong>'+esc(t.title||"Saved track")+'</strong><small>'+esc(t.genre||t.prompt||"Saved audio")+'</small>'+audio+'<span class="featured-real-play-count" data-real-plays="'+esc(t.id)+'">'+Number(plays[t.id]||0)+' plays</span></div></div>';
+  }).join("");
+  bindRealAudioPlayEvents(box);
+  box.querySelectorAll("[data-featured-play]").forEach(button=>button.addEventListener("click",e=>{e.stopPropagation();playMusic(button.dataset.featuredPlay)}));
 }
 function renderFeaturedGamesPreview(){
-  const box=$("#featuredGamesPreview");if(!box)return;const rows=featuredGames.slice(0,4);
-  if(!rows.length){box.innerHTML="<div class=\"featured-empty\">No real games are available.</div>";return}
-  box.innerHTML=rows.map(g=>{const s=gameStats(g);return "<a class=\"featured-game-float-card\" href=\""+esc(g.officialUrl)+"\" target=\"_blank\" rel=\"noopener\" style=\"--game-a:"+esc(g.colorA||"#07100b")+";--game-b:"+esc(g.colorB||"#173b2a")+"\"><span class=\"featured-game-float-emoji\">"+esc(g.emoji)+"</span><strong>"+esc(g.title)+"</strong><small>"+esc(s.players===null?"No saved player data":s.players+" players")+"</small><b>Play Now →</b></a>"}).join("");
-  if(!window.matchMedia?.("(hover:none),(pointer:coarse)").matches){box.querySelectorAll(".featured-game-float-card").forEach(card=>{card.addEventListener("pointermove",e=>{const r=card.getBoundingClientRect(),px=(e.clientX-r.left)/r.width,py=(e.clientY-r.top)/r.height;card.style.setProperty("--frx",clamp((.5-py)*10,-10,10)+"deg");card.style.setProperty("--fry",clamp((px-.5)*10,-10,10)+"deg")},{passive:true});card.addEventListener("pointerleave",()=>{card.style.setProperty("--frx","0deg");card.style.setProperty("--fry","0deg")})})}
+  const box=$("#featuredGamesPreview");if(!box)return;
+  const rows=featuredGames.slice(0,4);
+  if(!rows.length){box.innerHTML='<div class="featured-empty">Wala pa games, upload real.</div>';return}
+  box.innerHTML=rows.map(g=>'<a class="featured-game-float-card" href="pages/ctrlzone.html?game='+encodeURIComponent(g.id)+'" data-real-game-play="'+esc(g.id)+'"><span class="featured-game-float-emoji">'+esc(g.emoji||"🎮")+'</span><strong>'+esc(g.title)+'</strong><small>'+getRealGamePlayCount(g.id)+' local plays</small><b>Play Now →</b></a>').join("");
+  if(!window.matchMedia?.("(hover:none),(pointer:coarse)").matches){
+    box.querySelectorAll(".featured-game-float-card").forEach(card=>{
+      card.addEventListener("pointermove",e=>{
+        const r=card.getBoundingClientRect(),px=(e.clientX-r.left)/r.width,py=(e.clientY-r.top)/r.height;
+        card.style.setProperty("--frx",clamp((.5-py)*10,-10,10)+"deg");card.style.setProperty("--fry",clamp((px-.5)*10,-10,10)+"deg");
+      },{passive:true});
+      card.addEventListener("pointerleave",()=>{
+        card.style.setProperty("--frx","0deg");card.style.setProperty("--fry","0deg");
+      });
+    });
+  }
 }
 function renderFeaturedFeedsPreview(rows){
   const box=$("#featuredFeedPreview");if(!box)return;
-  if(!rows.length){box.innerHTML="<div class=\"featured-empty\">Wala pang real published posts.</div>";return}
-  box.innerHTML=rows.slice(0,2).map(p=>"<article class=\"featured-feed-card\"><div class=\"featured-feed-card-head\"><span class=\"featured-feed-avatar\">"+(p.avatar?"<img src=\""+esc(p.avatar)+"\" alt=\"\" loading=\"lazy\">":esc((p.author||"M").trim().charAt(0).toUpperCase()))+"</span><div><strong>"+esc(p.author||"Member")+"</strong><small>"+esc(formatDate(p.createdAt))+"</small></div></div><p>"+esc(p.text||"")+"</p>"+(p.image?"<img src=\""+esc(p.image)+"\" alt=\"\" loading=\"lazy\">":"<div class=\"featured-feed-placeholder\">📱</div>")+"<span class=\"featured-feed-like\">"+Number(p.likes||0)+" likes</span></article>").join("");
+  if(!rows.length){box.innerHTML='<div class="featured-empty">Wala pang real posts. Mag post ng real sa Feeds.</div>';return}
+  box.innerHTML=rows.slice(0,2).map(p=>{
+    const avatar=p.avatar||"";
+    return '<article class="featured-feed-card"><div class="featured-feed-card-head"><span class="featured-feed-avatar">'+(avatar?'<img src="'+esc(avatar)+'" alt="" loading="lazy">':"")+'</span><div><strong>'+esc(p.author||"")+'</strong><small>'+esc(formatDate(p.createdAt))+'</small></div></div><p>'+esc(p.text||"")+'</p>'+(p.image?'<img class="real-feed-image" src="'+esc(p.image)+'" alt="" loading="lazy">':"")+'<span class="featured-feed-like">'+Math.max(0,Number(p.likes||0))+' likes</span></article>';
+  }).join("");
 }
-function renderFeaturedWebsiteData(journal,music,posts){renderFeaturedJournalPreview(journal);renderFeaturedMusicPreview(music);renderFeaturedGamesPreview();renderFeaturedFeedsPreview(posts)}
+function renderFeaturedWebsiteData(journal,music,posts,games){
+  renderFeaturedJournalPreview(journal);
+  renderFeaturedMusicPreview(music);
+  renderFeaturedGamesPreview();
+  renderFeaturedFeedsPreview(posts);
+  const gamesCount=$("#featuredGamesCount");if(gamesCount)gamesCount.textContent=String(games.length);
+  const feedsCount=$("#featuredFeedsCount");if(feedsCount)feedsCount.textContent=String(posts.length);
+  const musicCount=$("#featuredMusicCount");if(musicCount)musicCount.textContent=String(music.length);
+}
+async function loadRealPageTitle(path,targetId){
+  try{
+    const response=await fetch(path,{cache:"no-store"});
+    if(!response.ok)throw new Error("Page "+response.status);
+    const pageHtml=await response.text();
+    const parsed=new DOMParser().parseFromString(pageHtml,"text/html");
+    const title=String(parsed?.title||"").trim();
+    if(title&&$(targetId))$(targetId).textContent=title;
+  }catch(_){}
+}
 function drawFeaturedMusicWave(){
   if(!state.analyser)return;const bars=[...document.querySelectorAll("#featuredMusicWave i")],data=new Uint8Array(state.analyser.frequencyBinCount);
   const frame=()=>{const slide=$("#featuredTrack > .featured-slide:nth-child(2)");const active=document.querySelector(".featured-track-item.is-playing");if(!active&&!slide?.classList.contains("is-playing")){state.featuredWaveFrame=null;return}state.analyser.getByteFrequencyData(data);bars.forEach((bar,i)=>{const idx=Math.min(data.length-1,Math.floor(i*data.length/bars.length));bar.style.height=(6+Math.round((data[idx]/255)*30))+"px"});state.featuredWaveFrame=requestAnimationFrame(frame)};
@@ -762,25 +997,10 @@ function drawFeaturedMusicWave(){
    REAL BENTO HOMEPAGE DATA — no slider dependency
    ========================================================= */
 async function bentoReadMusicDb(name){
-  return new Promise(resolve=>{
-    try{
-      const req=indexedDB.open(name);
-      req.onsuccess=()=>{
-        const database=req.result;
-        const stores=[MUSIC_STORE,"tracks"].filter((n,i,a)=>a.indexOf(n)===i&&database.objectStoreNames.contains(n));
-        if(!stores.length){database.close();resolve([]);return}
-        const get=database.transaction(stores[0],"readonly").objectStore(stores[0]).getAll();
-        get.onsuccess=()=>{const rows=Array.isArray(get.result)?get.result:[];database.close();resolve(rows)};
-        get.onerror=()=>{database.close();resolve([])};
-      };
-      req.onerror=()=>resolve([]);
-    }catch(_){resolve([])}
-  });
+  return readRealMusicStore(name,name===REAL_MUSIC_DB?REAL_MUSIC_STORE:MUSIC_STORE);
 }
 async function bentoMusicRows(){
-  let rows=await bentoReadMusicDb("tubalhub_music_real");
-  if(!rows.length)rows=await dbAll().catch(()=>[]);
-  return rows.sort((a,b)=>Number(b.createdAt||0)-Number(a.createdAt||0));
+  return getRealMusic();
 }
 async function bentoOnlineCount(){
   try{
@@ -790,16 +1010,10 @@ async function bentoOnlineCount(){
   }catch(_){return null}
 }
 function bentoJournalItems(){
-  return readFirstArray(JOURNAL_KEYS).map((e,i)=>({
-    id:e.id||String(i),text:String(e.text||e.content||e.body||"").trim(),
-    mood:String(e.mood||e.emoji||"📝").trim(),createdAt:e.createdAt||e.date||e.updatedAt||0
-  })).filter(e=>e.text).slice(0,3);
+  return getRealJournalViews().slice(0,3);
 }
 function bentoRenderJournal(){
-  const box=$("#bentoJournalList");if(!box)return;
-  const rows=bentoJournalItems();
-  if(!rows.length){box.innerHTML='<div class="bento-empty">Wala pang saved journal entry. Real entries from Payapang Isip will appear here.</div>';return}
-  box.innerHTML=rows.map(e=>'<a class="bento-journal-item" href="pages/payapang-isip.html"><span class="bento-journal-mood">'+esc(e.mood||"📝")+'</span><span class="bento-item-copy"><strong>Saved entry</strong><p>'+esc(e.text)+'</p></span><span class="bento-item-date">'+esc(formatDate(e.createdAt))+'</span></a>').join("");
+  renderPayapangIsip();
 }
 function bentoMusicCover(track){
   const seed=String(track?.id||track?.title||"music"),hash=[...seed].reduce((n,ch)=>n+ch.charCodeAt(0),0),h1=hash%360,h2=(h1+86)%360;
@@ -807,56 +1021,73 @@ function bentoMusicCover(track){
 }
 function bentoRenderMusic(rows){
   const box=$("#bentoMusicList");if(!box)return;
-  if(!rows.length){box.innerHTML='<div class="bento-empty">Wala pang saved audio sa browser. Gumawa muna ng track sa AI Music.</div>';return}
-  box.innerHTML=rows.slice(0,3).map(t=>'<div class="bento-music-item" data-bento-music-id="'+esc(t.id)+'"><div class="bento-music-cover" style="background:'+esc(bentoMusicCover(t))+'"><span>🎵</span></div><button class="bento-music-play" data-bento-play="'+esc(t.id)+'" type="button" aria-label="Play '+esc(t.title||"saved track")+'">▶</button><div class="bento-item-copy"><strong>'+esc(t.title||"Saved track")+'</strong><p>'+esc(t.genre||t.prompt||"AI Music")+'</p></div><div class="bento-music-wave"><i></i><i></i><i></i></div></div>').join("");
+  if(!rows.length){
+    box.innerHTML='<div class="real-empty-card glass"><span class="real-empty-emoji" aria-hidden="true">🎵</span><p>Wala pang saved audio tracks.</p><a class="real-quick-link" href="pages/ai-music.html">Open AI Music →</a></div>';
+    return;
+  }
+  const plays=musicPlays();
+  box.innerHTML=rows.slice(0,3).map(t=>{
+    const src=realAudioSource(t);
+    const audio=src?'<audio class="bento-real-audio" src="'+esc(src)+'" controls preload="metadata" data-real-audio-id="'+esc(t.id)+'"></audio>':"";
+    return '<div class="bento-music-item" data-bento-music-id="'+esc(t.id)+'"><div class="bento-music-cover"><span>🎵</span></div><button class="bento-music-play" data-bento-play="'+esc(t.id)+'" type="button" aria-label="Play '+esc(t.title||"saved track")+'">▶</button><div class="bento-item-copy"><strong>'+esc(t.title||"Saved track")+'</strong><p>'+esc(t.genre||t.prompt||"Saved audio")+'</p>'+audio+'<span data-real-plays="'+esc(t.id)+'" class="real-data-count">'+Number(plays[t.id]||0)+' plays</span></div><div class="bento-music-wave"><i></i><i></i><i></i></div></div>';
+  }).join("");
+  bindRealAudioPlayEvents(box);
   box.querySelectorAll("[data-bento-play]").forEach(b=>b.addEventListener("click",()=>playMusic(b.dataset.bentoPlay)));
 }
 function bentoRenderFeeds(rows){
   const box=$("#bentoFeedsList");if(!box)return;
-  if(!rows.length){box.innerHTML='<div class="bento-empty">Wala pang published posts. Real Feeds content will appear here.</div>';return}
+  if(!rows.length){
+    renderRealFeedsEmptyState(box);
+    return;
+  }
   box.innerHTML=rows.slice(0,4).map(p=>{
     const avatar=p.avatar||"",image=p.image||"";
-    return '<article class="bento-feed-card"><div class="bento-feed-head"><span class="bento-feed-avatar">'+(avatar?'<img src="'+esc(avatar)+'" alt="" loading="lazy">':esc((p.author||"M").trim().charAt(0).toUpperCase()))+'</span><div class="bento-feed-author"><strong>'+esc(p.author||"Member")+'</strong><small>'+esc(formatDate(p.createdAt))+'</small></div></div><p class="bento-feed-text">'+esc(p.text||"")+'</p>'+(image?'<img class="bento-feed-image" src="'+esc(image)+'" alt="" loading="lazy">':'<div class="bento-feed-image-placeholder">📱</div>')+'<div class="bento-feed-foot"><span class="bento-like-value">'+Number(p.likes||0)+' likes</span><a class="bento-viewall" href="pages/feeds.html">Open →</a></div></article>';
+    return '<article class="bento-feed-card"><div class="bento-feed-head"><span class="bento-feed-avatar">'+(avatar?'<img src="'+esc(avatar)+'" alt="" loading="lazy">':"")+'</span><div class="bento-feed-author"><strong>'+esc(p.author||"")+'</strong><small>'+esc(formatDate(p.createdAt))+'</small></div></div><p class="bento-feed-text">'+esc(p.text||"")+'</p>'+(image?'<img class="bento-feed-image" src="'+esc(image)+'" alt="" loading="lazy">':"")+'<div class="bento-feed-foot"><span class="bento-like-value">'+Math.max(0,Number(p.likes||0))+' likes</span><a class="bento-viewall" href="pages/feeds.html">Open →</a></div></article>';
   }).join("");
 }
 function bentoRenderGames(){
   const box=$("#bentoGamesGrid");if(!box)return;
   const rows=featuredGames.slice(0,4);
-  if(!rows.length){box.innerHTML='<div class="bento-empty">No real games are available from the CTRLZONE catalog.</div>';return}
-  box.innerHTML=rows.map(g=>{
-    const stats=gameStats(g),players=stats.players===null?"No saved stats":String(stats.players)+" players";
-    return '<article class="bento-game-card" style="--game-a:'+esc(g.colorA||"#07100b")+';--game-b:'+esc(g.colorB||"#173b2a")+'"><div class="bento-game-cover"><span class="bento-game-emoji">'+esc(g.emoji)+'</span><span class="bento-game-local">LOCAL DATA</span></div><div class="bento-game-body"><div class="bento-game-title">'+esc(g.title)+'</div><div class="bento-game-meta"><span>'+esc(players)+'</span><a class="bento-play-btn" href="'+esc(g.officialUrl)+'" target="_blank" rel="noopener">Play Now</a></div></div></article>';
-  }).join("");
-  if(!window.matchMedia?.("(hover:none),(pointer:coarse)").matches){
-    box.querySelectorAll(".bento-game-card").forEach(card=>{
-      card.addEventListener("pointermove",e=>{const r=card.getBoundingClientRect(),px=(e.clientX-r.left)/r.width,py=(e.clientY-r.top)/r.height;card.style.setProperty("--rx",clamp((.5-py)*10,-10,10)+"deg");card.style.setProperty("--ry",clamp((px-.5)*10,-10,10)+"deg")},{passive:true});
-      card.addEventListener("pointerleave",()=>{card.style.setProperty("--rx","0deg");card.style.setProperty("--ry","0deg")});
-    });
+  if(!rows.length){
+    box.innerHTML='<div class="real-empty-card glass"><span class="real-empty-emoji" aria-hidden="true">🎮</span><p>Wala pa games, upload real</p><a class="real-quick-link" href="pages/ctrlzone.html">Open CTRLZONE →</a></div>';
+    return;
   }
+  box.innerHTML=rows.map(g=>{
+    const plays=getRealGamePlayCount(g.id);
+    return '<article class="bento-game-card" style="--game-a:'+esc(g.colorA||"#07100b")+';--game-b:'+esc(g.colorB||"#173b2a")+'"><div class="bento-game-cover"><span class="bento-game-emoji">'+esc(g.emoji||"🎮")+'</span><span class="bento-game-local">LOCAL DATA</span></div><div class="bento-game-body"><div class="bento-game-title">'+esc(g.title)+'</div><div class="bento-game-meta"><span>'+plays+' local plays</span><a class="bento-play-btn" href="pages/ctrlzone.html?game='+encodeURIComponent(g.id)+'" data-real-game-play="'+esc(g.id)+'">Play Now</a></div></div></article>';
+  }).join("");
 }
 async function renderRealData(){
+  migrateRealJournalStorage();
+  clearRealAudioUrls();
+  const [music,games,online]=await Promise.all([getRealMusic(),getRealGames(),bentoOnlineCount()]);
+  const journals=getRealJournalViews();
+  const posts=getRealFeeds();
+  featuredGames=games;
   bentoRenderJournal();
-  const [music,online]=await Promise.all([bentoMusicRows(),bentoOnlineCount()]);
   bentoRenderMusic(music);
-  if($("#bentoOnlineUsers"))$("#bentoOnlineUsers").textContent=online===null?"—":String(online);
-  let posts=parseStoredPosts();
-  if(!posts.length)posts=await firestorePosts();
-  bentoRenderFeeds(posts);
-  await loadFeaturedGames();
   bentoRenderGames();
-  renderFeaturedWebsiteData(bentoJournalItems(),music,posts);
-  const stats=$("#bentoHeroStats"),journalCount=bentoJournalItems().length;
-  if(stats)stats.innerHTML='<div class="bento-hero-stat"><small>Journal</small><strong>'+journalCount+'</strong></div><div class="bento-hero-stat"><small>Audio Tracks</small><strong>'+music.length+'</strong></div><div class="bento-hero-stat"><small>Online Users</small><strong>'+(online===null?"—":online)+'</strong></div>';
+  bentoRenderFeeds(posts);
+  renderFeaturedWebsiteData(journals,music,posts,games);
+  loadRealPageTitle("pages/payapang-isip.html","#featuredPeaceTitle");
+  loadRealPageTitle("pages/ai-music.html","#featuredMusicTitle");
+  loadRealPageTitle("pages/ctrlzone.html","#featuredGamesTitle");
+  loadRealPageTitle("pages/feeds.html","#featuredFeedsTitle");
+  const stats=$("#bentoHeroStats");
+  if(stats)stats.innerHTML='<div class="bento-hero-stat"><small>Journal</small><strong>'+journals.length+'</strong></div><div class="bento-hero-stat"><small>Audio Tracks</small><strong>'+music.length+'</strong></div><div class="bento-hero-stat"><small>Online Users</small><strong>'+(online===null?"—":online)+'</strong></div>';
 }
 function initBento(){
-  renderRealData().catch(e=>console.warn("[TUBAL HUB Bento]",e));
-  window.addEventListener("storage",e=>{
-    if(JOURNAL_KEYS.includes(e.key)||FEED_KEYS.includes(e.key)||e.key==="tubalhub_ctrlzone_game_stats")renderRealData();
+  const refresh=()=>renderRealData().catch(e=>console.warn("[TUBAL HUB real data]",e));
+  refresh();
+  window.addEventListener("tubalhub-real-data-update",refresh);
+  window.addEventListener("storage",event=>{
+    const key=event.key||"";
+    if(key===REAL_JOURNAL_KEY||key===LEGACY_JOURNAL_KEY||key===REAL_FEED_KEY||key===PLAYS_KEY||key===GAMES_KEY||(key.startsWith("play_")&&key.endsWith("_real")))refresh();
   });
+  window.addEventListener("focus",refresh,{passive:true});
+  document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")refresh()});
 }
-
 function init(){
-  purgeLegacyStudioData();
   initSpotlight();
   initBento();
   initFeaturedWebsiteSlider();
@@ -864,20 +1095,36 @@ function init(){
   initFooterNewsletter();
   initFooterSmoothLinks();
   initScrollReveal();
-  $("#homeMusicAudio")?.addEventListener("ended",()=>{
-    document.querySelectorAll(".music-real-card.is-playing,.bento-music-item.is-playing").forEach(card=>card.classList.remove("is-playing"));
-    $("#featuredTrack > .featured-slide:nth-child(2)")?.classList.remove("is-playing");
-    showHomeToast("Audio finished.");
-  });
+
+  const homeAudio=$("#homeMusicAudio");
+  if(homeAudio){
+    homeAudio.addEventListener("play",()=>{
+      const id=state.selectedMusic?.id;
+      if(!id)return;
+      const countedFor=homeAudio.dataset.realPlayCountedId||"";
+      if(countedFor===String(id))return;
+      homeAudio.dataset.realPlayCountedId=String(id);
+      incrementRealMusicPlay(id);
+      updateRealMusicPlayCounts();
+    });
+    homeAudio.addEventListener("ended",()=>{
+      homeAudio.dataset.realPlayCountedId="";
+      document.querySelectorAll(".music-real-card.is-playing,.bento-music-item.is-playing,.featured-track-item.is-playing").forEach(card=>card.classList.remove("is-playing"));
+      $("#featuredTrack > .featured-slide:nth-child(2)")?.classList.remove("is-playing");
+      showHomeToast("Audio finished.");
+    });
+  }
+
   addEventListener("beforeunload",cleanup);
-  addEventListener("storage",event=>{
-    if(JOURNAL_KEYS.includes(event.key))renderJournal();
-    if(event.key==="tubalhub_home_feed_likes"||FEED_KEYS.includes(event.key))renderFeeds();
-    if(event.key==="ctrlzone_kills"||event.key==="ctrlzone_wins"||event.key==="ctrlzone_rank")renderGameScores();
-    if(event.key===GAME_STATS_KEY||event.key===GAMES_KEY)loadFeaturedGames();
+  runRealDataAudit().catch(()=>{});
+
+  document.addEventListener("click",event=>{
+    const game=event.target.closest?.("[data-real-game-play]");
+    if(!game)return;
+    event.preventDefault();
+    playRealGame(game.dataset.realGamePlay);
   });
 }
-
 let homeStarted=false;
 let lastHomeMobile=window.innerWidth<=768;
 let resizeTimer=0;
@@ -904,10 +1151,6 @@ function startHome(){
   onAuthStateChanged(auth,user=>{
     const nameEl=$("#homeAuthName");
     if(nameEl)nameEl.textContent=user?(user.displayName||user.email?.split("@")[0]||"Member"):"";
-  });
-  document.addEventListener("click",e=>{
-    const play=e.target.closest?.("[data-feature-play]");
-    if(play)playFeaturedGame(play.dataset.featurePlay,play);
   });
   init();
 }
