@@ -5,7 +5,7 @@ import {getFirestore,collection,query,where,limit,onSnapshot,doc,writeBatch} fro
 
 const db=getFirestore(app);
 
-const DEMO_MODE=true;
+const DEMO_MODE=false;
 const KEY="tubalhub.notifications.v1";
 const esc=v=>{const d=document.createElement("div");d.textContent=String(v??"");return d.innerHTML};
 const ICONS={like:"❤️",comment:"💬",follow:"👤",shop:"🛒",game:"🎮",achievement:"🏆",system:"⚙️"};
@@ -188,7 +188,10 @@ function demoTick(){
   items=[n].concat(items.filter(x=>!String(x.id).startsWith("demo-live-")).slice(0,39));save();render();signalNew();
 }
 ensureUi();
-initFirebase();
-setInterval(demoTick,30000);
+onAuthStateChanged(auth,user=>{
+  me=user||null;
+  watchRemote();
+  render();
+});
 render();
 window.addEventListener("keydown",e=>{if(e.key==="Escape"&&document.getElementById("thNotificationPanel")?.classList.contains("is-open"))window.__tubalOpenNotifications?.(false)});
