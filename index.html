@@ -18,7 +18,7 @@
 <link rel="stylesheet" href="assets/css/home-premium.css?v=20260924">
 <link rel="stylesheet" href="assets/css/sidebar-premium.css?v=20260924-v9">
 <link rel="stylesheet" href="assets/css/home-agency.css?v=20260924-v2">
-<link rel="stylesheet" href="assets/css/home.css?v=20260924-bento2">
+<link rel="stylesheet" href="assets/css/home.css?v=20260924-featured1">
 <link rel="stylesheet" href="assets/css/notification-search.css?v=20260924-ns9">
 <style>
 .hub-home .search-box{position:relative!important;z-index:200!important;pointer-events:auto!important}
@@ -187,68 +187,98 @@
         <div id="bentoGamesGrid" class="bento-games-grid" aria-live="polite"></div>
       </section>
 
-      <section id="canvaStudio" class="glass-section canva-studio bento-canva" aria-labelledby="canvaStudioTitle">
-        <div class="canva-studio-head">
-          <div class="canva-studio-title-wrap">
-            <div class="canva-studio-title-row">
-              <h2 id="canvaStudioTitle"><span class="home-emoji" aria-hidden="true">🎨</span> Design Studio Parang Canva</h2>
-              <span class="canva-like-badge">✨ Canva-like</span>
+
+      <section id="featuredWebsite" class="glass-section bento-span-12 featured-website" aria-labelledby="featuredWebsiteTitle">
+        <div class="featured-website-head">
+          <div>
+            <div class="featured-website-title-row">
+              <h2 id="featuredWebsiteTitle"><span class="home-emoji" aria-hidden="true">🌟</span> FEATURED SA WEBSITE</h2>
+              <span class="featured-sliding-badge">SLIDING</span>
+              <span class="featured-autoplay" aria-label="Autoplay active"><i></i> Auto-play</span>
             </div>
-            <p>Totoong Canvas editor: text, image upload, emoji, shapes, draw, layers, templates at PNG export.</p>
+            <p>Isang mabilis na view ng real TUBAL HUB features at content na available sa site.</p>
           </div>
-          <div class="canva-template-head">
-            <strong>Templates</strong>
-            <button id="canvaTemplateViewAll" class="canva-head-link" type="button">View All</button>
-            <button id="canvaQuickPrev" class="canva-circle-control" type="button" aria-label="Previous templates">‹</button>
-            <button id="canvaQuickNext" class="canva-circle-control" type="button" aria-label="Next templates">›</button>
+          <div class="featured-website-actions">
+            <a href="#mainContent" class="featured-viewall">View All →</a>
+            <button id="featuredPrev" class="featured-circle-control" type="button" aria-label="Previous featured website">‹</button>
+            <button id="featuredNext" class="featured-circle-control" type="button" aria-label="Next featured website">›</button>
           </div>
         </div>
 
-        <div class="canva-studio-workspace">
-          <aside class="canva-toolbar" id="canvaToolbar" aria-label="Design tools">
-            <button type="button" class="canva-tool" data-canva-tool="text" title="Text"><span aria-hidden="true">📝</span><small>Text</small><i class="canva-burst"><b></b><b></b><b></b><b></b><b></b><b></b></i></button>
-            <button type="button" class="canva-tool" data-canva-tool="image" title="Image Upload"><span aria-hidden="true">🖼️</span><small>Image</small><i class="canva-burst"><b></b><b></b><b></b><b></b><b></b><b></b></i></button>
-            <button type="button" class="canva-tool" data-canva-tool="emoji" title="Emoji"><span aria-hidden="true">😀</span><small>Emoji</small><i class="canva-burst"><b></b><b></b><b></b><b></b><b></b><b></b></i></button>
-            <button type="button" class="canva-tool" data-canva-tool="shape" title="Shapes"><span aria-hidden="true">🔷</span><small>Shapes</small><i class="canva-burst"><b></b><b></b><b></b><b></b><b></b><b></b></i></button>
-            <button type="button" class="canva-tool" data-canva-tool="background" title="Background"><span aria-hidden="true">🎨</span><small>Background</small><i class="canva-burst"><b></b><b></b><b></b><b></b><b></b><b></b></i></button>
-            <button type="button" class="canva-tool" data-canva-tool="draw" title="Draw"><span aria-hidden="true">🖌️</span><small>Draw</small><i class="canva-burst"><b></b><b></b><b></b><b></b><b></b><b></b></i></button>
-            <input id="canvaImageInput" type="file" accept="image/*" hidden>
-            <input id="canvaBgPicker" type="color" value="#020604" hidden>
-          </aside>
-
-          <div class="canva-canvas-column">
-            <div class="canva-canvas-shell" id="canvaCanvasShell" tabindex="0" aria-label="Design canvas">
-              <canvas id="designCanvas" width="700" height="400"></canvas>
-              <div class="canva-canvas-tip" id="canvaCanvasTip">Drag an element, drop an image, or choose a tool.</div>
-            </div>
-            <div class="canva-workspace-meta"><span id="canvaSelectionStatus">No element selected</span><span id="canvaSaveStatus">Ready</span></div>
-          </div>
-
-          <aside class="canva-properties-panel" id="canvaPropertiesPanel" aria-label="Design properties">
-            <div class="canva-panel-head"><div><span class="canva-panel-kicker">TEMPLATES</span><h3>Quick formats</h3></div><span class="canva-template-count">4</span></div>
-            <div class="canva-quick-template-viewport"><div id="canvaQuickTemplateTrack" class="canva-quick-template-track"></div></div>
-            <div class="canva-panel-divider"></div>
-            <div class="canva-properties" id="canvaProperties">
-              <div class="canva-panel-kicker">PROPERTIES</div>
-              <div id="canvaPropertiesEmpty" class="canva-properties-empty">Select text to edit font, color, weight, style and alignment.</div>
-              <div id="canvaTextProperties" hidden>
-                <label class="canva-prop-label">Font size <output id="canvaFontSizeValue">32px</output><input id="canvaFontSize" type="range" min="12" max="72" step="1" value="32"></label>
-                <label class="canva-prop-label">Color <input id="canvaTextColor" type="color" value="#1dff91"></label>
-                <label class="canva-prop-label">Font family <select id="canvaFontFamily"><option value="Inter">Inter</option><option value="Poppins">Poppins</option></select></label>
-                <div class="canva-prop-row"><button id="canvaBold" class="canva-mini-toggle" type="button">B</button><button id="canvaItalic" class="canva-mini-toggle" type="button"><i>I</i></button><button class="canva-align-btn canva-mini-toggle" data-canva-align="left" type="button">L</button><button class="canva-align-btn canva-mini-toggle" data-canva-align="center" type="button">C</button><button class="canva-align-btn canva-mini-toggle" data-canva-align="right" type="button">R</button></div>
+        <div class="featured-track-wrapper" id="featuredTrackWrapper" tabindex="0" aria-label="Featured website slider">
+          <div class="featured-track" id="featuredTrack">
+            <article class="featured-slide featured-slide--peace" aria-label="Payapang Isip">
+              <div class="featured-slide-copy">
+                <span class="featured-kicker"><span class="home-emoji">🌿</span> REAL DATA</span>
+                <h3>Payapang Isip</h3>
+                <p>Totoong journal at breathing</p>
+                <div class="featured-slide-stat"><strong id="featuredJournalCount">—</strong><span>saved entries</span></div>
+                <a class="featured-primary-btn featured-pop-btn" href="pages/payapang-isip.html">Open Now <span>→</span></a>
               </div>
-            </div>
-            <div class="canva-panel-divider"></div>
-            <div class="canva-layers-panel"><div class="canva-panel-kicker">LAYERS <span id="canvaLayerCount">0</span></div><div id="canvaLayers" class="canva-layers" aria-label="Design layers"></div></div>
-            <div id="canvaTemplateAll" class="canva-template-all" hidden><div class="canva-panel-divider"></div><div class="canva-panel-kicker">ALL 12 TEMPLATES</div><div id="canvaTemplateGrid" class="canva-template-grid"></div></div>
-          </aside>
-        </div>
+              <div class="featured-preview-card">
+                <div class="featured-preview-head"><strong>Journal preview</strong><span>REAL</span></div>
+                <div id="featuredJournalPreview" class="featured-preview-list"></div>
+              </div>
+            </article>
 
-        <div class="canva-studio-bottom">
-          <div class="canva-template-library"><div class="canva-library-head"><strong>12 editable templates</strong><span>Real JSON presets — nothing is published until you save or share.</span></div><div id="canvaTemplateStrip" class="canva-template-strip"></div></div>
-          <div class="canva-export-bar"><button id="canvaDownloadPng" class="canva-export-btn" type="button">⬇️ Download PNG</button><button id="canvaShareFeeds" class="canva-export-btn" type="button">📤 Share to Feeds</button><button id="canvaSaveDraft" class="canva-export-btn" type="button">💾 Save Draft</button></div>
+            <article class="featured-slide featured-slide--music" aria-label="AI Music Studio">
+              <div class="featured-slide-copy">
+                <span class="featured-kicker"><span class="home-emoji">🎵</span> REAL AUDIO</span>
+                <h3>AI Music Studio</h3>
+                <p>Saved tracks from your browser, with real playback.</p>
+                <div class="featured-vinyl" aria-hidden="true"><div class="featured-vinyl-center">♪</div></div>
+              </div>
+              <div class="featured-preview-card featured-music-preview">
+                <div class="featured-preview-head"><strong>Saved tracks</strong><span id="featuredMusicCount">0</span></div>
+                <div id="featuredMusicWave" class="featured-waveform" aria-hidden="true"></div>
+                <div id="featuredMusicTracks" class="featured-preview-list"></div>
+              </div>
+            </article>
+
+            <article class="featured-slide featured-slide--games" aria-label="CTRLZONE Games">
+              <div class="featured-slide-copy">
+                <span class="featured-kicker"><span class="home-emoji">🎮</span> REAL CATALOG</span>
+                <h3>CTRLZONE Games</h3>
+                <p>Real games from the current TUBAL HUB CTRLZONE catalog.</p>
+                <a class="featured-primary-btn featured-pop-btn" href="pages/ctrlzone.html">Play Hub <span>→</span></a>
+              </div>
+              <div id="featuredGamesPreview" class="featured-game-floating-grid"></div>
+            </article>
+
+            <article class="featured-slide featured-slide--feeds" aria-label="Feeds Inside">
+              <div class="featured-slide-copy">
+                <span class="featured-kicker"><span class="home-emoji">📱</span> REAL POSTS</span>
+                <h3>Feeds Inside</h3>
+                <p>Published posts, avatars, images and real local likes.</p>
+                <a class="featured-primary-btn featured-pop-btn" href="pages/feeds.html">Open Feeds <span>→</span></a>
+              </div>
+              <div id="featuredFeedPreview" class="featured-feed-preview"></div>
+            </article>
+
+            <article class="featured-slide featured-slide--shop-profile" aria-label="TUBAL Shop and Profile">
+              <div class="featured-shop-profile-grid">
+                <a class="featured-feature-card" href="pages/shop.html">
+                  <span class="home-emoji">🛒</span>
+                  <strong>TUBAL SHOP</strong>
+                  <small>Browse the current web shop</small>
+                  <span class="featured-card-arrow">Open →</span>
+                </a>
+                <a class="featured-feature-card" href="pages/profile.html">
+                  <span class="home-emoji">👤</span>
+                  <strong>PROFILE</strong>
+                  <small>Manage your account and saved settings</small>
+                  <span class="featured-card-arrow">Open →</span>
+                </a>
+              </div>
+            </article>
+          </div>
+
+          <button id="featuredTrackPrev" class="featured-track-control featured-track-control--prev" type="button" aria-label="Previous slide">‹</button>
+          <button id="featuredTrackNext" class="featured-track-control featured-track-control--next" type="button" aria-label="Next slide">›</button>
+          <div id="featuredDots" class="featured-dots" role="tablist" aria-label="Featured website slides"></div>
         </div>
       </section>
+
 
       <footer id="mainFooter" class="glass-footer bento-footer" aria-label="TUBAL HUB footer">
         <div class="bento-footer-row bento-footer-row-1">
@@ -284,7 +314,7 @@
 <script type="module" src="assets/js/search.js?v=20260924-ns9"></script>
 <script src="assets/js/sidebar-premium.js?v=20260924-v9"></script>
 <script src="assets/js/home-agency.js?v=20260924-v1"></script>
-<script type="module" src="assets/js/home.js?v=20260924-bento2"></script>
+<script type="module" src="assets/js/home.js?v=20260924-featured1"></script>
   <script src="assets/js/ai-assistant.js?v=20260924-v2"></script>
 <!-- TUBAL HUB — Tubal AI Assistant -->
 <div id="tubalAiAssistant" class="tubal-ai" aria-label="Tubal AI Assistant">
