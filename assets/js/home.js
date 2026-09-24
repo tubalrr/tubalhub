@@ -214,8 +214,9 @@ async function playMusic(id){
   try{
     await ensureAnalyser(audio);
     await audio.play();
-    document.querySelectorAll(".music-real-card.is-playing").forEach(card=>card.classList.remove("is-playing"));
+    document.querySelectorAll(".music-real-card.is-playing,.bento-music-item.is-playing").forEach(card=>card.classList.remove("is-playing"));
     document.querySelector('.music-real-card[data-music-id="'+CSS.escape(String(id))+'"]')?.classList.add("is-playing");
+    document.querySelector('.bento-music-item[data-bento-music-id="'+CSS.escape(String(id))+'"]')?.classList.add("is-playing");
     const wave=$("#heroMusicWaveform");
     if(wave)wave.hidden=false;
   }catch(_){showHomeToast("Press play again to start the saved audio.")}
@@ -230,6 +231,7 @@ async function ensureAnalyser(audio){
   state.analyser=state.audioContext.createAnalyser();state.analyser.fftSize=128;state.analyser.smoothingTimeConstant=.78;
   state.source=state.audioContext.createMediaElementSource(audio);state.source.connect(state.analyser);state.analyser.connect(state.audioContext.destination);
   drawHeroWave();
+  drawBentoWave();
 }
 function drawHeroWave(){
   const canvas=$("#heroMusicCanvas"),ctx=canvas?.getContext("2d");if(!canvas||!ctx||!state.analyser)return;
@@ -250,6 +252,18 @@ function drawHeroWave(){
   cancelAnimationFrame(state.visualFrame);frame();
 }
 
+
+function drawBentoWave(){
+  if(!state.analyser)return;
+  const bars=[...document.querySelectorAll("#bentoMusicList .bento-music-wave i")],data=new Uint8Array(state.analyser.frequencyBinCount);
+  const frame=()=>{
+    state.analyser.getByteFrequencyData(data);
+    bars.forEach((bar,i)=>{const idx=Math.min(data.length-1,Math.floor(i*data.length/3));bar.style.height=(6+Math.round((data[idx]/255)*18))+"px"});
+    if(document.querySelector(".bento-music-item.is-playing"))state.bentoWaveFrame=requestAnimationFrame(frame);
+  };
+  cancelAnimationFrame(state.bentoWaveFrame);state.bentoWaveFrame=requestAnimationFrame(frame);
+}
+
 function storageAvatar(){
   try{return localStorage.getItem("tubalhub_avatar")||""}catch(_){return ""}
 }
@@ -257,14 +271,14 @@ function storageAvatar(){
 function parseStoredPosts(){
   return readFirstArray(FEED_KEYS).map((post,index)=>({
     id:post.id||String(index),author:post.author||post.authorName||post.userName||"Member",
-    avatar:post.avatar||post.authorPhotoURL||post.photoURL||"",text:String(post.text||post.content||post.message||"").trim(),
+    avatar:post.avatar||post.authorPhotoURL||post.photoURL||"",image:post.image||post.imageUrl||post.mediaUrl||"",text:String(post.text||post.content||post.message||"").trim(),
     likes:Number(post.likes||0),comments:Number(post.comments||0),createdAt:post.createdAt||post.date||0
   })).filter(post=>post.text||post.title);
 }
 async function firestorePosts(){
   try{
     const snap=await getDocs(query(collection(db,"hubPosts"),orderBy("createdAt","desc"),limit(10)));
-    return snap.docs.map(d=>{const x=d.data();return{id:d.id,author:x.authorName||"Member",avatar:x.authorPhotoURL||"",text:String(x.text||x.title||"").trim(),likes:Number(x.likes||0),comments:Number(x.comments||0),createdAt:x.createdAt?.toMillis?.()||x.createdAt?.seconds*1000||0}}).filter(x=>x.text);
+    return snap.docs.map(d=>{const x=d.data();return{id:d.id,author:x.authorName||"Member",avatar:x.authorPhotoURL||"",image:x.imageUrl||x.image||x.mediaUrl||"",text:String(x.text||x.title||"").trim(),likes:Number(x.likes||0),comments:Number(x.comments||0),createdAt:x.createdAt?.toMillis?.()||x.createdAt?.seconds*1000||0}}).filter(x=>x.text);
   }catch(_){return[]}
 }
 async function renderFeeds(){
@@ -948,16 +962,106 @@ function initCanvaStudio(){
   });
 }
 
+
+/* =========================================================
+   REAL BENTO HOMEPAGE DATA — no slider dependency
+   ========================================================= */
+async function bentoReadMusicDb(name){
+  return new Promise(resolve=>{
+    try{
+      const req=indexedDB.open(name);
+      req.onsuccess=()=>{
+        const database=req.result;
+        const stores=[MUSIC_STORE,"tracks"].filter((n,i,a)=>a.indexOf(n)===i&&database.objectStoreNames.contains(n));
+        if(!stores.length){database.close();resolve([]);return}
+        const get=database.transaction(stores[0],"readonly").objectStore(stores[0]).getAll();
+        get.onsuccess=()=>{const rows=Array.isArray(get.result)?get.result:[];database.close();resolve(rows)};
+        get.onerror=()=>{database.close();resolve([])};
+      };
+      req.onerror=()=>resolve([]);
+    }catch(_){resolve([])}
+  });
+}
+async function bentoMusicRows(){
+  let rows=await bentoReadMusicDb("tubalhub_music_real");
+  if(!rows.length)rows=await dbAll().catch(()=>[]);
+  return rows.sort((a,b)=>Number(b.createdAt||0)-Number(a.createdAt||0));
+}
+async function bentoOnlineCount(){
+  try{
+    const snap=await getDocs(query(collection(db,"presence"),limit(500))),online=new Set();
+    snap.forEach(s=>{const x=s.data();if(x?.online===true)online.add(s.id||x.uid)});
+    return online.size;
+  }catch(_){return null}
+}
+function bentoJournalItems(){
+  return readFirstArray(JOURNAL_KEYS).map((e,i)=>({
+    id:e.id||String(i),text:String(e.text||e.content||e.body||"").trim(),
+    mood:String(e.mood||e.emoji||"📝").trim(),createdAt:e.createdAt||e.date||e.updatedAt||0
+  })).filter(e=>e.text).slice(0,3);
+}
+function bentoRenderJournal(){
+  const box=$("#bentoJournalList");if(!box)return;
+  const rows=bentoJournalItems();
+  if(!rows.length){box.innerHTML='<div class="bento-empty">Wala pang saved journal entry. Real entries from Payapang Isip will appear here.</div>';return}
+  box.innerHTML=rows.map(e=>'<a class="bento-journal-item" href="pages/payapang-isip.html"><span class="bento-journal-mood">'+esc(e.mood||"📝")+'</span><span class="bento-item-copy"><strong>Saved entry</strong><p>'+esc(e.text)+'</p></span><span class="bento-item-date">'+esc(formatDate(e.createdAt))+'</span></a>').join("");
+}
+function bentoMusicCover(track){
+  const seed=String(track?.id||track?.title||"music"),hash=[...seed].reduce((n,ch)=>n+ch.charCodeAt(0),0),h1=hash%360,h2=(h1+86)%360;
+  return "linear-gradient(135deg,hsl("+h1+" 75% 55%),hsl("+h2+" 65% 42%))";
+}
+function bentoRenderMusic(rows){
+  const box=$("#bentoMusicList");if(!box)return;
+  if(!rows.length){box.innerHTML='<div class="bento-empty">Wala pang saved audio sa browser. Gumawa muna ng track sa AI Music.</div>';return}
+  box.innerHTML=rows.slice(0,3).map(t=>'<div class="bento-music-item" data-bento-music-id="'+esc(t.id)+'"><div class="bento-music-cover" style="background:'+esc(bentoMusicCover(t))+'"><span>🎵</span></div><button class="bento-music-play" data-bento-play="'+esc(t.id)+'" type="button" aria-label="Play '+esc(t.title||"saved track")+'">▶</button><div class="bento-item-copy"><strong>'+esc(t.title||"Saved track")+'</strong><p>'+esc(t.genre||t.prompt||"AI Music")+'</p></div><div class="bento-music-wave"><i></i><i></i><i></i></div></div>').join("");
+  box.querySelectorAll("[data-bento-play]").forEach(b=>b.addEventListener("click",()=>playMusic(b.dataset.bentoPlay)));
+}
+function bentoRenderFeeds(rows){
+  const box=$("#bentoFeedsList");if(!box)return;
+  if(!rows.length){box.innerHTML='<div class="bento-empty">Wala pang published posts. Real Feeds content will appear here.</div>';return}
+  box.innerHTML=rows.slice(0,4).map(p=>{
+    const avatar=p.avatar||"",image=p.image||"";
+    return '<article class="bento-feed-card"><div class="bento-feed-head"><span class="bento-feed-avatar">'+(avatar?'<img src="'+esc(avatar)+'" alt="" loading="lazy">':esc((p.author||"M").trim().charAt(0).toUpperCase()))+'</span><div class="bento-feed-author"><strong>'+esc(p.author||"Member")+'</strong><small>'+esc(formatDate(p.createdAt))+'</small></div></div><p class="bento-feed-text">'+esc(p.text||"")+'</p>'+(image?'<img class="bento-feed-image" src="'+esc(image)+'" alt="" loading="lazy">':'<div class="bento-feed-image-placeholder">📱</div>')+'<div class="bento-feed-foot"><span class="bento-like-value">'+Number(p.likes||0)+' likes</span><a class="bento-viewall" href="pages/feeds.html">Open →</a></div></article>';
+  }).join("");
+}
+function bentoRenderGames(){
+  const box=$("#bentoGamesGrid");if(!box)return;
+  const rows=featuredGames.slice(0,4);
+  if(!rows.length){box.innerHTML='<div class="bento-empty">No real games are available from the CTRLZONE catalog.</div>';return}
+  box.innerHTML=rows.map(g=>{
+    const stats=gameStats(g),players=stats.players===null?"No saved stats":String(stats.players)+" players";
+    return '<article class="bento-game-card" style="--game-a:'+esc(g.colorA||"#07100b")+';--game-b:'+esc(g.colorB||"#173b2a")+'"><div class="bento-game-cover"><span class="bento-game-emoji">'+esc(g.emoji)+'</span><span class="bento-game-local">LOCAL DATA</span></div><div class="bento-game-body"><div class="bento-game-title">'+esc(g.title)+'</div><div class="bento-game-meta"><span>'+esc(players)+'</span><a class="bento-play-btn" href="'+esc(g.officialUrl)+'" target="_blank" rel="noopener">Play Now</a></div></div></article>';
+  }).join("");
+  if(!window.matchMedia?.("(hover:none),(pointer:coarse)").matches){
+    box.querySelectorAll(".bento-game-card").forEach(card=>{
+      card.addEventListener("pointermove",e=>{const r=card.getBoundingClientRect(),px=(e.clientX-r.left)/r.width,py=(e.clientY-r.top)/r.height;card.style.setProperty("--rx",clamp((.5-py)*10,-10,10)+"deg");card.style.setProperty("--ry",clamp((px-.5)*10,-10,10)+"deg")},{passive:true});
+      card.addEventListener("pointerleave",()=>{card.style.setProperty("--rx","0deg");card.style.setProperty("--ry","0deg")});
+    });
+  }
+}
+async function renderRealData(){
+  bentoRenderJournal();
+  const [music,online]=await Promise.all([bentoMusicRows(),bentoOnlineCount()]);
+  bentoRenderMusic(music);
+  if($("#bentoOnlineUsers"))$("#bentoOnlineUsers").textContent=online===null?"—":String(online);
+  let posts=parseStoredPosts();
+  if(!posts.length)posts=await firestorePosts();
+  bentoRenderFeeds(posts);
+  await loadFeaturedGames();
+  bentoRenderGames();
+  const stats=$("#bentoHeroStats"),journalCount=bentoJournalItems().length;
+  if(stats)stats.innerHTML='<div class="bento-hero-stat"><small>Journal</small><strong>'+journalCount+'</strong></div><div class="bento-hero-stat"><small>Audio Tracks</small><strong>'+music.length+'</strong></div><div class="bento-hero-stat"><small>Design</small><strong>'+(localStorage.getItem(CANVA_DESIGN_KEY)?"Saved":"New")+'</strong></div>';
+}
+function initBento(){
+  renderRealData().catch(e=>console.warn("[TUBAL HUB Bento]",e));
+  window.addEventListener("storage",e=>{
+    if(JOURNAL_KEYS.includes(e.key)||FEED_KEYS.includes(e.key)||e.key==="tubalhub_canva_current"||e.key==="tubalhub_ctrlzone_game_stats")renderRealData();
+  });
+}
+
 function init(){
   initSpotlight();
-  initHeroSlider();
-  renderGameScores();
-  renderJournal();
-  loadMusic();
-  renderFeeds();
-  initHorizontalSections();
-  renderAllSliderDots();
-  loadFeaturedGames();
+  initBento();
   initCanvaStudio();
   initFooter();
   initFooterNewsletter();
