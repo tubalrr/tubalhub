@@ -120,6 +120,11 @@ function saveLocal(key,value){
 }
 function productById(id){return products.find(p=>p.id===id)}
 function collectionProducts(){return products.filter(p=>p.collection===state.collection)}
+function brandMarkHtml(collection,small=false){
+  if(collection==="th") return '<span class="mini-brand-logo th"><img src="../tubal-hub-logo.png" width="'+(small?22:28)+'" height="'+(small?22:28)+'" alt="TUBAL HUB"></span>';
+  if(collection==="payapang") return '<span class="mini-brand-logo pi" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M31 6C19 6 10 12 10 22c0 7 5 12 12 12 9 0 12-10 9-28Z"/><path d="M8 33c4-7 10-12 18-16"/></svg></span>';
+  return '<span class="mini-brand-logo cz" aria-hidden="true"><svg viewBox="0 0 44 34"><path d="M8 11h28a8 8 0 0 1 7.1 11.2l-3.6 7.3a4 4 0 0 1-7.2.2l-3-5.5H14.7l-3 5.5a4 4 0 0 1-7.2-.2L1 22.2A8 8 0 0 1 8 11Z"/><path d="M12 17v7M8.5 20.5h7M31 17.5h.01M35 21.5h.01"/></svg></span>';
+}
 function cartCount(){return state.cart.reduce((n,x)=>n+Number(x.qty||0),0)}
 function subtotal(){return state.cart.reduce((n,x)=>{const p=productById(x.id);return n+(p?Number(p.price)*Number(x.qty||0):0)},0)}
 function shipping(){return cartCount()?120:0}
@@ -193,7 +198,7 @@ function cardHtml(p,index){
     '</div>'+
     '<div class="product-info">'+
       '<h3 class="product-title">'+esc(p.title)+'</h3>'+
-      '<div class="product-shop">'+esc(p.seller)+'</div>'+
+      '<div class="product-shop product-shop-brand">'+brandMarkHtml(p.collection,true)+'<span>'+esc(p.seller)+'</span></div>'+
       '<div class="product-price-row"><strong class="product-price">'+money(p.price)+'</strong><span class="product-original">'+money(p.original)+'</span></div>'+
       '<div class="product-rating-row"><span>⭐ '+p.rating.toFixed(1)+'</span><span>Premium listing</span><span class="stock-low">'+p.stock+' left</span></div>'+
       '<div class="seller-row">'+
@@ -234,7 +239,7 @@ function updateCartUI(){
     const p=productById(item.id);if(!p)return"";
     return '<div class="cart-row">'+
       '<div class="cart-thumb"><img src="'+esc(p.image)+'" alt=""></div>'+
-      '<div class="cart-row-copy"><strong>'+esc(p.title)+'</strong><small>'+esc(p.seller)+'</small><div class="cart-row-bottom"><div class="qty-stepper"><button data-cart-minus="'+esc(p.id)+'" type="button">−</button><span>'+item.qty+'</span><button data-cart-plus="'+esc(p.id)+'" type="button">+</button></div></div></div>'+
+      '<div class="cart-row-copy"><strong>'+esc(p.title)+'</strong><small class="cart-shop-brand">'+brandMarkHtml(p.collection,true)+'<span>'+esc(p.seller)+'</span></small><div class="cart-row-bottom"><div class="qty-stepper"><button data-cart-minus="'+esc(p.id)+'" type="button">−</button><span>'+item.qty+'</span><button data-cart-plus="'+esc(p.id)+'" type="button">+</button></div></div></div>'+
       '<div><div class="cart-row-price">'+money(p.price*item.qty)+'</div><button class="cart-delete" data-cart-delete="'+esc(p.id)+'" type="button" aria-label="Remove '+esc(p.title)+'">⌫</button></div>'+
     '</div>';
   }).join("");
