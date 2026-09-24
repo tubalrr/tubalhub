@@ -161,111 +161,57 @@
         <span class="bento-data-note" id="bentoSystemNote">Real site data only • No mock counters</span>
       </section>
 
-      <section class="bento-card bento-journal" aria-labelledby="bentoJournalTitle">
-        <div class="bento-journal-glow" aria-hidden="true"></div>
-        <div class="bento-section-head">
-          <div class="bento-head-title bento-journal-heading">
-            <span class="bento-journal-icon home-emoji" aria-hidden="true">🌿</span>
-            <div>
-              <span class="bento-kicker">PAYAPANG ISIP</span>
-              <h2 id="bentoJournalTitle">A quiet place for your thoughts</h2>
-              <span>Saved journal entries from your browser</span>
-            </div>
-          </div>
-          <a class="bento-viewall" href="pages/payapang-isip.html">Open Journal →</a>
+      <div class="bento-row bento-row-real" aria-label="Real TUBAL HUB Bento">
+  <section class="glass-card-real bento-real-card bento-journal-real" aria-labelledby="bentoJournalTitle">
+    <header class="bento-real-header">
+      <div class="bento-real-brand">
+        <span class="bento-real-icon bento-real-icon--green">🌿</span>
+        <div>
+          <span class="bento-real-kicker">PAYAPANG ISIP</span>
+          <h2 id="bentoJournalTitle">A quiet place for your thoughts</h2>
+          <small>Saved journal entries from your browser</small>
         </div>
-        <div class="bento-journal-intro">
-          <div class="bento-journal-intro-mark">✦</div>
-          <div>
-            <strong>Your space, your words.</strong>
-            <p>Write what matters today and keep your real entries in one calm view.</p>
-          </div>
-        </div>
-        <div class="bento-journal-list-head">
-          <span>RECENT ENTRIES</span>
-          <span>REAL DATA</span>
-        </div>
-        <div id="bentoJournalList" class="bento-list bento-journal-list" aria-live="polite"></div>
-      </section>
+      </div>
+      <a class="bento-real-viewall" href="pages/payapang-isip.html">Open Journal →</a>
+    </header>
+    <div class="bento-real-list-head"><span>RECENT ENTRIES</span><span>REAL DATA</span></div>
+    <div id="bentoJournalList" class="bento-real-list" aria-live="polite"></div>
+  </section>
 
-      <section class="bento-card bento-shop" aria-labelledby="bentoShopTitle">
-        <div class="bento-shop-orbit" aria-hidden="true"></div>
-        <div class="bento-section-head">
-          <div class="bento-head-title bento-shop-heading">
-            <span class="bento-shop-icon home-emoji" aria-hidden="true">🛒</span>
-            <div>
-              <span class="bento-kicker">TUBAL HUB SHOP</span>
-              <h2 id="bentoShopTitle">Shop the Hub</h2>
-              <span>Explore the current collections from the TUBAL HUB storefront</span>
-            </div>
-          </div>
-          <a class="bento-viewall" href="pages/shop.html">Open Shop →</a>
+  <section class="glass-card-real bento-real-card bento-shop-real" aria-labelledby="bentoShopTitle">
+    <header class="bento-real-header">
+      <div class="bento-real-brand">
+        <span class="bento-real-icon bento-real-icon--violet">🛒</span>
+        <div>
+          <span class="bento-real-kicker">TUBAL HUB SHOP</span>
+          <h2 id="bentoShopTitle">Shop the Hub</h2>
+          <small>Real collections from the official storefront</small>
         </div>
-        <div id="bentoShopList" class="bento-shop-grid" aria-live="polite"></div>
-        <div class="bento-shop-footer">
-          <div class="bento-shop-live">
-            <span class="bento-shop-live-dot" aria-hidden="true"></span>
-            <div><strong>Live cart</strong><small id="bentoShopCart">0 items</small></div>
-          </div>
-          <div class="bento-shop-wishlist"><span>♡</span><div><strong id="bentoShopWishlist">0</strong><small>saved items</small></div></div>
-        </div>
-      </section>
+      </div>
+      <a class="bento-real-viewall" href="pages/shop.html">Open Shop →</a>
+    </header>
+    <div id="bentoShopList" class="shop-collections-real" aria-live="polite"></div>
+    <div id="liveCartReal" class="live-cart-real"><span>🛒 Live cart</span><span id="cartCountReal">0 items</span></div>
+  </section>
 
-      <section class="bento-card bento-feeds" aria-labelledby="bentoFeedsTitle">
-        <div class="bento-feeds-glow" aria-hidden="true"></div>
-        <div class="bento-section-head">
-          <div class="bento-head-title bento-feeds-heading">
-            <span class="bento-feeds-icon home-emoji" aria-hidden="true">📱</span>
-            <div>
-              <span class="bento-kicker">TUBAL HUB FEEDS</span>
-              <h2 id="bentoFeedsTitle">Community Feed</h2>
-              <span>Real posts published on this browser</span>
-            </div>
-          </div>
-          <a class="bento-viewall" href="pages/feeds.html">Open Feeds →</a>
+  <section class="glass-card-real bento-real-card bento-feed-real" aria-labelledby="bentoFeedsTitle">
+    <header class="bento-real-header">
+      <div class="bento-real-brand">
+        <span class="bento-real-icon bento-real-icon--purple">📱</span>
+        <div>
+          <span class="bento-real-kicker">TUBAL HUB FEEDS</span>
+          <h2 id="bentoFeedsTitle">Community Feed</h2>
+          <small>Real posts saved on this browser</small>
         </div>
-        <div class="bento-feeds-toolbar">
-          <span><i></i> LATEST</span>
-          <strong id="bentoFeedsLiveCount">0 posts</strong>
-        </div>
-        <div id="bentoFeedsList" class="bento-feed-scroll bento-feeds-list" aria-live="polite"></div>
-      </section>
+      </div>
+      <a class="bento-real-viewall" href="pages/feeds.html">Open Feeds →</a>
+    </header>
+    <div class="bento-feed-real-toolbar"><span><i></i> LATEST</span><strong id="bentoFeedsLiveCount">0 posts</strong></div>
+    <div id="bentoFeedsList" class="bento-real-feed-list" aria-live="polite"></div>
+  </section>
+</div>
 
-      <section id="tubalFeedsSection" class="bento-feeds-row" aria-label="TUBAL HUB Community Feed">
-        <div id="communityFeedCard" class="glass">
-          <div class="header">
-            <div>
-              <span class="tubal-feeds-kicker">TUBAL HUB FEEDS</span>
-              <h2>Community Feed</h2>
-              <small>Real posts published on this browser</small>
-            </div>
-            <a href="pages/feeds.html">Open Feeds →</a>
-          </div>
-          <div class="feed-latest-row"><span>LATEST</span><span id="feedCountReal">0 posts</span></div>
-          <div id="feedsInsideTrack" aria-live="polite"></div>
-        </div>
-
-        <div id="quickPostCard" class="glass">
-          <div class="header quick-post-header">
-            <div>
-              <span class="live-dot" aria-hidden="true"></span>
-              <span>LIVE COMMUNITY QUICK POST</span>
-            </div>
-            <span id="quickPostCount">0 posts real</span>
-          </div>
-          <h3>Share something real</h3>
-          <textarea id="realPostInput" maxlength="5000" placeholder="Isulat ang totoong post... TUBAL HUB Feeds."></textarea>
-          <label class="real-post-image-picker" for="realPostImage">
-            <span>Add image</span><span>optional</span>
-            <input type="file" id="realPostImage" accept="image/*">
-          </label>
-          <button id="saveRealPostBtn" type="button">Save real post</button>
-          <small class="real-post-note">Saved only in this browser using <code>tubalhub_feeds</code>.</small>
-        </div>
-      </section>
-
-
-      <section class="bento-card bento-games" aria-labelledby="bentoGamesTitle">
+<section class="bento-card bento-games" aria-labelledby="bentoGamesTitle">
         <div class="bento-games-atmosphere" aria-hidden="true"></div>
         <div class="bento-section-head">
           <div>
