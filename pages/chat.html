@@ -567,8 +567,5 @@ document.addEventListener('visibilitychange',()=>{if(currentUser&&!document.hidd
 <script src="../assets/js/chatbot.js?v=20260923" defer></script>
 <script src="../assets/js/theme.js?v=20260922" defer></script>
 <script src="../assets/js/global-chat-premium.js?v=20260924-v3" defer></script>
+<script src="../assets/js/global-chat-focus.js?v=20260924-v1" defer></script>
 </body></html>
-
-<script>
-(()=>{const list=document.getElementById('memberList');if(!list)return;const obs=new MutationObserver(()=>{if(window.privateDmListRefresh)window.privateDmListRefresh()});obs.observe(list,{childList:true,subtree:true});window.privateDmListRefresh=()=>{try{const box=document.getElementById('dmList');if(!box)return;document.querySelectorAll('.dm-row').forEach(row=>row.classList.toggle('online',!!document.querySelector('.member[data-uid="'+CSS.escape(row.dataset.uid||'')+'"]')))}catch(_){} };})();
-</script>
