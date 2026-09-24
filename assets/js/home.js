@@ -653,7 +653,7 @@ function featuredGameMarkup(game){
   const safeA=game.colorA||"#173b2a",safeB=game.colorB||"#07100b";
   const category=game.category||game.genre||"Game";
   return '<article class="game-feature-card" data-game-id="'+esc(game.id)+'" style="--game-a:'+esc(safeA)+';--game-b:'+esc(safeB)+'">'+
-    '<div class="game-feature-cover"><span class="game-feature-emoji" aria-hidden="true">'+esc(game.emoji||"🎮")+'</span><button class="game-feature-play" type="button" data-real-game-play="'+esc(game.id)+'" aria-label="Play '+esc(game.title)+'">▶️</button></div>'+
+    '<div class="game-feature-cover"><span class="game-feature-emoji" aria-hidden="true">'+esc(getRealGameInitials(game))+'</span><button class="game-feature-play" type="button" data-real-game-play="'+esc(game.id)+'" aria-label="Play '+esc(game.title)+'">▶️</button></div>'+
     '<div class="game-feature-body"><div class="game-feature-top"><h3>'+esc(game.title)+'</h3><span class="game-category">'+esc(category)+'</span></div>'+
     '<p class="game-feature-desc">'+esc(game.description||"")+'</p><div class="game-feature-stats">'+gameStatMarkup(game)+'</div></div>'+
     '<div class="game-feature-footer"><button class="game-feature-playnow" type="button" data-real-game-play="'+esc(game.id)+'">Play Now</button></div>'+
@@ -662,7 +662,7 @@ function featuredGameMarkup(game){
 function renderFeaturedGames(){
   const track=$("#gamesTrack");if(!track)return;
   if(!featuredGames.length){
-    track.innerHTML='<div class="real-empty-card glass"><span class="real-empty-emoji" aria-hidden="true">🎮</span><p>Wala pa games, upload real</p><a class="real-quick-link" href="pages/ctrlzone.html">Open CTRLZONE →</a></div>';
+    track.innerHTML='<div class="real-empty-card glass"><span class="real-empty-emoji" aria-hidden="true">NO LOGO</span><p>Wala pa games, upload real</p><a class="real-quick-link" href="pages/ctrlzone.html">Open CTRLZONE →</a></div>';
     gamesSlider?.stopAuto?.();
     return;
   }
@@ -1003,7 +1003,7 @@ function renderFeaturedGamesPreview(){
   const box=$("#featuredGamesPreview");if(!box)return;
   const rows=featuredGames.slice(0,4);
   if(!rows.length){box.innerHTML='<div class="featured-empty">Wala pa games, upload real.</div>';return}
-  box.innerHTML=rows.map(g=>'<a class="featured-game-float-card" href="pages/ctrlzone.html?game='+encodeURIComponent(g.id)+'" data-real-game-play="'+esc(g.id)+'"><span class="featured-game-float-emoji">'+esc(g.emoji||"🎮")+'</span><strong>'+esc(g.title)+'</strong><small>'+getRealGamePlayCount(g.id)+' local plays</small><b>Play Now →</b></a>').join("");
+  box.innerHTML=rows.map(g=>'<a class="featured-game-float-card" href="pages/ctrlzone.html?game='+encodeURIComponent(g.id)+'" data-real-game-play="'+esc(g.id)+'"><span class="featured-game-float-emoji">'+esc(getRealGameInitials(g))+'</span><strong>'+esc(g.title)+'</strong><small>'+getRealGamePlayCount(g.id)+' local plays</small><b>Play Now →</b></a>').join("");
   if(!window.matchMedia?.("(hover:none),(pointer:coarse)").matches){
     box.querySelectorAll(".featured-game-float-card").forEach(card=>{
       card.addEventListener("pointermove",e=>{
@@ -1137,7 +1137,7 @@ function bentoRenderShop(){
   const collections=[
     {id:"th",icon:"◈",title:"TUBAL HUB",sub:"Official hub collection"},
     {id:"payapang",icon:"🌿",title:"PAYAPANG ISIP",sub:"Calm collection"},
-    {id:"ctrlzone",icon:"🎮",title:"CTRLZONE",sub:"Gaming collection"}
+    {id:"ctrlzone",icon:"◈",title:"CTRLZONE",sub:"Gaming collection"}
   ];
   box.innerHTML=collections.map(item=>
     '<a class="collection-card" href="pages/shop.html#'+item.id+'"><span class="collection-card-icon">'+item.icon+'</span><span class="collection-card-title">'+item.title+'</span><span class="collection-card-sub">'+item.sub+'</span><span class="collection-card-arrow">→</span></a>'
