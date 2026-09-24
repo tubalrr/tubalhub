@@ -1,32 +1,32 @@
 {
-  "version": "1.2.4",
+  "version": "1.2.5",
   "date": "2026-09-25",
-  "time": "2026-09-25T01:00:00+08:00",
-  "message": "Homepage feature panel updated: AI Music moved out of the lower bento area and replaced with a cleaner TUBAL HUB Shop panel.",
+  "time": "2026-09-25T01:20:00+08:00",
+  "message": "Homepage Featured Games refresh with a premium CTRLZONE presentation using the real game catalog.",
   "changelog": [
     {
       "type": "Improved",
-      "icon": "🛒",
-      "title": "Homepage Shop Panel",
-      "desc": "The lower homepage feature panel now highlights the TUBAL HUB Shop instead of AI Music."
-    },
-    {
-      "type": "New",
-      "icon": "◈",
-      "title": "Three Shop Collections",
-      "desc": "Quick access is provided for TUBAL HUB, Payapang Isip, and CTRLZONE collections."
+      "icon": "🎮",
+      "title": "Featured Games Premium",
+      "desc": "The homepage Featured Games area now has a more polished CTRLZONE presentation with richer game cards and clearer hierarchy."
     },
     {
       "type": "Improved",
-      "icon": "📦",
-      "title": "Live Cart Summary",
-      "desc": "The homepage Shop panel reads the current cart and wishlist counts from browser storage."
+      "icon": "◈",
+      "title": "Real Game Metadata",
+      "desc": "Cards now surface the real game category, genre, description, official site link when available, and local play count from the current catalog."
+    },
+    {
+      "type": "New",
+      "icon": "⚡",
+      "title": "Live Catalog Indicator",
+      "desc": "The Featured Games section now shows the current number of games loaded from the real CTRLZONE catalog."
     },
     {
       "type": "Fixed",
-      "icon": "🎵",
-      "title": "AI Music Moved to Studio",
-      "desc": "AI Music remains available through its dedicated page and featured website area instead of occupying the lower homepage panel."
+      "icon": "↗",
+      "title": "Better Game Actions",
+      "desc": "Play Now and Official Site actions are visually separated while keeping the real game destinations."
     }
   ]
 }
