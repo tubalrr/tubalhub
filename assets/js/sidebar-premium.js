@@ -29,6 +29,14 @@
     sidebar.removeAttribute('data-expanded');
   }, {passive:true});
 
+  // Hard guard: moving into page content collapses the rail immediately.
+  document.addEventListener('pointermove', (e)=>{
+    if(e.clientX > 285){
+      sidebar.classList.remove('is-pinned');
+      sidebar.removeAttribute('data-expanded');
+    }
+  }, {passive:true});
+
   // Prevent the legacy expand button from reintroducing the sticky state.
   const toggle = sidebar.querySelector('.side-expand-toggle');
   toggle?.addEventListener('click', (e)=>{
