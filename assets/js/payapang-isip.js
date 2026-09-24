@@ -50,7 +50,7 @@ const state={
 
 const els={
   moodGrid:$("#moodGrid"),streak:$("#moodStreak"),chart:$("#moodChart"),journal:$("#journalEntries"),journalInput:$("#journalInput"),
-  breathOrbit:$("#breathOrbit"),breathPhase:$("#breathPhase"),breathCount:$("#breathCount"),breathStart:$("#startBreathing"),
+  breathOrbit:$("#breathOrbit"),breathPhase:$("#breathPhase"),breathCount:$("#breathCount"),breathStart:$("#startBreathing"),exerciseStart:$("#exerciseStart"),exerciseStatus:$("#exerciseStatus"),
   grounding:$("#groundingRows"),groundingSave:$("#saveGrounding"),chatWindow:$("#supportChatWindow"),chatInput:$("#supportChatInput"),
   chatSend:$("#supportChatSend"),playerTitle:$("#playerTitle"),playerProgress:$("#playerProgress"),playerElapsed:$("#playerElapsed"),playerDuration:$("#playerDuration"),
   playerBtn:$("#playerToggle"),playerTrack:$("#playerTrack"),visualizer:$("#visualizer"),toast:$("#piToast"),particles:$("#piParticles"),tipGrid:$("#tipsGrid")
@@ -136,18 +136,21 @@ function deleteEntry(id){
 function resetBreathing(){
   clearTimeout(state.breathing.timer);state.breathing.timer=null;state.breathing.running=false;state.breathing.phase="Ready";state.breathing.count=0;
   els.breathOrbit.classList.remove("is-active");els.breathPhase.textContent="Ready";els.breathCount.textContent="";
+  if(els.breathStart)els.breathStart.textContent="Start Breathing";
+  if(els.exerciseStart)els.exerciseStart.textContent="Start Cycle";
+  if(els.exerciseStatus)els.exerciseStatus.textContent="Ready when you are.";
 }
 function runBreathCycle(){
   if(!state.breathing.running)return;
   const phases=[{name:"Breathe In",seconds:4},{name:"Hold",seconds:4},{name:"Breathe Out",seconds:6}];
   let phaseIndex=state.breathing.phaseIndex||0;
   const phase=phases[phaseIndex%phases.length];let left=phase.seconds;
-  els.breathPhase.textContent=phase.name;els.breathCount.textContent=String(left);
+  els.breathPhase.textContent=phase.name;els.breathCount.textContent=String(left);if(els.exerciseStatus)els.exerciseStatus.textContent=phase.name+" • "+left+"s";
   const tick=()=>{if(!state.breathing.running)return;left--;els.breathCount.textContent=left>0?String(left):"0";if(left<=0){state.breathing.phaseIndex=(phaseIndex+1)%phases.length;state.breathing.count++;runBreathCycle()}else{state.breathing.timer=setTimeout(tick,1000)}};state.breathing.timer=setTimeout(tick,1000);
 }
 function startBreathing(){
   if(state.breathing.running){resetBreathing();return}
-  state.breathing.running=true;state.breathing.phaseIndex=0;els.breathOrbit.classList.add("is-active");els.breathStart.textContent="Stop Breathing";runBreathCycle();notify("Breathing exercise started");
+  state.breathing.running=true;state.breathing.phaseIndex=0;els.breathOrbit.classList.add("is-active");els.breathStart.textContent="Stop Breathing";if(els.exerciseStart)els.exerciseStart.textContent="Stop Cycle";runBreathCycle();notify("Breathing exercise started");
 }
 function bindBreathingButton(){els.breathStart.addEventListener("click",()=>{burstAt(els.breathStart,6);startBreathing();if(!state.breathing.running)els.breathStart.textContent="Start Breathing"})}
 
@@ -212,6 +215,7 @@ function togglePlayer(){
 }
 function bindPlayer(){
   els.playerBtn.addEventListener("click",togglePlayer);
+  $(".player-volume")?.addEventListener("input",e=>{if(masterGain)masterGain.gain.value=.035*Number(e.target.value)/.35});
   els.playerTrack.addEventListener("click",e=>{
     const r=els.playerTrack.getBoundingClientRect(),pct=clamp((e.clientX-r.left)/r.width,0,1);
     state.elapsed=Math.round(TRACKS[state.trackIndex].seconds*pct);updatePlayer();
@@ -250,7 +254,7 @@ function bind(){
   els.chatSend.addEventListener("click",sendChat);els.chatInput.addEventListener("keydown",e=>{if(e.key==="Enter")sendChat()});
   $$(".support-reacts button").forEach(b=>b.addEventListener("click",()=>react(b)));
   $$(".tip-card a").forEach(a=>a.addEventListener("click",()=>notify("Open the "+a.textContent.replace(" →","").toLowerCase()+" section")));
-  bindBreathingButton();bindPlayer();
+  bindBreathingButton();els.exerciseStart?.addEventListener("click",()=>{burstAt(els.exerciseStart,6);startBreathing();if(!state.breathing.running&&els.exerciseStatus)els.exerciseStatus.textContent="Ready when you are."});bindPlayer();
 }
 function init(){
   state.entries=loadEntries();renderMood();renderEntries();renderTips();initGrounding();renderChat();initThemes();switchTrack(0);bind();updatePlayer();
