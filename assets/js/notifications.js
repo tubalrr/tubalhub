@@ -1,7 +1,7 @@
 /* TUBAL HUB — Notification Center */
 import {app,auth} from "./firebase-config.js";
 import {onAuthStateChanged} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
-import {getFirestore,collection,query,where,orderBy,limit,onSnapshot,doc,writeBatch} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+import {getFirestore,collection,query,where,limit,onSnapshot,doc,writeBatch} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
 const db=getFirestore(app);
 const DEMO_MODE=true;
@@ -165,7 +165,7 @@ function signalNew(){const b=document.querySelector(".notification-btn");if(!b)r
 function watchRemote(){
   if(stopRemote){stopRemote();stopRemote=null}
   if(!me)return;
-  const q=query(collection(db,"notifications"),where("recipientUid","==",me.uid),orderBy("createdAt","desc"),limit(100));
+  const q=query(collection(db,"notifications"),where("recipientUid","==",me.uid),limit(100));
   stopRemote=onSnapshot(q,snap=>{
     const remote=snap.docs.map(d=>{const x=d.data();return{
       id:d.id,remote:true,type:x.type||"system",name:x.actorName||"TUBAL HUB",photoURL:x.actorPhotoURL||"",online:x.actorOnline===true,
