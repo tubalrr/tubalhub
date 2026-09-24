@@ -18,7 +18,7 @@
       "idReal": "mlbb_real",
       "titleReal": "Mobile Legends: Bang Bang",
       "devReal": "Moonton",
-      "linkReal": "ctrlzone.html?game=mlbb",
+      "linkReal": "pages/ctrlzone.html?game=mlbb",
       "logoReal": "/assets/games/logos/mlbb.png",
       "logoRealHD": "/assets/games/logos/mlbb@2x.png",
       "bannerReal": ""
@@ -39,7 +39,7 @@
       "idReal": "hok_real",
       "titleReal": "Honor of Kings",
       "devReal": "Tencent",
-      "linkReal": "ctrlzone.html?game=hok",
+      "linkReal": "pages/ctrlzone.html?game=hok",
       "logoReal": "/assets/games/logos/hok.png",
       "logoRealHD": "/assets/games/logos/hok@2x.png",
       "bannerReal": ""
@@ -60,7 +60,7 @@
       "idReal": "minecraft_real",
       "titleReal": "Minecraft",
       "devReal": "Mojang",
-      "linkReal": "ctrlzone.html?game=minecraft",
+      "linkReal": "pages/ctrlzone.html?game=minecraft",
       "logoReal": "/assets/games/logos/minecraft.png",
       "logoRealHD": "/assets/games/logos/minecraft@2x.png",
       "bannerReal": ""
@@ -81,7 +81,7 @@
       "idReal": "apex_real",
       "titleReal": "Apex Legends",
       "devReal": "Electronic Arts",
-      "linkReal": "ctrlzone.html?game=apex",
+      "linkReal": "pages/ctrlzone.html?game=apex",
       "logoReal": "/assets/games/logos/apex.png",
       "logoRealHD": "/assets/games/logos/apex@2x.png",
       "bannerReal": ""
@@ -102,7 +102,7 @@
       "idReal": "valorant_real",
       "titleReal": "VALORANT",
       "devReal": "Riot Games",
-      "linkReal": "ctrlzone.html?game=valorant",
+      "linkReal": "pages/ctrlzone.html?game=valorant",
       "logoReal": "/assets/games/logos/valorant.png",
       "logoRealHD": "/assets/games/logos/valorant@2x.png",
       "bannerReal": ""
@@ -123,7 +123,7 @@
       "idReal": "roblox_real",
       "titleReal": "Roblox",
       "devReal": "Roblox",
-      "linkReal": "ctrlzone.html?game=roblox",
+      "linkReal": "pages/ctrlzone.html?game=roblox",
       "logoReal": "/assets/games/logos/roblox.png",
       "logoRealHD": "/assets/games/logos/roblox@2x.png",
       "bannerReal": ""
@@ -144,7 +144,7 @@
       "idReal": "warzone_real",
       "titleReal": "Call of Duty: Warzone",
       "devReal": "Activision",
-      "linkReal": "ctrlzone.html?game=warzone",
+      "linkReal": "pages/ctrlzone.html?game=warzone",
       "logoReal": "/assets/games/logos/warzone.png",
       "logoRealHD": "/assets/games/logos/warzone@2x.png",
       "bannerReal": ""
@@ -165,7 +165,7 @@
       "idReal": "genshin_real",
       "titleReal": "Genshin Impact",
       "devReal": "HoYoverse",
-      "linkReal": "ctrlzone.html?game=genshin",
+      "linkReal": "pages/ctrlzone.html?game=genshin",
       "logoReal": "/assets/games/logos/genshin.png",
       "logoRealHD": "/assets/games/logos/genshin@2x.png",
       "bannerReal": ""
@@ -186,7 +186,7 @@
       "idReal": "lol_real",
       "titleReal": "League of Legends",
       "devReal": "Riot Games",
-      "linkReal": "ctrlzone.html?game=lol",
+      "linkReal": "pages/ctrlzone.html?game=lol",
       "logoReal": "/assets/games/logos/lol.png",
       "logoRealHD": "/assets/games/logos/lol@2x.png",
       "bannerReal": ""
