@@ -80,23 +80,13 @@ function updateBadge(){
   badge.textContent=total>99?"99+":String(total);badge.hidden=total<1;tip.textContent="Messages ("+total+")";launcher.hidden=!me;return total;
 }
 function watchUnread(){
-  if(stopUnread)stopUnread();incomingReady=false;
-  const q=query(collection(db,"messages"),where("participants","array-contains",me.uid),limit(200));
-  stopUnread=onSnapshot(q,s=>{
-    const counts={},incoming=[];
-    s.docChanges().forEach(ch=>{if(ch.type!=="added")return;const d=ch.doc.data();if(d.receiverId!==me.uid||d.senderId===me.uid)return;const ms=messageMs(d),seen=Number(localStorage.getItem("tubalMsgSeen:"+d.senderId)||0);if(ms>seen)incoming.push(d)});
-    s.forEach(x=>{const d=x.data();if(d.receiverId!==me.uid||d.senderId===me.uid)return;const ms=messageMs(d),seen=Number(localStorage.getItem("tubalMsgSeen:"+d.senderId)||0);if(ms>seen)counts[d.senderId]=(counts[d.senderId]||0)+1});
-    try{
-      Object.keys(counts).forEach(uid=>localStorage.setItem("tubalMsgUnread:"+uid,String(counts[uid])));
-      for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k?.startsWith("tubalMsgUnread:")&&!counts[k.slice(15)])localStorage.removeItem(k)}
-    }catch(_){}
-    const total=updateBadge();
-    if(incoming.length)animateLauncher();
-    if(!incomingReady){incomingReady=true;return}
-    const d=incoming[incoming.length-1];
-    if(d){playMessageSound();openIncomingChat({uid:d.senderId,displayName:d.displayName||"Member",photoURL:d.senderPhotoURL||d.photoURL||""})}
-  },e=>console.error("[TUBAL HUB] incoming messages",e));
+  if(stopUnread){stopUnread();stopUnread=null}
+  if(!me)return;
+  // The floating member/chat listener owns unread state now.
+  incomingReady=true;
+  updateBadge();
 }
+
 function messageMs(d){return d.createdAt?.toMillis?.()||d.createdAt?.seconds*1000||(d.createdAt instanceof Date?d.createdAt.getTime():0)||0}
 function openIncomingChat(u){target=u;const w=document.getElementById("tubalMsgWindow");document.getElementById("tubalMsgName").textContent=u.displayName||"Member";document.getElementById("tubalMsgAvatar").innerHTML=u.photoURL?'<img src="'+esc(u.photoURL)+'" alt="">':esc(initials(u.displayName));w.hidden=false;document.getElementById("tubalMessenger").hidden=true;document.getElementById("tubalMsgBackdrop").hidden=true;subscribeMessages();document.getElementById("tubalMsgInput").focus()}
 function openUser(u){target=u;markSeen(u.uid,Date.now());const w=document.getElementById("tubalMsgWindow");document.getElementById("tubalMsgName").textContent=u.displayName||"Member";document.getElementById("tubalMsgAvatar").innerHTML=u.photoURL?'<img src="'+esc(u.photoURL)+'" alt="">':esc(initials(u.displayName));w.hidden=false;document.getElementById("tubalMessenger").hidden=true;document.getElementById("tubalMsgBackdrop").hidden=true;subscribeMessages();document.getElementById("tubalMsgInput").focus()}
@@ -118,9 +108,11 @@ function watchUsers(){
 
   const usersRef=collection(db,"users");
   const presenceRef=collection(db,"presence");
-  let usersMap=new Map(),presenceMap=new Map();
-  let usersLoaded=false,presenceLoaded=false;
-  let stopUsersSnapshot=null,stopPresenceSnapshot=null;
+  const messagesRef=collection(db,"messages");
+
+  let usersMap=new Map(),presenceMap=new Map(),conversationMap=new Map();
+  let usersLoaded=false,presenceLoaded=false,messagesLoaded=false;
+  let stopUsersSnapshot=null,stopPresenceSnapshot=null,stopMessagesSnapshot=null;
   let refreshTimer=null,timeoutId=null;
 
   const onlineCutoff=()=>Date.now()-180000;
@@ -128,97 +120,161 @@ function watchUsers(){
     if(typeof value==="number")return value;
     return value?.toMillis?.()||value?.toDate?.()?.getTime?.()||0;
   };
-  const syncMap=(snap,map)=>{
-    map.clear();
-    snap.forEach(d=>{
-      const x=d.data();
-      map.set(x.uid||d.id,{...x,uid:x.uid||d.id});
-    });
-  };
 
-  const render=(errorMessage="")=>{
+  const render=()=>{
     const box=document.getElementById("tubalMsgList");
     if(!box)return;
 
-    if(errorMessage&&!usersLoaded&&!presenceLoaded){
-      box.innerHTML='<div class="tubal-msg-empty"><strong>Messages unavailable.</strong><span>'+esc(errorMessage)+'</span></div>';
-      return;
-    }
-    if(!usersLoaded&&!presenceLoaded){
+    if(!usersLoaded&&!presenceLoaded&&!messagesLoaded){
       box.innerHTML='<div class="tubal-msg-loading">Loading members…</div>';
       return;
     }
 
-    const list=[...usersMap.values()]
+    const rows=[...conversationMap.values()]
+      .map(chat=>{
+        const profile=usersMap.get(chat.uid)||{};
+        const presence=presenceMap.get(chat.uid);
+        const online=!!presence&&presence.online===true&&lastSeenMs(presence.lastSeen)>=onlineCutoff();
+        const unread=Number(chat.unread||0);
+        return {...chat,...profile,online,unread};
+      })
+      .sort((a,b)=>Number(b.unread>0)-Number(a.unread>0)||b.lastMs-a.lastMs);
+
+    const onlineUsers=[...usersMap.values()]
       .filter(u=>u.uid&&u.uid!==me.uid)
       .map(u=>{
         const p=presenceMap.get(u.uid);
         const online=!!p&&p.online===true&&lastSeenMs(p.lastSeen)>=onlineCutoff();
         return {...u,online};
       })
-      .sort((a,b)=>Number(b.online)-Number(a.online)||String(a.displayName||"").localeCompare(String(b.displayName||"")));
+      .filter(u=>u.online)
+      .sort((a,b)=>String(a.displayName||"").localeCompare(String(b.displayName||"")));
+
+    const list=rows.length?rows:onlineUsers.map(u=>({
+      uid:u.uid,displayName:u.displayName,email:u.email,photoURL:u.photoURL,online:true,
+      preview:"Online · Start a conversation",lastMs:0,unread:0
+    }));
 
     if(!list.length){
-      box.innerHTML='<div class="tubal-msg-empty"><strong>No other members yet.</strong><span>Other registered TUBAL HUB members will appear here.</span></div>';
+      box.innerHTML='<div class="tubal-msg-empty"><strong>No conversations yet.</strong><span>When someone sends you a private message, they will appear here.</span></div>';
       return;
     }
 
-    box.innerHTML=list.map(u=>'<button type="button" class="tubal-msg-user '+(u.online?'is-online':'is-offline')+'" data-uid="'+esc(u.uid)+'">'+
-      '<div class="tubal-msg-avatar">'+(u.photoURL?'<img src="'+esc(u.photoURL)+'" alt="">':esc(initials(u.displayName||u.email)))+'</div>'+
-      '<div class="tubal-msg-user-copy"><b>'+esc(u.displayName||u.email?.split("@")[0]||"Member")+'</b>'+
-      '<span class="tubal-msg-user-status">'+(u.online?'● Online':'○ Offline')+' · Message</span></div></button>').join("");
+    box.innerHTML=list.map(chat=>{
+      const unread=Number(chat.unread||0);
+      const preview=chat.preview||"Private conversation";
+      const time=chat.lastMs?new Date(chat.lastMs).toLocaleTimeString([], {hour:"numeric",minute:"2-digit"}):"";
+      return '<button type="button" class="tubal-msg-user '+(chat.online?"is-online ":"is-offline ")+(unread?"has-unread":"")+'" data-uid="'+esc(chat.uid)+'">'+
+        '<div class="tubal-msg-avatar">'+(chat.photoURL?'<img src="'+esc(chat.photoURL)+'" alt="">':esc(initials(chat.displayName||chat.email||"Member")))+
+        '<span class="tubal-msg-mini-status"></span></div>'+
+        '<div class="tubal-msg-user-copy"><b>'+esc(chat.displayName||chat.email?.split("@")[0]||"Member")+'</b>'+
+        '<span class="tubal-msg-preview">'+esc(preview)+'</span></div>'+
+        '<div class="tubal-msg-row-meta">'+(time?'<time>'+esc(time)+'</time>':'')+(unread?'<strong class="tubal-msg-unread">'+(unread>99?"99+":unread)+'</strong>':'')+'</div></button>';
+    }).join("");
 
     box.querySelectorAll(".tubal-msg-user").forEach(button=>{
-      const user=list.find(x=>x.uid===button.dataset.uid);
-      button.onclick=e=>{e.preventDefault();e.stopPropagation();if(user)openUser(user)};
+      const chat=list.find(x=>x.uid===button.dataset.uid);
+      button.onclick=e=>{
+        e.preventDefault();e.stopPropagation();
+        if(chat)openUser(chat);
+      };
     });
   };
 
-  const loadInitial=async()=>{
-    try{
-      const [usersSnap,presenceSnap]=await Promise.all([
-        getDocsFromServer(query(usersRef,limit(100))),
-        getDocsFromServer(query(presenceRef,limit(100)))
-      ]);
-      usersLoaded=true;presenceLoaded=true;
-      syncMap(usersSnap,usersMap);syncMap(presenceSnap,presenceMap);
-      render();
-    }catch(err){
-      console.error("[TUBAL HUB] floating Firebase member load",err);
-      render(err?.code==="permission-denied"?"Firestore denied member reads. Check Firestore Rules.":"Firebase member data could not be loaded.");
-    }
+  const ingestUsers=snap=>{
+    usersLoaded=true;usersMap=new Map();
+    snap.forEach(d=>{
+      const x=d.data();
+      usersMap.set(x.uid||d.id,{...x,uid:x.uid||d.id});
+    });
+    render();
   };
 
-  stopUsersSnapshot=onSnapshot(query(usersRef,limit(100)),snap=>{
-    usersLoaded=true;
-    syncMap(snap,usersMap);
+  const ingestPresence=snap=>{
+    presenceLoaded=true;presenceMap=new Map();
+    snap.forEach(d=>{
+      const x=d.data();
+      presenceMap.set(x.uid||d.id,{...x,uid:x.uid||d.id});
+    });
     render();
-  },err=>{
-    usersLoaded=true;
-    console.error("[TUBAL HUB] floating users listener",err);
+  };
+
+  const ingestMessages=snap=>{
+    messagesLoaded=true;
+    conversationMap=new Map();
+
+    snap.forEach(d=>{
+      const x=d.data();
+      const participants=Array.isArray(x.participants)?x.participants:[];
+      if(!participants.includes(me.uid))return;
+
+      const otherId=String(x.senderId||"")===String(me.uid)
+        ? String(x.receiverId||participants.find(id=>String(id)!==String(me.uid))||"")
+        : String(x.senderId||participants.find(id=>String(id)!==String(me.uid))||"");
+
+      if(!otherId||otherId===String(me.uid))return;
+
+      const ms=lastSeenMs(x.createdAt);
+      const existing=conversationMap.get(otherId);
+      const preview=x.type==="image"?"Sent an image":x.type==="gif"?"Sent a GIF":String(x.text||"").replace(/\s+/g," ").trim().slice(0,72);
+      const unread=Number(localStorage.getItem("tubalMsgUnread:"+otherId)||0);
+
+      if(!existing||ms>=existing.lastMs){
+        conversationMap.set(otherId,{
+          uid:otherId,
+          displayName:String(x.senderId||"")===String(me.uid)?"":(x.displayName||""),
+          photoURL:String(x.senderId||"")===String(me.uid)?"":(x.senderPhotoURL||x.photoURL||""),
+          preview,lastMs:ms,unread
+        });
+      }
+    });
+
+    // Recompute unread counts from actual stored conversation messages.
+    const unreadByUser={};
+    snap.forEach(d=>{
+      const x=d.data();
+      if(String(x.receiverId||"")!==String(me.uid))return;
+      const senderId=String(x.senderId||"");
+      if(!senderId)return;
+      const ms=lastSeenMs(x.createdAt);
+      const seen=Number(localStorage.getItem("tubalMsgSeen:"+senderId)||0);
+      if(ms>seen)unreadByUser[senderId]=(unreadByUser[senderId]||0)+1;
+    });
+
+    conversationMap.forEach((chat,uid)=>chat.unread=unreadByUser[uid]||0);
+    Object.keys(unreadByUser).forEach(uid=>localStorage.setItem("tubalMsgUnread:"+uid,String(unreadByUser[uid])));
+    render();
+  };
+
+  stopUsersSnapshot=onSnapshot(query(usersRef,limit(100)),ingestUsers,err=>{
+    usersLoaded=true;console.error("[TUBAL HUB] floating users listener",err);
     render(err?.code==="permission-denied"?"Firestore denied member reads. Check Firestore Rules.":"Firebase users listener failed.");
   });
 
-  stopPresenceSnapshot=onSnapshot(query(presenceRef,limit(100)),snap=>{
-    presenceLoaded=true;
-    syncMap(snap,presenceMap);
-    render();
-  },err=>{
-    presenceLoaded=true;
-    console.error("[TUBAL HUB] floating presence listener",err);
+  stopPresenceSnapshot=onSnapshot(query(presenceRef,limit(100)),ingestPresence,err=>{
+    presenceLoaded=true;console.error("[TUBAL HUB] floating presence listener",err);
     render(err?.code==="permission-denied"?"Firestore denied presence reads. Check Firestore Rules.":"Firebase presence listener failed.");
   });
 
+  stopMessagesSnapshot=onSnapshot(query(messagesRef,where("participants","array-contains",me.uid),limit(200)),ingestMessages,err=>{
+    messagesLoaded=true;console.error("[TUBAL HUB] floating messages listener",err);
+    render(err?.code==="permission-denied"?"Firestore denied private message reads. Check Firestore Rules.":"Firebase private messages could not be loaded.");
+  });
+
   timeoutId=setTimeout(()=>{
-    if(!usersLoaded&&!presenceLoaded)render("Firebase is not responding. Check your connection or Firestore configuration.");
+    if(!usersLoaded&&!presenceLoaded&&!messagesLoaded){
+      render("Firebase is not responding. Check your connection or Firestore configuration.");
+    }
   },3500);
 
-  refreshTimer=setInterval(render,30000);
-  loadInitial();
+  refreshTimer=setInterval(()=>{
+    render();
+  },30000);
 
   stopUsers=()=>{
     stopUsersSnapshot?.();
     stopPresenceSnapshot?.();
+    stopMessagesSnapshot?.();
     clearInterval(refreshTimer);
     clearTimeout(timeoutId);
   };
@@ -239,5 +295,5 @@ onAuthStateChanged(auth,u=>{
     const backdrop=document.getElementById("tubalMsgBackdrop"),panel=document.getElementById("tubalMessenger");
     if(backdrop)backdrop.hidden=true;if(panel){panel.classList.remove("msg-open");panel.hidden=true}return;
   }
-  if(launcher)launcher.hidden=false;setLauncherOnline(true);watchOwnPresence();watchUsers();watchUnread();updateBadge();
+  if(launcher)launcher.hidden=false;setLauncherOnline(true);watchOwnPresence();watchUsers();updateBadge();
 });
