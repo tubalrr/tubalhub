@@ -1,9 +1,20 @@
 /* TUBAL HUB — Notification Center */
-import {app,auth} from "./firebase-config.js";
-import {onAuthStateChanged} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
-import {getFirestore,collection,query,where,limit,onSnapshot,doc,writeBatch} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
-
-const db=getFirestore(app);
+let db=null,auth=null,authListener=null,firestoreApi=null;
+async function initFirebase(){
+  if(db||authListener)return;
+  try{
+    const cfg=await import("./firebase-config.js");
+    const authApi=await import("https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js");
+    const fs=await import("https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js");
+    auth=cfg.auth;db=fs.getFirestore(cfg.app);firestoreApi=fs;
+    authListener=authApi.onAuthStateChanged;
+    authListener(auth,u=>{
+      me=u&&!u.isAnonymous?u:null;
+      if(me)watchRemote();else{if(stopRemote){stopRemote();stopRemote=null}if(!items.some(x=>x.remote)){items=DEMO_MODE?demoLoad():[];render()}
+      }
+    });
+  }catch(e){console.warn("[TUBAL HUB] Firebase notifications unavailable",e)}
+}
 const DEMO_MODE=true;
 const KEY="tubalhub.notifications.v1";
 const esc=v=>{const d=document.createElement("div");d.textContent=String(v??"");return d.innerHTML};
@@ -145,7 +156,7 @@ function markAllRead(){
   const rows=[...document.querySelectorAll(".th-notification-row.is-unread")];
   rows.forEach((row,i)=>row.animate([{transform:"translateX(0)",opacity:1},{transform:"translateX(34px)",opacity:0}],{duration:260,delay:i*12,fill:"forwards",easing:"cubic-bezier(.16,1,.3,1)"}));
   const finish=async()=>{
-    if(me&&items.some(x=>x.remote)){const batch=writeBatch(db);items.filter(x=>x.remote&&!x.read).slice(0,450).forEach(n=>batch.update(doc(db,"notifications",n.id),{read:true}));try{await batch.commit()}catch(e){console.warn("[TUBAL HUB] mark notifications read",e)}}
+    if(me&&items.some(x=>x.remote)){const batch=firestoreApi.writeBatch(db);items.filter(x=>x.remote&&!x.read).slice(0,450).forEach(n=>batch.update(firestoreApi.doc(db,"notifications",n.id),{read:true}));try{await batch.commit()}catch(e){console.warn("[TUBAL HUB] mark notifications read",e)}}
     items=items.map(x=>Object.assign({},x,{read:true}));save();setTimeout(render,270+Math.min(rows.length,10)*12);
   };
   finish();
@@ -187,10 +198,7 @@ function demoTick(){
   items=[n].concat(items.filter(x=>!String(x.id).startsWith("demo-live-")).slice(0,39));save();render();signalNew();
 }
 ensureUi();
-onAuthStateChanged(auth,u=>{
-  me=u&&!u.isAnonymous?u:null;
-  if(me)watchRemote();else{if(stopRemote){stopRemote();stopRemote=null}items=DEMO_MODE?demoLoad():[];render()}
-});
+initFirebase();
 setInterval(demoTick,30000);
 render();
 window.addEventListener("keydown",e=>{if(e.key==="Escape"&&document.getElementById("thNotificationPanel")?.classList.contains("is-open"))window.__tubalOpenNotifications?.(false)});
