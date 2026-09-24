@@ -1,51 +1,53 @@
-// TUBAL HUB — Sidebar V3: hover-only rail + mouse spotlight
+// TUBAL HUB — Hamburger navigation drawer
 (function(){
-  const sidebar = document.querySelector('.hub-sidebar');
-  if(!sidebar) return;
+  const root = document.querySelector('.hub-home');
+  const sidebar = document.getElementById('tubalSidebar');
+  const trigger = document.getElementById('sidebarMenuTrigger');
+  const backdrop = document.getElementById('sidebarBackdrop');
+  const closeBtn = document.getElementById('sidebarClose');
 
-  // Remove the old pinned state so an older session/script can never
-  // leave the rail permanently expanded.
-  sidebar.classList.remove('is-pinned');
-  sidebar.removeAttribute('data-expanded');
+  if(!root || !sidebar || !trigger) return;
 
-  const setSpot = (e)=>{
-    const rect = sidebar.getBoundingClientRect();
-    const x = Math.max(0, Math.min(rect.width, e.clientX - rect.left));
-    const y = Math.max(0, Math.min(rect.height, e.clientY - rect.top));
-    sidebar.style.setProperty('--sb-x', x + 'px');
-    sidebar.style.setProperty('--sb-y', y + 'px');
+  const setOpen = (open)=>{
+    root.classList.toggle('sidebar-is-open', open);
+    trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    trigger.setAttribute('aria-label', open ? 'Close navigation' : 'Open navigation');
+    trigger.setAttribute('title', open ? 'Close navigation' : 'Open navigation');
+    sidebar.setAttribute('aria-hidden', open ? 'false' : 'true');
+    if(open){
+      document.documentElement.classList.add('tubal-sidebar-open');
+      closeBtn?.focus({preventScroll:true});
+    }else{
+      document.documentElement.classList.remove('tubal-sidebar-open');
+    }
   };
 
-  sidebar.addEventListener('pointermove', setSpot, {passive:true});
-
-  sidebar.addEventListener('pointerleave', ()=>{
-    sidebar.style.setProperty('--sb-x', '36px');
-    sidebar.style.setProperty('--sb-y', '120px');
-  }, {passive:true});
-
-  // Safety: never keep the rail expanded after the pointer leaves.
-  sidebar.addEventListener('mouseleave', ()=>{
-    sidebar.classList.remove('is-pinned');
-    sidebar.removeAttribute('data-expanded');
-  }, {passive:true});
-
-  // Hard guard: moving into page content collapses the rail immediately.
-  document.addEventListener('pointermove', (e)=>{
-    if(e.clientX > 285){
-      sidebar.classList.remove('is-pinned');
-      sidebar.removeAttribute('data-expanded');
-    }
-  }, {passive:true});
-
-  // Prevent the legacy expand button from reintroducing the sticky state.
-  const toggle = sidebar.querySelector('.side-expand-toggle');
-  toggle?.addEventListener('click', (e)=>{
+  trigger.addEventListener('click', (e)=>{
     e.preventDefault();
-    sidebar.classList.remove('is-pinned');
-    sidebar.removeAttribute('data-expanded');
+    e.stopPropagation();
+    setOpen(!root.classList.contains('sidebar-is-open'));
   });
 
-  if(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches){
-    sidebar.style.setProperty('--sb-speed', '0s');
-  }
+  closeBtn?.addEventListener('click', ()=>{
+    setOpen(false);
+    trigger.focus({preventScroll:true});
+  });
+
+  backdrop?.addEventListener('click', ()=>setOpen(false));
+
+  sidebar.querySelectorAll('.side-nav a, .side-brand, .fan-btn, .social-mini a, .sidebar-user').forEach(link=>{
+    link.addEventListener('click', ()=>{
+      setOpen(false);
+    });
+  });
+
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape' && root.classList.contains('sidebar-is-open')){
+      setOpen(false);
+      trigger.focus({preventScroll:true});
+    }
+  });
+
+  // Keep the drawer closed on initial load, regardless of older state.
+  setOpen(false);
 })();
