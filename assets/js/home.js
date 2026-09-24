@@ -1000,8 +1000,19 @@ async function bentoMusicRows(){
 }
 async function bentoOnlineCount(){
   try{
-    const snap=await getDocs(query(collection(db,"presence"),limit(500))),online=new Set();
-    snap.forEach(s=>{const x=s.data();if(x?.online===true)online.add(s.id||x.uid)});
+    const snap=await getDocs(query(collection(db,"presence"),limit(500)));
+    const now=Date.now();
+    const ONLINE_WINDOW_MS=45000;
+    const online=new Set();
+    snap.forEach(s=>{
+      const x=s.data()||{};
+      const lastSeenMs=typeof x.lastSeen?.toMillis==="function"
+        ? x.lastSeen.toMillis()
+        : Number.isFinite(Number(x.lastSeen)) ? Number(x.lastSeen) : 0;
+      if(x.online===true && lastSeenMs>0 && (now-lastSeenMs)<=ONLINE_WINDOW_MS){
+        online.add(s.id||x.uid);
+      }
+    });
     return online.size;
   }catch(_){return null}
 }
