@@ -1407,6 +1407,11 @@ function startHome(){
       console.error("Logout failed:",error);
     }
   });
+  const applyAuthUI=()=>syncHomeAuthUI(auth.currentUser);
+  applyAuthUI();
+  try{
+    auth.authStateReady?.().then(applyAuthUI).catch(()=>{});
+  }catch(_){}
   onAuthStateChanged(auth,user=>{
     syncHomeAuthUI(user);
   });
