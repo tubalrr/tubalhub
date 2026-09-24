@@ -559,7 +559,7 @@ body.hub-home .home-premium-footer{
 }
 
 /* Mobile drawer: 3-line trigger stays visible and tappable. */
-@media(max-width:767px){
+@media(max-width:768px){
   html.tubal-sidebar-open,
   html.tubal-sidebar-open body{
     overflow:hidden!important;
@@ -989,7 +989,7 @@ body.hub-home .home-premium-footer{
   }
 }
 
-@media(min-width:481px) and (max-width:767px){
+@media(min-width:481px) and (max-width:768px){
   .hub-home .search-box{
     width:140px!important;
     min-width:140px!important;
