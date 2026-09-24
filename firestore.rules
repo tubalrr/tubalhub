@@ -319,6 +319,36 @@ service cloud.firestore {
     }
 
     // =========================================================
+    // UNIFIED HUB CONTENT FEED
+    // =========================================================
+    // One publish can surface in the appropriate TUBAL HUB areas:
+    // Feeds plus the source section such as News, Shop, Games, etc.
+    match /hubPosts/{postId} {
+      allow read: if true;
+
+      allow create: if realUser()
+        && request.resource.data.createdBy == request.auth.uid
+        && request.resource.data.contentType in [
+          'post','product','game','news','video','announcement','event','story'
+        ]
+        && request.resource.data.status == 'published'
+        && request.resource.data.destinations is list
+        && request.resource.data.destinations.size() > 0
+        && request.resource.data.destinations.size() <= 10
+        && request.resource.data.title is string
+        && request.resource.data.text is string
+        && request.resource.data.title.size() <= 240
+        && request.resource.data.text.size() <= 4000;
+
+      allow update, delete: if adminUser()
+        || (
+          realUser()
+          && resource.data.createdBy == request.auth.uid
+          && request.resource.data.createdBy == resource.data.createdBy
+        );
+    }
+
+    // =========================================================
     // PUBLIC CONTENT — ADMIN WRITE
     // =========================================================
 
