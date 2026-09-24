@@ -17,8 +17,12 @@
 <link rel="stylesheet" href="assets/css/home-premium.css?v=20260924">
 <link rel="stylesheet" href="assets/css/sidebar-premium.css?v=20260924-v9">
 <link rel="stylesheet" href="assets/css/home-agency.css?v=20260924-v2">
-<link rel="stylesheet" href="assets/css/notification-search.css?v=20260924-ns4">
-<style>.home-games-section{margin-top:24px}.games-preview-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.game-preview-card{display:flex;align-items:center;gap:12px;padding:18px;border:1px solid rgba(139,124,255,.22);border-radius:18px;background:rgba(17,20,38,.62);color:inherit;text-decoration:none;transition:.2s}.game-preview-card:hover{transform:translateY(-4px);border-color:#8b7cff}.game-preview-card>span{font-size:32px}.game-preview-card .game-logo{width:64px;height:64px;object-fit:contain;flex:0 0 64px;border-radius:10px;background:rgba(255,255,255,.06);padding:5px}.game-preview-card .game-logo-ml{display:flex;align-items:center;justify-content:center;padding:0;background:linear-gradient(145deg,#1a65d8,#071a4b);color:#fff;font-weight:900;font-size:20px;letter-spacing:-1px;text-shadow:0 2px 4px rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.2)}.game-preview-card div{min-width:0;flex:1}.game-preview-card small{font-size:10px;opacity:.65}.game-preview-card h3{margin:4px 0;font-size:15px}.game-preview-card p{margin:0;font-size:11px;opacity:.65}.game-preview-card>b{font-size:18px}@media(max-width:900px){.games-preview-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:560px){.games-preview-grid{grid-template-columns:1fr}}</style></head>
+<link rel="stylesheet" href="assets/css/notification-search.css?v=20260924-ns5">
+<style>.home-games-section{margin-top:24px}.games-preview-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.game-preview-card{display:flex;align-items:center;gap:12px;padding:18px;border:1px solid rgba(139,124,255,.22);border-radius:18px;background:rgba(17,20,38,.62);color:inherit;text-decoration:none;transition:.2s}.game-preview-card:hover{transform:translateY(-4px);border-color:#8b7cff}.game-preview-card>span{font-size:32px}.game-preview-card .game-logo{width:64px;height:64px;object-fit:contain;flex:0 0 64px;border-radius:10px;background:rgba(255,255,255,.06);padding:5px}.game-preview-card .game-logo-ml{display:flex;align-items:center;justify-content:center;padding:0;background:linear-gradient(145deg,#1a65d8,#071a4b);color:#fff;font-weight:900;font-size:20px;letter-spacing:-1px;text-shadow:0 2px 4px rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.2)}.game-preview-card div{min-width:0;flex:1}.game-preview-card small{font-size:10px;opacity:.65}.game-preview-card h3{margin:4px 0;font-size:15px}.game-preview-card p{margin:0;font-size:11px;opacity:.65}.game-preview-card>b{font-size:18px}@media(max-width:900px){.games-preview-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:560px){.games-preview-grid{grid-template-columns:1fr}}</style><style>
+.hub-home .search-box{position:relative;z-index:200;pointer-events:auto!important}
+.hub-home .search-box input{position:relative;z-index:2;pointer-events:auto!important;cursor:text!important}
+.hub-home .search-box .search-shortcut{position:relative;z-index:3}
+</style></head>
 <body class="hub-home">
 
 <button class="sidebar-menu-trigger" id="sidebarMenuTrigger" type="button" aria-controls="tubalSidebar" aria-expanded="false" aria-label="Open navigation" title="Open navigation">
@@ -91,10 +95,6 @@
 
 <div class="hub-main">
   <header class="hub-topbar">
-    <a class="top-nav-logo" href="index.html" aria-label="TUBAL HUB Home" title="TUBAL HUB">
-      <img src="tubal-hub-logo.png" width="46" height="46" alt="TUBAL HUB">
-      <i class="top-logo-status" aria-hidden="true"></i>
-    </a>
     <div class="theme-switcher" aria-label="Theme">
       <button data-theme-btn="midnight" class="theme-btn active" title="Midnight"><span class="dot"></span> Midnight</button>
       <button data-theme-btn="forest" class="theme-btn" title="Forest"><span class="dot"></span> Forest</button>
@@ -312,7 +312,7 @@ const io=new IntersectionObserver((entries)=>{if(entries[0].isIntersecting){io.d
 <script src="assets/js/main.js?v=20260924-main3"></script>
 <script src="assets/js/theme.js"></script>
 <script type="module" src="assets/js/notifications.js?v=20260924-ns4"></script>
-<script type="module" src="assets/js/search.js?v=20260924-ns6"></script>
+<script type="module" src="assets/js/search.js?v=20260924-ns7"></script>
 <script src="assets/js/sidebar-premium.js?v=20260924-v9"></script>
 <script src="assets/js/home-agency.js?v=20260924-v1"></script>
 </body>
