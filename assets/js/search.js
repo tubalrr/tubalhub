@@ -199,7 +199,9 @@ function onKey(e){
 }
 onAuthStateChanged(auth,u=>{readyUser=!!u&&!u.isAnonymous;cache=null;cacheAt=0});
 ensureUi();
-document.querySelector(".search-box")?.addEventListener("click",e=>{e.preventDefault();open("")});
-document.querySelector(".search-box input")?.addEventListener("focus",()=>open(""));
-document.querySelector(".search-box")?.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();open("")}});
+document.querySelector(".search-box")?.addEventListener("click",e=>{if(e.target.closest(".search-shortcut")){e.preventDefault();open("");return}if(!e.target.closest("input")){e.preventDefault();open("")}});
+const topSearch=document.querySelector(".search-box input");
+topSearch?.addEventListener("focus",()=>{if(modal?.hidden)open(topSearch.value||"")});
+topSearch?.addEventListener("input",()=>{if(modal?.hidden)open(topSearch.value||"")});
+document.querySelector(".search-box")?.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();open(document.querySelector(".search-box input")?.value||"")}});
 document.addEventListener("keydown",e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==="k"){e.preventDefault();open("");return}if(e.key==="Tab"&&modal&&!modal.hidden){const focusables=[...modal.querySelectorAll("input,button,[href],[tabindex]:not([tabindex=\"-1\"])")];if(!focusables.length)return;const first=focusables[0],last=focusables[focusables.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}});
