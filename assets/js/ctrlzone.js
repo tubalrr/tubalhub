@@ -1,3 +1,6 @@
+import {getFirestore,collection,onSnapshot} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+import {app} from "./firebase-config.js";
+const db=getFirestore(app);
 const LOGO_BASE="https://commons.wikimedia.org/wiki/Special:Redirect/file/";
 const games=[
 {id:"mlbb",name:"Mobile Legends: Bang Bang",short:"MLBB",logo:LOGO_BASE+"Mobile_Legends_Logo.webp",cover:"https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=88",genre:"MOBA",dev:"Moonton",officialUrl:"https://www.mobilelegends.com",description:"Fast 5v5 MOBA sessions built around heroes, lanes, and team play."},
@@ -34,6 +37,37 @@ function burstAt(el,count=6){
     p.style.setProperty("--dx",Math.cos(a)*d+"px");p.style.setProperty("--dy",Math.sin(a)*d+"px");
     els.particles.appendChild(p);setTimeout(()=>p.remove(),650)
   }
+}
+function updateLiveUI(count){
+  state.liveMembers=count;
+  const header=document.getElementById("headerLivePlayers");
+  const featured=document.getElementById("featuredLiveCount");
+  const copy=document.getElementById("featuredMemberCopy");
+  const dot=document.querySelector(".ctrl-header-live .live-dot");
+  if(header)header.textContent=String(count);
+  if(featured)featured.textContent=String(count);
+  if(copy)copy.textContent=count===1?"1 member is online now.":count+" members are online now.";
+  dot?.classList.toggle("is-offline",count===0);
+}
+function initRealPresence(){
+  onSnapshot(collection(db,"presence"),snap=>{
+    const cutoff=Date.now()-45000;
+    let count=0;
+    snap.forEach(x=>{
+      const d=x.data();
+      const seen=d.lastSeen?.toMillis?.();
+      if(d.online===true&&seen&&seen>=cutoff)count++;
+    });
+    updateLiveUI(count);
+  },err=>{
+    console.warn("[CTRLZONE presence]",err);
+    const h=document.getElementById("headerLivePlayers");
+    const f=document.getElementById("featuredLiveCount");
+    const c=document.getElementById("featuredMemberCopy");
+    if(h)h.textContent="—";
+    if(f)f.textContent="—";
+    if(c)c.textContent="Live member count unavailable.";
+  });
 }
 function renderFilters(){
   const counts=Object.fromEntries(genres.map(g=>[g,g==="All"?games.length:games.filter(x=>x.genre===g).length]));
@@ -74,12 +108,7 @@ function wireSpotlights(){
 }
 function renderFeatured(){
   const g=games.find(x=>x.id===state.featuredId)||games[0];
-  els.featured.innerHTML='<div class="featured-cover"><img src="'+esc(g.cover)+'" alt="'+esc(g.name)+' featured cover"></div>'+
-    '<div class="featured-copy"><img class="feature-logo" src="'+esc(g.logo)+'" alt="'+esc(g.name)+' official logo">'+
-    '<div class="featured-live"><span class="mini-online-dot"></span> LIVE NOW • '+esc(g.players)+' ONLINE</div>'+
-    '<h3>'+esc(g.name)+'</h3><p class="featured-desc">'+esc(g.description)+'</p>'+
-    '<div class="avatar-stack">'+['RR','ML','JT','NX'].map((x,i)=>'<span class="party-avatar '+(i===3?"offline":"")+'">'+x+'</span>').join("")+'</div>'+
-    '<div class="featured-actions"><button class="join-party" data-featured-play="'+esc(g.id)+'" type="button">Join Party →</button><button class="watch-stream" data-featured-stream="'+esc(g.id)+'" type="button">Watch Stream</button></div></div>';
+  els.featured.innerHTML='<div class="featured-cover"><img src="'+esc(g.cover)+'" alt="'+esc(g.name)+' featured cover"></div><div class="featured-copy"><img class="feature-logo" src="'+esc(g.logo)+'" alt="'+esc(g.name)+' official logo"><div class="featured-live"><span class="mini-online-dot"></span> TUBAL HUB LIVE • <strong id="featuredLiveCount">…</strong> MEMBERS</div><h3>'+esc(g.name)+'</h3><p class="featured-desc">'+esc(g.description)+'</p><div class="featured-members" aria-live="polite"><span id="featuredMemberCopy">Checking live members…</span></div><div class="featured-actions"><button class="join-party" data-featured-play="'+esc(g.id)+'" type="button">Join Party →</button><button class="watch-stream" data-featured-stream="'+esc(g.id)+'" type="button">Watch Stream</button></div></div>';
   wireSpotlights();
 }
 function playGame(g,button){
@@ -110,7 +139,7 @@ document.getElementById("playNowBtn")?.addEventListener("click",()=>{
   const g=games.find(x=>x.id===state.featuredId)||games[0];const b=document.getElementById("playNowBtn");playGame(g,b);
 });
 
-readFavs();renderFilters();renderFeatured();
+readFavs();const sg=document.getElementById("statGameCount");if(sg)sg.textContent=String(games.length);const sn=document.getElementById("statGenreCount");if(sn)sn.textContent=String(new Set(games.map(g=>g.genre)).size);const so=document.getElementById("statOfficialCount");if(so)so.textContent=String(games.filter(g=>g.officialUrl).length);renderFilters();renderFeatured();initRealPresence();
 els.grid.innerHTML=Array.from({length:8},(_,i)=>'<div class="game-card" style="--stagger:'+(i*.06)+'s"><div class="game-cover"><span class="logo-skeleton" style="inset:0"></span></div><div class="game-body"><div class="game-body-top"><span class="game-mini-logo"><span class="logo-skeleton"></span></span><div class="game-meta"><div style="height:18px;width:68%;border-radius:7px;background:rgba(255,255,255,.06)"></div><div style="height:9px;width:35%;margin-top:8px;border-radius:5px;background:rgba(255,255,255,.04)"></div></div></div><div style="height:10px;width:92%;margin-top:15px;border-radius:5px;background:rgba(255,255,255,.04)"></div><div style="height:10px;width:68%;margin-top:7px;border-radius:5px;background:rgba(255,255,255,.04)"></div></div></div>').join("");
 setTimeout(renderGames,650);
 
