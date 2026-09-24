@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('header nav a').forEach(link => {
     try {
       const target = new URL(link.href, current.href);
-      if (target.pathname.replace(/\\/+$/, '') === current.pathname.replace(/\\/+$/, '')) link.classList.add('active');
+      if (target.pathname.replace(/\/+$/, '') === current.pathname.replace(/\/+$/, '')) link.classList.add('active');
     } catch (_) {}
   });
 
