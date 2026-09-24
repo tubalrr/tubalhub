@@ -14,3 +14,7 @@ html[data-theme="midnight"] .tubal-ai-window{border-radius:10px;background:#0206
 /* Default state: chatbot window stays completely hidden until the assistant button is pressed. */
 .tubal-ai-window{display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important;transform:scale(.92)!important;}
 .tubal-ai-window.is-open{display:grid!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;transform:scale(1)!important;}
+
+/* The emoji/reaction picker must stay hidden until its button is pressed. */
+.tubal-ai-emoji-picker[hidden]{display:none!important;visibility:hidden!important;pointer-events:none!important;}
+.tubal-ai-emoji-picker:not([hidden]){display:grid!important;visibility:visible;pointer-events:auto;}
