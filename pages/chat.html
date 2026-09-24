@@ -163,7 +163,25 @@ function renderMessage(id,data){
 }
 function openReactionMenu(button,messageId){const existing=document.querySelector('.inline-reactions');if(existing)existing.remove();const box=document.createElement('div');box.className='inline-reactions';box.style.cssText='position:fixed;z-index:50;background:#061713;border:1px solid #1d7550;border-radius:12px;padding:7px;box-shadow:0 15px 40px #000b;display:flex;gap:3px;flex-wrap:wrap;max-width:260px';box.innerHTML=['❤️','👍','😂','🔥','💚'].map((e,i)=>`<button type="button" class="emoji-choice reaction-menu-choice" data-e="${e}" style="--quick-delay:${i*.05}s">${e}</button>`).join('');document.body.appendChild(box);const r=button.getBoundingClientRect();box.style.left=Math.min(r.left,innerWidth-270)+'px';box.style.top=Math.max(10,r.top-52)+'px';box.querySelectorAll('[data-e]').forEach(b=>b.onclick=()=>{const emoji=b.dataset.e;animateReactionTarget(b);toggleReaction(messageId,emoji);box.remove()});setTimeout(()=>document.addEventListener('click',function close(ev){if(!box.contains(ev.target)&&ev.target!==button){box.remove();document.removeEventListener('click',close)}},{once:false}),0)}
 async function toggleReaction(messageId,emoji){if(!isRealUser())return;fireReactionFx(messageId,emoji);const id=`${messageId}_${currentUser.uid}`;const r=doc(db,'globalChatReactions',id);const snap=await getDoc(r);let arr=snap.exists()?Array.isArray(snap.data().reactions)?snap.data().reactions:[]:[];arr=arr.includes(emoji)?arr.filter(x=>x!==emoji):[...arr,emoji];if(arr.length)await setDoc(r,{messageId,uid:currentUser.uid,reactions:arr,updatedAt:serverTimestamp()},{merge:true});else if(snap.exists())await deleteDoc(r)}
-function renderReplyReactions(item,replyId){const bar=item.querySelector('.reply-reaction-bar');if(!bar)return;const counts=reactionState['reply_'+replyId]||{};bar.innerHTML=Object.entries(counts).filter(([,n])=>n>0).map(([e,n])=>`<button type="button" class="reaction-chip reply-reaction-chip" data-react="${esc(e)}">${e} ${n}</button>`).join('');bar.querySelectorAll('.reply-reaction-chip').forEach(b=>b.onclick=e=>{e.stopPropagation();toggleReplyReaction(replyId,b.dataset.react)})}
+function renderReplyReactions(item,replyId){
+ const bar=item.querySelector('.reply-reaction-bar');if(!bar)return;
+ const key='reply_'+replyId;
+ const counts=reactionState[key]||{};
+ const users=reactionUsersState[key]||{};
+ bar.innerHTML=Object.entries(counts).filter(([,n])=>n>0).map(([e,n])=>{
+   const active=users[e]?.has(currentUser?.uid);
+   return '<button type="button" class="reaction-chip reply-reaction-chip" data-react="'+esc(e)+'">'+
+     '<span class="react-emoji">'+e+'</span><span class="react-count">'+n+'</span></button>'.replace(
+       '<button type="button" class="reaction-chip reply-reaction-chip"',
+       '<button type="button" class="reaction-chip reply-reaction-chip'+(active?' active':'')+(n===1?' reaction-new':'')+'"'
+     );
+ }).join('');
+ bar.querySelectorAll('.reply-reaction-chip').forEach(b=>b.onclick=e=>{
+   e.stopPropagation();
+   animateReactionTarget(b);
+   toggleReplyReaction(replyId,b.dataset.react);
+ });
+}
 function openReplyReactionMenu(button,replyId){const existing=document.querySelector('.reply-inline-reactions');if(existing)existing.remove();const box=document.createElement('div');box.className='reply-inline-reactions';box.style.cssText='position:fixed;z-index:60;background:#061713;border:1px solid #1d7550;border-radius:12px;padding:7px;box-shadow:0 15px 40px #000b;display:flex;gap:3px;flex-wrap:wrap;max-width:260px';box.innerHTML=emojis.slice(0,18).map(e=>`<button type="button" class="emoji-choice" data-e="${esc(e)}">${e}</button>`).join('');document.body.appendChild(box);const r=button.getBoundingClientRect();box.style.left=Math.min(r.left,innerWidth-270)+'px';box.style.top=Math.max(10,r.top-52)+'px';box.querySelectorAll('[data-e]').forEach(b=>b.onclick=()=>{toggleReplyReaction(replyId,b.dataset.e);box.remove()});setTimeout(()=>document.addEventListener('click',function close(ev){if(!box.contains(ev.target)&&ev.target!==button){box.remove();document.removeEventListener('click',close)}},{once:false}),0)}
 async function toggleReplyReaction(replyId,emoji){if(!isRealUser())return;const id=`reply_${replyId}_${currentUser.uid}`;const r=doc(db,'globalChatReactions',id);const snap=await getDoc(r);let arr=snap.exists()?Array.isArray(snap.data().reactions)?snap.data().reactions:[]:[];arr=arr.includes(emoji)?arr.filter(x=>x!==emoji):[...arr,emoji];if(arr.length)await setDoc(r,{replyId,uid:currentUser.uid,reactions:arr,updatedAt:serverTimestamp()},{merge:true});else if(snap.exists())await deleteDoc(r)}
 function subscribeReactions(){
