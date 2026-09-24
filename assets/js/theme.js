@@ -22,9 +22,20 @@
     window.dispatchEvent(new CustomEvent('tubalhubthemechange', {detail:{theme}}));
   };
 
+  function loadUpdateNotifier(){
+    if(window.__tubalHubUpdateNotifierLoaded || document.querySelector('script[data-tubal-update-notifier]')) return;
+    const themeScript=[...document.scripts].find(s=>/assets\/js\/theme\.js(?:\\?|$)/.test(s.src));
+    if(!themeScript) return;
+    const script=document.createElement("script");
+    script.src=new URL("./update-notifier.js",themeScript.src).href;
+    script.defer=true;
+    script.dataset.tubalUpdateNotifier="1";
+    document.head.appendChild(script);
+  }
+
   window.setTubalTheme = apply;
 
-  const init = ()=>apply(getSaved());
+  const init = ()=>{apply(getSaved());loadUpdateNotifier();};
   if(document.readyState === 'loading'){
     document.addEventListener('DOMContentLoaded', init, {once:true});
   }else{
