@@ -2158,7 +2158,7 @@ body.theme-light.hub-home .bento-footer .footer-access-cards a,.theme-light.hub-
     min-height:0;
     border-radius:24px;
   }
-  .bento-card,#canvaStudio.bento-canva{backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+  .bento-card,{backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
   .bento-hero{height:340px;padding:22px}
   .bento-hero-copy{width:100%}
   .bento-hero h1{font-size:28px}
@@ -2188,7 +2188,7 @@ body.theme-light.hub-home .bento-footer .footer-access-cards a,.theme-light.hub-
   .bento-hero-stat strong{font-size:13px}
   .bento-feeds .bento-feed-scroll{max-height:470px}
   .bento-games-grid{grid-template-columns:1fr}
-  #canvaStudio.bento-canva{padding-left:11px;padding-right:11px}
+  {padding-left:11px;padding-right:11px}
   .bento-footer .footer-link-list a{font-size:8px}
 }
 
