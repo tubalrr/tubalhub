@@ -2049,27 +2049,6 @@ body.hub-home .home-page.bento-home-page .home-shell{
   background:linear-gradient(135deg,#1dff91,#7d5aff);
 }
 
-#canvaStudio.bento-canva{
-  grid-column:span 12;
-  min-height:640px;
-  padding:28px;
-}
-#canvaStudio.bento-canva .canva-studio-head{margin-bottom:20px}
-#canvaStudio.bento-canva .canva-canvas-shell{
-  width:min(700px,100%);
-  max-width:700px;
-  aspect-ratio:7/4;
-}
-#canvaStudio.bento-canva #designCanvas{width:100%;height:100%}
-#canvaStudio.bento-canva .canva-template-strip{grid-template-columns:repeat(6,minmax(140px,1fr))}
-#canvaStudio.bento-canva .canva-template-card{min-height:100px}
-#canvaStudio.bento-canva .canva-template-card .canva-template-thumb{height:62px}
-#canvaStudio.bento-canva .canva-quick-template{flex-basis:140px;min-height:100px}
-#canvaStudio.bento-canva .canva-quick-template .canva-template-thumb{height:48px}
-#canvaStudio.bento-canva .canva-studio-workspace{grid-template-columns:80px minmax(0,1fr) 280px}
-#canvaStudio.bento-canva .canva-toolbar{width:80px;min-height:400px}
-#canvaStudio.bento-canva .canva-properties-panel{width:280px}
-
 #mainFooter.bento-footer{
   grid-column:span 12;
   margin:0;
@@ -2193,22 +2172,6 @@ body.theme-light.hub-home .bento-footer .footer-access-cards a,.theme-light.hub-
   .bento-games-grid{grid-template-columns:1fr 1fr;gap:10px}
   .bento-game-card{min-height:168px;border-radius:20px}
   .bento-game-cover{height:82px}
-  #canvaStudio.bento-canva{min-height:0;padding:16px;padding-bottom:236px}
-  #canvaStudio.bento-canva .canva-studio-workspace{display:flex;flex-direction:column;gap:10px}
-  #canvaStudio.bento-canva .canva-canvas-column{order:1}
-  #canvaStudio.bento-canva .canva-toolbar{
-    order:2;width:100%;height:60px;min-height:60px;padding:6px;overflow-x:auto;overflow-y:hidden;
-    flex-direction:row;justify-content:flex-start;border-radius:18px;position:sticky;bottom:210px;z-index:900;
-  }
-  #canvaStudio.bento-canva .canva-tool{flex:0 0 48px}
-  #canvaStudio.bento-canva .canva-properties-panel{
-    order:3;position:fixed;left:8px;right:8px;bottom:8px;width:auto;height:200px;min-height:200px;z-index:900;overflow:auto;border-radius:20px;
-  }
-  #canvaStudio.bento-canva .canva-canvas-shell{width:min(320px,100%);height:320px;aspect-ratio:1/1}
-  #canvaStudio.bento-canva #designCanvas{width:100%;height:100%}
-  #canvaStudio.bento-canva .canva-template-library{display:none}
-  #canvaStudio.bento-canva .canva-export-bar{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
-  #canvaStudio.bento-canva .canva-export-btn{min-height:38px;padding:0 8px;font-size:8px}
   .bento-footer{padding:22px!important}
   .bento-footer-row-1,.bento-footer-row-2,.bento-footer-row-3{grid-template-columns:1fr}
   .bento-footer-row-3{align-items:start}
