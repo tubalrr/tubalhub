@@ -3241,3 +3241,351 @@ body.theme-light .real-quick-form select{
   .premium-game-card,.bento-game-cover-shine{transition:none}
   .premium-game-card:hover{transform:none}
 }
+
+
+/* =========================================================
+   MOBILE BROWSER UX FIX — scoped to <=768px only
+   Desktop/tablet layout above 768px is untouched.
+   ========================================================= */
+@media (max-width:768px){
+  html,body{
+    width:100%;
+    max-width:100%;
+    overflow-x:hidden;
+    -webkit-text-size-adjust:100%;
+  }
+  body.hub-home{
+    min-width:0;
+  }
+  body.hub-home .home-page,
+  body.hub-home .bento-home-page,
+  body.hub-home .home-shell{
+    width:100%;
+    max-width:100%;
+    min-width:0;
+    margin:0;
+  }
+  body.hub-home .home-shell{
+    padding-left:0;
+    padding-right:0;
+  }
+
+  /* Keep the real three-dash drawer usable above every homepage layer. */
+  body.hub-home .sidebar-menu-trigger,
+  body.hub-home #sidebarMenuTrigger{
+    position:fixed;
+    top:max(12px,env(safe-area-inset-top));
+    left:12px;
+    width:44px;
+    height:44px;
+    min-width:44px;
+    min-height:44px;
+    padding:0;
+    z-index:1002;
+    touch-action:manipulation;
+  }
+  body.hub-home #sidebarBackdrop,
+  body.hub-home .sidebar-backdrop{
+    position:fixed;
+    inset:0;
+    z-index:1000;
+    background:rgba(0,0,0,.60);
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
+  }
+  body.hub-home #tubalSidebar,
+  body.hub-home .hub-sidebar{
+    position:fixed;
+    top:0;
+    bottom:0;
+    left:0;
+    width:min(280px,86vw);
+    max-width:280px;
+    z-index:1001;
+    transform:translate3d(-105%,0,0);
+    will-change:transform;
+    overflow-y:auto;
+    overscroll-behavior:contain;
+    -webkit-overflow-scrolling:touch;
+  }
+  body.hub-home.tubal-sidebar-open #tubalSidebar,
+  html.tubal-sidebar-open body.hub-home #tubalSidebar,
+  body.hub-home .hub-sidebar.sidebar-open{
+    transform:translate3d(0,0,0);
+  }
+  html.tubal-sidebar-open body.hub-home{
+    overflow:hidden;
+    touch-action:none;
+  }
+
+  /* Real Bento grid: one comfortable column on phones. */
+  #mainContent.bento-grid{
+    width:100%;
+    max-width:none;
+    min-width:0;
+    margin:0;
+    padding:calc(64px + env(safe-area-inset-top)) 10px calc(88px + env(safe-area-inset-bottom));
+    display:grid;
+    grid-template-columns:minmax(0,1fr);
+    gap:12px;
+    box-sizing:border-box;
+  }
+  #mainContent.bento-grid > *{
+    grid-column:1 / -1 !important;
+    min-width:0;
+    max-width:100%;
+  }
+  .bento-card,
+  #canvaStudio.bento-canva,
+  #featuredWebsite,
+  #mainFooter.bento-footer{
+    width:100%;
+    max-width:100%;
+    min-width:0;
+    border-radius:24px;
+    box-sizing:border-box;
+    overflow:hidden;
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+  }
+
+  /* Hero */
+  .bento-hero{
+    min-height:340px;
+    height:340px;
+    padding:22px 18px;
+    display:flex;
+    align-items:flex-start;
+  }
+  .bento-hero-copy{
+    width:100%;
+    max-width:100%;
+    padding-top:8px;
+  }
+  .bento-hero h1{
+    max-width:76%;
+    font-size:28px;
+    line-height:1.02;
+  }
+  .bento-hero p{
+    max-width:82%;
+    font-size:11px;
+    line-height:1.55;
+  }
+  .bento-hero-stats{
+    max-width:78%;
+    gap:6px;
+    margin-top:14px;
+  }
+  .bento-hero-stat{
+    min-width:72px;
+    padding:7px 8px;
+  }
+  .bento-hero-stat strong{font-size:13px}
+  .bento-cta-row{
+    max-width:82%;
+    gap:7px;
+    margin-top:14px;
+  }
+  .bento-primary-btn,.bento-secondary-btn{
+    min-height:40px;
+    padding:0 10px;
+    font-size:9px;
+  }
+  .bento-breathing-wrap{
+    right:8px;
+    bottom:14px;
+    top:auto;
+    width:112px;
+    height:112px;
+    transform:none;
+  }
+  .bento-breathing-circle{
+    width:88px;
+    height:88px;
+  }
+  .bento-breathing-circle b{font-size:20px}
+
+  /* Section headers and content spacing */
+  .bento-journal,.bento-music,.bento-feeds,.bento-games,.bento-quick-stats{
+    min-height:0;
+    padding:17px;
+  }
+  .bento-section-head{
+    align-items:center;
+  }
+  .bento-head-title h2,
+  .bento-games-title h2,
+  .bento-quick-stats .bento-section-head h2{
+    font-size:18px;
+  }
+  .bento-viewall{
+    font-size:8px;
+  }
+
+  /* Lists stay readable and don't create horizontal overflow. */
+  .bento-list{gap:8px;margin-top:12px}
+  .bento-journal-item,.bento-music-item{
+    min-height:68px;
+    padding:9px;
+    border-radius:15px;
+  }
+  .bento-journal-mood{
+    width:38px;
+    height:38px;
+    flex-basis:38px;
+    font-size:22px;
+  }
+  .bento-item-copy p{font-size:8px}
+  .bento-item-date{font-size:6px}
+  .bento-feed-scroll{
+    max-height:500px;
+    padding-right:1px;
+  }
+  .bento-feed-card{
+    border-radius:16px;
+    padding:9px;
+  }
+  .bento-feed-image,.bento-feed-image-placeholder{
+    height:120px;
+  }
+
+  /* Games: two compact cards where space allows, one card on very small phones. */
+  .bento-games-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:9px;
+    margin-top:13px;
+  }
+  .bento-game-card{
+    min-height:160px;
+    border-radius:19px;
+  }
+  .bento-game-cover{height:76px;padding:11px}
+  .bento-game-emoji{font-size:27px}
+  .bento-game-body{padding:9px}
+  .bento-game-title{font-size:10px}
+  .bento-game-meta{font-size:7px;gap:5px}
+  .bento-play-btn{min-height:28px;padding:0 8px;font-size:7px}
+
+  /* Existing Canva area, if present in an older cached build: keep it phone-safe. */
+  #canvaStudio.bento-canva{
+    min-height:0;
+    padding:14px;
+  }
+  #canvaStudio.bento-canva .canva-studio-workspace{
+    display:flex;
+    flex-direction:column;
+    gap:9px;
+  }
+  #canvaStudio.bento-canva .canva-canvas-shell{
+    width:min(320px,100%);
+    height:320px;
+    max-width:320px;
+    margin:0 auto;
+  }
+  #canvaStudio.bento-canva #designCanvas{
+    width:100%;
+    height:100%;
+  }
+  #canvaStudio.bento-canva .canva-toolbar{
+    width:100%;
+    min-height:58px;
+    height:58px;
+    display:flex;
+    flex-direction:row;
+    align-items:center;
+    overflow-x:auto;
+    overflow-y:hidden;
+    gap:6px;
+    padding:5px;
+    scrollbar-width:none;
+    touch-action:pan-x;
+  }
+  #canvaStudio.bento-canva .canva-toolbar::-webkit-scrollbar{display:none}
+  #canvaStudio.bento-canva .canva-tool{
+    flex:0 0 48px;
+    min-width:48px;
+    min-height:48px;
+  }
+  #canvaStudio.bento-canva .canva-properties-panel{
+    width:100%;
+    max-width:none;
+    max-height:200px;
+    overflow-y:auto;
+    border-radius:18px;
+  }
+  #canvaStudio.bento-canva .canva-template-library{
+    display:none;
+  }
+
+  /* Footer */
+  #mainFooter.bento-footer{
+    padding:20px 16px;
+    border-radius:24px;
+  }
+  .bento-footer-row-1,
+  .bento-footer-row-2,
+  .bento-footer-row-3{
+    grid-template-columns:1fr;
+    gap:18px;
+  }
+  .bento-footer-row-2,
+  .bento-footer-row-3{
+    margin-top:18px;
+    padding-top:18px;
+  }
+  .bento-footer .footer-site-status-grid{
+    grid-template-columns:1fr 1fr;
+  }
+  .bento-footer .footer-follow{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:8px;
+  }
+  .bento-footer .footer-follow-icons{
+    flex-wrap:wrap;
+  }
+  .bento-footer .footer-copyright{
+    justify-content:flex-start;
+    line-height:1.6;
+  }
+
+  /* Touch devices: no hover transforms that cause accidental layout movement. */
+  @media (hover:none),(pointer:coarse){
+    .bento-game-card:hover,
+    .premium-game-card:hover,
+    .bento-journal-item:hover,
+    .bento-music-item:hover,
+    .bento-feed-card:hover{
+      transform:none;
+    }
+    .bento-game-card{
+      transform:none !important;
+    }
+  }
+}
+
+@media(max-width:390px){
+  #mainContent.bento-grid{
+    padding-left:8px;
+    padding-right:8px;
+  }
+  .bento-hero{
+    height:350px;
+    min-height:350px;
+    padding-left:15px;
+    padding-right:15px;
+  }
+  .bento-hero h1{font-size:26px}
+  .bento-hero p{max-width:86%}
+  .bento-hero-stats{max-width:84%}
+  .bento-cta-row{
+    max-width:86%;
+    display:grid;
+    grid-template-columns:1fr;
+  }
+  .bento-primary-btn,.bento-secondary-btn{width:100%}
+  .bento-games-grid{grid-template-columns:1fr}
+  .bento-game-card{min-height:154px}
+  .bento-footer .footer-site-status-grid{grid-template-columns:1fr}
+}
