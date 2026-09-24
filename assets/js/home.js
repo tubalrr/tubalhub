@@ -1122,13 +1122,30 @@ function bentoRenderFeeds(rows){
 function bentoRenderGames(){
   const box=$("#bentoGamesGrid");if(!box)return;
   const rows=featuredGames.slice(0,4);
+  const countEl=$("#bentoGamesLiveCount");
+  if(countEl)countEl.textContent=featuredGames.length+" "+(featuredGames.length===1?"game":"games");
   if(!rows.length){
-    box.innerHTML='<div class="real-empty-card glass"><span class="real-empty-emoji" aria-hidden="true">🎮</span><p>Wala pa games, upload real</p><a class="real-quick-link" href="pages/ctrlzone.html">Open CTRLZONE →</a></div>';
+    box.innerHTML='<div class="real-empty-card glass"><span class="real-empty-emoji" aria-hidden="true">🎮</span><p>No games are currently listed in the real CTRLZONE catalog.</p><a class="real-quick-link" href="pages/ctrlzone.html">Open CTRLZONE →</a></div>';
     return;
   }
-  box.innerHTML=rows.map(g=>{
+  box.innerHTML=rows.map((g,i)=>{
     const plays=getRealGamePlayCount(g.id);
-    return '<article class="bento-game-card" style="--game-a:'+esc(g.colorA||"#07100b")+';--game-b:'+esc(g.colorB||"#173b2a")+'"><div class="bento-game-cover"><span class="bento-game-emoji">'+esc(g.emoji||"🎮")+'</span><span class="bento-game-local">LOCAL DATA</span></div><div class="bento-game-body"><div class="bento-game-title">'+esc(g.title)+'</div><div class="bento-game-meta"><span>'+plays+' local plays</span><a class="bento-play-btn" href="pages/ctrlzone.html?game='+encodeURIComponent(g.id)+'" data-real-game-play="'+esc(g.id)+'">Play Now</a></div></div></article>';
+    const category=String(g.category||g.genre||"GAME");
+    const genre=String(g.genre||"Game");
+    const official=g.officialUrl?'<a class="bento-game-official" href="'+esc(g.officialUrl)+'" target="_blank" rel="noopener noreferrer">Official site ↗</a>':"";
+    return '<article class="bento-game-card premium-game-card" style="--game-a:'+esc(g.colorA||"#283247")+';--game-b:'+esc(g.colorB||"#0d1220")+'">'+
+      '<div class="bento-game-cover premium-game-cover">'+
+        '<div class="bento-game-cover-top"><span class="bento-game-rank">0'+(i+1)+'</span><span class="bento-game-category">'+esc(category)+'</span></div>'+
+        '<div class="bento-game-emblem"><span>'+esc(g.emoji||"🎮")+'</span></div>'+
+        '<div class="bento-game-cover-shine" aria-hidden="true"></div>'+
+      '</div>'+
+      '<div class="bento-game-body premium-game-body">'+
+        '<div class="bento-game-title-row"><div><span class="bento-game-genre">'+esc(genre)+'</span><h3 class="bento-game-title">'+esc(g.title)+'</h3></div><span class="bento-game-local">REAL</span></div>'+
+        '<p class="bento-game-description">'+esc(g.description||"")+'</p>'+
+        '<div class="bento-game-footer-row"><span class="bento-game-plays">▶ '+plays+' local plays</span><a class="bento-play-btn" href="pages/ctrlzone.html?game='+encodeURIComponent(g.id)+'" data-real-game-play="'+esc(g.id)+'">Play Now <span>→</span></a></div>'+
+        official+
+      '</div>'+
+    '</article>';
   }).join("");
 }
 async function renderRealData(){
