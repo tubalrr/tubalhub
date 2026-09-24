@@ -70,12 +70,12 @@ function ensureUi(){
   const shell=document.getElementById("thNotificationShell");
   const setOpen=open=>{
     if(open){
-      overlay.hidden=false;panel.setAttribute("aria-hidden","false");
+      overlay.hidden=false;overlay.style.display="block";overlay.style.pointerEvents="auto";panel.setAttribute("aria-hidden","false");
       requestAnimationFrame(()=>{overlay.classList.add("is-open");panel.classList.add("is-open")});
       document.body.classList.add("th-notification-open");
     }else{
       overlay.classList.remove("is-open");panel.classList.remove("is-open");panel.setAttribute("aria-hidden","true");
-      setTimeout(()=>{if(!panel.classList.contains("is-open"))overlay.hidden=true},240);
+      setTimeout(()=>{if(!panel.classList.contains("is-open")){overlay.hidden=true;overlay.style.display="none";overlay.style.pointerEvents="none"}},240);
       document.body.classList.remove("th-notification-open");
     }
   };
