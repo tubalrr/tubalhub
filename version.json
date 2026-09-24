@@ -1,8 +1,8 @@
 {
-  "version": "1.2.0",
+  "version": "1.2.1",
   "date": "2026-05-14",
-  "time": "2026-05-14T10:00:00Z",
-  "message": "Real Payapang Isip tools, real AI Music audio, a cleaner homepage, and a working featured slider.",
+  "time": "2026-05-14T12:00:00Z",
+  "message": "Added a real featured games carousel to the homepage using the CTRLZONE catalog.",
   "changelog": [
     {
       "type": "New",
@@ -27,6 +27,12 @@
       "icon": "🎠",
       "title": "Homepage Sliding",
       "desc": "Gumagana na ang featured homepage slider para sa Payapang Isip, AI Music, CTRLZONE, Shop, Feeds, Global Chat, at News."
+    },
+    {
+      "type": "New",
+      "icon": "🎮",
+      "title": "Featured Games Bottom Carousel",
+      "desc": "Naglagay ng real CTRLZONE game cards sa ibaba ng homepage, may sliding controls, Play Now, at local saved game stats."
     }
   ]
 }
