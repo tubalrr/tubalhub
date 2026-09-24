@@ -85,7 +85,8 @@ function cardMarkup(g,i){
     '<div class="game-cover"><img class="cover-image" src="'+esc(g.cover)+'" alt="'+esc(g.name)+' game cover" loading="lazy"><span class="official-badge">Official ✓</span><span class="genre-badge">'+esc(g.genre)+'</span>'+logoMarkup(g,true)+'</div>'+
     '<button class="favorite-btn '+(state.favorites.has(g.id)?"active":"")+'" data-favorite="'+esc(g.id)+'" type="button" aria-label="'+(state.favorites.has(g.id)?"Remove":"Add")+' '+esc(g.name)+' favorite">'+(state.favorites.has(g.id)?"♥":"♡")+'</button>'+
     '<div class="game-body"><div class="game-body-top">'+logoMarkup(g,false)+'<div class="game-meta"><h3 class="game-title">'+esc(g.name)+'</h3><div class="game-dev">'+esc(g.dev)+'</div></div></div>'+
-    '<p class="game-desc">'+esc(g.description)+'</p><div class="game-stats"><span class="game-stat">✓ <strong>Official listing</strong></span><span class="game-stat">'+esc(g.genre)+'</span></div></div></div></article>'
+    '<p class="game-desc">'+esc(g.description)+'</p><div class="game-stats"><span class="game-stat">✓ <strong>Official listing</strong></span><span class="game-stat">'+esc(g.genre)+'</span></div>'+
+    '<div class="game-actions"><button class="game-action play-official" data-play="'+esc(g.id)+'" type="button">Play Official</button><button class="game-action visit-site" data-visit="'+esc(g.id)+'" type="button">Visit Website</button><button class="game-action share-game" data-share="'+esc(g.id)+'" type="button" aria-label="Share '+esc(g.name)+'">•••</button></div></div></article>';
 }
 function renderGames(){
   const list=filteredGames();els.count.textContent=list.length+" game"+(list.length===1?"":"s");
