@@ -1145,12 +1145,38 @@ addEventListener("resize",()=>{
   resizeTimer=setTimeout(handleHomeBreakpoint,140);
 },{passive:true});
 
+function syncHomeAuthUI(user){
+  const guest=$("#authGuestActions");
+  const signed=$("#authUserActions");
+  const name=$("#authUserName");
+  const sidebarUser=$("#sidebarUser");
+  const sidebarName=$("#sidebarUserName");
+  const sidebarAvatar=$("#sidebarUserAvatar");
+  const loggedIn=Boolean(user);
+  const displayName=String(user?.displayName||user?.email?.split("@")[0]||"").trim();
+
+  if(guest){
+    guest.hidden=loggedIn;
+    guest.setAttribute("aria-hidden",loggedIn?"true":"false");
+  }
+  if(signed){
+    signed.hidden=!loggedIn;
+    signed.setAttribute("aria-hidden",loggedIn?"false":"true");
+  }
+  if(name)name.textContent=loggedIn?displayName:"";
+  if(sidebarUser){
+    sidebarUser.hidden=!loggedIn;
+    sidebarUser.setAttribute("aria-hidden",loggedIn?"false":"true");
+  }
+  if(sidebarName)sidebarName.textContent=loggedIn?displayName:"";
+  if(sidebarAvatar)sidebarAvatar.textContent=(displayName.trim().charAt(0)||"U").toUpperCase();
+}
+
 function startHome(){
   if(homeStarted)return;
   homeStarted=true;
   onAuthStateChanged(auth,user=>{
-    const nameEl=$("#homeAuthName");
-    if(nameEl)nameEl.textContent=user?(user.displayName||user.email?.split("@")[0]||"Member"):"";
+    syncHomeAuthUI(user);
   });
   init();
 }
