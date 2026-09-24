@@ -41,7 +41,7 @@ function ui(){
     '<div id="tubalMsgBackdrop" class="tubal-msg-backdrop" hidden></div>',
     '<section id="tubalMessenger" class="tubal-msg-panel" hidden>',
       '<header class="tubal-msg-head"><strong>Messages</strong><span style="font-size:10px;color:#70ffe0">● Online</span><button id="tubalMsgClose" class="tubal-msg-close" type="button" aria-label="Close messages">×</button></header>',
-      '<div id="tubalMsgList" class="tubal-msg-list"><div style="padding:18px;color:#8fa39a;font-size:12px">Loading members…</div></div>',
+      '<div id="tubalMsgList" class="tubal-msg-list"><div class="tubal-msg-loading">Loading members…</div></div>',
     '</section>',
     '<section id="tubalMsgWindow" class="tubal-msg-window" hidden>',
       '<header class="tubal-msg-window-head"><button type="button" id="tubalMsgProfile" class="tubal-msg-profile"><div id="tubalMsgAvatar" class="tubal-msg-avatar">M</div><div><strong id="tubalMsgName">Member</strong><div class="tubal-msg-status">● Online</div></div></button><button type="button" id="tubalMsgCall" title="Video call" aria-label="Video call">📹</button><button type="button" id="tubalMsgWindowClose" aria-label="Close private chat">×</button></header>',
@@ -116,53 +116,67 @@ function watchUsers(){
   if(stopUsers){stopUsers();stopUsers=null}
   if(!me)return;
 
-  const presenceRef=collection(db,"presence");
   const usersRef=collection(db,"users");
-  let presenceMap=new Map(),usersMap=new Map();
-  let presenceLoaded=false,usersLoaded=false;
+  const presenceRef=collection(db,"presence");
+  let usersMap=new Map(),presenceMap=new Map();
+  let usersLoaded=false,presenceLoaded=false;
+  let timeoutId=null;
 
   const onlineCutoff=()=>Date.now()-180000;
+  const isOnline=uid=>{
+    const p=presenceMap.get(uid);
+    if(!p||p.online!==true)return false;
+    const last=typeof p.lastSeen==="number"
+      ? p.lastSeen
+      : (p.lastSeen?.toMillis?.()||p.lastSeen?.toDate?.()?.getTime?.()||0);
+    return last>=onlineCutoff();
+  };
 
   const render=()=>{
-    const merged=new Map();
-
-    presenceMap.forEach((x,uid)=>merged.set(uid,{...x,uid}));
-    usersMap.forEach((x,uid)=>{
-      const last=typeof x.lastSeen==="number"
-        ? x.lastSeen
-        : (x.lastSeen?.toMillis?.()||x.lastSeen?.toDate?.()?.getTime?.()||0);
-      if(last>=onlineCutoff()){
-        const prev=merged.get(uid)||{};
-        merged.set(uid,{...prev,...x,uid,lastSeen:last,online:true});
-      }
-    });
-
-    const list=[...merged.values()]
-      .filter(x=>x.uid&&x.uid!==me.uid&&x.online===true&&(
-        typeof x.lastSeen==="number"
-          ? x.lastSeen>=onlineCutoff()
-          : (x.lastSeen?.toDate?.()?.getTime?.()||0)>=onlineCutoff()
-      ))
-      .sort((a,b)=>String(a.displayName||"").localeCompare(String(b.displayName||"")));
-
     const box=document.getElementById("tubalMsgList");
     if(!box)return;
 
-    if(!presenceLoaded&&!usersLoaded){
-      box.innerHTML='<div style="padding:18px;color:#8fa39a;font-size:12px">Loading members…</div>';
+    if(!usersLoaded&&!presenceLoaded){
+      box.innerHTML='<div class="tubal-msg-loading">Loading members…</div>';
       return;
     }
 
-    box.innerHTML=list.length
-      ? list.map(u=>'<button type="button" class="tubal-msg-user" data-uid="'+esc(u.uid)+'"><div class="tubal-msg-avatar">'+(u.photoURL?'<img src="'+esc(u.photoURL)+'" alt="">':esc(initials(u.displayName)))+'</div><div class="tubal-msg-user-copy"><b>'+esc(u.displayName||"Member")+'</b><span>● Online · Message</span></div></button>').join("")
-      : '<div style="padding:18px;color:#8fa39a;font-size:12px">No other members online.</div>';
+    const list=[...usersMap.values()]
+      .filter(u=>u.uid&&u.uid!==me.uid)
+      .map(u=>({...u,online:isOnline(u.uid)}))
+      .sort((a,b)=>Number(b.online)-Number(a.online)||String(a.displayName||"").localeCompare(String(b.displayName||"")));
 
-    box.querySelectorAll(".tubal-msg-user").forEach((b,i)=>{
-      b.onclick=e=>{e.preventDefault();e.stopPropagation();openUser(list[i])};
+    if(!list.length){
+      box.innerHTML='<div class="tubal-msg-empty"><strong>No other members yet.</strong><span>Other registered TUBAL HUB members will appear here.</span></div>';
+      return;
+    }
+
+    box.innerHTML=list.map(u=>'<button type="button" class="tubal-msg-user '+(u.online?'is-online':'is-offline')+'" data-uid="'+esc(u.uid)+'">'+
+      '<div class="tubal-msg-avatar">'+(u.photoURL?'<img src="'+esc(u.photoURL)+'" alt="">':esc(initials(u.displayName||u.email)))+'</div>'+
+      '<div class="tubal-msg-user-copy"><b>'+esc(u.displayName||u.email?.split("@")[0]||"Member")+'</b>'+
+      '<span class="tubal-msg-user-status">'+(u.online?'● Online':'○ Offline')+' · Message</span></div></button>').join("");
+
+    box.querySelectorAll(".tubal-msg-user").forEach(button=>{
+      const user=list.find(x=>x.uid===button.dataset.uid);
+      button.onclick=e=>{e.preventDefault();e.stopPropagation();if(user)openUser(user)};
     });
   };
 
-  const stopPresence=onSnapshot(query(presenceRef,limit(50)),snap=>{
+  const stopUsersSnapshot=onSnapshot(query(usersRef,limit(100)),snap=>{
+    usersLoaded=true;
+    usersMap=new Map();
+    snap.forEach(d=>{
+      const x=d.data();
+      usersMap.set(x.uid||d.id,{...x,uid:x.uid||d.id});
+    });
+    render();
+  },err=>{
+    usersLoaded=true;
+    console.warn("[TUBAL HUB] floating users unavailable",err);
+    render();
+  });
+
+  const stopPresenceSnapshot=onSnapshot(query(presenceRef,limit(100)),snap=>{
     presenceLoaded=true;
     presenceMap=new Map();
     snap.forEach(d=>{
@@ -176,22 +190,15 @@ function watchUsers(){
     render();
   });
 
-  const stopUsersPresence=onSnapshot(query(usersRef,limit(100)),snap=>{
-    usersLoaded=true;
-    usersMap=new Map();
-    snap.forEach(d=>{
-      const x=d.data();
-      usersMap.set(x.uid||d.id,{...x,uid:x.uid||d.id});
-    });
-    render();
-  },err=>{
-    usersLoaded=true;
-    console.warn("[TUBAL HUB] floating users presence unavailable",err);
-    render();
-  });
+  timeoutId=setTimeout(()=>{
+    if(!usersLoaded&&!presenceLoaded){
+      const box=document.getElementById("tubalMsgList");
+      if(box)box.innerHTML='<div class="tubal-msg-empty"><strong>Members are unavailable right now.</strong><span>Check your connection and try again.</span></div>';
+    }
+  },3500);
 
   const refresh=setInterval(render,30000);
-  stopUsers=()=>{stopPresence();stopUsersPresence();clearInterval(refresh)};
+  stopUsers=()=>{stopUsersSnapshot();stopPresenceSnapshot();clearInterval(refresh);clearTimeout(timeoutId)};
 }
 function watchOwnPresence(){
   if(stopOwnPresence)stopOwnPresence();
