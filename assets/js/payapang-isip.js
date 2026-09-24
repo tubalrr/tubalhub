@@ -1,165 +1,497 @@
-import { app } from "./firebase-config.js";
+(() => {
+  "use strict";
 
-const MOODS=[
-  {emoji:"😊",label:"Happy",value:5},
-  {emoji:"😐",label:"Okay",value:3},
-  {emoji:"😔",label:"Sad",value:2},
-  {emoji:"😤",label:"Frustrated",value:2},
-  {emoji:"😴",label:"Tired",value:2},
-  {emoji:"🥹",label:"Tender",value:4}
-];
-const TIPS=[
-  {icon:"🌿",title:"Step outside",text:"A few quiet minutes with fresh air can create space between thoughts.",link:"Take a pause"},
-  {icon:"🧘",title:"Unclench the day",text:"Drop your shoulders, soften your jaw, and give yourself one slow breath.",link:"Try breathing"},
-  {icon:"💤",title:"Protect your rest",text:"A calmer evening routine can make winding down easier.",link:"Open rest tips"},
-  {icon:"📖",title:"Write it down",text:"Put one honest thought on the page without judging it.",link:"Open journal"},
-  {icon:"🤝",title:"Stay connected",text:"A trusted person can make a hard day feel a little lighter.",link:"Find support"}
-];
-const $=s=>document.querySelector(s);
-const $$=s=>document.querySelectorAll(s);
-const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
-const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
-const fmtTime=iso=>new Date(iso).toLocaleString("en-PH",{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"});
-const moodByValue=v=>MOODS.find(m=>m.label===v)||null;
+  const $ = (sel, root = document) => root.querySelector(sel);
+  const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
+  const storage = {
+    grounding: "payapang-isip-grounding-v1",
+    journal: "payapang-isip-journal-v1"
+  };
 
-const state={
-  mood:null,
-  entries:[],
-  breathing:{running:false,phase:"Ready",count:0,timer:null},
-  grounding:["","","","",""],
-};
+  const state = {
+    box: { running:false, phaseIndex:0, remaining:4, round:0, timer:null },
+    diaphragm: { running:false, remaining:120, timer:null },
+    weil: { running:false, phaseIndex:0, remaining:4, breath:0, timer:null },
+    journal: { entries:[], editingId:null }
+  };
 
-const els={
-  moodGrid:$("#moodGrid"),streak:$("#moodStreak"),chart:$("#moodChart"),journal:$("#journalEntries"),journalInput:$("#journalInput"),
-  breathOrbit:$("#breathOrbit"),breathPhase:$("#breathPhase"),breathCount:$("#breathCount"),breathStart:$("#startBreathing"),exerciseStart:$("#exerciseStart"),exerciseStatus:$("#exerciseStatus"),
-  grounding:$("#groundingRows"),groundingSave:$("#saveGrounding"),toast:$("#piToast"),particles:$("#piParticles"),tipGrid:$("#tipsGrid")
-};
+  const boxPhases = [
+    { name:"Inhale", seconds:4, klass:"inhale" },
+    { name:"Hold", seconds:4, klass:"hold" },
+    { name:"Exhale", seconds:4, klass:"exhale" },
+    { name:"Hold", seconds:4, klass:"hold" }
+  ];
 
-function burstAt(el,count=6){
-  if(!el)return;
-  const r=el.getBoundingClientRect();
-  for(let i=0;i<count;i++){
-    const p=document.createElement("i");p.className="pi-particle";p.style.left=(r.left+r.width/2)+"px";p.style.top=(r.top+r.height/2)+"px";
-    const a=(Math.PI*2/count)*i,d=18+Math.random()*20;
-    p.style.setProperty("--dx",Math.cos(a)*d+"px");p.style.setProperty("--dy",Math.sin(a)*d+"px");
-    if(i%2)p.style.background="#1dff91";
-    els.particles.appendChild(p);setTimeout(()=>p.remove(),700);
+  const weilPhases = [
+    { name:"Inhale", seconds:4, klass:"inhale" },
+    { name:"Hold", seconds:7, klass:"hold" },
+    { name:"Exhale", seconds:8, klass:"exhale" }
+  ];
+
+  const els = {
+    toast: $("#piToast"),
+
+    boxVisual: $("#boxVisual"),
+    boxPhase: $("#boxPhase"),
+    boxCount: $("#boxCount"),
+    boxRound: $("#boxRound"),
+    boxProgress: $("#boxProgress"),
+    boxStatus: $("#boxStatus"),
+    boxStart: $("#boxStart"),
+
+    diaphragmTimer: $("#diaphragmTimer"),
+    diaphragmPhase: $("#diaphragmPhase"),
+    diaphragmStatus: $("#diaphragmStatus"),
+    diaphragmStart: $("#diaphragmStart"),
+
+    weilVisual: $("#weilVisual"),
+    weilPhase: $("#weilPhase"),
+    weilCount: $("#weilCount"),
+    weilRound: $("#weilRound"),
+    weilProgress: $("#weilProgress"),
+    weilStatus: $("#weilStatus"),
+    weilStart: $("#weilStart"),
+
+    groundingSave: $("#groundingSave"),
+    groundingSaved: $("#groundingSaved"),
+
+    journalMood: $("#journalMood"),
+    journalInput: $("#journalInput"),
+    journalSave: $("#journalSave"),
+    journalCancel: $("#journalCancel"),
+    journalMode: $("#journalMode"),
+    journalEntries: $("#journalEntries")
+  };
+
+  function showToast(message) {
+    if (!els.toast) return;
+    els.toast.textContent = message;
+    els.toast.classList.add("open");
+    clearTimeout(showToast.timer);
+    showToast.timer = setTimeout(() => els.toast.classList.remove("open"), 2200);
   }
-}
-function notify(msg){
-  els.toast.textContent=msg;els.toast.classList.add("open");clearTimeout(notify.t);
-  notify.t=setTimeout(()=>els.toast.classList.remove("open"),2200);
-}
 
-function loadMood(){
-  try{
-    const saved=JSON.parse(localStorage.getItem("payapang-mood-history")||"[]");
-    return Array.isArray(saved)?saved.filter(x=>x&&x.date&&x.label):[];
-  }catch(_){return []}
-}
-function saveMoodHistory(list){try{localStorage.setItem("payapang-mood-history",JSON.stringify(list.slice(-90)))}catch(_){}}
-function streakCount(list){
-  const days=new Set(list.map(x=>x.date));
-  let d=new Date();let n=0;
-  while(days.has(d.toISOString().slice(0,10))){n++;d.setDate(d.getDate()-1)}
-  return n;
-}
-function renderMood(){
-  els.moodGrid.innerHTML=MOODS.map(m=>'<button class="mood-btn '+(state.mood?.label===m.label?"selected":"")+'" data-mood="'+esc(m.label)+'" type="button"><span class="emoji">'+m.emoji+'</span><small>'+m.label+'</small></button>').join("");
-  const history=loadMood();
-  const streak=streakCount(history);
-  els.streak.textContent="🔥 "+streak+" day"+(streak===1?"":"s")+" calm";
-  renderChart(history);
-}
-function selectMood(label,btn){
-  const mood=moodByValue(label);if(!mood)return;
-  state.mood=mood;
-  const today=new Date().toISOString().slice(0,10);
-  const history=loadMood().filter(x=>x.date!==today);
-  history.push({date:today,label:mood.label,emoji:mood.emoji,value:mood.value});
-  saveMoodHistory(history);
-  $$(".mood-btn").forEach(b=>b.classList.remove("selected"));
-  btn.classList.add("selected");burstAt(btn,6);notify(mood.label+" mood saved");
-  renderMood();
-}
-function renderChart(history){
-  const days=[];const now=new Date();
-  for(let i=6;i>=0;i--){const d=new Date(now);d.setDate(now.getDate()-i);days.push(d.toISOString().slice(0,10))}
-  const vals=days.map(d=>history.find(x=>x.date===d)?.value??0);
-  const points=vals.map((v,i)=>{const x=8+i*15.1;const y=v?58-(v/5)*42:60;return [x,y]});
-  const path=points.map((p,i)=>(i?"L":"M")+p[0].toFixed(1)+" "+p[1].toFixed(1)).join(" ");
-  els.chart.innerHTML='<svg viewBox="0 0 100 70" preserveAspectRatio="none"><path class="chart-path" d="'+path+'"></path>'+points.map((p,i)=>vals[i]?'<circle class="chart-dot" cx="'+p[0]+'" cy="'+p[1]+'" r="2.2"></circle>':"").join("")+'</svg>';
-}
+  function safeRead(key, fallback) {
+    try {
+      const value = JSON.parse(localStorage.getItem(key) || "");
+      return value ?? fallback;
+    } catch {
+      return fallback;
+    }
+  }
 
-function saveJournal(){
-  const text=els.journalInput.value.trim();if(!text){notify("Write something first");els.journalInput.focus();return}
-  const entry={id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),text,mood:state.mood?.emoji||"•",createdAt:new Date().toISOString()};
-  state.entries.unshift(entry);persistEntries();els.journalInput.value="";renderEntries();burstAt(els.journal,8);notify("Journal entry saved");
-}
-function persistEntries(){try{localStorage.setItem("payapang-journal",JSON.stringify(state.entries))}catch(_){}}
-function loadEntries(){try{const x=JSON.parse(localStorage.getItem("payapang-journal")||"[]");return Array.isArray(x)?x:[]}catch(_){return []}}
-function renderEntries(){
-  if(!state.entries.length){els.journal.innerHTML='<div class="journal-empty">Your saved entries will appear here.</div>';return}
-  els.journal.innerHTML=state.entries.map(e=>'<article class="journal-entry" data-entry-id="'+esc(e.id)+'"><div class="journal-meta"><div><span class="journal-mood">'+esc(e.mood)+"</span></div><div class="entry-actions"><button data-edit-entry=""+esc(e.id)+"" type="button" aria-label="Edit entry">✎</button><button data-delete-entry=""+esc(e.id)+"" type="button" aria-label="Delete entry">×</button></div></div><div class="journal-time">'+esc(fmtTime(e.createdAt))+'</div><div class="journal-text">'+esc(e.text)+'</div></article>').join("");
-}
-function editEntry(id){
-  const e=state.entries.find(x=>x.id===id);if(!e)return;
-  const next=prompt("Edit your journal entry:",e.text);if(next===null)return;
-  const text=next.trim();if(!text)return;
-  e.text=text;e.createdAt=new Date().toISOString();persistEntries();renderEntries();notify("Entry updated");
-}
-function deleteEntry(id){
-  state.entries=state.entries.filter(x=>x.id!==id);persistEntries();renderEntries();notify("Entry deleted");
-}
+  function safeWrite(key, value) {
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+      return true;
+    } catch {
+      showToast("This browser could not save that entry.");
+      return false;
+    }
+  }
 
-function resetBreathing(){
-  clearTimeout(state.breathing.timer);state.breathing.timer=null;state.breathing.running=false;state.breathing.phase="Ready";state.breathing.count=0;
-  els.breathOrbit.classList.remove("is-active");els.breathPhase.textContent="Ready";els.breathCount.textContent="";
-  if(els.breathStart)els.breathStart.textContent="Start Breathing";
-  if(els.exerciseStart)els.exerciseStart.textContent="Start Cycle";
-  if(els.exerciseStatus)els.exerciseStatus.textContent="Ready when you are.";
-}
-function runBreathCycle(){
-  if(!state.breathing.running)return;
-  const phases=[{name:"Breathe In",seconds:4},{name:"Hold",seconds:4},{name:"Breathe Out",seconds:6}];
-  let phaseIndex=state.breathing.phaseIndex||0;
-  const phase=phases[phaseIndex%phases.length];let left=phase.seconds;
-  els.breathPhase.textContent=phase.name;els.breathCount.textContent=String(left);if(els.exerciseStatus)els.exerciseStatus.textContent=phase.name+" • "+left+"s";
-  const tick=()=>{if(!state.breathing.running)return;left--;els.breathCount.textContent=left>0?String(left):"0";if(left<=0){state.breathing.phaseIndex=(phaseIndex+1)%phases.length;state.breathing.count++;runBreathCycle()}else{state.breathing.timer=setTimeout(tick,1000)}};state.breathing.timer=setTimeout(tick,1000);
-}
-function startBreathing(){
-  if(state.breathing.running){resetBreathing();return}
-  state.breathing.running=true;state.breathing.phaseIndex=0;els.breathOrbit.classList.add("is-active");els.breathStart.textContent="Stop Breathing";if(els.exerciseStart)els.exerciseStart.textContent="Stop Cycle";runBreathCycle();notify("Breathing exercise started");
-}
-function bindBreathingButton(){els.breathStart.addEventListener("click",()=>{burstAt(els.breathStart,6);startBreathing();if(!state.breathing.running)els.breathStart.textContent="Start Breathing"})}
+  function uid() {
+    if (window.crypto && typeof window.crypto.randomUUID === "function") {
+      return window.crypto.randomUUID();
+    }
+    return "entry-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 9);
+  }
 
-function renderTips(){els.tipGrid.innerHTML=TIPS.map((t,i)=>'<article class="tip-card" style="--stagger:'+(i*.06)+'s"><div class="tip-icon">'+t.icon+'</div><h3>'+esc(t.title)+'</h3><p>'+esc(t.text)+'</p><a href="#tips" data-tip="'+i+'">'+esc(t.link)+' →</a></article>').join("")}
+  function formatDate(iso) {
+    const d = new Date(iso);
+    if (Number.isNaN(d.getTime())) return "Saved";
+    return d.toLocaleString("en-PH", {
+      month:"short",
+      day:"numeric",
+      year:"numeric",
+      hour:"numeric",
+      minute:"2-digit"
+    });
+  }
 
-function initGrounding(){
-  const labels=["5 things you see","4 things you feel","3 things you hear","2 things you smell","1 thing you taste"];
-  els.grounding.innerHTML=labels.map((l,i)=>'<div class="grounding-row"><label>'+l+'</label><input data-grounding="'+i+'" type="text" maxlength="120"></div>').join("");
-  const saved=localStorage.getItem("payapang-grounding");
-  if(saved){try{JSON.parse(saved).forEach((v,i)=>{const input=els.grounding.querySelector('[data-grounding="'+i+'"]');if(input)input.value=v})}catch(_){}}
-  $("[data-grounding]")?.closest("div");
-}
-function saveGrounding(){
-  const values=[...els.grounding.querySelectorAll("input")].map(x=>x.value.trim());
-  localStorage.setItem("payapang-grounding",JSON.stringify(values));burstAt(els.groundingSave,6);notify("Grounding notes saved");
-}
+  function formatClock(totalSeconds) {
+    const s = Math.max(0, totalSeconds);
+    const m = Math.floor(s / 60).toString().padStart(2, "0");
+    const sec = (s % 60).toString().padStart(2, "0");
+    return m + ":" + sec;
+  }
 
-function initThemes(){
-  const sync=()=>{const t=localStorage.getItem("tubalhub-theme")||"forest";document.body.classList.remove("theme-midnight","theme-forest","theme-light");document.body.classList.add("theme-"+t)};
-  sync();window.addEventListener("tubalhubthemechange",sync);
-}
-function bind(){
-  els.moodGrid.addEventListener("click",e=>{const b=e.target.closest("[data-mood]");if(b)selectMood(b.dataset.mood,b)});
-  $("#saveJournal").addEventListener("click",saveJournal);
-  els.journal.addEventListener("click",e=>{const edit=e.target.closest("[data-edit-entry]");if(edit)editEntry(edit.dataset.editEntry);const del=e.target.closest("[data-delete-entry]");if(del)deleteEntry(del.dataset.deleteEntry)});
-  els.groundingSave.addEventListener("click",saveGrounding);
-  $$(".tip-card a").forEach(a=>a.addEventListener("click",()=>notify("Open the "+a.textContent.replace(" →","").toLowerCase()+" section")));
-  bindBreathingButton();els.exerciseStart?.addEventListener("click",()=>{burstAt(els.exerciseStart,6);startBreathing();if(!state.breathing.running&&els.exerciseStatus)els.exerciseStatus.textContent="Ready when you are."});
-}
-function init(){
-  state.entries=loadEntries();renderMood();renderEntries();renderTips();initGrounding();initThemes();bind();
-}
-init();
+  function setOrb(orb, phase) {
+    if (!orb) return;
+    orb.classList.remove("inhale", "hold", "exhale");
+    if (phase) orb.classList.add(phase.klass);
+  }
+
+  // Fast, GPU-friendly cursor spotlight: one requestAnimationFrame per frame at most.
+  let raf = 0;
+  window.addEventListener("pointermove", (event) => {
+    if (raf) return;
+    raf = requestAnimationFrame(() => {
+      document.body.style.setProperty("--mx", event.clientX + "px");
+      document.body.style.setProperty("--my", event.clientY + "px");
+      raf = 0;
+    });
+  }, { passive:true });
+
+  function applyTheme(theme) {
+    const value = ["midnight", "forest", "light"].includes(theme) ? theme : "forest";
+    document.body.classList.remove("theme-midnight", "theme-forest", "theme-light");
+    document.body.classList.add("theme-" + value);
+    $$(".pi-theme button").forEach(button => {
+      button.classList.toggle("active", button.dataset.theme === value);
+    });
+  }
+
+  function initThemes() {
+    const stored = localStorage.getItem("tubalhub-theme") || "forest";
+    applyTheme(stored);
+    $$(".pi-theme button").forEach(button => {
+      button.addEventListener("click", () => {
+        const value = button.dataset.theme;
+        localStorage.setItem("tubalhub-theme", value);
+        applyTheme(value);
+        window.dispatchEvent(new CustomEvent("tubalhubthemechange", { detail:value }));
+      });
+    });
+    window.addEventListener("tubalhubthemechange", () => {
+      applyTheme(localStorage.getItem("tubalhub-theme") || "forest");
+    });
+  }
+
+  function finishBox() {
+    clearInterval(state.box.timer);
+    state.box.timer = null;
+    state.box.running = false;
+    state.box.phaseIndex = 0;
+    state.box.remaining = 4;
+    state.box.round = 0;
+    setOrb(els.boxVisual, null);
+    els.boxPhase.textContent = "Done";
+    els.boxCount.textContent = "✓";
+    els.boxRound.textContent = "4 rounds complete";
+    els.boxProgress.style.width = "100%";
+    els.boxStatus.textContent = "Nice work. Let your breathing return to a comfortable pace.";
+    els.boxStart.textContent = "Start 4 Rounds Again";
+  }
+
+  function renderBox() {
+    const phase = boxPhases[state.box.phaseIndex];
+    setOrb(els.boxVisual, phase);
+    els.boxPhase.textContent = phase.name;
+    els.boxCount.textContent = String(state.box.remaining);
+    els.boxRound.textContent = "Round " + state.box.round + " / 4";
+    const phaseProgress = 1 - (state.box.remaining / phase.seconds);
+    const overall = ((state.box.round - 1) * 4 + state.box.phaseIndex + phaseProgress) / 16;
+    els.boxProgress.style.width = (Math.max(0, Math.min(1, overall)) * 100).toFixed(1) + "%";
+    els.boxStatus.textContent = phase.name + " • " + state.box.remaining + " seconds";
+  }
+
+  function tickBox() {
+    if (!state.box.running) return;
+    state.box.remaining -= 1;
+    if (state.box.remaining > 0) {
+      renderBox();
+      return;
+    }
+
+    if (state.box.phaseIndex === boxPhases.length - 1) {
+      if (state.box.round >= 4) {
+        finishBox();
+        return;
+      }
+      state.box.round += 1;
+      state.box.phaseIndex = 0;
+    } else {
+      state.box.phaseIndex += 1;
+    }
+    state.box.remaining = boxPhases[state.box.phaseIndex].seconds;
+    renderBox();
+  }
+
+  function startBox() {
+    if (state.box.running) {
+      clearInterval(state.box.timer);
+      state.box.running = false;
+      els.boxStart.textContent = "Start 4 Rounds";
+      els.boxStatus.textContent = "Stopped. Your progress was reset.";
+      state.box.round = 0;
+      state.box.phaseIndex = 0;
+      state.box.remaining = 4;
+      setOrb(els.boxVisual, null);
+      els.boxPhase.textContent = "Ready";
+      els.boxCount.textContent = "4";
+      els.boxRound.textContent = "Round 0 / 4";
+      els.boxProgress.style.width = "0%";
+      return;
+    }
+    state.box.running = true;
+    state.box.round = 1;
+    state.box.phaseIndex = 0;
+    state.box.remaining = boxPhases[0].seconds;
+    els.boxStart.textContent = "Stop";
+    renderBox();
+    clearInterval(state.box.timer);
+    state.box.timer = setInterval(tickBox, 1000);
+  }
+
+  function finishDiaphragm() {
+    clearInterval(state.diaphragm.timer);
+    state.diaphragm.timer = null;
+    state.diaphragm.running = false;
+    state.diaphragm.remaining = 120;
+    els.diaphragmTimer.textContent = "02:00";
+    els.diaphragmPhase.textContent = "Done";
+    els.diaphragmStatus.textContent = "Two minutes complete. Notice how your chest, belly, and breathing feel now.";
+    els.diaphragmStart.textContent = "Start 2 Minutes Again";
+  }
+
+  function startDiaphragm() {
+    if (state.diaphragm.running) {
+      clearInterval(state.diaphragm.timer);
+      state.diaphragm.running = false;
+      state.diaphragm.remaining = 120;
+      els.diaphragmTimer.textContent = "02:00";
+      els.diaphragmPhase.textContent = "Ready";
+      els.diaphragmStatus.textContent = "Stopped. Restart when you are comfortable.";
+      els.diaphragmStart.textContent = "Start 2 Minutes";
+      return;
+    }
+
+    state.diaphragm.running = true;
+    state.diaphragm.remaining = 120;
+    els.diaphragmStart.textContent = "Stop";
+    els.diaphragmPhase.textContent = "Slow belly breathing";
+    els.diaphragmStatus.textContent = "Try about 5–6 breaths per minute. Keep the breath gentle.";
+    clearInterval(state.diaphragm.timer);
+    state.diaphragm.timer = setInterval(() => {
+      state.diaphragm.remaining -= 1;
+      els.diaphragmTimer.textContent = formatClock(state.diaphragm.remaining);
+      if (state.diaphragm.remaining <= 0) finishDiaphragm();
+    }, 1000);
+  }
+
+  function finishWeil() {
+    clearInterval(state.weil.timer);
+    state.weil.timer = null;
+    state.weil.running = false;
+    state.weil.phaseIndex = 0;
+    state.weil.remaining = 4;
+    state.weil.breath = 0;
+    setOrb(els.weilVisual, null);
+    els.weilPhase.textContent = "Done";
+    els.weilCount.textContent = "✓";
+    els.weilRound.textContent = "4 breaths complete";
+    els.weilProgress.style.width = "100%";
+    els.weilStatus.textContent = "Done. Breathe normally and let the exercise settle.";
+    els.weilStart.textContent = "Start 4 Breaths Again";
+  }
+
+  function renderWeil() {
+    const phase = weilPhases[state.weil.phaseIndex];
+    setOrb(els.weilVisual, phase);
+    els.weilPhase.textContent = phase.name;
+    els.weilCount.textContent = String(state.weil.remaining);
+    els.weilRound.textContent = "Breath " + state.weil.breath + " / 4";
+    const cycleSeconds = 4 + 7 + 8;
+    const elapsedInPhase = phase.seconds - state.weil.remaining;
+    const cycleProgress = (weilPhases.slice(0, state.weil.phaseIndex).reduce((sum, item) => sum + item.seconds, 0) + elapsedInPhase) / cycleSeconds;
+    const overall = ((state.weil.breath - 1) + cycleProgress) / 4;
+    els.weilProgress.style.width = (Math.max(0, Math.min(1, overall)) * 100).toFixed(1) + "%";
+    els.weilStatus.textContent = phase.name + " • " + state.weil.remaining + " seconds";
+  }
+
+  function tickWeil() {
+    if (!state.weil.running) return;
+    state.weil.remaining -= 1;
+    if (state.weil.remaining > 0) {
+      renderWeil();
+      return;
+    }
+
+    if (state.weil.phaseIndex === weilPhases.length - 1) {
+      if (state.weil.breath >= 4) {
+        finishWeil();
+        return;
+      }
+      state.weil.breath += 1;
+      state.weil.phaseIndex = 0;
+    } else {
+      state.weil.phaseIndex += 1;
+    }
+    state.weil.remaining = weilPhases[state.weil.phaseIndex].seconds;
+    renderWeil();
+  }
+
+  function startWeil() {
+    if (state.weil.running) {
+      clearInterval(state.weil.timer);
+      state.weil.running = false;
+      els.weilStart.textContent = "Start 4 Breaths";
+      els.weilStatus.textContent = "Stopped. Restart when the pace feels comfortable.";
+      state.weil.breath = 0;
+      state.weil.phaseIndex = 0;
+      state.weil.remaining = 4;
+      setOrb(els.weilVisual, null);
+      els.weilPhase.textContent = "Ready";
+      els.weilCount.textContent = "4";
+      els.weilRound.textContent = "Breath 0 / 4";
+      els.weilProgress.style.width = "0%";
+      return;
+    }
+    state.weil.running = true;
+    state.weil.breath = 1;
+    state.weil.phaseIndex = 0;
+    state.weil.remaining = weilPhases[0].seconds;
+    els.weilStart.textContent = "Stop";
+    renderWeil();
+    clearInterval(state.weil.timer);
+    state.weil.timer = setInterval(tickWeil, 1000);
+  }
+
+  function renderGrounding() {
+    const sessions = safeRead(storage.grounding, []);
+    if (!Array.isArray(sessions) || sessions.length === 0) {
+      els.groundingSaved.innerHTML = '<div class="saved-empty">Your saved grounding notes will appear here after you save your first session.</div>';
+      return;
+    }
+    els.groundingSaved.innerHTML = sessions.slice(0, 8).map(session => {
+      const labels = ["see","touch","hear","smell","taste"];
+      return '<article class="grounding-session">' +
+        '<div class="saved-meta"><strong>5–4–3–2–1 session</strong><span class="saved-time">' + formatDate(session.createdAt) + '</span></div>' +
+        '<div class="grounding-values">' +
+        session.values.map((value, index) => '<div><strong>' + (5-index) + ' ' + labels[index] + '</strong><span>' + escapeHtml(value || "—") + '</span></div>').join("") +
+        '</div></article>';
+    }).join("");
+  }
+
+  function saveGrounding() {
+    const values = $$("[data-grounding]").map(input => input.value.trim());
+    const session = { id:uid(), createdAt:new Date().toISOString(), values };
+    const sessions = safeRead(storage.grounding, []);
+    const list = Array.isArray(sessions) ? sessions : [];
+    list.unshift(session);
+    if (safeWrite(storage.grounding, list.slice(0, 20))) {
+      renderGrounding();
+      showToast("Grounding session saved in this browser.");
+    }
+  }
+
+  function escapeHtml(value) {
+    return String(value ?? "").replace(/[&<>"']/g, char => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+    }[char]));
+  }
+
+  function loadJournal() {
+    const entries = safeRead(storage.journal, []);
+    state.journal.entries = Array.isArray(entries) ? entries : [];
+  }
+
+  function renderJournal() {
+    if (!state.journal.entries.length) {
+      els.journalEntries.innerHTML = '<div class="saved-empty">No journal entries yet. Your first saved entry will appear here.</div>';
+      return;
+    }
+    els.journalEntries.innerHTML = state.journal.entries.map(entry =>
+      '<article class="journal-entry" data-entry="' + escapeHtml(entry.id) + '">' +
+        '<div class="journal-meta">' +
+          '<div><span class="mood">' + (entry.mood ? escapeHtml(entry.mood) : "•") + '</span><span class="journal-time"> ' + formatDate(entry.createdAt) + '</span></div>' +
+          '<div class="entry-tools"><button type="button" data-edit="' + escapeHtml(entry.id) + '" aria-label="Edit entry">✎</button><button type="button" data-delete="' + escapeHtml(entry.id) + '" aria-label="Delete entry">×</button></div>' +
+        '</div>' +
+        '<div class="journal-text">' + escapeHtml(entry.text) + '</div>' +
+      '</article>'
+    ).join("");
+  }
+
+  function resetJournalEditor() {
+    state.journal.editingId = null;
+    els.journalInput.value = "";
+    els.journalMood.value = "";
+    els.journalMode.textContent = "New entry";
+    els.journalSave.textContent = "Save Entry";
+    els.journalCancel.hidden = true;
+  }
+
+  function saveJournal() {
+    const text = els.journalInput.value.trim();
+    const mood = els.journalMood.value;
+    if (!text) {
+      showToast("Write your journal entry first.");
+      els.journalInput.focus();
+      return;
+    }
+
+    if (state.journal.editingId) {
+      const entry = state.journal.entries.find(item => item.id === state.journal.editingId);
+      if (!entry) return;
+      entry.text = text;
+      entry.mood = mood;
+      entry.createdAt = new Date().toISOString();
+      showToast("Journal entry updated.");
+    } else {
+      state.journal.entries.unshift({
+        id:uid(),
+        createdAt:new Date().toISOString(),
+        mood,
+        text
+      });
+      showToast("Journal entry saved.");
+    }
+
+    state.journal.entries = state.journal.entries.slice(0, 50);
+    safeWrite(storage.journal, state.journal.entries);
+    resetJournalEditor();
+    renderJournal();
+  }
+
+  function editJournal(id) {
+    const entry = state.journal.entries.find(item => item.id === id);
+    if (!entry) return;
+    state.journal.editingId = id;
+    els.journalInput.value = entry.text;
+    els.journalMood.value = entry.mood || "";
+    els.journalMode.textContent = "Editing entry";
+    els.journalSave.textContent = "Update Entry";
+    els.journalCancel.hidden = false;
+    els.journalInput.focus();
+    els.journalInput.scrollIntoView({ behavior:"smooth", block:"center" });
+  }
+
+  function deleteJournal(id) {
+    const entry = state.journal.entries.find(item => item.id === id);
+    if (!entry) return;
+    if (!window.confirm("Delete this journal entry?")) return;
+    state.journal.entries = state.journal.entries.filter(item => item.id !== id);
+    safeWrite(storage.journal, state.journal.entries);
+    if (state.journal.editingId === id) resetJournalEditor();
+    renderJournal();
+    showToast("Journal entry deleted.");
+  }
+
+  function bind() {
+    els.boxStart.addEventListener("click", startBox);
+    els.diaphragmStart.addEventListener("click", startDiaphragm);
+    els.weilStart.addEventListener("click", startWeil);
+    els.groundingSave.addEventListener("click", saveGrounding);
+
+    els.journalSave.addEventListener("click", saveJournal);
+    els.journalCancel.addEventListener("click", resetJournalEditor);
+
+    els.journalEntries.addEventListener("click", event => {
+      const edit = event.target.closest("[data-edit]");
+      const del = event.target.closest("[data-delete]");
+      if (edit) editJournal(edit.dataset.edit);
+      if (del) deleteJournal(del.dataset.delete);
+    });
+  }
+
+  function init() {
+    initThemes();
+    renderGrounding();
+    loadJournal();
+    renderJournal();
+    bind();
+  }
+
+  init();
+})();
