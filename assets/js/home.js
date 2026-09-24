@@ -137,6 +137,25 @@ function journalEntries(){
   })).filter(entry=>entry.text).slice(0,10);
 }
 
+function renderGameScores(){
+  const box=$("#gameScoreStack");if(!box)return;
+  const readNumber=(keys)=>{
+    for(const key of keys){
+      const raw=localStorage.getItem(key);
+      if(raw===null||raw==="")continue;
+      const n=Number(raw);
+      if(Number.isFinite(n))return n;
+    }
+    return null;
+  };
+  const stats=[
+    ["Kills",readNumber(["ctrlzone_kills","tubalhub_game_kills"])],
+    ["Wins",readNumber(["ctrlzone_wins","tubalhub_game_wins"])],
+    ["Rank",localStorage.getItem("ctrlzone_rank")||localStorage.getItem("tubalhub_game_rank")||"—"]
+  ];
+  box.innerHTML=stats.map(([label,value])=>"<div class=\"game-score\"><strong>"+esc(value===null?"—":value)+"</strong><span>"+label+"</span></div>").join("");
+}
+
 function renderJournal(){
   const track=$("#journalTrack");if(!track)return;
   const entries=journalEntries();
@@ -232,7 +251,12 @@ function toggleFeedLike(button){
   const id=button.dataset.feedLike;
   const key="tubalhub_home_feed_likes",likes=safeJson(key,{});
   const next=!Boolean(likes[id]);likes[id]=next;localStorage.setItem(key,JSON.stringify(likes));
-  button.classList.toggle("liked",next);button.classList.remove("bursting");void button.offsetWidth;button.classList.add("bursting");
+  button.classList.toggle("liked",next);button.textContent=next?"Liked":"Like";
+  button.classList.remove("bursting");void button.offsetWidth;button.classList.add("bursting");
+  const card=button.closest(".feed-card");
+  const base=Number(card?.dataset.baseLikes||0);
+  const stat=card?.querySelector("[data-home-like-count]");
+  if(stat)stat.textContent=(base+(next?1:0))+" likes";
   showHomeToast(next?"Liked this post.":"Like removed.");
 }
 function showHomeToast(message){
@@ -272,9 +296,14 @@ function cleanup(){
   try{state.audioContext?.close()}catch(_){}
 }
 function init(){
-  initSpotlight();initHeroSlider();renderJournal();loadMusic();renderFeeds();initHorizontalSections();initFooter();
+  initSpotlight();initHeroSlider();renderGameScores();renderJournal();loadMusic();renderFeeds();initHorizontalSections();initFooter();
   $("#homeMusicAudio")?.addEventListener("ended",()=>showHomeToast("Audio finished."));
   addEventListener("beforeunload",cleanup);
+  addEventListener("storage",event=>{
+    if(JOURNAL_KEYS.includes(event.key))renderJournal();
+    if(event.key==="tubalhub_home_feed_likes"||FEED_KEYS.includes(event.key))renderFeeds();
+    if(event.key==="ctrlzone_kills"||event.key==="ctrlzone_wins"||event.key==="ctrlzone_rank")renderGameScores();
+  });
 }
 onAuthStateChanged(auth,user=>{
   const nameEl=$("#homeAuthName");
