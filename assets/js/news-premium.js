@@ -49,10 +49,11 @@ function renderGrid(list){
   if(!list.length){grid.innerHTML="<div class='news-empty'><div><div class='news-empty-icon'>⌕</div><h3>No matching news</h3><p>Try another category or search phrase.</p></div></div>";return}
   grid.innerHTML=list.map((x,i)=>{
     const stats=metrics(x),saved=state.bookmarks.has(x.id);
-    return "<article class='news-card' data-open='"+esc(x.id)+"' style='animation-delay:"+(Math.min(i,14)*.06)+"s'><div class='news-card-media'>"+mediaHtml(x,false)+"<span class='news-card-category'>"+esc(categoryLabel(categoryOf(x)))+"</span><button class='news-bookmark "+(saved?"saved":"")+"' data-bookmark='"+esc(x.id)+"' type='button' aria-label='"+(saved?"Remove bookmark":"Bookmark")+"'>"+(saved?"★":"☆")+"</button></div><div class='news-card-content'><h3 class='news-card-title'>"+esc(titleOf(x))+"</h3><p class='news-card-excerpt'>"+esc(textOf(x))+"</p><div class='news-card-footer'><div class='news-card-author'>"+avatarHtml(x,false)+"<div class='news-byline'><b>"+esc(authorName(x))+"</b><span>"+esc(dateLabel(x))+"</span></div></div><div class='news-card-metrics'>"+stats.map(s=>"<span>"+esc(s)+"</span>").join("")+"</div></div></div></article>"
+    return "<article class='news-card' data-open='"+esc(x.id)+"' style='animation-delay:"+(Math.min(i,14)*.06)+"s'><div class='news-card-media'>"+mediaHtml(x,false)+"<span class='news-card-category'>"+esc(categoryLabel(categoryOf(x)))+"</span><button class='news-bookmark "+(saved?"saved":"")+"' data-bookmark='"+esc(x.id)+"' type='button' aria-label='"+(saved?"Remove bookmark":"Bookmark")+"'>"+(saved?"★":"☆")+"</button></div><div class='news-card-content'><h3 class='news-card-title'>"+esc(titleOf(x))+"</h3><p class='news-card-excerpt'>"+esc(textOf(x))+"</p><div class='news-card-footer'><div class='news-card-author'>"+avatarHtml(x,false)+"<div class='news-byline'><b>"+esc(authorName(x))+"</b><span>"+esc(dateLabel(x))+"</span></div></div><div class='news-card-metrics'>"+stats.map(s=>"<span>"+esc(s)+"</span>").join("")+"<span class='news-reactions'><button type='button' class='news-react' data-react='😀' aria-label='React'>😀</button><button type='button' class='news-react' data-react='❤️' aria-label='React with heart'>❤️</button></span></div></div></div></article>"
   }).join("");
   grid.querySelectorAll("[data-open]").forEach(card=>card.addEventListener("click",e=>{if(e.target.closest("[data-bookmark]"))return;const x=state.all.find(y=>y.id===card.dataset.open);if(x)openReader(x)}));
-  grid.querySelectorAll("[data-bookmark]").forEach(btn=>btn.addEventListener("click",e=>{e.stopPropagation();const id=btn.dataset.bookmark;if(state.bookmarks.has(id))state.bookmarks.delete(id);else state.bookmarks.add(id);saveJson("tubalhub-news-bookmarks",[...state.bookmarks]);renderGrid(filtered())}));
+  grid.querySelectorAll("[data-bookmark]").forEach(btn=>btn.addEventListener("click",e=>{e.stopPropagation();const id=btn.dataset.bookmark;if(state.bookmarks.has(id))state.bookmarks.delete(id);else state.bookmarks.add(id);saveJson("tubalhub-news-bookmarks",[...state.bookmarks]);btn.classList.remove("is-pop");void btn.offsetWidth;btn.classList.add("is-pop");setTimeout(()=>btn.classList.remove("is-pop"),420);renderGrid(filtered())}));
+  grid.querySelectorAll(".news-react").forEach(btn=>btn.addEventListener("click",e=>{e.stopPropagation();btn.classList.remove("is-pop");void btn.offsetWidth;btn.classList.add("is-pop");const burst=document.createElement("span");burst.className="news-react-burst";for(let i=0;i<6;i++){const p=document.createElement("i");p.style.setProperty("--a",(i*60)+"deg");burst.appendChild(p)}btn.appendChild(burst);setTimeout(()=>burst.remove(),600);setTimeout(()=>btn.classList.remove("is-pop"),450)}));
 }
 
 function renderTrending(){
@@ -62,10 +63,14 @@ function renderTrending(){
   box.querySelectorAll("[data-trend]").forEach(a=>a.addEventListener("click",e=>{e.preventDefault();const x=state.all.find(y=>y.id===a.dataset.trend);if(x)openReader(x)}));
 }
 function renderRelated(){
-  const box=document.getElementById("relatedGrid");if(!box)return;
   const list=state.all.filter(x=>x.id!==state.current?.id).slice(0,3);
-  box.innerHTML=list.length?list.map(x=>"<article class='news-card' data-related='"+esc(x.id)+"'><div class='news-card-media'>"+mediaHtml(x,false)+"<span class='news-card-category'>"+esc(categoryLabel(categoryOf(x)))+"</span></div><div class='news-card-content'><h3 class='news-card-title'>"+esc(titleOf(x))+"</h3><p class='news-card-excerpt'>"+esc(textOf(x))+"</p></div></article>").join(""):"<div class='news-empty'><div><div class='news-empty-icon'>✦</div><h3>No related articles</h3><p>More published stories will appear here.</p></div></div>";
-  box.querySelectorAll("[data-related]").forEach(x=>x.addEventListener("click",()=>{const item=state.all.find(y=>y.id===x.dataset.related);if(item)openReader(item)}));
+  const renderBox=box=>{
+    if(!box)return;
+    box.innerHTML=list.length?list.map(x=>"<article class='news-card' data-related='"+esc(x.id)+"'><div class='news-card-media'>"+mediaHtml(x,false)+"<span class='news-card-category'>"+esc(categoryLabel(categoryOf(x)))+"</span></div><div class='news-card-content'><h3 class='news-card-title'>"+esc(titleOf(x))+"</h3><p class='news-card-excerpt'>"+esc(textOf(x))+"</p></div></article>").join(""):"<div class='news-empty'><div><div class='news-empty-icon'>✦</div><h3>No related articles</h3><p>More published stories will appear here.</p></div></div>";
+    box.querySelectorAll("[data-related]").forEach(el=>el.addEventListener("click",()=>{const item=state.all.find(y=>y.id===el.dataset.related);if(item)openReader(item)}));
+  };
+  renderBox(document.getElementById("relatedGrid"));
+  renderBox(document.getElementById("readerRelatedGrid"));
 }
 function renderComments(x){
   const box=document.getElementById("newsCommentsList"),comments=Array.isArray(x.comments)?x.comments:[];
