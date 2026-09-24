@@ -142,18 +142,17 @@ function saveRealJournal(event){
   }
 }
 function renderPayapangIsip(){
-  const track=document.querySelector("#payapangIsipTrack")||
-    document.querySelector("#bentoJournalList")||
-    document.querySelector("#journalTrack");
+  const track=document.querySelector("#bentoJournalList")||document.querySelector("#payapangIsipTrack")||document.querySelector("#journalTrack");
   if(!track)return;
   const real=getRealJournalViews();
   if(real.length===0){
-    track.innerHTML='<div class="real-empty-card glass"><span class="real-empty-emoji" aria-hidden="true">🌿</span><p>Wala pa journal</p><form id="realJournalForm" class="real-quick-form"><input name="titleReal" type="text" maxlength="100" placeholder="Real journal title" required><textarea name="contentReal" maxlength="5000" placeholder="Isulat ang totoong journal mo..." required></textarea><select name="moodEmoji" aria-label="Mood"><option value="🌿">🌿</option><option value="😌">😌</option><option value="☀️">☀️</option><option value="🌙">🌙</option><option value="🍃">🍃</option><option value="💭">💭</option></select><div class="real-quick-form-actions"><button type="submit">Gumawa ng Real</button><a class="real-quick-link" href="pages/payapang-isip.html">Open Payapang Isip →</a></div></form></div>';
+    track.innerHTML='<div class="real-bento-empty" id="journalEmptyReal"><div class="empty-icon">🌿</div><p>Wala pa journal</p><small>Real entries mo dito lalabas</small><form id="realJournalForm" class="real-bento-form"><input name="titleReal" id="journalTitleReal" maxlength="100" placeholder="Real journal title" required><textarea name="contentReal" id="journalTextReal" maxlength="5000" placeholder="Isulat ang totoong journal mo..." required></textarea><div class="real-bento-actions"><button id="saveJournalReal" type="submit">🌿 Gumawa ng Real</button><a href="pages/payapang-isip.html">Open Payapang Isip →</a></div></form></div>';
     $("#realJournalForm")?.addEventListener("submit",saveRealJournal,{once:true});
     return;
   }
-  track.innerHTML=real.slice(0,homeCardLimit()).map(entry=>'<article class="real-data-card journal-real-card"><div class="journal-real-top"><span class="journal-real-icon home-emoji" aria-hidden="true">'+esc(entry.mood||"🌿")+'</span><span class="journal-real-date">'+esc(formatDate(entry.createdAt))+'</span></div><div class="journal-real-mood">REAL JOURNAL</div><h3 class="journal-real-title">'+esc(entry.title||"Untitled")+'</h3><p class="journal-real-text">'+esc(entry.content.slice(0,220))+(entry.content.length>220?"…":"")+'</p></article>').join("");
+  track.innerHTML=real.slice(0,3).map(entry=>'<article class="journal-item-real"><div class="journal-top"><span aria-hidden="true">'+esc(entry.mood||"🌿")+'</span><span class="journal-date">'+esc(formatDate(entry.createdAt))+'</span></div><h3>'+esc(entry.title||"")+'</h3><p>'+esc(entry.content.slice(0,160))+(entry.content.length>160?"…":"")+'</p></article>').join("");
 }
+
 function getRealMusicDatabaseExists(name){
   if(!window.indexedDB)return Promise.resolve(false);
   if(typeof indexedDB.databases!=="function")return Promise.resolve(true);
@@ -236,13 +235,10 @@ async function saveRealFeed(event){
   }
 }
 function renderRealFeedsEmptyState(box){
-  box.innerHTML='<div class="real-empty-card glass"><span class="real-empty-emoji" aria-hidden="true">📱</span><p>Wala pang real posts</p><form id="realFeedForm" class="real-quick-form"><textarea name="feedText" maxlength="5000" placeholder="Isulat ang totoong post..." required></textarea><input name="feedImage" type="file" accept="image/*"><span id="realFeedFileName" class="real-feed-file-name">Walang image na pinili</span><div class="real-quick-form-actions"><button type="submit">Mag post ng real</button><a class="real-quick-link" href="pages/feeds.html">Open Feeds →</a></div></form></div>';
+  box.innerHTML='<div class="real-bento-empty"><div class="empty-icon" style="background:rgba(125,90,255,.15);">📱</div><p>Wala pang real posts</p><small>Real posts mo dito lalabas</small><form id="realFeedForm" class="real-feed-quick-form"><textarea name="feedText" maxlength="5000" placeholder="Isulat ang totoong post..." required></textarea><input name="feedImage" type="file" accept="image/*"><div class="real-bento-actions"><button type="submit">Save real post</button><a href="pages/feeds.html">Open Feeds →</a></div></form></div>';
   $("#realFeedForm")?.addEventListener("submit",saveRealFeed,{once:true});
-  $("#realFeedForm input[type=file]")?.addEventListener("change",event=>{
-    const name=event.target.files?.[0]?.name||"Walang image na pinili";
-    const target=$("#realFeedFileName");if(target)target.textContent=name;
-  },{once:true});
 }
+
 function getRealGamePlayCount(id){
   const raw=localStorage.getItem("play_"+id+"_real")||"0";
   const n=parseInt(raw,10);
@@ -1080,18 +1076,17 @@ function getBentoShopCount(key){
 function bentoRenderShop(){
   const box=$("#bentoShopList");if(!box)return;
   const collections=[
-    {id:"th",icon:"◈",title:"TUBAL HUB",sub:"Community collection"},
+    {id:"th",icon:"◈",title:"TUBAL HUB",sub:"Official hub collection"},
     {id:"payapang",icon:"🌿",title:"PAYAPANG ISIP",sub:"Calm collection"},
     {id:"ctrlzone",icon:"🎮",title:"CTRLZONE",sub:"Gaming collection"}
   ];
   box.innerHTML=collections.map(item=>
-    '<a class="bento-shop-collection" href="pages/shop.html#'+item.id+'"><span class="bento-shop-collection-icon">'+item.icon+'</span><div><strong>'+item.title+'</strong><small>'+item.sub+'</small></div><span class="bento-shop-arrow">→</span></a>'
+    '<a class="collection-card" href="pages/shop.html#'+item.id+'"><span class="collection-card-icon">'+item.icon+'</span><span class="collection-card-title">'+item.title+'</span><span class="collection-card-sub">'+item.sub+'</span><span class="collection-card-arrow">→</span></a>'
   ).join("");
   const cart=getBentoShopCount("tubalhub-shop-cart-v1");
-  const wishlist=getBentoShopCount("tubalhub-shop-wishlist-v1");
-  const cartLabel=cart===1?"1 item":cart+" items";
-  const cartEl=$("#bentoShopCart");if(cartEl)cartEl.textContent=cartLabel;
-  const wishEl=$("#bentoShopWishlist");if(wishEl)wishEl.textContent=String(wishlist);
+  const cartEl=$("#cartCountReal")||$("#bentoShopCart");
+  if(cartEl)cartEl.textContent=cart+" "+(cart===1?"item":"items");
+  const wishEl=$("#bentoShopWishlist");if(wishEl)wishEl.textContent=String(getBentoShopCount("tubalhub-shop-wishlist-v1"));
 }
 
 function bentoRenderFeeds(rows){
@@ -1272,6 +1267,19 @@ function initFeedsBodyReal(){
   });
   renderFeedsBodyReal();
 }
+
+function initRealBentoSpotlight(){
+  document.querySelectorAll(".glass-card-real").forEach(card=>{
+    if(card.dataset.spotlightReady==="1")return;
+    card.dataset.spotlightReady="1";
+    card.addEventListener("mousemove",e=>{
+      const rect=card.getBoundingClientRect();
+      card.style.setProperty("--mx",(e.clientX-rect.left)+"px");
+      card.style.setProperty("--my",(e.clientY-rect.top)+"px");
+    },{passive:true});
+  });
+}
+
 function initHomeVersionWatcherBridge(){
   if(window.tubalHubVersionChecker?.start){
     window.tubalHubVersionChecker.start();
@@ -1279,6 +1287,7 @@ function initHomeVersionWatcherBridge(){
 }
 function init(){\n  initHomeVersionWatcherBridge();
   initFeedsBodyReal();
+  initRealBentoSpotlight();
   initSpotlight();
   initBento();
   initFeaturedWebsiteSlider();
