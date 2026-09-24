@@ -2547,3 +2547,51 @@ body.theme-light .real-quick-form select{
   color:#24372c;
   border-color:#dfe7e1;
 }
+
+
+/* AUTH HEADER — logged-in name and logged-out actions remain visible */
+.hub-home .top-actions .auth-actions,
+.hub-home .top-actions .auth-user-actions{
+  align-items:center;
+  gap:6px;
+  flex:0 0 auto;
+}
+.hub-home .top-actions .auth-actions{
+  display:flex;
+}
+.hub-home .top-actions .auth-user-actions{
+  display:flex;
+  max-width:min(34vw,280px);
+}
+.hub-home .top-actions .auth-user-name{
+  display:block;
+  max-width:min(24vw,190px);
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font-size:13px;
+  font-weight:700;
+  line-height:1;
+  padding:0 4px;
+}
+.hub-home .top-actions .logout-btn{
+  min-width:36px;
+  height:36px;
+  padding:0 10px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.16);
+  background:rgba(255,255,255,.08);
+  color:inherit;
+  cursor:pointer;
+}
+@media (max-width:768px){
+  .hub-home .top-actions .auth-user-name{
+    max-width:110px;
+    font-size:12px;
+  }
+  .hub-home .top-actions .logout-btn{
+    min-width:34px;
+    height:34px;
+    padding:0 8px;
+  }
+}
