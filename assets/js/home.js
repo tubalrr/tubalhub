@@ -223,6 +223,10 @@ function drawHeroWave(){
   cancelAnimationFrame(state.visualFrame);frame();
 }
 
+function storageAvatar(){
+  try{return localStorage.getItem("tubalhub_avatar")||""}catch(_){return ""}
+}
+
 function parseStoredPosts(){
   return readFirstArray(FEED_KEYS).map((post,index)=>({
     id:post.id||String(index),author:post.author||post.authorName||post.userName||"Member",
@@ -244,9 +248,18 @@ async function renderFeeds(){
     track.innerHTML='<div class="empty-card home-glass"><div><span class="home-emoji" aria-hidden="true">📱</span><strong>Wala pang real posts sa Feeds.</strong><span>Kapag may published content, lalabas dito.</span></div></div>';
     return;
   }
-  track.innerHTML=posts.slice(0,10).map(p=>'<article class="feed-card data-track-card home-glass" data-feed-id="'+esc(p.id)+'"><div class="feed-head"><div class="feed-avatar">'+(p.avatar?'<img src="'+esc(p.avatar)+'" alt="" loading="lazy">':esc((p.author||"M").trim().charAt(0).toUpperCase()))+'</div><div class="feed-author"><strong>'+esc(p.author)+'</strong><small>'+esc(formatDate(p.createdAt))+'</small></div></div><p>'+esc((p.text||"").slice(0,220))+(String(p.text||"").length>220?"…":"")+'</p><div class="feed-stats"><span>'+p.likes+' likes</span><span>'+p.comments+' comments</span><button type="button" class="like-btn" data-feed-like="'+esc(p.id)+'">Like</button></div></article>').join("");
+  const likes=safeJson("tubalhub_home_feed_likes",{});
+  const myAvatar=storageAvatar();
+  const myUid=auth.currentUser?.uid||"";
+  track.innerHTML=posts.slice(0,10).map(p=>{
+    const avatar=(p.id===myUid||p.author===auth.currentUser?.displayName)&&myAvatar?myAvatar:p.avatar;
+    const liked=likes[p.id]===true;
+    const base=Number(p.likes||0);
+    return '<article class="feed-card data-track-card home-glass" data-feed-id="'+esc(p.id)+'" data-base-likes="'+base+'"><div class="feed-head"><div class="feed-avatar">'+(avatar?'<img src="'+esc(avatar)+'" alt="" loading="lazy">':esc((p.author||"M").trim().charAt(0).toUpperCase()))+'</div><div class="feed-author"><strong>'+esc(p.author)+'</strong><small>'+esc(formatDate(p.createdAt))+'</small></div></div><p>'+esc((p.text||"").slice(0,220))+(String(p.text||"").length>220?"…":"")+'</p><div class="feed-stats"><span data-home-like-count="'+esc(p.id)+'">'+(base+(liked?1:0))+' likes</span><span>'+Number(p.comments||0)+' comments</span><button type="button" class="like-btn '+(liked?"liked":"")+'" data-feed-like="'+esc(p.id)+'">'+(liked?"Liked":"Like")+'</button></div></article>';
+  }).join("");
   $$("#feedTrack [data-feed-like]").forEach(button=>button.addEventListener("click",()=>toggleFeedLike(button)));
 }
+
 function toggleFeedLike(button){
   const id=button.dataset.feedLike;
   const key="tubalhub_home_feed_likes",likes=safeJson(key,{});
