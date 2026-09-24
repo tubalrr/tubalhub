@@ -95,24 +95,3 @@ document.querySelectorAll('header nav a').forEach(a=>{if(a.href===location.href)
   });
   window.TUBAL_HUB_LICENSE={name:BRAND,copyright:'© 2026 TUBAL HUB',license:LICENSE_URL};
 })();
-
-/* TUBAL HUB — site-wide Messenger floating chat */
-(function(){
-  const load=()=>{
-    if(!document.querySelector('link[data-tubal-floating-msg-css]')){
-      const css=document.createElement('link');
-      css.rel='stylesheet';
-      css.href='/tubalhub/assets/css/floating-messenger.css?v=20260923-msg2';
-      css.dataset.tubalFloatingMsgCss='1';
-      document.head.appendChild(css);
-    }
-    if(document.querySelector('script[data-tubal-floating-msg]')) return;
-    const s=document.createElement('script');
-    s.type='module';
-    s.src='/tubalhub/assets/js/floating-messenger.js?v=20260923-msg2';
-    s.dataset.tubalFloatingMsg='1';
-    document.head.appendChild(s);
-  };
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',load,{once:true});
-  else load();
-})();
