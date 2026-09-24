@@ -166,7 +166,60 @@ async function toggleReaction(messageId,emoji){if(!isRealUser())return;fireReact
 function renderReplyReactions(item,replyId){const bar=item.querySelector('.reply-reaction-bar');if(!bar)return;const counts=reactionState['reply_'+replyId]||{};bar.innerHTML=Object.entries(counts).filter(([,n])=>n>0).map(([e,n])=>`<button type="button" class="reaction-chip reply-reaction-chip" data-react="${esc(e)}">${e} ${n}</button>`).join('');bar.querySelectorAll('.reply-reaction-chip').forEach(b=>b.onclick=e=>{e.stopPropagation();toggleReplyReaction(replyId,b.dataset.react)})}
 function openReplyReactionMenu(button,replyId){const existing=document.querySelector('.reply-inline-reactions');if(existing)existing.remove();const box=document.createElement('div');box.className='reply-inline-reactions';box.style.cssText='position:fixed;z-index:60;background:#061713;border:1px solid #1d7550;border-radius:12px;padding:7px;box-shadow:0 15px 40px #000b;display:flex;gap:3px;flex-wrap:wrap;max-width:260px';box.innerHTML=emojis.slice(0,18).map(e=>`<button type="button" class="emoji-choice" data-e="${esc(e)}">${e}</button>`).join('');document.body.appendChild(box);const r=button.getBoundingClientRect();box.style.left=Math.min(r.left,innerWidth-270)+'px';box.style.top=Math.max(10,r.top-52)+'px';box.querySelectorAll('[data-e]').forEach(b=>b.onclick=()=>{toggleReplyReaction(replyId,b.dataset.e);box.remove()});setTimeout(()=>document.addEventListener('click',function close(ev){if(!box.contains(ev.target)&&ev.target!==button){box.remove();document.removeEventListener('click',close)}},{once:false}),0)}
 async function toggleReplyReaction(replyId,emoji){if(!isRealUser())return;const id=`reply_${replyId}_${currentUser.uid}`;const r=doc(db,'globalChatReactions',id);const snap=await getDoc(r);let arr=snap.exists()?Array.isArray(snap.data().reactions)?snap.data().reactions:[]:[];arr=arr.includes(emoji)?arr.filter(x=>x!==emoji):[...arr,emoji];if(arr.length)await setDoc(r,{replyId,uid:currentUser.uid,reactions:arr,updatedAt:serverTimestamp()},{merge:true});else if(snap.exists())await deleteDoc(r)}
-function subscribeReactions(){if(stopReactions)stopReactions();const q=query(collection(db,'globalChatReactions'),limit(1000));stopReactions=onSnapshot(q,snap=>{reactionState={};snap.forEach(d=>{const x=d.data();const key=x.replyId?'reply_'+x.replyId:x.messageId;if(!key)return;if(!reactionState[key])reactionState[key]={};(x.reactions||[]).forEach(e=>reactionState[key][e]=(reactionState[key][e]||0)+1)});document.querySelectorAll('.msg').forEach(row=>{const id=row.dataset.id;const bar=row.querySelector('.reaction-bar');if(bar)bar.innerHTML=reactionHtml(id);bar?.querySelectorAll('.reaction-chip').forEach(btn=>btn.addEventListener('click',()=>toggleReaction(id,btn.dataset.react)));row.querySelectorAll('.reply-item').forEach(item=>{const rid=item.dataset.replyId;if(rid)renderReplyReactions(item,rid)})});},err=>console.error('Reaction error',err))}
+function subscribeReactions(){
+ if(stopReactions)stopReactions();
+ const q=query(collection(db,'globalChatReactions'),limit(1000));
+ stopReactions=onSnapshot(q,snap=>{
+   const previous=reactionState;
+   reactionState={};
+   reactionUsersState={};
+
+   snap.forEach(d=>{
+     const x=d.data();
+     const key=x.replyId?'reply_'+x.replyId:x.messageId;
+     if(!key)return;
+     if(!reactionState[key])reactionState[key]={};
+     if(!reactionUsersState[key])reactionUsersState[key]={};
+     (x.reactions||[]).forEach(e=>{
+       reactionState[key][e]=(reactionState[key][e]||0)+1;
+       if(!reactionUsersState[key][e])reactionUsersState[key][e]=new Set();
+       if(x.uid)reactionUsersState[key][e].add(x.uid);
+     });
+   });
+
+   document.querySelectorAll('.msg').forEach(row=>{
+     const id=row.dataset.id;
+     const bar=row.querySelector('.reaction-bar');
+     if(bar){
+       const prevCounts=previous[id]||{};
+       const addedEmoji=Object.keys(reactionState[id]||{}).find(e=>(reactionState[id]?.[e]||0)>(prevCounts[e]||0))||'';
+       bar.innerHTML=reactionHtml(id,addedEmoji);
+       bar.querySelectorAll('.reaction-chip').forEach(btn=>{
+         btn.addEventListener('click',e=>{
+           e.stopPropagation();
+           toggleReaction(id,btn.dataset.react);
+         });
+       });
+       if(addedEmoji){
+         const newCount=reactionState[id]?.[addedEmoji]||0;
+         if(newCount>=5 && (prevCounts[addedEmoji]||0)<5)burstFiveConfetti(row,addedEmoji);
+       }
+     }
+     row.querySelectorAll('.quick-reaction').forEach(btn=>{
+       btn.addEventListener('click',e=>{
+         e.stopPropagation();
+         const emoji=btn.dataset.e;
+         animateReactionTarget(btn);
+         toggleReaction(id,emoji);
+       });
+     });
+     row.querySelectorAll('.reply-item').forEach(item=>{
+       const rid=item.dataset.replyId;
+       if(rid)renderReplyReactions(item,rid);
+     });
+   });
+ },err=>console.error('Reaction error',err));
+}
 function subscribeReplies(){if(stopReplies)stopReplies();const q=query(collection(db,'globalChatReplies'),orderBy('createdAt','asc'),limit(500));stopReplies=onSnapshot(q,snap=>{document.querySelectorAll('.reply-box').forEach(x=>x.innerHTML='');snap.forEach(d=>{const x=d.data(),root=x.messageId,box=document.getElementById(`replies-${root}`);if(!box)return;const item=document.createElement('div');item.className='reply-item'+(x.parentReplyId?' nested-reply':'');item.dataset.replyId=d.id;item.innerHTML=`<div class="reply-meta"><b class="private-member-name">${esc(x.displayName||'Member')}</b> • ${esc(timeText(x.createdAt))}</div><div class="reply-text">${esc(x.text)}</div><div class="reply-actions"><button type="button" class="reply-react-btn" title="React">😊</button><button type="button" class="reply-to-reply">↩ Reply</button></div><div class="reply-reaction-bar"></div>`;item.querySelector('.reply-to-reply').onclick=e=>{e.stopPropagation();setReplyTarget(root,x.displayName||'Member',String(x.text||'').slice(0,100),d.id)};item.querySelector('.reply-react-btn').onclick=e=>{e.stopPropagation();openReplyReactionMenu(e.currentTarget,d.id)};renderReplyReactions(item,d.id);box.appendChild(item)});},err=>console.error('Reply error',err))}
 function subscribeMessages(){if(stopMessages)stopMessages();const q=query(collection(db,'globalChats'),orderBy('createdAt','asc'),limit(100));stopMessages=onSnapshot(q,snap=>{messages.innerHTML='';if(snap.empty)messages.innerHTML='<div class="empty-chat"><strong>No messages yet.</strong>Start the first conversation in Global Chat.</div>';snap.forEach(d=>messages.appendChild(renderMessage(d.id,d.data())));globalMessageCount.textContent=snap.size;messages.scrollTop=messages.scrollHeight;setStatus(`Live • ${snap.size} message${snap.size===1?'':'s'} loaded from Global Chat`);},err=>{console.error(err);setStatus('Could not load Global Chat. Check Firestore Rules.',true)})}
 async function subscribePresence(){if(stopPresence)stopPresence();if(stopUsersPresence)stopUsersPresence();if(heartbeatPresenceRefresh)clearInterval(heartbeatPresenceRefresh);const presenceRef=collection(db,'presence'),usersRef=collection(db,'users');let presenceMap=new Map(),usersMap=new Map();const onlineCutoff=()=>Date.now()-180000;const render=()=>{const merged=new Map();presenceMap.forEach((x,uid)=>merged.set(uid,{...x,uid}));usersMap.forEach((x,uid)=>{const last=(typeof x.lastSeen==='number'?x.lastSeen:(x.lastSeen?.toMillis?.()||x.lastSeen?.toDate?.()?.getTime?.()||0));if(last>=onlineCutoff()){const prev=merged.get(uid)||{};merged.set(uid,{...prev,...x,uid,online:true,lastSeen:last})}});const m=[...merged.values()].filter(x=>x.online===true&&((typeof x.lastSeen==='number'?x.lastSeen:(x.lastSeen?.toDate?.()?.getTime?.()||0))>=onlineCutoff()));m.sort((a,b)=>String(a.displayName||'').localeCompare(String(b.displayName||'')));const debug=document.getElementById('presenceDebug');if(debug)debug.textContent=`Presence: ${presenceMap.size} • Users: ${usersMap.size} • Online: ${m.length} • Shown: ${Math.min(m.length,20)}`;onlineCount.textContent=m.length;onlineMembers.textContent=m.length;memberList.innerHTML='';if(!m.length){memberList.innerHTML='<div class="empty-side">No members are online right now.</div>';return}m.slice(0,20).forEach(x=>{const div=document.createElement('div');div.className='member';div.dataset.uid=x.uid;div.innerHTML=`${avatarHtml(x,'mini')}<div class="member-info"><button type="button" class="private-member-name" data-private-uid="${esc(x.uid)}">${esc(x.displayName||'Member')}</button><span>● Online</span></div>${x.uid===currentUser?.uid?'<span class="you-tag">YOU</span>':''}`;memberList.appendChild(div);if(x.uid!==currentUser?.uid){div.title='Open private chat';div.style.cursor='pointer';div.addEventListener('click',e=>{if(e.target.closest('.video-call-btn,.member-call-btn,.private-call'))return;e.preventDefault();e.stopPropagation();openPrivateChat(x)});const nameEl=div.querySelector('.private-member-name');nameEl.style.cursor='pointer';nameEl.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();openPrivateChat(x)})}})};const readPresence=snap=>{presenceMap=new Map();snap.forEach(d=>{const x=d.data();presenceMap.set(x.uid||d.id,{...x,uid:x.uid||d.id})});render()};const readUsers=snap=>{usersMap=new Map();snap.forEach(d=>{const x=d.data();if(x.uid||d.id)usersMap.set(x.uid||d.id,{...x,uid:x.uid||d.id})});render()};try{const [freshPresence,freshUsers]=await Promise.all([getDocsFromServer(query(presenceRef)),getDocsFromServer(query(usersRef))]);readPresence(freshPresence);readUsers(freshUsers);console.log('[TUBAL HUB presence] fresh server:',freshPresence.size,'presence,',freshUsers.size,'users')}catch(e){console.error('[TUBAL HUB presence] fresh server read failed',e)}stopPresence=onSnapshot(query(presenceRef),readPresence,err=>console.error('[TUBAL HUB presence]',err));stopUsersPresence=onSnapshot(query(usersRef),readUsers,err=>console.error('[TUBAL HUB users presence]',err));heartbeatPresenceRefresh=setInterval(async()=>{try{const fresh=await getDocsFromServer(query(usersRef));readUsers(fresh)}catch(e){console.warn('[TUBAL HUB users refresh]',e)}},30000)}
