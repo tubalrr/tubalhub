@@ -168,3 +168,21 @@
   .gif-sticker-picker.is-open,
   .gif-sticker-item{animation:none!important;transition:none!important;}
 }
+
+/* Render GIF uploads as sticker-like media in Global Chat. */
+.message-content .gif-sticker-media{
+  width:auto!important;
+  max-width:min(250px,72vw)!important;
+  max-height:250px!important;
+  margin-top:0!important;
+  border:0!important;
+  border-radius:18px!important;
+  background:transparent!important;
+  box-shadow:0 12px 30px rgba(0,0,0,.24)!important;
+}
+@media(max-width:760px){
+  .message-content .gif-sticker-media{
+    max-width:min(220px,68vw)!important;
+    max-height:220px!important;
+  }
+}
