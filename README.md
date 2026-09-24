@@ -207,6 +207,6 @@ The website is intended for personal and non-commercial viewing unless permissio
 
 ## © Copyright
 
-© 2026 TUBAL HUB. All rights reserved.
+© 2026 TUBAL HUB — All Rights Reserved.
 
 Built and maintained by **TUBAL HUB**.
