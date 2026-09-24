@@ -1,54 +1,43 @@
-// TUBAL HUB — Premium Sidebar V2 interactions
+// TUBAL HUB — Sidebar V3: hover-only rail + mouse spotlight
 (function(){
   const sidebar = document.querySelector('.hub-sidebar');
   if(!sidebar) return;
 
-  const toggle = sidebar.querySelector('.side-expand-toggle');
+  // Remove the old pinned state so an older session/script can never
+  // leave the rail permanently expanded.
+  sidebar.classList.remove('is-pinned');
+  sidebar.removeAttribute('data-expanded');
 
-  const sync = ()=>{
-    const pinned = sidebar.classList.contains('is-pinned');
-    toggle?.setAttribute('aria-pressed', pinned ? 'true' : 'false');
-    toggle?.setAttribute('aria-expanded', pinned ? 'true' : 'false');
-    toggle?.setAttribute('aria-label', pinned ? 'Collapse sidebar' : 'Expand sidebar');
-    toggle?.setAttribute('title', pinned ? 'Collapse sidebar' : 'Expand sidebar');
-    sidebar.setAttribute('data-expanded', pinned ? 'true' : 'false');
-    sidebar.style.setProperty('--side-spot-x', '50%');
-    sidebar.style.setProperty('--side-spot-y', '50%');
-  };
-
-  toggle?.addEventListener('click', function(e){
-    e.preventDefault();
-    e.stopPropagation();
-    sidebar.classList.toggle('is-pinned');
-    sync();
-  });
-
-  sidebar.addEventListener('pointermove', function(e){
+  const setSpot = (e)=>{
     const rect = sidebar.getBoundingClientRect();
     const x = Math.max(0, Math.min(rect.width, e.clientX - rect.left));
     const y = Math.max(0, Math.min(rect.height, e.clientY - rect.top));
-    sidebar.style.setProperty('--side-spot-x', x + 'px');
-    sidebar.style.setProperty('--side-spot-y', y + 'px');
+    sidebar.style.setProperty('--sb-x', x + 'px');
+    sidebar.style.setProperty('--sb-y', y + 'px');
+  };
+
+  sidebar.addEventListener('pointermove', setSpot, {passive:true});
+
+  sidebar.addEventListener('pointerleave', ()=>{
+    sidebar.style.setProperty('--sb-x', '36px');
+    sidebar.style.setProperty('--sb-y', '120px');
   }, {passive:true});
 
-  sidebar.addEventListener('pointerleave', function(){
-    sidebar.style.setProperty('--side-spot-x', '50%');
-    sidebar.style.setProperty('--side-spot-y', '50%');
-  });
-
-  document.addEventListener('keydown', function(e){
-    if(e.key === 'Escape' && sidebar.classList.contains('is-pinned')){
-      sidebar.classList.remove('is-pinned');
-      sync();
-    }
-  });
-
-  document.addEventListener('pointerdown', function(e){
-    if(!sidebar.classList.contains('is-pinned')) return;
-    if(sidebar.contains(e.target)) return;
+  // Safety: never keep the rail expanded after the pointer leaves.
+  sidebar.addEventListener('mouseleave', ()=>{
     sidebar.classList.remove('is-pinned');
-    sync();
+    sidebar.removeAttribute('data-expanded');
   }, {passive:true});
 
-  sync();
+  // Prevent the legacy expand button from reintroducing the sticky state.
+  const toggle = sidebar.querySelector('.side-expand-toggle');
+  toggle?.addEventListener('click', (e)=>{
+    e.preventDefault();
+    sidebar.classList.remove('is-pinned');
+    sidebar.removeAttribute('data-expanded');
+  });
+
+  if(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches){
+    sidebar.style.setProperty('--sb-speed', '0s');
+  }
 })();
