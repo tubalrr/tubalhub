@@ -8,8 +8,10 @@
   const sync = ()=>{
     const pinned = sidebar.classList.contains('is-pinned');
     toggle?.setAttribute('aria-pressed', pinned ? 'true' : 'false');
+    toggle?.setAttribute('aria-expanded', pinned ? 'true' : 'false');
     toggle?.setAttribute('aria-label', pinned ? 'Collapse sidebar' : 'Expand sidebar');
     toggle?.setAttribute('title', pinned ? 'Collapse sidebar' : 'Expand sidebar');
+    sidebar.setAttribute('data-expanded', pinned ? 'true' : 'false');
     sidebar.style.setProperty('--side-spot-x', '50%');
     sidebar.style.setProperty('--side-spot-y', '50%');
   };
