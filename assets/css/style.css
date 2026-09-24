@@ -348,9 +348,58 @@
         /* Ad */
         #tubalHubAd{border-radius:20px; background:linear-gradient(135deg, rgba(45,255,138,0.10), rgba(45,255,138,0.02)); border:1px dashed rgba(45,255,138,0.22); padding:14px 16px; display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:16px}
         html[data-theme="light"] #tubalHubAd{background:linear-gradient(135deg, rgba(18,158,74,0.08), rgba(18,158,74,0.02)); border-color:rgba(18,158,74,0.18)}
-      `}
-
 /* ===== SAFETY FOR LIVE SITE - preserve functional IDs ===== */
 #authGuestActions, #authUserActions{display:flex !important}
 #authGuestActions[hidden], #authUserActions[hidden]{display:none !important}
 #facebookVideoContainer, [data-home-news-list], #tubalHubAd, #cookieBox{position:relative; z-index:1}
+
+
+/* TUBAL HUB theme switcher */
+.theme-switcher{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  padding:5px;
+  border:1px solid var(--border);
+  border-radius:999px;
+  background:var(--surface);
+  box-shadow:var(--card-shadow);
+}
+.theme-switcher .theme-btn{
+  width:auto;
+  min-width:88px;
+  height:34px;
+  padding:0 11px;
+  gap:7px;
+  border:1px solid transparent;
+  border-radius:999px;
+  background:transparent;
+  color:var(--muted);
+  font:600 12px/1 'Inter',sans-serif;
+  cursor:pointer;
+}
+.theme-switcher .theme-btn:hover{
+  color:var(--text);
+  border-color:var(--border);
+}
+.theme-switcher .theme-btn.active{
+  color:var(--bg);
+  background:var(--text);
+}
+.theme-switcher .dot{
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  display:inline-block;
+  flex:0 0 9px;
+  background:#777;
+}
+.theme-switcher [data-theme-btn="midnight"] .dot{background:#2dff8a}
+.theme-switcher [data-theme-btn="forest"] .dot{background:#33ff88}
+.theme-switcher [data-theme-btn="light"] .dot{background:#129e4a}
+html[data-theme="light"] .theme-switcher .theme-btn.active{background:#0f2316;color:#fff}
+@media(max-width:900px){
+  .theme-switcher .theme-btn{min-width:34px;width:34px;padding:0}
+  .theme-switcher .theme-btn{font-size:0}
+  .theme-switcher .dot{margin:0}
+}
