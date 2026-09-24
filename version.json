@@ -1,32 +1,32 @@
 {
-  "version": "1.2.3",
+  "version": "1.2.4",
   "date": "2026-09-25",
-  "time": "2026-09-25T00:45:00+08:00",
-  "message": "TUBAL HUB update system refresh: improved update detection and a reliable notification fallback.",
+  "time": "2026-09-25T01:00:00+08:00",
+  "message": "Homepage feature panel updated: AI Music moved out of the lower bento area and replaced with a cleaner TUBAL HUB Shop panel.",
   "changelog": [
     {
-      "type": "Fixed",
-      "icon": "🔔",
-      "title": "Update Notification Restored",
-      "desc": "The website update checker now loads its update UI more reliably and can fall back to an internal notification panel."
-    },
-    {
       "type": "Improved",
-      "icon": "⚡",
-      "title": "Faster Update Detection",
-      "desc": "The live update checker now checks for a new published version every 10 seconds while enabled."
-    },
-    {
-      "type": "Improved",
-      "icon": "◈",
-      "title": "Reliable Asset Paths",
-      "desc": "The notifier now resolves the TUBAL HUB project path directly instead of depending on a relative path assumption."
+      "icon": "🛒",
+      "title": "Homepage Shop Panel",
+      "desc": "The lower homepage feature panel now highlights the TUBAL HUB Shop instead of AI Music."
     },
     {
       "type": "New",
-      "icon": "🌙",
-      "title": "TUBAL HUB v1.2.3",
-      "desc": "This release contains the notification reliability fixes and the latest homepage improvements."
+      "icon": "◈",
+      "title": "Three Shop Collections",
+      "desc": "Quick access is provided for TUBAL HUB, Payapang Isip, and CTRLZONE collections."
+    },
+    {
+      "type": "Improved",
+      "icon": "📦",
+      "title": "Live Cart Summary",
+      "desc": "The homepage Shop panel reads the current cart and wishlist counts from browser storage."
+    },
+    {
+      "type": "Fixed",
+      "icon": "🎵",
+      "title": "AI Music Moved to Studio",
+      "desc": "AI Music remains available through its dedicated page and featured website area instead of occupying the lower homepage panel."
     }
   ]
 }
