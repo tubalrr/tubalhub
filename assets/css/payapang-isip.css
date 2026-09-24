@@ -152,18 +152,6 @@ body.payapang-page:before{
 .grounding-row label{font-size:9px;font-weight:900;color:#5f7366}.grounding-row input{height:36px;border-radius:12px;border:1px solid rgba(120,255,170,.14);background:rgba(255,255,255,.22);padding:0 10px;outline:none;color:inherit;font:500 10px Inter,sans-serif}
 .grounding-row input:focus{box-shadow:0 0 0 3px rgba(141,214,109,.18);border-color:rgba(141,214,109,.42)}
 
-.support-chat{padding:18px;border-radius:24px}
-.chat-window{min-height:290px;max-height:350px;overflow:auto;padding:10px;display:flex;flex-direction:column;gap:8px}
-.chat-bubble{max-width:78%;padding:10px 12px;border-radius:18px 18px 18px 4px;background:rgba(255,255,255,.28);border:1px solid rgba(120,160,130,.12);font-size:10px;line-height:1.5;color:#52655a}
-.chat-bubble.me{align-self:flex-end;color:#11301d;background:linear-gradient(135deg,#8ed66d,#1dff91);border-radius:18px 18px 4px 18px;border-color:transparent}
-.chat-meta{display:flex;align-items:center;gap:7px;margin-bottom:4px;font-size:7px;color:#839087}
-.chat-avatar{position:relative;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#b8df96,#dff6d3);font-size:10px}
-.chat-avatar:after{content:"";position:absolute;right:-1px;bottom:0;width:7px;height:7px;border-radius:50%;background:#ff1a1a;border:2px solid #fff;box-shadow:0 0 8px rgba(255,26,26,.55)}
-.chat-avatar.offline:after{background:#000;box-shadow:none}
-.support-reacts{display:flex;gap:6px;margin-top:8px}.support-reacts button{border:1px solid rgba(120,160,130,.14);background:rgba(255,255,255,.24);border-radius:999px;padding:5px 8px;font-size:10px;cursor:pointer}
-.chat-compose{display:flex;gap:7px;margin-top:9px}.chat-compose input{flex:1;height:38px;border-radius:999px;border:1px solid rgba(120,255,170,.14);background:rgba(255,255,255,.22);padding:0 14px;outline:none;color:inherit;font:500 10px Inter,sans-serif}
-.typing-dots{display:inline-flex;gap:3px;align-items:center}.typing-dots i{width:4px;height:4px;background:#1dff91;border-radius:50%;animation:typing .75s infinite alternate}.typing-dots i:nth-child(2){animation-delay:.15s}.typing-dots i:nth-child(3){animation-delay:.3s}
-@keyframes typing{from{opacity:.3;transform:translateY(0)}to{opacity:1;transform:translateY(-2px)}}
 
 body.theme-midnight.payapang-page{--pi-ink:#eef8f0;--pi-muted:#7f9087;--pi-bg:#020604;--pi-glass:rgba(7,17,10,.72);--pi-border:rgba(120,255,170,.14);background:#020604;color:var(--pi-ink)}
 body.theme-midnight.payapang-page:before{opacity:.20;background-image:linear-gradient(rgba(29,255,145,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(29,255,145,.045) 1px,transparent 1px);background-size:30px 30px}
