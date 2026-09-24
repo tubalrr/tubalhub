@@ -1,5 +1,5 @@
 {
-  "source": "CTRLZONE catalog — single source of truth",
+  "source": "CTRLZONE catalog — real game records",
   "updated": "2026-09-25",
   "games": [
     {
@@ -15,7 +15,11 @@
       "emoji": "🎮",
       "category": "Hot",
       "colorA": "#0d5bd7",
-      "colorB": "#031a4b"
+      "colorB": "#031a4b",
+      "idReal": "mlbb_real",
+      "titleReal": "Mobile Legends: Bang Bang",
+      "devReal": "Moonton",
+      "linkReal": "ctrlzone.html?game=mlbb"
     },
     {
       "id": "hok",
@@ -30,7 +34,11 @@
       "emoji": "⚔️",
       "category": "Hot",
       "colorA": "#4e2d9e",
-      "colorB": "#11142c"
+      "colorB": "#11142c",
+      "idReal": "hok_real",
+      "titleReal": "Honor of Kings",
+      "devReal": "Tencent",
+      "linkReal": "ctrlzone.html?game=hok"
     },
     {
       "id": "minecraft",
@@ -45,7 +53,11 @@
       "emoji": "🧱",
       "category": "New",
       "colorA": "#2b8a3e",
-      "colorB": "#0d2915"
+      "colorB": "#0d2915",
+      "idReal": "minecraft_real",
+      "titleReal": "Minecraft",
+      "devReal": "Mojang",
+      "linkReal": "ctrlzone.html?game=minecraft"
     },
     {
       "id": "apex",
@@ -60,7 +72,11 @@
       "emoji": "🔥",
       "category": "Trending",
       "colorA": "#8d2f4c",
-      "colorB": "#24101a"
+      "colorB": "#24101a",
+      "idReal": "apex_real",
+      "titleReal": "Apex Legends",
+      "devReal": "Electronic Arts",
+      "linkReal": "ctrlzone.html?game=apex"
     },
     {
       "id": "valorant",
@@ -75,7 +91,11 @@
       "emoji": "🎯",
       "category": "Trending",
       "colorA": "#b92b4d",
-      "colorB": "#2a0b19"
+      "colorB": "#2a0b19",
+      "idReal": "valorant_real",
+      "titleReal": "VALORANT",
+      "devReal": "Riot Games",
+      "linkReal": "ctrlzone.html?game=valorant"
     },
     {
       "id": "roblox",
@@ -90,7 +110,11 @@
       "emoji": "🧩",
       "category": "New",
       "colorA": "#5d5d67",
-      "colorB": "#16161b"
+      "colorB": "#16161b",
+      "idReal": "roblox_real",
+      "titleReal": "Roblox",
+      "devReal": "Roblox",
+      "linkReal": "ctrlzone.html?game=roblox"
     },
     {
       "id": "warzone",
@@ -105,7 +129,11 @@
       "emoji": "💥",
       "category": "Hot",
       "colorA": "#70734c",
-      "colorB": "#181b14"
+      "colorB": "#181b14",
+      "idReal": "warzone_real",
+      "titleReal": "Call of Duty: Warzone",
+      "devReal": "Activision",
+      "linkReal": "ctrlzone.html?game=warzone"
     },
     {
       "id": "genshin",
@@ -120,7 +148,11 @@
       "emoji": "🌌",
       "category": "Trending",
       "colorA": "#477dca",
-      "colorB": "#18243d"
+      "colorB": "#18243d",
+      "idReal": "genshin_real",
+      "titleReal": "Genshin Impact",
+      "devReal": "HoYoverse",
+      "linkReal": "ctrlzone.html?game=genshin"
     },
     {
       "id": "lol",
@@ -135,7 +167,11 @@
       "emoji": "🏹",
       "category": "Hot",
       "colorA": "#8b6b29",
-      "colorB": "#241b0a"
+      "colorB": "#241b0a",
+      "idReal": "lol_real",
+      "titleReal": "League of Legends",
+      "devReal": "Riot Games",
+      "linkReal": "ctrlzone.html?game=lol"
     }
   ]
 }
