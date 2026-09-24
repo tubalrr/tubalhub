@@ -18,6 +18,7 @@
 <link rel="stylesheet" href="assets/css/home-premium.css?v=20260924">
 <link rel="stylesheet" href="assets/css/sidebar-premium.css?v=20260924-v9">
 <link rel="stylesheet" href="assets/css/home-agency.css?v=20260924-v2">
+<link rel="stylesheet" href="assets/css/home.css?v=20260924-v1">
 <link rel="stylesheet" href="assets/css/notification-search.css?v=20260924-ns9">
 <style>.home-games-section{margin-top:24px}.games-preview-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.game-preview-card{display:flex;align-items:center;gap:12px;padding:18px;border:1px solid rgba(139,124,255,.22);border-radius:18px;background:rgba(17,20,38,.62);color:inherit;text-decoration:none;transition:.2s}.game-preview-card:hover{transform:translateY(-4px);border-color:#8b7cff}.game-preview-card>span{font-size:32px}.game-preview-card .game-logo{width:64px;height:64px;object-fit:contain;flex:0 0 64px;border-radius:10px;background:rgba(255,255,255,.06);padding:5px}.game-preview-card .game-logo-ml{display:flex;align-items:center;justify-content:center;padding:0;background:linear-gradient(145deg,#1a65d8,#071a4b);color:#fff;font-weight:900;font-size:20px;letter-spacing:-1px;text-shadow:0 2px 4px rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.2)}.game-preview-card div{min-width:0;flex:1}.game-preview-card small{font-size:10px;opacity:.65}.game-preview-card h3{margin:4px 0;font-size:15px}.game-preview-card p{margin:0;font-size:11px;opacity:.65}.game-preview-card>b{font-size:18px}@media(max-width:900px){.games-preview-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:560px){.games-preview-grid{grid-template-columns:1fr}}</style><style>
 .hub-home .search-box{position:relative!important;z-index:200!important;pointer-events:auto!important}
@@ -121,165 +122,93 @@
     </div>
   </header>
 
-  <script type="module">
-    import { auth, app } from "./assets/js/firebase-config.js";
-    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+    <main class="home-page">
+    <div class="home-shell">
+      <section class="home-hero home-glass" aria-label="TUBAL HUB featured slider">
+        <div id="heroTrack" class="hero-track" aria-live="polite">
+          <article class="hero-slide hero-slide--peace">
+            <div class="hero-slide-inner">
+              <span class="hero-eyebrow"><span class="home-emoji" aria-hidden="true">🌿</span> REAL WELLNESS</span>
+              <h1>Payapang Isip</h1>
+              <p>Real journal entries and practical breathing tools saved by you in your browser.</p>
+              <span class="real-pill"><span class="home-emoji" aria-hidden="true">✓</span> Real journal mo</span>
+              <a class="hero-cta" href="pages/payapang-isip.html">Open Payapang Isip →</a>
+            </div>
+            <div class="hero-breath" aria-hidden="true"><span class="home-emoji">🌿</span></div>
+          </article>
 
-    const guestActions = document.getElementById("authGuestActions");
-    const userActions = document.getElementById("authUserActions");
-    const userName = document.getElementById("authUserName");
-    const logoutBtn = document.getElementById("logoutBtn");
-    const db = getFirestore(app);
+          <article class="hero-slide hero-slide--music">
+            <div class="hero-slide-inner">
+              <span class="hero-eyebrow"><span class="home-emoji" aria-hidden="true">🎵</span> REAL AI MUSIC</span>
+              <h1>AI Music</h1>
+              <p>Your generated audio only. The waveform below uses live frequency data from a real saved track when it is playing.</p>
+              <span class="real-pill"><span class="home-emoji" aria-hidden="true">✓</span> Real music mo</span>
+              <a class="hero-cta" href="pages/ai-music.html">Open AI Music Studio →</a>
+            </div>
+            <div id="heroMusicWaveform" class="wave-visual">
+              <canvas id="heroMusicCanvas" aria-label="Real audio frequency visualizer"></canvas>
+              <span class="wave-hint" id="heroMusicHint">Play a saved track</span>
+            </div>
+          </article>
 
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        guestActions.hidden = true;
-        userActions.hidden = false;
-
-        // Never show the user's email as the visible account name.
-        // Prefer the editable Firestore profile name, then Firebase displayName.
-        let name = user.displayName || "";
-        if (!user.isAnonymous) {
-          try {
-            const profileSnap = await getDoc(doc(db, "users", user.uid));
-            if (profileSnap.exists()) {
-              name = String(profileSnap.data().displayName || name || "").trim();
-            }
-          } catch (error) {
-            console.warn("Could not load profile name:", error);
-          }
-        }
-
-        userName.textContent = name || (user.isAnonymous ? "Guest" : "Member");
-        userName.title = user.isAnonymous ? "Guest account" : "Edit your profile name";
-
-        const sidebarUser = document.getElementById("sidebarUser");
-        const sidebarUserName = document.getElementById("sidebarUserName");
-        const sidebarUserAvatar = document.getElementById("sidebarUserAvatar");
-        if (sidebarUser && sidebarUserName && sidebarUserAvatar) {
-          const sidebarName = name || (user.isAnonymous ? "Guest" : "Member");
-          sidebarUser.hidden = false;
-          sidebarUserName.textContent = sidebarName;
-          sidebarUserAvatar.textContent = (sidebarName.trim().charAt(0) || "U").toUpperCase();
-          if (user.photoURL) {
-            sidebarUserAvatar.style.backgroundImage = 'url("' + user.photoURL.replace(/"/g, '&quot;') + '")';
-            sidebarUserAvatar.classList.add("has-photo");
-          }
-        }
-        userName.style.cursor = user.isAnonymous ? "default" : "pointer";
-
-        if (!user.isAnonymous) {
-          userName.onclick = () => {
-            window.location.href = "pages/profiles.html";
-          };
-        }
-      } else {
-        guestActions.hidden = false;
-        userActions.hidden = true;
-        userName.textContent = "";
-        userName.onclick = null;
-        const sidebarUser = document.getElementById("sidebarUser");
-        if (sidebarUser) sidebarUser.hidden = true;
-      }
-    });
-
-    logoutBtn?.addEventListener("click", async () => {
-      try {
-        await signOut(auth);
-        window.location.reload();
-      } catch (error) {
-        console.error("Logout failed:", error);
-      }
-    });
-  </script>
-
-  <main>
-    <section class="hero-new">
-      <div class="hero-art"></div>
-      <div class="hero-content">
-        <div class="hero-kicker">WELCOME TO</div>
-        <h1>TUBAL<span>HUB</span></h1>
-        <div class="hero-sub">CONTENT <i>•</i> COMMUNITY <i>•</i> CREATIVITY</div>
-        <p>More than just a website. A place for ideas, stories, creators, gamers, and friends.</p>
-        <div class="hero-actions"><a class="hero-green" href="#brands">Explore Hub</a><a class="hero-outline" href="pages/feeds.html">⌁ &nbsp; Open Feeds</a><a class="hero-outline" href="pages/news.html">▣ &nbsp; Read News</a></div>
-      </div>
-      <div class="hero-logo-large"><div></div><a href="index.html" aria-label="TUBAL HUB Home" title="TUBAL HUB Home"><img src="tubal-hub-logo.png" loading="eager" decoding="async" fetchpriority="high" width="180" height="180" alt="TUBAL HUB logo"></a></div>
-      <div class="hero-quote">“Three Brands.<br><b>One Community.</b><br>Always Together.” <span>◆</span></div>
-    </section>
-
-    <section class="hub-ad-section" aria-label="Advertisement">
-      <div class="hub-ad-label">ADVERTISEMENT</div>
-      <div class="hub-ad-container" id="tubalHubAd">
-        <div class="hub-ad-placeholder">
-          <span>ADVERTISEMENT</span>
-          <small>Ad space reserved</small>
+          <article class="hero-slide hero-slide--game">
+            <div class="hero-slide-inner">
+              <span class="hero-eyebrow"><span class="home-emoji" aria-hidden="true">🎮</span> REAL GAME DATA</span>
+              <h1>CTRLZONE</h1>
+              <p>Game stats appear only when you have saved real gameplay data on this device.</p>
+              <span class="real-pill"><span class="home-emoji" aria-hidden="true">✓</span> Real laro mo</span>
+              <a class="hero-cta" href="pages/ctrlzone.html">Open CTRLZONE →</a>
+            </div>
+            <div id="gameScoreStack" class="game-score-stack" aria-label="Saved game stats"></div>
+          </article>
         </div>
-      </div>
-    </section>
+        <button id="heroPrev" class="hero-arrow prev" type="button" aria-label="Previous slide">‹</button>
+        <button id="heroNext" class="hero-arrow next" type="button" aria-label="Next slide">›</button>
+        <div id="heroDots" class="hero-dots" role="tablist" aria-label="Hero slides"></div>
+      </section>
 
-    <section class="brand-strip" id="brands">
-      <a class="brand-card brand-nature" href="pages/payapang-isip.html"><div class="brand-visual">🌿</div><div><h2>PAYAPANG ISIP</h2><p>Peace, mind, and a better you.</p></div><span>Explore →</span></a>
-      <a class="brand-card brand-game" href="pages/ctrlzone.html"><div class="brand-visual">🎮</div><div><h2>CTRLZONE</h2><p>Game. Create. Level up.</p></div><span>Explore →</span></a>
-      <a class="brand-card brand-profile" href="pages/profiles.html"><div class="brand-visual">✦</div><div><h2>PROFILES</h2><p>Life, stories, and journeys.</p></div><span>Explore →</span></a>
-      <div class="brand-tagline">Play<br>Explore<br><b>Together</b> <i>◆</i></div>
-    </section>
+      <section class="home-section">
+        <div class="slider-bar">
+          <div><h2><span class="home-emoji" aria-hidden="true">🌿</span> Payapang Isip</h2></div>
+          <div class="slider-actions"><a href="pages/payapang-isip.html">View All →</a><div class="slider-controls"><button id="journalTrackPrev" class="slider-control" type="button" aria-label="Previous journal entries">‹</button><button id="journalTrackNext" class="slider-control" type="button" aria-label="Next journal entries">›</button></div></div>
+        </div>
+        <div id="journalTrack" class="data-slider" aria-label="Real Payapang Isip journal entries"></div>
+      </section>
 
-    <section class="feature-row">
-      <div class="live-card">
-        <div class="live-bg"></div><div class="live-waveform" aria-hidden="true"><i style="--bar:3px;--delay:0s"></i><i style="--bar:10px;--delay:0.09s"></i><i style="--bar:6px;--delay:0.18s"></i><i style="--bar:13px;--delay:0.27s"></i><i style="--bar:9px;--delay:0.36s"></i><i style="--bar:5px;--delay:0.44999999999999996s"></i><i style="--bar:12px;--delay:0.54s"></i><i style="--bar:8px;--delay:0s"></i><i style="--bar:4px;--delay:0.09s"></i><i style="--bar:11px;--delay:0.18s"></i><i style="--bar:7px;--delay:0.27s"></i><i style="--bar:3px;--delay:0.36s"></i><i style="--bar:10px;--delay:0.44999999999999996s"></i><i style="--bar:6px;--delay:0.54s"></i><i style="--bar:13px;--delay:0s"></i><i style="--bar:9px;--delay:0.09s"></i><i style="--bar:5px;--delay:0.18s"></i><i style="--bar:12px;--delay:0.27s"></i><i style="--bar:8px;--delay:0.36s"></i><i style="--bar:4px;--delay:0.44999999999999996s"></i></div><div class="live-copy"><span class="live-now">● LIVE NOW</span><h2>TUBAL HUB<br><em>IS LIVE!</em></h2><p>Catch the latest updates and community action.</p><a href="pages/chat.html">◉ &nbsp; Join Live</a></div>
-      </div>
-      <div class="social-card"><h2>Follow on Socials</h2><div class="social-grid"><a class="social-facebook" href="https://www.facebook.com/"><b aria-hidden="true"><img src="https://cdn.simpleicons.org/facebook/ffffff" alt="Facebook" loading="lazy" decoding="async"></b><span>Facebook<small>Open App</small></span></a><a class="social-youtube" href="https://www.youtube.com/"><b aria-hidden="true"><img src="https://cdn.simpleicons.org/youtube/ffffff" alt="YouTube" loading="lazy" decoding="async"></b><span>YouTube<small>Open App</small></span></a><a class="social-tiktok" href="https://www.tiktok.com/"><b aria-hidden="true"><img src="https://cdn.simpleicons.org/tiktok/ffffff" alt="TikTok" loading="lazy" decoding="async"></b><span>TikTok<small>Open App</small></span></a><a class="social-community" href="pages/chat.html"><b aria-hidden="true">◉</b><span>Community<small>Join</small></span></a></div></div>
-    </section>
+      <section class="home-section">
+        <div class="slider-bar">
+          <div><h2><span class="home-emoji" aria-hidden="true">🎵</span> AI Music</h2></div>
+          <div class="slider-actions"><a href="pages/ai-music.html">Open Studio →</a><div class="slider-controls"><button id="musicTrackPrev" class="slider-control" type="button" aria-label="Previous AI music tracks">‹</button><button id="musicTrackNext" class="slider-control" type="button" aria-label="Next AI music tracks">›</button></div></div>
+        </div>
+        <div id="musicTrack" class="data-slider" aria-label="Real generated music"></div>
+      </section>
 
+      <section class="home-section">
+        <div class="slider-bar">
+          <div><h2><span class="home-emoji" aria-hidden="true">📱</span> Feeds Inside</h2></div>
+          <div class="slider-actions"><a href="pages/feeds.html">View All →</a><div class="slider-controls"><button id="feedTrackPrev" class="slider-control" type="button" aria-label="Previous feed posts">‹</button><button id="feedTrackNext" class="slider-control" type="button" aria-label="Next feed posts">›</button></div></div>
+        </div>
+        <div id="feedTrack" class="data-slider" aria-label="Real feed posts"></div>
+      </section>
 
-    <section class="home-section facebook-video-section" aria-label="Facebook Videos">
-      <div class="home-heading">
-        <div><h2>Facebook <em>Videos</em></h2><p class="fb-video-subtitle">Videos published by TUBAL HUB admin</p></div>
-        <a class="fb-open-link" href="https://www.facebook.com/share/1EkK7ev1Yt/" target="_blank" rel="noopener noreferrer">Facebook →</a>
-      </div>
-      <div class="facebook-video-container" id="facebookVideoContainer">
-        <div class="news-empty">Loading Facebook videos…</div>
-      </div>
-    </section>
-
-    <section class="home-section home-news-section">
-      <div class="home-heading"><h2>Latest <em>News</em></h2><a href="pages/news.html">View All →</a></div>
-      <div class="news-grid" data-home-news-list>
-        <div class="news-empty">Loading latest news…</div>
-      </div>
-    </section>
-
-    <section class="home-section home-games-section" aria-label="Games"><div class="home-heading"><div><h2>Featured <em>Games</em></h2><p>Explore official game sites and platforms.</p></div><a href="pages/ctrlzone.html">CTRLZONE →</a></div><div class="games-preview-grid"><a class="game-preview-card" href="https://www.mobilelegends.com/" target="_blank" rel="noopener noreferrer"><div class="game-logo game-logo-ml" aria-label="Mobile Legends logo">ML</div><div><small>MOBA</small><h3>Mobile Legends</h3><p>Official website</p></div><b>↗</b></a><a class="game-preview-card" href="https://www.honorofkings.com/" target="_blank" rel="noopener noreferrer"><img class="game-logo" src="https://commons.wikimedia.org/wiki/Special:Redirect/file/Honor_of_Kings_Wordmark_Logo.png" alt="Honor of Kings logo"><div><small>MOBA</small><h3>Honor of Kings</h3><p>Official website</p></div><b>↗</b></a><a class="game-preview-card" href="https://www.minecraft.net/" target="_blank" rel="noopener noreferrer"><img class="game-logo" src="https://commons.wikimedia.org/wiki/Special:Redirect/file/Minecraft_Logo.png" alt="Minecraft logo"><div><small>SANDBOX</small><h3>Minecraft</h3><p>Official website</p></div><b>↗</b></a><a class="game-preview-card" href="https://www.ea.com/games/apex-legends" target="_blank" rel="noopener noreferrer"><img class="game-logo" src="https://commons.wikimedia.org/wiki/Special:Redirect/file/Apex_Legends_logo.png" alt="Apex Legends logo"><div><small>ACTION</small><h3>Apex Legends</h3><p>Official website</p></div><b>↗</b></a></div></section><section class="home-section home-shop-section" aria-label="Shop">
-      <div class="home-heading">
-        <div><h2>TUBAL HUB <em>Shop</em></h2><p>Discover products and creator collections from the Hub.</p></div>
-        <a href="pages/shop.html">View Shop →</a>
-      </div>
-      <div class="shop-preview-grid">
-        <a class="shop-preview-card" href="pages/shop.html">
-          <div class="shop-preview-art">TH</div>
-          <div><small>TUBAL HUB</small><h3>Official Hub Collection</h3><span>Coming Soon →</span></div>
-        </a>
-        <a class="shop-preview-card" href="pages/shop.html">
-          <div class="shop-preview-art">🌿</div>
-          <div><small>PAYAPANG ISIP</small><h3>Peace Collection</h3><span>Coming Soon →</span></div>
-        </a>
-        <a class="shop-preview-card" href="pages/shop.html">
-          <div class="shop-preview-art">⚡</div>
-          <div><small>CTRLZONE</small><h3>Creator Collection</h3><span>Coming Soon →</span></div>
-        </a>
-      </div>
-    </section>
-
-    <section class="feature-links">
-      <a href="pages/news.html"><b>▣</b><span>Events<small>Join upcoming activities</small></span></a>
-      <a href="pages/community.html"><b>♧</b><span>Community<small>Meet fellow members</small></span></a>
-      <a href="pages/profiles.html"><b>▧</b><span>Gallery<small>Explore stories & moments</small></span></a>
-      <a href="pages/announcements.html"><b>✉</b><span>Announcements<small>Get the latest updates</small></span></a>
-    </section>
+      <footer class="clean-footer home-glass">
+        <div>
+          <strong>TUBAL HUB</strong>
+          <span class="footer-sub">Real content appears here from your saved data and connected TUBAL HUB services.</span>
+          <span class="footer-sub" id="homeStorage">Local data: calculating…</span>
+        </div>
+        <div class="footer-status">
+          <span id="homeOnlineDot" class="footer-status-dot" aria-hidden="true"></span>
+          <span class="footer-version" id="homeVersion">Loading version…</span>
+        </div>
+        <nav class="footer-links" aria-label="Footer">
+          <a href="pages/feeds.html">Feeds</a><a href="pages/ai-music.html">AI Music</a><a href="pages/payapang-isip.html">Payapang Isip</a><a href="pages/ctrlzone.html">CTRLZONE</a><a href="pages/settings.html">Settings</a>
+        </nav>
+      </footer>
+    </div>
+    <audio id="homeMusicAudio" preload="metadata"></audio>
+    <div id="homeToast" class="home-toast" role="status" aria-live="polite"></div>
   </main>
-
-  <footer class="hub-footer"><div class="footer-brand"><img src="tubal-hub-logo.png" loading="lazy" decoding="async" width="180" height="180" alt="TUBAL HUB"><b>TUBAL HUB</b><span>© 2026 TUBAL HUB. All rights reserved.</span></div><div class="footer-links"><a href="index.html">Home</a><a href="pages/news.html">News</a><a href="pages/shop.html">Shop</a><a href="pages/community.html">Community</a><a href="pages/privacy.html">Privacy</a><a href="pages/cookies.html">Cookies</a><a href="pages/terms.html">Terms</a><a href="pages/license.html">License</a><a href="pages/copyright.html">Copyright</a><a href="pages/contact.html">Contact</a></div><p>Keep Creating &nbsp; / &nbsp; Keep Growing &nbsp; / &nbsp; Keep Going <i>◆</i></p></footer>
 </div>
 
 <div id="update-banner"></div>
