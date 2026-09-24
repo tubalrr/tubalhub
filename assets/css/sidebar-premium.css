@@ -213,10 +213,10 @@
   gap:0!important;
   margin:0!important;
   padding:0 0 6px!important;
-  overflow-x:visible!important;
+  overflow-x:hidden!important;
   overflow-y:auto!important;
   scrollbar-width:thin;
-  scrollbar-color:rgba(29,255,145,.55) transparent;
+  scrollbar-color:transparent transparent;
   scrollbar-gutter:stable;
 }
 
@@ -224,6 +224,9 @@
 .hub-home .side-nav::-webkit-scrollbar-track{background:transparent!important}
 .hub-home .side-nav::-webkit-scrollbar-thumb{
   border-radius:999px!important;
+  background:transparent!important;
+}
+.hub-home .hub-sidebar:hover .side-nav::-webkit-scrollbar-thumb{
   background:linear-gradient(180deg,#1dff91,#7d5aff)!important;
 }
 
