@@ -45,8 +45,7 @@ const state={
 const els={
   moodGrid:$("#moodGrid"),streak:$("#moodStreak"),chart:$("#moodChart"),journal:$("#journalEntries"),journalInput:$("#journalInput"),
   breathOrbit:$("#breathOrbit"),breathPhase:$("#breathPhase"),breathCount:$("#breathCount"),breathStart:$("#startBreathing"),exerciseStart:$("#exerciseStart"),exerciseStatus:$("#exerciseStatus"),
-  grounding:$("#groundingRows"),groundingSave:$("#saveGrounding"),chatWindow:$("#supportChatWindow"),chatInput:$("#supportChatInput"),
-  chatSend:$("#supportChatSend"),playerTitle:$("#playerTitle"),playerProgress:$("#playerProgress"),playerElapsed:$("#playerElapsed"),playerDuration:$("#playerDuration"),
+  grounding:$("#groundingRows"),groundingSave:$("#saveGrounding"),playerTitle:$("#playerTitle"),playerProgress:$("#playerProgress"),playerElapsed:$("#playerElapsed"),playerDuration:$("#playerDuration"),
   playerBtn:$("#playerToggle"),playerTrack:$("#playerTrack"),visualizer:$("#visualizer"),toast:$("#piToast"),particles:$("#piParticles"),tipGrid:$("#tipsGrid")
 };
 
@@ -216,10 +215,6 @@ function bindPlayer(){
     if(state.playing)state.startedAt=performance.now()-state.elapsed*1000;
   });
   els.playerTitle.addEventListener("click",()=>{switchTrack(state.trackIndex+1);notify(TRACKS[state.trackIndex].title)});
-}
-
-function react(btn){
-  burstAt(btn,5);notify("Reaction sent");
 }
 
 function initThemes(){
