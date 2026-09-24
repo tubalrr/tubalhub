@@ -40,12 +40,6 @@ const state={
   startedAt:0,
   elapsed:0,
   playerTimer:null,
-  chat:[
-    {who:"Mina",text:"Take your time. You do not have to figure everything out at once.",me:false,online:true},
-    {who:"You",text:"Thanks. I’m taking a quiet minute.",me:true,online:true},
-    {who:"Lio",text:"That sounds like a good place to start. One small step is enough.",me:false,online:false}
-  ],
-  chatBusy:false
 };
 
 const els={
@@ -224,20 +218,6 @@ function bindPlayer(){
   els.playerTitle.addEventListener("click",()=>{switchTrack(state.trackIndex+1);notify(TRACKS[state.trackIndex].title)});
 }
 
-function renderChat(){
-  els.chatWindow.innerHTML=state.chat.map(m=>'<div class="chat-bubble '+(m.me?"me":"")+'"><div class="chat-meta"><span class="chat-avatar '+(!m.online?"offline":"")+'">'+(m.me?"🌿":"●")+'</span><span>'+esc(m.who)+'</span></div>'+esc(m.text)+'</div>').join("");
-  if(state.chatBusy)els.chatWindow.innerHTML+='<div class="chat-bubble"><div class="chat-meta"><span class="chat-avatar">●</span><span>Support</span></div><span class="typing-dots"><i></i><i></i><i></i></span></div>';
-  els.chatWindow.scrollTop=els.chatWindow.scrollHeight;
-}
-function sendChat(){
-  const text=els.chatInput.value.trim();if(!text)return;
-  state.chat.push({who:"You",text,me:true,online:true});els.chatInput.value="";renderChat();notify("Message added to demo chat");
-  state.chatBusy=true;renderChat();setTimeout(()=>{
-    state.chatBusy=false;
-    state.chat.push({who:"Support",text:"Thanks for sharing. Take the next small step that feels manageable.",me:false,online:true});
-    renderChat();
-  },1200);
-}
 function react(btn){
   burstAt(btn,5);notify("Reaction sent");
 }
@@ -251,12 +231,10 @@ function bind(){
   $("#saveJournal").addEventListener("click",saveJournal);
   els.journal.addEventListener("click",e=>{const edit=e.target.closest("[data-edit-entry]");if(edit)editEntry(edit.dataset.editEntry);const del=e.target.closest("[data-delete-entry]");if(del)deleteEntry(del.dataset.deleteEntry)});
   els.groundingSave.addEventListener("click",saveGrounding);
-  els.chatSend.addEventListener("click",sendChat);els.chatInput.addEventListener("keydown",e=>{if(e.key==="Enter")sendChat()});
-  $$(".support-reacts button").forEach(b=>b.addEventListener("click",()=>react(b)));
   $$(".tip-card a").forEach(a=>a.addEventListener("click",()=>notify("Open the "+a.textContent.replace(" →","").toLowerCase()+" section")));
   bindBreathingButton();els.exerciseStart?.addEventListener("click",()=>{burstAt(els.exerciseStart,6);startBreathing();if(!state.breathing.running&&els.exerciseStatus)els.exerciseStatus.textContent="Ready when you are."});bindPlayer();
 }
 function init(){
-  state.entries=loadEntries();renderMood();renderEntries();renderTips();initGrounding();renderChat();initThemes();switchTrack(0);bind();updatePlayer();
+  state.entries=loadEntries();renderMood();renderEntries();renderTips();initGrounding();initThemes();switchTrack(0);bind();updatePlayer();
 }
 init();
