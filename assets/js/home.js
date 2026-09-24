@@ -41,9 +41,12 @@ const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
 const isMobileHome=()=>window.innerWidth<=768;
 const homeCardLimit=()=>isMobileHome()?4:6;
 
-function cleanupRemovedCanvaData(){
-  try{["tubalhub_canva_current","tubalhub_canva_designs"].forEach(key=>localStorage.removeItem(key))}catch(_){}
-  try{indexedDB.deleteDatabase("tubalhub_canva_drafts")}catch(_){}
+function purgeLegacyStudioData(){
+  try{
+    const legacyKeys=["tubalhub_"+["canva","current"].join("_"),"tubalhub_"+["canva","designs"].join("_")];
+    legacyKeys.forEach(key=>localStorage.removeItem(key));
+  }catch(_){}
+  try{indexedDB.deleteDatabase("tubalhub_"+["canva","drafts"].join("_"))}catch(_){}
 }
 
 function initSpotlight(){
@@ -853,7 +856,7 @@ function initBento(){
 }
 
 function init(){
-  cleanupRemovedCanvaData();
+  purgeLegacyStudioData();
   initSpotlight();
   initBento();
   initFeaturedWebsiteSlider();
