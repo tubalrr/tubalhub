@@ -181,6 +181,7 @@
       showRealUpdateNotify(payload);
       return;
     }
+    if (signature) localStorage.setItem(INDEX_SIG_KEY, signature);
     setVersionBadge(versionData.version, "current");
   }
 
