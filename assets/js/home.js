@@ -1394,3 +1394,110 @@ if(document.readyState==="loading"){
 }else{
   startHome();
 }
+
+
+/* =========================================================
+   REAL ADVERTISEMENT — remote/local data only, no mock ads
+   ========================================================= */
+(function initRealAdvertisements(){
+  const ADS_LOCAL_KEY="tubalhub_ads";
+  const ADS_AUTOPLAY_KEY="tubalhub_ads_autoplay";
+  const state={ads:[],index:0,timer:null,paused:false,hovered:false,dragStartX:0,dragStartScroll:0,dragging:false,skipTimers:new Map()};
+  const $id=id=>document.getElementById(id);
+  const escAd=value=>String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
+  const realHref=value=>{const href=String(value||"").trim();if(!href)return"#";return /^(https?:|mailto:|tel:|\/|\.\.?\/|#)/i.test(href)?href:"#"};
+  const realText=value=>String(value??"").trim();
+
+  function getRealAds(){
+    const local=(()=>{try{const value=JSON.parse(localStorage.getItem(ADS_LOCAL_KEY)||"[]");return Array.isArray(value)?value:[]}catch(_){return[]}})();
+    return fetch("/data/ads.json",{cache:"no-store"}).then(r=>r.ok?r.json():[]).catch(()=>[]).then(remote=>{
+      const rows=Array.isArray(remote)?remote:(Array.isArray(remote?.ads)?remote.ads:[]);
+      return rows.length?rows:(local.length?local:[]);
+    });
+  }
+
+  function trackAdClick(ad){
+    if(!ad?.id)return;
+    try{localStorage.setItem("ad_click_"+String(ad.id)+"_real",String(Date.now()))}catch(_){ }
+    window.dispatchEvent(new CustomEvent("tubalhub-ad-click",{detail:{id:ad.id,type:ad.type||"unknown"}}));
+  }
+
+  function adCardHtml(ad){
+    const title=realText(ad.titleReal||ad.title||"Sponsored");
+    const desc=realText(ad.descReal||ad.desc||"");
+    const price=realText(ad.priceReal||ad.price||"");
+    const image=realText(ad.imageReal||ad.image||"");
+    const link=realHref(ad.linkReal||ad.link);
+    const type=realText(ad.type).toLowerCase();
+    if(type==="banner")return '<article class="ad-banner" data-ad-id="'+escAd(ad.id)+'" data-ad-link="'+escAd(link)+'"><div class="ad-banner-copy"><span class="ad-card-kicker">Sponsored</span><h3>'+escAd(title)+'</h3><p>'+escAd(desc)+'</p><button type="button">'+escAd(realText(ad.ctaReal||ad.cta||"Learn More"))+'</button></div><span class="ad-banner-emoji" aria-hidden="true">'+escAd(realText(ad.emojiReal||ad.emoji||"📢"))+'</span></article>';
+    if(type==="video")return '<article class="ad-video" data-ad-id="'+escAd(ad.id)+'" data-ad-link="'+escAd(link)+'"><video class="ad-video-el" muted autoplay loop playsinline preload="metadata" poster="'+escAd(realText(ad.posterReal||ad.poster||""))+'" src="'+escAd(realText(ad.videoReal||ad.video||""))+'"></video><div class="ad-video-overlay"><div class="ad-video-copy"><strong>'+escAd(title)+'</strong><span>'+escAd(desc)+'</span></div><button class="ad-video-skip" type="button" data-ad-skip="'+escAd(ad.id)+'">Skip <b>5</b></button></div></article>';
+    return '<article class="ad-card" data-ad-id="'+escAd(ad.id)+'" data-ad-link="'+escAd(link)+'"><div class="ad-card-media">'+(image?'<img src="'+escAd(image)+'" alt="'+escAd(title)+'" loading="lazy" decoding="async">':'<span class="ad-card-media-emoji" aria-hidden="true">'+escAd(realText(ad.emojiReal||ad.emoji||"📢"))+'</span>')+'</div><div class="ad-card-body"><span class="ad-card-kicker">Sponsored</span><h4>'+escAd(title)+'</h4><p>'+escAd(desc)+'</p><div class="ad-card-bottom">'+(price?'<span class="ad-card-price">'+escAd(price)+'</span>':'<span></span>')+'<button class="ad-card-cta" type="button">'+escAd(realText(ad.ctaReal||ad.cta||"Open"))+'</button></div></div></article>';
+  }
+
+  function renderDots(){
+    const dots=$id("adsDots");if(!dots)return;
+    dots.innerHTML=state.ads.map((ad,i)=>'<button class="ads-dot '+(i===state.index?"active":"")+'" type="button" role="tab" aria-label="Advertisement '+(i+1)+'" aria-selected="'+(i===state.index?"true":"false")+'" data-ad-dot="'+i+'"></button>').join("");
+  }
+  function centerSlide(index,behavior="smooth"){
+    const track=$id("adsTrack");if(!track||!state.ads.length)return;
+    state.index=Math.max(0,Math.min(state.ads.length-1,index));
+    const slide=track.children[state.index];
+    if(slide){const left=slide.offsetLeft-(track.clientWidth-slide.offsetWidth)/2;track.scrollTo({left:Math.max(0,left),behavior})}
+    renderDots();
+  }
+  function syncIndexFromScroll(){
+    const track=$id("adsTrack");if(!track||!state.ads.length)return;
+    const center=track.scrollLeft+track.clientWidth/2;let best=0,bestDist=Infinity;
+    [...track.children].forEach((slide,i)=>{const d=Math.abs((slide.offsetLeft+slide.offsetWidth/2)-center);if(d<bestDist){best=i;bestDist=d}});
+    if(best!==state.index){state.index=best;renderDots()}
+  }
+  function clearAdTimer(){if(state.timer){clearInterval(state.timer);state.timer=null}}
+  function startAdTimer(){clearAdTimer();if(state.paused||state.hovered||state.ads.length<2)return;state.timer=setInterval(()=>{if(!state.paused&&!state.hovered)centerSlide((state.index+1)%state.ads.length)},5000)}
+  function setPaused(paused){state.paused=paused;const btn=$id("adsAutoplay");if(btn){btn.classList.toggle("is-paused",paused);btn.setAttribute("aria-pressed",paused?"false":"true");btn.setAttribute("aria-label",paused?"Resume advertisement autoplay":"Pause advertisement autoplay");const label=btn.querySelector("span");if(label)label.textContent=paused?"Autoplay paused":"Auto-play 5s"}startAdTimer()}
+  function bindVideoCountdown(card,ad){
+    const btn=card.querySelector("[data-ad-skip]");if(!btn)return;
+    let remaining=5;btn.innerHTML="Skip <b>"+remaining+"</b>";
+    const old=state.skipTimers.get(ad.id);if(old)clearInterval(old);
+    const timer=setInterval(()=>{remaining-=1;btn.innerHTML=remaining>0?"Skip <b>"+remaining+"</b>":"Skip";if(remaining<=0){clearInterval(timer);state.skipTimers.delete(ad.id)}},1000);
+    state.skipTimers.set(ad.id,timer);
+    const video=card.querySelector("video");video?.play?.().catch(()=>{});
+    btn.addEventListener("click",e=>{e.stopPropagation();video?.pause?.();card.remove()},{once:true});
+  }
+  function renderAdsReal(){
+    getRealAds().then(real=>{
+      state.ads=real.filter(ad=>ad&&ad.id&&["banner","square","video"].includes(String(ad.type||"").toLowerCase()));
+      const track=$id("adsTrack");if(!track)return;
+      if(!state.ads.length){track.innerHTML='<div class="ads-empty"><div><strong>No sponsored ads available</strong><small>Real ads will appear here when ad data is published.</small></div></div>';renderDots();clearAdTimer();return}
+      track.innerHTML=state.ads.map(adCardHtml).join("");
+      state.index=0;renderDots();centerSlide(0,"auto");startAdTimer();
+      [...track.children].forEach((card,i)=>{const ad=state.ads[i];if(String(ad.type).toLowerCase()==="video")bindVideoCountdown(card,ad)});
+    }).catch(error=>{console.warn("[TUBAL HUB real ads]",error)})
+  }
+
+  function init(){
+    const track=$id("adsTrack"),wrapper=$id("adsTrackWrapper");if(!track||!wrapper)return;
+    $id("adsPrev")?.addEventListener("click",()=>centerSlide((state.index-1+state.ads.length)%state.ads.length));
+    $id("adsNext")?.addEventListener("click",()=>centerSlide((state.index+1)%state.ads.length));
+    $id("adsAutoplay")?.addEventListener("click",()=>setPaused(!state.paused));
+    $id("adsDots")?.addEventListener("click",e=>{const dot=e.target.closest?.("[data-ad-dot]");if(dot)centerSlide(Number(dot.dataset.adDot))});
+    track.addEventListener("scroll",()=>{requestAnimationFrame(syncIndexFromScroll)},{passive:true});
+    wrapper.addEventListener("mouseenter",()=>{state.hovered=true;clearAdTimer()});
+    wrapper.addEventListener("mouseleave",()=>{state.hovered=false;startAdTimer()});
+    wrapper.addEventListener("focusin",()=>clearAdTimer());wrapper.addEventListener("focusout",()=>{if(!state.hovered)startAdTimer()});
+    track.addEventListener("pointerdown",e=>{state.dragStartX=e.clientX;state.dragStartScroll=track.scrollLeft;state.dragging=true;track.setPointerCapture?.(e.pointerId)});
+    track.addEventListener("pointermove",e=>{if(!state.dragging)return;const dx=e.clientX-state.dragStartX;if(Math.abs(dx)>=1)track.scrollLeft=state.dragStartScroll-dx},{passive:true});
+    const endDrag=e=>{if(!state.dragging)return;state.dragging=false;const dx=e.clientX-state.dragStartX;if(Math.abs(dx)>=50){centerSlide(dx<0?state.index+1:state.index-1)}else syncIndexFromScroll()};
+    track.addEventListener("pointerup",endDrag);track.addEventListener("pointercancel",endDrag);track.addEventListener("lostpointercapture",()=>{state.dragging=false});
+    track.addEventListener("click",e=>{
+      if(state.dragging)return;
+      const card=e.target.closest?.("[data-ad-id]");if(!card)return;
+      if(e.target.closest?.("button")){
+        if(e.target.closest?.(".ad-card-cta")||e.target.closest?.(".ad-banner button")){const ad=state.ads.find(x=>String(x.id)===String(card.dataset.adId));if(ad){trackAdClick(ad);location.href=realHref(ad.linkReal||ad.link)}}
+        return;
+      }
+      const ad=state.ads.find(x=>String(x.id)===String(card.dataset.adId));if(ad){trackAdClick(ad);const href=realHref(ad.linkReal||ad.link);if(href!=="#")location.href=href}
+    });
+    renderAdsReal();
+  }
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init,{once:true});else init();
+})();
