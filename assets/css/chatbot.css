@@ -36,3 +36,58 @@
 }
 
 @media(max-width:600px){.tubal-bot-launch{width:62px;height:62px;right:max(14px,env(safe-area-inset-right));bottom:max(14px,env(safe-area-inset-bottom));display:flex!important;align-items:center;justify-content:center;opacity:1!important;visibility:visible!important}.tubal-bot-panel{z-index:2147483647;right:8px;bottom:82px;width:calc(100vw - 16px);height:calc(100dvh - 100px);max-height:620px}}
+/* =========================================================
+   TUBAL HUB — STACKED AI COMPANION POSITION
+   AI button sits above the premium message launcher.
+   ========================================================= */
+.tubal-bot-launch{
+  position:fixed!important;
+  right:24px!important;
+  bottom:96px!important;
+  left:auto!important;
+  top:auto!important;
+  width:56px!important;
+  height:56px!important;
+  z-index:9998!important;
+  border:1px solid rgba(255,255,255,.20)!important;
+  border-radius:50%!important;
+  background:linear-gradient(135deg,#7d5aff,#00d4ff)!important;
+  box-shadow:0 8px 32px rgba(0,0,0,.52),0 0 24px rgba(125,90,255,.38),inset 0 1px rgba(255,255,255,.18)!important;
+  backdrop-filter:blur(16px)!important;
+  -webkit-backdrop-filter:blur(16px)!important;
+  transform:translate3d(0,0,0) scale(1)!important;
+  will-change:transform;
+  animation:tubalAiStackFloat 3.2s ease-in-out infinite!important;
+  transition:transform .28s cubic-bezier(.16,1,.3,1),box-shadow .28s ease,filter .28s ease!important;
+}
+.tubal-bot-launch:hover{
+  transform:translate3d(0,-3px,0) scale(1.10)!important;
+  box-shadow:0 12px 38px rgba(0,0,0,.56),0 0 32px rgba(125,90,255,.58),0 0 52px rgba(0,212,255,.18),inset 0 1px rgba(255,255,255,.24)!important;
+  filter:saturate(1.08);
+}
+@keyframes tubalAiStackFloat{
+  0%,100%{transform:translate3d(0,0,0)}
+  50%{transform:translate3d(0,-4px,0)}
+}
+.tubal-bot-launch.dragging{
+  cursor:pointer!important;
+  transform:translate3d(0,0,0) scale(1)!important;
+}
+.tubal-bot-panel{
+  right:24px!important;
+  bottom:164px!important;
+  z-index:9997!important;
+}
+@media(max-width:760px){
+  .tubal-bot-launch{
+    right:max(14px,env(safe-area-inset-right))!important;
+    bottom:96px!important;
+    width:56px!important;
+    height:56px!important;
+  }
+  .tubal-bot-panel{
+    right:10px!important;
+    bottom:164px!important;
+    width:calc(100vw - 20px)!important;
+  }
+}
