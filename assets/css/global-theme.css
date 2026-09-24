@@ -784,3 +784,184 @@ body.theme-galaxy .hero-new::before{
 @media(prefers-reduced-motion:reduce){
   body.theme-galaxy .hero-new::after,body.theme-galaxy .hero-new::before{animation:none!important}
 }
+
+
+/* ===== FINAL HOMEPAGE THEMES: midnight / forest / light ===== */
+html[data-theme="midnight"]{
+  --hub-bg:#050b08;
+  --hub-panel:#0b1711;
+  --hub-panel-2:#102219;
+  --hub-text:#ecfff4;
+  --hub-muted:#91aa9d;
+  --hub-accent:#35e890;
+  --hub-border:rgba(117,255,176,.16);
+}
+html[data-theme="forest"]{
+  --hub-bg:#061108;
+  --hub-panel:#0b1d11;
+  --hub-panel-2:#12301b;
+  --hub-text:#effff2;
+  --hub-muted:#9ab3a0;
+  --hub-accent:#73e37d;
+  --hub-border:rgba(126,227,125,.20);
+}
+html[data-theme="light"]{
+  --hub-bg:#f4f7f2;
+  --hub-panel:#ffffff;
+  --hub-panel-2:#edf4eb;
+  --hub-text:#122118;
+  --hub-muted:#63776b;
+  --hub-accent:#179b50;
+  --hub-border:rgba(18,66,35,.12);
+}
+
+html[data-theme="midnight"] body.hub-home,
+html[data-theme="forest"] body.hub-home,
+html[data-theme="light"] body.hub-home{
+  background:var(--hub-bg)!important;
+  color:var(--hub-text)!important;
+  transition:background .35s ease,color .35s ease;
+}
+
+body.hub-home .hub-sidebar,
+body.hub-home .hub-topbar,
+body.hub-home .card,
+body.hub-home .brand-card,
+body.hub-home .live-card,
+body.hub-home .social-card,
+body.hub-home .feature-links a,
+body.hub-home .home-shop-section .shop-preview-card,
+body.hub-home .facebook-video-container{
+  transition:background .35s ease,border-color .35s ease,color .35s ease,box-shadow .35s ease;
+}
+
+html[data-theme="midnight"] body.hub-home .hub-sidebar,
+html[data-theme="midnight"] body.hub-home .hub-topbar{
+  background:rgba(7,16,11,.94)!important;
+  border-color:var(--hub-border)!important;
+}
+html[data-theme="forest"] body.hub-home .hub-sidebar,
+html[data-theme="forest"] body.hub-home .hub-topbar{
+  background:rgba(8,24,13,.95)!important;
+  border-color:var(--hub-border)!important;
+}
+html[data-theme="light"] body.hub-home .hub-sidebar,
+html[data-theme="light"] body.hub-home .hub-topbar{
+  background:rgba(255,255,255,.96)!important;
+  border-color:var(--hub-border)!important;
+}
+
+html[data-theme="midnight"] body.hub-home .brand-card,
+html[data-theme="midnight"] body.hub-home .live-card,
+html[data-theme="midnight"] body.hub-home .social-card,
+html[data-theme="midnight"] body.hub-home .feature-links a,
+html[data-theme="midnight"] body.hub-home .facebook-video-container,
+html[data-theme="midnight"] body.hub-home .shop-preview-card{
+  background:linear-gradient(145deg,#0c1b12,#071009)!important;
+  border-color:var(--hub-border)!important;
+}
+html[data-theme="forest"] body.hub-home .brand-card,
+html[data-theme="forest"] body.hub-home .live-card,
+html[data-theme="forest"] body.hub-home .social-card,
+html[data-theme="forest"] body.hub-home .feature-links a,
+html[data-theme="forest"] body.hub-home .facebook-video-container,
+html[data-theme="forest"] body.hub-home .shop-preview-card{
+  background:linear-gradient(145deg,#102618,#071209)!important;
+  border-color:var(--hub-border)!important;
+}
+html[data-theme="light"] body.hub-home .brand-card,
+html[data-theme="light"] body.hub-home .live-card,
+html[data-theme="light"] body.hub-home .social-card,
+html[data-theme="light"] body.hub-home .feature-links a,
+html[data-theme="light"] body.hub-home .facebook-video-container,
+html[data-theme="light"] body.hub-home .shop-preview-card{
+  background:var(--hub-panel)!important;
+  border-color:var(--hub-border)!important;
+  color:var(--hub-text)!important;
+  box-shadow:0 10px 28px rgba(20,60,30,.06);
+}
+
+html[data-theme="midnight"] body.hub-home .side-nav a,
+html[data-theme="forest"] body.hub-home .side-nav a{
+  color:var(--hub-muted)!important;
+}
+html[data-theme="light"] body.hub-home .side-nav a{
+  color:#53695c!important;
+}
+html[data-theme="midnight"] body.hub-home .side-nav a:hover,
+html[data-theme="midnight"] body.hub-home .side-nav a.active{
+  background:rgba(53,232,144,.12)!important;
+  color:var(--hub-text)!important;
+}
+html[data-theme="forest"] body.hub-home .side-nav a:hover,
+html[data-theme="forest"] body.hub-home .side-nav a.active{
+  background:rgba(115,227,125,.14)!important;
+  color:var(--hub-text)!important;
+}
+html[data-theme="light"] body.hub-home .side-nav a:hover,
+html[data-theme="light"] body.hub-home .side-nav a.active{
+  background:rgba(23,155,80,.10)!important;
+  color:var(--hub-text)!important;
+}
+
+html[data-theme="midnight"] body.hub-home,
+html[data-theme="forest"] body.hub-home{
+  --page-bg:var(--hub-bg);
+  --page-panel:var(--hub-panel);
+  --page-panel2:var(--hub-panel-2);
+  --page-text:var(--hub-text);
+  --page-muted:var(--hub-muted);
+  --page-accent:var(--hub-accent);
+  --page-line:var(--hub-border);
+}
+html[data-theme="light"] body.hub-home{
+  --page-bg:var(--hub-bg);
+  --page-panel:var(--hub-panel);
+  --page-panel2:var(--hub-panel-2);
+  --page-text:var(--hub-text);
+  --page-muted:var(--hub-muted);
+  --page-accent:var(--hub-accent);
+  --page-line:var(--hub-border);
+}
+
+html[data-theme="midnight"] body.hub-home .hero-new{
+  background:linear-gradient(115deg,#07140d,#0d2217 48%,#050a07)!important;
+}
+html[data-theme="forest"] body.hub-home .hero-new{
+  background:linear-gradient(115deg,#07160b,#15321c 48%,#061008)!important;
+}
+html[data-theme="light"] body.hub-home .hero-new{
+  background:linear-gradient(115deg,#eef7ed,#ffffff 52%,#eaf4ea)!important;
+  color:var(--hub-text)!important;
+}
+
+html[data-theme="light"] body.hub-home .hero-content h1,
+html[data-theme="light"] body.hub-home .hero-content p,
+html[data-theme="light"] body.hub-home .hero-sub,
+html[data-theme="light"] body.hub-home .home-heading,
+html[data-theme="light"] body.hub-home .home-heading h2,
+html[data-theme="light"] body.hub-home .feature-links span,
+html[data-theme="light"] body.hub-home .hub-footer{
+  color:var(--hub-text)!important;
+}
+html[data-theme="light"] body.hub-home .home-heading p,
+html[data-theme="light"] body.hub-home .shop-preview-card small,
+html[data-theme="light"] body.hub-home .shop-preview-card span{
+  color:var(--hub-muted)!important;
+}
+
+.theme-switcher .theme-btn{
+  color:var(--hub-muted);
+}
+.theme-switcher .theme-btn.active{
+  color:var(--hub-bg)!important;
+  background:var(--hub-text)!important;
+}
+html[data-theme="light"] .theme-switcher{
+  background:#fff!important;
+  border-color:var(--hub-border)!important;
+}
+html[data-theme="light"] .theme-switcher .theme-btn.active{
+  background:#122118!important;
+  color:#fff!important;
+}
