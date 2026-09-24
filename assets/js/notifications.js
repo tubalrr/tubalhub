@@ -33,7 +33,7 @@ const DEMO_SEED=[
   ["achievement","A new profile milestone is available","Check your profile activity."]
 ].map((x,i)=>({
   id:"demo-"+i,type:x[0],name:"TUBAL HUB",title:x[1],preview:x[2],
-  time:Date.now()-i*60000*(i<8?10:90),online:i%3!==1,read:i>=17
+  time:Date.now()-i*60000*(i<8?10:90),online:i%3!==1,read:i>=17,buttons:x[0]==="game"
 }));
 
 let me=null,items=[],activeTab="all",stopRemote=null,audioCtx=null;
@@ -142,7 +142,13 @@ function burst(el,count){
   }
 }
 function markAllRead(){
-  items=items.map(x=>Object.assign({},x,{read:true}));save();render();
+  const rows=[...document.querySelectorAll(".th-notification-row.is-unread")];
+  rows.forEach((row,i)=>row.animate([{transform:"translateX(0)",opacity:1},{transform:"translateX(34px)",opacity:0}],{duration:260,delay:i*12,fill:"forwards",easing:"cubic-bezier(.16,1,.3,1)"}));
+  const finish=async()=>{
+    if(me&&items.some(x=>x.remote)){const batch=writeBatch(db);items.filter(x=>x.remote&&!x.read).slice(0,450).forEach(n=>batch.update(doc(db,"notifications",n.id),{read:true}));try{await batch.commit()}catch(e){console.warn("[TUBAL HUB] mark notifications read",e)}}
+    items=items.map(x=>Object.assign({},x,{read:true}));save();setTimeout(render,270+Math.min(rows.length,10)*12);
+  };
+  finish();
 }
 async function clearAll(){
   if(DEMO_MODE){items=[];save();render();return}
@@ -175,7 +181,7 @@ function watchRemote(){
   },err=>console.warn("[TUBAL HUB] notifications listener",err));
 }
 function demoTick(){
-  if(!DEMO_MODE||!items.length)return;
+  if(!DEMO_MODE||!items.length||items.some(x=>x.remote))return;
   const src=DEMO_SEED[Math.floor(Math.random()*DEMO_SEED.length)];
   const n={id:"demo-live-"+Date.now(),type:src[0],name:"TUBAL HUB",title:src[1],preview:src[2],time:Date.now(),online:Math.random()>.4,read:false};
   items=[n].concat(items.filter(x=>!String(x.id).startsWith("demo-live-")).slice(0,39));save();render();signalNew();
