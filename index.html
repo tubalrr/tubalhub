@@ -213,35 +213,6 @@
 
 <div id="update-banner"></div>
 <div class="cookie" id="cookieBox"><div><b>🍪 Cookies</b><span>We use cookies to improve your experience.</span></div><button id="acceptCookie">Accept</button></div>
-<script type="module">
-import {getFirestore,collection,getDocs} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
-import {app} from "./assets/js/firebase-config.js";
-const box=document.getElementById("facebookVideoContainer");
-const loadVideos=async()=>{
-const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
-const isFacebookShare=u=>/facebook\.com\/share\//i.test(u);
-try{
- const snap=await getDocs(collection(getFirestore(app),"facebookVideos"));
- const items=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>{
-   const at=a.createdAt?.seconds??0,bt=b.createdAt?.seconds??0; return bt-at;
- }).slice(0,12);
- if(!items.length){box.innerHTML='<div class="news-empty">No Facebook videos published yet.</div>'}
- else{box.innerHTML='<div class="facebook-video-grid">'+items.map(x=>{const u=x.url||"",videoUrl=x.videoUrl||"",thumb=x.thumbnail||"",title=esc(x.title||"Facebook Video"),playUrl=videoUrl||u;let media;if(videoUrl){media='<div class="facebook-video-frame"><video controls playsinline preload="metadata" poster="'+esc(thumb)+'"><source src="'+esc(videoUrl)+'" type="video/mp4">Your browser does not support video playback.</video></div>'}else{media='<a class="facebook-video-placeholder" href="'+esc(u)+'" target="_blank" rel="noopener noreferrer">'+(thumb?'<img src="'+esc(thumb)+'" alt="'+title+'">':'<div class="facebook-placeholder-icon">f</div>')+'<strong>'+title+'</strong><small>Facebook video</small><span>Open Video →</span></a>'}return '<article class="facebook-video-card">'+media+'<div class="facebook-share-info"><h3>'+title+'</h3><a href="'+esc(playUrl)+'" target="_blank" rel="noopener noreferrer">Open Video →</a></div></article>'}).join("")+'</div>'}
-}catch(e){console.error("Facebook videos unavailable:",e);box.innerHTML='<div class="news-empty">Facebook videos are temporarily unavailable. Please refresh the page.</div>'}
-};
-const io=new IntersectionObserver((entries)=>{if(entries[0].isIntersecting){io.disconnect();loadVideos();}},{rootMargin:"500px"});io.observe(box);
-</script>
-<style>
-.home-shop-section{margin-top:48px}
-.shop-preview-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
-.shop-preview-card{display:flex;align-items:center;gap:14px;padding:16px;text-decoration:none;color:inherit;background:linear-gradient(145deg,#09110c,#050806);border:1px solid #183125;border-radius:11px;transition:.25s}
-.shop-preview-card:hover{transform:translateY(-4px);border-color:#1dff91;box-shadow:0 0 24px #1dff9115}
-.shop-preview-art{width:62px;height:62px;flex:0 0 62px;display:grid;place-items:center;border-radius:10px;background:radial-gradient(circle,#22572b,#0a140d 68%);font-size:22px;font-weight:900}
-.shop-preview-card small{font-size:7px;letter-spacing:1.2px;color:#60776a}
-.shop-preview-card h3{font-size:13px;margin:5px 0}
-.shop-preview-card span{font-size:8px;color:#9cff57}
-@media(max-width:800px){.shop-preview-grid{grid-template-columns:1fr}}
-</style>
 <script src="assets/js/app.js?v=20260924-top4"></script>
 <script src="assets/js/main.js?v=20260924-main3"></script>
 <script src="assets/js/theme.js"></script>
@@ -250,6 +221,7 @@ const io=new IntersectionObserver((entries)=>{if(entries[0].isIntersecting){io.d
 <script type="module" src="assets/js/search.js?v=20260924-ns9"></script>
 <script src="assets/js/sidebar-premium.js?v=20260924-v9"></script>
 <script src="assets/js/home-agency.js?v=20260924-v1"></script>
+<script type="module" src="assets/js/home.js?v=20260924-v1"></script>
   <script src="assets/js/ai-assistant.js?v=20260924-v2"></script>
 <!-- TUBAL HUB — Tubal AI Assistant -->
 <div id="tubalAiAssistant" class="tubal-ai" aria-label="Tubal AI Assistant">
