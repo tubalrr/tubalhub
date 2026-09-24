@@ -7,6 +7,7 @@ const db=getFirestore(app);
 
 const DEMO_MODE=false;
 const KEY="tubalhub.notifications.v1";
+const LOCAL_SYSTEM_KEY="tubalhub.system-notifications.v1";
 const esc=v=>{const d=document.createElement("div");d.textContent=String(v??"");return d.innerHTML};
 const ICONS={like:"❤️",comment:"💬",follow:"👤",shop:"🛒",game:"🎮",achievement:"🏆",system:"⚙️"};
 const ACTIONS={like:"reacted to your content",comment:"commented on your post",follow:"started following you",shop:"sent a shop update",game:"sent you a game invite",achievement:"unlocked an achievement",system:"sent a system update"};
@@ -37,7 +38,20 @@ const DEMO_SEED=[
   time:Date.now()-i*60000*(i<8?10:90),online:i%3!==1,read:i>=17,buttons:x[0]==="game"
 }));
 
-let me=null,items=[],activeTab="all",stopRemote=null,audioCtx=null;
+let me=null,items=[],localSystemItems=[],activeTab="all",stopRemote=null,audioCtx=null;
+function loadLocalSystem(){try{const x=JSON.parse(localStorage.getItem(LOCAL_SYSTEM_KEY)||"[]");localSystemItems=Array.isArray(x)?x:[]}catch(_){localSystemItems=[]}}
+function saveLocalSystem(){try{localStorage.setItem(LOCAL_SYSTEM_KEY,JSON.stringify(localSystemItems.slice(0,50)))}catch(_){}}
+export function addNotification(data={}){
+  const id=String(data.id||("system-"+Date.now()+"-"+Math.random().toString(36).slice(2,8)));
+  if(localSystemItems.some(x=>String(x.id)===id))return localSystemItems.find(x=>String(x.id)===id);
+  const n={id:id,type:data.type||"system",name:"TUBAL HUB",title:data.title||"Website Updated!",preview:data.message||"",time:Date.now(),read:data.unread===true?false:true,url:"index.html",icon:data.icon||"🔔"};
+  localSystemItems=[n,...localSystemItems].slice(0,50);
+  saveLocalSystem();
+  items=[...localSystemItems,...items.filter(x=>x.remote)];
+  render();
+  signalNew();
+  return n;
+}
 
 function demoLoad(){
   try{const x=JSON.parse(localStorage.getItem(KEY)||"null");if(Array.isArray(x))return x}catch(_){}
@@ -109,9 +123,11 @@ function filtered(){return items.filter(n=>{
 }).sort((a,b)=>Number(b.time||0)-Number(a.time||0))}
 function rowHtml(n,i){
   const avatar=n.photoURL?'<img src="'+esc(n.photoURL)+'" alt="">':esc((n.name||"TUBAL HUB").charAt(0).toUpperCase());
+  const status=n.online===true?'<span class="th-notif-status online" title="Online"></span>':n.online===false?'<span class="th-notif-status offline" title="Offline"></span>':"";
+  const icon=n.icon||ICONS[n.type]||"🔔";
   const url=n.url||({shop:"pages/shop.html",game:"pages/ctrlzone.html",comment:"pages/feeds.html",follow:"pages/profiles.html",like:"pages/feeds.html",achievement:"pages/profiles.html",system:"pages/settings.html"}[n.type]||"pages/feeds.html");
   return '<article class="th-notification-row '+(n.read?"is-read":"is-unread")+'" style="--stagger:'+Math.min(i,10)*.04+'s" data-notification-id="'+esc(n.id)+'">'+
-    '<div class="th-notif-avatar-wrap"><div class="th-notif-avatar">'+avatar+'</div><span class="th-notif-status '+(n.online?"online":"offline")+'" title="'+(n.online?"Online":"Offline")+'"></span><span class="th-notif-type type-'+esc(n.type||"system")+'">'+(ICONS[n.type]||"🔔")+'</span></div>'+
+    '<div class="th-notif-avatar-wrap"><div class="th-notif-avatar">'+avatar+'</div>'+status+'<span class="th-notif-type type-'+esc(n.type||"system")+'">'+icon+'</span></div>'+
     '<div class="th-notification-main"><div class="th-notification-copy"><strong>'+esc(n.name||"TUBAL HUB")+'</strong> <span class="th-notification-action">'+esc(ACTIONS[n.type]||"sent you an update")+'</span></div>'+
     '<div class="th-notification-time">'+esc(time(n.time))+'</div><span class="th-notification-preview">'+esc(n.title||"New activity")+'</span>'+
     (n.preview?'<span class="th-notification-preview">'+esc(n.preview)+'</span>':"")+
@@ -178,7 +194,7 @@ function watchRemote(){
       id:d.id,remote:true,type:x.type||"system",name:x.actorName||"TUBAL HUB",photoURL:x.actorPhotoURL||"",online:x.actorOnline===true,
       read:x.read===true,title:x.title||"New activity",preview:x.preview||"",time:x.createdAt?.toMillis?.()||x.createdAt?.seconds*1000||Date.now(),url:x.url||"",productImage:x.productImage||""
     }});
-    if(remote.length){items=remote;render()}else if(!items.length){items=DEMO_MODE?demoLoad():[];render()}
+    if(remote.length){items=[...localSystemItems,...remote];render()}else if(!items.length){items=DEMO_MODE?demoLoad():[...localSystemItems];render()}
   },err=>console.warn("[TUBAL HUB] notifications listener",err));
 }
 function demoTick(){
@@ -188,6 +204,8 @@ function demoTick(){
   items=[n].concat(items.filter(x=>!String(x.id).startsWith("demo-live-")).slice(0,39));save();render();signalNew();
 }
 ensureUi();
+loadLocalSystem();
+items=[...localSystemItems];
 onAuthStateChanged(auth,user=>{
   me=user||null;
   watchRemote();
