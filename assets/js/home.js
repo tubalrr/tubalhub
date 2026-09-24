@@ -663,6 +663,291 @@ function initScrollReveal(){
     });
   }
 }
+
+/* =========================================================
+   CANVA-LIKE DESIGN STUDIO — vanilla Canvas, real local data
+   ========================================================= */
+const CANVA_STUDIO_VERSION="1.0.0";
+const CANVA_DESIGN_KEY="tubalhub_canva_current";
+const CANVA_DRAFT_DB="tubalhub_canva_drafts";
+const CANVA_DRAFT_STORE="drafts";
+const CANVA_W=600;
+const CANVA_H=400;
+const canvaStudioState={
+  canvas:null,ctx:null,objects:[],background:{type:"transparent"},selectedId:null,activeTool:"",
+  interaction:null,drawPreview:null,renderQueued:false,imageCache:new Map(),templateIndex:0
+};
+const CANVA_TEMPLATES=[
+  {id:"gradient-green",name:"Gradient Green",format:"600×400",background:{type:"gradient",from:"#1dff91",to:"#7d5aff",angle:135},objects:[
+    {type:"text",x:56,y:58,text:"TUBAL HUB",fontSize:48,color:"#020604",fontFamily:"Inter",bold:true,italic:false,align:"left",rotation:0},
+    {type:"text",x:60,y:126,text:"DESIGN STUDIO",fontSize:22,color:"#ffffff",fontFamily:"Poppins",bold:true,italic:false,align:"left",rotation:0},
+    {type:"shape",shape:"circle",x:458,y:84,w:82,h:82,color:"rgba(255,255,255,.24)",rotation:0}
+  ]},
+  {id:"midnight-aurora",name:"Midnight Aurora",format:"600×400",background:{type:"gradient",from:"#020604",to:"#173b2a",angle:115},objects:[
+    {type:"text",x:48,y:50,text:"MIDNIGHT",fontSize:50,color:"#ffffff",fontFamily:"Inter",bold:true,italic:false,align:"left",rotation:0},
+    {type:"text",x:50,y:112,text:"AURORA",fontSize:42,color:"#1dff91",fontFamily:"Poppins",bold:true,italic:false,align:"left",rotation:0},
+    {type:"text",x:52,y:180,text:"A quiet glow for bold ideas.",fontSize:18,color:"#dce9e2",fontFamily:"Inter",bold:false,italic:true,align:"left",rotation:0}
+  ]},
+  {id:"forest-organic",name:"Forest Organic",format:"600×400",background:{type:"gradient",from:"#0a1f12",to:"#234a31",angle:135},objects:[
+    {type:"emoji",x:64,y:58,char:"🌿",fontSize:72,rotation:0},
+    {type:"text",x:58,y:150,text:"FOREST NOTES",fontSize:38,color:"#f4f4e8",fontFamily:"Poppins",bold:true,italic:false,align:"left",rotation:0},
+    {type:"text",x:60,y:208,text:"organic • calm • local",fontSize:18,color:"#b7c9bd",fontFamily:"Inter",bold:false,italic:false,align:"left",rotation:0}
+  ]},
+  {id:"light-minimal",name:"Light Minimal",format:"600×400",background:{type:"solid",color:"#f8f7f2"},objects:[
+    {type:"text",x:52,y:54,text:"LESS, BUT BETTER",fontSize:38,color:"#101513",fontFamily:"Inter",bold:true,italic:false,align:"left",rotation:0},
+    {type:"shape",shape:"rect",x:54,y:138,w:150,h:8,color:"#1dff91",rotation:0},
+    {type:"text",x:54,y:170,text:"Clean space. Clear message.",fontSize:19,color:"#5b665f",fontFamily:"Poppins",bold:false,italic:false,align:"left",rotation:0}
+  ]},
+  {id:"payapang-calm",name:"Payapang Isip",format:"1080×1080",background:{type:"gradient",from:"#dbeadf",to:"#8fae95",angle:135},objects:[
+    {type:"emoji",x:68,y:54,char:"🌿",fontSize:62,rotation:0},
+    {type:"text",x:58,y:138,text:"Payapang Isip",fontSize:44,color:"#193225",fontFamily:"Poppins",bold:true,italic:false,align:"left",rotation:0},
+    {type:"text",x:60,y:206,text:"Huminga. Huminto. Magpatuloy.",fontSize:18,color:"#355443",fontFamily:"Inter",bold:false,italic:true,align:"left",rotation:0}
+  ]},
+  {id:"ai-music-neon",name:"AI Music Neon",format:"500×500",background:{type:"gradient",from:"#170b31",to:"#071b22",angle:125},objects:[
+    {type:"emoji",x:60,y:44,char:"🎵",fontSize:68,rotation:0},
+    {type:"text",x:58,y:136,text:"AI MUSIC",fontSize:46,color:"#ffffff",fontFamily:"Inter",bold:true,italic:false,align:"left",rotation:0},
+    {type:"text",x:60,y:202,text:"NEW SOUND / NEW MOOD",fontSize:17,color:"#1dff91",fontFamily:"Poppins",bold:true,italic:false,align:"left",rotation:0},
+    {type:"shape",shape:"circle",x:456,y:230,w:54,h:54,color:"rgba(125,90,255,.85)",rotation:0}
+  ]},
+  {id:"ctrlzone-gaming",name:"CTRLZONE Gaming",format:"1280×720",background:{type:"gradient",from:"#07100b",to:"#173b2a",angle:140},objects:[
+    {type:"emoji",x:52,y:52,char:"🎮",fontSize:64,rotation:0},
+    {type:"text",x:50,y:136,text:"CTRLZONE",fontSize:52,color:"#1dff91",fontFamily:"Inter",bold:true,italic:false,align:"left",rotation:0},
+    {type:"text",x:54,y:202,text:"PLAY • CREATE • CONNECT",fontSize:18,color:"#e8f5ed",fontFamily:"Poppins",bold:true,italic:false,align:"left",rotation:0},
+    {type:"shape",shape:"rect",x:52,y:252,w:496,h:5,color:"#1dff91",rotation:0}
+  ]},
+  {id:"creator-quote",name:"Creator Quote",format:"1080×1080",background:{type:"gradient",from:"#121218",to:"#2a2542",angle:135},objects:[
+    {type:"text",x:52,y:54,text:"MAKE IT YOURS.",fontSize:44,color:"#ffffff",fontFamily:"Poppins",bold:true,italic:false,align:"left",rotation:0},
+    {type:"text",x:54,y:132,text:"Your idea deserves a canvas.",fontSize:24,color:"#d5cffd",fontFamily:"Inter",bold:false,italic:true,align:"left",rotation:0},
+    {type:"shape",shape:"circle",x:492,y:286,w:52,h:52,color:"#7d5aff",rotation:0}
+  ]},
+  {id:"podcast-cover",name:"Podcast Cover",format:"1400×1400",background:{type:"gradient",from:"#0c0d0d",to:"#3a2416",angle:125},objects:[
+    {type:"shape",shape:"circle",x:54,y:42,w:88,h:88,color:"#d4a082",rotation:0},
+    {type:"text",x:54,y:156,text:"THE NIGHT SHOW",fontSize:42,color:"#fff8ef",fontFamily:"Inter",bold:true,italic:false,align:"left",rotation:0},
+    {type:"text",x:56,y:220,text:"CONVERSATIONS AFTER DARK",fontSize:16,color:"#d9bda8",fontFamily:"Poppins",bold:true,italic:false,align:"left",rotation:0}
+  ]},
+  {id:"youtube-thumbnail",name:"YouTube Thumbnail",format:"1280×720",background:{type:"gradient",from:"#07100b",to:"#41214f",angle:135},objects:[
+    {type:"text",x:42,y:42,text:"NEW VIDEO",fontSize:22,color:"#1dff91",fontFamily:"Inter",bold:true,italic:false,align:"left",rotation:0},
+    {type:"text",x:42,y:100,text:"MAKE SOMETHING",fontSize:44,color:"#ffffff",fontFamily:"Poppins",bold:true,italic:false,align:"left",rotation:0},
+    {type:"text",x:44,y:158,text:"PEOPLE WILL REMEMBER",fontSize:30,color:"#ffffff",fontFamily:"Inter",bold:true,italic:false,align:"left",rotation:0},
+    {type:"shape",shape:"rect",x:44,y:224,w:178,h:48,color:"#7d5aff",rotation:0},
+    {type:"text",x:61,y:233,text:"WATCH →",fontSize:20,color:"#ffffff",fontFamily:"Poppins",bold:true,italic:false,align:"left",rotation:0}
+  ]},
+  {id:"event-poster",name:"Event Poster",format:"1080×1350",background:{type:"gradient",from:"#0a1f12",to:"#0b2e34",angle:135},objects:[
+    {type:"text",x:50,y:48,text:"COMMUNITY NIGHT",fontSize:38,color:"#ffffff",fontFamily:"Poppins",bold:true,italic:false,align:"left",rotation:0},
+    {type:"shape",shape:"rect",x:52,y:116,w:160,h:6,color:"#1dff91",rotation:0},
+    {type:"text",x:52,y:150,text:"LIVE • LOCAL • OPEN",fontSize:20,color:"#a7c6b5",fontFamily:"Inter",bold:true,italic:false,align:"left",rotation:0},
+    {type:"emoji",x:482,y:286,char:"✨",fontSize:58,rotation:0}
+  ]},
+  {id:"product-promo",name:"Product Promo",format:"1080×1080",background:{type:"gradient",from:"#141b17",to:"#33254d",angle:135},objects:[
+    {type:"text",x:50,y:48,text:"NEW DROP",fontSize:24,color:"#1dff91",fontFamily:"Inter",bold:true,italic:false,align:"left",rotation:0},
+    {type:"text",x:50,y:98,text:"YOUR PRODUCT",fontSize:44,color:"#ffffff",fontFamily:"Poppins",bold:true,italic:false,align:"left",rotation:0},
+    {type:"text",x:52,y:164,text:"Put your real product image here.",fontSize:18,color:"#c5cdc8",fontFamily:"Inter",bold:false,italic:false,align:"left",rotation:0},
+    {type:"shape",shape:"circle",x:478,y:268,w:72,h:72,color:"#1dff91",rotation:0}
+  ]}
+];
+
+function canvaClone(value){return JSON.parse(JSON.stringify(value))}
+function canvaNewId(prefix="obj"){return prefix+"-"+Date.now().toString(36)+"-"+Math.random().toString(36).slice(2,8)}
+function canvaStatus(message){const el=$("#canvaSaveStatus");if(el)el.textContent=message}
+function canvaFont(obj){return (obj.italic?"italic ":"")+(obj.bold?"700 ":"400 ")+Number(obj.fontSize||24)+"px "+(obj.fontFamily||"Inter")+", sans-serif"}
+function canvaMeasure(obj){
+  if(obj.type==="text"){const ctx=canvaStudioState.ctx;ctx.save();ctx.font=canvaFont(obj);const width=Math.max(12,ctx.measureText(String(obj.text||"")).width);ctx.restore();return{w:Math.min(CANVA_W,Math.max(12,width)),h:Math.max(16,Number(obj.fontSize||24)*1.25)}}
+  if(obj.type==="emoji")return{w:Number(obj.fontSize||48),h:Number(obj.fontSize||48)}
+  if(obj.type==="image")return{w:Number(obj.w||160),h:Number(obj.h||120)}
+  if(obj.type==="path"){const pts=Array.isArray(obj.points)?obj.points:[];if(!pts.length)return{w:20,h:20};const xs=pts.map(p=>p.x),ys=pts.map(p=>p.y);return{w:Math.max(20,Math.max(...xs)-Math.min(...xs)),h:Math.max(20,Math.max(...ys)-Math.min(...ys))}}
+  return{w:Number(obj.w||120),h:Number(obj.h||80)}
+}
+function canvaBounds(obj){const s=canvaMeasure(obj);return{x:Number(obj.x||0),y:Number(obj.y||0),w:s.w,h:s.h,cx:Number(obj.x||0)+s.w/2,cy:Number(obj.y||0)+s.h/2}}
+function canvaRotatePoint(px,py,cx,cy,deg){const r=deg*Math.PI/180,c=Math.cos(r),s=Math.sin(r),dx=px-cx,dy=py-cy;return{x:dx*c+dy*s+cx,y:-dx*s+dy*c+cy}}
+function canvaInversePoint(px,py,b){return canvaRotatePoint(px,py,b.cx,b.cy,-b.rotation)}
+function canvaHitObject(obj,x,y){const b={...canvaBounds(obj),rotation:Number(obj.rotation||0)},p=canvaInversePoint(x,y,b),pad=4;return p.x>=b.x-pad&&p.x<=b.x+b.w+pad&&p.y>=b.y-pad&&p.y<=b.y+b.h+pad}
+function canvaGetHandlePoints(obj){
+  const b={...canvaBounds(obj),rotation:Number(obj.rotation||0)},raw=[["nw",b.x,b.y],["n",b.x+b.w/2,b.y],["ne",b.x+b.w,b.y],["e",b.x+b.w,b.y+b.h/2],["se",b.x+b.w,b.y+b.h],["s",b.x+b.w/2,b.y+b.h],["sw",b.x,b.y+b.h],["w",b.x,b.y+b.h/2]];
+  const handles=raw.map(v=>({name:v[0],...canvaRotatePoint(v[1],v[2],b.cx,b.cy,b.rotation)})),top=handles[1],angle=b.rotation*Math.PI/180;
+  return{box:b,handles,rotate:{x:top.x+Math.sin(angle)*28,y:top.y-Math.cos(angle)*28}}
+}
+function canvaPointerPosition(e){const canvas=canvaStudioState.canvas,rect=canvas.getBoundingClientRect();return{x:clamp((e.clientX-rect.left)*(canvas.width/rect.width),0,CANVA_W),y:clamp((e.clientY-rect.top)*(canvas.height/rect.height),0,CANVA_H)}}
+function canvaFindHandle(x,y){
+  const obj=canvaStudioState.objects.find(o=>o.id===canvaStudioState.selectedId);if(!obj)return null;const hp=canvaGetHandlePoints(obj);
+  for(const h of hp.handles)if(Math.hypot(h.x-x,h.y-y)<10)return{type:"resize",handle:h.name};
+  if(Math.hypot(hp.rotate.x-x,hp.rotate.y-y)<14)return{type:"rotate"};return null;
+}
+function canvaDrawBackground(){
+  const ctx=canvaStudioState.ctx,bg=canvaStudioState.background||{type:"transparent"};
+  if(bg.type==="solid"){ctx.fillStyle=bg.color||"#020604";ctx.fillRect(0,0,CANVA_W,CANVA_H);return}
+  if(bg.type==="gradient"){const angle=(Number(bg.angle)||135)*Math.PI/180,dx=Math.cos(angle),dy=Math.sin(angle),cx=CANVA_W/2,cy=CANVA_H/2,len=Math.hypot(CANVA_W,CANVA_H),g=ctx.createLinearGradient(cx-dx*len/2,cy-dy*len/2,cx+dx*len/2,cy+dy*len/2);g.addColorStop(0,bg.from||"#020604");g.addColorStop(1,bg.to||"#1dff91");ctx.fillStyle=g;ctx.fillRect(0,0,CANVA_W,CANVA_H)}
+}
+function canvaDrawObject(obj){
+  const ctx=canvaStudioState.ctx,b=canvaBounds(obj);ctx.save();ctx.translate(b.cx,b.cy);ctx.rotate(Number(obj.rotation||0)*Math.PI/180);
+  if(obj.type==="text"){ctx.font=canvaFont(obj);ctx.fillStyle=obj.color||"#fff";ctx.textBaseline="top";ctx.textAlign=obj.align||"left";const anchor=obj.align==="center"?0:obj.align==="right"?b.w/2:-b.w/2;ctx.fillText(String(obj.text||""),anchor,-b.h/2)}
+  else if(obj.type==="emoji"){ctx.font=Number(obj.fontSize||48)+"px system-ui, sans-serif";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(String(obj.char||"🌿"),0,0)}
+  else if(obj.type==="shape"){ctx.fillStyle=obj.color||"#1dff91";if(obj.shape==="circle"){ctx.beginPath();ctx.ellipse(0,0,b.w/2,b.h/2,0,0,Math.PI*2);ctx.fill()}else ctx.fillRect(-b.w/2,-b.h/2,b.w,b.h)}
+  else if(obj.type==="image"){const img=canvaStudioState.imageCache.get(obj.id)||canvaStudioState.imageCache.get(obj.src);if(img?.complete)ctx.drawImage(img,-b.w/2,-b.h/2,b.w,b.h)}
+  else if(obj.type==="path"){const pts=Array.isArray(obj.points)?obj.points:[];if(pts.length){ctx.strokeStyle=obj.color||"#1dff91";ctx.lineWidth=Number(obj.lineWidth||4);ctx.lineCap="round";ctx.lineJoin="round";ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(p.x-b.cx,p.y-b.cy):ctx.moveTo(p.x-b.cx,p.y-b.cy));ctx.stroke()}}
+  ctx.restore();
+}
+function canvaDrawSelection(obj){
+  const ctx=canvaStudioState.ctx,hp=canvaGetHandlePoints(obj);ctx.save();ctx.strokeStyle="#1dff91";ctx.lineWidth=2;ctx.setLineDash([6,4]);ctx.beginPath();
+  hp.handles.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.closePath();ctx.stroke();ctx.setLineDash([]);
+  hp.handles.forEach(p=>{ctx.fillStyle="#fff";ctx.strokeStyle="#1dff91";ctx.lineWidth=2;ctx.fillRect(p.x-4,p.y-4,8,8);ctx.strokeRect(p.x-4,p.y-4,8,8)});
+  ctx.strokeStyle="#1dff91";ctx.beginPath();ctx.moveTo(hp.handles[1].x,hp.handles[1].y);ctx.lineTo(hp.rotate.x,hp.rotate.y);ctx.stroke();
+  ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(hp.rotate.x,hp.rotate.y,10,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.fillStyle="#1dff91";ctx.font="12px sans-serif";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText("↻",hp.rotate.x,hp.rotate.y);ctx.restore();
+}
+function canvaRender(){
+  if(!canvaStudioState.ctx)return;const ctx=canvaStudioState.ctx;ctx.clearRect(0,0,CANVA_W,CANVA_H);canvaDrawBackground();canvaStudioState.objects.forEach(canvaDrawObject);if(canvaStudioState.drawPreview)canvaDrawObject(canvaStudioState.drawPreview);
+  const selected=canvaStudioState.objects.find(o=>o.id===canvaStudioState.selectedId);if(selected)canvaDrawSelection(selected);$("#canvaCanvasShell")?.classList.toggle("has-design",!!canvaStudioState.objects.length||canvaStudioState.background.type!=="transparent");
+}
+function canvaRequestRender(){if(canvaStudioState.renderQueued)return;canvaStudioState.renderQueued=true;requestAnimationFrame(()=>{canvaStudioState.renderQueued=false;canvaRender()})}
+function canvaSaveCurrent(){
+  const payload={version:CANVA_STUDIO_VERSION,updatedAt:Date.now(),background:canvaClone(canvaStudioState.background),objects:canvaClone(canvaStudioState.objects)};
+  try{localStorage.setItem(CANVA_DESIGN_KEY,JSON.stringify(payload));canvaStatus("Saved locally")}catch(_){canvaStatus("Local save unavailable")}
+}
+function canvaLoadCurrent(){
+  try{const raw=localStorage.getItem(CANVA_DESIGN_KEY);if(!raw)return;const data=JSON.parse(raw);if(!data||!Array.isArray(data.objects)||!data.background)return;canvaStudioState.objects=data.objects;canvaStudioState.background=data.background;canvaStatus("Loaded saved design")}catch(_){canvaStatus("New canvas")}
+}
+function canvaSelect(id){
+  canvaStudioState.selectedId=id||null;canvaUpdateProperties();canvaRenderLayers();
+  const selected=canvaStudioState.objects.find(o=>o.id===id),status=$("#canvaSelectionStatus");
+  if(status)status.textContent=selected?(selected.type==="text"?"Text selected":selected.type==="image"?"Image selected":selected.type==="emoji"?"Emoji selected":selected.type==="shape"?"Shape selected":"Drawing selected"):"No element selected";
+  canvaRequestRender();
+}
+function canvaAddObject(obj){obj.id=obj.id||canvaNewId();canvaStudioState.objects.push(obj);canvaSelect(obj.id);canvaSaveCurrent()}
+function addText(){const text=window.prompt("Text to add:","");if(text===null||!text.trim())return;canvaAddObject({type:"text",x:70,y:70,text:text.trim(),fontSize:32,color:"#1dff91",fontFamily:"Inter",bold:false,italic:false,align:"left",rotation:0})}
+function addEmoji(char="🌿"){canvaAddObject({type:"emoji",x:120,y:100,char,fontSize:58,rotation:0})}
+function addShape(shape="rect"){canvaAddObject({type:"shape",shape:shape==="circle"?"circle":"rect",x:180,y:130,w:180,h:110,color:"#1dff91",rotation:0})}
+function changeBackground(value){
+  if(typeof value==="string"&&value.startsWith("linear-gradient"))canvaStudioState.background={type:"gradient",from:"#1dff91",to:"#7d5aff",angle:135};
+  else if(typeof value==="string")canvaStudioState.background={type:"solid",color:value};
+  else if(value?.type)canvaStudioState.background=canvaClone(value);
+  canvaSaveCurrent();canvaRequestRender();
+}
+function canvaLoadImage(src,callback){const cached=canvaStudioState.imageCache.get(src);if(cached){callback?.(cached);return}const img=new Image();img.onload=()=>{canvaStudioState.imageCache.set(src,img);callback?.(img);canvaRequestRender()};img.onerror=()=>canvaStatus("Image could not be loaded");img.src=src}
+function uploadImage(file){
+  if(!file||!file.type.startsWith("image/"))return;const reader=new FileReader();reader.onload=()=>{const src=String(reader.result||""),img=new Image();img.onload=()=>{
+    const max=220,scale=Math.min(1,max/Math.max(img.width,img.height)),obj={type:"image",src,x:Math.round((CANVA_W-img.width*scale)/2),y:Math.round((CANVA_H-img.height*scale)/2),w:Math.max(40,Math.round(img.width*scale)),h:Math.max(40,Math.round(img.height*scale)),rotation:0};
+    canvaAddObject(obj);canvaStudioState.imageCache.set(obj.id,img);canvaStudioState.imageCache.set(src,img);canvaRequestRender();
+  };img.src=src};reader.readAsDataURL(file);
+}
+function canvaDeleteSelected(){
+  const id=canvaStudioState.selectedId;if(!id)return;canvaStudioState.objects=canvaStudioState.objects.filter(o=>o.id!==id);canvaStudioState.selectedId=null;canvaUpdateProperties();canvaRenderLayers();canvaSaveCurrent();canvaRequestRender();canvaStatus("Element deleted");
+}
+function canvaObjectAt(x,y){for(let i=canvaStudioState.objects.length-1;i>=0;i--)if(canvaHitObject(canvaStudioState.objects[i],x,y))return canvaStudioState.objects[i];return null}
+function handleMouseDown(e){
+  const p=canvaPointerPosition(e),tool=canvaStudioState.activeTool;canvaStudioState.canvas.setPointerCapture?.(e.pointerId);
+  if(tool==="draw"){canvaStudioState.interaction={mode:"draw",startX:p.x,startY:p.y};canvaStudioState.drawPreview={type:"path",x:0,y:0,points:[{x:p.x,y:p.y}],color:"#1dff91",lineWidth:4,rotation:0};canvaRequestRender();return}
+  if(canvaStudioState.selectedId){const handle=canvaFindHandle(p.x,p.y),obj=canvaStudioState.objects.find(o=>o.id===canvaStudioState.selectedId);if(handle&&obj){const b=canvaBounds(obj);canvaStudioState.interaction={mode:handle.type,handle:handle.handle,startX:p.x,startY:p.y,startObj:canvaClone(obj),startAngle:Math.atan2(p.y-b.cy,p.x-b.cx)};return}}
+  const target=canvaObjectAt(p.x,p.y);if(target){canvaSelect(target.id);canvaStudioState.interaction={mode:"drag",startX:p.x,startY:p.y,startObj:canvaClone(target)}}else canvaSelect(null);
+}
+function handleMouseMove(e){
+  const interaction=canvaStudioState.interaction;if(!interaction)return;const p=canvaPointerPosition(e),id=canvaStudioState.selectedId,obj=canvaStudioState.objects.find(o=>o.id===id);
+  if(interaction.mode==="draw"){canvaStudioState.drawPreview.points.push({x:p.x,y:p.y});canvaRequestRender();return}
+  if(!obj)return;
+  if(interaction.mode==="drag"){const s=interaction.startObj,w=canvaMeasure(obj).w,h=canvaMeasure(obj).h;obj.x=clamp(s.x+(p.x-interaction.startX),0,CANVA_W-w);obj.y=clamp(s.y+(p.y-interaction.startY),0,CANVA_H-h)}
+  else if(interaction.mode==="rotate"){const b=canvaBounds(interaction.startObj),now=Math.atan2(p.y-b.cy,p.x-b.cx);obj.rotation=interaction.startObj.rotation+(now-interaction.startAngle)*180/Math.PI}
+  else if(interaction.mode==="resize"){
+    const start=interaction.startObj,dx=p.x-interaction.startX,dy=p.y-interaction.startY;let w=start.w??canvaMeasure(start).w,h=start.h??canvaMeasure(start).h,x=start.x,y=start.y;
+    if(interaction.handle.includes("e"))w=Math.max(24,w+dx);if(interaction.handle.includes("s"))h=Math.max(24,h+dy);if(interaction.handle.includes("w")){w=Math.max(24,w-dx);x=start.x+dx}if(interaction.handle.includes("n")){h=Math.max(24,h-dy);y=start.y+dy}
+    if(obj.type==="circle"){const size=Math.max(24,Math.max(Math.abs(w),Math.abs(h)));w=size;h=size}
+    obj.w=clamp(w,24,CANVA_W);obj.h=clamp(h,24,CANVA_H);obj.x=clamp(x,0,CANVA_W-obj.w);obj.y=clamp(y,0,CANVA_H-obj.h);
+    if(obj.type==="text"){const base=start.w||canvaMeasure(start).w;obj.fontSize=clamp(Math.round((start.fontSize||32)*(obj.w/base)),12,72)}
+    if(obj.type==="emoji"){const base=start.w||start.fontSize||48;obj.fontSize=clamp(Math.round((start.fontSize||48)*(obj.w/base)),18,120)}
+  }
+  canvaRequestRender();
+}
+function handleMouseUp(){
+  const interaction=canvaStudioState.interaction;if(!interaction)return;
+  if(interaction.mode==="draw"&&canvaStudioState.drawPreview?.points?.length>1){const pts=canvaStudioState.drawPreview.points,path={type:"path",x:0,y:0,points:pts.map(pt=>({x:pt.x,y:pt.y})),color:"#1dff91",lineWidth:4,rotation:0};path.id=canvaNewId("draw");canvaStudioState.objects.push(path);canvaSelect(path.id)}
+  canvaStudioState.interaction=null;canvaStudioState.drawPreview=null;canvaSaveCurrent();canvaRequestRender();
+}
+function canvaRenderLayers(){
+  const box=$("#canvaLayers"),count=$("#canvaLayerCount");if(!box)return;const rows=[...canvaStudioState.objects].reverse();if(count)count.textContent=String(canvaStudioState.objects.length);
+  if(!rows.length){box.innerHTML='<div class="canva-properties-empty">No layers yet. Add text, emoji, shapes or an image.</div>';return}
+  const icons={text:"T",image:"🖼️",emoji:"😀",shape:"🔷",path:"🖌️"};
+  box.innerHTML=rows.map((o,i)=>'<div class="canva-layer '+(o.id===canvaStudioState.selectedId?"selected":"")+'" draggable="true" data-canva-layer="'+esc(o.id)+'"><span class="canva-layer-drag">⋮⋮</span><span class="canva-layer-icon">'+icons[o.type]+'</span><span class="canva-layer-name">'+esc(o.type==="text"?o.text:o.type==="emoji"?o.char:o.type==="shape"?o.shape:"Drawing")+'</span><span class="canva-layer-z">'+(canvaStudioState.objects.length-i)+'</span></div>').join("");
+  box.querySelectorAll("[data-canva-layer]").forEach(el=>{
+    el.addEventListener("click",()=>canvaSelect(el.dataset.canvaLayer));el.addEventListener("dragstart",e=>{e.dataTransfer?.setData("text/plain",el.dataset.canvaLayer);el.classList.add("dragging")});
+    el.addEventListener("dragend",()=>el.classList.remove("dragging"));el.addEventListener("dragover",e=>e.preventDefault());
+    el.addEventListener("drop",e=>{e.preventDefault();const fromId=e.dataTransfer?.getData("text/plain");if(!fromId||fromId===el.dataset.canvaLayer)return;const from=canvaStudioState.objects.findIndex(o=>o.id===fromId),to=canvaStudioState.objects.findIndex(o=>o.id===el.dataset.canvaLayer);if(from<0||to<0)return;const [item]=canvaStudioState.objects.splice(from,1);canvaStudioState.objects.splice(to,0,item);canvaSaveCurrent();canvaRenderLayers();canvaRequestRender()});
+  });
+}
+function canvaUpdateProperties(){
+  const empty=$("#canvaPropertiesEmpty"),props=$("#canvaTextProperties"),obj=canvaStudioState.objects.find(o=>o.id===canvaStudioState.selectedId),isText=obj?.type==="text";
+  if(empty)empty.hidden=isText;if(props)props.hidden=!isText;if(!isText)return;
+  const size=$("#canvaFontSize"),sizeValue=$("#canvaFontSizeValue"),color=$("#canvaTextColor"),family=$("#canvaFontFamily"),bold=$("#canvaBold"),italic=$("#canvaItalic");
+  if(size){size.value=String(clamp(Number(obj.fontSize||32),12,72));if(sizeValue)sizeValue.textContent=size.value+"px"}if(color)color.value=obj.color||"#fff";if(family)family.value=obj.fontFamily||"Inter";
+  bold?.classList.toggle("active",!!obj.bold);italic?.classList.toggle("active",!!obj.italic);$("#canvaProperties .canva-align-btn").forEach(b=>b.classList.toggle("active",b.dataset.canvaAlign===(obj.align||"left")));
+}
+function canvaBindTextControls(){
+  const size=$("#canvaFontSize"),sizeValue=$("#canvaFontSizeValue"),color=$("#canvaTextColor"),family=$("#canvaFontFamily"),bold=$("#canvaBold"),italic=$("#canvaItalic"),selectedText=()=>canvaStudioState.objects.find(o=>o.id===canvaStudioState.selectedId&&o.type==="text");
+  size?.addEventListener("input",()=>{const o=selectedText();if(!o)return;o.fontSize=clamp(Number(size.value),12,72);if(sizeValue)sizeValue.textContent=size.value+"px";canvaSaveCurrent();canvaRequestRender()});
+  color?.addEventListener("input",()=>{const o=selectedText();if(!o)return;o.color=color.value;canvaSaveCurrent();canvaRequestRender()});
+  family?.addEventListener("change",()=>{const o=selectedText();if(!o)return;o.fontFamily=family.value;canvaSaveCurrent();canvaRequestRender()});
+  bold?.addEventListener("click",()=>{const o=selectedText();if(!o)return;o.bold=!o.bold;canvaUpdateProperties();canvaSaveCurrent();canvaRequestRender()});
+  italic?.addEventListener("click",()=>{const o=selectedText();if(!o)return;o.italic=!o.italic;canvaUpdateProperties();canvaSaveCurrent();canvaRequestRender()});
+  $("#canvaProperties .canva-align-btn").forEach(b=>b.addEventListener("click",()=>{const o=selectedText();if(!o)return;o.align=b.dataset.canvaAlign;canvaUpdateProperties();canvaSaveCurrent();canvaRequestRender()}));
+}
+function canvaTemplateCard(t,compact=false){
+  const bg=t.background?.type==="solid"?t.background.color:"linear-gradient(135deg,"+(t.background?.from||"#1dff91")+","+(t.background?.to||"#7d5aff")+")";
+  return '<button type="button" class="'+(compact?"canva-quick-template":"canva-template-card")+'" data-canva-template="'+esc(t.id)+'"><span class="canva-template-thumb" style="--template-bg:'+esc(bg)+'"></span><strong>'+esc(t.name)+'</strong><small>'+esc(t.format)+'</small></button>';
+}
+function canvaRenderTemplates(){
+  const quick=$("#canvaQuickTemplateTrack"),strip=$("#canvaTemplateStrip"),grid=$("#canvaTemplateGrid"),quickTemplates=CANVA_TEMPLATES.slice(0,4);
+  if(quick)quick.innerHTML=quickTemplates.map(t=>canvaTemplateCard(t,true)).join("");if(strip)strip.innerHTML=CANVA_TEMPLATES.map(t=>canvaTemplateCard(t,false)).join("");if(grid)grid.innerHTML=CANVA_TEMPLATES.map(t=>canvaTemplateCard(t,false)).join("");
+  document.querySelectorAll("[data-canva-template]").forEach(b=>b.addEventListener("click",()=>canvaApplyTemplate(b.dataset.canvaTemplate)));
+}
+function canvaApplyTemplate(id){
+  const template=CANVA_TEMPLATES.find(t=>t.id===id);if(!template)return;canvaStudioState.background=canvaClone(template.background);canvaStudioState.objects=canvaClone(template.objects).map(o=>({...o,id:canvaNewId("layer")}));
+  canvaStudioState.selectedId=null;canvaSaveCurrent();canvaUpdateProperties();canvaRenderLayers();canvaStatus("Template loaded");canvaRequestRender();
+}
+async function openCanvaDraftDb(){
+  return new Promise((resolve,reject)=>{const req=indexedDB.open(CANVA_DRAFT_DB,1);req.onupgradeneeded=()=>{const db=req.result;if(!db.objectStoreNames.contains(CANVA_DRAFT_STORE))db.createObjectStore(CANVA_DRAFT_STORE,{keyPath:"id"})};req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error||new Error("Draft storage unavailable."))});
+}
+async function canvaSaveDraft(){
+  try{
+    const db=await openCanvaDraftDb(),payload={id:"latest",savedAt:Date.now(),version:CANVA_STUDIO_VERSION,background:canvaClone(canvaStudioState.background),objects:canvaClone(canvaStudioState.objects)};
+    await new Promise((resolve,reject)=>{const tx=db.transaction(CANVA_DRAFT_STORE,"readwrite"),req=tx.objectStore(CANVA_DRAFT_STORE).put(payload);req.onsuccess=resolve;req.onerror=()=>reject(req.error||new Error("Draft save failed."))});
+    db.close();canvaStatus("Draft saved to IndexedDB");showHomeToast("Draft saved locally.");
+  }catch(_){canvaStatus("Draft storage unavailable");showHomeToast("Could not save the draft.")}
+}
+function canvaDownloadPng(){
+  try{canvaRender();const url=canvaStudioState.canvas.toDataURL("image/png"),a=document.createElement("a");a.href=url;a.download="tubal-hub-design-"+Date.now()+".png";document.body.appendChild(a);a.click();a.remove();canvaStatus("PNG exported");showHomeToast("PNG exported.")}catch(_){canvaStatus("PNG export failed");showHomeToast("PNG export failed.")}
+}
+function canvaShareToFeeds(){
+  try{
+    canvaRender();const image=canvaStudioState.canvas.toDataURL("image/png"),current=auth.currentUser,posts=safeJson("tubalhub_feeds",[]);
+    if(!Array.isArray(posts))throw new Error("Feed storage unavailable");const author=current?.displayName||current?.email?.split("@")[0]||"You",avatar=typeof storageAvatar==="function"?storageAvatar():"";
+    posts.unshift({id:"studio-"+Date.now().toString(36),author,avatar,text:"Shared from TUBAL HUB Design Studio",title:"Design Studio export",image,createdAt:Date.now(),likes:0,comments:0,source:"canva-studio"});
+    localStorage.setItem("tubalhub_feeds",JSON.stringify(posts.slice(0,30)));renderFeeds();showHomeToast("Design shared to your local Feeds.");canvaStatus("Shared to local Feeds");
+  }catch(e){console.warn("[Design Studio] feed share failed",e);canvaStatus("Feed storage unavailable");showHomeToast("Could not save the design to local Feeds.")}
+}
+function canvaToolBurst(button){if(!button)return;button.classList.remove("burst");void button.offsetWidth;button.classList.add("burst");setTimeout(()=>button.classList.remove("burst"),620)}
+function canvaSetTool(tool){
+  canvaStudioState.activeTool=canvaStudioState.activeTool===tool?"":tool;$("#canvaToolbar .canva-tool").forEach(b=>b.classList.toggle("active",b.dataset.canvaTool===canvaStudioState.activeTool));
+  $("#canvaCanvasShell")?.classList.toggle("is-drawing",canvaStudioState.activeTool==="draw");if(canvaStudioState.canvas)canvaStudioState.canvas.style.cursor=canvaStudioState.activeTool==="draw"?"crosshair":"default";
+}
+function canvaQuickTemplateScroll(direction){$("#canvaQuickTemplateTrack")?.scrollBy({left:direction*128,behavior:"smooth"})}
+function canvaBindStudio(){
+  const canvas=canvaStudioState.canvas;
+  canvas.addEventListener("pointerdown",handleMouseDown);canvas.addEventListener("pointermove",handleMouseMove);canvas.addEventListener("pointerup",handleMouseUp);canvas.addEventListener("pointercancel",handleMouseUp);
+  canvas.addEventListener("dblclick",e=>{const p=canvaPointerPosition(e),o=canvaObjectAt(p.x,p.y);if(o?.type==="text")canvaSelect(o.id)});
+  canvas.addEventListener("dragover",e=>{e.preventDefault();canvas.classList.add("canva-drop-active")});canvas.addEventListener("dragleave",()=>canvas.classList.remove("canva-drop-active"));
+  canvas.addEventListener("drop",e=>{e.preventDefault();canvas.classList.remove("canva-drop-active");const file=[...(e.dataTransfer?.files||[])].find(f=>f.type.startsWith("image/"));if(file)uploadImage(file)});
+  $("#canvaToolbar .canva-tool").forEach(b=>b.addEventListener("click",()=>{canvaToolBurst(b);const tool=b.dataset.canvaTool;if(tool==="text"){canvaSetTool("");addText()}else if(tool==="image"){canvaSetTool("");$("#canvaImageInput")?.click()}else if(tool==="emoji"){canvaSetTool("");addEmoji("🌿")}else if(tool==="shape"){canvaSetTool("");addShape("rect")}else if(tool==="background")$("#canvaBgPicker")?.click();else if(tool==="draw")canvaSetTool("draw")}));
+  $("#canvaImageInput")?.addEventListener("change",e=>{const file=e.target.files?.[0];if(file)uploadImage(file);e.target.value=""});$("#canvaBgPicker")?.addEventListener("input",e=>changeBackground(e.target.value));
+  $("#canvaDownloadPng")?.addEventListener("click",canvaDownloadPng);$("#canvaShareFeeds")?.addEventListener("click",canvaShareToFeeds);$("#canvaSaveDraft")?.addEventListener("click",canvaSaveDraft);
+  $("#canvaQuickPrev")?.addEventListener("click",()=>canvaQuickTemplateScroll(-1));$("#canvaQuickNext")?.addEventListener("click",()=>canvaQuickTemplateScroll(1));
+  $("#canvaTemplateViewAll")?.addEventListener("click",()=>{const all=$("#canvaTemplateAll"),button=$("#canvaTemplateViewAll");if(!all)return;all.hidden=!all.hidden;button.textContent=all.hidden?"View All":"Hide"});
+  canvaBindTextControls();
+}
+function initCanvaStudio(){
+  const canvas=$("#designCanvas");if(!canvas)return;canvaStudioState.canvas=canvas;canvaStudioState.ctx=canvas.getContext("2d",{alpha:true,desynchronized:true});if(!canvaStudioState.ctx)return;
+  canvaLoadCurrent();canvaRenderTemplates();canvaRenderLayers();canvaUpdateProperties();canvaBindStudio();canvaRequestRender();
+  document.addEventListener("keydown",e=>{
+    if((e.key==="Delete"||e.key==="Backspace")&&canvaStudioState.selectedId&&!/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName||"")){e.preventDefault();canvaDeleteSelected()}
+    if(e.key==="Escape"&&canvaStudioState.activeTool==="draw")canvaSetTool("");
+  });
+}
+
 function init(){
   initSpotlight();
   initHeroSlider();
@@ -673,6 +958,7 @@ function init(){
   initHorizontalSections();
   renderAllSliderDots();
   loadFeaturedGames();
+  initCanvaStudio();
   initFooter();
   initFooterNewsletter();
   initFooterSmoothLinks();
