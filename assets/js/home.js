@@ -803,7 +803,7 @@ function canvaSaveCurrent(){
   try{localStorage.setItem(CANVA_DESIGN_KEY,JSON.stringify(payload));canvaStatus("Saved locally")}catch(_){canvaStatus("Local save unavailable")}
 }
 function canvaLoadCurrent(){
-  try{const raw=localStorage.getItem(CANVA_DESIGN_KEY);if(!raw)return;const data=JSON.parse(raw);if(!data||!Array.isArray(data.objects)||!data.background)return;canvaStudioState.objects=data.objects;canvaStudioState.background=data.background;canvaStatus("Loaded saved design")}catch(_){canvaStatus("New canvas")}
+  try{const raw=localStorage.getItem(CANVA_DESIGN_KEY);if(!raw)return;const data=JSON.parse(raw);if(!data||!Array.isArray(data.objects)||!data.background)return;canvaStudioState.objects=data.objects;canvaStudioState.background=data.background;canvaStudioState.objects.filter(o=>o.type==="image"&&o.src).forEach(o=>canvaLoadImage(o.src,img=>canvaStudioState.imageCache.set(o.id,img)));canvaStatus("Loaded saved design")}catch(_){canvaStatus("New canvas")}
 }
 function canvaSelect(id){
   canvaStudioState.selectedId=id||null;canvaUpdateProperties();canvaRenderLayers();
@@ -856,7 +856,7 @@ function handleMouseMove(e){
 }
 function handleMouseUp(){
   const interaction=canvaStudioState.interaction;if(!interaction)return;
-  if(interaction.mode==="draw"&&canvaStudioState.drawPreview?.points?.length>1){const pts=canvaStudioState.drawPreview.points,path={type:"path",x:0,y:0,points:pts.map(pt=>({x:pt.x,y:pt.y})),color:"#1dff91",lineWidth:4,rotation:0};path.id=canvaNewId("draw");canvaStudioState.objects.push(path);canvaSelect(path.id)}
+  if(interaction.mode==="draw"&&canvaStudioState.drawPreview?.points?.length>1){const pts=canvaStudioState.drawPreview.points,xs=pts.map(pt=>pt.x),ys=pts.map(pt=>pt.y),path={type:"path",x:Math.min(...xs),y:Math.min(...ys),points:pts.map(pt=>({x:pt.x,y:pt.y})),color:"#1dff91",lineWidth:4,rotation:0};path.id=canvaNewId("draw");canvaStudioState.objects.push(path);canvaSelect(path.id)}
   canvaStudioState.interaction=null;canvaStudioState.drawPreview=null;canvaSaveCurrent();canvaRequestRender();
 }
 function canvaRenderLayers(){
