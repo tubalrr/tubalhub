@@ -2,18 +2,27 @@ import {getFirestore,collection,onSnapshot} from "https://www.gstatic.com/fireba
 import {app} from "./firebase-config.js";
 const db=getFirestore(app);
 const LOGO_BASE="https://commons.wikimedia.org/wiki/Special:Redirect/file/";
-const games=[
-{id:"mlbb",name:"Mobile Legends: Bang Bang",short:"MLBB",logo:LOGO_BASE+"Mobile_Legends_Logo.webp",cover:"https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=88",genre:"MOBA",dev:"Moonton",officialUrl:"https://www.mobilelegends.com",description:"Fast 5v5 MOBA sessions built around heroes, lanes, and team play."},
-{id:"hok",name:"Honor of Kings",short:"HOK",logo:LOGO_BASE+"Honor_of_Kings_Wordmark_Logo.png",cover:"https://images.unsplash.com/photo-1593305841991-05c297ba4575?auto=format&fit=crop&w=1200&q=88",genre:"MOBA",dev:"Tencent",officialUrl:"https://www.honorofkings.com",description:"Competitive 5v5 mobile action with quick team fights and ranked play."},
-{id:"minecraft",name:"Minecraft",short:"MC",logo:LOGO_BASE+"Minecraft_Logo-en.svg",cover:LOGO_BASE+"Screenshot_from_the_Minecraft_End.png",genre:"Sandbox",dev:"Mojang",officialUrl:"https://www.minecraft.net",description:"Build, explore, survive, and create worlds with no single path."},
-{id:"apex",name:"Apex Legends",short:"APEX",logo:LOGO_BASE+"Apex_Legends_logo.svg",cover:"https://images.unsplash.com/photo-1552820728-8b83bb6b773f?auto=format&fit=crop&w=1200&q=88",genre:"Battle Royale",dev:"Electronic Arts",officialUrl:"https://www.ea.com/games/apex-legends",description:"Hero-based battle royale built around movement, squads, and clutch plays."},
-{id:"valorant",name:"VALORANT",short:"VAL",logo:LOGO_BASE+"Valorant_logo.svg",cover:"https://images.unsplash.com/photo-1547394765-185e1e68f34e?auto=format&fit=crop&w=1200&q=88",genre:"FPS",dev:"Riot Games",officialUrl:"https://playvalorant.com",description:"Precision tactical FPS action with agent abilities and round strategy."},
-{id:"roblox",name:"Roblox",short:"RBX",logo:LOGO_BASE+"Roblox_Logo_2022.svg",cover:"https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1200&q=88",genre:"Sandbox",dev:"Roblox",officialUrl:"https://www.roblox.com",description:"A huge player-made universe of experiences, creators, and communities."},
-{id:"warzone",name:"Call of Duty: Warzone",short:"WZ",logo:LOGO_BASE+"Call_of_Duty_Warzone_Logo.png",cover:LOGO_BASE+"Call_of_Duty_Warzone.jpg",genre:"Battle Royale",dev:"Activision",officialUrl:"https://www.callofduty.com/warzone",description:"Large-scale online combat with squad play, movement, and seasonal content."},
-{id:"genshin",name:"Genshin Impact",short:"GI",logo:LOGO_BASE+"Genshin_Impact_wordmark.svg",cover:"https://images.unsplash.com/photo-1513542789411-b6a5d3e3166e?auto=format&fit=crop&w=1200&q=88",genre:"Action",dev:"HoYoverse",officialUrl:"https://genshin.hoyoverse.com",description:"Open-world action RPG exploration with elemental combat and a large world."},
-{id:"lol",name:"League of Legends",short:"LOL",logo:LOGO_BASE+"League_of_Legends.png",cover:"https://images.unsplash.com/photo-1603481546238-487240415921?auto=format&fit=crop&w=1200&q=88",genre:"MOBA",dev:"Riot Games",officialUrl:"https://www.leagueoflegends.com",description:"Classic 5v5 MOBA strategy with champions, objectives, and ranked competition."}
-];
-
+async function loadCtrlzoneGames(){
+  try{
+    const res=await fetch("../data/games.json?ctrlzone="+Date.now(),{cache:"no-store"});
+    if(!res.ok)throw new Error("games.json "+res.status);
+    const data=await res.json();
+    const rows=Array.isArray(data)?data:(Array.isArray(data?.games)?data.games:[]);
+    return rows.filter(g=>g&&g.id&&(g.title||g.name)).map(g=>({
+      ...g,
+      name:String(g.name||g.title),
+      short:String(g.short||g.id).toUpperCase(),
+      genre:String(g.genre||g.category||"Game"),
+      dev:String(g.dev||""),
+      description:String(g.description||""),
+      officialUrl:String(g.officialUrl||"")
+    }));
+  }catch(err){
+    console.error("[CTRLZONE catalog] failed to load shared games.json",err);
+    return [];
+  }
+}
+const games=await loadCtrlzoneGames();
 const state={genre:"All",query:"",favorites:new Set(),featuredId:"mlbb",liveMembers:0,featuredTimer:null,featuredIndex:0};
 const els={
   grid:document.getElementById("gamesGrid"),filters:document.getElementById("genreFilters"),search:document.getElementById("gameSearch"),
