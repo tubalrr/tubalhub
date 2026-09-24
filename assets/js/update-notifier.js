@@ -15,6 +15,7 @@
   const LAST_EVENT_KEY = "tubalhub_update_event";
   const POLL_MS = 30000;
   const TOAST_MS = 30000;
+  const UPDATES_ENABLED_KEY = "tubalhub_notif_website_updates";
 
   let remoteVersion = null;
   let remoteSignature = "";
@@ -23,8 +24,10 @@
   let loadedUi = false;
   let applying = false;
   let channel = null;
+  let pollTimer = null;
 
   const $ = id => document.getElementById(id);
+  const updatesEnabled = () => localStorage.getItem(UPDATES_ENABLED_KEY) !== "0";
 
   function ensureCss() {
     if (document.querySelector('link[data-tubal-update-css]')) return;
@@ -186,6 +189,7 @@
   }
 
   async function poll() {
+    if (!updatesEnabled()) return;
     try {
       const [versionData,signature] = await Promise.all([fetchVersion(),fetchIndexSignature()]);
       compareAndNotify(versionData,signature);
@@ -282,12 +286,43 @@
     } catch (_) {}
   }
 
+  function hideUpdateUi() {
+    const banner = $("thUpdateBanner"), toast = $("thUpdateToast"), overlay = $("thUpdateOverlay");
+    banner?.classList.remove("is-open");
+    toast?.classList.remove("is-open");
+    if (banner) banner.hidden = true;
+    if (toast) toast.hidden = true;
+    if (overlay) overlay.hidden = true;
+  }
+
+  function setUpdatesEnabled(enabled) {
+    const on = enabled !== false;
+    localStorage.setItem(UPDATES_ENABLED_KEY, on ? "1" : "0");
+    if (on) {
+      if (!pollTimer) pollTimer = setInterval(poll, POLL_MS);
+      poll();
+    } else {
+      if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+      localStorage.removeItem(UPDATE_KEY);
+      hideUpdateUi();
+    }
+    return on;
+  }
+
+  window.tubalHubUpdateNotifier = window.tubalHubUpdateNotifier || {};
+  window.tubalHubUpdateNotifier.setEnabled = setUpdatesEnabled;
+  window.tubalHubUpdateNotifier.isEnabled = updatesEnabled;
+
   async function init() {
     await ensureUiReady();
     openChannel();
     listenServiceWorker();
-    await poll();
-    setInterval(poll,POLL_MS);
+    if (updatesEnabled()) {
+      await poll();
+      pollTimer = setInterval(poll, POLL_MS);
+    } else {
+      hideUpdateUi();
+    }
   }
 
   init();
