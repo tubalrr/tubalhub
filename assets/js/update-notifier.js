@@ -49,8 +49,12 @@
     ensureCss();
     ensureVersionLink();
     if (document.querySelector("#thUpdateBanner")) { loadedUi = true; return; }
-    const holder = document.querySelector("#update-banner");
-    if (!holder) return;
+    let holder = document.querySelector("#update-banner");
+    if (!holder) {
+      holder = document.createElement("div");
+      holder.id = "update-banner";
+      document.body.prepend(holder);
+    }
     const response = await fetch(componentUrl, {cache:"no-store"});
     if (!response.ok) throw new Error("Update notifier UI unavailable: " + response.status);
     holder.innerHTML = await response.text();
@@ -76,7 +80,7 @@
   }
 
   function buildMessage(data) {
-    return (data?.message || "A new TUBAL HUB website update is ready.") + " • v" + (data?.version || "—");
+    return "v" + (data?.version || "—") + " — " + (data?.message || "A new TUBAL HUB website update is ready.");
   }
 
   async function addNotificationCenterEntry(data) {
