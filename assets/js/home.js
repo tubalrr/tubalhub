@@ -456,7 +456,7 @@ function initFooterNewsletter(){
   });
 }
 function initFooterSmoothLinks(){
-  document.querySelectorAll('.home-premium-footer a[href^="#"]').forEach(link=>{
+  document.querySelectorAll('#mainFooter a[href^="#"]').forEach(link=>{
     link.addEventListener("click",event=>{
       const id=link.getAttribute("href"),target=id&&document.querySelector(id);
       if(!target)return;
@@ -466,12 +466,54 @@ function initFooterSmoothLinks(){
     });
   });
 }
+
+function initFooterSpotlight(){
+  const footer=$("#mainFooter");
+  if(!footer||window.matchMedia?.("(hover: none), (pointer: coarse)").matches)return;
+  let frame=0;
+  footer.addEventListener("pointermove",event=>{
+    const rect=footer.getBoundingClientRect(),x=event.clientX-rect.left,y=event.clientY-rect.top;
+    if(frame)return;
+    frame=requestAnimationFrame(()=>{
+      footer.style.setProperty("--footer-x",x+"px");
+      footer.style.setProperty("--footer-y",y+"px");
+      frame=0;
+    });
+  },{passive:true});
+}
+
+function initFooterMessages(){
+  const button=$("#footerMessagesButton");
+  if(!button)return;
+  button.addEventListener("click",()=>{
+    const aiFab=$("#tubalAiFab");
+    if(aiFab){
+      aiFab.click();
+    }else{
+      window.location.href="pages/chat.html";
+    }
+  });
+}
+
+function initFooterQr(){
+  const box=$("#footerQrCode");
+  if(!box||box.dataset.ready==="1")return;
+  box.dataset.ready="1";
+  const img=document.createElement("img");
+  img.src="https://quickchart.io/qr?size=96&margin=1&text="+encodeURIComponent("https://tubalrr.github.io/tubalhub/");
+  img.alt="TUBAL HUB QR code";
+  img.loading="lazy";
+  img.decoding="async";
+  box.appendChild(img);
+}
+
 async function initFooter(){
   try{
     const r=await fetch("version.json?t="+Date.now(),{cache:"no-store"});if(!r.ok)throw new Error();
-    const data=await r.json();$("#homeVersion").textContent="v"+(data.version||"—");
-  }catch(_){$("#homeVersion").textContent="Version unavailable"}
-  const update=()=>{$("#homeOnlineDot")?.classList.toggle("offline",!navigator.onLine)};
+    const data=await r.json();
+    const version=$("#homeVersion");if(version)version.textContent="v"+(data.version||"—");
+  }catch(_){const version=$("#homeVersion");if(version)version.textContent="Version unavailable"}
+  const update=()=>$("#homeOnlineDot")?.classList.toggle("offline",!navigator.onLine);
   update();
   const textEl=$("#homeOnlineText");
   if(textEl)textEl.textContent=navigator.onLine?"Online":"Offline";
@@ -481,6 +523,9 @@ async function initFooter(){
     const bytes=[...Array(localStorage.length)].reduce((sum,_,i)=>{const k=localStorage.key(i)||"",v=localStorage.getItem(k)||"";return sum+(k.length+v.length)*2},0);
     const storage=$("#homeStorage");if(storage)storage.textContent=(bytes/1024).toFixed(1)+" KB local data";
   }catch(_){}
+  initFooterSpotlight();
+  initFooterMessages();
+  initFooterQr();
 }
 const sliderTimers=new Map();
 
