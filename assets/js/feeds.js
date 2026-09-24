@@ -3,7 +3,7 @@ import {onAuthStateChanged} from "https://www.gstatic.com/firebasejs/12.19.0/fir
 import {getFirestore,collection,getDocs,query,orderBy,limit,onSnapshot} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
 const db=getFirestore(app);
-const state={auth:null,items:[],products:[],users:[],localPosts:readLocal("tubalhub-feed-posts",[]),saved:new Set(readLocal("tubalhub-feed-saved",[])),likes:readLocal("tubalhub-feed-likes",{}),filter:"all",query:"",sort:"latest",page:0,pageSize:5,loading:false,savedMode:false};
+const state={auth:null,items:[],products:[],users:[],localPosts:readLocal("tubalhub-feed-posts",[]),saved:new Set(readLocal("tubalhub-feed-saved",[])),likes:readLocal("tubalhub-feed-likes",{}),comments:readLocal("tubalhub-feed-comments",{}),currentCommentId:null,filter:"all",query:"",sort:"latest",page:0,pageSize:5,loading:false,savedMode:false};
 
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
 function readLocal(k,f){try{const v=JSON.parse(localStorage.getItem(k)||"null");return v??f}catch(_){return f}}
@@ -98,6 +98,18 @@ function renderFeed(reset){
  state.page++;
  bindPosts();
 }
+function renderComments(id){
+ const box=document.getElementById("commentList");if(!box)return;
+ const list=Array.isArray(state.comments[id])?state.comments[id]:[];
+ box.innerHTML=list.length?list.map(x=>"<div class='comment-bubble'><b>"+esc(x.author||"Member")+"</b>"+esc(x.text)+"</div>").join(""):"<div class='feed-side-meta'>No comments yet. Start the conversation.</div>";
+}
+function openComments(id){
+ state.currentCommentId=id;
+ renderComments(id);
+ document.getElementById("commentModal").classList.add("open");
+ document.getElementById("commentInput").focus();
+}
+function closeComments(){document.getElementById("commentModal").classList.remove("open");state.currentCommentId=null}
 function bindPosts(){
  document.querySelectorAll(".post-card:not([data-bound])").forEach(card=>{
   card.dataset.bound="1";
@@ -110,7 +122,7 @@ function bindPosts(){
    b.classList.toggle("liked",!!state.likes[id]);
   });
   card.querySelector("[data-action='share']")?.addEventListener("click",()=>openShare(card.dataset.id));
-  card.querySelector("[data-action='comment']")?.addEventListener("click",()=>showNotice("Comments are available when a shared comment backend is connected."));
+  card.querySelector("[data-action='comment']")?.addEventListener("click",()=>openComments(card.dataset.id));
   card.querySelector("[data-buy]")?.addEventListener("click",e=>{e.stopPropagation();const b=e.currentTarget;b.classList.add("is-pop");setTimeout(()=>b.classList.remove("is-pop"),460);location.href="shop.html"});
  });
 }
@@ -142,6 +154,16 @@ function setupUI(){
  document.getElementById("savedMenu")?.addEventListener("click",()=>{state.savedMode=true;state.filter="all";document.querySelectorAll(".feed-filter").forEach(x=>x.classList.remove("active"));renderFeed(true)});
  window.addEventListener("scroll",()=>{if(window.innerHeight+window.scrollY>document.body.offsetHeight-700&&!state.loading){const max=Math.ceil(visible().length/state.pageSize);if(state.page<max)renderFeed(false)}},{passive:true});
  document.getElementById("postModal")?.addEventListener("click",e=>{if(e.target.id==="postModal")closePostModal()});
+ document.getElementById("commentModal")?.addEventListener("click",e=>{if(e.target.id==="commentModal")closeComments()});
+ document.getElementById("closeComments")?.addEventListener("click",closeComments);
+ document.getElementById("commentForm")?.addEventListener("submit",e=>{
+  e.preventDefault();
+  const input=document.getElementById("commentInput"),text=input.value.trim(),id=state.currentCommentId;
+  if(!id||!text)return;
+  if(!Array.isArray(state.comments[id]))state.comments[id]=[];
+  state.comments[id].push({author:displayName(state.auth)||"Member",text,createdAt:Date.now()});
+  writeLocal("tubalhub-feed-comments",state.comments);input.value="";renderComments(id);
+ });
 }
 function setupContacts(){
  try{
