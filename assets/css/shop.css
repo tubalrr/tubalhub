@@ -511,3 +511,29 @@ body.theme-light .shop-brand-chip{
 }
 body.theme-light .shop-brand-chip b{color:#1a241d}
 body.theme-light .shop-brand-chip small{color:#718078}
+
+.mini-brand-logo{
+  flex:0 0 auto;
+  width:22px;height:22px;border-radius:7px;
+  display:inline-grid;place-items:center;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(255,255,255,.045);
+  vertical-align:middle;
+}
+.mini-brand-logo img{width:20px;height:20px;object-fit:contain;display:block;border-radius:6px}
+.mini-brand-logo svg{width:16px;height:16px;fill:none;stroke:#8cffad;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.mini-brand-logo.pi svg{stroke:#9fe878}
+.mini-brand-logo.cz svg{stroke:#9f91ff}
+.product-shop-brand{
+  display:flex!important;
+  align-items:center;
+  gap:6px;
+}
+.cart-shop-brand{
+  display:flex!important;
+  align-items:center;
+  gap:5px;
+}
+.cart-shop-brand .mini-brand-logo{width:19px;height:19px}
+.cart-shop-brand .mini-brand-logo img{width:17px;height:17px}
