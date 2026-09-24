@@ -1410,10 +1410,18 @@ if(document.readyState==="loading"){
 
   function getRealAds(){
     const local=(()=>{try{const value=JSON.parse(localStorage.getItem(ADS_LOCAL_KEY)||"[]");return Array.isArray(value)?value:[]}catch(_){return[]}})();
-    return fetch("/data/ads.json",{cache:"no-store"}).then(r=>r.ok?r.json():[]).catch(()=>[]).then(remote=>{
-      const rows=Array.isArray(remote)?remote:(Array.isArray(remote?.ads)?remote.ads:[]);
-      return rows.length?rows:(local.length?local:[]);
-    });
+    const builtIn=[
+      {id:"ad1_real",titleReal:"TUBAL HUB Premium",descReal:"Unlock real features",ctaReal:"Upgrade Now",type:"banner",bgReal:"linear-gradient(135deg,#1dff91,#7d5aff)",linkReal:"pages/shop.html"},
+      {id:"ad2_real",titleReal:"New Drop - Tubal Tee",priceReal:"₱599",type:"square",bgReal:"linear-gradient(135deg,#ff9a3d,#ff1a1a)",linkReal:"pages/shop.html"},
+      {id:"ad3_real",titleReal:"AI Music Studio",descReal:"Create real music",type:"square",bgReal:"linear-gradient(135deg,#020604,#0a1f12)",linkReal:"pages/ai-music.html"}
+    ];
+    return fetch("data/ads.json",{cache:"no-store"})
+      .then(r=>r.ok?r.json():[])
+      .catch(()=>[])
+      .then(remote=>{
+        const rows=Array.isArray(remote)?remote:(Array.isArray(remote?.ads)?remote.ads:[]);
+        return rows.length?rows:(local.length?local:builtIn);
+      });
   }
 
   function trackAdClick(ad){
@@ -1429,9 +1437,9 @@ if(document.readyState==="loading"){
     const image=realText(ad.imageReal||ad.image||"");
     const link=realHref(ad.linkReal||ad.link);
     const type=realText(ad.type).toLowerCase();
-    if(type==="banner")return '<article class="ad-banner" data-ad-id="'+escAd(ad.id)+'" data-ad-link="'+escAd(link)+'"><div class="ad-banner-copy"><span class="ad-card-kicker">Sponsored</span><h3>'+escAd(title)+'</h3><p>'+escAd(desc)+'</p><button type="button">'+escAd(realText(ad.ctaReal||ad.cta||"Learn More"))+'</button></div><span class="ad-banner-emoji" aria-hidden="true">'+escAd(realText(ad.emojiReal||ad.emoji||"📢"))+'</span></article>';
+    if(type==="banner")return '<article class="ad-card ad-banner" data-ad-id="'+escAd(ad.id)+'" data-ad-link="'+escAd(link)+'" style="background:'+(escAd(ad.bgReal||"linear-gradient(135deg,#1dff91,#7d5aff)"))+'"><div class="ad-banner-copy"><span class="ad-card-kicker">Sponsored</span><h3>'+escAd(title)+'</h3><p>'+escAd(desc)+'</p><button type="button">'+escAd(realText(ad.ctaReal||ad.cta||"Learn More"))+'</button></div><span class="ad-banner-emoji" aria-hidden="true">📢</span></article>';
     if(type==="video")return '<article class="ad-video" data-ad-id="'+escAd(ad.id)+'" data-ad-link="'+escAd(link)+'"><video class="ad-video-el" muted autoplay loop playsinline preload="metadata" poster="'+escAd(realText(ad.posterReal||ad.poster||""))+'" src="'+escAd(realText(ad.videoReal||ad.video||""))+'"></video><div class="ad-video-overlay"><div class="ad-video-copy"><strong>'+escAd(title)+'</strong><span>'+escAd(desc)+'</span></div><button class="ad-video-skip" type="button" data-ad-skip="'+escAd(ad.id)+'">Skip <b>5</b></button></div></article>';
-    return '<article class="ad-card" data-ad-id="'+escAd(ad.id)+'" data-ad-link="'+escAd(link)+'"><div class="ad-card-media">'+(image?'<img src="'+escAd(image)+'" alt="'+escAd(title)+'" loading="lazy" decoding="async">':'<span class="ad-card-media-emoji" aria-hidden="true">'+escAd(realText(ad.emojiReal||ad.emoji||"📢"))+'</span>')+'</div><div class="ad-card-body"><span class="ad-card-kicker">Sponsored</span><h4>'+escAd(title)+'</h4><p>'+escAd(desc)+'</p><div class="ad-card-bottom">'+(price?'<span class="ad-card-price">'+escAd(price)+'</span>':'<span></span>')+'<button class="ad-card-cta" type="button">'+escAd(realText(ad.ctaReal||ad.cta||"Open"))+'</button></div></div></article>';
+    return '<article class="ad-card" data-ad-id="'+escAd(ad.id)+'" data-ad-link="'+escAd(link)+'" style="background:'+(escAd(ad.bgReal||"rgba(255,255,255,.045)"))+'"><div class="ad-card-media">'+(image?'<img src="'+escAd(image)+'" alt="'+escAd(title)+'" loading="lazy" decoding="async">':'<span class="ad-card-media-emoji" aria-hidden="true">'+escAd(realText(ad.emojiReal||ad.emoji||"📢"))+'</span>')+'</div><div class="ad-card-body"><span class="ad-card-kicker">Sponsored</span><h4>'+escAd(title)+'</h4><p>'+escAd(desc)+'</p><div class="ad-card-bottom">'+(price?'<span class="ad-card-price">'+escAd(price)+'</span>':'<span></span>')+'<button class="ad-card-cta" type="button">'+escAd(realText(ad.ctaReal||ad.cta||"Open"))+'</button></div></div></article>';
   }
 
   function renderDots(){
