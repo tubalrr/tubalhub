@@ -20,6 +20,7 @@
         category: String(g.category || g.genre || "Game"),
         description: String(g.description || ""),
         emoji: String(g.emoji || "🎮"),
+        logo: String(g.logo || ""),
         officialUrl: String(g.officialUrl || "")
       }));
     } catch (err) {
@@ -32,7 +33,8 @@
           genre: String(g.genre || g.category || "Game"),
           category: String(g.category || g.genre || "Game"),
           description: String(g.description || ""),
-          emoji: String(g.emoji || "🎮")
+          emoji: String(g.emoji || "🎮"),
+          logo: String(g.logo || "")
         })) : [];
       } catch (_) {
         return [];
@@ -70,7 +72,9 @@
       return '<article class="bento-game-card premium-game-card" style="--game-a:' + esc(colorA) + ';--game-b:' + esc(colorB) + '">' +
         '<div class="bento-game-cover premium-game-cover">' +
           '<div class="bento-game-cover-top"><span class="bento-game-rank">0' + (i + 1) + '</span><span class="bento-game-category">' + esc(g.category) + '</span></div>' +
-          '<div class="bento-game-emblem"><span>' + esc(g.emoji) + '</span></div>' +
+          '<div class="bento-game-emblem">' +
+            (g.logo ? '<img class="bento-game-logo" src="' + esc(g.logo) + '" alt="' + esc(g.title) + ' official logo" loading="lazy" onerror="this.hidden=true;this.nextElementSibling.hidden=false">' : '') +
+            '<span' + (g.logo ? ' hidden' : '') + '>' + esc(g.emoji) + '</span></div>' +
           '<div class="bento-game-cover-shine" aria-hidden="true"></div>' +
         '</div>' +
         '<div class="bento-game-body premium-game-body">' +
