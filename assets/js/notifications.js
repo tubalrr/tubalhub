@@ -153,8 +153,8 @@ function markAllRead(){
 async function clearAll(){
   if(DEMO_MODE){items=[];save();render();return}
   const batch=writeBatch(db);
-  items.filter(x=>x.remote&&!x.read).slice(0,450).forEach(n=>batch.update(doc(db,"notifications",n.id),{read:true}));
-  try{await batch.commit()}catch(e){console.warn("[TUBAL HUB] clear notifications",e)}
+  items.filter(x=>x.remote).slice(0,450).forEach(n=>batch.delete(doc(db,"notifications",n.id)));
+  try{await batch.commit()}catch(e){console.warn("[TUBAL HUB] clear notifications",e);return}
   items=[];render();
 }
 function pop(){
