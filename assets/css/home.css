@@ -1625,7 +1625,6 @@ body.hub-home .home-page.bento-home-page .home-shell{
   align-items:start;
 }
 .bento-card,
-#canvaStudio.bento-canva,
 #mainFooter.bento-footer{
   position:relative;
   min-width:0;
@@ -2138,7 +2137,7 @@ body.theme-light.hub-home .bento-footer .footer-access-cards a,.theme-light.hub-
   .bento-quick-stats{grid-column:span 2}
   .bento-journal,.bento-music{grid-column:span 3}
   .bento-feeds{grid-column:span 2}
-  #canvaStudio.bento-canva,#mainFooter.bento-footer{grid-column:span 6}
+  #mainFooter.bento-footer{grid-column:span 6}
   .bento-footer-row-1{grid-template-columns:repeat(2,minmax(0,1fr))}
   .bento-footer-row-2{grid-template-columns:1fr 1fr}
   .bento-footer-row-3{grid-template-columns:1fr 1fr}
@@ -2153,7 +2152,7 @@ body.theme-light.hub-home .bento-footer .footer-access-cards a,.theme-light.hub-
     grid-template-columns:1fr;
     gap:12px;
   }
-  .bento-card,#canvaStudio.bento-canva,#mainFooter.bento-footer,
+  .bento-card,#mainFooter.bento-footer,
   .bento-hero,.bento-quick-stats,.bento-journal,.bento-music,.bento-feeds,.bento-games{
     grid-column:1 / -1;
     min-height:0;
