@@ -4262,3 +4262,15 @@ body > div[style*="60px"],.left-rail,.narrow-col{
   .bento-hero-message{width:100%;min-height:96px}
   .bento-hero-message strong{font-size:15px}
 }
+
+/* HERO MESSAGE — smooth fade transition */
+.bento-hero-message{
+  opacity:1;
+  transform:translateY(0);
+  transition:opacity .55s ease,transform .55s ease;
+  will-change:opacity,transform;
+}
+.bento-hero-message.is-changing{
+  opacity:0 !important;
+  transform:translateY(4px);
+}
