@@ -18,7 +18,7 @@
 <link rel="stylesheet" href="assets/css/home-premium.css?v=20260924">
 <link rel="stylesheet" href="assets/css/sidebar-premium.css?v=20260924-v9">
 <link rel="stylesheet" href="assets/css/home-agency.css?v=20260924-v2">
-<link rel="stylesheet" href="assets/css/home.css?v=20260924-footer5">
+<link rel="stylesheet" href="assets/css/home.css?v=20260924-studio1">
 <link rel="stylesheet" href="assets/css/notification-search.css?v=20260924-ns9">
 <style>
 .hub-home .search-box{position:relative!important;z-index:200!important;pointer-events:auto!important}
@@ -255,6 +255,107 @@
         </div>
       </section>
 
+
+      <section id="canvaStudio" class="glass-section canva-studio" aria-labelledby="canvaStudioTitle">
+        <div class="canva-studio-head">
+          <div class="canva-studio-title-wrap">
+            <div class="canva-studio-title-row">
+              <h2 id="canvaStudioTitle"><span class="home-emoji" aria-hidden="true">🎨</span> Design Studio - Parang Canva</h2>
+              <span class="canva-like-badge">✨ Canva-like</span>
+            </div>
+            <p>Gumawa ng sariling design gamit ang totoong canvas, uploads, layers, templates at PNG export.</p>
+          </div>
+          <div class="canva-template-head">
+            <strong><span aria-hidden="true">Templates</span></strong>
+            <button id="canvaTemplateViewAll" class="canva-head-link" type="button">View All</button>
+            <button id="canvaQuickPrev" class="canva-circle-control" type="button" aria-label="Previous templates">‹</button>
+            <button id="canvaQuickNext" class="canva-circle-control" type="button" aria-label="Next templates">›</button>
+          </div>
+        </div>
+
+        <div class="canva-studio-workspace">
+          <aside class="canva-toolbar" id="canvaToolbar" aria-label="Design tools">
+            <button type="button" class="canva-tool" data-canva-tool="text" title="Text"><span aria-hidden="true">📝</span><small>Text</small><i class="canva-burst" aria-hidden="true"><b></b><b></b><b></b><b></b><b></b><b></b></i></button>
+            <button type="button" class="canva-tool" data-canva-tool="image" title="Image Upload"><span aria-hidden="true">🖼️</span><small>Image</small><i class="canva-burst" aria-hidden="true"><b></b><b></b><b></b><b></b><b></b><b></b></i></button>
+            <button type="button" class="canva-tool" data-canva-tool="emoji" title="Emoji"><span aria-hidden="true">😀</span><small>Emoji</small><i class="canva-burst" aria-hidden="true"><b></b><b></b><b></b><b></b><b></b><b></b></i></button>
+            <button type="button" class="canva-tool" data-canva-tool="shape" title="Shapes"><span aria-hidden="true">🔷</span><small>Shapes</small><i class="canva-burst" aria-hidden="true"><b></b><b></b><b></b><b></b><b></b><b></b></i></button>
+            <button type="button" class="canva-tool" data-canva-tool="background" title="Background"><span aria-hidden="true">🎨</span><small>Background</small><i class="canva-burst" aria-hidden="true"><b></b><b></b><b></b><b></b><b></b><b></b></i></button>
+            <button type="button" class="canva-tool" data-canva-tool="draw" title="Draw"><span aria-hidden="true">🖌️</span><small>Draw</small><i class="canva-burst" aria-hidden="true"><b></b><b></b><b></b><b></b><b></b><b></b></i></button>
+            <input id="canvaImageInput" type="file" accept="image/*" hidden>
+            <input id="canvaBgPicker" type="color" value="#020604" hidden>
+          </aside>
+
+          <div class="canva-canvas-column">
+            <div class="canva-canvas-shell" id="canvaCanvasShell" tabindex="0" aria-label="Design canvas. Drag, resize, rotate, and delete selected elements.">
+              <canvas id="designCanvas" width="600" height="400"></canvas>
+              <div class="canva-canvas-tip" id="canvaCanvasTip">Drag an element, drop an image, or choose a tool.</div>
+              <div class="canva-selection-ui" id="canvaSelectionUi" hidden>
+                <button type="button" class="canva-rotate-handle" id="canvaRotateHandle" aria-label="Rotate selected element">↻</button>
+                <button type="button" class="canva-delete-handle" id="canvaDeleteHandle" aria-label="Delete selected element">×</button>
+              </div>
+            </div>
+            <div class="canva-workspace-meta">
+              <span id="canvaSelectionStatus">No element selected</span>
+              <span id="canvaSaveStatus">Ready</span>
+            </div>
+          </div>
+
+          <aside class="canva-properties-panel" id="canvaPropertiesPanel" aria-label="Design properties">
+            <div class="canva-panel-head">
+              <div><span class="canva-panel-kicker">TEMPLATES</span><h3>Quick formats</h3></div>
+              <span class="canva-template-count">4</span>
+            </div>
+            <div class="canva-quick-template-viewport">
+              <div id="canvaQuickTemplateTrack" class="canva-quick-template-track" aria-label="Quick format templates"></div>
+            </div>
+
+            <div class="canva-panel-divider"></div>
+
+            <div class="canva-properties" id="canvaProperties">
+              <div class="canva-panel-kicker">PROPERTIES</div>
+              <div id="canvaPropertiesEmpty" class="canva-properties-empty">Select text to edit font, color, weight, style and alignment.</div>
+              <div id="canvaTextProperties" hidden>
+                <label class="canva-prop-label">Font size <output id="canvaFontSizeValue">32px</output><input id="canvaFontSize" type="range" min="12" max="72" step="1" value="32"></label>
+                <label class="canva-prop-label">Color <input id="canvaTextColor" type="color" value="#1dff91"></label>
+                <label class="canva-prop-label">Font family <select id="canvaFontFamily"><option value="Inter">Inter</option><option value="Poppins">Poppins</option></select></label>
+                <div class="canva-prop-row">
+                  <button id="canvaBold" class="canva-mini-toggle" type="button">B</button>
+                  <button id="canvaItalic" class="canva-mini-toggle" type="button"><i>I</i></button>
+                  <button class="canva-align-btn canva-mini-toggle" type="button" data-canva-align="left">L</button>
+                  <button class="canva-align-btn canva-mini-toggle" type="button" data-canva-align="center">C</button>
+                  <button class="canva-align-btn canva-mini-toggle" type="button" data-canva-align="right">R</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="canva-panel-divider"></div>
+
+            <div class="canva-layers-panel">
+              <div class="canva-panel-kicker">LAYERS <span id="canvaLayerCount">0</span></div>
+              <div id="canvaLayers" class="canva-layers" aria-label="Design layers"></div>
+            </div>
+
+            <div id="canvaTemplateAll" class="canva-template-all" hidden>
+              <div class="canva-panel-divider"></div>
+              <div class="canva-panel-kicker">ALL 12 TEMPLATES</div>
+              <div id="canvaTemplateGrid" class="canva-template-grid"></div>
+            </div>
+          </aside>
+        </div>
+
+        <div class="canva-studio-bottom">
+          <div class="canva-template-library">
+            <div class="canva-library-head"><strong>12 editable templates</strong><span id="canvaTemplateHint">Click a card to load its JSON preset.</span></div>
+            <div id="canvaTemplateStrip" class="canva-template-strip"></div>
+          </div>
+          <div class="canva-export-bar">
+            <button id="canvaDownloadPng" class="canva-export-btn" type="button"><span aria-hidden="true">⬇️</span> Download PNG</button>
+            <button id="canvaShareFeeds" class="canva-export-btn" type="button"><span aria-hidden="true">📤</span> Share to Feeds</button>
+            <button id="canvaSaveDraft" class="canva-export-btn" type="button"><span aria-hidden="true">💾</span> Save Draft</button>
+          </div>
+        </div>
+      </section>
+
       <footer id="mainFooter" class="glass-footer" aria-label="TUBAL HUB footer">
   <div class="footer-main-grid">
     <section class="footer-column" aria-labelledby="footer-care-title">
@@ -391,7 +492,7 @@
 <script type="module" src="assets/js/search.js?v=20260924-ns9"></script>
 <script src="assets/js/sidebar-premium.js?v=20260924-v9"></script>
 <script src="assets/js/home-agency.js?v=20260924-v1"></script>
-<script type="module" src="assets/js/home.js?v=20260924-footer5"></script>
+<script type="module" src="assets/js/home.js?v=20260924-studio1"></script>
   <script src="assets/js/ai-assistant.js?v=20260924-v2"></script>
 <!-- TUBAL HUB — Tubal AI Assistant -->
 <div id="tubalAiAssistant" class="tubal-ai" aria-label="Tubal AI Assistant">
