@@ -215,6 +215,16 @@ function commaList(v){return Array.isArray(v) ? v.join(", ") : String(v || "");}
 function avatar(el,url,name){
   el.innerHTML = url ? `<img src="${esc(url)}" alt="">` : esc(initials(name));
 }
+function animateNumber(el,target,duration=650){
+  if(!el)return;
+  const end=Math.max(0,Number(target)||0);
+  const start=Number(el.dataset.value||0);
+  el.dataset.value=String(end);
+  if(start===end){el.textContent=end.toLocaleString();return}
+  const t0=performance.now();
+  const tick=now=>{const p=Math.min(1,(now-t0)/duration);const eased=1-Math.pow(1-p,3);el.textContent=Math.round(start+(end-start)*eased).toLocaleString();if(p<1)requestAnimationFrame(tick)};
+  requestAnimationFrame(tick);
+}
 function setOnlineState(online){
   const dot=$("profileStatusDot"),mini=$("messageStatusMini"),sideDot=$("sideStatusDot"),sideText=$("sideStatusText"),onlineText=$("profileOnlineText");
   [dot,mini,sideDot].forEach(x=>x?.classList.toggle("online",!!online));
@@ -262,7 +272,7 @@ function render(){
   const name=profile.displayName||currentUser.displayName||currentUser.email?.split("@")[0]||"Member";
   const handle=profile.username ? "@"+String(profile.username).replace(/^@/,"") : "@"+(currentUser.email?.split("@")[0]||"member");
   $("topName").textContent=name;
-  $("profileName").innerHTML=esc(name)+` <span class="verified">◆</span>`;
+  const isVerified=profile.verified===true||currentUser.emailVerified===true; $("profileName").innerHTML=esc(name)+(isVerified?` <span class="verified" title="Verified">✓</span>`:"");
   $("profileHandle").innerHTML=esc(handle)+` <span>•</span> <strong>● Online</strong>`;
   $("profileBio").textContent=profile.bio||"No bio added yet.";
   $("aboutText").textContent=profile.bio||"No bio added yet. Edit your profile to tell the community about yourself.";
@@ -273,12 +283,16 @@ function render(){
   $("aboutGames").textContent=commaList(profile.favoriteGames)||"Not set";
   $("currentlyPlaying").textContent=profile.currentlyPlaying||"Not set";
   $("joinedDate").textContent=formatDate(profile.createdAt||currentUser.metadata?.creationTime);
-  $("postCount").textContent=Number(profile.postCount||0);
-  $("followerCount").textContent=Number(profile.followerCount||0);
-  $("followingCount").textContent=Number(profile.followingCount||0);
+  animateNumber($("postCount"),profile.postCount||0);
+  animateNumber($("followerCount"),profile.followerCount||0);
+  animateNumber($("followingCount"),profile.followingCount||0);
   $("viewCount").textContent=Number(profile.totalViews||0);
   $("friendCount").textContent=Number(profile.friendCount||0);
   $("friendCountLabel").textContent=Number(profile.friendCount||0)+" friends";
+  const friends=Array.isArray(profile.friends)?profile.friends.filter(Boolean):[];
+  $("friendStack").innerHTML=friends.length
+    ?friends.slice(0,7).map(f=>'<span class="friend-avatar-stack" title="'+esc(f.displayName||f.name||"Friend")+'">'+(f.photoURL?'<img src="'+esc(f.photoURL)+'" alt="">':esc(initials(f.displayName||f.name||"Friend")))+"</span>").join("")+(friends.length>7?'<span class="friend-avatar-stack friend-more">+'+(friends.length-7)+'</span>':'')
+    :'<span class="friend-placeholder">No friends added yet.</span>';
   $("sideJoinedDate").textContent=formatDate(profile.createdAt||currentUser.metadata?.creationTime).replace(/^Joined\s+/,"");
   $("sideLocation").textContent=profile.location||"Not set";
   const website=profile.social?.website||profile.website||"";
