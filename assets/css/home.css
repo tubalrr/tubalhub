@@ -4218,3 +4218,47 @@ body > div[style*="60px"],.left-rail,.narrow-col{
   visibility:hidden !important;
   pointer-events:none !important;
 }
+
+/* TUBAL HUB HERO — rotating feature message, not stats */
+.bento-hero-message{
+  margin-top:18px;
+  width:min(100%,560px);
+  min-height:92px;
+  padding:15px 17px;
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:18px;
+  background:rgba(4,10,18,.34);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:4px;
+  transition:opacity .25s ease,transform .25s ease;
+}
+.bento-hero-message.is-changing{opacity:.35;transform:translateY(3px)}
+.bento-hero-message-label{
+  font-size:8px;
+  font-weight:800;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:#9dffcb;
+}
+.bento-hero-message strong{
+  font-size:17px;
+  line-height:1.2;
+  color:#fff;
+}
+.bento-hero-message span:not(.bento-hero-message-label){
+  font-size:11px;
+  line-height:1.45;
+  color:rgba(235,241,255,.72);
+  max-width:520px;
+}
+.bento-hero-message-dots{display:flex;gap:5px;margin-top:6px}
+.bento-hero-message-dots i{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.25)}
+.bento-hero-message-dots i.active{background:#8dffbd;box-shadow:0 0 9px rgba(141,255,189,.65)}
+@media(max-width:700px){
+  .bento-hero-message{width:100%;min-height:96px}
+  .bento-hero-message strong{font-size:15px}
+}
