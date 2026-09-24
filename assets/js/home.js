@@ -1152,29 +1152,43 @@ function syncHomeAuthUI(user){
   const sidebarUser=$("#sidebarUser");
   const sidebarName=$("#sidebarUserName");
   const sidebarAvatar=$("#sidebarUserAvatar");
+  const logout=$("#logoutBtn");
   const loggedIn=Boolean(user);
-  const displayName=String(user?.displayName||user?.email?.split("@")[0]||"").trim();
+  const displayName=String(user?.displayName||user?.email?.split("@")[0]||(user?.isAnonymous?"Guest":"")).trim();
 
   if(guest){
     guest.hidden=loggedIn;
+    guest.style.display=loggedIn?"none":"flex";
     guest.setAttribute("aria-hidden",loggedIn?"true":"false");
   }
   if(signed){
     signed.hidden=!loggedIn;
+    signed.style.display=loggedIn?"flex":"none";
     signed.setAttribute("aria-hidden",loggedIn?"false":"true");
   }
   if(name)name.textContent=loggedIn?displayName:"";
+  if(logout)logout.setAttribute("aria-label",loggedIn?"Log out "+displayName:"Logout");
   if(sidebarUser){
     sidebarUser.hidden=!loggedIn;
+    sidebarUser.style.display=loggedIn?"flex":"none";
     sidebarUser.setAttribute("aria-hidden",loggedIn?"false":"true");
   }
   if(sidebarName)sidebarName.textContent=loggedIn?displayName:"";
-  if(sidebarAvatar)sidebarAvatar.textContent=(displayName.trim().charAt(0)||"U").toUpperCase();
+  if(sidebarAvatar)sidebarAvatar.textContent=(displayName.charAt(0)||"U").toUpperCase();
 }
 
 function startHome(){
   if(homeStarted)return;
   homeStarted=true;
+  const logout=$("#logoutBtn");
+  logout?.addEventListener("click",async()=>{
+    try{
+      const {signOut}=await import("https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js");
+      await signOut(auth);
+    }catch(error){
+      console.error("Logout failed:",error);
+    }
+  });
   onAuthStateChanged(auth,user=>{
     syncHomeAuthUI(user);
   });
