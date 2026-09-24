@@ -90,18 +90,54 @@ function watchUnread(){
 
 function messageMs(d){return d.createdAt?.toMillis?.()||d.createdAt?.seconds*1000||(d.createdAt instanceof Date?d.createdAt.getTime():0)||0}
 function openIncomingChat(u){target=u;const w=document.getElementById("tubalMsgWindow");document.getElementById("tubalMsgName").textContent=u.displayName||"Member";document.getElementById("tubalMsgAvatar").innerHTML=u.photoURL?'<img src="'+esc(u.photoURL)+'" alt="">':esc(initials(u.displayName));w.hidden=false;document.getElementById("tubalMessenger").hidden=true;document.getElementById("tubalMsgBackdrop").hidden=true;subscribeMessages();document.getElementById("tubalMsgInput").focus()}
-function openUser(u){target=u;markSeen(u.uid,Date.now());const w=document.getElementById("tubalMsgWindow");document.getElementById("tubalMsgName").textContent=u.displayName||"Member";document.getElementById("tubalMsgAvatar").innerHTML=u.photoURL?'<img src="'+esc(u.photoURL)+'" alt="">':esc(initials(u.displayName));w.hidden=false;document.getElementById("tubalMessenger").hidden=true;document.getElementById("tubalMsgBackdrop").hidden=true;subscribeMessages();document.getElementById("tubalMsgInput").focus()}
+function openUser(u){
+  if(!u||!u.uid||!me)return;
+  target=u;
+  markSeen(u.uid,Date.now());
+  const w=document.getElementById("tubalMsgWindow");
+  const name=document.getElementById("tubalMsgName");
+  const avatar=document.getElementById("tubalMsgAvatar");
+  const body=document.getElementById("tubalMsgBody");
+  name.textContent=u.displayName||u.email?.split("@")[0]||"Member";
+  avatar.innerHTML=u.photoURL?'<img src="'+esc(u.photoURL)+'" alt="">':esc(initials(u.displayName||u.email));
+  body.innerHTML='<div class="tubal-msg-open-loading">Opening conversation…</div>';
+  w.hidden=false;
+  document.getElementById("tubalMessenger").hidden=true;
+  document.getElementById("tubalMsgBackdrop").hidden=true;
+  requestAnimationFrame(()=>document.getElementById("tubalMsgInput")?.focus());
+  subscribeMessages();
+}
 function subscribeMessages(){
   if(stopMessages)stopMessages();
+  if(!me||!target)return;
+  const selectedUid=target.uid;
   const q=query(collection(db,"messages"),where("participants","array-contains",me.uid),limit(200));
-  stopMessages=onSnapshot(q,s=>{
-    const list=[];s.forEach(x=>{const d=x.data();if(Array.isArray(d.participants)&&d.participants.includes(target.uid))list.push(d)});
+  const paint=list=>{
+    if(target?.uid!==selectedUid)return;
     list.sort((a,b)=>messageMs(a)-messageMs(b));
     const b=document.getElementById("tubalMsgBody");
-    b.innerHTML=list.length?list.map(d=>'<div class="tubal-msg-bubble '+(d.senderId===me.uid?"me":"")+'">'+esc(d.text||"")+"</div>").join(""):'<div style="color:#8fa39a;text-align:center;padding:30px 10px;font-size:12px">No messages yet. Say hello! 👋</div>';
+    if(!b)return;
+    b.innerHTML=list.length
+      ?list.map(d=>'<div class="tubal-msg-bubble '+(d.senderId===me.uid?"me":"")+'">'+esc(d.text||"")+"</div>").join("")
+      :'<div style="color:#8fa39a;text-align:center;padding:30px 10px;font-size:12px">No messages yet. Say hello! 👋</div>';
     b.scrollTop=b.scrollHeight;
     if(target)markSeen(target.uid,list.length?messageMs(list[list.length-1]):Date.now());
-  },e=>console.error("[TUBAL HUB] message listener",e));
+  };
+  // Render the window immediately; hydrate with Firebase in the snapshot callback.
+  const b=document.getElementById("tubalMsgBody");
+  if(b)b.innerHTML='<div class="tubal-msg-open-loading">Loading conversation…</div>';
+  stopMessages=onSnapshot(q,s=>{
+    const list=[];
+    s.forEach(x=>{
+      const d=x.data();
+      if(Array.isArray(d.participants)&&d.participants.includes(selectedUid))list.push(d);
+    });
+    paint(list);
+  },e=>{
+    const body=document.getElementById("tubalMsgBody");
+    if(body&&target?.uid===selectedUid)body.innerHTML='<div class="tubal-msg-empty"><strong>Conversation unavailable.</strong><span>Private message access was denied or could not be loaded.</span></div>';
+    console.error("[TUBAL HUB] message listener",e);
+  });
 }
 function watchUsers(){
   if(stopUsers){stopUsers();stopUsers=null}
@@ -174,13 +210,49 @@ function watchUsers(){
     }).join("");
 
     window.__tubalFloatingRender=render;
-    box.querySelectorAll(".tubal-msg-user").forEach(button=>{
-      const chat=list.find(x=>x.uid===button.dataset.uid);
-      button.onclick=e=>{
+
+    if(!box.dataset.clickReady){
+      const openRow=e=>{
+        const button=e.target.closest?.(".tubal-msg-user");
+        if(!button||!box.contains(button))return;
         e.preventDefault();e.stopPropagation();
-        if(chat)openUser(chat);
+        const uid=button.dataset.uid;
+        const chat=window.__tubalFloatingChats?.get(uid);
+        if(!chat)return;
+        if(e.type==="click"&&button.dataset.pointerOpened==="1"){
+          button.dataset.pointerOpened="0";
+          return;
+        }
+        openUser(chat);
       };
-    });
+
+      box.addEventListener("pointerdown",e=>{
+        if(e.pointerType==="mouse"&&e.button!==0)return;
+        const button=e.target.closest?.(".tubal-msg-user");
+        if(!button)return;
+        const uid=button.dataset.uid;
+        const chat=window.__tubalFloatingChats?.get(uid);
+        if(!chat)return;
+        e.preventDefault();e.stopPropagation();
+        button.dataset.pointerOpened="1";
+        openUser(chat);
+      },{passive:false});
+
+      box.addEventListener("click",openRow);
+      box.addEventListener("keydown",e=>{
+        if(e.key!=="Enter"&&e.key!==" ")return;
+        const button=e.target.closest?.(".tubal-msg-user");
+        if(!button)return;
+        const chat=window.__tubalFloatingChats?.get(button.dataset.uid);
+        if(!chat)return;
+        e.preventDefault();e.stopPropagation();openUser(chat);
+      });
+
+      box.dataset.clickReady="1";
+    }
+
+    window.__tubalFloatingChats=new Map(list.map(chat=>[String(chat.uid),chat]));
+    box.querySelectorAll(".tubal-msg-user").forEach(button=>button.style.cursor="pointer");
   };
 
   const ingestUsers=snap=>{
