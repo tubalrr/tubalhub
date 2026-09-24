@@ -18,7 +18,7 @@
 <link rel="stylesheet" href="assets/css/home-premium.css?v=20260924">
 <link rel="stylesheet" href="assets/css/sidebar-premium.css?v=20260924-v9">
 <link rel="stylesheet" href="assets/css/home-agency.css?v=20260924-v2">
-<link rel="stylesheet" href="assets/css/home.css?v=20260925-games1">
+<link rel="stylesheet" href="assets/css/home.css?v=20260925-bento-fix" data-tubal-home-css>
 <link rel="stylesheet" href="assets/css/notification-search.css?v=20260924-ns9">
 <style>
 .hub-home .search-box{position:relative!important;z-index:200!important;pointer-events:auto!important}
@@ -27,6 +27,15 @@
 .th-search-input{display:block!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important}
 .th-search-input-row{position:relative;z-index:2}
 </style>    <link rel="stylesheet" href="assets/css/ai-assistant.css?v=20260924-v4">
+<script id="tubalHomeCssReload">
+(function(){
+  var css=document.querySelector('link[data-tubal-home-css],link[href*="home.css"]');
+  if(css){
+    var base='assets/css/home.css';
+    css.href=base+'?update='+Date.now();
+  }
+})();
+</script>
 </head>
 <body class="hub-home">
 
