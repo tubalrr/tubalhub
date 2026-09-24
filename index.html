@@ -18,7 +18,7 @@
 <link rel="stylesheet" href="assets/css/home-premium.css?v=20260924">
 <link rel="stylesheet" href="assets/css/sidebar-premium.css?v=20260924-v9">
 <link rel="stylesheet" href="assets/css/home-agency.css?v=20260924-v2">
-<link rel="stylesheet" href="assets/css/home.css?v=20260925-payapang1">
+<link rel="stylesheet" href="assets/css/home.css?v=20260925-shop1">
 <link rel="stylesheet" href="assets/css/notification-search.css?v=20260924-ns9">
 <style>
 .hub-home .search-box{position:relative!important;z-index:200!important;pointer-events:auto!important}
@@ -188,13 +188,27 @@
         <div id="bentoJournalList" class="bento-list bento-journal-list" aria-live="polite"></div>
       </section>
 
-      <section class="bento-card bento-music" aria-labelledby="bentoMusicTitle">
+      <section class="bento-card bento-shop" aria-labelledby="bentoShopTitle">
+        <div class="bento-shop-orbit" aria-hidden="true"></div>
         <div class="bento-section-head">
-          <div class="bento-head-title"><span class="home-emoji" aria-hidden="true">🎵</span><div><h2 id="bentoMusicTitle">AI Music</h2><span>Saved audio from your browser</span></div></div>
-          <a class="bento-viewall" href="pages/ai-music.html">Open Studio →</a>
+          <div class="bento-head-title bento-shop-heading">
+            <span class="bento-shop-icon home-emoji" aria-hidden="true">🛒</span>
+            <div>
+              <span class="bento-kicker">TUBAL HUB SHOP</span>
+              <h2 id="bentoShopTitle">Shop the Hub</h2>
+              <span>Explore the current collections from the TUBAL HUB storefront</span>
+            </div>
+          </div>
+          <a class="bento-viewall" href="pages/shop.html">Open Shop →</a>
         </div>
-        <div id="bentoMusicList" class="bento-list bento-music-list" aria-live="polite"></div>
-        <div class="bento-wave-summary" id="bentoMusicWave" aria-hidden="true"><i></i><i></i><i></i></div>
+        <div id="bentoShopList" class="bento-shop-grid" aria-live="polite"></div>
+        <div class="bento-shop-footer">
+          <div class="bento-shop-live">
+            <span class="bento-shop-live-dot" aria-hidden="true"></span>
+            <div><strong>Live cart</strong><small id="bentoShopCart">0 items</small></div>
+          </div>
+          <div class="bento-shop-wishlist"><span>♡</span><div><strong id="bentoShopWishlist">0</strong><small>saved items</small></div></div>
+        </div>
       </section>
 
       <section class="bento-card bento-feeds" aria-labelledby="bentoFeedsTitle">
