@@ -54,7 +54,7 @@ function initSpotlight(){
 export function createSlider(trackId,prevId,nextId,dotsId){
   const track=$("#"+trackId);if(!track)return null;
   const prev=$("#"+prevId),next=$("#"+nextId),dots=$("#"+dotsId);
-  const slides=$(".hero-slide",track);
+  const slides=Array.from(track.querySelectorAll(".hero-slide"));
   if(!slides.length)return null;
   const horizontal=track.dataset.horizontal==="true";
   let index=0,startX=0,deltaX=0,dragging=false,autoTimer=null;
