@@ -104,31 +104,32 @@ body{background:radial-gradient(circle at 80% 0%,#17351e 0,transparent 34%),#050
 <script src="../assets/js/data.js"></script><script src="../assets/js/main.js"></script>
 <script src="../assets/js/theme.js?v=20260922" defer></script>
 <script type="module">
-import {getFirestore,collection,getDocs,query,orderBy,limit} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+import {getFirestore,collection,getDocs,query,orderBy,limit,onSnapshot} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 import {app} from "../assets/js/firebase-config.js";
+import {subscribeHubPosts} from "../assets/js/hub-content.js";
 const db=getFirestore(app),grid=document.getElementById("shopProductGrid");
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
-const fallback=[
-{name:"Ultimate Mod Pack",category:"mods",description:"Creator-ready game files and resources.",price:"Free",icon:"🧩",badge:"FEATURED"},
-{name:"TUBAL HUB Creator Kit",category:"products",description:"Digital assets for your next project.",price:"Free",icon:"◈",badge:"NEW"},
-{name:"Ambient Creator Pack",category:"music",description:"Original-style background audio resources.",price:"Free",icon:"♫",badge:"AUDIO"},
-{name:"TUBAL HUB Templates",category:"products",description:"Reusable templates for community creators.",price:"Free",icon:"TH",badge:"HUB"}
-];
-function card(x){
- const name=esc(x.name),cat=esc(x.category||"products"),desc=esc(x.description||""),price=esc(x.price||"Free"),icon=esc(x.icon||"◈"),badge=esc(x.badge||"");
- return '<article class="shop-live-card" data-category="'+cat+'" data-name="'+name.toLowerCase()+'">'+(badge?'<span class="shop-badge">'+badge+'</span>':'')+'<div class="shop-live-art">'+icon+'</div><div class="shop-live-body"><small>'+cat.toUpperCase()+'</small><h3>'+name+'</h3><p>'+desc+'</p><div class="shop-price"><strong>'+price+'</strong><button class="shop-add" data-name="'+name+'" data-price="'+price+'" data-icon="'+icon+'">ADD TO CART</button></div></div></article>';
+const state={direct:[],hub:[],cart:[]};
+function normalizeDirect(d){const x=d.data();return{id:"product-"+d.id,sourceId:d.id,sourceCollection:"products",name:x.name||x.title||"Product",category:x.category||"products",description:x.description||"",price:x.price||"Free",icon:x.icon||"◈",badge:x.badge||"",image:x.imageUrl||"",productUrl:x.productUrl||"",createdAt:x.createdAt||0}}
+function normalizeHub(x){return{id:"hub-"+x.id,sourceId:x.sourceId||x.id,sourceCollection:x.sourceCollection||"hubPosts",name:x.title||"Product",category:x.category||"products",description:x.text||"",price:x.price||"Free",icon:"◈",badge:"HUB",image:x.imageUrl||"",productUrl:x.productUrl||"",createdAt:x.createdAt||0}}
+function sameKey(x){return x.sourceCollection+":"+x.sourceId}
+function merged(){const all=[...state.hub.filter(x=>Array.isArray(x.destinations)?x.destinations.includes("shop"):true),...state.direct],seen=new Set();return all.filter(x=>{const k=sameKey(x);if(seen.has(k))return false;seen.add(k);return true}).sort((a,b)=>(b.createdAt?.toMillis?.()||b.createdAt?.seconds*1000||0)-(a.createdAt?.toMillis?.()||a.createdAt?.seconds*1000||0))}
+function card(x){return '<article class="shop-live-card" data-category="'+esc(x.category)+'" data-name="'+esc(x.name.toLowerCase())+'">'+(x.badge?'<span class="shop-badge">'+esc(x.badge)+'</span>':'')+'<div class="shop-live-art">'+(x.image?'<img src="'+esc(x.image)+'" alt="" loading="lazy">':esc(x.icon))+'</div><div class="shop-live-body"><small>'+esc(x.category.toUpperCase())+'</small><h3>'+esc(x.name)+'</h3><p>'+esc(x.description)+'</p><div class="shop-price"><strong>'+esc(x.price)+'</strong><button class="shop-add" data-name="'+esc(x.name)+'" data-price="'+esc(x.price)+'" data-icon="'+esc(x.icon)+'" data-url="'+esc(x.productUrl)+'">ADD TO CART</button></div></div></article>'}
+function render(){grid.innerHTML=merged().length?merged().map(card).join(""):'<div class="shop-note">No published products yet.</div>';bindCards()}
+function bindCards(){
+ grid.querySelectorAll(".shop-add").forEach(b=>b.onclick=()=>{const item={name:b.dataset.name,price:b.dataset.price,icon:b.dataset.icon,url:b.dataset.url};if(item.url){location.href=item.url;return}if(!state.cart.some(x=>x.name===item.name))state.cart.push(item);renderCart()});
+ document.querySelectorAll(".shop-filter").forEach(b=>b.onclick=()=>{document.querySelectorAll(".shop-filter").forEach(x=>x.classList.remove("active"));b.classList.add("active");const f=b.dataset.filter;grid.querySelectorAll(".shop-live-card").forEach(c=>c.style.display=f==="all"||c.dataset.category===f?"":"none")});
+ document.getElementById("shopSearch")?.addEventListener("input",e=>{const q=e.target.value.toLowerCase();grid.querySelectorAll(".shop-live-card").forEach(c=>c.style.display=c.dataset.name.includes(q)?"":"none")});
 }
-async function loadProducts(){try{const snap=await getDocs(query(collection(db,"products"),orderBy("createdAt","desc"),limit(100)));grid.innerHTML=snap.empty?fallback.map(card).join(""):snap.docs.map(d=>card({id:d.id,...d.data()})).join("");}catch(e){grid.innerHTML=fallback.map(card).join("")}}
-loadProducts();
+function renderCart(){const box=document.getElementById("cartItems");document.getElementById("cartCount").textContent=state.cart.length;if(!state.cart.length){box.className="cart-empty";box.textContent="Your cart is empty.";document.getElementById("cartTotal").textContent="Free";return}box.className="";box.innerHTML=state.cart.map((x,i)=>'<div class="cart-row"><span class="cart-emoji">'+esc(x.icon)+'</span><div><b>'+esc(x.name)+'</b><small>'+esc(x.price)+'</small></div><button class="cart-remove" data-remove="'+i+'">Remove</button></div>').join("");document.getElementById("cartTotal").textContent="Free";box.querySelectorAll("[data-remove]").forEach(b=>b.onclick=()=>{state.cart.splice(Number(b.dataset.remove),1);renderCart()})}
+async function loadDirect(){try{const snap=await getDocs(query(collection(db,"products"),orderBy("createdAt","desc"),limit(100)));state.direct=snap.docs.map(normalizeDirect);render()}catch(e){console.warn("[Shop] products",e);state.direct=[];render()}}
+subscribeHubPosts(items=>{state.hub=items.filter(x=>x.contentType==="product");render()});
+document.getElementById("openCart")?.addEventListener("click",()=>document.getElementById("cartPanel").classList.add("open"));
+document.getElementById("closeCart")?.addEventListener("click",()=>document.getElementById("cartPanel").classList.remove("open"));
+document.getElementById("cartPanel")?.addEventListener("click",e=>{if(e.target.id==="cartPanel")e.currentTarget.classList.remove("open")});
+loadDirect();renderCart();
 </script>
-<script>
-(()=>{const cart=[];const $=s=>document.querySelector(s),$=s=>[...document.querySelectorAll(s)];
-function render(){sessionStorage.setItem('tubalHubCart',JSON.stringify(cart));const box=$('#cartItems');$('#cartCount').textContent=cart.length;if(!cart.length){box.className='cart-empty';box.textContent='Your cart is empty.';$('#cartTotal').textContent='Free';return}box.className='';box.innerHTML=cart.map((x,i)=>'<div class="cart-row"><span class="cart-emoji">'+x.icon+'</span><div><b>'+x.name+'</b><small>'+x.price+'</small></div><button class="cart-remove" data-remove="'+i+'">Remove</button></div>').join('');$('#cartTotal').textContent='Free';$('[data-remove]').forEach(b=>b.onclick=()=>{cart.splice(+b.dataset.remove,1);render()})}
-$('.shop-add').forEach(b=>b.onclick=()=>{if(!cart.some(x=>x.name===b.dataset.name)){cart.push({name:b.dataset.name,price:b.dataset.price,icon:b.dataset.icon});render();}});
-$('.shop-filter').forEach(b=>b.onclick=()=>{$('.shop-filter').forEach(x=>x.classList.remove('active'));b.classList.add('active');const f=b.dataset.filter;$('.shop-live-card').forEach(c=>c.style.display=f==='all'||c.dataset.category===f?'':'none')});
-$('#shopSearch').oninput=e=>{const q=e.target.value.toLowerCase();$('.shop-live-card').forEach(c=>c.style.display=c.dataset.name.includes(q)?'':'none')};
-$('#openCart').onclick=()=>$('#cartPanel').classList.add('open');$('#closeCart').onclick=()=>$('#cartPanel').classList.remove('open');$('#cartPanel').onclick=e=>{if(e.target.id==='cartPanel')e.currentTarget.classList.remove('open')};render()})();
-</script>
+
 <script type="module" src="../assets/js/presence.js?v=20260923"></script>
 </body>
 </html>
