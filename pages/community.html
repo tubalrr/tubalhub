@@ -72,7 +72,11 @@
 <a class="community-card" href="announcements.html"><div class="community-icon">♢</div><h3>Announcements</h3><p>See important platform notices and new feature updates.</p></a>
 </div>
 </section>
-<section class="community-bottom">
+<section class="community-bottom"><div class="community-cta" id="hubCommunityFeed"><h3>Latest Hub Posts</h3><p>New community posts published through TUBAL HUB will appear here.</p></div></section><script type="module">
+import {subscribeHubPosts} from "../assets/js/hub-content.js";
+const box=document.getElementById("hubCommunityFeed"),esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
+if(box)subscribeHubPosts(items=>{const list=items.filter(x=>Array.isArray(x.destinations)&&x.destinations.includes("community")).slice(0,5);box.innerHTML='<h3>Latest Hub Posts</h3>'+ (list.length?list.map(x=>'<p><b>'+esc(x.authorName||"Member")+'</b> · '+esc(x.title||x.text||"Post")+'</p>').join(""):'<p>No community posts yet.</p>')});
+</script><section class="community-bottom">
 <div class="community-cta"><h3>Ready to join the conversation?</h3><p>Jump into Global Chat and connect with the TUBAL HUB community.</p><a class="community-btn primary" href="chat.html">Go to Global Chat →</a></div>
 <div class="community-cta"><h3>Looking for something else?</h3><p>Explore games, news, AI experiences and digital content from the main hub.</p><a class="community-btn" href="../index.html">Back to TUBAL HUB →</a></div>
 </section>
