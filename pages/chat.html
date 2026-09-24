@@ -64,21 +64,26 @@ function setReplyTarget(messageId,name,preview,parentReplyId=null){replyTarget={
 function clearReply(){replyTarget=null;replyingBar.style.display='none'}
 let reactionUsersState={};
 let reactionFxTimers=new Map();
+let reactionSnapshotReady=false;
 
-function reactionButtonHtml(messageId,emoji,count,isActive=false,animate=false){
-  return '<button type="button" class="reaction-chip'+(isActive?' active':'')+(animate?' reaction-new':'')+'" data-message="'+esc(messageId)+'" data-react="'+esc(emoji)+'" aria-label="React with '+esc(emoji)+'">'+
-    '<span class="react-emoji">'+emoji+'</span><span class="react-count">'+count+'</span></button>';
+function reactionButtonHtml(messageId,emoji,count,isActive=false,isNew=false,index=0,countChanged=false){
+  const delay=(index*0.05).toFixed(2)+'s';
+  return '<button type="button" class="reaction-chip'+(isActive?' active':'')+(isNew?' reaction-new':'')+'" data-message="'+esc(messageId)+'" data-react="'+esc(emoji)+'" style="--reaction-delay:'+delay+'" aria-label="React with '+esc(emoji)+'">'+
+    '<span class="react-emoji">'+emoji+'</span><span class="react-count'+(countChanged?' count-update':'')+'">'+count+'</span></button>';
 }
 
-function reactionHtml(messageId,animateEmoji=''){
+function reactionHtml(messageId,previousCounts={}){
   const counts=reactionState[messageId]||{};
   const users=reactionUsersState[messageId]||{};
-  return Object.entries(counts).filter(([,n])=>n>0).map(([e,n])=>{
+  const ready=reactionSnapshotReady;
+  return Object.entries(counts).filter(([,n])=>n>0).map(([e,n],index)=>{
+    const previous=Number(previousCounts[e]||0);
     const active=users[e]?.has(currentUser?.uid);
-    return reactionButtonHtml(messageId,e,n,!!active,e===animateEmoji);
+    const changed=ready && n!==previous;
+    const isNew=ready && n>0 && previous===0;
+    return reactionButtonHtml(messageId,e,n,!!active,isNew,index,changed);
   }).join('');
 }
-
 function hapticTick(){
   try{if('vibrate' in navigator)navigator.vibrate(8)}catch(_){}
 }
@@ -90,29 +95,28 @@ function burstReactionParticles(target,count=6){
   for(let i=0;i<count;i++){
     const dot=document.createElement('i');
     dot.style.setProperty('--p-angle',(i*(360/count)+((i%2)*9))+'deg');
-    dot.style.setProperty('--p-distance',(15+(i%3)*4)+'px');
-    dot.style.setProperty('--p-delay',(i*.02)+'s');
+    dot.style.setProperty('--p-distance','24px');
+    dot.style.setProperty('--p-delay',(i*.025)+'s');
     wrap.appendChild(dot);
   }
   target.appendChild(wrap);
-  setTimeout(()=>wrap.remove(),650);
+  setTimeout(()=>wrap.remove(),700);
 }
 
 function burstFiveConfetti(row,emoji){
   if(!row)return;
   const wrap=document.createElement('span');
   wrap.className='reaction-confetti';
-  for(let i=0;i<8;i++){
+  for(let i=0;i<12;i++){
     const bit=document.createElement('i');
-    bit.style.setProperty('--c-angle',(i*(360/8))+'deg');
-    bit.style.setProperty('--c-distance',(16+(i%2)*8)+'px');
-    bit.style.setProperty('--c-delay',(i*.025)+'s');
+    bit.style.setProperty('--c-angle',(i*(360/12))+'deg');
+    bit.style.setProperty('--c-distance','80px');
+    bit.style.setProperty('--c-delay',(i*.018)+'s');
     wrap.appendChild(bit);
   }
   row.appendChild(wrap);
-  setTimeout(()=>wrap.remove(),780);
+  setTimeout(()=>wrap.remove(),900);
 }
-
 function animateReactionTarget(target){
   if(!target)return;
   target.classList.remove('reaction-pop');
@@ -156,8 +160,8 @@ function renderMessage(id,data){
  if(me){const del=document.createElement('button');del.type='button';del.className='action-btn delete-btn';del.textContent='🗑 Delete';del.title='Delete your message';row.querySelector('.message-actions').appendChild(del);del.addEventListener('click',async ev=>{ev.stopPropagation();if(!confirm('Delete this message?'))return;del.disabled=true;try{await deleteDoc(doc(db,'globalChats',id))}catch(err){console.error(err);alert('Hindi ma-delete ang message. Check Firestore Rules.')}finally{del.disabled=false}})}
  row.querySelector('.reply-btn').addEventListener('click',e=>{e.stopPropagation();setReplyTarget(id,data.displayName||data.name||'Member',String(data.text||data.type||'').slice(0,100))});
  row.querySelector('.inline-react-btn').addEventListener('click',e=>{e.stopPropagation();openReactionMenu(e.currentTarget,id)});
- row.querySelectorAll('.reaction-chip').forEach(btn=>btn.addEventListener('click',e=>{e.stopPropagation();toggleReaction(id,btn.dataset.react)}));
- row.querySelectorAll('.quick-reaction').forEach(btn=>btn.addEventListener('click',e=>{e.stopPropagation();const emoji=btn.dataset.e;animateReactionTarget(btn);toggleReaction(id,emoji)}));
+ row.querySelectorAll('.reaction-chip').forEach(btn=>btn.addEventListener('click',e=>{e.stopPropagation();animateReactionTarget(btn);toggleReaction(id,btn.dataset.react)}));
+ row.querySelectorAll('.quick-reaction').forEach(btn=>btn.addEventListener('click',e=>{e.stopPropagation();toggleReaction(id,btn.dataset.e)}));
  row.addEventListener('click',()=>{document.querySelectorAll('.msg.selected').forEach(x=>{if(x!==row)x.classList.remove('selected')});row.classList.toggle('selected')});
  return row;
 }
@@ -189,6 +193,7 @@ function subscribeReactions(){
  const q=query(collection(db,'globalChatReactions'),limit(1000));
  stopReactions=onSnapshot(q,snap=>{
    const previous=reactionState;
+   const wasReady=reactionSnapshotReady;
    reactionState={};
    reactionUsersState={};
 
@@ -210,32 +215,38 @@ function subscribeReactions(){
      const bar=row.querySelector('.reaction-bar');
      if(bar){
        const prevCounts=previous[id]||{};
-       const addedEmoji=Object.keys(reactionState[id]||{}).find(e=>(reactionState[id]?.[e]||0)>(prevCounts[e]||0))||'';
-       bar.innerHTML=reactionHtml(id,addedEmoji);
+       bar.innerHTML=reactionHtml(id,prevCounts);
        bar.querySelectorAll('.reaction-chip').forEach(btn=>{
          btn.addEventListener('click',e=>{
            e.stopPropagation();
+           animateReactionTarget(btn);
            toggleReaction(id,btn.dataset.react);
          });
        });
-       if(addedEmoji){
-         const newCount=reactionState[id]?.[addedEmoji]||0;
-         if(newCount>=5 && (prevCounts[addedEmoji]||0)<5)burstFiveConfetti(row,addedEmoji);
+
+       if(wasReady){
+         Object.keys(reactionState[id]||{}).forEach(e=>{
+           const nextCount=reactionState[id]?.[e]||0;
+           const prevCount=prevCounts[e]||0;
+           if(nextCount>=5 && prevCount<5)burstFiveConfetti(row,e);
+         });
        }
      }
+
      row.querySelectorAll('.quick-reaction').forEach(btn=>{
        btn.addEventListener('click',e=>{
          e.stopPropagation();
-         const emoji=btn.dataset.e;
-         animateReactionTarget(btn);
-         toggleReaction(id,emoji);
+         toggleReaction(id,btn.dataset.e);
        });
      });
+
      row.querySelectorAll('.reply-item').forEach(item=>{
        const rid=item.dataset.replyId;
        if(rid)renderReplyReactions(item,rid);
      });
    });
+
+   reactionSnapshotReady=true;
  },err=>console.error('Reaction error',err));
 }
 function subscribeReplies(){if(stopReplies)stopReplies();const q=query(collection(db,'globalChatReplies'),orderBy('createdAt','asc'),limit(500));stopReplies=onSnapshot(q,snap=>{document.querySelectorAll('.reply-box').forEach(x=>x.innerHTML='');snap.forEach(d=>{const x=d.data(),root=x.messageId,box=document.getElementById(`replies-${root}`);if(!box)return;const item=document.createElement('div');item.className='reply-item'+(x.parentReplyId?' nested-reply':'');item.dataset.replyId=d.id;item.innerHTML=`<div class="reply-meta"><b class="private-member-name">${esc(x.displayName||'Member')}</b> • ${esc(timeText(x.createdAt))}</div><div class="reply-text">${esc(x.text)}</div><div class="reply-actions"><button type="button" class="reply-react-btn" title="React">😊</button><button type="button" class="reply-to-reply">↩ Reply</button></div><div class="reply-reaction-bar"></div>`;item.querySelector('.reply-to-reply').onclick=e=>{e.stopPropagation();setReplyTarget(root,x.displayName||'Member',String(x.text||'').slice(0,100),d.id)};item.querySelector('.reply-react-btn').onclick=e=>{e.stopPropagation();openReplyReactionMenu(e.currentTarget,d.id)};renderReplyReactions(item,d.id);box.appendChild(item)});},err=>console.error('Reply error',err))}
