@@ -389,13 +389,61 @@ function burstGameButton(button,count=6){
     dot.animate([{transform:"translate(-50%,-50%) scale(1)",opacity:1},{transform:"translate(calc(-50% + "+dx+"px),calc(-50% + "+dy+"px)) scale(.2)",opacity:0}],{duration:480,fill:"forwards",easing:"cubic-bezier(.16,1,.3,1)"}).onfinish=()=>dot.remove();
   }
 }
+function burstFooterSend(button,count=6){
+  if(!button)return;
+  const r=button.getBoundingClientRect();
+  for(let i=0;i<count;i++){
+    const dot=document.createElement("i");dot.className="footer-send-dot";
+    const angle=(Math.PI*2/count)*i,dx=Math.cos(angle)*(24+i*3),dy=Math.sin(angle)*(24+i*3);
+    dot.style.left=(r.left+r.width/2)+"px";dot.style.top=(r.top+r.height/2)+"px";
+    document.body.appendChild(dot);
+    dot.animate([{transform:"translate(-50%,-50%) scale(1)",opacity:1},{transform:"translate(calc(-50% + "+dx+"px),calc(-50% + "+dy+"px)) scale(.2)",opacity:0}],{duration:480,fill:"forwards",easing:"cubic-bezier(.16,1,.3,1)"}).onfinish=()=>dot.remove();
+  }
+}
+function initFooterNewsletter(){
+  const form=$("#footerNewsletterForm"),input=$("#footerNewsletterEmail"),status=$("#footerNewsletterStatus"),button=$("#footerNewsletterSend");
+  if(!form||!input||!status||!button)return;
+  form.addEventListener("submit",event=>{
+    event.preventDefault();
+    const email=input.value.trim().toLowerCase();
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+      status.textContent="Please enter a valid email address.";
+      status.className="footer-newsletter-status is-error";
+      return;
+    }
+    let list=[];
+    try{const raw=JSON.parse(localStorage.getItem("tubalhub_newsletter_subscribers")||"[]");list=Array.isArray(raw)?raw:[]}catch(_){}
+    if(!list.includes(email))list.push(email);
+    try{localStorage.setItem("tubalhub_newsletter_subscribers",JSON.stringify(list))}catch(_){}
+    input.value="";
+    status.textContent="Saved on this device.";
+    status.className="footer-newsletter-status is-ok";
+    button.classList.remove("is-pop");void button.offsetWidth;button.classList.add("is-pop");
+    burstFooterSend(button,6);
+  });
+}
+function initFooterSmoothLinks(){
+  document.querySelectorAll('.home-premium-footer a[href^="#"]').forEach(link=>{
+    link.addEventListener("click",event=>{
+      const id=link.getAttribute("href"),target=id&&document.querySelector(id);
+      if(!target)return;
+      event.preventDefault();
+      target.scrollIntoView({behavior:"smooth",block:"start"});
+      history.replaceState(null,"",id);
+    });
+  });
+}
 async function initFooter(){
   try{
     const r=await fetch("version.json?t="+Date.now(),{cache:"no-store"});if(!r.ok)throw new Error();
     const data=await r.json();$("#homeVersion").textContent="v"+(data.version||"—");
   }catch(_){$("#homeVersion").textContent="Version unavailable"}
   const update=()=>{$("#homeOnlineDot")?.classList.toggle("offline",!navigator.onLine)};
-  update();addEventListener("online",update);addEventListener("offline",update);
+  update();
+  const textEl=$("#homeOnlineText");
+  if(textEl)textEl.textContent=navigator.onLine?"Online":"Offline";
+  addEventListener("online",()=>{update();if(textEl)textEl.textContent="Online"});
+  addEventListener("offline",()=>{update();if(textEl)textEl.textContent="Offline"});
   try{
     const bytes=[...Array(localStorage.length)].reduce((sum,_,i)=>{const k=localStorage.key(i)||"",v=localStorage.getItem(k)||"";return sum+(k.length+v.length)*2},0);
     const storage=$("#homeStorage");if(storage)storage.textContent=(bytes/1024).toFixed(1)+" KB local data";
@@ -421,7 +469,7 @@ function cleanup(){
   try{state.audioContext?.close()}catch(_){}
 }
 function init(){
-  initSpotlight();initHeroSlider();renderGameScores();renderJournal();loadMusic();renderFeeds();initHorizontalSections();loadFeaturedGames();initFooter();
+  initSpotlight();initHeroSlider();renderGameScores();renderJournal();loadMusic();renderFeeds();initHorizontalSections();loadFeaturedGames();initFooter();initFooterNewsletter();initFooterSmoothLinks();
   $("#homeMusicAudio")?.addEventListener("ended",()=>showHomeToast("Audio finished."));
   addEventListener("beforeunload",cleanup);
   addEventListener("storage",event=>{
