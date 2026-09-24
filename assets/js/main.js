@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  applyTubalTheme();
+  window.setTubalTheme?.();
 });
 
 function escapeHtml(value) {
