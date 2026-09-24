@@ -71,7 +71,8 @@ const state={
   quickQty:1,
   selectedSize:"",
   selectedColor:"",
-  filterOpen:false
+  filterOpen:false,
+  payment:"card"
 };
 
 const els={
@@ -353,11 +354,28 @@ function openQuick(id){
   requestAnimationFrame(()=>els.quickLayer.classList.add("is-open"));
 }
 function closeQuick(){els.quickLayer.classList.remove("is-open");setTimeout(()=>{if(!els.quickLayer.classList.contains("is-open"))els.quickLayer.hidden=true},220)}
+function updatePaymentUI(){
+  const data={
+    card:{title:"Card",label:"Card details",placeholder:"Card reference (demo)"},
+    bank:{title:"Bank Transfer",label:"Bank reference",placeholder:"Bank reference (demo)"},
+    paypal:{title:"PayPal",label:"PayPal reference",placeholder:"PayPal email / reference (demo)"}
+  }[state.payment]||null;
+  if(!data)return;
+  document.querySelectorAll(".payment-method").forEach(b=>b.classList.toggle("active",b.dataset.payment===state.payment));
+  const field=document.getElementById("paymentReference");
+  const label=field?.closest("label");
+  if(label){
+    label.firstChild.textContent=data.label+" ";
+    field.placeholder=data.placeholder;
+  }
+  const copy=document.getElementById("checkoutCopy");
+  if(copy)copy.textContent=cartCount()+" items ready • "+data.title+" selected.";
+}
 function openCheckout(){
   if(!state.cart.length)return;
   els.checkoutTotal.textContent=money(total());
-  els.checkoutCopy.textContent=cartCount()+" items are ready for checkout.";
   els.checkoutLayer.hidden=false;
+  updatePaymentUI();
   requestAnimationFrame(()=>els.checkoutLayer.classList.add("is-open"));
 }
 function closeCheckout(){els.checkoutLayer.classList.remove("is-open");setTimeout(()=>{if(!els.checkoutLayer.classList.contains("is-open"))els.checkoutLayer.hidden=true},220)}
@@ -422,11 +440,18 @@ document.getElementById("quickViewAdd").addEventListener("click",()=>{if(state.c
 document.getElementById("quickViewBuy").addEventListener("click",()=>{if(state.current)buyProduct(state.current,state.quickQty)});
 document.getElementById("checkoutBtn").addEventListener("click",openCheckout);
 document.getElementById("closeCheckout").addEventListener("click",closeCheckout);
+document.getElementById("closeCheckoutX").addEventListener("click",closeCheckout);
+document.querySelectorAll(".payment-method").forEach(btn=>btn.addEventListener("click",()=>{
+  state.payment=btn.dataset.payment||"card";
+  updatePaymentUI();
+  burstAt(btn,6);
+}));
 els.checkoutLayer.addEventListener("click",e=>{if(e.target===els.checkoutLayer)closeCheckout()});
 document.getElementById("finishCheckout").addEventListener("click",()=>{
   const orderTotal=total();
+  const method={card:"Card",bank:"Bank Transfer",paypal:"PayPal"}[state.payment]||"Card";
   burstAt(document.getElementById("finishCheckout"),12);
-  state.cart=[];saveCart();updateCartUI();closeCheckout();closeCart();notify("Mock order placed • "+money(orderTotal));
+  state.cart=[];saveCart();updateCartUI();closeCheckout();closeCart();notify("Payment selected: "+method+" • "+money(orderTotal));
 });
 window.addEventListener("keydown",e=>{
   if(e.key!=="Escape")return;
