@@ -229,13 +229,11 @@ body.theme-light .featured-members span{
 
 /* FEATURED GAME CAROUSEL */
 .featured-stage{position:relative;overflow:hidden;border-radius:26px}
-#featuredGame{transform:translate3d(0,0,0);opacity:1;will-change:transform,opacity;transition:transform .42s cubic-bezier(.16,1,.3,1),opacity .22s ease}
-#featuredGame.slide-leave-next{transform:translate3d(-70px,0,0);opacity:0}
-#featuredGame.slide-leave-prev{transform:translate3d(70px,0,0);opacity:0}
-#featuredGame.slide-enter-next{transform:translate3d(70px,0,0);opacity:0}
-#featuredGame.slide-enter-prev{transform:translate3d(-70px,0,0);opacity:0}
+.featured-track{display:flex;width:100%;transform:translate3d(0,0,0);will-change:transform}
+.featured-track .featured-card{flex:0 0 100%;width:100%;min-width:100%;transform:none!important}
+.featured-track .spotlight-card:before{pointer-events:none}
 .featured-control{
-  position:absolute;top:50%;z-index:9;transform:translateY(-50%);
+  position:absolute;top:50%;z-index:20;transform:translateY(-50%);
   width:40px;height:40px;border-radius:50%;
   border:1px solid rgba(255,255,255,.14);
   background:rgba(3,8,5,.62);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
@@ -245,12 +243,13 @@ body.theme-light .featured-members span{
 .featured-control.prev{left:14px}.featured-control.next{right:14px}
 .featured-control:hover{transform:translateY(-50%) scale(1.08);border-color:rgba(29,255,145,.42);background:rgba(29,255,145,.08);box-shadow:0 0 24px rgba(29,255,145,.12)}
 .featured-dots{
-  position:absolute;left:50%;bottom:14px;z-index:10;transform:translateX(-50%);
-  display:flex;gap:6px;padding:6px 8px;border:1px solid rgba(255,255,255,.10);
-  border-radius:999px;background:rgba(3,8,5,.56);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)
+  position:absolute;left:50%;bottom:14px;z-index:21;transform:translateX(-50%);
+  display:flex;gap:6px;max-width:min(72vw,420px);overflow:auto;padding:6px 8px;
+  border:1px solid rgba(255,255,255,.10);border-radius:999px;
+  background:rgba(3,8,5,.56);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)
 }
 .featured-dots button{
-  width:7px;height:7px;padding:0;border:0;border-radius:50%;
+  flex:0 0 auto;width:7px;height:7px;padding:0;border:0;border-radius:50%;
   background:rgba(255,255,255,.28);cursor:pointer;transition:width .2s ease,background .2s ease,box-shadow .2s ease
 }
 .featured-dots button.active{width:22px;border-radius:999px;background:var(--cz-green);box-shadow:0 0 10px rgba(29,255,145,.55)}
@@ -263,5 +262,5 @@ body.theme-light .featured-dots button{background:#c9d2cc}
   .featured-dots{bottom:10px}
 }
 @media(prefers-reduced-motion:reduce){
-  #featuredGame.slide-leave-next,#featuredGame.slide-leave-prev,#featuredGame.slide-enter-next,#featuredGame.slide-enter-prev{transform:none;transition:none}
+  .featured-track{transition:none!important}
 }
