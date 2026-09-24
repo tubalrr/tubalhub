@@ -80,8 +80,10 @@ function renderSponsored(){
 }
 
 function productMarkup(x){return "<div class='product-card'><div class='product-media'>"+(x.image?"<img src='"+esc(x.image)+"' alt='' loading='lazy'>":"◈")+"</div><div class='product-info'><div class='product-info-top'><div><h3>"+esc(x.title)+"</h3><div class='product-price'>"+(x.price!==""?"₱"+esc(x.price):"")+"</div></div>"+(x.stock!==""?"<span class='stock-pill'>"+esc(x.stock)+" in stock</span>":"")+"</div><button class='buy-btn' data-buy='"+esc(x.id)+"' type='button'>Buy</button></div></div>"}
-function gameMarkup(x){return "<div class='game-card'><div class='game-cover'>"+(x.image?"<img src='"+esc(x.image)+"' alt='' loading='lazy'>":"<b>"+esc(x.title.slice(0,2))+"</b>")+"</div><div class='game-info'><h3 style='margin:0;font:800 16px/1.1 "Space Grotesk"'>"+esc(x.title)+"</h3><p style='margin:6px 0;color:#74877e;font-size:10px'>"+esc(x.description)+"</p><a class='play-btn' href='"+esc(x.url)+"' target='_blank' rel='noopener'>Play Now →</a></div></div>"}
-
+function gameMarkup(x){
+ const players=x.playersOnline!==undefined&&x.playersOnline!==null?"<p class='game-online'><i class='contact-dot online'></i> "+esc(String(x.playersOnline))+" players online</p>":"";
+ return "<div class='game-card'><div class='game-cover'>"+(x.image?"<img src='"+esc(x.image)+"' alt='' loading='lazy'>":"<b>"+esc(x.title.slice(0,2))+"</b>")+"</div><div class='game-info'><h3 style='margin:0;font:800 16px/1.1 \"Space Grotesk\"'>"+esc(x.title)+"</h3><p style='margin:6px 0;color:#74877e;font-size:10px'>"+esc(x.description)+"</p>"+players+"<a class='play-btn' href='"+esc(x.url)+"' target='_blank' rel='noopener'>Play Now →</a></div></div>";
+}
 function renderPost(x,i){
  const liked=Number(state.likes[x.id]||0)>0;
  const likes=Number(x.likes||0)+(liked?Number(state.likes[x.id]||0):0);
@@ -90,26 +92,21 @@ function renderPost(x,i){
  return "<article class='post-card' data-id='"+esc(x.id)+"' style='animation-delay:"+Math.min(i,12)*.08+"s'><div class='post-head'>"+avatarHtml(x)+"<div class='post-meta'><b>"+esc(x.author||"Member")+"</b><span>"+esc(timeLabel(x.createdAt))+" · Everyone</span></div>"+(x.sponsored?"<span class='post-sponsor'>Sponsored</span>":"")+"<span class='post-status "+(x.online===true?"online":"")+"' aria-label='"+(x.online===true?"Online":"Offline")+"'></span></div><div class='post-body'>"+(caption?"<p class='post-caption'>"+esc(caption)+"</p>":"")+body+"</div><div class='post-footer'><div class='post-stats'><span class='like-stat'>"+(likes?likes+" likes":"No reactions yet")+"</span><span>"+(x.comments?x.comments+" comments":"")+(x.shares?" · "+x.shares+" shares":"")+"</span></div><div class='post-actions'><button class='post-action "+(liked?"liked":"")+"' data-action='like'>❤️ Like</button><button class='post-action' data-action='comment'>💬 Comment</button><button class='post-action' data-action='share'>↗ Share</button></div></div></article>";
 }
 function renderFeed(reset){
- const list=visible(),box=document.getElementById("feedList");if(!box)return;
+ const list=visible(),box=document.getElementById("feedList");if(!box||state.loading)return;
  if(reset){state.page=0;box.innerHTML=""}
  const start=state.page*state.pageSize,slice=list.slice(start,start+state.pageSize);
  if(!slice.length&&state.page===0){box.innerHTML="<div class='feed-empty'><strong>No posts in your feed</strong><span>Published products, games, and your saved posts appear here.</span></div>";return}
- box.insertAdjacentHTML("beforeend",slice.map(renderPost).join(""));
- state.page++;
- bindPosts();
+ state.loading=true;
+ const sk=document.createElement("div");sk.className="load-more-skeleton";sk.innerHTML="<div class='skeleton'></div><div class='skeleton'></div><div class='skeleton'></div>";
+ box.appendChild(sk);
+ setTimeout(()=>{
+   sk.remove();
+   box.insertAdjacentHTML("beforeend",slice.map(renderPost).join(""));
+   state.page++;
+   state.loading=false;
+   bindPosts();
+ },140);
 }
-function renderComments(id){
- const box=document.getElementById("commentList");if(!box)return;
- const list=Array.isArray(state.comments[id])?state.comments[id]:[];
- box.innerHTML=list.length?list.map(x=>"<div class='comment-bubble'><b>"+esc(x.author||"Member")+"</b>"+esc(x.text)+"</div>").join(""):"<div class='feed-side-meta'>No comments yet. Start the conversation.</div>";
-}
-function openComments(id){
- state.currentCommentId=id;
- renderComments(id);
- document.getElementById("commentModal").classList.add("open");
- document.getElementById("commentInput").focus();
-}
-function closeComments(){document.getElementById("commentModal").classList.remove("open");state.currentCommentId=null}
 function bindPosts(){
  document.querySelectorAll(".post-card:not([data-bound])").forEach(card=>{
   card.dataset.bound="1";
@@ -137,6 +134,10 @@ function publishLocalPost(e){
  const text=document.getElementById("postText").value.trim();if(!text)return;
  const item={id:"local-"+Date.now(),text,author:displayName(state.auth),photo:photoOf(state.auth),createdAt:Date.now(),likes:0};
  state.localPosts.unshift(item);writeLocal("tubalhub-feed-posts",state.localPosts);document.getElementById("postText").value="";closePostModal();buildFeed();
+}
+function setupComposer(){
+ const trigger=document.getElementById("createPostTrigger");
+ if(trigger)trigger.textContent=state.auth?"What's on your mind, "+displayName(state.auth)+"?":"What's on your mind?";
 }
 function setupUI(){
  document.body.addEventListener("pointermove",e=>{document.body.style.setProperty("--fd-mx",e.clientX+"px");document.body.style.setProperty("--fd-my",e.clientY+"px")},{passive:true});
@@ -174,5 +175,5 @@ function setupContacts(){
 function bindUserAvatar(){const a=document.getElementById("createAvatar");if(a){a.innerHTML=photoOf(state.auth)?"<img src='"+esc(photoOf(state.auth))+"' alt=''>":esc(initials(displayName(state.auth)))}}
 onAuthStateChanged(auth,async user=>{
  state.auth=user&&!user.isAnonymous?user:null;
- bindUserAvatar();setupUI();setupContacts();await loadProducts();buildFeed();
+ bindUserAvatar();setupComposer();setupUI();setupContacts();await loadProducts();buildFeed();
 });
