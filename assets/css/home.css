@@ -1687,10 +1687,11 @@ body.hub-home .home-page.bento-home-page .home-shell{
   align-items:center;
   isolation:isolate;
   background:
-    radial-gradient(260px circle at 84% 32%,rgba(255,255,255,.2),transparent 60%),
-    linear-gradient(135deg,#8ed66d 0%,#1dff91 52%,#7d5aff 100%);
-  color:#061009;
-  box-shadow:0 26px 70px rgba(29,255,145,.12),0 20px 40px rgba(0,0,0,.24);
+    radial-gradient(300px circle at 86% 24%,rgba(120,150,255,.16),transparent 62%),
+    radial-gradient(260px circle at 18% 82%,rgba(74,222,200,.10),transparent 68%),
+    linear-gradient(135deg,#0d1422 0%,#121a2d 52%,#1b1830 100%);
+  color:#f4f7ff;
+  box-shadow:0 26px 70px rgba(6,10,24,.34),0 20px 40px rgba(0,0,0,.28);
 }
 .bento-hero::before{
   background:
@@ -1702,7 +1703,7 @@ body.hub-home .home-page.bento-home-page .home-shell{
   z-index:3;
   width:min(66%,640px);
 }
-.bento-hero .bento-kicker{color:rgba(4,20,10,.72)}
+.bento-hero .bento-kicker{color:rgba(232,239,255,.70)}
 .bento-hero h1{
   margin:10px 0 10px;
   font-size:36px;
@@ -1713,7 +1714,7 @@ body.hub-home .home-page.bento-home-page .home-shell{
 .bento-hero p{
   margin:0;
   max-width:560px;
-  color:rgba(4,24,13,.72);
+  color:rgba(226,233,248,.72);
   font-size:13px;
   line-height:1.65;
 }
@@ -1726,14 +1727,14 @@ body.hub-home .home-page.bento-home-page .home-shell{
 .bento-hero-stat{
   min-width:90px;
   padding:9px 11px;
-  border:1px solid rgba(4,24,13,.12);
+  border:1px solid rgba(255,255,255,.12);
   border-radius:14px;
-  background:rgba(255,255,255,.22);
+  background:rgba(255,255,255,.07);
   backdrop-filter:blur(14px);
   -webkit-backdrop-filter:blur(14px);
 }
 .bento-hero-stat small{display:block;font-size:7px;text-transform:uppercase;letter-spacing:.08em;color:rgba(4,24,13,.6)}
-.bento-hero-stat strong{display:block;margin-top:2px;font-size:15px;color:#05140b}
+.bento-hero-stat strong{display:block;margin-top:2px;font-size:15px;color:#f6f8ff}
 .bento-cta-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px}
 .bento-primary-btn,.bento-secondary-btn{
   min-height:42px;
@@ -1754,9 +1755,9 @@ body.hub-home .home-page.bento-home-page .home-shell{
   box-shadow:0 12px 28px rgba(0,0,0,.18);
 }
 .bento-secondary-btn{
-  background:rgba(255,255,255,.18);
-  color:#06150b;
-  border:1px solid rgba(4,24,13,.14);
+  background:rgba(255,255,255,.08);
+  color:#f4f7ff;
+  border:1px solid rgba(255,255,255,.12);
   backdrop-filter:blur(14px);
   -webkit-backdrop-filter:blur(14px);
 }
@@ -1781,9 +1782,9 @@ body.hub-home .home-page.bento-home-page .home-shell{
   place-items:center;
   align-content:center;
   gap:2px;
-  color:#063114;
+  color:#eef4ff;
   border:1px solid rgba(255,255,255,.5);
-  background:rgba(255,255,255,.24);
+  background:rgba(255,255,255,.08);
   box-shadow:0 0 40px rgba(255,255,255,.24),inset 0 0 28px rgba(255,255,255,.16);
   animation:bentoBreath 8s ease-in-out infinite;
 }
@@ -2594,4 +2595,35 @@ body.theme-light .real-quick-form select{
     height:34px;
     padding:0 8px;
   }
+}
+
+
+/* TUBAL HUB hero branding — softer on the eyes */
+.bento-brand-logo{
+  width:142px;
+  height:142px;
+  gap:5px;
+  padding:16px;
+  border-radius:34px;
+  background:rgba(8,12,24,.34);
+  border:1px solid rgba(255,255,255,.16);
+  box-shadow:0 0 44px rgba(113,128,255,.16),inset 0 0 28px rgba(255,255,255,.05);
+}
+.bento-brand-logo img{
+  display:block;
+  width:78px;
+  height:78px;
+  object-fit:contain;
+  filter:drop-shadow(0 8px 20px rgba(0,0,0,.28));
+}
+.bento-brand-logo span{
+  font-size:8px;
+  font-weight:900;
+  letter-spacing:.12em;
+  color:rgba(239,244,255,.82);
+}
+@media (max-width:768px){
+  .bento-brand-logo{width:112px;height:112px;padding:12px;border-radius:28px}
+  .bento-brand-logo img{width:62px;height:62px}
+  .bento-brand-logo span{font-size:7px}
 }
