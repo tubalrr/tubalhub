@@ -240,3 +240,16 @@ body.theme-light.feeds-page{
 .trend-copy b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#e8f5ed;font:800 9px/1.25 Inter,sans-serif}
 .trend-copy small{display:block;margin-top:4px;color:#6f8279;font-size:7px}
 body.theme-light.feeds-page .trend-copy b{color:#26372d}
+
+/* Active in Games / Suggested for you */
+.active-game-row,.suggested-row{width:100%;display:flex;align-items:center;gap:8px;padding:9px 11px;border:0;border-top:1px solid rgba(255,255,255,.045);background:transparent;color:inherit;text-align:left}
+.active-game-row{cursor:default}.suggested-row{cursor:pointer;transition:background .2s ease,transform .2s ease}.suggested-row:hover{background:rgba(29,255,145,.055);transform:translateX(2px)}
+.contact-avatar{width:32px;height:32px;flex:0 0 32px;border-radius:50%;overflow:hidden;border:1px solid rgba(255,255,255,.1);background:linear-gradient(135deg,var(--fd-purple),var(--fd-green));display:grid;place-items:center;color:#fff;font:850 8px/1 "Space Grotesk";position:relative}
+.contact-avatar img{width:100%;height:100%;object-fit:cover}
+.active-game-copy,.suggested-copy{min-width:0;flex:1}
+.active-game-copy b,.suggested-copy b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#e6f3eb;font:800 8px/1.2 Inter,sans-serif}
+.active-game-copy span,.suggested-copy small{display:block;margin-top:3px;color:#6f8279;font-size:7px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.suggested-plus{width:25px;height:25px;display:grid;place-items:center;border:1px solid rgba(29,255,145,.15);border-radius:50%;background:rgba(29,255,145,.07);color:var(--fd-green);font:900 14px/1 Inter,sans-serif}
+.active-game-row .contact-dot{width:8px;height:8px;flex:0 0 8px;border-radius:50%}
+.theme-light .active-game-copy b,.theme-light .suggested-copy b{color:#26372d}
+.theme-light .active-game-row,.theme-light .suggested-row{border-top-color:#e5e7eb}
