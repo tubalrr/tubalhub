@@ -242,14 +242,11 @@ function init(){
   if(topInput){
     topInput.removeAttribute("readonly");
     topInput.removeAttribute("tabindex");
-    topInput.addEventListener("focus",()=>{open(topInput.value||"")});
     topInput.addEventListener("input",()=>{
       clearTimeout(debounceId);
-      const q=topInput.value;
       if(modal?.classList.contains("is-open")){
-        input.value=q;debounceId=setTimeout(()=>render(q),140);
-      }else{
-        debounceId=setTimeout(()=>open(q),140);
+        input.value=topInput.value;
+        debounceId=setTimeout(()=>render(topInput.value),140);
       }
     });
     topInput.addEventListener("keydown",e=>{
@@ -258,8 +255,8 @@ function init(){
     });
   }
   box?.addEventListener("click",e=>{
-    if(e.target===topInput||e.target.closest(".search-shortcut"))return;
-    open(topInput?.value||"");
+    if(e.target===topInput)return;
+    if(e.target.closest(".search-shortcut")){e.preventDefault();open(topInput?.value||"")}
   });
   document.addEventListener("keydown",e=>{
     if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==="k"){e.preventDefault();open(topInput?.value||"");return}
