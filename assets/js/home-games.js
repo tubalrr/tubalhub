@@ -88,15 +88,38 @@
     return true;
   }
 
+  let catalogGames = [];
+  let rotationTimer = null;
+  let rotationIndex = 0;
+
+  function renderRotating() {
+    if (!catalogGames.length) return;
+    const ordered = catalogGames.map((_, i) => catalogGames[(rotationIndex + i) % catalogGames.length]);
+    render(ordered);
+  }
+
   async function refresh() {
     const games = await loadCatalog();
-    render(games);
+    catalogGames = games;
+    rotationIndex = catalogGames.length ? rotationIndex % catalogGames.length : 0;
+    renderRotating();
+  }
+
+  function startRotation() {
+    clearInterval(rotationTimer);
+    if (catalogGames.length <= 4) return;
+    rotationTimer = setInterval(() => {
+      rotationIndex = (rotationIndex + 1) % catalogGames.length;
+      renderRotating();
+    }, 4500);
   }
 
   function init() {
-    refresh();
+    refresh().then(startRotation);
     // Home can be initialized by several scripts; retry after layout/script startup.
-    [250, 800, 1600, 3000].forEach(ms => setTimeout(refresh, ms));
+    [250, 800, 1600, 3000].forEach(ms => setTimeout(() => {
+      refresh().then(startRotation);
+    }, ms));
     window.addEventListener("focus", refresh, { passive: true });
     window.addEventListener("storage", e => {
       if (e.key === "tubalhub_ctrlzone_games" || (e.key || "").startsWith("play_")) refresh();
