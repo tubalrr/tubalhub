@@ -26,4 +26,14 @@
     observer.observe(members,{childList:true,subtree:true});
   }
   window.addEventListener('resize',refreshDmOnline,{passive:true});
+
+  const logoSelector='.chat-globe-logo,.member-list .mini,.channel-logo,.rules-logo,.dm-avatar';
+  grid.addEventListener('click',e=>{
+    const logo=e.target.closest?.(logoSelector);
+    if(!logo||!grid.contains(logo))return;
+    logo.classList.remove('logo-pop');
+    void logo.offsetWidth;
+    logo.classList.add('logo-pop');
+    setTimeout(()=>logo.classList.remove('logo-pop'),460);
+  },{passive:true});
 })();
