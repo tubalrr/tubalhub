@@ -1,5 +1,32 @@
 {
-  "version": "1.0.5",
-  "time": "2026-05-13T10:00:00Z",
-  "message": "Added CTRLZONE + AI Music + Payapang Isip"
+  "version": "1.2.0",
+  "date": "2026-05-14",
+  "time": "2026-05-14T10:00:00Z",
+  "message": "Real Payapang Isip tools, real AI Music audio, a cleaner homepage, and a working featured slider.",
+  "changelog": [
+    {
+      "type": "New",
+      "icon": "🌿",
+      "title": "Payapang Isip Real",
+      "desc": "Totoong breathing at journal data na ang ginagamit ng page—local user entries at real interaction state, hindi fake mock content."
+    },
+    {
+      "type": "Improved",
+      "icon": "🎵",
+      "title": "AI Music Real Audio",
+      "desc": "AI Music now uses real generated audio from the MusicGen service and a live Web Audio analyser visualizer instead of placeholder audio."
+    },
+    {
+      "type": "Fixed",
+      "icon": "🔧",
+      "title": "Homepage Video Removed",
+      "desc": "Tinanggal ang lumang bottom homepage video section para mas malinis at mas focused ang home page."
+    },
+    {
+      "type": "New",
+      "icon": "🎠",
+      "title": "Homepage Sliding",
+      "desc": "Gumagana na ang featured homepage slider para sa Payapang Isip, AI Music, CTRLZONE, Shop, Feeds, Global Chat, at News."
+    }
+  ]
 }
