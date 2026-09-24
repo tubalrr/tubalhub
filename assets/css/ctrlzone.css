@@ -195,3 +195,34 @@ body.theme-light .ctrl-toast{background:rgba(255,255,255,.94);color:#29372f;bord
 @media(prefers-reduced-motion:reduce){
   *,*:before,*:after{scroll-behavior:auto!important;animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
 }
+/* REAL PRESENCE STATES */
+.live-dot.is-offline,.mini-online-dot.is-offline{
+  background:#000;
+  box-shadow:none;
+  animation:none;
+}
+.featured-members{
+  min-height:30px;
+  display:flex;
+  align-items:center;
+  color:#71837a;
+  font-size:9px;
+}
+.featured-members span{
+  display:inline-flex;
+  align-items:center;
+  min-height:28px;
+  padding:0 10px;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:999px;
+  background:rgba(255,255,255,.035);
+}
+body.theme-light .featured-members span{
+  color:#66766d;
+  background:rgba(255,255,255,.58);
+  border-color:#e5e7eb;
+}
+
+@media(max-width:640px){
+  .featured-members{font-size:9px}
+}
