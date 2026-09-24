@@ -139,7 +139,25 @@ function bindPosts(){
   card.querySelector("[data-buy]")?.addEventListener("click",e=>{e.stopPropagation();const b=e.currentTarget;b.classList.add("is-pop");setTimeout(()=>b.classList.remove("is-pop"),460);location.href="shop.html"});
  });
 }
-function burst(btn){const host=btn.parentElement,s=document.createElement("span");s.className="post-action-burst";for(let i=0;i<6;i++){const p=document.createElement("i");p.style.setProperty("--a",(i*60)+"deg");s.appendChild(p)}host.appendChild(s);setTimeout(()=>s.remove(),620)}
+function burst(btn){
+  const host=btn.parentElement,s=document.createElement("span");
+  s.className="post-action-burst";
+  for(let i=0;i<6;i++){const p=document.createElement("i");p.style.setProperty("--a",(i*60)+"deg");s.appendChild(p)}
+  host.appendChild(s);setTimeout(()=>s.remove(),620);
+  const layer=document.createElement("span");layer.className="react-pop-layer";
+  const emojis=["❤️","👍","🔥","💚","😂"];
+  emojis.forEach((emoji,i)=>{
+    const p=document.createElement("span");p.className="react-pop";p.textContent=emoji;
+    const angle=(-155+i*77)+(Math.random()*18-9),dist=30+Math.random()*28;
+    const rad=angle*Math.PI/180;
+    p.style.setProperty("--rx",(Math.cos(rad)*dist).toFixed(1)+"px");
+    p.style.setProperty("--ry",(Math.sin(rad)*dist).toFixed(1)+"px");
+    p.style.setProperty("--rr",(Math.random()*36-18).toFixed(0)+"deg");
+    p.style.animationDelay=(i*22)+"ms";layer.appendChild(p);
+  });
+  const ring=document.createElement("span");ring.className="react-ring";layer.appendChild(ring);
+  host.appendChild(layer);setTimeout(()=>layer.remove(),820);
+}
 function openShare(id){const s=document.getElementById("shareSheet");if(!s)return;document.getElementById("shareUrl").value=location.href.split("#")[0]+"#feed-"+encodeURIComponent(id);s.classList.add("open")}
 function showNotice(message){const n=document.getElementById("feedNotice");if(!n)return;n.textContent=message;n.classList.add("open");setTimeout(()=>n.classList.remove("open"),2200)}
 function openPostModal(){document.getElementById("postModal").classList.add("open");document.getElementById("postText").focus()}
@@ -160,7 +178,16 @@ function setupComposer(){
  if(trigger)trigger.textContent=state.auth?"What's on your mind, "+displayName(state.auth)+"?":"What's on your mind?";
 }
 function setupUI(){
- document.body.addEventListener("pointermove",e=>{document.body.style.setProperty("--fd-mx",e.clientX+"px");document.body.style.setProperty("--fd-my",e.clientY+"px")},{passive:true});
+ document.body.addEventListener("pointermove",e=>{
+  document.body.style.setProperty("--fd-mx",e.clientX+"px");
+  document.body.style.setProperty("--fd-my",e.clientY+"px");
+  const card=e.target.closest(".post-card,.feeds-panel,.feed-toolbar");
+  if(card){
+    const r=card.getBoundingClientRect();
+    card.style.setProperty("--fd-card-mx",(((e.clientX-r.left)/Math.max(1,r.width))*100)+"%");
+    card.style.setProperty("--fd-card-my",(((e.clientY-r.top)/Math.max(1,r.height))*100)+"%");
+  }
+},{passive:true});
  document.querySelectorAll(".feed-filter").forEach(b=>b.addEventListener("click",()=>{state.savedMode=false;state.filter=b.dataset.filter||"all";document.querySelectorAll(".feed-filter").forEach(x=>x.classList.toggle("active",x===b));renderFeed(true)}));
  document.getElementById("feedSearch")?.addEventListener("input",e=>{state.query=e.target.value;renderFeed(true)});
  document.getElementById("feedSort")?.addEventListener("change",e=>{state.sort=e.target.value;renderFeed(true)});
