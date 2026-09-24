@@ -1082,10 +1082,29 @@ async function renderRealData(){
   loadRealPageTitle("pages/feeds.html","#featuredFeedsTitle");
   const stats=$("#bentoHeroStats");
   if(stats)stats.innerHTML='<div class="bento-hero-stat"><small>Journal</small><strong>'+journals.length+'</strong></div><div class="bento-hero-stat"><small>Audio Tracks</small><strong>'+music.length+'</strong></div><div class="bento-hero-stat"><small>Online Users</small><strong>'+(online===null?"—":online)+'</strong></div>';
+  const setText=(sel,value)=>{const el=$(sel);if(el)el.textContent=String(value)};
+  setText("#bentoOnlineUsers",online===null?"—":online);
+  setText("#bentoJournalCount",journals.length);
+  setText("#bentoMusicCount",music.length);
+  setText("#bentoGamesCount",games.length);
+  setText("#bentoFeedsCount",posts.length);
+}
+async function loadBentoVersion(){
+  try{
+    const response=await fetch(new URL("version.json",document.baseURI).href,{cache:"no-store"});
+    if(!response.ok)throw new Error("version "+response.status);
+    const data=await response.json();
+    const version=String(data?.version||"").trim();
+    const el=$("#bentoVersion");
+    if(el)el.textContent=version?("v"+version):"—";
+  }catch(_){
+    const el=$("#bentoVersion");if(el)el.textContent="—";
+  }
 }
 function initBento(){
   const refresh=()=>renderRealData().catch(e=>console.warn("[TUBAL HUB real data]",e));
   refresh();
+  loadBentoVersion();
   window.addEventListener("tubalhub-real-data-update",refresh);
   window.addEventListener("storage",event=>{
     const key=event.key||"";
