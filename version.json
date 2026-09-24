@@ -1,38 +1,38 @@
 {
-  "version": "1.2.1",
-  "date": "2026-05-14",
-  "time": "2026-05-14T12:00:00Z",
-  "message": "Added a real featured games carousel to the homepage using the CTRLZONE catalog.",
+  "version": "1.2.2",
+  "date": "2026-09-25",
+  "time": "2026-09-25T00:30:00+08:00",
+  "message": "TUBAL HUB homepage refresh: fully branded hero, softer premium visual design, live Quick Stats, and improved real-time presence.",
   "changelog": [
     {
-      "type": "New",
-      "icon": "🌿",
-      "title": "Payapang Isip Real",
-      "desc": "Totoong breathing at journal data na ang ginagamit ng page—local user entries at real interaction state, hindi fake mock content."
+      "type": "Improved",
+      "icon": "◈",
+      "title": "TUBAL HUB Homepage",
+      "desc": "The homepage hero is now fully branded as TUBAL HUB with the official TUBAL HUB logo."
     },
     {
       "type": "Improved",
-      "icon": "🎵",
-      "title": "AI Music Real Audio",
-      "desc": "AI Music now uses real generated audio from the MusicGen service and a live Web Audio analyser visualizer instead of placeholder audio."
+      "icon": "🌙",
+      "title": "Softer Hero Design",
+      "desc": "The bright green hero was replaced with a darker premium palette that is easier on the eyes."
+    },
+    {
+      "type": "New",
+      "icon": "📊",
+      "title": "Live Stats",
+      "desc": "Quick Stats now shows live site data, including fresh Firebase presence and real content counts."
     },
     {
       "type": "Fixed",
-      "icon": "🔧",
-      "title": "Homepage Video Removed",
-      "desc": "Tinanggal ang lumang bottom homepage video section para mas malinis at mas focused ang home page."
+      "icon": "👥",
+      "title": "Real Online Presence",
+      "desc": "Online users are counted from fresh Firebase presence heartbeats instead of stale online records."
     },
     {
-      "type": "New",
-      "icon": "🎠",
-      "title": "Homepage Sliding",
-      "desc": "Gumagana na ang featured homepage slider para sa Payapang Isip, AI Music, CTRLZONE, Shop, Feeds, Global Chat, at News."
-    },
-    {
-      "type": "New",
-      "icon": "🎮",
-      "title": "Featured Games Bottom Carousel",
-      "desc": "Naglagay ng real CTRLZONE game cards sa ibaba ng homepage, may sliding controls, Play Now, at local saved game stats."
+      "type": "Fixed",
+      "icon": "🔔",
+      "title": "Update Notifications",
+      "desc": "The website update notifier now has a new release version so the latest changes can surface in the update notification."
     }
   ]
 }
