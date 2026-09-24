@@ -4196,3 +4196,25 @@ body > div[style*="60px"],.left-rail,.narrow-col{
     grid-row:auto !important;
   }
 }
+
+
+/* =========================================================
+   AUTH UI HARD FIX — NEVER SHOW LOGIN/SIGN UP WHEN LOGGED IN
+   ========================================================= */
+.hub-home .top-actions #authGuestActions[aria-hidden="true"],
+.hub-home .top-actions #authGuestActions[hidden]{
+  display:none !important;
+  visibility:hidden !important;
+  pointer-events:none !important;
+}
+.hub-home .top-actions #authUserActions[aria-hidden="false"]{
+  display:flex !important;
+  visibility:visible !important;
+  pointer-events:auto !important;
+}
+.hub-home .top-actions #authUserActions[aria-hidden="true"],
+.hub-home .top-actions #authUserActions[hidden]{
+  display:none !important;
+  visibility:hidden !important;
+  pointer-events:none !important;
+}
