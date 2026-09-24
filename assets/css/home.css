@@ -1505,3 +1505,93 @@ body.theme-forest.hub-home #mainFooter.glass-footer::before{
   #mainFooter.glass-footer *,
   #footerMessagesButton{transition:none!important;animation:none!important}
 }
+
+/* Truth-first footer status cards: no unconfigured payment/delivery/certification claims. */
+#mainFooter .footer-access-links{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+}
+#mainFooter .footer-access-links .app-badge{
+  min-height:48px;
+  padding:0 12px;
+  display:grid;
+  place-items:center;
+  color:#c7d6ce;
+  text-decoration:none;
+  font-size:11px;
+  font-weight:850;
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:12px;
+  background:rgba(255,255,255,.045);
+}
+#mainFooter .footer-access-links .app-badge:hover{
+  color:#1dff91;
+}
+#mainFooter .footer-status-panel{
+  min-width:0;
+}
+#mainFooter .footer-coming-soon-card{
+  min-height:72px;
+  padding:12px 14px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  border:1px solid rgba(120,255,170,.11);
+  border-radius:14px;
+  background:rgba(255,255,255,.035);
+  color:#92a39a;
+}
+#mainFooter .footer-coming-soon-card span{
+  width:30px;height:30px;flex:0 0 30px;
+  display:grid;place-items:center;
+  border-radius:10px;
+  color:#1dff91;
+  background:rgba(29,255,145,.08);
+  border:1px solid rgba(29,255,145,.16);
+  font-size:14px;
+  font-weight:900;
+}
+#mainFooter .footer-coming-soon-card strong{
+  font-size:11px;
+  line-height:1.4;
+  color:#c8d6cf;
+}
+#mainFooter .footer-site-status-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+#mainFooter .footer-site-status-grid > span:not(.verification-qr){
+  min-height:45px;
+  padding:8px 9px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:3px;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:10px;
+  background:rgba(255,255,255,.035);
+  color:#80928a;
+  font-size:8px;
+  line-height:1.35;
+}
+#mainFooter .footer-site-status-grid > span b{
+  color:#1dff91;
+  font-size:10px;
+  letter-spacing:.8px;
+}
+#mainFooter .footer-site-status-grid .verification-qr{
+  width:58px;height:58px;
+  justify-self:start;
+}
+@media(max-width:900px){
+  #mainFooter .footer-access-links{grid-template-columns:1fr 1fr 1fr}
+}
+@media(max-width:680px){
+  #mainFooter .footer-access-links{grid-template-columns:1fr}
+  #mainFooter .footer-site-status-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:480px){
+  #mainFooter .footer-site-status-grid{grid-template-columns:1fr 1fr}
+}
