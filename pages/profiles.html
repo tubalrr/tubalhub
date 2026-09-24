@@ -202,7 +202,7 @@
 <script type="module">
 import { app, auth } from "../assets/js/firebase-config.js";
 import { onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, serverTimestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
 const db = getFirestore(app);
 const $ = id => document.getElementById(id);
@@ -365,11 +365,9 @@ onAuthStateChanged(auth,async user=>{
   }
   currentUser=user;
   try{
-    const presenceModule="https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
-    const {onSnapshot}=await import(presenceModule);
     onSnapshot(doc(db,"presence",user.uid),snap=>setOnlineState(snap.exists()&&snap.data()?.online===true),()=>setOnlineState(false));
     await loadProfile(user);
-  catch(err){
+  }catch(err){
     console.error(err);
     $("profileName").textContent="Profile could not load";
     $("profileBio").textContent="Check your Firestore rules and try again.";
