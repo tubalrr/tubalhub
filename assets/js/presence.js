@@ -36,17 +36,31 @@ const db = getFirestore();
 let currentUser = null;
 let heartbeat = null;
 
+function onlinePreference() {
+  try { return localStorage.getItem('tubalhub_privacy_online') !== '0'; } catch (_) { return true; }
+}
+
 async function setPresence(user) {
   if (!user || user.isAnonymous) return;
   const ref = doc(db, 'presence', user.uid);
+  const online = onlinePreference();
   await setDoc(ref, {
     uid: user.uid,
     displayName: user.displayName || user.email?.split('@')[0] || 'Member',
     photoURL: user.photoURL || '',
-    online: true,
+    online,
     lastSeen: serverTimestamp()
   }, { merge: true });
 }
+
+async function syncPrivacyPresence() {
+  if (!currentUser || currentUser.isAnonymous) return;
+  try { await setPresence(currentUser); } catch (_) {}
+}
+
+window.addEventListener('tubalhubprivacychange', () => {
+  syncPrivacyPresence();
+});
 
 onAuthStateChanged(auth, async user => {
   currentUser = user;
