@@ -38,8 +38,11 @@ const formatDate=value=>{
   return date.toLocaleDateString("en-PH",{month:"short",day:"numeric",year:"numeric"});
 };
 const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
+const isMobileHome=()=>window.innerWidth<768;
+const homeCardLimit=()=>isMobileHome()?4:6;
 
 function initSpotlight(){
+  if(window.matchMedia?.("(hover: none), (pointer: coarse)").matches)return;
   let frame=0,x=innerWidth/2,y=innerHeight/2;
   addEventListener("pointermove",e=>{
     x=e.clientX;y=e.clientY;if(frame)return;
@@ -152,7 +155,7 @@ function journalStarterCards(){
     ["🍃","Gratitude","Anong simpleng bagay ang pinasasalamatan mo ngayon?"],
     ["💭","Mind dump","Isulat ang nasa isip mo ngayon, kahit isang pangungusap lang."]
   ];
-  return prompts.map((p,i)=>({id:"starter-"+i,icon:p[0],title:p[1],text:p[2],date:today}));
+  return prompts.slice(0,homeCardLimit()).map((p,i)=>({id:"starter-"+i,icon:p[0],title:p[1],text:p[2],date:today}));
 }
 
 function renderGameScores(){
@@ -187,7 +190,7 @@ function renderJournal(){
 let musicTracks=[];
 function musicStarterCards(){
   const names=["Create your first track","Build a night ambience","Try a chill texture","Make a study loop","Explore a new mood","Generate a fresh idea"];
-  return names.map((title,i)=>({title,icon:["🎵","🌌","🌿","📚","🌙","✨"][i],sub:"No saved audio yet"}));
+  return names.slice(0,homeCardLimit()).map((title,i)=>({title,icon:["🎵","🌌","🌿","📚","🌙","✨"][i],sub:"No saved audio yet"}));
 }
 async function loadMusic(){
   const track=$("#musicTrack");if(!track)return;
@@ -274,7 +277,7 @@ async function renderFeeds(){
       const data=await r.json();
       const changes=Array.isArray(data.changelog)?data.changelog.slice(-6).reverse():[];
       if(changes.length){
-        track.innerHTML=changes.slice(0,6).map((c,i)=>'<article class="real-data-card feed-update-card feed-update-fallback"><div class="feed-update-head"><span class="feed-update-avatar home-emoji" aria-hidden="true">'+esc(c.icon||"📢")+'</span><div class="feed-update-author"><strong>TUBAL HUB Updates</strong><small>'+esc(data.date||"Current release")+'</small></div></div><p class="feed-update-text">'+esc(c.desc||c.title||"Website update")+'</p><div class="feed-update-art"><span class="home-emoji" aria-hidden="true">'+esc(c.icon||"📢")+'</span></div><div class="feed-update-stats"><span>'+esc(c.type||"Update")+'</span><span class="feed-update-source">Real changelog</span></div></article>').join("");
+        track.innerHTML=changes.slice(0,homeCardLimit()).map((c,i)=>'<article class="real-data-card feed-update-card feed-update-fallback"><div class="feed-update-head"><span class="feed-update-avatar home-emoji" aria-hidden="true">'+esc(c.icon||"📢")+'</span><div class="feed-update-author"><strong>TUBAL HUB Updates</strong><small>'+esc(data.date||"Current release")+'</small></div></div><p class="feed-update-text">'+esc(c.desc||c.title||"Website update")+'</p><div class="feed-update-art"><span class="home-emoji" aria-hidden="true">'+esc(c.icon||"📢")+'</span></div><div class="feed-update-stats"><span>'+esc(c.type||"Update")+'</span><span class="feed-update-source">Real changelog</span></div></article>').join("");
         return;
       }
     }catch(_){}
@@ -284,7 +287,7 @@ async function renderFeeds(){
   const likes=safeJson("tubalhub_home_feed_likes",{});
   const myAvatar=storageAvatar();
   const myUid=auth.currentUser?.uid||"";
-  track.innerHTML=posts.slice(0,10).map(p=>{
+  track.innerHTML=posts.slice(0,homeCardLimit()).map(p=>{
     const avatar=(p.id===myUid||p.author===auth.currentUser?.displayName)&&myAvatar?myAvatar:p.avatar;
     const liked=likes[p.id]===true;
     const base=Number(p.likes||0);
@@ -339,7 +342,7 @@ async function loadFeaturedGames(){
       list=[];
     }
   }
-  featuredGames=list.filter(g=>g&&g.id&&g.title&&g.emoji&&g.description&&g.officialUrl).slice(0,12);
+  featuredGames=list.filter(g=>g&&g.id&&g.title&&g.emoji&&g.description&&g.officialUrl).slice(0,isMobileHome()?4:12);
   renderFeaturedGames();
 }
 function gameStats(game){
@@ -378,16 +381,18 @@ function renderFeaturedGames(){
     return;
   }
   track.innerHTML=featuredGames.map(featuredGameMarkup).join("");
-  track.querySelectorAll(".game-feature-card").forEach(card=>{
-    card.addEventListener("pointermove",e=>{
-      const r=card.getBoundingClientRect(),px=(e.clientX-r.left)/r.width,py=(e.clientY-r.top)/r.height;
-      const rx=clamp((.5-py)*10,-10,10),ry=clamp((px-.5)*10,-10,10);
-      card.style.setProperty("--rx",rx+"deg");card.style.setProperty("--ry",ry+"deg");
-    },{passive:true});
-    card.addEventListener("pointerleave",()=>{
-      card.style.setProperty("--rx","0deg");card.style.setProperty("--ry","0deg");
+  if(!window.matchMedia?.("(hover: none), (pointer: coarse)").matches){
+    track.querySelectorAll(".game-feature-card").forEach(card=>{
+      card.addEventListener("pointermove",e=>{
+        const r=card.getBoundingClientRect(),px=(e.clientX-r.left)/r.width,py=(e.clientY-r.top)/r.height;
+        const rx=clamp((.5-py)*10,-10,10),ry=clamp((px-.5)*10,-10,10);
+        card.style.setProperty("--rx",rx+"deg");card.style.setProperty("--ry",ry+"deg");
+      },{passive:true});
+      card.addEventListener("pointerleave",()=>{
+        card.style.setProperty("--rx","0deg");card.style.setProperty("--ry","0deg");
+      });
     });
-  });
+  }
   gamesSlider?.stopAuto();
   gamesSlider=null;
   renderAllSliderDots();
