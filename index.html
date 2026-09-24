@@ -231,40 +231,39 @@
         <div id="bentoFeedsList" class="bento-feed-scroll bento-feeds-list" aria-live="polite"></div>
       </section>
 
-      <section id="tubalFeedsSection" class="tubal-feeds-section" aria-labelledby="tubalFeedsTitle">
-        <div class="tubal-feeds-main">
-          <div class="tubal-feeds-header">
+      <section id="tubalFeedsSection" class="bento-feeds-row" aria-label="TUBAL HUB Community Feed">
+        <div id="communityFeedCard" class="glass">
+          <div class="header">
             <div>
-              <span class="tubal-feeds-kicker"><span class="tubal-feeds-live-dot" aria-hidden="true"></span> LIVE COMMUNITY</span>
-              <h2 id="tubalFeedsTitle">📱 Community Feed</h2>
-              <p>Real posts saved from TUBAL HUB Feeds.</p>
+              <span class="tubal-feeds-kicker">TUBAL HUB FEEDS</span>
+              <h2>Community Feed</h2>
+              <small>Real posts published on this browser</small>
             </div>
-            <div class="tubal-feeds-header-actions">
-              <span id="feedsCount" class="tubal-feeds-count">0 posts real</span>
-              <a class="tubal-feeds-open-btn" href="pages/feeds.html">Open Feeds</a>
-            </div>
+            <a href="pages/feeds.html">Open Feeds →</a>
           </div>
-          <div id="feedsInsideTrack" class="feeds-inside-track" aria-live="polite" tabindex="0"></div>
+          <div class="feed-latest-row"><span>LATEST</span><span id="feedCountReal">0 posts</span></div>
+          <div id="feedsInsideTrack" aria-live="polite"></div>
         </div>
 
-        <aside class="tubal-feeds-quick-post glass" aria-labelledby="quickPostTitle">
-          <div class="quick-post-head">
+        <div id="quickPostCard" class="glass">
+          <div class="header quick-post-header">
             <div>
-              <span class="tubal-feeds-kicker">QUICK POST</span>
-              <h3 id="quickPostTitle">Share something real</h3>
+              <span class="live-dot" aria-hidden="true"></span>
+              <span>LIVE COMMUNITY QUICK POST</span>
             </div>
-            <span aria-hidden="true">✦</span>
+            <span id="quickPostCount">0 posts real</span>
           </div>
-          <form id="tubalQuickFeedForm">
-            <label for="tubalQuickFeedText">Your post</label>
-            <textarea id="tubalQuickFeedText" name="feedText" maxlength="5000" placeholder="Isulat ang totoong post..." required></textarea>
-            <label class="quick-post-file" for="tubalQuickFeedImage">Add image <span id="tubalQuickFeedFileName">optional</span></label>
-            <input id="tubalQuickFeedImage" name="feedImage" type="file" accept="image/*">
-            <button type="submit">Save real post</button>
-            <small>Saved only in this browser using <code>tubalhub_feeds</code>.</small>
-          </form>
-        </aside>
+          <h3>Share something real</h3>
+          <textarea id="realPostInput" maxlength="5000" placeholder="Isulat ang totoong post... TUBAL HUB Feeds."></textarea>
+          <label class="real-post-image-picker" for="realPostImage">
+            <span>Add image</span><span>optional</span>
+            <input type="file" id="realPostImage" accept="image/*">
+          </label>
+          <button id="saveRealPostBtn" type="button">Save real post</button>
+          <small class="real-post-note">Saved only in this browser using <code>tubalhub_feeds</code>.</small>
+        </div>
       </section>
+
 
       <section class="bento-card bento-games" aria-labelledby="bentoGamesTitle">
         <div class="bento-games-atmosphere" aria-hidden="true"></div>
