@@ -1,5 +1,6 @@
 
-import {getFirestore,collection,getDocs,query,orderBy,limit} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+import {getFirestore,collection,getDocs,query,orderBy,limit,onSnapshot} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+import {subscribeHubPosts} from "./hub-content.js";
 import {app} from "./firebase-config.js";
 const db=getFirestore(app);
 
@@ -20,7 +21,7 @@ const authorName=x=>x.authorName||x.authorDisplayName||x.displayName||x.author||
 const authorPhoto=x=>x.authorPhotoURL||x.authorPhoto||x.authorAvatar||"";
 const authorOnline=x=>x.authorOnline===true||x.online===true;
 const metrics=x=>{const b=[];if(x.views!==undefined&&x.views!==null&&x.views!=="")b.push(String(x.views));if(x.commentsCount!==undefined&&x.commentsCount!==null)b.push(String(x.commentsCount)+" comments");return b};
-const state={all:[],filter:"all",query:"",current:null,bookmarks:new Set(readJson("tubalhub-news-bookmarks",[]))};
+const state={all:[],sourceNews:[],hubNews:[],filter:"all",query:"",current:null,bookmarks:new Set(readJson("tubalhub-news-bookmarks",[]))};
 
 function avatarHtml(x,big){const src=authorPhoto(x);return src?"<span class='"+(big?"news-avatar":"news-mini-avatar")+"'><img src='"+esc(src)+"' alt=''></span>":"<span class='"+(big?"news-avatar":"news-mini-avatar")+"'>"+esc(initials(authorName(x)))+"</span>"}
 function mediaHtml(x,featured){const src=imageOf(x);if(src)return "<img class='"+(featured?"news-featured-media":"news-card-media-image")+"' src='"+esc(src)+"' alt='' loading='"+(featured?"eager":"lazy")+"'>";const icon={gaming:"🎮",community:"◉",stories:"✦",events:"◈",tech:"⌁",platform:"▣"}[categoryOf(x)]||"📰";return "<div class='"+(featured?"news-featured-fallback":"news-card-fallback")+"'>"+icon+"</div>"}
@@ -100,9 +101,20 @@ function setup(){
 }
 async function load(){
   setup();
-  const grid=document.getElementById("newsGrid");if(grid)grid.innerHTML="<div class='news-skeleton'><div class='news-skeleton-card'></div><div class='news-skeleton-card'></div><div class='news-skeleton-card'></div></div>";
-  try{const snap=await getDocs(query(collection(db,"news"),orderBy("createdAt","desc"),limit(100)));state.all=snap.docs.map(d=>({id:d.id,...d.data()}))}
-  catch(e){console.error("[TUBAL HUB News]",e);state.all=[]}
-  renderTicker();renderFeatured();renderGrid(filtered());renderTrending();renderRelated();
+  const grid=document.getElementById("newsGrid");
+  if(grid)grid.innerHTML="<div class='news-skeleton'><div class='news-skeleton-card'></div><div class='news-skeleton-card'></div><div class='news-skeleton-card'></div></div>";
+  try{
+    const snap=await getDocs(query(collection(db,"news"),orderBy("createdAt","desc"),limit(100)));
+    state.sourceNews=snap.docs.map(d=>({id:"news-"+d.id,sourceCollection:"news",sourceId:d.id,contentType:"news",title:d.data().title||"",text:d.data().text||d.data().summary||"",description:d.data().text||d.data().summary||"",imageUrl:d.data().imageUrl||d.data().image||"",createdAt:d.data().createdAt||0,authorName:d.data().authorName||"TUBAL HUB News",category:d.data().category||"platform",articleUrl:d.data().articleUrl||""}));
+  }catch(e){console.error("[TUBAL HUB News]",e);state.sourceNews=[]}
+  const merge=()=>{
+    const hub=state.hubNews.filter(x=>Array.isArray(x.destinations)?x.destinations.includes("news"):x.contentType==="news").map(x=>({...x,id:"hub-"+x.id}));
+    const keys=new Set();
+    state.all=[...hub,...state.sourceNews].filter(x=>{const k=x.sourceCollection&&x.sourceId?x.sourceCollection+":"+x.sourceId:x.id;if(keys.has(k))return false;keys.add(k);return true});
+    state.all.sort((a,b)=>(b.createdAt?.toMillis?.()||b.createdAt?.seconds*1000||0)-(a.createdAt?.toMillis?.()||a.createdAt?.seconds*1000||0));
+    renderTicker();renderFeatured();renderGrid(filtered());renderTrending();renderRelated();
+  };
+  try{subscribeHubPosts(items=>{state.hubNews=items;merge()})}catch(e){console.warn("[TUBAL HUB News] hubPosts",e)}
+  merge();
 }
 load();
