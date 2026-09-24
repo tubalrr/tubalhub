@@ -430,6 +430,39 @@ service cloud.firestore {
     }
 
     // =========================================================
+    // NOTIFICATIONS
+    // =========================================================
+
+    match /notifications/{notificationId} {
+      allow read: if realUser()
+        && resource.data.recipientUid == request.auth.uid;
+
+      // Notification writers are restricted to the admin/backend path.
+      allow create: if adminUser()
+        && request.resource.data.recipientUid is string
+        && request.resource.data.type is string
+        && request.resource.data.title is string
+        && request.resource.data.title.size() <= 240;
+
+      allow update: if adminUser()
+        || (
+          realUser()
+          && resource.data.recipientUid == request.auth.uid
+          && request.resource.data.recipientUid == resource.data.recipientUid
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+            'read',
+            'readAt'
+          ])
+        );
+
+      allow delete: if adminUser()
+        || (
+          realUser()
+          && resource.data.recipientUid == request.auth.uid
+        );
+    }
+
+    // =========================================================
     // DEFAULT DENY
     // =========================================================
 
