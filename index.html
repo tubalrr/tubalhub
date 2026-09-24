@@ -18,7 +18,7 @@
 <link rel="stylesheet" href="assets/css/home-premium.css?v=20260924">
 <link rel="stylesheet" href="assets/css/sidebar-premium.css?v=20260924-v9">
 <link rel="stylesheet" href="assets/css/home-agency.css?v=20260924-v2">
-<link rel="stylesheet" href="assets/css/home.css?v=20260925-bento-fix" data-tubal-home-css>
+<link rel="stylesheet" href="assets/css/home.css?v=20260925-real-logo3" data-tubal-home-css>
 <link rel="stylesheet" href="assets/css/notification-search.css?v=20260924-ns9">
 <style>
 .hub-home .search-box{position:relative!important;z-index:200!important;pointer-events:auto!important}
@@ -175,25 +175,18 @@
         <span class="bento-data-note" id="bentoSystemNote">Real site data only • No mock counters</span>
       </section>
 
- <section class="bento-card bento-games" aria-labelledby="bentoGamesTitle">
-        <div class="bento-games-atmosphere" aria-hidden="true"></div>
-        <div class="bento-section-head">
-          <div>
-            <div class="bento-games-title">
-              <span class="bento-games-icon home-emoji" aria-hidden="true">🎮</span>
-              <div><span class="bento-kicker">CTRLZONE</span><h2 id="bentoGamesTitle">Featured Games</h2></div>
-              <span class="bento-hot-badge"><i>●</i> LIVE CATALOG</span>
-            </div>
-            <span class="bento-subline">A premium window into the real CTRLZONE game catalog.</span>
-          </div>
-          <a class="bento-viewall" href="pages/ctrlzone.html">Open CTRLZONE →</a>
-        </div>
-        <div class="bento-games-toolbar">
-          <span><i></i> CURRENT CATALOG</span>
-          <strong id="bentoGamesLiveCount">0 games</strong>
-        </div>
-        <div id="bentoGamesGrid" class="bento-games-grid" aria-live="polite"></div>
-      </section>
+ <section id="ctrlzoneCard" class="glass-card-real bento-card-real ctrlzone-featured-real" aria-labelledby="ctrlzoneFeaturedTitle">
+  <header class="ctrlzone-featured-header">
+    <div class="ctrlzone-featured-brand">
+      <img src="/assets/icons/ctrlzone-logo-real.png" alt="" width="32" height="32" loading="lazy" onerror="this.style.display='none'">
+      <div><span class="ctrlzone-featured-kicker">CTRLZONE</span><h3 id="ctrlzoneFeaturedTitle">Featured Games</h3></div>
+      <span class="ctrlzone-live-catalog">● LIVE CATALOG</span>
+    </div>
+    <a href="pages/ctrlzone.html" class="ctrlzone-open-link">Open CTRLZONE →</a>
+  </header>
+  <div id="featuredGamesTrackReal" class="featured-games-track-real" aria-live="polite"></div>
+  <div id="currentCatalogCount" class="current-catalog-count">0 games real</div>
+</section>
 
      <div class="bento-row bento-row-real" aria-label="Real TUBAL HUB Bento">
   <section class="glass-card-real bento-real-card bento-journal-real" aria-labelledby="bentoJournalTitle">
@@ -399,8 +392,8 @@
 <script type="module" src="assets/js/search.js?v=20260924-ns9"></script>
 <script src="assets/js/sidebar-premium.js?v=20260924-v9"></script>
 <script src="assets/js/home-agency.js?v=20260924-v1"></script>
-<script type="module" src="assets/js/home.js?v=20260925-hero3"></script>
-<script src="assets/js/home-games.js?v=20260925-games3"></script>
+<script type="module" src="assets/js/home.js?v=20260925-real-logo3"></script>
+
   <script src="assets/js/ai-assistant.js?v=20260924-v2"></script>
 <!-- TUBAL HUB — Tubal AI Assistant -->
 <div id="tubalAiAssistant" class="tubal-ai" aria-label="Tubal AI Assistant">
