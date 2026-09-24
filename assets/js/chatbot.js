@@ -136,7 +136,6 @@
   /* Fixed stacked launcher — intentionally not draggable. */
   launch.classList.remove('dragging');
   panel.querySelector('.tubal-bot-close').onclick=()=>panel.classList.remove('open');
-  panel.querySelector('.tubal-bot-close').onclick=()=>panel.classList.remove('open');
   panel.querySelector('form').onsubmit=e=>{e.preventDefault();ask(input.value)};
   panel.querySelectorAll('[data-q]').forEach(b=>b.onclick=()=>ask(b.dataset.q));
   initAdminModeration();
