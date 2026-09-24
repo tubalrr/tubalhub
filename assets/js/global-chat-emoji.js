@@ -65,7 +65,7 @@
   let variants=new Map();
   let emojiSet=new Set();
   let state={
-    category:'smileys-emotion',
+    category:'latest',
     query:'',
     tone:Number(localStorage.getItem(STORAGE.tone)||0),
     longPressed:false
@@ -170,9 +170,16 @@
       .slice(0,96);
   }
 
+  function latestItems(){
+    return [...items]
+      .sort((a,b)=>Number(b.version||0)-Number(a.version||0))
+      .slice(0,100);
+  }
+
   function currentItems(){
     const q=state.query.trim().toLowerCase();
     if(q)return items.filter(x=>(x.name+' '+x.subgroup+' '+x.groupLabel+' '+x.emoji).toLowerCase().includes(q));
+    if(state.category==='latest')return latestItems();
     if(state.category==='recent')return recentItems();
     if(state.category==='frequent')return frequentItems();
     return items.filter(x=>x.group===state.category);
@@ -222,7 +229,7 @@
     const list=currentItems();
     sectionTitle.textContent=state.query.trim()
       ? 'Search • '+list.length
-      : (state.category==='recent'?'Recent':state.category==='frequent'?'Frequent':(GROUPS.find(g=>g.key===state.category)?.label||'Emoji'));
+      : (state.category==='latest'?'Latest 100':state.category==='recent'?'Recent':state.category==='frequent'?'Frequent':(GROUPS.find(g=>g.key===state.category)?.label||'Emoji'));
     grid.replaceChildren();
     if(!list.length){
       const empty=document.createElement('div');
@@ -248,6 +255,7 @@
   function renderTabs(){
     tabs.replaceChildren();
     const top=[
+      {key:'latest',icon:'✨',label:'Latest 100'},
       {key:'recent',icon:'🕘',label:'Recent'},
       {key:'frequent',icon:'⚡',label:'Frequent'},
       ...GROUPS
