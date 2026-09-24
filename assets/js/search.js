@@ -65,6 +65,7 @@ function open(q=""){
   modal.style.display="grid";
   modal.style.pointerEvents="auto";
   modal.classList.add("is-open");
+  document.getElementById("thSearchModal")?.classList.add("is-open");
   document.querySelector(".search-box")?.classList.add("is-open");
   if(topInput)topInput.value=q;
   input.value=q;
@@ -74,6 +75,7 @@ function open(q=""){
 function close(){
   if(!modal)return;
   modal.classList.remove("is-open");
+  document.getElementById("thSearchModal")?.classList.remove("is-open");
   modal.style.pointerEvents="none";
   document.querySelector(".search-box")?.classList.remove("is-open");
   setTimeout(()=>{
