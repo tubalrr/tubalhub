@@ -143,7 +143,7 @@ function journalEntries(){
     text:String(entry.text||entry.content||entry.body||"").trim(),
     mood:String(entry.mood||entry.emoji||"").trim(),
     createdAt:entry.createdAt||entry.date||entry.updatedAt||0
-  })).filter(entry=>entry.text).slice(0,10);
+  })).filter(entry=>entry.text).slice(0,homeCardLimit());
 }
 function journalStarterCards(){
   const today=new Date().toLocaleDateString("en-PH",{month:"short",day:"numeric",year:"numeric"});
@@ -200,7 +200,7 @@ async function loadMusic(){
     return;
   }
   const plays=musicPlays();
-  track.innerHTML=musicTracks.slice(0,10).map(t=>'<article class="real-data-card music-real-card data-track-card" data-music-id="'+esc(t.id)+'"><div class="music-real-cover"><span class="music-real-emoji home-emoji" aria-hidden="true">🎵</span><button class="music-real-play" type="button" data-play-music="'+esc(t.id)+'" aria-label="Play '+esc(t.title||"saved track")+'">▶</button></div><div class="music-mini-wave"><i></i><i></i><i></i></div><div class="music-real-meta"><h3 class="music-real-title">'+esc(t.title||"Saved track")+'</h3><p class="music-real-sub">'+esc(t.genre||"AI Music")+" · "+Number(plays[t.id]||0)+" plays</p></div></article>').join("");
+  track.innerHTML=musicTracks.slice(0,homeCardLimit()).map(t=>'<article class="real-data-card music-real-card data-track-card" data-music-id="'+esc(t.id)+'"><div class="music-real-cover"><span class="music-real-emoji home-emoji" aria-hidden="true">🎵</span><button class="music-real-play" type="button" data-play-music="'+esc(t.id)+'" aria-label="Play '+esc(t.title||"saved track")+'">▶</button></div><div class="music-mini-wave"><i></i><i></i><i></i></div><div class="music-real-meta"><h3 class="music-real-title">'+esc(t.title||"Saved track")+'</h3><p class="music-real-sub">'+esc(t.genre||"AI Music")+" · "+Number(plays[t.id]||0)+" plays</p></div></article>').join("");
   track.querySelectorAll("[data-play-music]").forEach(button=>button.addEventListener("click",()=>playMusic(button.dataset.playMusic)));
 }
 
@@ -584,6 +584,10 @@ function initAllSliders(){
       track.scrollBy({left:step,behavior:"smooth"});
     },5000);
     sliderTimers.set(id,timer);
+    if("MutationObserver" in window){
+      const observer=new MutationObserver(()=>requestAnimationFrame(renderAllSliderDots));
+      observer.observe(track,{childList:true});
+    }
   });
 }
 function initHorizontalSections(){initAllSliders();}
