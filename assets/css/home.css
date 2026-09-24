@@ -3866,3 +3866,51 @@ body.theme-light .real-quick-form select{
   #adsTrack{min-height:180px !important;padding:8px !important;gap:14px !important;}
   #adsTrack > .ad-card{min-width:280px !important;max-width:280px !important;width:280px !important;height:180px !important;flex-basis:280px !important;}
 }
+
+
+/* =========================================================
+   COMMUNITY FEED ROW — hard layout fix, no overlap
+   ========================================================= */
+.bento-feeds-row,
+.bento-feeds-row *{box-sizing:border-box;}
+.bento-feeds-row{
+  display:grid !important;grid-template-columns:minmax(0,1fr) minmax(0,1fr) !important;
+  gap:24px !important;width:100% !important;max-width:1280px !important;margin:0 auto 40px !important;
+  align-items:start !important;overflow:visible !important;position:relative !important;z-index:1 !important;
+  grid-column:1 / -1 !important;
+}
+#communityFeedCard,#quickPostCard{
+  position:relative !important;left:auto !important;right:auto !important;top:auto !important;bottom:auto !important;
+  transform:none !important;width:100% !important;min-width:0 !important;min-height:420px !important;height:auto !important;
+  margin:0 !important;background:rgba(255,255,255,.04) !important;backdrop-filter:blur(20px) !important;
+  -webkit-backdrop-filter:blur(20px) !important;border:1px solid rgba(120,255,170,.14) !important;
+  border-radius:32px !important;padding:24px !important;overflow:hidden !important;z-index:1 !important;
+  float:none !important;clear:none !important;grid-column:auto !important;grid-row:auto !important;
+}
+.bento-feeds-row .header{position:relative !important;display:flex !important;justify-content:space-between !important;align-items:center !important;gap:16px !important;width:100% !important;margin:0 !important;}
+#communityFeedCard .header h2{margin:6px 0 3px !important;font-size:24px !important;}
+#communityFeedCard .header small{display:block !important;color:#82958a !important;font-size:9px !important;}
+#communityFeedCard .header a{font-size:12px !important;color:#b9efc8 !important;white-space:nowrap !important;text-decoration:none !important;}
+.feed-latest-row{margin:16px 0 !important;display:flex !important;justify-content:space-between !important;align-items:center !important;gap:10px !important;color:#9eb0a5 !important;font-size:10px !important;letter-spacing:2px !important;}
+#feedCountReal,#quickPostCount{letter-spacing:0 !important;font-size:11px !important;color:#c9ded1 !important;}
+#feedsInsideTrack{display:flex !important;flex-direction:column !important;gap:12px !important;width:100% !important;max-height:300px !important;min-height:200px !important;overflow-y:auto !important;overflow-x:hidden !important;padding-right:3px !important;}
+#feedsInsideTrack .feed-item{position:relative !important;width:100% !important;min-width:0 !important;flex:0 0 auto !important;padding:12px !important;border-radius:16px !important;display:flex !important;gap:10px !important;align-items:flex-start !important;background:rgba(255,255,255,.035) !important;border:1px solid rgba(120,255,170,.10) !important;}
+#feedsInsideTrack .feed-item img{width:32px !important;height:32px !important;min-width:32px !important;border-radius:50% !important;object-fit:cover !important;}
+#feedsInsideTrack .feed-item .feed-copy{min-width:0 !important;flex:1 !important;}
+#feedsInsideTrack .feed-item b{font-size:12px !important;}
+#feedsInsideTrack .feed-item p{font-size:12px !important;margin:2px 0 !important;white-space:pre-wrap !important;overflow-wrap:anywhere !important;}
+#feedsInsideTrack .feed-item small{font-size:9px !important;color:#82958a !important;}
+#quickPostCard .quick-post-header{justify-content:space-between !important;color:#bfe7cc !important;font-size:9px !important;letter-spacing:1px !important;}
+#quickPostCard .quick-post-header>div{display:flex !important;align-items:center !important;gap:7px !important;}
+#quickPostCard .live-dot{width:8px !important;height:8px !important;display:inline-block !important;flex:0 0 8px !important;border-radius:50% !important;background:#1dff91 !important;animation:pulse 2s infinite !important;}
+#quickPostCard h3{margin:18px 0 12px !important;font-size:24px !important;}
+#realPostInput{display:block !important;position:relative !important;width:100% !important;min-width:0 !important;min-height:120px !important;height:120px !important;margin:0 !important;background:rgba(0,0,0,.3) !important;border:1px solid rgba(120,255,170,.2) !important;border-radius:16px !important;padding:12px !important;color:#fff !important;resize:none !important;outline:none !important;z-index:1 !important;}
+#realPostInput:focus{border-color:rgba(29,255,145,.5) !important;box-shadow:0 0 24px rgba(29,255,145,.08) !important;}
+.real-post-image-picker{width:100% !important;min-height:48px !important;margin:12px 0 !important;border:1px dashed rgba(255,255,255,.2) !important;border-radius:12px !important;padding:10px !important;display:flex !important;justify-content:space-between !important;align-items:center !important;color:#d5e6db !important;font-size:12px !important;cursor:pointer !important;background:rgba(255,255,255,.02) !important;}
+.real-post-image-picker>span:last-of-type{font-size:11px !important;opacity:.6 !important;}
+.real-post-image-picker input{display:none !important;}
+#saveRealPostBtn{display:block !important;width:100% !important;margin:0 !important;background:linear-gradient(135deg,#1dff91,#7d5aff) !important;border:none !important;padding:14px !important;border-radius:20px !important;font-weight:800 !important;color:#020604 !important;cursor:pointer !important;}
+#saveRealPostBtn:hover{filter:brightness(1.08) !important;transform:translateY(-1px) !important;}
+.real-post-note{display:block !important;margin-top:8px !important;opacity:.6 !important;font-size:10px !important;}
+#communityFeedCard .real-empty-feed{height:200px !important;display:flex !important;align-items:center !important;justify-content:center !important;opacity:.5 !important;text-align:center !important;padding:20px !important;}
+@media(max-width:768px){.bento-feeds-row{grid-template-columns:1fr !important;gap:18px !important;}#communityFeedCard,#quickPostCard{min-height:auto !important;}}
