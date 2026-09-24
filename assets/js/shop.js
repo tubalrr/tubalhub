@@ -336,7 +336,7 @@ function openQuick(id){
   state.current=p;state.quickQty=1;state.selectedSize=p.sizes[0]||"";state.selectedColor=p.colors[0]||"";
   els.quickBadge.textContent=p.badge;
   els.quickTitle.textContent=p.title;
-  els.quickShop.textContent=p.seller;
+  els.quickShop.innerHTML=brandMarkHtml(p.collection,true)+'<span>'+esc(p.seller)+'</span>';
   els.quickPrice.textContent=money(p.price);
   els.quickOriginal.textContent=money(p.original);
   els.quickDescription.textContent=p.description;
