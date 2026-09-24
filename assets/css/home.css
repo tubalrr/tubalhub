@@ -4152,3 +4152,47 @@ body > div[style*="60px"],.left-rail,.narrow-col{
     grid-row:auto !important;
   }
 }
+
+
+/* =========================================================
+   RESTORE — LIVE STATS BESIDE TUBAL HUB HERO
+   ========================================================= */
+#mainContent{
+  display:grid !important;
+  grid-template-columns:minmax(0,1.2fr) minmax(320px,.8fr) !important;
+  align-items:start !important;
+  gap:24px !important;
+}
+#mainContent > #bentoHero{
+  grid-column:1 !important;
+  grid-row:1 !important;
+  width:100% !important;
+  min-width:0 !important;
+  margin:0 !important;
+}
+#mainContent > .bento-quick-stats{
+  grid-column:2 !important;
+  grid-row:1 !important;
+  width:100% !important;
+  min-width:0 !important;
+  margin:0 !important;
+  box-sizing:border-box !important;
+}
+#mainContent > .bento-row-real,
+#mainContent > .bento-row,
+#mainContent > .bento-games,
+#mainContent > .featured-website,
+#mainContent > #advertisement,
+#mainContent > #mainFooter{
+  grid-column:1 / -1 !important;
+}
+@media(max-width:900px){
+  #mainContent{
+    grid-template-columns:minmax(0,1fr) !important;
+  }
+  #mainContent > #bentoHero,
+  #mainContent > .bento-quick-stats{
+    grid-column:1 !important;
+    grid-row:auto !important;
+  }
+}
