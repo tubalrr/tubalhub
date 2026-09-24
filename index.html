@@ -18,7 +18,7 @@
 <link rel="stylesheet" href="assets/css/home-premium.css?v=20260924">
 <link rel="stylesheet" href="assets/css/sidebar-premium.css?v=20260924-v9">
 <link rel="stylesheet" href="assets/css/home-agency.css?v=20260924-v2">
-<link rel="stylesheet" href="assets/css/home.css?v=20260924-v3">
+<link rel="stylesheet" href="assets/css/home.css?v=20260924-v4">
 <link rel="stylesheet" href="assets/css/notification-search.css?v=20260924-ns9">
 <style>
 .hub-home .search-box{position:relative!important;z-index:200!important;pointer-events:auto!important}
@@ -124,7 +124,7 @@
 
     <main class="home-page">
     <div class="home-shell">
-      <section class="home-hero home-glass" aria-label="TUBAL HUB featured slider">
+      <section id="heroSlider" class="home-hero home-glass" aria-label="TUBAL HUB featured slider">
         <div id="heroTrack" class="hero-track" aria-live="polite">
           <article class="hero-slide hero-slide--peace">
             <div class="hero-slide-inner">
@@ -255,19 +255,46 @@
         </div>
       </section>
 
-      <footer class="clean-footer home-glass">
-        <div>
-          <strong>TUBAL HUB</strong>
-          <span class="footer-sub">Real content appears here from your saved data and connected TUBAL HUB services.</span>
-          <span class="footer-sub" id="homeStorage">Local data: calculating…</span>
+      <footer class="home-premium-footer">
+        <div class="footer-top-row">
+          <section class="footer-brand-column" aria-label="TUBAL HUB">
+            <a class="footer-brand-lockup" href="index.html" aria-label="TUBAL HUB Home"><span class="footer-brand-neon">TUBAL HUB</span></a>
+            <p class="footer-tagline">Payapang Isip <span class="home-emoji" aria-hidden="true">🌿</span> AI Music <span class="home-emoji" aria-hidden="true">🎵</span> CTRLZONE <span class="home-emoji" aria-hidden="true">🎮</span></p>
+            <div class="footer-socials" aria-label="Social links">
+              <a class="footer-social" href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><span class="home-emoji" aria-hidden="true">ⓕ</span></a>
+              <a class="footer-social" href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><span class="home-emoji" aria-hidden="true">▶</span></a>
+              <a class="footer-social" href="https://www.tiktok.com/" target="_blank" rel="noopener noreferrer" aria-label="TikTok"><span class="home-emoji" aria-hidden="true">♪</span></a>
+              <a class="footer-social" href="pages/chat.html" aria-label="Global Chat"><span class="home-emoji" aria-hidden="true">💬</span></a>
+            </div>
+          </section>
+          <nav class="footer-links-column" aria-label="Quick Links">
+            <span class="footer-column-label">QUICK LINKS</span>
+            <div class="footer-quick-links">
+              <a class="footer-quick-pill" href="#heroSlider"><span class="home-emoji" aria-hidden="true">🎠</span> Homepage</a>
+              <a class="footer-quick-pill" href="#musicTrack"><span class="home-emoji" aria-hidden="true">🎵</span> Music</a>
+              <a class="footer-quick-pill" href="#journalTrack"><span class="home-emoji" aria-hidden="true">🌿</span> Payapang Isip</a>
+              <a class="footer-quick-pill" href="#featuredGames"><span class="home-emoji" aria-hidden="true">🎮</span> Games</a>
+            </div>
+          </nav>
+          <section class="footer-newsletter-column" aria-label="Newsletter">
+            <span class="footer-column-label">STAY IN THE LOOP</span>
+            <form id="footerNewsletterForm" class="footer-newsletter">
+              <label class="sr-only" for="footerNewsletterEmail">Email address</label>
+              <input id="footerNewsletterEmail" name="email" type="email" autocomplete="email" inputmode="email" placeholder="Your email address" required>
+              <button id="footerNewsletterSend" type="submit">Send</button>
+            </form>
+            <span id="footerNewsletterStatus" class="footer-newsletter-status" aria-live="polite"></span>
+          </section>
         </div>
-        <div class="footer-status">
-          <span id="homeOnlineDot" class="footer-status-dot" aria-hidden="true"></span>
-          <span class="footer-version" id="homeVersion">Loading version…</span>
+        <div class="footer-bottom-row">
+          <div class="footer-meta">
+            <span class="footer-version"><span id="homeVersion">Loading version…</span></span>
+            <span class="footer-online"><span id="homeOnlineDot" class="footer-status-dot" aria-hidden="true"></span><span id="homeOnlineText">Online</span></span>
+            <span>© 2026 TUBAL HUB</span>
+            <span>Made with <span class="home-emoji" aria-hidden="true">💚</span></span>
+          </div>
+          <span class="footer-storage" id="homeStorage">Local data: calculating…</span>
         </div>
-        <nav class="footer-links" aria-label="Footer">
-          <a href="pages/feeds.html">Feeds</a><a href="pages/ai-music.html">AI Music</a><a href="pages/payapang-isip.html">Payapang Isip</a><a href="pages/ctrlzone.html">CTRLZONE</a><a href="pages/settings.html">Settings</a>
-        </nav>
       </footer>
     </div>
     <audio id="homeMusicAudio" preload="metadata"></audio>
@@ -285,7 +312,7 @@
 <script type="module" src="assets/js/search.js?v=20260924-ns9"></script>
 <script src="assets/js/sidebar-premium.js?v=20260924-v9"></script>
 <script src="assets/js/home-agency.js?v=20260924-v1"></script>
-<script type="module" src="assets/js/home.js?v=20260924-v3"></script>
+<script type="module" src="assets/js/home.js?v=20260924-v4"></script>
   <script src="assets/js/ai-assistant.js?v=20260924-v2"></script>
 <!-- TUBAL HUB — Tubal AI Assistant -->
 <div id="tubalAiAssistant" class="tubal-ai" aria-label="Tubal AI Assistant">
