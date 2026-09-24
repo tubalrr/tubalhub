@@ -8,6 +8,21 @@
 <section class="welcome" id="dashboard"><div><small>WELCOME BACK, ADMIN</small><h2>Control your <em>hub.</em></h2><p>Manage content, members and community activity from one protected panel.</p></div><div class="scan"><span></span><b>SECURE PANEL</b><small>FIREBASE AUTH</small></div></section>
 <section class="stats"><div class="stat"><span>NEWS</span><strong id="newsCount">0</strong><b>Firestore items</b></div><div class="stat"><span>ANNOUNCEMENTS</span><strong id="annCount">0</strong><b>Firestore items</b></div><div class="stat"><span>MEMBERS</span><strong id="memberCount">0</strong><b>Registered users</b></div><div class="stat"><span>CHAT</span><strong id="chatCount">0</strong><b>Recent messages</b></div></section>
 <section class="panel hub-distribution-note"><div class="panel-head"><div><small>CONTENT DISTRIBUTION</small><h2>One Publish → Multiple Hub Surfaces</h2></div><span>HUB POSTS</span></div><p>New content published from Admin is mirrored into the shared hubPosts stream. Feeds receives every published item; News, Shop, Games and other sections receive items matching their content type.</p></section>
+<section class="panel" id="hubPublisher">
+  <div class="panel-head"><div><small>UNIFIED PUBLISHER</small><h2>Publish Across the Hub</h2></div><span>HUB POSTS</span></div>
+  <div class="form-grid">
+    <select id="hpType"><option value="post">Post</option><option value="news">News</option><option value="product">Product</option><option value="game">Game</option><option value="video">Video</option><option value="event">Event</option><option value="announcement">Announcement</option><option value="story">Story</option></select>
+    <input id="hpTitle" placeholder="Title">
+    <input id="hpText" placeholder="Description / text">
+    <input id="hpImage" placeholder="Image URL (optional)">
+    <input id="hpMedia" placeholder="Video File URL (optional)">
+    <input id="hpUrl" placeholder="Link / Product URL (optional)">
+    <input id="hpPrice" placeholder="Price (product only)">
+    <input id="hpStock" placeholder="Stock (product only)">
+    <button id="publishHubContent">Publish to Hub →</button>
+  </div>
+  <small style="opacity:.55;display:block;margin-top:8px">Feeds always receives the item. The content type also routes it to its matching surface.</small>
+</section>
 
 <section class="panel" id="facebookVideosPanel">
   <div class="panel-head"><div><small>SOCIAL VIDEO CONTROL</small><h2>Facebook Videos</h2></div><span>ADMIN ONLY</span></div>
@@ -78,6 +93,16 @@ async function load(){
   news=n.docs.map(d=>({id:d.id,...d.data()}));anns=a.docs.map(d=>({id:d.id,...d.data()}));members=u.docs.map(d=>({id:d.id,...d.data()}));chats=c.docs.map(d=>({id:d.id,...d.data()}));fbVideos=v.docs.map(d=>({id:d.id,...d.data()}));shopProducts=p.docs.map(d=>({id:d.id,...d.data()}));render();
  }catch(e){toast("Firestore error: "+e.message);render()}
 }
+$("publishHubContent").onclick=async()=>{
+ const contentType=$("hpType").value,title=$("hpTitle").value.trim(),text=$("hpText").value.trim(),imageUrl=$("hpImage").value.trim(),mediaUrl=$("hpMedia").value.trim(),productUrl=$("hpUrl").value.trim(),price=$("hpPrice").value.trim(),stock=$("hpStock").value.trim();
+ if(!title||!text)return toast("Enter a title and text.");
+ const destinations={post:["feeds","community"],news:["feeds","news"],product:["feeds","shop"],game:["feeds","games"],video:["feeds","news"],event:["feeds","events"],announcement:["feeds","news","community"],story:["feeds","news"]}[contentType]||["feeds"];
+ try{
+  await addDoc(collection(db,"hubPosts"),{contentType,title,text,imageUrl,mediaUrl,productUrl,price,stock,category:contentType,authorName:"TUBAL HUB",authorPhotoURL:"",createdBy:auth.currentUser.uid,sourceCollection:"hubPosts",sourceId:"",destinations,status:"published",createdAt:serverTimestamp()});
+  ["hpTitle","hpText","hpImage","hpMedia","hpUrl","hpPrice","hpStock"].forEach(id=>$(id).value="");
+  toast("Published to "+destinations.join(" + ")+" .");
+ }catch(e){toast(e.message)}
+};
 $("addShopProduct").onclick=async()=>{
  const name=$("spName").value.trim(),category=$("spCategory").value,price=$("spPrice").value.trim()||"Free",icon=$("spIcon").value.trim()||"◈",badge=$("spBadge").value.trim(),imageUrl=$("spImage").value.trim(),productUrl=$("spUrl").value.trim(),description=$("spDescription").value.trim();
  if(!name||!description)return toast("Enter product name and description.");
