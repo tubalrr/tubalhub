@@ -10,7 +10,7 @@ import crypto from "node:crypto";
 
 const app = express();
 const port = Number(process.env.PORT || 3000);
-const allowedOrigin = process.env.ALLOWED_ORIGIN || "https://tubalrr.github.io";
+const allowedOrigin = process.env.ALLOWED_ORIGIN || "http://localhost:3000";
 
 app.disable("x-powered-by");
 app.set("trust proxy", 1);
