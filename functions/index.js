@@ -718,10 +718,8 @@ exports.upgradeShopProductReal = onCall(async request => {
   const result = await db.runTransaction(async tx => {
     const productRef = db.collection("products").doc(productId);
     const licenseRef = db.collection("licenses").doc(licenseId);
-    const [productSnap, licenseSnap] = await Promise.all([
-      tx.get(productRef),
-      tx.get(licenseRef)
-    ]);
+    const productSnap = await tx.get(productRef);
+    const licenseSnap = await tx.get(licenseRef);
 
     if (!productSnap.exists || !licenseSnap.exists) {
       throw new HttpsError("not-found", "Product or license not found.");
