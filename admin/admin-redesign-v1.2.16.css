@@ -560,3 +560,13 @@ body:after{display:none!important}#sidebarToggle{position:fixed!important;z-inde
   .topbar #logout{display:inline-flex!important;align-items:center!important;justify-content:center!important;min-width:88px!important;height:38px!important;padding:0 16px!important;border:1px solid rgba(52,211,153,.42)!important;border-radius:10px!important;background:rgba(3,18,12,.95)!important;color:#e5fff1!important;font-size:10px!important;font-weight:800!important;cursor:pointer!important;pointer-events:auto!important;visibility:visible!important;opacity:1!important;position:relative!important;z-index:10001!important}
 }
 .admin-search-wrap,.admin-search,.admin-search-results{display:none!important}
+
+/* HARD FIX: keep Admin Sign Out independently visible in the fixed topbar */
+.topbar{overflow:visible!important}
+.topbar .top-actions{position:fixed!important;top:13px!important;right:18px!important;z-index:10050!important;display:flex!important;align-items:center!important;gap:10px!important}
+.topbar #logout{position:relative!important;display:inline-flex!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;min-width:96px!important;height:38px!important;padding:0 16px!important;z-index:10051!important}
+@media(max-width:650px){
+  .topbar .top-actions{top:15px!important;right:14px!important}
+  .topbar .top-actions>span{display:none!important}
+  .topbar #logout{min-width:96px!important;height:38px!important}
+}
