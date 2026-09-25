@@ -322,9 +322,12 @@ function initSponsoredReal(){
     const url=String(active.linkUrl||"").trim();
     const badge=esc(active.badge||"SPONSORED");
     const safeUrl=/^https?:\/\//i.test(url)?url:"";
-    const media=image&&/^https?:\/\//i.test(image)
-      ?'<img src="'+esc(image)+'" alt="" loading="lazy" decoding="async">'
-      :"";
+    const isShopee=/shopee\\.(ph|com|co\\.id|co\\.th|sg|vn|my|tw|cl|br)\\b/i.test(url);
+    const media=image&&/^https?:\\/\\//i.test(image)
+      ?'<img class="sponsored-media-real" src="'+esc(image)+'" alt="" loading="lazy" decoding="async">'
+      :isShopee
+        ?'<div class="sponsored-brand-real" aria-label="Shopee"><img src="https://cdn.simpleicons.org/shopee/EE4D2D" alt="Shopee" loading="eager" decoding="async"></div>'
+        :"";
 
     if(head)head.innerHTML='<span>Sponsored</span><span>'+badge+'</span>';
 
