@@ -327,6 +327,14 @@ service cloud.firestore {
     }
 
     // =========================================================
+    // SPONSORS — PUBLIC READ / ADMIN WRITE
+    // =========================================================
+    match /sponsors/{sponsorId} {
+      allow read: if true;
+      allow create, update, delete: if adminUser();
+    }
+
+    // =========================================================
     // PUBLIC CONTENT — ADMIN WRITE
     // =========================================================
 
