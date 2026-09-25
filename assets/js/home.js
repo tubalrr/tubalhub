@@ -313,7 +313,7 @@ function initSponsoredReal(){
     const image=String(data.imageUrlReal||"").trim();
     const link=String(data.linkReal||"").trim();
     const safeLink=/^https?:\/\//i.test(link)?link:"";
-    const imageHtml=/^https?:\/\//i.test(image)?'<img src="'+escAttr(image)+'" alt="" loading="lazy" decoding="async" style="width:100%;height:140px;object-fit:cover;display:block;">':"";
+    const imageHtml=/^https?:\/\//i.test(image)?'<img src="'+escAttr(image)+'" alt="" loading="lazy" decoding="async" onerror="this.remove()" style="width:100%;height:140px;object-fit:cover;display:block;">':"";
     const body=imageHtml+'<div style="padding:10px;"><b style="font-size:12px;">'+title+'</b>'+(desc?'<p style="font-size:10px;opacity:.6;margin:4px 0 0;">'+desc+'</p>':"")+'</div>';
     status.textContent="LIVE";
     status.style.background="rgba(29,255,145,0.15)";
