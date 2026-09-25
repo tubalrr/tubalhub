@@ -250,8 +250,8 @@ async function loadAnalyticsReal(){
       const start=new Date(end);start.setDate(start.getDate()-29);start.setHours(0,0,0,0);
       const [uSnap,gSnap,mSnap]=await Promise.all([
         getDocs(collection(db,"users")),
-        getDocs(query(collection(db,"globalChats"),where("createdAt",">=",Timestamp.fromDate(start)),where("createdAt","<=",Timestamp.fromDate(end)),limit(50000))),
-        getDocs(query(collection(db,"messages"),where("createdAt",">=",Timestamp.fromDate(start)),where("createdAt","<=",Timestamp.fromDate(end)),limit(50000)))
+        getDocs(query(collection(db,"globalChats"),where("createdAt",">=",Timestamp.fromDate(start)),where("createdAt","<=",Timestamp.fromDate(end)),limit(10000))),
+        getDocs(query(collection(db,"messages"),where("createdAt",">=",Timestamp.fromDate(start)),where("createdAt","<=",Timestamp.fromDate(end)),limit(10000)))
       ]);
       const users=new Map(),days=[],active=new Map();
       const dayKey=d=>{const x=new Date(d);x.setHours(0,0,0,0);return x.toISOString().slice(0,10)};
