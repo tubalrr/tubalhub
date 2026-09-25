@@ -777,10 +777,12 @@ function initFooterQr(){
   if(!box||box.dataset.ready==="1")return;
   box.dataset.ready="1";
   const img=document.createElement("img");
-  img.src="https://quickchart.io/qr?size=96&margin=1&text="+encodeURIComponent("https://tubalrr.github.io/tubalhub/");
+  img.src="/assets/images/tubal-hub-footer-qr.png";
   img.alt="TUBAL HUB QR code";
   img.loading="lazy";
   img.decoding="async";
+  img.width=96;
+  img.height=96;
   box.appendChild(img);
 }
 
