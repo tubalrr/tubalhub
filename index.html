@@ -19,14 +19,14 @@ window.TUBAL_EMAILJS_CONFIG = Object.freeze({
 </script>
 <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://cdn.simpleicons.org" crossorigin>
-<link rel="stylesheet" href="assets/css/style.css?v=1.2.10">
-<link rel="stylesheet" href="assets/css/global-theme.css?v=1.2.10">
-  <link rel="stylesheet" href="assets/css/premium-logos.css?v=1.2.10" data-tubal-premium-logos>
-<link rel="stylesheet" href="assets/css/home-premium.css?v=1.2.10">
-<link rel="stylesheet" href="assets/css/sidebar-premium.css?v=1.2.10">
-<link rel="stylesheet" href="assets/css/home-agency.css?v=1.2.10">
-<link rel="stylesheet" href="assets/css/home.css?v=1.2.10" data-tubal-home-css>
-<link rel="stylesheet" href="assets/css/notification-search.css?v=1.2.10">
+<link rel="stylesheet" href="assets/css/style.css?v=1.2.16">
+<link rel="stylesheet" href="assets/css/global-theme.css?v=1.2.16">
+  <link rel="stylesheet" href="assets/css/premium-logos.css?v=1.2.16" data-tubal-premium-logos>
+<link rel="stylesheet" href="assets/css/home-premium.css?v=1.2.16">
+<link rel="stylesheet" href="assets/css/sidebar-premium.css?v=1.2.16">
+<link rel="stylesheet" href="assets/css/home-agency.css?v=1.2.16">
+<link rel="stylesheet" href="assets/css/home.css?v=1.2.16" data-tubal-home-css>
+<link rel="stylesheet" href="assets/css/notification-search.css?v=1.2.16">
 <style>
 .hub-home .search-box{position:relative!important;z-index:200!important;pointer-events:auto!important}
 .hub-home .search-box input{display:block!important;position:relative!important;z-index:2!important;width:100%!important;min-width:0!important;height:40px!important;padding:0 8px!important;pointer-events:auto!important;opacity:1!important;visibility:visible!important;cursor:text!important;border:0!important;outline:0!important;box-shadow:none!important}
@@ -359,21 +359,17 @@ window.TUBAL_EMAILJS_CONFIG = Object.freeze({
           <div class="bento-stat-tile"><span class="bento-mini-icon">🎵</span><div><small>AI Music</small><strong id="bentoMusicCount">0</strong><em>Saved audio</em></div></div>
           <div class="bento-stat-tile"><span class="bento-mini-icon">🎮</span><div><small>Games</small><strong id="bentoGamesCount">0</strong><em>CTRLZONE catalog</em></div></div>
           <div class="bento-stat-tile"><span class="bento-mini-icon">📱</span><div><small>Feeds</small><strong id="bentoFeedsCount">0</strong><em>Saved posts</em></div></div>
-          <div class="bento-stat-tile"><span class="bento-mini-icon">◈</span><div><small>Version</small><strong id="bentoVersion">v1.2.10</strong><em>Source: version.json</em></div></div>
+          <div class="bento-stat-tile"><span class="bento-mini-icon">◈</span><div><small>Version</small><strong id="bentoVersion">v1.2.16</strong><em>Source: version.json</em></div></div>
         </div>
         <span class="bento-data-note" id="bentoSystemNote">Real site data only • No mock counters</span>
       </section>
 
-<aside id="sponsoredContainerReal" class="sponsored-container-real" aria-label="Sponsored">
-  <div class="sponsored-container-head-real">
-    <span>Sponsored</span>
-    <span>EMPTY</span>
+<aside id="sponsoredContainerReal" aria-label="Sponsored" style="width:100%;max-width:1280px;box-sizing:border-box;background:rgba(8,20,12,0.4);border:1px dashed rgba(255,255,255,0.08);border-radius:16px;padding:12px;margin-top:16px;min-height:90px;">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+    <span style="font-size:9px;letter-spacing:2px;opacity:0.3;">SPONSORED</span>
+    <span id="sponsoredStatusReal" style="font-size:7px;background:rgba(255,255,255,0.05);padding:2px 6px;border-radius:20px;">CHECKING...</span>
   </div>
-  <div class="sponsored-empty-real">
-    <span aria-hidden="true">📦</span>
-    <b>No Sponsor Yet</b>
-    <small>Empty container — ready for a future real sponsor.</small>
-  </div>
+  <div id="sponsoredContentReal"></div>
 </aside>
 
  <div id="featuredGameReal" class="featured-game-sponsored-grid-real">
@@ -581,7 +577,7 @@ window.TUBAL_EMAILJS_CONFIG = Object.freeze({
             <span>Pinapayagan ko ang TUBAL HUB na gamitin ang email na ito para sa system-update notifications. Consent is optional and can be removed from this browser.</span>
           </label>
           <div class="footer-subscribe-meta-real">
-            <small>Current release: <b id="notifyCurrentVersionReal">v1.2.10</b> • Saved locally in this browser • Email delivery uses EmailJS only when the owner has configured a real service/public key.</small>
+            <small>Current release: <b id="notifyCurrentVersionReal">v1.2.16</b> • Saved locally in this browser • Email delivery uses EmailJS only when the owner has configured a real service/public key.</small>
             <button id="unsubscribeNotifyRealBtn" type="button">Unsubscribe</button>
           </div>
         </section>
@@ -589,7 +585,7 @@ window.TUBAL_EMAILJS_CONFIG = Object.freeze({
         <div class="bento-footer-row bento-footer-row-3">
           <div class="footer-country"><span class="footer-ph-circle" aria-label="Philippines">🇵🇭</span><span>Philippines</span></div>
           <div class="footer-follow"><strong>Follow Us</strong><div class="footer-follow-icons"><a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" aria-label="Facebook">ⓕ</a><a href="https://www.linkedin.com/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">in</a><a href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer" aria-label="YouTube">▶</a><a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">◎</a><a href="https://twitter.com/" target="_blank" rel="noopener noreferrer" aria-label="Twitter">𝕏</a><a href="https://www.tiktok.com/" target="_blank" rel="noopener noreferrer" aria-label="TikTok">♪</a></div></div>
-          <div class="footer-copyright"><span>© 2026 TUBAL HUB</span><span>Version <b id="liveVersion">v1.2.10</b></span><span>Build <b id="liveBuild">2026-09-25_1015</b></span><span class="footer-online"><span id="homeOnlineDot" class="footer-status-dot"></span><span id="homeOnlineText">Online</span></span><span>Local data: <b id="localDataStatus">0 journals • 0 posts • 0 cart • real</b></span></div>
+          <div class="footer-copyright"><span>© 2026 TUBAL HUB</span><span>Version <b id="liveVersion">v1.2.16</b></span><span>Build <b id="liveBuild">2026-09-25_1015</b></span><span class="footer-online"><span id="homeOnlineDot" class="footer-status-dot"></span><span id="homeOnlineText">Online</span></span><span>Local data: <b id="localDataStatus">0 journals • 0 posts • 0 cart • real</b></span></div>
         </div>
       </footer>
     </div>
@@ -610,7 +606,7 @@ window.TUBAL_EMAILJS_CONFIG = Object.freeze({
         <small>May bagong build na-detect sa GitHub</small>
       </div>
     </div>
-    <span id="updateVersionBadgeReal" class="system-update-version-real">v1.2.10</span>
+    <span id="updateVersionBadgeReal" class="system-update-version-real">v1.2.16</span>
   </div>
   <div class="system-update-body-real">
     <div class="system-update-meta-real">
@@ -647,16 +643,16 @@ window.TUBAL_EMAILJS_CONFIG = Object.freeze({
 </div>
 
 <div class="cookie" id="cookieBox"><div><b>🍪 Cookies</b><span>We use cookies to improve your experience.</span></div><button id="acceptCookie">Accept</button></div>
-<script src="assets/js/app.js?v=1.2.10"></script>
-<script src="assets/js/main.js?v=1.2.10"></script>
+<script src="assets/js/app.js?v=1.2.16"></script>
+<script src="assets/js/main.js?v=1.2.16"></script>
 <script src="assets/js/theme.js"></script>
-<script type="module" src="assets/js/notifications.js?v=1.2.10"></script>
-<script type="module" src="assets/js/search.js?v=1.2.10"></script>
-<script src="assets/js/sidebar-premium.js?v=1.2.10"></script>
-<script src="js/global-chat.js?v=1.2.13-videohandler1" defer></script>
-<script src="assets/js/home-agency.js?v=1.2.10"></script>
-<script type="module" src="assets/js/home.js?v=1.2.13"></script>
+<script type="module" src="assets/js/notifications.js?v=1.2.16"></script>
+<script type="module" src="assets/js/search.js?v=1.2.16"></script>
+<script src="assets/js/sidebar-premium.js?v=1.2.16"></script>
+<script src="js/global-chat.js?v=1.2.16" defer></script>
+<script src="assets/js/home-agency.js?v=1.2.16"></script>
+<script type="module" src="assets/js/home.js?v=1.2.16"></script>
 
-<script src="js/chatbot.js?v=1.2.10"></script>
+<script src="js/chatbot.js?v=1.2.16"></script>
 </body>
 </html>
