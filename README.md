@@ -216,3 +216,28 @@ The website is intended for personal and non-commercial viewing unless permissio
 © 2026 TUBAL HUB — All Rights Reserved.
 
 Built and maintained by **TUBAL HUB**.
+
+
+## 🛍️ Gumroad Source-Code Edition
+
+This branch is prepared as a buyer-facing source-code distribution edition.
+
+### Before deployment
+1. Create a NEW Firebase project for the buyer.
+2. Create a Web App in that Firebase project and replace the values in `assets/js/firebase-config.js`.
+3. Replace the Firebase config in `firebase-messaging-sw.js`.
+4. Deploy `firestore.rules`, `storage.rules`, `firestore.indexes.json`, and `functions/` to the buyer's Firebase project.
+5. Set the buyer's authenticated user with the Firebase custom claim `admin: true`.
+6. Configure server-only environment variables from `.env.example`.
+7. Review third-party assets, domains, logos, API quotas, and payment-provider requirements before commercial launch.
+
+### Important payment note
+The template does not store card numbers, expiry dates, or CVV. The built-in manual order flow is intended for bank-transfer or PayPal-style reference workflows until the buyer connects a PCI-compliant payment provider.
+
+### Distribution
+The purchaser may customize and deploy the source under the included source-code license. The purchaser may not redistribute or resell the source code as a competing template or source-code pack.
+
+See:
+- `GUMROAD-SETUP.md`
+- `GUMROAD-LISTING.md`
+- `TUBAL-HUB-SOURCE-CODE-LICENSE.md`
