@@ -489,3 +489,161 @@
   }
   window.tubalHubChatGuardReal = Object.freeze({moderateTextReal,isRateLimitedReal});
 })();
+
+/* =========================================================
+   TUBAL HUB — GLOBAL CHAT STORAGE AUTO-CLEANUP REAL
+   Uses the existing Storage path: global-chat/{uid}/...
+   No fake quota/size estimates are shown.
+   ========================================================= */
+(() => {
+  "use strict";
+
+  const MAX_IMAGES_REAL = 40;
+  const MAX_SIZE_REAL = 8 * 1024 * 1024;
+  const ALLOWED_MIME_REAL = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+  let storageApiPromiseReal = null;
+
+  async function storageApiReal() {
+    if (!storageApiPromiseReal) {
+      storageApiPromiseReal = Promise.all([
+        import("https://www.gstatic.com/firebasejs/12.19.0/firebase-storage.js"),
+        import("../assets/js/firebase-config.js")
+      ]).then(([storageMod, configMod]) => ({
+        ...storageMod,
+        auth: configMod.auth,
+        app: configMod.app
+      }));
+    }
+    return storageApiPromiseReal;
+  }
+
+  function currentRealUser() {
+    const user = window.firebase?.auth?.currentUser;
+    return user && !user.isAnonymous ? user : null;
+  }
+
+  async function listOwnChatFilesReal() {
+    const { getStorage, ref, listAll, getMetadata, auth } = await storageApiReal();
+    const user = auth?.currentUser || window.firebase?.auth?.currentUser;
+    if (!user || user.isAnonymous) {
+      return { user: null, files: [] };
+    }
+
+    const storage = getStorage();
+    const folderRef = ref(storage, "global-chat/" + user.uid);
+    const result = await listAll(folderRef);
+    const files = await Promise.all(result.items.map(async (fileRef) => {
+      try {
+        const metadata = await getMetadata(fileRef);
+        return {
+          ref: fileRef,
+          name: fileRef.name,
+          time: Date.parse(metadata.timeCreated || "") || 0,
+          size: Number(metadata.size || 0),
+          contentType: metadata.contentType || ""
+        };
+      } catch (_) {
+        return {
+          ref: fileRef,
+          name: fileRef.name,
+          time: 0,
+          size: 0,
+          contentType: ""
+        };
+      }
+    }));
+
+    files.sort((a, b) => a.time - b.time);
+    return { user, files };
+  }
+
+  async function autoDeleteOldReal() {
+    try {
+      const { files } = await listOwnChatFilesReal();
+      const beforeCount = files.length;
+
+      if (beforeCount < MAX_IMAGES_REAL) {
+        return { didDelete: false, deleted: 0, beforeCount, afterCount: beforeCount };
+      }
+
+      const toDelete = files.slice(0, 15);
+      let deleted = 0;
+
+      for (const item of toDelete) {
+        try {
+          const { deleteObject } = await storageApiReal();
+          await deleteObject(item.ref);
+          deleted++;
+        } catch (error) {
+          console.warn("Global Chat auto-delete failed:", item.name, error);
+        }
+      }
+
+      return {
+        didDelete: deleted > 0,
+        deleted,
+        beforeCount,
+        afterCount: Math.max(0, beforeCount - deleted)
+      };
+    } catch (error) {
+      console.warn("Global Chat storage cleanup unavailable:", error);
+      return { didDelete: false, deleted: 0, beforeCount: 0, afterCount: 0, error };
+    }
+  }
+
+  async function prepareUploadReal(file) {
+    if (!file) throw new Error("NO_FILE");
+    if (file.size > MAX_SIZE_REAL) throw new Error("FILE_TOO_LARGE");
+    if (!ALLOWED_MIME_REAL.includes(file.type)) throw new Error("FILE_TYPE_NOT_ALLOWED");
+
+    const cleanup = await autoDeleteOldReal();
+    if (cleanup.didDelete) {
+      console.info("Global Chat storage cleanup:", cleanup.deleted, "old media deleted.");
+    }
+    return cleanup;
+  }
+
+  async function showStorageUsageReal() {
+    const badge = document.getElementById("storageBadgeReal");
+    if (!badge) return;
+
+    try {
+      const { files } = await listOwnChatFilesReal();
+      const count = files.length;
+      const bytes = files.reduce((sum, item) => sum + Number(item.size || 0), 0);
+      const mb = (bytes / (1024 * 1024)).toFixed(1);
+
+      badge.textContent = count + "/" + MAX_IMAGES_REAL + " media • " + mb + " MB";
+      badge.title = "Your Global Chat media in global-chat/{uid}/. Max " + MAX_IMAGES_REAL + " files before auto-cleanup.";
+      badge.style.background = count >= Math.ceil(MAX_IMAGES_REAL * 0.8)
+        ? "rgba(255,180,50,.16)"
+        : "rgba(29,255,145,.1)";
+      badge.style.border = "1px solid rgba(255,255,255,.08)";
+      badge.style.color = "#dfffee";
+    } catch (_) {
+      badge.textContent = "Storage: checking…";
+    }
+  }
+
+  window.tubalHubStorageAutoDeleteReal = Object.freeze({
+    MAX_IMAGES_REAL,
+    MAX_SIZE_REAL,
+    ALLOWED_MIME_REAL,
+    autoDeleteOldReal,
+    prepareUploadReal,
+    showStorageUsageReal
+  });
+
+  function initStorageReal() {
+    if (!document.getElementById("storageBadgeReal")) return;
+    showStorageUsageReal();
+    window.clearInterval(window.__tubalHubStorageUsageTimerReal);
+    window.__tubalHubStorageUsageTimerReal = window.setInterval(showStorageUsageReal, 10000);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initStorageReal, { once: true });
+  } else {
+    initStorageReal();
+  }
+})();
