@@ -4632,3 +4632,22 @@ body > div[style*="60px"],.left-rail,.narrow-col{
   background:rgba(29,255,145,.07);
   color:#fff;
 }
+
+
+/* =========================================================
+   Shared 3-dash safety contract
+   The Global Chat trigger is scoped to .global-chat-page so
+   homepage styling remains unchanged.
+   ========================================================= */
+body.global-chat-page .global-chat-menu-toggle,
+body.global-chat-page #sidebarToggle{
+  position:fixed!important;
+  left:16px!important;
+  top:10px!important;
+  width:44px!important;
+  height:44px!important;
+  min-width:44px!important;
+  min-height:44px!important;
+  z-index:1002!important;
+  pointer-events:auto!important;
+}
