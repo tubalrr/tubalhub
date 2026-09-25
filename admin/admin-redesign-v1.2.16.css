@@ -606,3 +606,25 @@ body.sidebar-collapsed #sidebarToggle{left:16px!important}
 body.sidebar-collapsed .sidebar,
 body.sidebar-collapsed .sidebar *{visibility:hidden!important}
 body.sidebar-collapsed .sidebar{display:none!important}
+
+
+/* SYSTEM SETTINGS — SEPARATE VIEW FROM DASHBOARD */
+#systemSettings{display:none!important}
+body:has(#systemSettings:target) .dashboard-head,
+body:has(#systemSettings:target) .stats,
+body:has(#systemSettings:target) .dashboard-grid,
+body:has(#systemSettings:target) #shopProducts,
+body:has(#systemSettings:target) #content,
+body:has(#systemSettings:target) #eventsManager,
+body:has(#systemSettings:target) #announcements,
+body:has(#systemSettings:target) #members,
+body:has(#systemSettings:target) #chat,
+body:has(#systemSettings:target) footer{display:none!important}
+body:has(#systemSettings:target) #systemSettings{
+  display:block!important;
+  width:100%!important;
+  max-width:100%!important;
+  min-height:220px!important;
+  height:auto!important;
+  margin:0!important;
+}
