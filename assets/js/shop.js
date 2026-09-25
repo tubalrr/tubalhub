@@ -1,6 +1,5 @@
 import {app,auth} from "./firebase-config.js";
 import {getFirestore,collection,addDoc,serverTimestamp,onSnapshot,getDocs} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
-import {publishHubPost} from "./hub-content.js";
 
 const db=getFirestore(app);
 const CART_KEY="tubalhub-shop-cart-v1";
@@ -273,27 +272,6 @@ function updateCartUI(){
   document.getElementById("cartTitleCount").textContent=count+" "+(count===1?"item":"items");
 }
 
-async function createShopFeedEvent(p,action){
-  const user=auth.currentUser;
-  if(!user||user.isAnonymous)return;
-  const name=user.displayName||user.email?.split("@")[0]||"Member";
-  try{
-    await publishHubPost({
-      contentType:"product",
-      title:name+" "+(action==="buy"?"bought":"added")+" "+p.title,
-      text:name+" "+(action==="buy"?"bought":"added")+" "+p.title+" in TUBAL HUB Shop.",
-      imageUrl:p.image,
-      productUrl:location.href.split("#")[0]+"#"+encodeURIComponent(p.id),
-      price:p.price,
-      stock:p.stock,
-      authorName:name,
-      authorPhotoURL:user.photoURL||"",
-      sourceCollection:"shop",
-      sourceId:p.id,
-      destinations:["feeds","shop"]
-    });
-  }catch(e){console.warn("[TUBAL HUB Shop] feed event failed",e)}
-}
 async function createShopNotification(p,action){
   const user=auth.currentUser;
   if(!user||user.isAnonymous)return;
@@ -316,10 +294,6 @@ async function createShopNotification(p,action){
     window.dispatchEvent(new CustomEvent("tubalhub-shop-notification",{detail:{productId:p.id,action}}));
   }catch(e){console.warn("[TUBAL HUB Shop] notification failed",e)}
 }
-async function recordShopEvent(p,action){
-  await Promise.allSettled([createShopFeedEvent(p,action),createShopNotification(p,action)]);
-}
-
 function addToCart(id,qty=1,trigger=null,action="cart"){
   const p=productById(id);if(!p)return;
   const row=state.cart.find(x=>x.id===id);
@@ -329,7 +303,7 @@ function addToCart(id,qty=1,trigger=null,action="cart"){
   if(trigger){trigger.classList.remove("is-pop");void trigger.offsetWidth;trigger.classList.add("is-pop");burstAt(trigger,8)}
   burstAt(els.cartBtn,6);
   notify("Added to cart! "+p.title);
-  recordShopEvent(p,action);
+  createShopNotification(p,action);
 }
 function removeCart(id){state.cart=state.cart.filter(x=>x.id!==id);saveCart();updateCartUI()}
 function stepCart(id,delta){
