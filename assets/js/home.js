@@ -304,7 +304,11 @@ function initSponsoredReal(){
 
   const render=items=>{
     const active=items
-      .filter(x=>x&&x.active===true)
+      .filter(x=>x&&(
+        x.active===true ||
+        String(x.active||"").toLowerCase()==="true" ||
+        x.active===1
+      ))
       .sort((a,b)=>toMillis(b.updatedAt||b.createdAt)-toMillis(a.updatedAt||a.createdAt))[0];
 
     const head=container.querySelector(".sponsored-container-head-real");
@@ -322,12 +326,14 @@ function initSponsoredReal(){
     const url=String(active.linkUrl||"").trim();
     const badge=esc(active.badge||"SPONSORED");
     const safeUrl=/^https?:\/\//i.test(url)?url:"";
-    const isShopee=/shopee\\.(ph|com|co\\.id|co\\.th|sg|vn|my|tw|cl|br)\\b/i.test(url);
-    const media=image&&/^https?:\\/\\//i.test(image)
+    const sponsorText=(title+" "+text+" "+badge).toLowerCase();
+    const isShopee=/\\bshopee\\.(?:ph|com|co\\.id|co\\.th|sg|vn|my|tw|cl|br)\\b/i.test(url)||sponsorText.includes("shopee");
+    const hasCustomImage=image&&/^https?:\\/\\//i.test(image);
+    const media=hasCustomImage
       ?'<img class="sponsored-media-real" src="'+esc(image)+'" alt="" loading="lazy" decoding="async">'
       :isShopee
-        ?'<div class="sponsored-brand-real" aria-label="Shopee"><img src="https://cdn.simpleicons.org/shopee/EE4D2D" alt="Shopee" loading="eager" decoding="async"></div>'
-        :"";
+        ?'<div class="sponsored-brand-real" aria-label="Shopee"><img src="https://cdn.simpleicons.org/shopee/EE4D2D" alt="Shopee" loading="eager" decoding="async" onerror="this.style.display=\'none\';this.parentElement.classList.add(\'is-fallback\')"><span>SHOPEE</span></div>'
+        :'<div class="sponsored-brand-real sponsored-brand-fallback" aria-hidden="true"><span>SPONSORED</span></div>';
 
     if(head)head.innerHTML='<span>Sponsored</span><span>'+badge+'</span>';
 
