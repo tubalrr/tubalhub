@@ -673,7 +673,7 @@ function getRealGamePlayCount(id){
 }
 async function getRealGames(){
   try{
-    const response=await fetch('data/games.json?v=1.2.10&t='+Date.now(),{cache:'no-store'});
+    const response=await fetch('data/games.json?v=1.2.16&t='+Date.now(),{cache:'no-store'});
     if(!response.ok)throw new Error('games.json '+response.status);
     const data=await response.json();
     const rows=Array.isArray(data)?data:(Array.isArray(data?.games)?data.games:[]);
@@ -1980,17 +1980,12 @@ if(document.readyState==="loading"){
 
   function getRealAds(){
     const local=(()=>{try{const value=JSON.parse(localStorage.getItem(ADS_LOCAL_KEY)||"[]");return Array.isArray(value)?value:[]}catch(_){return[]}})();
-    const builtIn=[
-      {id:"ad1_real",titleReal:"TUBAL HUB Premium",descReal:"Unlock real features",ctaReal:"Upgrade Now",type:"banner",bgReal:"linear-gradient(135deg,#1dff91,#7d5aff)",linkReal:"pages/shop.html"},
-      {id:"ad2_real",titleReal:"New Drop - Tubal Tee",priceReal:"₱599",type:"square",bgReal:"linear-gradient(135deg,#ff9a3d,#ff1a1a)",linkReal:"pages/shop.html"},
-      {id:"ad3_real",titleReal:"AI Music Studio",descReal:"Create real music",type:"square",bgReal:"linear-gradient(135deg,#020604,#0a1f12)",linkReal:"pages/ai-music.html"}
-    ];
-    return fetch("data/ads.json",{cache:"no-store"})
+    return fetch("data/ads.json?v=1.2.16&t="+Date.now(),{cache:"no-store"})
       .then(r=>r.ok?r.json():[])
       .catch(()=>[])
       .then(remote=>{
         const rows=Array.isArray(remote)?remote:(Array.isArray(remote?.ads)?remote.ads:[]);
-        return rows.length?rows:(local.length?local:builtIn);
+        return rows.length?rows:local;
       });
   }
 
@@ -2100,7 +2095,7 @@ function renderAllReal(){
   const cartEl=document.getElementById('cartCountReal');
   if(cartEl)cartEl.textContent=cart.length+' '+(cart.length===1?'item':'items')+' real';
 
-  fetch('data/games.json?v=1.2.10&t='+Date.now(),{cache:'no-store'})
+  fetch('data/games.json?v=1.2.16&t='+Date.now(),{cache:'no-store'})
     .then(r=>{if(!r.ok)throw new Error('games.json '+r.status);return r.json()})
     .then(games=>{
       const rows=Array.isArray(games)?games:(Array.isArray(games.games)?games.games:[]);
@@ -2237,7 +2232,7 @@ async function detectSystemUpdateReal(force=false){
   if(!force && now-lastCheckReal<3000)return;
   lastCheckReal=now;
   try{
-    const res=await fetch('version.json?v=1.2.10&t='+Date.now(),{
+    const res=await fetch('version.json?v=1.2.16&t='+Date.now(),{
       cache:'no-store',
       headers:{'Cache-Control':'no-cache','Pragma':'no-cache'}
     });
