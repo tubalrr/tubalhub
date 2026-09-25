@@ -172,3 +172,34 @@
     init();
   }
 })();
+
+/* Shared real moderation + rate-limit guard for Global Chat messages and replies. */
+(() => {
+  const BANNED_WORDS_REAL = [
+    "fuck","fucking","shit","bitch","asshole","bastard","damn",
+    "putangina","puta","gago","tanga","bobo","ulol","tarantado","leche","bwisit","buwisit","hayop","hinayupak",
+    "p*tangina","p*tang ina","putang ina","g*go","t*nga","b*bo","bw3sit","bwesit"
+  ];
+  const normalize = (value) => String(value || "").toLowerCase().replace(/[0@]/g,"o").replace(/[1!|]/g,"i").replace(/[3]/g,"e").replace(/[4@]/g,"a").replace(/[$5]/g,"s").replace(/[7]/g,"t").replace(/[._*\-]+/g,"").replace(/\s+/g," ").trim();
+  const escapeRegex = (value) => String(value).replace(/[.*+?^$()|[\]\\]/g,"\\$&");
+  const patterns = BANNED_WORDS_REAL.map(word => new RegExp("(?<![a-z0-9])" + escapeRegex(word).replace(/\\s+/g,"\\\\s*") + "(?![a-z0-9])","i"));
+  function moderateTextReal(textReal){
+    const raw = String(textReal || "");
+    if(!raw.trim()) return {allowed:false,reason:"Empty",cleanText:"",hadBadWord:false};
+    const normalized = normalize(raw);
+    const found = BANNED_WORDS_REAL.find((word,index) => patterns[index].test(raw) || patterns[index].test(normalized));
+    if(!found) return {allowed:true,reason:"",cleanText:raw.trim(),hadBadWord:false};
+    return {allowed:false,reason:found,cleanText:"",hadBadWord:true};
+  }
+  function isRateLimitedReal(uid){
+    const safeUid = String(uid || "").trim();
+    if(!safeUid) return false;
+    const key = "tubalhub_ratelimit_" + safeUid;
+    const now = Date.now();
+    const last = Number(localStorage.getItem(key) || 0);
+    if(now - last < 2000) return true;
+    localStorage.setItem(key,String(now));
+    return false;
+  }
+  window.tubalHubChatGuardReal = Object.freeze({moderateTextReal,isRateLimitedReal});
+})();
