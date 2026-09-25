@@ -499,85 +499,17 @@ document.querySelectorAll(".payment-brand-logos img").forEach(img=>img.addEventL
 }));
 function openOrderReview(){
   if(state.upgradeTarget){
-    const p=state.upgradeTarget.product;
-    document.getElementById("reviewSubtotal").textContent=money(parseProductPrice(p.upgradePrice));
-    document.getElementById("reviewShipping").textContent=money(0);
-    document.getElementById("reviewTotal").textContent=money(parseProductPrice(p.upgradePrice));
-    document.getElementById("reviewPayment").textContent={card:"Card • Visa / Mastercard",bank:"Bank Transfer",paypal:"PayPal"}[state.payment]||"Card";
-    document.getElementById("orderReviewItems").innerHTML='<div class="order-review-item"><div class="product-no-image">UP</div><div><strong>'+esc(p.title)+'</strong><span>Upgrade v'+esc(state.upgradeTarget.license.ownedVersion)+' → v'+esc(p.latestVersion)+'</span></div><b>'+money(parseProductPrice(p.upgradePrice))+'</b></div>';
-    els.checkoutLayer.classList.remove("is-open");setTimeout(()=>{els.checkoutLayer.hidden=true;const layer=document.getElementById("orderReviewLayer");layer.hidden=false;requestAnimationFrame(()=>layer.classList.add("is-open"))},220);return;
-  }
-  document.getElementById("reviewSubtotal").textContent=money(subtotal());
-  document.getElementById("reviewShipping").textContent=money(shipping());
-  document.getElementById("reviewTotal").textContent=money(total());
-  document.getElementById("reviewPayment").textContent={card:"Card • Visa / Mastercard",bank:"Bank Transfer",paypal:"PayPal"}[state.payment]||"Card";
-  const list=document.getElementById("orderReviewItems");
-  list.innerHTML=state.cart.map(item=>{const p=productById(item.id);if(!p)return"";return '<div class="order-review-item"><img src="'+esc(p.image)+'" alt=""><div><strong>'+esc(p.title)+'</strong><span>Qty '+item.qty+'</span></div><b>'+money(p.price*item.qty)+'</b></div>'}).join("");
-  els.checkoutLayer.classList.remove("is-open");
-  setTimeout(()=>{els.checkoutLayer.hidden=true;const layer=document.getElementById("orderReviewLayer");layer.hidden=false;requestAnimationFrame(()=>layer.classList.add("is-open"))},220);
-}
-function closeOrderReview(){
-  const layer=document.getElementById("orderReviewLayer");layer.classList.remove("is-open");
-  setTimeout(()=>{if(!layer.classList.contains("is-open"))layer.hidden=true},220);
-}
-function readPaymentReference(){
-  const ids=["gcashReference","mayaReference","bankReference","paymentReference"];
-  for(const id of ids){
-    const value=String(document.getElementById(id)?.value||"").trim();
-    if(value)return value.slice(0,160);
-  }
-  return "";
-}
-function openOrderSuccess(orderTotal,method,orderId){
-  const number=String(orderId||"").trim()||"Pending";
-  document.getElementById("orderNumber").textContent=number;
-  document.getElementById("successTotal").textContent=money(orderTotal);
-  document.getElementById("successPayment").textContent=method;
-  document.getElementById("orderSuccessCopy").textContent="Order "+number+" was submitted and is pending manual payment verification. Digital ownership stays locked until Admin verifies payment.";
-  document.getElementById("orderSuccessLayer").hidden=false;
-  requestAnimationFrame(()=>document.getElementById("orderSuccessLayer").classList.add("is-open"));
-}
-function closeOrderSuccess(){
-  const layer=document.getElementById("orderSuccessLayer");layer.classList.remove("is-open");
-  setTimeout(()=>{if(!layer.classList.contains("is-open"))layer.hidden=true},220);
-}
-els.checkoutLayer.addEventListener("click",e=>{if(e.target===els.checkoutLayer)closeCheckout()});
-document.getElementById("finishCheckout").addEventListener("click",()=>{
-  const form=document.getElementById("paymentFields");
-  const required=form?.querySelectorAll("input[required]")||[];
-  let valid=true;
-  required.forEach(input=>{if(!String(input.value||"").trim()){input.reportValidity?.();valid=false;}});
-  if(!valid)return;
-  burstAt(document.getElementById("finishCheckout"),12);
-  openOrderReview();
-});
-document.getElementById("closeOrderReview").addEventListener("click",closeOrderReview);
-document.getElementById("backToPayment").addEventListener("click",()=>{
-  closeOrderReview();
-  setTimeout(()=>{els.checkoutLayer.hidden=false;requestAnimationFrame(()=>els.checkoutLayer.classList.add("is-open"))},220);
-});
-document.getElementById("placeOrderBtn").addEventListener("click",async()=>{
-  const orderTotal=state.upgradeTarget?parseProductPrice(state.upgradeTarget.product.upgradePrice):total();
-  const method={card:"Card • Visa / Mastercard",bank:"Bank Transfer",paypal:"PayPal"}[state.payment]||"Card";
-  const user=auth.currentUser;
-  if(!user||user.isAnonymous){notify("Sign in with a real account to create an order or license.");return}
-
-  if(state.upgradeTarget){
     try{
       const p=state.upgradeTarget.product, license=state.upgradeTarget.license;
       const result=await upgradeShopProductReal({
         productId:p.firestoreId,
         licenseId:license.id,
-        paymentMethod:method
+        paymentMethod:method,
+        paymentReference:readPaymentReference()
       });
-      const latestVersion=result?.data?.latestVersion||p.latestVersion;
-      ownedLicenses=ownedLicenses.map(x=>x.id===license.id
-        ? {...x,ownedVersion:latestVersion,latestVersion,downloadUrl:p.downloadUrl||""}
-        : x);
-      renderMyProducts();
       state.upgradeTarget=null;
       burstAt(document.getElementById("placeOrderBtn"),12);
-      openOrderSuccess(orderTotal,method);
+      openOrderSuccess(orderTotal,method,result?.data?.orderId);
       closeOrderReview();
       return;
     }catch(e){
@@ -597,12 +529,13 @@ document.getElementById("placeOrderBtn").addEventListener("click",async()=>{
         const p=productById(x.id);
         return {productId:p?.firestoreId||p?.id,qty:x.qty};
       }),
-      paymentMethod:method
+      paymentMethod:method,
+      paymentReference:readPaymentReference()
     });
     const serverTotal=Number(result?.data?.total);
     const finalTotal=Number.isFinite(serverTotal)?serverTotal:orderTotal;
     burstAt(document.getElementById("placeOrderBtn"),12);
-    openOrderSuccess(finalTotal,method);
+    openOrderSuccess(finalTotal,method,result?.data?.orderId);
     state.cart=[];saveCart();updateCartUI();closeOrderReview();closeCart();
   }catch(e){
     console.error("[TUBAL HUB Shop] secure order failed",e);
