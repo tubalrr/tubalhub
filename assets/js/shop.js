@@ -406,11 +406,11 @@ function updatePaymentUI(){
       : '<label class="payment-field-full">PayPal email<input id="paypalEmail" type="email" autocomplete="email" placeholder="you@example.com" required></label><label class="payment-field-full">PayPal reference<input id="paypalReference" type="text" placeholder="Payment reference" required></label>';
   }
   const copy=document.getElementById("checkoutCopy");
-  if(copy)copy.textContent=cartCount()+" items ready • "+data.title+" selected.";
+  if(copy)copy.textContent=state.upgradeTarget?"Upgrade "+state.upgradeTarget.product.title+" to v"+state.upgradeTarget.product.latestVersion+" • "+data.title+" selected.":cartCount()+" items ready • "+data.title+" selected.";
 }
 function openCheckout(){
   if(!state.cart.length&&!state.upgradeTarget)return;
-  els.checkoutTotal.textContent=money(total());
+  els.checkoutTotal.textContent=money(state.upgradeTarget?parseProductPrice(state.upgradeTarget.product.upgradePrice):total());
   els.checkoutLayer.hidden=false;
   updatePaymentUI();
   requestAnimationFrame(()=>els.checkoutLayer.classList.add("is-open"));
