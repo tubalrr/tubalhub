@@ -142,6 +142,7 @@ body:after{display:none!important}#sidebarToggle{position:fixed!important;z-inde
 #content .form-grid textarea{min-height:65px!important}
 #content .form-grid button{padding:9px!important}
 #newsList .item{padding:8px 0!important;gap:9px!important}
+#newsList{max-height:360px!important;overflow-y:auto!important;overflow-x:hidden!important;padding-right:6px!important;scrollbar-width:thin!important;scrollbar-color:#334155 transparent!important}#newsList::-webkit-scrollbar{width:6px!important}#newsList::-webkit-scrollbar-track{background:rgba(255,255,255,.025)!important;border-radius:99px!important}#newsList::-webkit-scrollbar-thumb{background:#334155!important;border-radius:99px!important}#newsList::-webkit-scrollbar-thumb:hover{background:#475569!important}
 #newsList .item b{font-size:10px!important}
 #newsList .item p{font-size:8px!important;line-height:1.35!important;margin:2px 0!important}
 #newsList .item small{font-size:7px!important}
