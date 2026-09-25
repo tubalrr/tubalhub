@@ -150,9 +150,17 @@ service cloud.firestore {
     match /users/{userId} {
       allow read: if realUser();
 
+      // Users may create their own profile, but role/admin/moderation fields
+      // are server/admin managed and cannot be self-assigned.
       allow create: if realUser()
         && userId == request.auth.uid
-        && request.resource.data.uid == request.auth.uid;
+        && request.resource.data.uid == request.auth.uid
+        && !('roleReal' in request.resource.data)
+        && !('isAdmin' in request.resource.data)
+        && !('strikesReal' in request.resource.data)
+        && !('chatStatus' in request.resource.data)
+        && !('banUntil' in request.resource.data)
+        && !('banReason' in request.resource.data);
 
       allow update: if adminUser()
         || (
@@ -160,6 +168,9 @@ service cloud.firestore {
           && userId == request.auth.uid
           && request.resource.data.uid == resource.data.uid
           && request.resource.data.diff(resource.data).affectedKeys().hasNone([
+            'roleReal',
+            'isAdmin',
+            'strikesReal',
             'chatStatus',
             'warnings',
             'mutedUntil',
@@ -169,7 +180,10 @@ service cloud.firestore {
             'banned',
             'bannedAt',
             'bannedBy',
-            'banUntil'
+            'banUntil',
+            'lastStrikeAt',
+            'lastModerationReasonReal',
+            'lastModerationMessageIdReal'
           ])
         );
 
