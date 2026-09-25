@@ -275,10 +275,24 @@ function renderQuickReactionBar(){
   '</div>';
 }
 
+const userRoleStateReal=new Map();
+
+function syncMessageAdminBadgeReal(row){
+  if(!row)return;
+  const badge=row.querySelector('.admin-role-badge');
+  if(!badge)return;
+  const role=userRoleStateReal.get(String(row.dataset.uid||''))||'user';
+  badge.hidden=role!=='admin';
+}
+
+function syncAllMessageAdminBadgesReal(){
+  document.querySelectorAll('.msg').forEach(syncMessageAdminBadgeReal);
+}
+
 function renderMessage(id,data){
- const me=currentUser&&data.uid===currentUser.uid, user={displayName:data.displayName||data.name,email:data.email,photoURL:data.photoURL};const row=document.createElement('div');row.className='msg'+(me?' me':'');row.dataset.id=id;
+ const me=currentUser&&data.uid===currentUser.uid, user={displayName:data.displayName||data.name,email:data.email,photoURL:data.photoURL};const row=document.createElement('div');row.className='msg'+(me?' me':'');row.dataset.id=id;row.dataset.uid=String(data.uid||'');
  const formatted=window.tubalFormatChatText?window.tubalFormatChatText(data.text||''):{html:esc(data.text||''),className:''};let body='';if(data.type==='image'||data.type==='gif'){body=`<img class="media${data.type==='gif'?' gif-sticker-media':''}" src="${esc(data.mediaUrl||'')}" alt="${data.type==='gif'?'GIF Sticker':'Image'}" loading="lazy">${data.text?`<div class="file-label">${esc(data.text)}</div>`:''}`}else body=`<div class="bubble ${formatted.className||''}">${formatted.html}</div>`;
- row.innerHTML=`${avatarHtml(user)}<div class="msg-body"><div class="msg-meta"><b>${esc(data.displayName||data.name||data.email?.split('@')[0]||'Member')}</b>${me?'<span class="admin">YOU</span>':''}${data.isAdmin?'<span class="admin">ADMIN</span>':''}<span class="time">${esc(timeText(data.createdAt))}</span></div>${data.replyTo?`<div class="file-label">↪ Replying to ${esc(data.replyTo.name||'member')}: ${esc(data.replyTo.preview||'')}</div>`:''}<div class="message-content">${body}<button type="button" class="inline-react-btn" title="React to this message" aria-label="React to this message">😊</button></div>${renderQuickReactionBar()}<div class="reaction-bar">${reactionHtml(id)}</div><div class="message-actions"><button type="button" class="action-btn reply-btn">↩ Reply</button></div><div class="reply-box" id="replies-${esc(id)}"></div></div>`;
+ row.innerHTML=`${avatarHtml(user)}<div class="msg-body"><div class="msg-meta"><b>${esc(data.displayName||data.name||data.email?.split('@')[0]||'Member')}</b>${me?'<span class="admin">YOU</span>':''}<span class="admin-role-badge" hidden>ADMIN</span><span class="time">${esc(timeText(data.createdAt))}</span></div>${data.replyTo?`<div class="file-label">↪ Replying to ${esc(data.replyTo.name||'member')}: ${esc(data.replyTo.preview||'')}</div>`:''}<div class="message-content">${body}<button type="button" class="inline-react-btn" title="React to this message" aria-label="React to this message">😊</button></div>${renderQuickReactionBar()}<div class="reaction-bar">${reactionHtml(id)}</div><div class="message-actions"><button type="button" class="action-btn reply-btn">↩ Reply</button></div><div class="reply-box" id="replies-${esc(id)}"></div></div>`;
  if(me){const del=document.createElement('button');del.type='button';del.className='action-btn delete-btn';del.textContent='🗑 Delete';del.title='Delete your message';row.querySelector('.message-actions').appendChild(del);del.addEventListener('click',async ev=>{ev.stopPropagation();if(!confirm('Delete this message?'))return;del.disabled=true;try{await deleteDoc(doc(db,'globalChats',id))}catch(err){console.error(err);alert('Hindi ma-delete ang message. Check Firestore Rules.')}finally{del.disabled=false}})}
  row.querySelector('.reply-btn').addEventListener('click',e=>{e.stopPropagation();setReplyTarget(id,data.displayName||data.name||'Member',String(data.text||data.type||'').slice(0,100))});
  row.querySelector('.inline-react-btn').addEventListener('click',e=>{e.preventDefault();e.stopPropagation();document.querySelectorAll('.msg.reaction-open').forEach(x=>{if(x!==row)x.classList.remove('reaction-open')});row.classList.toggle('reaction-open');openReactionMenu(e.currentTarget,id)});
@@ -372,59 +386,80 @@ function subscribeReactions(){
  },err=>console.error('Reaction error',err));
 }
 function subscribeReplies(){if(stopReplies)stopReplies();const q=query(collection(db,'globalChatReplies'),orderBy('createdAt','asc'),limit(500));stopReplies=onSnapshot(q,snap=>{document.querySelectorAll('.reply-box').forEach(x=>x.innerHTML='');snap.forEach(d=>{const x=d.data(),root=x.messageId,box=document.getElementById(`replies-${root}`);if(!box)return;const item=document.createElement('div');item.className='reply-item'+(x.parentReplyId?' nested-reply':'');item.dataset.replyId=d.id;item.innerHTML=`<div class="reply-meta"><b class="private-member-name">${esc(x.displayName||'Member')}</b> • ${esc(timeText(x.createdAt))}</div><div class="reply-text">${esc(x.text)}</div><div class="reply-actions"><button type="button" class="reply-react-btn" title="React">😊</button><button type="button" class="reply-to-reply">↩ Reply</button></div><div class="reply-reaction-bar"></div>`;item.querySelector('.reply-to-reply').onclick=e=>{e.stopPropagation();setReplyTarget(root,x.displayName||'Member',String(x.text||'').slice(0,100),d.id)};item.querySelector('.reply-react-btn').onclick=e=>{e.stopPropagation();openReplyReactionMenu(e.currentTarget,d.id)};renderReplyReactions(item,d.id);box.appendChild(item)});},err=>console.error('Reply error',err))}
+function renderChatSnapshotReal(snap, channelValue, sourceReal){
+  const docs=snap.docs
+    .map(d=>({id:d.id,data:d.data()}))
+    .filter(item=>item.data?.channel===channelValue)
+    .sort((a,b)=>{
+      const ta=a.data?.createdAt?.toMillis?.()
+        ?? a.data?.createdAt?.toDate?.()?.getTime?.()
+        ?? (typeof a.data?.createdAt==='number'?a.data.createdAt:0);
+      const tb=b.data?.createdAt?.toMillis?.()
+        ?? b.data?.createdAt?.toDate?.()?.getTime?.()
+        ?? (typeof b.data?.createdAt==='number'?b.data.createdAt:0);
+      return ta-tb || a.id.localeCompare(b.id);
+    })
+    .slice(-100);
+
+  messages.innerHTML='<div class="chat-build-marker-real" id="chatBuildMarkerReal">Today</div>';
+
+  if(!docs.length){
+    messages.innerHTML+='<div class="empty-chat"><strong>No messages in # '+esc(activeChannelReal)+'.</strong><span>This channel is empty until a real member posts here.</span></div>';
+  }else{
+    docs.forEach(item=>messages.appendChild(renderMessage(item.id,item.data)));
+  }
+
+  globalMessageCount.textContent=String(docs.length);
+
+  document.querySelectorAll('.channel-count-real').forEach(el=>{
+    if(el.dataset.channelCount===activeChannelReal)el.textContent=String(docs.length);
+  });
+
+  messages.scrollTop=messages.scrollHeight;
+  setStatus('Live • # '+activeChannelReal+' • '+docs.length+' real message'+(docs.length===1?'':'s')+(sourceReal==='fallback'?' • fallback':''));
+  window.dispatchEvent(new CustomEvent('tubalhub-chat-channel-loaded',{
+    detail:{channel:activeChannelReal,count:docs.length,source:sourceReal}
+  }));
+}
+
 function subscribeMessages(){
   if(stopMessages)stopMessages();
   const channelValue=activeChannelReal==='general'?'global-chat':activeChannelReal;
 
-  // IMPORTANT: use only the channel filter here.
-  // Combining channel + createdAt ordering requires a Firestore composite index
-  // and was causing the live chat listener to fail. We sort the returned real
-  // channel messages locally and keep the newest 100.
-  const q=query(
+  const qReal=query(
     collection(db,'globalChats'),
-    where('channel','==',channelValue)
+    where('channel','==',channelValue),
+    where('createdAt','!=',null),
+    orderBy('createdAt','asc'),
+    limitToLast(100)
   );
 
-  stopMessages=onSnapshot(q,snap=>{
-    const channelDocs=snap.docs
-      .map(d=>({id:d.id,data:d.data()}))
-      .filter(item=>item.data?.channel===channelValue)
-      .sort((a,b)=>{
-        const ta=a.data?.createdAt?.toMillis?.()
-          ?? a.data?.createdAt?.toDate?.()?.getTime?.()
-          ?? (typeof a.data?.createdAt==='number'?a.data.createdAt:0);
-        const tb=b.data?.createdAt?.toMillis?.()
-          ?? b.data?.createdAt?.toDate?.()?.getTime?.()
-          ?? (typeof b.data?.createdAt==='number'?b.data.createdAt:0);
-        return ta-tb || a.id.localeCompare(b.id);
-      });
+  let fallbackUsed=false;
 
-    const latestDocs=channelDocs.slice(-100);
+  const attach=({queryValue,sourceReal})=>{
+    stopMessages=onSnapshot(queryValue,snap=>{
+      renderChatSnapshotReal(snap,channelValue,sourceReal);
+    },err=>{
+      console.error('[TUBAL HUB chat query]',sourceReal,err);
 
-    messages.innerHTML='<div class="chat-build-marker-real" id="chatBuildMarkerReal">Today</div>';
+      if(sourceReal==='indexed' && !fallbackUsed){
+        fallbackUsed=true;
+        if(stopMessages){stopMessages();stopMessages=null;}
+        setStatus('Index not ready • loading real messages with safe fallback…');
+        const qFallback=query(
+          collection(db,'globalChats'),
+          where('channel','==',channelValue)
+        );
+        attach({queryValue:qFallback,sourceReal:'fallback'});
+        return;
+      }
 
-    if(!latestDocs.length){
-      messages.innerHTML+='<div class="empty-chat"><strong>No messages in # '+esc(activeChannelReal)+'.</strong><span>This channel is empty until a real member posts here.</span></div>';
-    }else{
-      latestDocs.forEach(item=>messages.appendChild(renderMessage(item.id,item.data)));
-    }
-
-    globalMessageCount.textContent=String(latestDocs.length);
-
-    document.querySelectorAll('.channel-count-real').forEach(el=>{
-      if(el.dataset.channelCount===activeChannelReal)el.textContent=String(latestDocs.length);
+      messages.innerHTML='<div class="empty-chat"><strong>Chat temporarily unavailable.</strong><span>Firestore could not load the real messages for this channel.</span></div>';
+      setStatus('Could not load this channel. Check Firebase access/rules.',true);
     });
+  };
 
-    messages.scrollTop=messages.scrollHeight;
-    setStatus(`Live • # ${activeChannelReal} • ${latestDocs.length} real message${latestDocs.length===1?'':'s'}`);
-    window.dispatchEvent(new CustomEvent('tubalhub-chat-channel-loaded',{
-      detail:{channel:activeChannelReal,count:latestDocs.length}
-    }));
-  },err=>{
-    console.error('[TUBAL HUB chat query]',err);
-    messages.innerHTML='<div class="empty-chat"><strong>Chat temporarily unavailable.</strong><span>Firestore could not load the real messages for this channel.</span></div>';
-    setStatus('Could not load this channel. Check Firebase access/rules.',true);
-  });
+  attach({queryValue:qReal,sourceReal:'indexed'});
 }
 function setActiveChannelReal(channel){
   const allowed=['general','payapang-isip','ctrlzone','shop-talk','announcements'];
@@ -444,7 +479,20 @@ function setActiveChannelReal(channel){
 }
 window.tubalHubSetChatChannelReal=setActiveChannelReal;
 
-async function subscribePresence(){if(stopPresence)stopPresence();if(stopUsersPresence)stopUsersPresence();if(heartbeatPresenceRefresh)clearInterval(heartbeatPresenceRefresh);const presenceRef=collection(db,'presence'),usersRef=collection(db,'users');let presenceMap=new Map(),usersMap=new Map();const onlineCutoff=()=>Date.now()-180000;const render=()=>{const merged=new Map();presenceMap.forEach((x,uid)=>merged.set(uid,{...x,uid}));usersMap.forEach((x,uid)=>{const last=(typeof x.lastSeen==='number'?x.lastSeen:(x.lastSeen?.toMillis?.()||x.lastSeen?.toDate?.()?.getTime?.()||0));if(last>=onlineCutoff()){const prev=merged.get(uid)||{};merged.set(uid,{...prev,...x,uid,online:true,lastSeen:last})}});const m=[...merged.values()].filter(x=>x.online===true&&((typeof x.lastSeen==='number'?x.lastSeen:(x.lastSeen?.toDate?.()?.getTime?.()||0))>=onlineCutoff()));m.sort((a,b)=>String(a.displayName||'').localeCompare(String(b.displayName||'')));const debug=document.getElementById('presenceDebug');if(debug)debug.textContent=`Presence: ${presenceMap.size} • Users: ${usersMap.size} • Online: ${m.length} • Shown: ${Math.min(m.length,20)}`;onlineCount.textContent=m.length;onlineMembers.textContent=m.length;memberList.innerHTML='';if(!m.length){memberList.innerHTML='<div class="empty-side">No members are online right now.</div>';return}m.slice(0,20).forEach(x=>{const div=document.createElement('div');div.className='member is-online';div.dataset.uid=x.uid;div.innerHTML=`${avatarHtml(x,'mini')}<div class="member-info"><button type="button" class="private-member-name" data-private-uid="${esc(x.uid)}">${esc(x.displayName||'Member')}</button><span>● Online</span></div>${x.uid===currentUser?.uid?'<span class="you-tag">YOU</span>':''}`;memberList.appendChild(div);if(x.uid!==currentUser?.uid){div.title='Open private chat';div.style.cursor='pointer';div.addEventListener('click',e=>{if(e.target.closest('.video-call-btn,.member-call-btn,.private-call'))return;e.preventDefault();e.stopPropagation();openPrivateChat(x)});const nameEl=div.querySelector('.private-member-name');nameEl.style.cursor='pointer';nameEl.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();openPrivateChat(x)})}})};const readPresence=snap=>{presenceMap=new Map();snap.forEach(d=>{const x=d.data();presenceMap.set(x.uid||d.id,{...x,uid:x.uid||d.id})});render()};const readUsers=snap=>{usersMap=new Map();snap.forEach(d=>{const x=d.data();if(x.uid||d.id)usersMap.set(x.uid||d.id,{...x,uid:x.uid||d.id})});render()};try{const [freshPresence,freshUsers]=await Promise.all([getDocsFromServer(query(presenceRef)),getDocsFromServer(query(usersRef))]);readPresence(freshPresence);readUsers(freshUsers);console.log('[TUBAL HUB presence] fresh server:',freshPresence.size,'presence,',freshUsers.size,'users')}catch(e){console.error('[TUBAL HUB presence] fresh server read failed',e)}stopPresence=onSnapshot(query(presenceRef),readPresence,err=>console.error('[TUBAL HUB presence]',err));stopUsersPresence=onSnapshot(query(usersRef),readUsers,err=>console.error('[TUBAL HUB users presence]',err));heartbeatPresenceRefresh=setInterval(async()=>{try{const fresh=await getDocsFromServer(query(usersRef));readUsers(fresh)}catch(e){console.warn('[TUBAL HUB users refresh]',e)}},30000)}
+async function subscribePresence(){if(stopPresence)stopPresence();if(stopUsersPresence)stopUsersPresence();if(heartbeatPresenceRefresh)clearInterval(heartbeatPresenceRefresh);const presenceRef=collection(db,'presence'),usersRef=collection(db,'users');let presenceMap=new Map(),usersMap=new Map();const onlineCutoff=()=>Date.now()-180000;const render=()=>{const merged=new Map();presenceMap.forEach((x,uid)=>merged.set(uid,{...x,uid}));usersMap.forEach((x,uid)=>{const last=(typeof x.lastSeen==='number'?x.lastSeen:(x.lastSeen?.toMillis?.()||x.lastSeen?.toDate?.()?.getTime?.()||0));if(last>=onlineCutoff()){const prev=merged.get(uid)||{};merged.set(uid,{...prev,...x,uid,online:true,lastSeen:last})}});const m=[...merged.values()].filter(x=>x.online===true&&((typeof x.lastSeen==='number'?x.lastSeen:(x.lastSeen?.toDate?.()?.getTime?.()||0))>=onlineCutoff()));m.sort((a,b)=>String(a.displayName||'').localeCompare(String(b.displayName||'')));const debug=document.getElementById('presenceDebug');if(debug)debug.textContent=`Presence: ${presenceMap.size} • Users: ${usersMap.size} • Online: ${m.length} • Shown: ${Math.min(m.length,20)}`;onlineCount.textContent=m.length;onlineMembers.textContent=m.length;memberList.innerHTML='';if(!m.length){memberList.innerHTML='<div class="empty-side">No members are online right now.</div>';return}m.slice(0,20).forEach(x=>{const div=document.createElement('div');div.className='member is-online';div.dataset.uid=x.uid;div.innerHTML=`${avatarHtml(x,'mini')}<div class="member-info"><button type="button" class="private-member-name" data-private-uid="${esc(x.uid)}">${esc(x.displayName||'Member')}</button><span>● Online</span></div>${x.uid===currentUser?.uid?'<span class="you-tag">YOU</span>':''}`;memberList.appendChild(div);if(x.uid!==currentUser?.uid){div.title='Open private chat';div.style.cursor='pointer';div.addEventListener('click',e=>{if(e.target.closest('.video-call-btn,.member-call-btn,.private-call'))return;e.preventDefault();e.stopPropagation();openPrivateChat(x)});const nameEl=div.querySelector('.private-member-name');nameEl.style.cursor='pointer';nameEl.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();openPrivateChat(x)})}})};const readPresence=snap=>{presenceMap=new Map();snap.forEach(d=>{const x=d.data();presenceMap.set(x.uid||d.id,{...x,uid:x.uid||d.id})});render()};const readUsers=snap=>{
+  usersMap=new Map();
+  userRoleStateReal.clear();
+  snap.forEach(d=>{
+    const x=d.data();
+    const uid=x.uid||d.id;
+    if(uid){
+      usersMap.set(uid,{...x,uid});
+      userRoleStateReal.set(String(uid),String(x.roleReal||'user'));
+    }
+  });
+  render();
+  syncAllMessageAdminBadgesReal();
+};try{const [freshPresence,freshUsers]=await Promise.all([getDocsFromServer(query(presenceRef)),getDocsFromServer(query(usersRef))]);readPresence(freshPresence);readUsers(freshUsers);console.log('[TUBAL HUB presence] fresh server:',freshPresence.size,'presence,',freshUsers.size,'users')}catch(e){console.error('[TUBAL HUB presence] fresh server read failed',e)}stopPresence=onSnapshot(query(presenceRef),readPresence,err=>console.error('[TUBAL HUB presence]',err));stopUsersPresence=onSnapshot(query(usersRef),readUsers,err=>console.error('[TUBAL HUB users presence]',err));heartbeatPresenceRefresh=setInterval(async()=>{try{const fresh=await getDocsFromServer(query(usersRef));readUsers(fresh)}catch(e){console.warn('[TUBAL HUB users refresh]',e)}},30000)}
 function dmTime(ts){
   const d=ts?.toDate?ts.toDate():(typeof ts==='number'?new Date(ts):null);
   if(!d)return '';
