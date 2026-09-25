@@ -4319,7 +4319,7 @@ body > div[style*="60px"],.left-rail,.narrow-col{
 .game-card-real-logo:hover{transform:translateY(-4px);border-color:rgba(125,90,255,.38);box-shadow:0 10px 30px rgba(125,90,255,.2)}
 .game-real-logo-box{width:100%;aspect-ratio:1;background:rgba(255,255,255,.04);border-radius:16px;display:flex;align-items:center;justify-content:center;overflow:hidden;margin-bottom:10px}
 .game-card-real-logo-img{width:80%;height:80%;object-fit:contain;image-rendering:auto;filter:drop-shadow(0 4px 12px rgba(0,0,0,.5))}
-.game-real-initials{display:flex;align-items:center;justify-content:center;width:72px;height:72px;border-radius:18px;background:rgba(125,90,255,.12);border:1px solid rgba(125,90,255,.24);font-size:26px;font-weight:900;letter-spacing:.04em}
+.game-real-initials[hidden]{display:none!important}.game-real-initials{display:flex;align-items:center;justify-content:center;width:72px;height:72px;border-radius:18px;background:rgba(125,90,255,.12);border:1px solid rgba(125,90,255,.24);font-size:26px;font-weight:900;letter-spacing:.04em}
 .game-card-real-logo>b{display:block;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .game-card-real-logo>small{display:block;margin-top:3px;font-size:10px;opacity:.6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .real-logo-badge{position:absolute;top:8px;right:8px;background:#1dff91;color:#020604;font-size:8px;font-weight:800;padding:2px 6px;border-radius:20px}
