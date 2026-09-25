@@ -21,7 +21,8 @@ import {getFirestore,collection,getDocs,addDoc,deleteDoc,doc,query,orderBy,limit
 const ADMIN_EMAIL="tubalrr@gmail.com",db=getFirestore(),$=id=>document.getElementById(id);
 let news=[],anns=[],members=[],chats=[],shopProducts=[],sponsoredAds=[];
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
-function toast(m){$("toast").textContent=m;$("toast").classList.add("show");setTimeout(()=>$("toast").classList.remove("show"),3200)}\nfunction runAdminSearch(value){
+function toast(m){$("toast").textContent=m;$("toast").classList.add("show");setTimeout(()=>$("toast").classList.remove("show"),3200)}
+function runAdminSearch(value){
   const q=String(value||"").trim().toLowerCase();
   const box=$("adminSearchResults");
   if(!box)return;
