@@ -731,8 +731,6 @@ exports.upgradeShopProductReal = onCall(async request => {
 
     const orderRef = db.collection("orders").doc();
     const upgradeRef = db.collection("upgrades").doc();
-    const downloadRef = db.collection("downloads").doc();
-
     tx.set(orderRef, {
       uid: request.auth.uid,
       type: "upgrade",
@@ -850,7 +848,15 @@ exports.verifyShopOrderReal = onCall(async request => {
 
       const upgrade = upgradeSnap.data() || {};
       const license = licenseSnap.data() || {};
-      if (license.uid !== order.uid || upgrade.uid !== order.uid || upgrade.licenseId !== licenseId) {
+      if (
+        license.uid !== order.uid
+        || upgrade.uid !== order.uid
+        || upgrade.orderId !== orderId
+        || upgrade.productId !== order.productId
+        || upgrade.licenseId !== licenseId
+        || order.licenseId !== licenseId
+        || order.productId !== upgrade.productId
+      ) {
         throw new HttpsError("failed-precondition", "Upgrade ownership records do not match.");
       }
       if (upgrade.status === "paid") {
