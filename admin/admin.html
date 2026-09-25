@@ -24,7 +24,19 @@
   <small style="opacity:.55;display:block;margin-top:8px">Feeds always receives the item. The content type also routes it to its matching surface.</small>
 </section>
 
-<section class="panel" id="facebookVideosPanel">
+<section class="panel" id="sponsoredControl">
+  <div class="panel-head"><div><small>SPONSORED CONTROL</small><h2>Sponsored Placement</h2></div><span>FIRESTORE</span></div>
+  <div class="form-grid">
+    <input id="saTitle" placeholder="Sponsor title">
+    <input id="saText" placeholder="Sponsor description">
+    <input id="saImage" placeholder="Image URL (optional)">
+    <input id="saUrl" placeholder="Sponsor / product URL (optional)">
+    <input id="saBadge" placeholder="Badge e.g. SPONSORED" value="SPONSORED">
+    <button id="addSponsoredAd">Publish Sponsored →</button>
+  </div>
+  <small style="opacity:.55;display:block;margin-top:8px">Published ads appear automatically below Live Stats on the homepage. Only the latest active sponsor is shown.</small>
+  <div id="sponsoredAdList"></div>
+</section><section class="panel" id="facebookVideosPanel">
   <div class="panel-head"><div><small>SOCIAL VIDEO CONTROL</small><h2>Facebook Videos</h2></div><span>ADMIN ONLY</span></div>
   <div class="form-grid fb-video-admin-form">
     <input id="fvTitle" placeholder="Video title">
@@ -47,6 +59,7 @@ import {auth} from "../assets/js/firebase-config.js";
 import {onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 import {getFirestore,collection,getDocs,addDoc,deleteDoc,doc,query,orderBy,limit,serverTimestamp,updateDoc,Timestamp,writeBatch} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 const ADMIN_EMAIL="tubalrr@gmail.com",db=getFirestore(),$=id=>document.getElementById(id);
+let news=[],anns=[],members=[],chats=[],fbVideos=[],shopProducts=[],sponsoredAds=[];
 let news=[],anns=[],members=[],chats=[],fbVideos=[],shopProducts=[];
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
 function mirrorHubPost(batch,sourceRef,data){
@@ -74,6 +87,31 @@ function toast(m){$("toast").textContent=m;$("toast").classList.add("show");setT
 function firestoreError(e){
   if(e?.code==="permission-denied") return "Publishing blocked by Firestore Rules. Publish the latest firestore.rules in Firebase Console, then refresh.";
   return e?.message||"Firestore error";
+}
+async function loadSponsoredAds(){
+  try{
+    const snap=await getDocs(query(collection(db,"sponsoredAds"),orderBy("createdAt","desc"),limit(20)));
+    sponsoredAds=snap.docs.map(d=>({id:d.id,...d.data()}));
+    renderSponsoredAds();
+  }catch(e){console.warn(e);toast(firestoreError(e))}
+}
+function renderSponsoredAds(){
+  const box=$("sponsoredAdList");if(!box)return;
+  box.innerHTML=sponsoredAds.length?sponsoredAds.map(a=>'<div class="admin-item"><b>'+esc(a.title||"Sponsored")+'</b><small>'+esc(a.text||"")+'</small><span>'+(a.active===false?"INACTIVE":"ACTIVE")+'</span><button data-delete-sponsored="'+esc(a.id)+'">Delete</button></div>').join(""):'<small style="opacity:.5">No sponsored placements yet.</small>';
+  box.querySelectorAll("[data-delete-sponsored]").forEach(btn=>btn.onclick=async()=>{try{await deleteDoc(doc(db,"sponsoredAds",btn.dataset.deleteSponsored));toast("Sponsored deleted");await loadSponsoredAds()}catch(e){toast(firestoreError(e))}});
+}
+async function addSponsoredAd(){
+  const title=String($("saTitle")?.value||"").trim(),text=String($("saText")?.value||"").trim(),imageUrl=String($("saImage")?.value||"").trim(),linkUrl=String($("saUrl")?.value||"").trim(),badge=String($("saBadge")?.value||"SPONSORED").trim()||"SPONSORED";
+  if(!title){toast("Sponsor title required");return}
+  try{
+    const batch=writeBatch(db);
+    sponsoredAds.forEach(a=>batch.update(doc(db,"sponsoredAds",a.id),{active:false,updatedAt:serverTimestamp()}));
+    const ref=doc(collection(db,"sponsoredAds"));
+    batch.set(ref,{title,text,imageUrl,linkUrl,badge,active:true,createdBy:auth.currentUser.uid,createdAt:serverTimestamp(),updatedAt:serverTimestamp()});
+    await batch.commit();
+    ["saTitle","saText","saImage","saUrl"].forEach(id=>{const el=$(id);if(el)el.value=""});
+    toast("Sponsored published");await loadSponsoredAds();
+  }catch(e){toast(firestoreError(e))}
 }
 function render(){
  $("newsCount").textContent=news.length;$("annCount").textContent=anns.length;$("memberCount").textContent=members.length;$("chatCount").textContent=chats.length;
@@ -153,6 +191,8 @@ $("addAnn").onclick=async()=>{
  }catch(e){toast(firestoreError(e))}
 };
 document.addEventListener("click",async e=>{const name=e.target.closest("[data-member-ban]");if(name){const uid=name.dataset.memberBan;if(uid===auth.currentUser?.uid)return;const member=members.find(x=>(x.uid||x.id)===uid);window.__banTargetUid=uid;window.__banTargetName=member?.displayName||member?.email||"Member";window.__banDuration=null;$("banTargetName").textContent=window.__banTargetName;$("banReasonInput").value="";document.querySelectorAll(".ban-options button").forEach(x=>x.classList.remove("selected"));$("banModal").hidden=false;return}const b=e.target.closest("button");if(!b)return;try{if(b.dataset.delNews){if(!confirm("Delete this news article?"))return;await deleteDoc(doc(db,"news",b.dataset.delNews));await load();}if(b.dataset.editNews){const x=news.find(n=>n.id===b.dataset.editNews);if(!x)return;const title=prompt("News title:",x.title||"");if(title===null)return;const text=prompt("News content:",x.text||"");if(text===null)return;const date=prompt("Date:",x.date||"Latest");if(date===null)return;const category=prompt("Category (platform/community/creator):",x.category||"platform");if(category===null)return;await updateDoc(doc(db,"news",x.id),{title:title.trim(),text:text.trim(),date:date.trim()||"Latest",category:category.trim().toLowerCase()||"platform",updatedAt:serverTimestamp(),updatedBy:auth.currentUser.uid});await load();toast("News updated.");}if(b.dataset.delAnn){await deleteDoc(doc(db,"announcements",b.dataset.delAnn));await load();}if(b.dataset.delChat){await deleteDoc(doc(db,"globalChats",b.dataset.delChat));await load();}if(b.dataset.delFb){await deleteDoc(doc(db,"facebookVideos",b.dataset.delFb));await load();}if(b.dataset.delProduct){await deleteDoc(doc(db,"products",b.dataset.delProduct));await load();}if(b.dataset.ban){const reason=prompt("Ban reason (optional):","Violation of Global Chat rules");if(reason===null)return;const duration=b.dataset.banDuration||$("banDuration").value;let banUntil=null;if(duration!=="permanent"){const hours={"1h":1,"6h":6,"12h":12,"1d":24,"3d":72,"7d":168,"30d":720}[duration];banUntil=Timestamp.fromDate(new Date(Date.now()+hours*60*60*1000));}await updateDoc(doc(db,"users",b.dataset.ban),{chatStatus:"banned",banned:true,banReason:reason.trim()||"Global Chat rules violation",bannedAt:serverTimestamp(),bannedBy:auth.currentUser.uid,banUntil});await load();toast(duration==="permanent"?"Member permanently banned.":"Member banned until "+banUntil.toDate().toLocaleString()+".")}if(b.dataset.unban){if(!confirm("Unban this member from Global Chat?"))return;await updateDoc(doc(db,"users",b.dataset.unban),{chatStatus:"active",banned:false,banReason:null,bannedAt:null,bannedBy:null});await load();toast("Member unbanned.")}}catch(x){toast(x.message)}});
-document.querySelectorAll(".ban-options button").forEach(btn=>btn.onclick=()=>{window.__banDuration=btn.dataset.duration;document.querySelectorAll(".ban-options button").forEach(x=>x.classList.remove("selected"));btn.classList.add("selected")});$("closeBanModal").onclick=$("cancelBan").onclick=()=>{$("banModal").hidden=true};$("confirmBan").onclick=async()=>{const uid=window.__banTargetUid,duration=window.__banDuration;if(!uid||!duration)return toast("Select a ban duration.");let banUntil=null;if(duration!=="permanent"){const hours={"1h":1,"6h":6,"12h":12,"1d":24,"3d":72,"7d":168,"30d":720}[duration];banUntil=Timestamp.fromDate(new Date(Date.now()+hours*60*60*1000));}try{await updateDoc(doc(db,"users",uid),{chatStatus:"banned",banned:true,banReason:$("banReasonInput").value.trim()||"Global Chat rules violation",bannedAt:serverTimestamp(),bannedBy:auth.currentUser.uid,banUntil});$("banModal").hidden=true;await load();toast(duration==="permanent"?"Member permanently banned.":"Member banned until "+banUntil.toDate().toLocaleString()+".")}catch(e){toast(e.message)}};$("logout").onclick=()=>signOut(auth);
+document.querySelectorAll(".ban-options button").forEach(btn=>btn.onclick=()=>{window.__banDuration=btn.dataset.duration;document.querySelectorAll(".ban-options button").forEach(x=>x.classList.remove("selected"));btn.classList.add("selected")});$("closeBanModal").onclick=$("cancelBan").onclick=()=>{$("banModal").hidden=true};$("confirmBan").onclick=async()=>{const uid=window.__banTargetUid,duration=window.__banDuration;if(!uid||!duration)return toast("Select a ban duration.");let banUntil=null;if(duration!=="permanent"){const hours={"1h":1,"6h":6,"12h":12,"1d":24,"3d":72,"7d":168,"30d":720}[duration];banUntil=Timestamp.fromDate(new Date(Date.now()+hours*60*60*1000));}try{await updateDoc(doc(db,"users",uid),{chatStatus:"banned",banned:true,banReason:$("banReasonInput").value.trim()||"Global Chat rules violation",bannedAt:serverTimestamp(),bannedBy:auth.currentUser.uid,banUntil});$("banModal").hidden=true;await load();toast(duration==="permanent"?"Member permanently banned.":"Member banned until "+banUntil.toDate().toLocaleString()+".")}catch(e){toast(e.message)}};$("addSponsoredAd")?.addEventListener("click",addSponsoredAd);
+loadSponsoredAds();
+$("logout").onclick=()=>signOut(auth);
 onAuthStateChanged(auth,async user=>{if(!user||user.email?.toLowerCase()!==ADMIN_EMAIL){location.replace("login.html");return}$("adminEmail").textContent=user.email;$("loading").remove();$("app").hidden=false;await load()});
 </script></body></html>
