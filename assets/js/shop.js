@@ -348,18 +348,18 @@ function openQuick(id){
 }
 function closeQuick(){els.quickLayer.classList.remove("is-open");setTimeout(()=>{if(!els.quickLayer.classList.contains("is-open"))els.quickLayer.hidden=true},220)}
 function updatePaymentUI(){
-  const data={
-    card:{title:"Card",label:"Card details",placeholder:"Card reference (demo)"},
-    bank:{title:"Bank Transfer",label:"Bank reference",placeholder:"Bank reference (demo)"},
-    paypal:{title:"PayPal",label:"PayPal reference",placeholder:"PayPal email / reference (demo)"}
-  }[state.payment]||null;
+  const data={card:{title:"Card",formTitle:"Card details",brand:"VISA / MASTERCARD"},bank:{title:"Bank Transfer",formTitle:"Bank transfer details",brand:"BANK"},paypal:{title:"PayPal",formTitle:"PayPal details",brand:"PAYPAL"}}[state.payment];
   if(!data)return;
   document.querySelectorAll(".payment-method").forEach(b=>b.classList.toggle("active",b.dataset.payment===state.payment));
-  const field=document.getElementById("paymentReference");
-  const label=field?.closest("label");
-  if(label){
-    label.firstChild.textContent=data.label+" ";
-    field.placeholder=data.placeholder;
+  document.getElementById("paymentFormTitle").textContent=data.formTitle;
+  document.getElementById("paymentFormBrand").textContent=data.brand;
+  const grid=document.querySelector(".payment-form-grid");
+  if(grid){
+    grid.innerHTML=state.payment==="card"
+      ? '<label class="payment-field-full">Cardholder name<input id="cardholderName" type="text" autocomplete="cc-name" placeholder="Full name"></label><label class="payment-field-full">Card number<input id="cardNumber" type="text" inputmode="numeric" autocomplete="cc-number" maxlength="19" placeholder="1234 5678 9012 3456"></label><label>Expiry date<input id="cardExpiry" type="text" inputmode="numeric" autocomplete="cc-exp" maxlength="5" placeholder="MM/YY"></label><label>CVV<input id="cardCvv" type="password" inputmode="numeric" autocomplete="cc-csc" maxlength="4" placeholder="123"></label>'
+      : state.payment==="bank"
+      ? '<label class="payment-field-full">Account name<input id="bankName" type="text" autocomplete="name" placeholder="Account name"></label><label class="payment-field-full">Bank reference<input id="bankReference" type="text" placeholder="Reference number"></label>'
+      : '<label class="payment-field-full">PayPal email<input id="paypalEmail" type="email" autocomplete="email" placeholder="you@example.com"></label><label class="payment-field-full">PayPal reference<input id="paypalReference" type="text" placeholder="Reference (demo)"></label>';
   }
   const copy=document.getElementById("checkoutCopy");
   if(copy)copy.textContent=cartCount()+" items ready • "+data.title+" selected.";
@@ -440,6 +440,11 @@ document.querySelectorAll(".payment-method").forEach(btn=>btn.addEventListener("
   state.payment=btn.dataset.payment||"card";
   updatePaymentUI();
   burstAt(btn,6);
+}));
+document.querySelectorAll(".payment-brand-logos img").forEach(img=>img.addEventListener("click",e=>{
+  e.stopPropagation();
+  const btn=img.closest(".payment-method");
+  if(btn){state.payment=btn.dataset.payment||"card";updatePaymentUI();burstAt(btn,6);requestAnimationFrame(()=>document.getElementById("cardholderName")?.focus());}
 }));
 els.checkoutLayer.addEventListener("click",e=>{if(e.target===els.checkoutLayer)closeCheckout()});
 document.getElementById("finishCheckout").addEventListener("click",()=>{
