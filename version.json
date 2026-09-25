@@ -1,32 +1,45 @@
 {
-  "version": "1.2.5",
-  "date": "2026-09-25",
-  "time": "2026-09-25T01:20:00+08:00",
-  "message": "Homepage Featured Games refresh with a premium CTRLZONE presentation using the real game catalog.",
-  "changelog": [
+  "version": "1.2.6",
+  "build": "2026-09-25_0940",
+  "releasedAtReal": "2026-09-25T09:40:00+08:00",
+  "releasedByReal": "tubalrr",
+  "updatesReal": [
     {
-      "type": "Improved",
-      "icon": "🎮",
-      "title": "Featured Games Premium",
-      "desc": "The homepage Featured Games area now has a more polished CTRLZONE presentation with richer game cards and clearer hierarchy."
+      "typeReal": "FEAT",
+      "scopeReal": "System Update",
+      "detailReal": "May slide-in SYSTEM UPDATE container na lumalabas kapag may bagong deployed version at may real changelog.",
+      "iconReal": "🚀"
     },
     {
-      "type": "Improved",
-      "icon": "◈",
-      "title": "Real Game Metadata",
-      "desc": "Cards now surface the real game category, genre, description, official site link when available, and local play count from the current catalog."
+      "typeReal": "BUILD",
+      "scopeReal": "version.json",
+      "detailReal": "Pinalitan ang changelog structure para sa version, build, release time, author at typed real updates.",
+      "iconReal": "🔧"
     },
     {
-      "type": "New",
-      "icon": "⚡",
-      "title": "Live Catalog Indicator",
-      "desc": "The Featured Games section now shows the current number of games loaded from the real CTRLZONE catalog."
+      "typeReal": "FIX",
+      "scopeReal": "Homepage Data Paths",
+      "detailReal": "Inayos ang relative paths para sa data at local QR assets sa GitHub Pages /tubalhub deployment.",
+      "iconReal": "🛠️"
     },
     {
-      "type": "Fixed",
-      "icon": "↗",
-      "title": "Better Game Actions",
-      "desc": "Play Now and Official Site actions are visually separated while keeping the real game destinations."
+      "typeReal": "FIX",
+      "scopeReal": "Payapang Isip",
+      "detailReal": "Featured card content ay kumukuha na ng actual page summary at section names mula sa Payapang Isip page.",
+      "iconReal": "🌿"
+    },
+    {
+      "typeReal": "UI",
+      "scopeReal": "Featured Games",
+      "detailReal": "Real game logos ang ginagamit sa Featured Games at initials lang ang fallback kapag walang logo file.",
+      "iconReal": "🎮"
+    },
+    {
+      "typeReal": "STYLE",
+      "scopeReal": "3-Dash Navigation",
+      "detailReal": "Pinanatili ang fixed top-left 3-dash menu at mas mataas na z-index para hindi maharangan ng update container.",
+      "iconReal": "☰"
     }
-  ]
+  ],
+  "breakingReal": false
 }
