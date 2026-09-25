@@ -100,8 +100,41 @@
 <label>CVV<input id="cardCvv" type="password" inputmode="numeric" autocomplete="cc-csc" maxlength="4" placeholder="123"></label>
 </div></div>
     <div class="checkout-note">Secure checkout</div>
-    <button id="finishCheckout" class="gradient-btn checkout-confirm" type="button">Pay Now →</button>
+    <button id="finishCheckout" class="gradient-btn checkout-confirm" type="button">Continue Payment →</button>
     <button id="closeCheckout" class="ghost-btn" type="button">Back to Shop</button>
+  </section>
+</div>
+
+<div id="orderReviewLayer" class="quickview-layer" hidden>
+  <section class="checkout-modal glass-surface payment-modal order-review-modal" role="dialog" aria-modal="true" aria-labelledby="orderReviewTitle">
+    <button id="closeOrderReview" class="glass-close payment-close" type="button" aria-label="Close order review">×</button>
+    <span class="eyebrow">ORDER REVIEW</span>
+    <h2 id="orderReviewTitle">Review your order</h2>
+    <p>Check your items and payment details before placing the order.</p>
+    <div id="orderReviewItems" class="order-review-items"></div>
+    <div class="order-review-summary">
+      <div><span>Subtotal</span><b id="reviewSubtotal">₱0</b></div>
+      <div><span>Shipping</span><b id="reviewShipping">₱0</b></div>
+      <div class="total-row"><span>Total</span><strong id="reviewTotal">₱0</strong></div>
+    </div>
+    <div class="order-review-payment"><span>Payment method</span><strong id="reviewPayment">Card</strong></div>
+    <button id="placeOrderBtn" class="gradient-btn checkout-confirm" type="button">Place Order →</button>
+    <button id="backToPayment" class="ghost-btn" type="button">Back to Payment</button>
+  </section>
+</div>
+
+<div id="orderSuccessLayer" class="quickview-layer" hidden>
+  <section class="checkout-modal glass-surface payment-modal order-success-modal" role="dialog" aria-modal="true" aria-labelledby="orderSuccessTitle">
+    <span class="eyebrow">ORDER CONFIRMED</span>
+    <h2 id="orderSuccessTitle">Your order is confirmed</h2>
+    <p id="orderSuccessCopy">Your order has been placed successfully.</p>
+    <div class="order-success-icon">✓</div>
+    <div class="order-success-summary">
+      <div><span>Order number</span><strong id="orderNumber">—</strong></div>
+      <div><span>Total</span><strong id="successTotal">₱0</strong></div>
+      <div><span>Payment</span><strong id="successPayment">Card</strong></div>
+    </div>
+    <button id="closeOrderSuccess" class="gradient-btn checkout-confirm" type="button">Back to Shop</button>
   </section>
 </div>
 
