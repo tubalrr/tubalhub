@@ -132,3 +132,17 @@ body:after{display:none!important}#sidebarToggle{position:fixed!important;z-inde
 .members-open-btn{border:1px solid rgba(52,211,153,.24)!important;border-radius:10px!important;padding:9px 13px!important;background:rgba(52,211,153,.06)!important;color:#6ee7b7!important;font-size:9px!important;font-weight:800!important;cursor:pointer!important;transition:.2s ease!important}
 .members-open-btn:hover{border-color:rgba(52,211,153,.65)!important;background:rgba(52,211,153,.11)!important;box-shadow:0 0 18px rgba(52,211,153,.08)!important}
 .members-content[hidden]{display:none!important}
+
+/* NEWS MANAGER — compact like Recent Users */
+#content{max-width:760px!important;width:100%!important;float:none!important;margin:0 0 13px!important;padding:14px!important}
+#content .panel-head{margin-bottom:10px!important;padding-bottom:9px!important}
+#content .panel-head h2{font-size:15px!important}
+#content .form-grid{gap:7px!important}
+#content .form-grid input,#content .form-grid textarea{padding:9px 10px!important;font-size:10px!important}
+#content .form-grid textarea{min-height:65px!important}
+#content .form-grid button{padding:9px!important}
+#newsList .item{padding:8px 0!important;gap:9px!important}
+#newsList .item b{font-size:10px!important}
+#newsList .item p{font-size:8px!important;line-height:1.35!important;margin:2px 0!important}
+#newsList .item small{font-size:7px!important}
+@media(max-width:950px){#content{max-width:100%!important}}
