@@ -658,40 +658,50 @@ exports.cleanupOldImagesReal = onSchedule("every 24 hours", async () => {
     }
   }
 
-  const expired = entries.filter(item => item.time > 0 && now - item.time > sevenDaysMs);
-  const deletedByAgeNames = new Set();
+  const expired = entries.filter(item =>
+    item.time > 0 && now - item.time > sevenDaysMs
+  );
+
+  const expiredNames = new Set();
   let deletedByAge = 0;
+  let expiredDocsUpdated = 0;
 
   for (const item of expired) {
     try {
-      await item.file[String.fromCharCode(100,101,108,101,116,101)]();
+      await item.file.delete();
       deletedByAge++;
-      deletedByAgeNames.add(item.name);
+      expiredNames.add(item.name);
+      expiredDocsUpdated += await markChatMediaExpiredReal(
+        item.name.split("/").pop() || "",
+        item.name
+      );
     } catch (error) {
-      logger.warn("Could not clean expired Global Chat media.", {
+      logger.warn("Could not delete expired Global Chat media.", {
         name: item.name,
         error: error?.message || String(error)
       });
     }
   }
 
-  const remainingBeforeTrim = entries
-    .filter(item => !deletedByAgeNames.has(item.name))
-    .sort((a, b) => a.time - b.time);
   const remaining = entries
-    .filter(item => !deletedByAgeNames.has(item.name))
+    .filter(item => !expiredNames.has(item.name))
     .sort((a, b) => a.time - b.time);
 
   const excess = Math.max(0, remaining.length - maxFiles);
   let deletedByCount = 0;
 
   for (let i = 0; i < excess; i++) {
+    const item = remaining[i];
     try {
-      await remaining[i].file.delete();
+      await item.file.delete();
       deletedByCount++;
+      expiredDocsUpdated += await markChatMediaExpiredReal(
+        item.name.split("/").pop() || "",
+        item.name
+      );
     } catch (error) {
       logger.warn("Could not delete excess Global Chat media.", {
-        name: remaining[i].name,
+        name: item.name,
         error: error?.message || String(error)
       });
     }
@@ -701,6 +711,7 @@ exports.cleanupOldImagesReal = onSchedule("every 24 hours", async () => {
     scanned: files.length,
     deletedByAge,
     deletedByCount,
+    expiredDocsUpdated,
     remainingEstimated: Math.max(0, remaining.length - deletedByCount)
   });
 
