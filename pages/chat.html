@@ -170,6 +170,7 @@ const db=getFirestore(app), storage=getStorage(app), functionsReal=getFunctions(
 const sendMessageFnReal=httpsCallable(functionsReal,'sendMessageReal');
 const sendReplyFnReal=httpsCallable(functionsReal,'sendReplyReal');
 const sendPrivateMessageFnReal=httpsCallable(functionsReal,'sendPrivateMessageReal');
+const sendGlobalMediaFnReal=httpsCallable(functionsReal,'sendGlobalMediaMessageReal');
 const cleanupGlobalChatMediaFnReal=httpsCallable(functionsReal,'cleanupGlobalChatMediaReal');
 const TUBAL_VERSION_REAL='1.2.16';
 const lock=document.getElementById('chatLock'),content=document.getElementById('chatContent'),messages=document.getElementById('messages'),form=document.getElementById('chatForm'),input=document.getElementById('messageInput'),sendButton=document.getElementById('sendButton'),statusEl=document.getElementById('chatStatus'),memberList=document.getElementById('memberList'),onlineCount=document.getElementById('onlineCount'),onlineMembers=document.getElementById('onlineMembers'),globalMessageCount=document.getElementById('globalMessageCount'),replyingBar=document.getElementById('replyingBar'),replyingName=document.getElementById('replyingName'),cancelReply=document.getElementById('cancelReply'),emojiPicker=document.getElementById('emojiPicker');
@@ -762,55 +763,35 @@ async function sendMessage(payload){
   if(!isRealUser())throw new Error('LOGIN_REQUIRED');
   const status=await getModerationStatus();
   const blocked=moderationBlocked(status);
-  if(blocked){alert('🛡️ TUBAL HUB AI MODERATION\n\n'+blocked);throw new Error('MODERATION_BLOCKED');}
+  if(blocked){alert('🛡️ TUBAL HUB AI MODERATION\\n\\n'+blocked);throw new Error('MODERATION_BLOCKED');}
 
+  const channel=activeChannelReal;
   if(payload?.type==='text'){
     const cleanText=String(payload.text||'').trim();
-    try{
-      const result=await sendMessageFnReal({text:cleanText,channel:activeChannelReal});
-      lastMessageTime=Date.now();
-      if(result?.data?.moderated)showModerationNotice('🛡️ Server moderation cleaned this message before publishing.');
-      return result?.data;
-    }catch(fnError){
-      console.warn('[TUBAL HUB] sendMessageReal unavailable; using Firestore fallback.',fnError);
-      // Keep chat usable if the callable deployment is temporarily unavailable.
-      // Firestore Rules require a real authenticated owner; the server trigger still moderates it.
-      const uid=currentUser.uid;
-      const name=currentUser.displayName||currentUser.email?.split('@')[0]||'Member';
-      const channel=activeChannelReal==='general'?'global-chat':activeChannelReal;
-      const ref=await addDoc(collection(db,'globalChats'),{
-        uid,
-        displayName:name,
-        name,
-        email:currentUser.email||'',
-        photoURL:currentUser.photoURL||'',
-        createdAt:serverTimestamp(),
-        text:cleanText,
-        textReal:cleanText,
-        type:'text',
-        channel
-      });
-      lastMessageTime=Date.now();
-      return {success:true,id:ref.id,fallback:true};
-    }
+    if(!cleanText)throw new Error('EMPTY_MESSAGE');
+    const result=await sendMessageFnReal({text:cleanText,channel});
+    lastMessageTime=Date.now();
+    if(result?.data?.moderated)showModerationNotice('🛡️ Server moderation cleaned this message before publishing.');
+    return result?.data;
   }
 
-  // Images/GIFs remain direct Firebase Storage + Firestore writes.
-  // Server trigger validates any accompanying text/caption after creation.
-  const uid=currentUser.uid;
-  const limited=window.tubalHubChatGuardReal?.isRateLimitedReal?.(uid) ?? (Date.now()-lastMessageTime<2000);
-  if(limited)throw new Error('RATE_LIMIT');
-  lastMessageTime=Date.now();
-  await addDoc(collection(db,'globalChats'),{
-    uid,
-    displayName:currentUser.displayName||currentUser.email?.split('@')[0]||'Member',
-    name:currentUser.displayName||currentUser.email?.split('@')[0]||'Member',
-    email:currentUser.email||'',
-    photoURL:currentUser.photoURL||'',
-    createdAt:serverTimestamp(),
-    ...payload,
-    channel:(activeChannelReal==='general'?'global-chat':activeChannelReal)
-  });
+  if(payload?.type==='image'||payload?.type==='gif'){
+    const limited=window.tubalHubChatGuardReal?.isRateLimitedReal?.(currentUser.uid) ?? (Date.now()-lastMessageTime<2000);
+    if(limited)throw new Error('RATE_LIMIT');
+
+    const result=await sendGlobalMediaFnReal({
+      type:String(payload.type),
+      channel,
+      mediaUrl:String(payload.mediaUrl||''),
+      storagePath:String(payload.storagePath||''),
+      text:String(payload.text||payload.textReal||'').trim()
+    });
+    lastMessageTime=Date.now();
+    if(result?.data?.moderated)showModerationNotice('🛡️ Server moderation cleaned this caption before publishing.');
+    return result?.data;
+  }
+
+  throw new Error('INVALID_MESSAGE_TYPE');
 }
 async function sendReply(text){
   if(!replyTarget||!isRealUser())return;
