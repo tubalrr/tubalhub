@@ -88,6 +88,14 @@ function requireRealUser(request) {
   }
 }
 
+function requireAdminUser(request) {
+  requireRealUser(request);
+  const token = request.auth.token || {};
+  if (token.admin !== true && token.email !== "tubalrr@gmail.com") {
+    throw new HttpsError("permission-denied", "Administrator access required.");
+  }
+}
+
 function displayNameFromRequest(request) {
   return (request.auth.token && request.auth.token.name) ||
     (request.auth.token && request.auth.token.email ? request.auth.token.email.split("@")[0] : "") ||
@@ -621,11 +629,14 @@ exports.createShopOrderReal = onCall(async request => {
   requireRealUser(request);
 
   const items = normalizeShopItemsReal(request.data?.items);
-  const paymentMethod = String(request.data?.paymentMethod || "").slice(0, 80) || "Card";
+  const paymentMethod = String(request.data?.paymentMethod || "").slice(0, 80) || "Manual payment";
+  const paymentReference = String(request.data?.paymentReference || "").trim().slice(0, 160);
   const products = await getShopProductsReal(items);
 
   let total = 0;
   const orderItems = [];
+  let hasDigital = false;
+  let hasPhysical = false;
 
   for (const item of products) {
     const p = item.data;
@@ -633,74 +644,48 @@ exports.createShopOrderReal = onCall(async request => {
     if (price === null) {
       throw new HttpsError("failed-precondition", "A selected product has an invalid price.");
     }
+
+    const productType = String(p.productType || "physical").slice(0, 60);
+    if (productType === "physical") hasPhysical = true;
+    else hasDigital = true;
+
     total += price * item.qty;
     orderItems.push({
       productId: item.id,
       title: String(p.name || "Product").slice(0, 240),
       qty: item.qty,
       price: String(p.price ?? "Free").slice(0, 100),
-      productType: String(p.productType || "physical").slice(0, 60),
-      version: p.version ? String(p.version).slice(0, 80) : null
+      productType,
+      version: p.version ? String(p.version).slice(0, 80) : null,
+      latestVersion: String(p.latestVersion || p.version || "1.0.0").slice(0, 80),
+      licenseType: String(p.license || "Standard").slice(0, 100),
+      downloadUrl: String(p.downloadUrl || "").slice(0, 3000)
     });
   }
 
+  if (hasDigital && hasPhysical) {
+    throw new HttpsError("failed-precondition", "Digital and physical products must be purchased separately.");
+  }
+
   const orderRef = db.collection("orders").doc();
-  const batch = db.batch();
-  batch.set(orderRef, {
+  await orderRef.set({
     uid: request.auth.uid,
     items: orderItems,
     total,
     paymentMethod,
-    status: "placed",
+    paymentReference,
+    status: "pending_payment",
+    paymentVerified: false,
     createdAt: FieldValue.serverTimestamp(),
     createdByServer: true
   });
-
-  const createdLicenseIds = [];
-  for (const item of products) {
-    const p = item.data;
-    const productType = String(p.productType || "physical");
-    if (productType === "physical") continue;
-
-    const licenseRef = db.collection("licenses").doc();
-    const downloadRef = db.collection("downloads").doc();
-    const version = String(p.version || "1.0.0");
-    const latestVersion = String(p.latestVersion || version);
-
-    batch.set(licenseRef, {
-      uid: request.auth.uid,
-      orderId: orderRef.id,
-      productId: item.id,
-      productName: String(p.name || "Product").slice(0, 240),
-      ownedVersion: version,
-      licenseType: String(p.license || "Standard").slice(0, 100),
-      latestVersion,
-      downloadUrl: String(p.downloadUrl || "").slice(0, 3000),
-      createdAt: FieldValue.serverTimestamp(),
-      updatedAt: FieldValue.serverTimestamp(),
-      createdByServer: true
-    });
-
-    batch.set(downloadRef, {
-      uid: request.auth.uid,
-      orderId: orderRef.id,
-      productId: item.id,
-      version,
-      downloadUrl: String(p.downloadUrl || "").slice(0, 3000),
-      createdAt: FieldValue.serverTimestamp(),
-      createdByServer: true
-    });
-
-    createdLicenseIds.push(licenseRef.id);
-  }
-
-  await batch.commit();
 
   return {
     success: true,
     orderId: orderRef.id,
     total,
-    licenseIds: createdLicenseIds
+    status: "pending_payment",
+    licenseIds: []
   };
 });
 
@@ -709,7 +694,8 @@ exports.upgradeShopProductReal = onCall(async request => {
 
   const productId = String(request.data?.productId || "").trim();
   const licenseId = String(request.data?.licenseId || "").trim();
-  const paymentMethod = String(request.data?.paymentMethod || "").slice(0, 80) || "Card";
+  const paymentMethod = String(request.data?.paymentMethod || "").slice(0, 80) || "Manual payment";
+  const paymentReference = String(request.data?.paymentReference || "").trim().slice(0, 160);
 
   if (!productId || !licenseId) {
     throw new HttpsError("invalid-argument", "Product and license are required.");
@@ -753,7 +739,9 @@ exports.upgradeShopProductReal = onCall(async request => {
       productId,
       total: upgradePrice,
       paymentMethod,
-      status: "placed",
+      paymentReference,
+      status: "pending_payment",
+      paymentVerified: false,
       createdAt: FieldValue.serverTimestamp(),
       createdByServer: true
     });
@@ -762,31 +750,219 @@ exports.upgradeShopProductReal = onCall(async request => {
       uid: request.auth.uid,
       orderId: orderRef.id,
       productId,
+      licenseId,
       fromVersion: currentVersion,
       toVersion: latestVersion,
       price: String(p.upgradePrice ?? "Free").slice(0, 100),
+      downloadUrl: String(p.downloadUrl || "").slice(0, 3000),
+      status: "pending_payment",
       createdAt: FieldValue.serverTimestamp(),
       createdByServer: true
     });
 
-    tx.update(licenseRef, {
-      ownedVersion: latestVersion,
+    // IMPORTANT: ownership is not changed here. It is unlocked only by
+    // verifyShopOrderReal after an administrator verifies the manual payment.
+
+    return {
+      orderId: orderRef.id,
+      upgradeId: upgradeRef.id,
       latestVersion,
-      downloadUrl: String(p.downloadUrl || "").slice(0, 3000),
+      status: "pending_payment"
+    };
+  });
+
+  return { success: true, ...result };
+});
+
+exports.verifyShopOrderReal = onCall(async request => {
+  requireAdminUser(request);
+
+  const orderId = String(request.data?.orderId || "").trim();
+  const approved = request.data?.approved === true;
+  const paymentReference = String(request.data?.paymentReference || "").trim().slice(0, 160);
+  const verificationNote = String(request.data?.verificationNote || "").trim().slice(0, 500);
+
+  if (!orderId) {
+    throw new HttpsError("invalid-argument", "Order ID is required.");
+  }
+
+  const orderRef = db.collection("orders").doc(orderId);
+
+  if (!approved) {
+    const rejected = await db.runTransaction(async tx => {
+      const orderSnap = await tx.get(orderRef);
+      if (!orderSnap.exists) throw new HttpsError("not-found", "Order not found.");
+
+      const order = orderSnap.data() || {};
+      if (order.status === "paid") {
+        return { alreadyPaid: true, status: "paid" };
+      }
+      if (order.status !== "pending_payment") {
+        throw new HttpsError("failed-precondition", "Only pending-payment orders can be rejected.");
+      }
+
+      tx.update(orderRef, {
+        status: "rejected",
+        paymentVerified: false,
+        verifiedAt: FieldValue.serverTimestamp(),
+        verifiedBy: request.auth.uid,
+        verificationNote,
+        updatedAt: FieldValue.serverTimestamp()
+      });
+      return { alreadyPaid: false, status: "rejected" };
+    });
+
+    return { success: true, ...rejected };
+  }
+
+  const result = await db.runTransaction(async tx => {
+    const orderSnap = await tx.get(orderRef);
+    if (!orderSnap.exists) throw new HttpsError("not-found", "Order not found.");
+
+    const order = orderSnap.data() || {};
+    if (order.status === "paid") {
+      return { alreadyPaid: true, status: "paid", licenseIds: [] };
+    }
+    if (order.status !== "pending_payment") {
+      throw new HttpsError("failed-precondition", "Only pending-payment orders can be verified.");
+    }
+
+    const licenseIds = [];
+    const upgradeIds = [];
+
+    if (order.type === "upgrade") {
+      const upgradeId = String(order.upgradeId || "");
+      const licenseId = String(order.licenseId || "");
+      if (!upgradeId || !licenseId) {
+        throw new HttpsError("failed-precondition", "Upgrade order is missing ownership references.");
+      }
+
+      const upgradeRef = db.collection("upgrades").doc(upgradeId);
+      const licenseRef = db.collection("licenses").doc(licenseId);
+      const upgradeSnap = await tx.get(upgradeRef);
+      const licenseSnap = await tx.get(licenseRef);
+
+      if (!upgradeSnap.exists || !licenseSnap.exists) {
+        throw new HttpsError("not-found", "Upgrade or license record not found.");
+      }
+
+      const upgrade = upgradeSnap.data() || {};
+      const license = licenseSnap.data() || {};
+      if (license.uid !== order.uid || upgrade.uid !== order.uid || upgrade.licenseId !== licenseId) {
+        throw new HttpsError("failed-precondition", "Upgrade ownership records do not match.");
+      }
+      if (upgrade.status === "paid") {
+        tx.update(orderRef, {
+          status: "paid",
+          paymentVerified: true,
+          verifiedAt: FieldValue.serverTimestamp(),
+          verifiedBy: request.auth.uid,
+          verificationNote,
+          paymentReference: paymentReference || order.paymentReference || "",
+          updatedAt: FieldValue.serverTimestamp()
+        });
+        return { alreadyPaid: true, status: "paid", licenseIds: [licenseId] };
+      }
+      if (upgrade.status !== "pending_payment") {
+        throw new HttpsError("failed-precondition", "Upgrade is not awaiting payment verification.");
+      }
+
+      const targetVersion = String(upgrade.toVersion || "").trim();
+      const currentVersion = String(license.ownedVersion || "").trim();
+      if (!targetVersion || targetVersion === currentVersion) {
+        throw new HttpsError("failed-precondition", "License is already on the requested version.");
+      }
+
+      tx.update(licenseRef, {
+        ownedVersion: targetVersion,
+        latestVersion: targetVersion,
+        downloadUrl: String(upgrade.downloadUrl || license.downloadUrl || "").slice(0, 3000),
+        updatedAt: FieldValue.serverTimestamp()
+      });
+
+      tx.update(upgradeRef, {
+        status: "paid",
+        paidAt: FieldValue.serverTimestamp(),
+        verifiedAt: FieldValue.serverTimestamp(),
+        verifiedBy: request.auth.uid,
+        verificationNote,
+        paymentReference: paymentReference || order.paymentReference || ""
+      });
+
+      const downloadRef = db.collection("downloads").doc("order-" + orderId + "-" + licenseId);
+      tx.set(downloadRef, {
+        uid: order.uid,
+        orderId,
+        productId: String(order.productId || upgrade.productId || ""),
+        version: targetVersion,
+        downloadUrl: String(upgrade.downloadUrl || license.downloadUrl || "").slice(0, 3000),
+        createdAt: FieldValue.serverTimestamp(),
+        createdByServer: true
+      }, { merge: true });
+
+      tx.update(orderRef, {
+        status: "paid",
+        paymentVerified: true,
+        verifiedAt: FieldValue.serverTimestamp(),
+        verifiedBy: request.auth.uid,
+        verificationNote,
+        paymentReference: paymentReference || order.paymentReference || "",
+        updatedAt: FieldValue.serverTimestamp()
+      });
+
+      upgradeIds.push(upgradeId);
+      licenseIds.push(licenseId);
+      return { alreadyPaid: false, status: "paid", licenseIds, upgradeIds };
+    }
+
+    const items = Array.isArray(order.items) ? order.items : [];
+    const digitalItems = items.filter(item => String(item?.productType || "physical") !== "physical");
+    for (const item of digitalItems) {
+      const productId = String(item?.productId || "").trim();
+      if (!productId) continue;
+
+      const licenseId = "order-" + orderId + "-" + productId;
+      const downloadId = "order-" + orderId + "-" + productId;
+
+      tx.set(db.collection("licenses").doc(licenseId), {
+        uid: order.uid,
+        orderId,
+        productId,
+        productName: String(item.title || "Product").slice(0, 240),
+        ownedVersion: String(item.version || "1.0.0").slice(0, 80),
+        licenseType: String(item.licenseType || "Standard").slice(0, 100),
+        latestVersion: String(item.latestVersion || item.version || "1.0.0").slice(0, 80),
+        downloadUrl: String(item.downloadUrl || "").slice(0, 3000),
+        status: "paid",
+        createdAt: FieldValue.serverTimestamp(),
+        updatedAt: FieldValue.serverTimestamp(),
+        createdByServer: true
+      }, { merge: true });
+
+      tx.set(db.collection("downloads").doc(downloadId), {
+        uid: order.uid,
+        orderId,
+        productId,
+        version: String(item.version || "1.0.0").slice(0, 80),
+        downloadUrl: String(item.downloadUrl || "").slice(0, 3000),
+        createdAt: FieldValue.serverTimestamp(),
+        createdByServer: true
+      }, { merge: true });
+
+      licenseIds.push(licenseId);
+    }
+
+    tx.update(orderRef, {
+      status: "paid",
+      paymentVerified: true,
+      verifiedAt: FieldValue.serverTimestamp(),
+      verifiedBy: request.auth.uid,
+      verificationNote,
+      paymentReference: paymentReference || order.paymentReference || "",
       updatedAt: FieldValue.serverTimestamp()
     });
 
-    tx.set(downloadRef, {
-      uid: request.auth.uid,
-      orderId: orderRef.id,
-      productId,
-      version: latestVersion,
-      downloadUrl: String(p.downloadUrl || "").slice(0, 3000),
-      createdAt: FieldValue.serverTimestamp(),
-      createdByServer: true
-    });
-
-    return { orderId: orderRef.id, upgradeId: upgradeRef.id, latestVersion };
+    return { alreadyPaid: false, status: "paid", licenseIds, upgradeIds };
   });
 
   return { success: true, ...result };
@@ -891,9 +1067,9 @@ exports.cleanupGlobalChatMediaReal = onCall(async request => {
   }
 
   if (entries.length < maxFiles) {
-    await recordCleanupStatsReal({deleted, deletedByAge: 0, deletedByCount: deleted});
+    await recordCleanupStatsReal({deleted: 0, deletedByAge: 0, deletedByCount: 0});
 
-  return { success: true, deleted: 0, beforeCount: entries.length, afterCount: entries.length, expiredDocsUpdated: 0 };
+    return { success: true, deleted: 0, beforeCount: entries.length, afterCount: entries.length, expiredDocsUpdated: 0 };
   }
 
   entries.sort((a, b) => a.time - b.time);
