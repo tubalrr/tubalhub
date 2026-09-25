@@ -356,10 +356,10 @@ function updatePaymentUI(){
   const grid=document.querySelector(".payment-form-grid");
   if(grid){
     grid.innerHTML=state.payment==="card"
-      ? '<label class="payment-field-full">Cardholder name<input id="cardholderName" type="text" autocomplete="cc-name" placeholder="Full name"></label><label class="payment-field-full">Card number<input id="cardNumber" type="text" inputmode="numeric" autocomplete="cc-number" maxlength="19" placeholder="1234 5678 9012 3456"></label><label>Expiry date<input id="cardExpiry" type="text" inputmode="numeric" autocomplete="cc-exp" maxlength="5" placeholder="MM/YY"></label><label>CVV<input id="cardCvv" type="password" inputmode="numeric" autocomplete="cc-csc" maxlength="4" placeholder="123"></label>'
+      ? '<label class="payment-field-full">Cardholder name<input id="cardholderName" type="text" autocomplete="cc-name" placeholder="Full name" required></label><label class="payment-field-full">Card number<input id="cardNumber" type="text" inputmode="numeric" autocomplete="cc-number" maxlength="19" placeholder="1234 5678 9012 3456" required></label><label>Expiry date<input id="cardExpiry" type="text" inputmode="numeric" autocomplete="cc-exp" maxlength="5" placeholder="MM/YY" required></label><label>CVV<input id="cardCvv" type="password" inputmode="numeric" autocomplete="cc-csc" maxlength="4" placeholder="CVV" required></label>'
       : state.payment==="bank"
-      ? '<label class="payment-field-full">Account name<input id="bankName" type="text" autocomplete="name" placeholder="Account name"></label><label class="payment-field-full">Bank reference<input id="bankReference" type="text" placeholder="Reference number"></label>'
-      : '<label class="payment-field-full">PayPal email<input id="paypalEmail" type="email" autocomplete="email" placeholder="you@example.com"></label><label class="payment-field-full">PayPal reference<input id="paypalReference" type="text" placeholder="Reference (demo)"></label>';
+      ? '<label class="payment-field-full">Account name<input id="bankName" type="text" autocomplete="name" placeholder="Account name" required></label><label class="payment-field-full">Bank reference<input id="bankReference" type="text" placeholder="Reference number" required></label>'
+      : '<label class="payment-field-full">PayPal email<input id="paypalEmail" type="email" autocomplete="email" placeholder="you@example.com" required></label><label class="payment-field-full">PayPal reference<input id="paypalReference" type="text" placeholder="Payment reference" required></label>';
   }
   const copy=document.getElementById("checkoutCopy");
   if(copy)copy.textContent=cartCount()+" items ready • "+data.title+" selected.";
@@ -448,10 +448,15 @@ document.querySelectorAll(".payment-brand-logos img").forEach(img=>img.addEventL
 }));
 els.checkoutLayer.addEventListener("click",e=>{if(e.target===els.checkoutLayer)closeCheckout()});
 document.getElementById("finishCheckout").addEventListener("click",()=>{
+  const form=document.getElementById("paymentFields");
+  const required=form?.querySelectorAll("input[required]")||[];
+  let valid=true;
+  required.forEach(input=>{if(!String(input.value||"").trim()){input.reportValidity?.();valid=false;}});
+  if(!valid)return;
   const orderTotal=total();
   const method={card:"Card",bank:"Bank Transfer",paypal:"PayPal"}[state.payment]||"Card";
   burstAt(document.getElementById("finishCheckout"),12);
-  state.cart=[];saveCart();updateCartUI();closeCheckout();closeCart();notify("Payment selected: "+method+" • "+money(orderTotal));
+  notify("Order ready: "+method+" • "+money(orderTotal));
 });
 window.addEventListener("keydown",e=>{
   if(e.key!=="Escape")return;
