@@ -721,3 +721,14 @@ body.theme-light .payment-back:hover{
 .payment-form-grid input{width:100%;box-sizing:border-box;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.055);color:inherit;border-radius:12px;padding:12px 13px;outline:none}
 .payment-form-grid input:focus{border-color:rgba(255,190,80,.75);box-shadow:0 0 0 3px rgba(255,190,80,.12)}
 @media(max-width:560px){.payment-form-grid{grid-template-columns:1fr}.payment-form-grid .payment-field-full{grid-column:auto}}
+
+/* Order review and confirmation */
+.order-review-items{display:grid;gap:9px;margin:16px 0;max-height:230px;overflow:auto}
+.order-review-item{display:grid;grid-template-columns:48px 1fr auto;align-items:center;gap:10px;padding:9px;border:1px solid rgba(255,255,255,.1);border-radius:13px;background:rgba(255,255,255,.04)}
+.order-review-item img{width:48px;height:48px;border-radius:10px;object-fit:cover}
+.order-review-item div{display:grid;gap:3px}.order-review-item span{font-size:.72rem;opacity:.65}
+.order-review-summary{display:grid;gap:7px;padding:12px 0;border-top:1px solid rgba(255,255,255,.1);border-bottom:1px solid rgba(255,255,255,.1)}
+.order-review-summary div,.order-review-payment{display:flex;justify-content:space-between;gap:12px}.order-review-summary .total-row{font-size:1.05rem;margin-top:4px}
+.order-review-payment{padding:13px 0;font-size:.85rem}.order-review-payment strong{font-weight:800}
+.order-success-icon{width:62px;height:62px;border-radius:50%;display:grid;place-items:center;margin:20px auto;font-size:2rem;font-weight:900;border:1px solid rgba(120,220,150,.45);background:rgba(80,190,110,.12)}
+.order-success-summary{display:grid;gap:10px;margin-bottom:20px}.order-success-summary div{display:flex;justify-content:space-between;gap:15px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.09)}
