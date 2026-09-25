@@ -24,7 +24,7 @@ const REAL_FEED_KEY = "tubalhub_feeds";
 const LEGACY_JOURNAL_KEY = "payapang-isip-journal-v1";
 const JOURNAL_KEYS = [REAL_JOURNAL_KEY,LEGACY_JOURNAL_KEY,"payapang-journal"];
 const FEED_KEYS = [REAL_FEED_KEY];
-const SPONSORED_COLLECTION_REAL = "sponsoredAds";
+const SPONSORED_COLLECTION_REAL = "sponsors";
 const REAL_MUSIC_DB = "tubalhub_db";
 const REAL_MUSIC_STORE = "music";
 const MUSIC_DB = "tubalhub-ai-music";
@@ -292,70 +292,59 @@ const HUB_HERO_MESSAGES=[
 ];
 function initSponsoredReal(){
   const container=document.getElementById("sponsoredContainerReal");
-  if(!container||container.dataset.ready)return;
+  const content=document.getElementById("sponsoredContentReal");
+  const status=document.getElementById("sponsoredStatusReal");
+  if(!container||!content||!status||container.dataset.ready)return;
   container.dataset.ready="1";
 
-  const toMillis=value=>{
-    if(value?.toMillis)return value.toMillis();
-    if(value?.seconds!=null)return Number(value.seconds)*1000;
-    const parsed=Date.parse(value||"");
-    return Number.isFinite(parsed)?parsed:0;
+  const escAttr=value=>String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
+  const renderEmpty=(label="EMPTY")=>{
+    status.textContent=label;
+    status.style.color="rgba(255,255,255,0.2)";
+    status.style.background="rgba(255,255,255,0.05)";
+    content.innerHTML='<div style="background:rgba(0,0,0,0.2);border-radius:12px;border:1px dashed rgba(120,255,170,0.08);display:flex;align-items:center;justify-content:center;flex-direction:column;padding:18px;text-align:center;"><span style="font-size:18px;opacity:.15;">📦</span><small style="font-size:9px;opacity:.25;margin-top:6px;">No sponsor yet - empty lang real - ready for future sponsor</small></div>';
   };
 
   const render=items=>{
-    const active=items
-      .filter(x=>x&&(
-        x.active===true ||
-        String(x.active||"").toLowerCase()==="true" ||
-        x.active===1
-      ))
-      .sort((a,b)=>toMillis(b.updatedAt||b.createdAt)-toMillis(a.updatedAt||a.createdAt))[0];
+    const sponsor=items
+      .map(x=>({id:x.id,...x.data}))
+      .filter(x=>x && (x.isActive===true || String(x.isActive||"").toLowerCase()==="true") && !(x.isExpired===true || String(x.isExpired||"").toLowerCase()==="true"))
+      .sort((a,b)=>{
+        const ms=v=>v?.toMillis?.()??(v?.seconds!=null?Number(v.seconds)*1000:(Date.parse(v||"")||0));
+        return ms(b.updatedAt||b.createdAt)-ms(a.updatedAt||a.createdAt);
+      });
 
-    const head=container.querySelector(".sponsored-container-head-real");
-    const empty=container.querySelector(".sponsored-empty-real");
+    if(!sponsor.length){renderEmpty();return;}
+    const s=sponsor[0];
+    const title=escAttr(s.titleReal||"Sponsored");
+    const desc=escAttr(s.descReal||"");
+    const image=String(s.imageUrlReal||"").trim();
+    const link=String(s.linkReal||"").trim();
+    const safeLink=/^https?:\/\//i.test(link)?link:"";
+    const imageHtml=/^https?:\/\//i.test(image)
+      ? '<img src="'+escAttr(image)+'" alt="" loading="lazy" decoding="async" style="width:100%;height:140px;object-fit:cover;display:block;">'
+      : "";
+    const copy='<div style="padding:10px;"><b style="font-size:12px;">'+title+'</b>'+(desc?'<p style="font-size:10px;opacity:.6;margin:4px 0 0;">'+desc+'</p>':"")+'</div>';
+    const body=imageHtml+copy;
 
-    if(!active){
-      if(head)head.innerHTML="<span>Sponsored</span><span>EMPTY</span>";
-      if(!empty)return;
-      return;
-    }
-
-    const title=esc(active.title||"Sponsored");
-    const text=esc(active.text||"");
-    const image=String(active.imageUrl||"").trim();
-    const url=String(active.linkUrl||"").trim();
-    const badge=esc(active.badge||"SPONSORED");
-    const safeUrl=/^https?:\/\//i.test(url)?url:"";
-    const sponsorText=(title+" "+text+" "+badge).toLowerCase();
-    const isShopee=/\\bshopee\\.(?:ph|com|co\\.id|co\\.th|sg|vn|my|tw|cl|br)\\b/i.test(url)||sponsorText.includes("shopee");
-    const hasCustomImage=image&&/^https?:\\/\\//i.test(image);
-    const media=hasCustomImage
-      ?'<img class="sponsored-media-real" src="'+esc(image)+'" alt="" loading="lazy" decoding="async">'
-      :isShopee
-        ?'<div class="sponsored-brand-real" aria-label="Shopee"><img src="https://cdn.simpleicons.org/shopee/EE4D2D" alt="Shopee" loading="eager" decoding="async" onerror="this.style.display=\'none\';this.parentElement.classList.add(\'is-fallback\')"><span>SHOPEE</span></div>'
-        :'<div class="sponsored-brand-real sponsored-brand-fallback" aria-hidden="true"><span>SPONSORED</span></div>';
-
-    if(head)head.innerHTML='<span>Sponsored</span><span>'+badge+'</span>';
-
-    const cardHtml='<div class="sponsored-real-card">'+media+
-      '<div class="sponsored-real-copy"><small>'+badge+'</small><strong>'+title+'</strong>'+
-      (text?'<p>'+text+'</p>':"")+
-      (safeUrl?'<a href="'+esc(safeUrl)+'" target="_blank" rel="noopener noreferrer">Learn More →</a>':"")+
-      '</div></div>';
-
-    if(empty)empty.outerHTML=cardHtml;
-    else{
-      const existing=container.querySelector(".sponsored-real-card");
-      if(existing)existing.outerHTML=cardHtml;
-      else container.insertAdjacentHTML("beforeend",cardHtml);
-    }
+    status.textContent="LIVE";
+    status.style.background="rgba(29,255,145,0.15)";
+    status.style.color="#1dff91";
+    content.innerHTML=safeLink
+      ? '<a href="'+escAttr(safeLink)+'" target="_blank" rel="noopener noreferrer" style="display:block;background:rgba(0,0,0,.3);border-radius:12px;overflow:hidden;text-decoration:none;color:#fff;border:1px solid rgba(255,215,0,.2);">'+body+'</a>'
+      : '<div style="display:block;background:rgba(0,0,0,.3);border-radius:12px;overflow:hidden;color:#fff;border:1px solid rgba(255,215,0,.2);">'+body+'</div>';
   };
 
-  const renderSnapshot=snap=>render(snap.docs.map(d=>({id:d.id,...d.data()})));
   try{
-    const q=query(collection(db,SPONSORED_COLLECTION_REAL),limit(20));
-    onSnapshot(q,renderSnapshot,err=>console.warn("[TUBAL HUB Sponsored]",err));
-  }catch(err){console.warn("[TUBAL HUB Sponsored init]",err)}
+    const q=query(collection(db,"sponsors"),limit(20));
+    onSnapshot(q,snap=>render(snap.docs.map(d=>({id:d.id,data:d.data()}))),err=>{
+      console.warn("[TUBAL HUB Sponsors]",err);
+      renderEmpty("EMPTY");
+    });
+  }catch(err){
+    console.warn("[TUBAL HUB Sponsors init]",err);
+    renderEmpty("EMPTY");
+  }
 }
 function initHubHeroMessages(){
   const box=$("#bentoHeroMessage"),title=$("#bentoHeroMessageTitle"),textEl=$("#bentoHeroMessageText"),dots=$("#bentoHeroMessageDots");
