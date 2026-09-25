@@ -1026,21 +1026,44 @@ exports.migrateShopDownloadSecretsReal = onCall(async request => {
   for (const docSnap of snap.docs) {
     const data = docSnap.data() || {};
     const legacyUrl = String(data.downloadUrl || "").trim();
-    if (!legacyUrl) continue;
 
-    await db.collection("productSecrets").doc(docSnap.id).set({
-      sourceUrl: legacyUrl,
-      migratedFrom: "products.downloadUrl",
-      updatedAt: FieldValue.serverTimestamp(),
-      updatedBy: request.auth.uid
-    }, { merge: true });
+    if (legacyUrl) {
+      await db.collection("productSecrets").doc(docSnap.id).set({
+        sourceUrl: legacyUrl,
+        migratedFrom: "products.downloadUrl",
+        updatedAt: FieldValue.serverTimestamp(),
+        updatedBy: request.auth.uid
+      }, { merge: true });
 
-    await docSnap.ref.update({
-      downloadUrl: FieldValue.delete()
-    });
+      await docSnap.ref.update({
+        downloadUrl: FieldValue.delete()
+      });
 
-    migrated++;
-    removed++;
+      migrated++;
+      removed++;
+    }
+
+    const versions = await db.collection("productVersions")
+      .where("productId", "==", docSnap.id)
+      .limit(100)
+      .get();
+
+    for (const versionSnap of versions.docs) {
+      const versionData = versionSnap.data() || {};
+      const versionUrl = String(versionData.downloadUrl || "").trim();
+      if (!versionUrl) continue;
+
+      await db.collection("productSecrets").doc(docSnap.id).set({
+        ["sourceUrlByVersion." + String(versionData.version || versionSnap.id).replace(/[^a-zA-Z0-9._-]/g, "_")]: versionUrl,
+        updatedAt: FieldValue.serverTimestamp(),
+        updatedBy: request.auth.uid
+      }, { merge: true });
+
+      await versionSnap.ref.update({
+        downloadUrl: FieldValue.delete()
+      });
+      removed++;
+    }
   }
 
   return { success: true, migrated, removed };
