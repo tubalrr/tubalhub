@@ -103,10 +103,9 @@ async function load(){
   setup();
   const grid=document.getElementById("newsGrid");
   if(grid)grid.innerHTML="<div class='news-skeleton'><div class='news-skeleton-card'></div><div class='news-skeleton-card'></div><div class='news-skeleton-card'></div></div>";
-  try{
-    const snap=await getDocs(query(collection(db,"news"),orderBy("createdAt","desc"),limit(100)));
+  const mapNewsSnapshot=snap=>{
     state.sourceNews=snap.docs.map(d=>({id:"news-"+d.id,sourceCollection:"news",sourceId:d.id,contentType:"news",title:d.data().title||"",text:d.data().text||d.data().summary||"",description:d.data().text||d.data().summary||"",imageUrl:d.data().imageUrl||d.data().image||"",createdAt:d.data().createdAt||0,authorName:d.data().authorName||"TUBAL HUB News",category:d.data().category||"platform",articleUrl:d.data().articleUrl||""}));
-  }catch(e){console.error("[TUBAL HUB News]",e);state.sourceNews=[]}
+  };
   const merge=()=>{
     const hub=state.hubNews.filter(x=>Array.isArray(x.destinations)?x.destinations.includes("news"):x.contentType==="news").map(x=>({...x,id:"hub-"+x.id}));
     const keys=new Set();
@@ -115,6 +114,18 @@ async function load(){
     renderTicker();renderFeatured();renderGrid(filtered());renderTrending();renderRelated();
   };
   try{subscribeHubPosts(items=>{state.hubNews=items;merge()})}catch(e){console.warn("[TUBAL HUB News] hubPosts",e)}
+  try{
+    onSnapshot(query(collection(db,"news"),orderBy("createdAt","desc"),limit(100)),snap=>{
+      mapNewsSnapshot(snap);
+      merge();
+    },error=>console.error("[TUBAL HUB News] realtime news listener",error));
+  }catch(e){
+    console.warn("[TUBAL HUB News] realtime listener unavailable",e);
+    try{
+      const snap=await getDocs(query(collection(db,"news"),orderBy("createdAt","desc"),limit(100)));
+      mapNewsSnapshot(snap);
+    }catch(loadError){console.error("[TUBAL HUB News] initial load",loadError);state.sourceNews=[]}
+  }
   merge();
 }
 load();
