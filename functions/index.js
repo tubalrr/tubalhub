@@ -925,7 +925,6 @@ exports.verifyShopOrderReal = onCall(async request => {
       tx.update(licenseRef, {
         ownedVersion: targetVersion,
         latestVersion: targetVersion,
-        downloadUrl: String(upgrade.downloadUrl || license.downloadUrl || "").slice(0, 3000),
         updatedAt: FieldValue.serverTimestamp()
       });
 
@@ -944,7 +943,6 @@ exports.verifyShopOrderReal = onCall(async request => {
         orderId,
         productId: String(order.productId || upgrade.productId || ""),
         version: targetVersion,
-        downloadUrl: String(upgrade.downloadUrl || license.downloadUrl || "").slice(0, 3000),
         createdAt: FieldValue.serverTimestamp(),
         createdByServer: true
       }, { merge: true });
@@ -982,7 +980,6 @@ exports.verifyShopOrderReal = onCall(async request => {
         ownedVersion: String(item.version || "1.0.0").slice(0, 80),
         licenseType: String(item.licenseType || "Standard").slice(0, 100),
         latestVersion: String(item.latestVersion || item.version || "1.0.0").slice(0, 80),
-        downloadUrl: String(item.downloadUrl || "").slice(0, 3000),
         status: "paid",
         createdAt: FieldValue.serverTimestamp(),
         updatedAt: FieldValue.serverTimestamp(),
@@ -1017,6 +1014,36 @@ exports.verifyShopOrderReal = onCall(async request => {
   });
 
   return { success: true, ...result };
+});
+
+exports.migrateShopDownloadSecretsReal = onCall(async request => {
+  requireAdminUser(request);
+
+  const snap = await db.collection("products").limit(100).get();
+  let migrated = 0;
+  let removed = 0;
+
+  for (const docSnap of snap.docs) {
+    const data = docSnap.data() || {};
+    const legacyUrl = String(data.downloadUrl || "").trim();
+    if (!legacyUrl) continue;
+
+    await db.collection("productSecrets").doc(docSnap.id).set({
+      sourceUrl: legacyUrl,
+      migratedFrom: "products.downloadUrl",
+      updatedAt: FieldValue.serverTimestamp(),
+      updatedBy: request.auth.uid
+    }, { merge: true });
+
+    await docSnap.ref.update({
+      downloadUrl: FieldValue.delete()
+    });
+
+    migrated++;
+    removed++;
+  }
+
+  return { success: true, migrated, removed };
 });
 
 exports.getAuthorizedDownloadReal = onCall(async request => {
