@@ -21,7 +21,7 @@ function friendlyAuthError(code) {
     case "auth/email-already-in-use": return "That email is already registered.";
     case "auth/weak-password": return "Choose a stronger password.";
     case "auth/popup-closed-by-user": return "Google sign-in was cancelled.";
-    case "auth/popup-blocked": return "Google popup was blocked. Allow pop-ups for tubalrr.github.io and try again.";
+    case "auth/popup-blocked": return "Google popup was blocked. Allow pop-ups for this website and try again.";
     case "auth/too-many-requests": return "Too many attempts. Please try again later.";
     case "auth/operation-not-allowed": return "Google sign-in is not enabled in Firebase Console.";
     case "auth/unauthorized-domain": return "This website domain is not authorized in Firebase Authentication.";
