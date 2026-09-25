@@ -431,6 +431,7 @@ exports.sendMessageReal = onCall(async request => {
     moderatedReal: !!moderation.flagged,
     flaggedReal: !!moderation.flagged,
     verifiedReal: true,
+    roleReal: (request.auth.token?.admin === true || request.auth.token?.email === "tubalrr@gmail.com") ? "admin" : "user",
     moderatedBy: "server"
   };
 
@@ -462,6 +463,71 @@ exports.sendMessageReal = onCall(async request => {
     moderated: !!moderation.flagged,
     cleanText: moderation.cleanText
   };
+});
+
+exports.sendGlobalMediaMessageReal = onCall(async request => {
+  requireRealUser(request);
+
+  const type = String(request.data?.type || "");
+  const channel = channelToFirestoreReal(request.data?.channel);
+  const mediaUrl = String(request.data?.mediaUrl || "").trim();
+  const storagePath = String(request.data?.storagePath || "").trim();
+  const textReal = String(request.data?.text || request.data?.textReal || "").trim();
+
+  if (!["image", "gif"].includes(type) || !channel || !mediaUrl || mediaUrl.length > 3000) {
+    throw new HttpsError("invalid-argument", "Invalid media message.");
+  }
+  if (textReal.length > 500) {
+    throw new HttpsError("invalid-argument", "Caption must be 500 characters or less.");
+  }
+
+  if (storagePath && !storagePath.startsWith("global-chat/" + request.auth.uid + "/")) {
+    throw new HttpsError("permission-denied", "Invalid media ownership.");
+  }
+
+  const moderation = textReal
+    ? moderateServerReal(textReal)
+    : { allowed: true, flagged: false, cleanText: "", reason: "" };
+
+  if (!moderation.allowed) {
+    await writeModerationLogReal({
+      typeReal: "media_callable_blocked",
+      originalTextReal: textReal,
+      reasonReal: moderation.reason,
+      uid: request.auth.uid,
+      channel
+    });
+    await recordStrikeReal(request.auth.uid, moderation.reason, channel, "");
+    throw new HttpsError("invalid-argument", "Media caption blocked by server moderation.");
+  }
+
+  await enforceRateLimitReal(request.auth.uid);
+
+  const name = displayNameFromRequest(request);
+  const token = request.auth.token || {};
+  const roleReal = token.admin === true || token.email === "tubalrr@gmail.com" ? "admin" : "user";
+  const ref = await db.collection("globalChats").add({
+    uid: request.auth.uid,
+    displayName: name,
+    name,
+    email: token.email || "",
+    photoURL: token.picture || "",
+    createdAt: FieldValue.serverTimestamp(),
+    type,
+    channel,
+    mediaUrl,
+    storagePath,
+    storagePathReal: storagePath,
+    text: moderation.cleanText,
+    textReal: moderation.cleanText,
+    roleReal,
+    moderatedReal: !!moderation.flagged,
+    flaggedReal: !!moderation.flagged,
+    verifiedReal: true,
+    moderatedBy: "server"
+  });
+
+  return { success: true, id: ref.id, moderated: !!moderation.flagged };
 });
 
 exports.sendReplyReal = onCall(async request => {
