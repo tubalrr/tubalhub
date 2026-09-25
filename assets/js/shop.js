@@ -7,6 +7,7 @@ const db=getFirestore(app);
 const shopFunctions=getFunctions(app);
 const createShopOrderReal=httpsCallable(shopFunctions,"createShopOrderReal");
 const upgradeShopProductReal=httpsCallable(shopFunctions,"upgradeShopProductReal");
+const getAuthorizedDownloadReal=httpsCallable(shopFunctions,"getAuthorizedDownloadReal");
 const CART_KEY="tubalhub-shop-cart-v2";
 const WISH_KEY="tubalhub-shop-wishlist-v1";
 const THEME_KEY="tubalhub-theme";
@@ -37,7 +38,7 @@ const galleryPool=[IMG.tshirt,IMG.hoodie,IMG.cap,IMG.backpack,IMG.mug,IMG.poster
 let realProducts=[];
 let realProductsUnsubscribe=null;
 const parseProductPrice=v=>{const n=Number(String(v??"").replace(/[^0-9.]/g,""));return Number.isFinite(n)?n:0};
-const normalizeRealProduct=x=>({id:"real-"+x.id,firestoreId:x.id,real:true,collection:"th",title:String(x.name||"Unnamed Product"),price:parseProductPrice(x.price),priceLabel:String(x.price||"Free"),original:0,originalLabel:"",image:String(x.imageUrl||"").trim(),seller:"TUBAL HUB Shop",sellerInitials:"TH",online:false,stock:null,rating:null,badge:String(x.badge||"").trim(),description:String(x.description||""),details:String(x.description||""),sizes:[],colors:[],productUrl:String(x.productUrl||"").trim(),category:String(x.category||"products"),productType:String(x.productType||"physical"),version:String(x.version||"1.0.0"),releaseDate:String(x.releaseDate||""),license:String(x.license||""),upgradePrice:String(x.upgradePrice||"Free"),latestVersion:String(x.latestVersion||x.version||"1.0.0"),downloadUrl:String(x.downloadUrl||""),includes:String(x.includes||""),changelog:String(x.changelog||"")});
+const normalizeRealProduct=x=>({id:"real-"+x.id,firestoreId:x.id,real:true,collection:"th",title:String(x.name||"Unnamed Product"),price:parseProductPrice(x.price),priceLabel:String(x.price||"Free"),original:0,originalLabel:"",image:String(x.imageUrl||"").trim(),seller:"TUBAL HUB Shop",sellerInitials:"TH",online:false,stock:null,rating:null,badge:String(x.badge||"").trim(),description:String(x.description||""),details:String(x.description||""),sizes:[],colors:[],productUrl:String(x.productUrl||"").trim(),category:String(x.category||"products"),productType:String(x.productType||"physical"),version:String(x.version||"1.0.0"),releaseDate:String(x.releaseDate||""),license:String(x.license||""),upgradePrice:String(x.upgradePrice||"Free"),latestVersion:String(x.latestVersion||x.version||"1.0.0"),includes:String(x.includes||""),changelog:String(x.changelog||"")});
 function listenToRealProducts(){if(realProductsUnsubscribe)realProductsUnsubscribe();realProductsUnsubscribe=onSnapshot(collection(db,"products"),snap=>{realProducts=snap.docs.map(d=>normalizeRealProduct({id:d.id,...d.data()}));renderProducts();updateCounts();renderMyProducts()},e=>console.warn("[TUBAL HUB Shop] real products listener failed",e))}
 
 const products=[
@@ -341,13 +342,24 @@ function shopNow(){document.getElementById("catalog").scrollIntoView({behavior:"
 function galleryFor(p){return [p.image,galleryPool[(products.indexOf(p)+1)%galleryPool.length],galleryPool[(products.indexOf(p)+2)%galleryPool.length],galleryPool[(products.indexOf(p)+3)%galleryPool.length]]}
 
 function licenseForProduct(id){return ownedLicenses.find(x=>x.productId===id)||null}
+async function openAuthorizedDownload(licenseId){
+  try{
+    const result=await getAuthorizedDownloadReal({licenseId});
+    const url=String(result?.data?.url||"").trim();
+    if(!url){notify("Protected download is not available.");return}
+    window.open(url,"_blank","noopener,noreferrer");
+  }catch(e){
+    console.error("[TUBAL HUB Shop] protected download failed",e);
+    notify("Download is unavailable. A paid license is required.");
+  }
+}
 function renderMyProducts(){
   if(!els.myProductsSection)return;
   const user=auth.currentUser;
   if(!user||user.isAnonymous){els.myProductsSection.hidden=true;return}
   els.myProductsSection.hidden=false;
   els.myProductsStatus.textContent=ownedLicenses.length?ownedLicenses.length+" owned product"+(ownedLicenses.length===1?"":"s"):"No digital licenses yet";
-  els.myProductsGrid.innerHTML=ownedLicenses.map(l=>{const p=productById(l.productId);if(!p)return"";const latest=p.latestVersion||p.version||l.ownedVersion;const upgrade=latest!==l.ownedVersion;const history=upgradeHistory.filter(x=>x.productId===l.productId);return '<article class="owned-product-card"><div><b>'+esc(p.title)+'</b><span>Owned Version: v'+esc(l.ownedVersion)+'</span><span>License: '+esc(l.licenseType||p.license||"Standard")+'</span><span>Latest Version: v'+esc(latest)+'</span><div class="upgrade-history"><b>Purchase History</b><span>v'+esc(l.ownedVersion)+' → Purchased</span>'+history.map(x=>'<span>v'+esc(x.toVersion||"—")+' → Upgraded</span>').join("")+'</div></div><div class="owned-product-actions">'+(l.downloadUrl?'<a class="add-btn" href="'+esc(l.downloadUrl)+'" target="_blank" rel="noopener noreferrer">Download</a>':"")+(upgrade?'<button class="buy-now-btn" data-upgrade="'+esc(p.id)+'" type="button">Upgrade</button>':'<span class="owned-current">Up to date</span>')+'</div></article>'}).join("")||'<div class="shop-empty">No digital products owned yet.</div>';
+  els.myProductsGrid.innerHTML=ownedLicenses.map(l=>{const p=productById(l.productId);if(!p)return"";const latest=p.latestVersion||p.version||l.ownedVersion;const upgrade=latest!==l.ownedVersion;const history=upgradeHistory.filter(x=>x.productId===l.productId);return '<article class="owned-product-card"><div><b>'+esc(p.title)+'</b><span>Owned Version: v'+esc(l.ownedVersion)+'</span><span>License: '+esc(l.licenseType||p.license||"Standard")+'</span><span>Latest Version: v'+esc(latest)+'</span><div class="upgrade-history"><b>Purchase History</b><span>v'+esc(l.ownedVersion)+' → Purchased</span>'+history.map(x=>'<span>v'+esc(x.toVersion||"—")+' → Upgraded</span>').join("")+'</div></div><div class="owned-product-actions"><button class="add-btn" data-download-license="'+esc(l.id)+'" type="button">Download</button>'+(upgrade?'<button class="buy-now-btn" data-upgrade="'+esc(p.id)+'" type="button">Upgrade</button>':'<span class="owned-current">Up to date</span>')+'</div></article>'}).join("")||'<div class="shop-empty">No digital products owned yet.</div>';
 }
 function listenToOwnedProducts(user){
   if(licenseUnsubscribe){licenseUnsubscribe();licenseUnsubscribe=null}
@@ -482,7 +494,13 @@ document.getElementById("quickViewPlus").addEventListener("click",()=>{state.qui
 document.getElementById("quickViewAdd").addEventListener("click",()=>{if(state.current)addToCart(state.current.id,state.quickQty,document.getElementById("quickViewAdd"))});
 document.getElementById("quickViewBuy").addEventListener("click",()=>{if(state.current){if(state.current.real&&state.current.productType!=="physical"){const owned=licenseForProduct(state.current.firestoreId);closeQuick();if(owned){state.upgradeTarget={product:state.current,license:owned};openCheckout()}else{state.cart=[];addToCart(state.current.id,1,null,"buy");openCheckout()}}else buyProduct(state.current,state.quickQty)}});
 document.getElementById("quickViewUpgrade").addEventListener("click",()=>{if(state.current){const owned=licenseForProduct(state.current.firestoreId);if(owned){state.upgradeTarget={product:state.current,license:owned};closeQuick();openCheckout();}}});
-document.addEventListener("click",e=>{const b=e.target.closest("[data-upgrade]");if(!b)return;const p=productById(b.dataset.upgrade);const owned=p&&licenseForProduct(p.firestoreId);if(p&&owned){state.upgradeTarget={product:p,license:owned};openCheckout()}});
+document.addEventListener("click",async e=>{
+  const downloadButton=e.target.closest("[data-download-license]");
+  if(downloadButton){
+    e.preventDefault();
+    await openAuthorizedDownload(downloadButton.dataset.downloadLicense);
+    return;
+  }const b=e.target.closest("[data-upgrade]");if(!b)return;const p=productById(b.dataset.upgrade);const owned=p&&licenseForProduct(p.firestoreId);if(p&&owned){state.upgradeTarget={product:p,license:owned};openCheckout()}});
 document.getElementById("checkoutBtn").addEventListener("click",openCheckout);
 document.getElementById("closeCheckout").addEventListener("click",closeCheckout);
 document.getElementById("backCheckout").addEventListener("click",()=>{closeCheckout();burstAt(document.getElementById("backCheckout"),5)});
