@@ -127,3 +127,8 @@ body:after{display:none!important}#sidebarToggle{position:fixed!important;z-inde
 .admin-search-empty{padding:12px;color:#71877d;font-size:9px;text-align:center}
 @media(max-width:800px){.admin-search-wrap{width:min(300px,45vw)} }
 @media(max-width:560px){.admin-search-wrap{width:100%;order:3}.topbar{height:auto;min-height:68px;flex-wrap:wrap;padding:10px 0;gap:8px}.top-actions{margin-left:auto}}
+
+/* REGISTERED MEMBERS — collapsed until requested */
+.members-open-btn{border:1px solid rgba(52,211,153,.24)!important;border-radius:10px!important;padding:9px 13px!important;background:rgba(52,211,153,.06)!important;color:#6ee7b7!important;font-size:9px!important;font-weight:800!important;cursor:pointer!important;transition:.2s ease!important}
+.members-open-btn:hover{border-color:rgba(52,211,153,.65)!important;background:rgba(52,211,153,.11)!important;box-shadow:0 0 18px rgba(52,211,153,.08)!important}
+.members-content[hidden]{display:none!important}
