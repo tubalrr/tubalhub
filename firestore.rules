@@ -452,8 +452,10 @@ service cloud.firestore {
     match /orders/{orderId} {
       // Order/ownership records are server-generated only.
       allow create, update, delete: if adminUser();
-      allow read: if realUser()
-        && resource.data.uid == request.auth.uid;
+      // Buyers can read only their own orders; admins can review all orders
+      // for manual payment verification.
+      allow read: if adminUser()
+        || (realUser() && resource.data.uid == request.auth.uid);
     }
 
     match /licenses/{licenseId} {
