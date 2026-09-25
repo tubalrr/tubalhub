@@ -1,5 +1,5 @@
 import {app,auth} from "./firebase-config.js";
-import {getFirestore,collection,onSnapshot,getDocs,query,where} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+import {getFirestore,collection,onSnapshot,getDocs,query,where,addDoc,serverTimestamp} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 import {onAuthStateChanged} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 import {getFunctions,httpsCallable} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-functions.js";
 
@@ -10,6 +10,10 @@ const upgradeShopProductReal=httpsCallable(shopFunctions,"upgradeShopProductReal
 const getAuthorizedDownloadReal=httpsCallable(shopFunctions,"getAuthorizedDownloadReal");
 const CART_KEY="tubalhub-shop-cart-v2";
 const WISH_KEY="tubalhub-shop-wishlist-v1";
+const THEME_KEY="tubalhub-theme";
+const money=n=>"₱"+Number(n||0).toLocaleString("en-PH",{maximumFractionDigits:0});
+const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
+
 const THEME_KEY="tubalhub-theme";
 const money=n=>"₱"+Number(n||0).toLocaleString("en-PH",{maximumFractionDigits:0});
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
