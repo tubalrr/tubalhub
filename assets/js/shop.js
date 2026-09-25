@@ -1,8 +1,9 @@
 import {app,auth} from "./firebase-config.js";
-import {getFirestore,collection,addDoc,serverTimestamp,onSnapshot,getDocs} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+import {getFirestore,collection,addDoc,serverTimestamp,onSnapshot,getDocs,query,where,doc,updateDoc} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+import {onAuthStateChanged} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
 const db=getFirestore(app);
-const CART_KEY="tubalhub-shop-cart-v1";
+const CART_KEY="tubalhub-shop-cart-v2";
 const WISH_KEY="tubalhub-shop-wishlist-v1";
 const THEME_KEY="tubalhub-theme";
 const money=n=>"₱"+Number(n||0).toLocaleString("en-PH",{maximumFractionDigits:0});
