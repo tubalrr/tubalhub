@@ -36,8 +36,11 @@ body{background:radial-gradient(circle at 75% 0%,#17345d55,transparent 30%),radi
 <link rel="stylesheet" href="../assets/css/global-chat-focus.css?v=20260924-v4">
   <link rel="stylesheet" href="../assets/css/premium-logos.css?v=20260924-logo1">
 </head>
-<body>
-<header class="topbar"><a class="brand" href="../index.html"><img src="../tubal-hub-logo.png" loading="eager" decoding="async" fetchpriority="high" width="180" height="180" alt="TUBAL HUB"><div><strong>TUBAL HUB</strong><small>PLAY • CREATE • CONNECT</small></div></a><nav class="topnav"><a href="../index.html">⌂ Home</a><a href="games.html">🎮 Games</a><a href="videos.html">▶ Videos</a><a href="community.html">♟ Community</a><a class="active" href="chat.html">💬 Global Chat</a><a href="about.html">ⓘ About</a><a href="contact.html">✉ Contact</a></nav><div class="profile"><div><div class="profile-name" id="profileName">TUBAL HUB</div><div class="online" id="profileStatus">● Checking...</div></div><div class="avatar" id="profileAvatar">TH</div><button type="button" class="mobile-rail-toggle topbar-rail-toggle" id="topOpenMembers" aria-label="Online members">☷</button><button type="button" class="mobile-rail-toggle topbar-rail-toggle" id="topOpenDMs" aria-label="Private chats">✉</button></div></header>
+<body class="global-chat-page">
+<button id="sidebarToggle" class="global-chat-menu-toggle" type="button" aria-controls="chatLeftRail" aria-expanded="false" aria-label="Toggle Global Chat sidebar" title="Toggle sidebar">
+  <span></span><span></span><span></span>
+</button>
+<header class="topbar"><a class="brand" href="../index.html"><img src="../tubal-hub-logo.png" loading="eager" decoding="async" fetchpriority="high" width="180" height="180" alt="TUBAL HUB"><div><strong>TUBAL HUB</strong><small>PLAY • CREATE • CONNECT</small></div><span id="globalChatVersionBadge" class="global-chat-version-badge">● LIVE v1.2.10</span></a><nav class="topnav"><a href="../index.html">⌂ Home</a><a href="games.html">🎮 Games</a><a href="videos.html">▶ Videos</a><a href="community.html">♟ Community</a><a class="active" href="chat.html">💬 Global Chat</a><a href="about.html">ⓘ About</a><a href="contact.html">✉ Contact</a></nav><div class="profile"><div><div class="profile-name" id="profileName">TUBAL HUB</div><div class="online" id="profileStatus">● Checking...</div></div><div class="avatar" id="profileAvatar">TH</div><button type="button" class="mobile-rail-toggle topbar-rail-toggle" id="topOpenMembers" aria-label="Online members">☷</button><button type="button" class="mobile-rail-toggle topbar-rail-toggle" id="topOpenDMs" aria-label="Private chats">✉</button></div></header>
 <div class="layout chat-layout">
 <main class="main chat-main">
 <section id="chatLock" class="lock-wrap"><div class="lock-card"><div class="lock-icon">🔐</div><h2>Login Required</h2><p>Global Chat is available to registered TUBAL HUB members. Create an account or log in to join the conversation.</p><div class="lock-actions"><a class="login" href="login.html?returnTo=chat.html">Login</a><a class="signup" href="signup.html?returnTo=chat.html">Create Account</a></div></div></section>
@@ -56,8 +59,15 @@ body{background:radial-gradient(circle at 75% 0%,#17345d55,transparent 30%),radi
     <div id="memberList" class="member-list"><div class="empty-side">No members are online right now.</div></div>
 
     <div class="rail-section channels">
-      <div class="rail-section-head"><h3>Chat Channels</h3></div>
-      <div class="channel-row active"><span class="channel-label"><i class="channel-logo" aria-hidden="true">#</i><span>global-chat</span></span><span id="globalMessageCount">0</span></div>
+      <div class="rail-section-head"><h3>Chat Channels</h3><span class="channel-source-real">FIRESTORE</span></div>
+      <div class="channel-list-real" role="tablist" aria-label="Global Chat channels">
+        <button type="button" class="channelReal active" data-channel="general" role="tab" aria-selected="true"><span># general</span><span class="channel-count-real" data-channel-count="general">0</span></button>
+        <button type="button" class="channelReal" data-channel="payapang-isip" role="tab" aria-selected="false"><span># payapang-isip</span><span class="channel-count-real" data-channel-count="payapang-isip">0</span></button>
+        <button type="button" class="channelReal" data-channel="ctrlzone" role="tab" aria-selected="false"><span># ctrlzone</span><span class="channel-count-real" data-channel-count="ctrlzone">0</span></button>
+        <button type="button" class="channelReal" data-channel="shop-talk" role="tab" aria-selected="false"><span># shop-talk</span><span class="channel-count-real" data-channel-count="shop-talk">0</span></button>
+        <button type="button" class="channelReal" data-channel="announcements" role="tab" aria-selected="false"><span># announcements</span><span class="channel-count-real" data-channel-count="announcements">0</span></button>
+      </div>
+      <div class="channel-real-note">Only messages that actually exist in the selected channel are shown.</div>
     </div>
 
     <div class="rail-section rules">
@@ -76,7 +86,7 @@ body{background:radial-gradient(circle at 75% 0%,#17345d55,transparent 30%),radi
     <div class="chat-focus-head">
       <div class="chat-title">
         <div class="globe chat-globe-logo" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"></circle><path d="M3.7 12h16.6M12 3.5c2.4 2.4 3.6 5.2 3.6 8.5S14.4 18.1 12 20.5M12 3.5C9.6 5.9 8.4 8.7 8.4 12s1.2 6.1 3.6 8.5"></path></svg></div>
-        <div><h1>Global Chat</h1><p>Live messages from TUBAL HUB members</p></div>
+        <div><h1 id="globalChatChannelTitle">Global Chat</h1><p>Live messages from TUBAL HUB members • real-time</p></div>
       </div>
       <div class="center-actions">
         <span class="count"><i></i><span id="onlineCount">0</span> Online</span>
@@ -86,11 +96,11 @@ body{background:radial-gradient(circle at 75% 0%,#17345d55,transparent 30%),radi
     </div>
     <div id="chatStatus" class="status-msg chat-connect"><span class="status-dot"></span>Connecting to TUBAL HUB...</div>
     <div id="moderationNotice" class="moderation-notice" role="alert" aria-live="assertive"></div>
-    <div class="messages chat-messages" id="messages"><div class="empty-chat"><strong>No messages yet.</strong>Start the first conversation in Global Chat.</div></div>
+    <div class="messages chat-messages" id="messages"><div class="chat-build-marker-real" id="chatBuildMarkerReal">Today</div><div class="empty-chat"><strong>No messages yet.</strong>Start the first conversation in Global Chat.</div></div>
     <div id="replyingBar" class="replying"><span>Replying to <b id="replyingName"></b></span><button id="cancelReply" type="button">Cancel</button></div>
     <form class="composer chat-composer" id="chatForm">
       <div class="composer-tools"><button type="button" class="tool" id="imageBtn" title="Send image">▧</button><button type="button" class="tool" id="gifBtn" title="Send GIF file">GIF</button><button type="button" class="tool" id="emojiBtn" title="Emoji" aria-label="Emoji">☺</button></div>
-      <input id="messageInput" maxlength="500" placeholder="Type your message..." autocomplete="off">
+      <input id="messageInput" maxlength="500" placeholder="Mag chat ka dito... real message • hindi fake" autocomplete="off">
       <button class="send" id="sendButton" type="submit">Send ➤</button>
       <input id="imageInput" type="file" accept="image/png,image/jpeg,image/webp" hidden>
       <input id="gifInput" type="file" accept="image/gif" hidden>
@@ -158,6 +168,7 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstati
 const db=getFirestore(app), storage=getStorage(app);
 const lock=document.getElementById('chatLock'),content=document.getElementById('chatContent'),messages=document.getElementById('messages'),form=document.getElementById('chatForm'),input=document.getElementById('messageInput'),sendButton=document.getElementById('sendButton'),statusEl=document.getElementById('chatStatus'),memberList=document.getElementById('memberList'),onlineCount=document.getElementById('onlineCount'),onlineMembers=document.getElementById('onlineMembers'),globalMessageCount=document.getElementById('globalMessageCount'),replyingBar=document.getElementById('replyingBar'),replyingName=document.getElementById('replyingName'),cancelReply=document.getElementById('cancelReply'),emojiPicker=document.getElementById('emojiPicker');
 let currentUser=null,stopMessages=null,heartbeatTimer=null,stopPresence=null,stopUsersPresence=null,heartbeatPresenceRefresh=null,stopBanStatus=null,stopReactions=null,stopReplies=null,stopDmList=null,replyTarget=null,lastMessageTime=0,reactionState={};
+let activeChannelReal="general";
 let privateTarget=null,stopPrivateMessages=null,privateLastMessageTime=0;
 const emojis=['😀','😂','😍','🥰','😎','😭','😡','😮','👍','👎','❤️','🔥','💯','🎮','🎉','👏','🤣','🤔','😅','🙌','💚','✨','👀','🙏','🥳','😴','🤝','🚀','💀','😇','😱','🤩','💪','🌿','⭐','🎯','🏆','❤️‍🔥','🫶','😊'];
 function enableMemberNameClick(){if(!memberList||memberList.dataset.privateClickReady)return;memberList.dataset.privateClickReady='1';memberList.addEventListener('click',e=>{const nameBtn=e.target.closest?.('.private-member-name');if(!nameBtn)return;const member=nameBtn.closest?.('.member');if(!member)return;const uid=member.dataset.uid;if(!uid||uid===currentUser?.uid)return;const name=nameBtn.textContent||'Member';const img=member.querySelector('.mini img');e.preventDefault();e.stopPropagation();openPrivateChat({uid,displayName:name,photoURL:img?.src||''})},true)}
@@ -356,7 +367,44 @@ function subscribeReactions(){
  },err=>console.error('Reaction error',err));
 }
 function subscribeReplies(){if(stopReplies)stopReplies();const q=query(collection(db,'globalChatReplies'),orderBy('createdAt','asc'),limit(500));stopReplies=onSnapshot(q,snap=>{document.querySelectorAll('.reply-box').forEach(x=>x.innerHTML='');snap.forEach(d=>{const x=d.data(),root=x.messageId,box=document.getElementById(`replies-${root}`);if(!box)return;const item=document.createElement('div');item.className='reply-item'+(x.parentReplyId?' nested-reply':'');item.dataset.replyId=d.id;item.innerHTML=`<div class="reply-meta"><b class="private-member-name">${esc(x.displayName||'Member')}</b> • ${esc(timeText(x.createdAt))}</div><div class="reply-text">${esc(x.text)}</div><div class="reply-actions"><button type="button" class="reply-react-btn" title="React">😊</button><button type="button" class="reply-to-reply">↩ Reply</button></div><div class="reply-reaction-bar"></div>`;item.querySelector('.reply-to-reply').onclick=e=>{e.stopPropagation();setReplyTarget(root,x.displayName||'Member',String(x.text||'').slice(0,100),d.id)};item.querySelector('.reply-react-btn').onclick=e=>{e.stopPropagation();openReplyReactionMenu(e.currentTarget,d.id)};renderReplyReactions(item,d.id);box.appendChild(item)});},err=>console.error('Reply error',err))}
-function subscribeMessages(){if(stopMessages)stopMessages();const q=query(collection(db,'globalChats'),orderBy('createdAt','asc'),limit(100));stopMessages=onSnapshot(q,snap=>{messages.innerHTML='';if(snap.empty)messages.innerHTML='<div class="empty-chat"><strong>No messages yet.</strong>Start the first conversation in Global Chat.</div>';snap.forEach(d=>messages.appendChild(renderMessage(d.id,d.data())));globalMessageCount.textContent=snap.size;messages.scrollTop=messages.scrollHeight;setStatus(`Live • ${snap.size} message${snap.size===1?'':'s'} loaded from Global Chat`);},err=>{console.error(err);setStatus('Could not load Global Chat. Check Firestore Rules.',true)})}
+function subscribeMessages(){
+  if(stopMessages)stopMessages();
+  const channelValue=activeChannelReal==='general'?'global-chat':activeChannelReal;
+  const q=query(collection(db,'globalChats'),where('channel','==',channelValue),orderBy('createdAt','asc'),limit(100));
+  stopMessages=onSnapshot(q,snap=>{
+    messages.innerHTML='<div class="chat-build-marker-real" id="chatBuildMarkerReal">Today</div>';
+    if(snap.empty)messages.innerHTML+='<div class="empty-chat"><strong>No messages in # '+esc(activeChannelReal)+'.</strong><span>This channel is empty until a real member posts here.</span></div>';
+    snap.forEach(d=>messages.appendChild(renderMessage(d.id,d.data())));
+    globalMessageCount.textContent=snap.size;
+    document.querySelectorAll('.channel-count-real').forEach(el=>{
+      if(el.dataset.channelCount===activeChannelReal)el.textContent=snap.size;
+    });
+    messages.scrollTop=messages.scrollHeight;
+    setStatus(`Live • # ${activeChannelReal} • ${snap.size} real message${snap.size===1?'':'s'}`);
+    window.dispatchEvent(new CustomEvent('tubalhub-chat-channel-loaded',{detail:{channel:activeChannelReal,count:snap.size}}));
+  },err=>{
+    console.error(err);
+    setStatus('Could not load this channel. Check Firestore Rules.',true);
+  });
+}
+function setActiveChannelReal(channel){
+  const allowed=['general','payapang-isip','ctrlzone','shop-talk','announcements'];
+  activeChannelReal=allowed.includes(String(channel))?String(channel):'general';
+  document.querySelectorAll('.channelReal').forEach(btn=>{
+    const active=btn.dataset.channel===activeChannelReal;
+    btn.classList.toggle('active',active);
+    btn.setAttribute('aria-selected',active?'true':'false');
+  });
+  const title=document.getElementById('globalChatChannelTitle');
+  if(title)title.textContent=activeChannelReal==='general'?'Global Chat':('# '+activeChannelReal);
+  subscribeMessages();
+  if(window.matchMedia?.('(max-width:900px)').matches){
+    document.getElementById('chatLeftRail')?.classList.remove('open');
+    document.getElementById('sidebarToggle')?.setAttribute('aria-expanded','false');
+  }
+}
+window.tubalHubSetChatChannelReal=setActiveChannelReal;
+
 async function subscribePresence(){if(stopPresence)stopPresence();if(stopUsersPresence)stopUsersPresence();if(heartbeatPresenceRefresh)clearInterval(heartbeatPresenceRefresh);const presenceRef=collection(db,'presence'),usersRef=collection(db,'users');let presenceMap=new Map(),usersMap=new Map();const onlineCutoff=()=>Date.now()-180000;const render=()=>{const merged=new Map();presenceMap.forEach((x,uid)=>merged.set(uid,{...x,uid}));usersMap.forEach((x,uid)=>{const last=(typeof x.lastSeen==='number'?x.lastSeen:(x.lastSeen?.toMillis?.()||x.lastSeen?.toDate?.()?.getTime?.()||0));if(last>=onlineCutoff()){const prev=merged.get(uid)||{};merged.set(uid,{...prev,...x,uid,online:true,lastSeen:last})}});const m=[...merged.values()].filter(x=>x.online===true&&((typeof x.lastSeen==='number'?x.lastSeen:(x.lastSeen?.toDate?.()?.getTime?.()||0))>=onlineCutoff()));m.sort((a,b)=>String(a.displayName||'').localeCompare(String(b.displayName||'')));const debug=document.getElementById('presenceDebug');if(debug)debug.textContent=`Presence: ${presenceMap.size} • Users: ${usersMap.size} • Online: ${m.length} • Shown: ${Math.min(m.length,20)}`;onlineCount.textContent=m.length;onlineMembers.textContent=m.length;memberList.innerHTML='';if(!m.length){memberList.innerHTML='<div class="empty-side">No members are online right now.</div>';return}m.slice(0,20).forEach(x=>{const div=document.createElement('div');div.className='member is-online';div.dataset.uid=x.uid;div.innerHTML=`${avatarHtml(x,'mini')}<div class="member-info"><button type="button" class="private-member-name" data-private-uid="${esc(x.uid)}">${esc(x.displayName||'Member')}</button><span>● Online</span></div>${x.uid===currentUser?.uid?'<span class="you-tag">YOU</span>':''}`;memberList.appendChild(div);if(x.uid!==currentUser?.uid){div.title='Open private chat';div.style.cursor='pointer';div.addEventListener('click',e=>{if(e.target.closest('.video-call-btn,.member-call-btn,.private-call'))return;e.preventDefault();e.stopPropagation();openPrivateChat(x)});const nameEl=div.querySelector('.private-member-name');nameEl.style.cursor='pointer';nameEl.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();openPrivateChat(x)})}})};const readPresence=snap=>{presenceMap=new Map();snap.forEach(d=>{const x=d.data();presenceMap.set(x.uid||d.id,{...x,uid:x.uid||d.id})});render()};const readUsers=snap=>{usersMap=new Map();snap.forEach(d=>{const x=d.data();if(x.uid||d.id)usersMap.set(x.uid||d.id,{...x,uid:x.uid||d.id})});render()};try{const [freshPresence,freshUsers]=await Promise.all([getDocsFromServer(query(presenceRef)),getDocsFromServer(query(usersRef))]);readPresence(freshPresence);readUsers(freshUsers);console.log('[TUBAL HUB presence] fresh server:',freshPresence.size,'presence,',freshUsers.size,'users')}catch(e){console.error('[TUBAL HUB presence] fresh server read failed',e)}stopPresence=onSnapshot(query(presenceRef),readPresence,err=>console.error('[TUBAL HUB presence]',err));stopUsersPresence=onSnapshot(query(usersRef),readUsers,err=>console.error('[TUBAL HUB users presence]',err));heartbeatPresenceRefresh=setInterval(async()=>{try{const fresh=await getDocsFromServer(query(usersRef));readUsers(fresh)}catch(e){console.warn('[TUBAL HUB users refresh]',e)}},30000)}
 function dmTime(ts){
   const d=ts?.toDate?ts.toDate():(typeof ts==='number'?new Date(ts):null);
@@ -594,7 +642,7 @@ function moderationWarning(){
 async function getModerationStatus(){
  try{const snap=await getDoc(doc(db,'users',currentUser.uid));if(!snap.exists())return {chatStatus:'active',warnings:0};const d=snap.data();return {chatStatus:d.chatStatus||'active',warnings:Number(d.warnings||0),mutedUntil:d.mutedUntil||null,banReason:d.banReason||''};}catch(e){console.error('Moderation status unavailable:',e);return {chatStatus:'active',warnings:0};}}
 function moderationBlocked(status){if(status.chatStatus==='banned')return '🚫 Your Global Chat access is banned. Reason: '+(status.banReason||'Community guidelines violation.');if(status.chatStatus==='muted'){const until=status.mutedUntil?.toDate?status.mutedUntil.toDate():new Date(status.mutedUntil||0);if(until>new Date())return '🔇 You are temporarily muted until '+until.toLocaleString()+'.';}return ''}
-async function sendMessage(payload){if(!isRealUser())throw new Error('LOGIN_REQUIRED');const status=await getModerationStatus();const blocked=moderationBlocked(status);if(blocked){alert('🛡️ TUBAL HUB AI MODERATION\\n\\n'+blocked);throw new Error('MODERATION_BLOCKED');}const text=payload?.text||'';if(payload?.type==='text'&&moderateText(text)){moderationWarning();throw new Error('MODERATION_BLOCKED')}const now=Date.now();if(now-lastMessageTime<1500)throw new Error('RATE_LIMIT');lastMessageTime=now;await addDoc(collection(db,'globalChats'),{channel:'global-chat',uid:currentUser.uid,displayName:currentUser.displayName||currentUser.email?.split('@')[0]||'Member',name:currentUser.displayName||currentUser.email?.split('@')[0]||'Member',email:currentUser.email||'',photoURL:currentUser.photoURL||'',createdAt:serverTimestamp(),...payload})}
+async function sendMessage(payload){if(!isRealUser())throw new Error('LOGIN_REQUIRED');const status=await getModerationStatus();const blocked=moderationBlocked(status);if(blocked){alert('🛡️ TUBAL HUB AI MODERATION\\n\\n'+blocked);throw new Error('MODERATION_BLOCKED');}const text=payload?.text||'';if(payload?.type==='text'&&moderateText(text)){moderationWarning();throw new Error('MODERATION_BLOCKED')}const now=Date.now();if(now-lastMessageTime<1500)throw new Error('RATE_LIMIT');lastMessageTime=now;await addDoc(collection(db,'globalChats'),{uid:currentUser.uid,displayName:currentUser.displayName||currentUser.email?.split('@')[0]||'Member',name:currentUser.displayName||currentUser.email?.split('@')[0]||'Member',email:currentUser.email||'',photoURL:currentUser.photoURL||'',createdAt:serverTimestamp(),...payload,channel:(activeChannelReal==='general'?'global-chat':activeChannelReal)})}
 async function sendReply(text){if(!replyTarget||!isRealUser())return;await addDoc(collection(db,'globalChatReplies'),{messageId:replyTarget.messageId,parentReplyId:replyTarget.parentReplyId||null,uid:currentUser.uid,displayName:currentUser.displayName||currentUser.email?.split('@')[0]||'Member',email:currentUser.email||'',text,createdAt:serverTimestamp()});clearReply()}
 
 document.getElementById('imageBtn').onclick=()=>document.getElementById('imageInput').click();document.getElementById('imageInput').onchange=async e=>{const f=e.target.files?.[0];if(!f)return;sendButton.disabled=true;try{const x=await uploadMedia(f,'image');await sendMessage({type:'image',mediaUrl:x.url,storagePath:x.path,text:''})}catch(err){console.error(err);alert(err.message==='FILE_TOO_LARGE'?'Maximum file size is 8 MB.':'Image upload failed. Make sure Firebase Storage is enabled.')}finally{sendButton.disabled=false;e.target.value='';input.focus()}};document.getElementById('gifInput').onchange=async e=>{const f=e.target.files?.[0];if(!f)return;sendButton.disabled=true;try{const x=await uploadMedia(f,'gif');await sendMessage({type:'gif',isSticker:true,mediaUrl:x.url,storagePath:x.path,text:''});window.dispatchEvent(new CustomEvent('tubal-gif-uploaded',{detail:{url:x.url,storagePath:x.path,name:f.name||'GIF Sticker'}}));document.getElementById('gifStickerPicker')?.classList.remove('is-open');document.getElementById('gifStickerPicker').hidden=true;}catch(err){console.error(err);alert(err.message==='FILE_TOO_LARGE'?'Maximum file size is 8 MB.':'GIF upload failed. Make sure Firebase Storage is enabled.')}finally{sendButton.disabled=false;e.target.value='';input.focus()}};window.addEventListener('tubal-send-gif-sticker',async e=>{const d=e.detail||{};if(!d.url||sendButton.disabled)return;sendButton.disabled=true;try{await sendMessage({type:'gif',isSticker:true,mediaUrl:String(d.url),storagePath:String(d.storagePath||''),text:''})}catch(err){console.error(err);alert(err.message==='RATE_LIMIT'?'Please wait a moment before sending another GIF.':err.message==='MODERATION_BLOCKED'?'GIF blocked by TUBAL HUB moderation.':'GIF sticker was not sent. Check Firebase Firestore Rules.')}finally{sendButton.disabled=false;input.focus()}});
@@ -607,6 +655,7 @@ document.addEventListener('visibilitychange',()=>{if(currentUser&&!document.hidd
 
 <script type="module" src="../assets/js/video-call.js?v=20260920-webRTC2"></script>
 
+<script src="../js/global-chat.js?v=1.2.10" defer></script>
 <script src="../assets/js/theme.js?v=20260922" defer></script>
 <script src="../assets/js/global-chat-emoji.js?v=20260924-v4" defer></script>
 <script src="../assets/js/global-chat-gif-stickers.js?v=20260924-v1" defer></script>
