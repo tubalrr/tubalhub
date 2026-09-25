@@ -319,6 +319,14 @@ service cloud.firestore {
     }
 
     // =========================================================
+    // SPONSORED PLACEMENTS — PUBLIC READ / ADMIN WRITE
+    // =========================================================
+    match /sponsoredAds/{adId} {
+      allow read: if true;
+      allow create, update, delete: if adminUser();
+    }
+
+    // =========================================================
     // PUBLIC CONTENT — ADMIN WRITE
     // =========================================================
 
