@@ -40,13 +40,9 @@ function normalizeReal(value) {
 }
 
 function escapedWordPattern(word) {
-  const escaped = String(word).replace(/[.*+?^$()|[\\]\\\\]/g, "\\\\function escapedWordPattern(word) {
-  const escaped = String(word).replace(/[.*+?^$()|[\\]\\\\]/g, "\\\\$&");
-  return new RegExp("(?<![a-z0-9])" + escaped.replace(/\\\\s+/g, "\\\\\\\\s*") + "(?![a-z0-9])", "i");
-}");
-  return new RegExp("(?<![a-z0-9])" + escaped.replace(/\\s+/g, "\\\\s*") + "(?![a-z0-9])", "i");
+  const escaped = String(word).replace(/[.*+?^$()|[\\]\\\\]/g, "\\$&");
+  return new RegExp("(?<![a-z0-9])" + escaped + "(?![a-z0-9])", "i");
 }
-
 function moderateServerReal(text) {
   const raw = String(text || "").trim();
   if (!raw) return { allowed: false, flagged: false, reason: "empty", cleanText: "" };
