@@ -533,17 +533,14 @@ window.TUBAL_EMAILJS_CONFIG = Object.freeze({
       </section>
 
 
-      <!-- TUBAL HUB ADVERTISEMENT — full-width safe section -->
-      <section id="advertisement" style="width:100%; max-width:1280px; margin:0 auto 40px; padding:24px; display:block; overflow:visible; background:rgba(255,255,255,0.04); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border:1px solid rgba(120,255,170,0.14); border-radius:32px;">
-        <div class="ads-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-          <h2 id="advertisementTitle" style="margin:0; display:flex; align-items:center; gap:8px;"><span class="home-emoji" aria-hidden="true">📢</span> Advertisement <span class="badge sponsored" style="background:#ffcc00; color:#020604; padding:4px 10px; border-radius:20px; font-size:11px; font-weight:800;">SPONSORED</span> <span class="live-dot" style="width:8px;height:8px;background:#1dff91;border-radius:50%;display:inline-block;animation:pulse 2s infinite;"></span></h2>
-          <div class="ads-controls"><button id="adsPrev" class="glass-circle prev" type="button" aria-label="Previous advertisement">‹</button><button id="adsNext" class="glass-circle next" type="button" aria-label="Next advertisement">›</button></div>
-        </div>
-        <div id="adsTrackWrapper" class="ads-track-wrapper" aria-label="Sponsored advertisements">
-          <div id="adsTrack" class="ads-track" aria-live="polite"></div>
-        </div>
-        <div class="ads-dots" id="adsDots" style="display:flex; gap:8px; justify-content:center; margin-top:16px;"></div>
-      </section>
+      <!-- TUBAL HUB SPONSORED 2 — real Firestore sponsor slot -->
+<section id="sponsoredContainerReal2" aria-label="Sponsored 2" style="width:100%;max-width:1280px;box-sizing:border-box;background:rgba(8,20,12,0.4);border:1px dashed rgba(255,255,255,0.08);border-radius:16px;padding:12px;margin-top:16px;min-height:90px;">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+    <span style="font-size:9px;letter-spacing:2px;opacity:0.3;">SPONSORED 2</span>
+    <span id="sponsoredStatusReal2" style="font-size:7px;background:rgba(255,255,255,0.05);padding:2px 6px;border-radius:20px;">CHECKING...</span>
+  </div>
+  <div id="sponsoredContentReal2"></div>
+</section>
 
 
 
