@@ -1,26 +1,32 @@
 {
-  "version": "1.2.8",
-  "build": "2026-09-25_1000",
-  "releasedAtReal": "2026-09-25T10:00:00+08:00",
+  "version": "1.2.9",
+  "build": "2026-09-25_1014",
+  "releasedAtReal": "2026-09-25T10:14:00+08:00",
   "releasedByReal": "tubalrr",
   "updatesReal": [
     {
       "typeReal": "FEAT",
-      "scopeReal": "Journal",
-      "detailReal": "Posted journal entries sa homepage ay may Edit at Delete actions gamit ang real local data.",
-      "iconReal": "📝"
+      "scopeReal": "TUBAL BOT",
+      "detailReal": "May real chatbot sa homepage na bumabati gamit ang naka-save na user name at nagpapakita ng current browser data.",
+      "iconReal": "🤖"
     },
     {
-      "typeReal": "FIX",
-      "scopeReal": "Journal Storage",
-      "detailReal": "Journal save flow ay gumagamit na ng latest real entries at pinapanatili ang edit/delete changes sa localStorage.",
-      "iconReal": "🔧"
+      "typeReal": "FEAT",
+      "scopeReal": "Chat Knowledge",
+      "detailReal": "May knowledge para sa Payapang Isip, Shop, Community Feed, CTRLZONE, policies, real-data rule at version updates.",
+      "iconReal": "🧠"
     },
     {
       "typeReal": "UI",
-      "scopeReal": "Journal Actions",
-      "detailReal": "Naglagay ng visible Edit at Delete controls sa bawat posted journal card.",
-      "iconReal": "✏️"
+      "scopeReal": "Chatbot UI",
+      "detailReal": "Glass chat window na may REAL badge, Enter-to-send, responsive mobile layout at live status.",
+      "iconReal": "💬"
+    },
+    {
+      "typeReal": "FIX",
+      "scopeReal": "3-Dash Navigation",
+      "detailReal": "TUBAL Bot z-index 1000 habang ang fixed 3-dash menu ay z-index 1002 para hindi maharangan.",
+      "iconReal": "☰"
     }
   ],
   "breakingReal": false
