@@ -111,6 +111,20 @@ const els={
   quickColors:document.getElementById("quickViewColors"),
   quickDetails:document.getElementById("quickViewDetails"),
   quickQty:document.getElementById("quickViewQty"),
+  quickQtyWrap:document.getElementById("quickViewQtyWrap"),
+  quickAdd:document.getElementById("quickViewAdd"),
+  quickBuy:document.getElementById("quickViewBuy"),
+  quickDigitalMeta:document.getElementById("quickViewDigitalMeta"),
+  quickVersion:document.getElementById("quickViewVersion"),
+  quickLicense:document.getElementById("quickViewLicense"),
+  quickRelease:document.getElementById("quickViewRelease"),
+  quickIncludes:document.getElementById("quickViewIncludes"),
+  quickIncludesText:document.getElementById("quickViewIncludesText"),
+  quickDownload:document.getElementById("quickViewDownload"),
+  quickUpgrade:document.getElementById("quickViewUpgrade"),
+  myProductsSection:document.getElementById("myProductsSection"),
+  myProductsGrid:document.getElementById("myProductsGrid"),
+  myProductsStatus:document.getElementById("myProductsStatus"),
   checkoutLayer:document.getElementById("checkoutLayer"),
   checkoutTotal:document.getElementById("checkoutTotal"),
   checkoutCopy:document.getElementById("checkoutCopy"),
@@ -432,7 +446,8 @@ els.quickLayer.addEventListener("click",e=>{if(e.target===els.quickLayer)closeQu
 document.getElementById("quickViewMinus").addEventListener("click",()=>{state.quickQty=Math.max(1,state.quickQty-1);els.quickQty.textContent=state.quickQty});
 document.getElementById("quickViewPlus").addEventListener("click",()=>{state.quickQty=Math.min(10,state.quickQty+1);els.quickQty.textContent=state.quickQty});
 document.getElementById("quickViewAdd").addEventListener("click",()=>{if(state.current)addToCart(state.current.id,state.quickQty,document.getElementById("quickViewAdd"))});
-document.getElementById("quickViewBuy").addEventListener("click",()=>{if(state.current)buyProduct(state.current,state.quickQty)});
+document.getElementById("quickViewBuy").addEventListener("click",()=>{if(state.current){if(state.current.real&&state.current.productType!=="physical"){closeQuick();state.cart=[];addToCart(state.current.id,1,null,"buy");openCheckout();}else buyProduct(state.current,state.quickQty)}});
+document.getElementById("quickViewUpgrade").addEventListener("click",()=>{if(state.current){const owned=licenseForProduct(state.current.firestoreId);if(owned){state.upgradeTarget={product:state.current,license:owned};closeQuick();openCheckout();}}});
 document.getElementById("checkoutBtn").addEventListener("click",openCheckout);
 document.getElementById("closeCheckout").addEventListener("click",closeCheckout);
 document.getElementById("backCheckout").addEventListener("click",()=>{closeCheckout();burstAt(document.getElementById("backCheckout"),5)});
@@ -448,6 +463,15 @@ document.querySelectorAll(".payment-brand-logos img").forEach(img=>img.addEventL
   if(btn){state.payment=btn.dataset.payment||"card";updatePaymentUI();burstAt(btn,6);requestAnimationFrame(()=>document.getElementById("cardholderName")?.focus());}
 }));
 function openOrderReview(){
+  if(state.upgradeTarget){
+    const p=state.upgradeTarget.product;
+    document.getElementById("reviewSubtotal").textContent=money(parseProductPrice(p.upgradePrice));
+    document.getElementById("reviewShipping").textContent=money(0);
+    document.getElementById("reviewTotal").textContent=money(parseProductPrice(p.upgradePrice));
+    document.getElementById("reviewPayment").textContent={card:"Card • Visa / Mastercard",bank:"Bank Transfer",paypal:"PayPal"}[state.payment]||"Card";
+    document.getElementById("orderReviewItems").innerHTML='<div class="order-review-item"><div class="product-no-image">UP</div><div><strong>'+esc(p.title)+'</strong><span>Upgrade v'+esc(state.upgradeTarget.license.ownedVersion)+' → v'+esc(p.latestVersion)+'</span></div><b>'+money(parseProductPrice(p.upgradePrice))+'</b></div>';
+    els.checkoutLayer.classList.remove("is-open");setTimeout(()=>{els.checkoutLayer.hidden=true;const layer=document.getElementById("orderReviewLayer");layer.hidden=false;requestAnimationFrame(()=>layer.classList.add("is-open"))},220);return;
+  }
   document.getElementById("reviewSubtotal").textContent=money(subtotal());
   document.getElementById("reviewShipping").textContent=money(shipping());
   document.getElementById("reviewTotal").textContent=money(total());
@@ -489,12 +513,37 @@ document.getElementById("backToPayment").addEventListener("click",()=>{
   closeOrderReview();
   setTimeout(()=>{els.checkoutLayer.hidden=false;requestAnimationFrame(()=>els.checkoutLayer.classList.add("is-open"))},220);
 });
-document.getElementById("placeOrderBtn").addEventListener("click",()=>{
-  const orderTotal=total();
+document.getElementById("placeOrderBtn").addEventListener("click",async()=>{
+  const orderTotal=state.upgradeTarget?parseProductPrice(state.upgradeTarget.product.upgradePrice):total();
   const method={card:"Card • Visa / Mastercard",bank:"Bank Transfer",paypal:"PayPal"}[state.payment]||"Card";
-  burstAt(document.getElementById("placeOrderBtn"),12);
-  openOrderSuccess(orderTotal,method);
-  state.cart=[];saveCart();updateCartUI();closeOrderReview();closeCart();
+  const user=auth.currentUser;
+  if(!user||user.isAnonymous){notify("Sign in with a real account to create an order or license.");return}
+  if(state.upgradeTarget){
+    try{
+      const p=state.upgradeTarget.product, license=state.upgradeTarget.license;
+      const orderRef=await addDoc(collection(db,"orders"),{uid:user.uid,type:"upgrade",productId:p.firestoreId,total:orderTotal,paymentMethod:method,status:"paid",createdAt:serverTimestamp()});
+      await addDoc(collection(db,"upgrades"),{uid:user.uid,orderId:orderRef.id,productId:p.firestoreId,fromVersion:license.ownedVersion,toVersion:p.latestVersion,price:p.upgradePrice||"Free",createdAt:serverTimestamp()});
+      await addDoc(collection(db,"downloads"),{uid:user.uid,orderId:orderRef.id,productId:p.firestoreId,version:p.latestVersion,downloadUrl:p.downloadUrl||"",createdAt:serverTimestamp()});
+      ownedLicenses=ownedLicenses.map(x=>x.id===license.id?{...x,ownedVersion:p.latestVersion,latestVersion:p.latestVersion,downloadUrl:p.downloadUrl||""}:x);renderMyProducts();
+      state.upgradeTarget=null;burstAt(document.getElementById("placeOrderBtn"),12);openOrderSuccess(orderTotal,method);closeOrderReview();return;
+    }catch(e){console.error(e);notify("Upgrade could not be recorded. Check Firestore Rules.");return}
+  }
+  const digitalItems=state.cart.map(x=>({row:x,p:productById(x.id)})).filter(x=>x.p?.real&&x.p.productType!=="physical");
+  const physicalItems=state.cart.map(x=>({row:x,p:productById(x.id)})).filter(x=>!x.p?.real||x.p.productType==="physical");
+  if(digitalItems.length&&physicalItems.length){notify("Digital and physical products must be purchased separately.");return}
+  try{
+    const orderRef=await addDoc(collection(db,"orders"),{uid:user.uid,items:state.cart.map(x=>{const p=productById(x.id);return {productId:p.firestoreId||p.id,title:p.title,qty:x.qty,price:p.priceLabel||p.price,productType:p.productType||"physical",version:p.version||null}}),total:orderTotal,paymentMethod:method,status:"paid",createdAt:serverTimestamp()});
+    if(digitalItems.length){
+      for(const {row,p} of digitalItems){
+        const licenseType=p.license||"Standard";
+        await addDoc(collection(db,"licenses"),{uid:user.uid,orderId:orderRef.id,productId:p.firestoreId,productName:p.title,ownedVersion:p.version||"1.0.0",licenseType,latestVersion:p.latestVersion||p.version||"1.0.0",downloadUrl:p.downloadUrl||"",createdAt:serverTimestamp(),updatedAt:serverTimestamp()});
+        await addDoc(collection(db,"downloads"),{uid:user.uid,orderId:orderRef.id,productId:p.firestoreId,version:p.version||"1.0.0",downloadUrl:p.downloadUrl||"",createdAt:serverTimestamp()});
+      }
+    }
+    burstAt(document.getElementById("placeOrderBtn"),12);
+    openOrderSuccess(orderTotal,method);
+    state.cart=[];saveCart();updateCartUI();closeOrderReview();closeCart();
+  }catch(e){console.error(e);notify("Order could not be recorded. Check Firestore Rules.");}
 });
 document.getElementById("closeOrderSuccess").addEventListener("click",closeOrderSuccess);
 window.addEventListener("keydown",e=>{
@@ -507,4 +556,5 @@ window.addEventListener("keydown",e=>{
 });
 
 loadCart();loadWishlist();updateCounts();updateCartUI();updateCollectionUI();listenToRealProducts();
+onAuthStateChanged(auth,user=>listenToOwnedProducts(user));
 setTimeout(()=>burstAt(document.getElementById("heroShopNow"),6),450);
