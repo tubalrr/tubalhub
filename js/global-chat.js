@@ -186,7 +186,7 @@
     {
       idReal: "tubal_intro",
       titleReal: "TUBAL HUB — Three Brands One Hub Intro",
-      descReal: "Official TUBAL HUB intro • verified YouTube source",
+      descReal: "Official TUBAL HUB intro • owner-supplied YouTube source",
       thumbReal: "https://i.ytimg.com/vi/OJRTOKrbJgI/hqdefault.jpg",
       youtubeReal: "https://www.youtube.com/embed/OJRTOKrbJgI?si=bL3-LIkCThxFBL_E",
       isReal: true
@@ -271,7 +271,7 @@
         <div style="padding:16px 20px;background:linear-gradient(135deg,#0a1f12,#1dff91);display:flex;justify-content:space-between;align-items:center;gap:12px;">
           <div>
             <b id="videoModalTitleReal" style="color:#020604;font-size:14px;">TUBAL HUB Videos • Real</b>
-            <br><small style="color:#020604;opacity:.7;">Verified video sources only • no fake MP4 paths</small>
+            <br><small style="color:#020604;opacity:.7;">Configured video sources only • no fake MP4 paths</small>
           </div>
           <button id="closeVideoReal" type="button" aria-label="Close videos" style="width:32px;height:32px;background:#020604;border:none;border-radius:50%;color:#fff;cursor:pointer;">✕</button>
         </div>
@@ -366,7 +366,7 @@
       placeholder.innerHTML = `
         <span style="font-size:48px;">📹</span>
         <strong>Real source not configured yet</strong>
-        <p style="margin:0;max-width:420px;opacity:.65;font-size:12px;">Walang verified YouTube URL o existing MP4 file sa repository para sa video na ito. Hindi ako gagamit ng placeholder o 404 path.</p>
+        <p style="margin:0;max-width:420px;opacity:.65;font-size:12px;">Walang owner-supplied YouTube URL o existing MP4 file sa repository para sa video na ito. Hindi ako gagamit ng placeholder o 404 path.</p>
       `;
       placeholder.style.display = "flex";
     }
