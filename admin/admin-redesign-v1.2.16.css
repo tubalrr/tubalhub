@@ -316,3 +316,62 @@ body:after{display:none!important}#sidebarToggle{position:fixed!important;z-inde
     min-height:0!important;
   }
 }
+
+
+/* CLEAN ADMIN CONTENT GRID — no floating cards */
+@media(min-width:951px){
+  .dashboard{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+    grid-template-areas:
+      "topbar topbar"
+      "head head"
+      "stats stats"
+      "overview overview"
+      "products news"
+      "announcements chat"
+      "members members"
+      "footer footer"!important;
+    gap:15px!important;
+    align-items:stretch!important;
+  }
+  .dashboard>.topbar{grid-area:topbar!important}
+  .dashboard>.dashboard-head{grid-area:head!important}
+  .dashboard>.stats{grid-area:stats!important}
+  .dashboard>.dashboard-grid{grid-area:overview!important}
+  .dashboard>#shopProducts{grid-area:products!important}
+  .dashboard>#content{grid-area:news!important}
+  .dashboard>#announcements{grid-area:announcements!important}
+  .dashboard>#chat{grid-area:chat!important}
+  .dashboard>#members{grid-area:members!important}
+  .dashboard>footer{grid-area:footer!important}
+
+  #shopProducts,#content,#announcements,#members,#chat{
+    float:none!important;
+    display:block!important;
+    width:100%!important;
+    max-width:none!important;
+    min-height:360px!important;
+    height:360px!important;
+    margin:0!important;
+  }
+  #shopProductList,#newsList,#annList,#membersContent,#chatContent{
+    max-height:235px!important;
+    overflow:auto!important;
+  }
+  #membersContent[hidden],#chatContent[hidden]{
+    display:none!important;
+  }
+}
+@media(max-width:950px){
+  .dashboard{
+    display:block!important;
+  }
+  #shopProducts,#content,#announcements,#members,#chat{
+    float:none!important;
+    width:100%!important;
+    max-width:100%!important;
+    height:auto!important;
+    min-height:0!important;
+  }
+}
