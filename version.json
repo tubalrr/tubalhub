@@ -1,9 +1,15 @@
 {
-  "version": "1.2.14",
-  "build": "2026-09-25_1120",
-  "releasedAtReal": "2026-09-25T03:20:00Z",
+  "version": "1.2.15",
+  "build": "2026-09-25_1135",
+  "releasedAtReal": "2026-09-25T03:35:00Z",
   "releasedByReal": "tubalrr",
   "updatesReal": [
+    {
+      "typeReal": "SECURITY",
+      "scopeReal": "Production Chat Security",
+      "detailReal": "Added Cloud Functions server moderation, callable text/reply/private sends, client text-write denial, role field protection, Storage image validation, and the globalChats chronological composite index with a safe client fallback.",
+      "iconReal": "🛡"
+    },
     {
       "typeReal": "FEAT",
       "scopeReal": "External Image Links",
@@ -43,7 +49,7 @@
     {
       "typeReal": "BUILD",
       "scopeReal": "Single Source of Truth",
-      "detailReal": "version.json is the single version/build source: v1.2.14 • build 2026-09-25_1120.",
+      "detailReal": "version.json is the single version/build source: v1.2.15 • build 2026-09-25_1135.",
       "iconReal": "✓"
     },
     {
