@@ -567,7 +567,7 @@ exports.cleanupOldImagesReal = onSchedule("every 24 hours", async () => {
     }
   }
 
-  const remaining = entries
+  const remainingBeforeTrim = entries
     .filter(item => !deletedByAgeNames.has(item.name))
     .sort((a, b) => a.time - b.time);
   const remaining = entries
