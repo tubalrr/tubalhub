@@ -10,9 +10,9 @@ All empty states are intentional. Real journals, feeds, cart data, and connected
 
 TUBAL HUB is a modern gaming, creative, community, and digital-content platform built for the web and mobile WebView experience.
 
-## 🌐 Live Website
+## 🌐 Preview / Deployment
 
-https://tubalrr.github.io/tubalhub/
+This Gumroad edition does not ship with the seller's live Firebase project or production domain. Configure your own Firebase project, hosting domain, and API services before deployment.
 
 ## 📰 TUBAL HUB Feeds
 
