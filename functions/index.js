@@ -91,7 +91,7 @@ function requireRealUser(request) {
 function requireAdminUser(request) {
   requireRealUser(request);
   const token = request.auth.token || {};
-  if (token.admin !== true && token.email !== "tubalrr@gmail.com") {
+  if (token.admin !== true) {
     throw new HttpsError("permission-denied", "Administrator access required.");
   }
 }
