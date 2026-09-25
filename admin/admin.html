@@ -239,23 +239,12 @@ function renderAnalyticsReal(data){
 }
 async function loadAnalyticsReal(){
 async function getAnalyticsMessagesPaged(collectionName,startDate,endDate){
-  const docs=[];
-  let cursor=null;
-  while(true){
-    let q=query(
-      collection(db,collectionName),
-      where("createdAt",">=",Timestamp.fromDate(startDate)),
-      where("createdAt","<=",Timestamp.fromDate(endDate)),
-      orderBy("createdAt","asc"),
-      limit(10000)
-    );
-    if(cursor)q=query(q,startAfter(cursor));
-    const snap=await getDocs(q);
-    docs.push(...snap.docs);
-    if(snap.size<10000)break;
-    cursor=snap.docs[snap.docs.length-1];
-  }
-  return docs;
+  const snap=await getDocs(query(
+    collection(db,collectionName),
+    where("createdAt",">=",Timestamp.fromDate(startDate)),
+    where("createdAt","<=",Timestamp.fromDate(endDate))
+  ));
+  return snap.docs;
 }
   // Read Firestore directly first. This keeps Admin Analytics independent of
   // callable-function CORS/deployment state and uses only real Firestore data.
