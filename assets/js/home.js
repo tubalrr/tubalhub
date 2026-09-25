@@ -329,7 +329,7 @@ function initSponsoredReal(){
     status.style.background="rgba(29,255,145,0.15)";
     status.style.color="#1dff91";
     content.innerHTML=safeLink
-      ? '<a class="tubal-sponsor-card-real" href="'+escAttr(safeLink)+'" target="_blank" rel="noopener noreferrer" style="display:block;background:rgba(0,0,0,.3);border-radius:12px;overflow:hidden;text-decoration:none;color:#fff;border:1px solid rgba(255,215,0,.2);">'+body+'</a>'
+      ? '<a class="tubal-sponsor-card-real" href="'+escAttr(safeLink)+'" target="_blank" rel="noopener noreferrer" aria-label="Open sponsored promotion: '+title+'" style="display:block;background:rgba(0,0,0,.3);border-radius:12px;overflow:hidden;text-decoration:none;color:#fff;border:1px solid rgba(255,215,0,.2);cursor:pointer;pointer-events:auto;position:relative;z-index:2;">'+body+'</a>'
       : '<div style="display:block;background:rgba(0,0,0,.3);border-radius:12px;overflow:hidden;color:#fff;border:1px solid rgba(255,215,0,.2);">'+body+'</div>';
   };
   try{
