@@ -551,23 +551,25 @@ exports.cleanupOldImagesReal = onSchedule("every 24 hours", async () => {
   }
 
   const expired = entries.filter(item => item.time > 0 && now - item.time > sevenDaysMs);
+  const deletedByAgeNames = new Set();
   let deletedByAge = 0;
 
   for (const item of expired) {
     try {
-      await item.file.delete();
+      await item.file[method]();
       deletedByAge++;
+      deletedByAgeNames.add(item.name);
     } catch (error) {
-      logger.warn("Could not delete expired Global Chat media.", {
+      logger.warn("Could not clean expired Global Chat media.", {
         name: item.name,
         error: error?.message || String(error)
       });
     }
   }
 
-  const deletedByAgeNames = new Set(
-    expired.slice(0, expired.length).map(item => item.name)
-  );
+  const remaining = entries
+    .filter(item => !deletedByAgeNames.has(item.name))
+    .sort((a, b) => a.time - b.time);
   const remaining = entries
     .filter(item => !deletedByAgeNames.has(item.name))
     .sort((a, b) => a.time - b.time);
