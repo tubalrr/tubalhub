@@ -570,3 +570,36 @@ body:after{display:none!important}#sidebarToggle{position:fixed!important;z-inde
   .topbar .top-actions>span{display:none!important}
   .topbar #logout{min-width:96px!important;height:38px!important}
 }
+
+/* SIDEBAR HAMBURGER TOGGLE */
+#sidebarToggle{
+  position:fixed!important;left:16px!important;top:16px!important;width:42px!important;height:42px!important;
+  display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:5px!important;
+  padding:0!important;border:1px solid rgba(148,163,184,.18)!important;border-radius:12px!important;
+  background:rgba(9,13,24,.92)!important;color:#e5e7eb!important;cursor:pointer!important;
+  z-index:10060!important;box-shadow:0 10px 28px rgba(0,0,0,.25)!important;
+}
+#sidebarToggle span{display:block!important;width:19px!important;height:2px!important;border-radius:3px!important;background:#cbd5e1!important;transition:transform .2s,opacity .2s!important}
+#sidebarToggle:hover{background:rgba(30,41,59,.98)!important;border-color:rgba(96,165,250,.35)!important}
+body.sidebar-collapsed .sidebar{width:76px!important;padding-left:12px!important;padding-right:12px!important}
+body.sidebar-collapsed .sidebar .brand-copy,
+body.sidebar-collapsed .sidebar .side-label,
+body.sidebar-collapsed .sidebar nav a span,
+body.sidebar-collapsed .sidebar .storage-card{display:none!important}
+body.sidebar-collapsed .sidebar .brand{justify-content:center!important}
+body.sidebar-collapsed .sidebar nav a{justify-content:center!important;padding-left:0!important;padding-right:0!important}
+body.sidebar-collapsed .topbar{left:76px!important}
+body.sidebar-collapsed .dashboard{width:calc(100% - 76px)!important;margin-left:76px!important}
+body.sidebar-collapsed #sidebarToggle{left:17px!important}
+@media(max-width:900px){
+  #sidebarToggle{left:14px!important;top:13px!important}
+  .topbar{padding-left:68px!important}
+  body.sidebar-collapsed .sidebar{width:270px!important}
+  body.sidebar-collapsed .sidebar .brand-copy,
+  body.sidebar-collapsed .sidebar .side-label,
+  body.sidebar-collapsed .sidebar nav a span,
+  body.sidebar-collapsed .sidebar .storage-card{display:block!important}
+  body.sidebar-collapsed .sidebar nav a{justify-content:flex-start!important;padding-left:12px!important;padding-right:12px!important}
+  body.sidebar-collapsed .topbar{left:0!important}
+  body.sidebar-collapsed .dashboard{width:100%!important;margin-left:0!important}
+}
