@@ -1375,18 +1375,25 @@ exports.getAdminAnalyticsReal = onCall(async request => {
   const messageCollections = ["globalChats", "messages"];
   const allMessages = [];
   for (const collectionName of messageCollections) {
-    const snap = await db.collection(collectionName)
-      .where("createdAt", ">=", Timestamp.fromDate(start))
-      .where("createdAt", "<=", Timestamp.fromDate(end))
-      .limit(10000)
-      .get();
-    for (const docSnap of snap.docs) {
-      const data = docSnap.data() || {};
-      const uid = String(data.uid || data.senderId || data.fromUid || "").trim();
-      const createdValue = data.createdAt;
-      const created = createdValue?.toDate ? createdValue.toDate() : new Date(createdValue || 0);
-      if (!uid || Number.isNaN(created.getTime())) continue;
-      allMessages.push({uid, created, collection: collectionName});
+    let cursor = null;
+    while (true) {
+      let q = db.collection(collectionName)
+        .where("createdAt", ">=", Timestamp.fromDate(start))
+        .where("createdAt", "<=", Timestamp.fromDate(end))
+        .orderBy("createdAt", "asc")
+        .limit(10000);
+      if (cursor) q = q.startAfter(cursor);
+      const snap = await q.get();
+      for (const docSnap of snap.docs) {
+        const data = docSnap.data() || {};
+        const uid = String(data.uid || data.senderId || data.fromUid || "").trim();
+        const createdValue = data.createdAt;
+        const created = createdValue?.toDate ? createdValue.toDate() : new Date(createdValue || 0);
+        if (!uid || Number.isNaN(created.getTime())) continue;
+        allMessages.push({uid, created, collection: collectionName});
+      }
+      if (snap.size < 10000) break;
+      cursor = snap.docs[snap.docs.length - 1];
     }
   }
 
