@@ -184,7 +184,7 @@ function enableMemberNameClick(){if(!memberList||memberList.dataset.privateClick
 enableMemberNameClick();
 setupChatFocusUi();
 function esc(v){const d=document.createElement('div');d.textContent=v??'';return d.innerHTML}function initials(n){return(n||'Member').trim().split(/\s+/).slice(0,2).map(x=>x[0]).join('').toUpperCase()||'M'}function avatarHtml(u,cls='msg-avatar'){return u.photoURL?`<div class="${cls}"><img src="${esc(u.photoURL)}" alt=""></div>`:`<div class="${cls}">${esc(initials(u.displayName||u.email))}</div>`}function timeText(ts){return ts?.toDate?ts.toDate().toLocaleTimeString([], {hour:'numeric',minute:'2-digit'}):'Sending...'}function setStatus(t,error=false){statusEl.textContent=t;statusEl.classList.toggle('error',error)}function isRealUser(u=currentUser){return !!u&&!u.isAnonymous}
-async function updatePresence(user,online=true){if(!isRealUser(user))return;const profile={uid:user.uid,displayName:user.displayName||user.email?.split('@')[0]||'Member',email:user.email||'',photoURL:user.photoURL||''};await setDoc(doc(db,'presence',user.uid),{...profile,online,lastSeen:Date.now(),presenceUpdatedAt:serverTimestamp()},{merge:true});await setDoc(doc(db,'users',user.uid),{...profile,lastSeen:serverTimestamp()},{merge:true})}
+async function updatePresence(user,online=true){if(!isRealUser(user))return;const profile={uid:user.uid,displayName:user.displayName||user.email?.split('@')[0]||'Member',photoURL:user.photoURL||''};await setDoc(doc(db,'presence',user.uid),{...profile,online,lastSeen:Date.now(),presenceUpdatedAt:serverTimestamp()},{merge:true});await setDoc(doc(db,'users',user.uid),{...profile,lastSeen:serverTimestamp()},{merge:true})}
 function setReplyTarget(messageId,name,preview,parentReplyId=null){replyTarget={messageId,name,preview,parentReplyId};replyingName.textContent=name;replyingBar.style.display='block';input.focus()}
 function clearReply(){replyTarget=null;replyingBar.style.display='none'}
 let reactionUsersState={};
@@ -284,7 +284,7 @@ function syncMessageAdminBadgeReal(row){
   if(!row)return;
   const badge=row.querySelector('.admin-role-badge');
   if(!badge)return;
-  const role=userRoleStateReal.get(String(row.dataset.uid||''))||'user';
+  const role=row.dataset.roleReal||'user';
   badge.hidden=role!=='admin';
 }
 
@@ -294,7 +294,7 @@ function syncAllMessageAdminBadgesReal(){
 
 function renderMessage(id,data){
  const me=currentUser&&data.uid===currentUser.uid, user={displayName:data.displayName||data.name,email:data.email,photoURL:data.photoURL};
- const row=document.createElement('div');row.className='msg'+(me?' me':'');row.dataset.id=id;row.dataset.uid=String(data.uid||'');
+ const row=document.createElement('div');row.className='msg'+(me?' me':'');row.dataset.id=id;row.dataset.uid=String(data.uid||'');row.dataset.roleReal=String(data.roleReal||'user');
  const rawText=String(data.text??data.textReal??'');
  const formatted=window.tubalFormatChatText?window.tubalFormatChatText(rawText):{html:esc(rawText),className:''};
  let body='';
@@ -483,20 +483,69 @@ function setActiveChannelReal(channel){
 }
 window.tubalHubSetChatChannelReal=setActiveChannelReal;
 
-async function subscribePresence(){if(stopPresence)stopPresence();if(stopUsersPresence)stopUsersPresence();if(heartbeatPresenceRefresh)clearInterval(heartbeatPresenceRefresh);const presenceRef=collection(db,'presence'),usersRef=collection(db,'users');let presenceMap=new Map(),usersMap=new Map();const onlineCutoff=()=>Date.now()-180000;const render=()=>{const merged=new Map();presenceMap.forEach((x,uid)=>merged.set(uid,{...x,uid}));usersMap.forEach((x,uid)=>{const last=(typeof x.lastSeen==='number'?x.lastSeen:(x.lastSeen?.toMillis?.()||x.lastSeen?.toDate?.()?.getTime?.()||0));if(last>=onlineCutoff()){const prev=merged.get(uid)||{};merged.set(uid,{...prev,...x,uid,online:true,lastSeen:last})}});const m=[...merged.values()].filter(x=>x.online===true&&((typeof x.lastSeen==='number'?x.lastSeen:(x.lastSeen?.toDate?.()?.getTime?.()||0))>=onlineCutoff()));m.sort((a,b)=>String(a.displayName||'').localeCompare(String(b.displayName||'')));const debug=document.getElementById('presenceDebug');if(debug)debug.textContent=`Presence: ${presenceMap.size} • Users: ${usersMap.size} • Online: ${m.length} • Shown: ${Math.min(m.length,20)}`;onlineCount.textContent=m.length;onlineMembers.textContent=m.length;memberList.innerHTML='';if(!m.length){memberList.innerHTML='<div class="empty-side">No members are online right now.</div>';return}m.slice(0,20).forEach(x=>{const div=document.createElement('div');div.className='member is-online';div.dataset.uid=x.uid;div.innerHTML=`${avatarHtml(x,'mini')}<div class="member-info"><button type="button" class="private-member-name" data-private-uid="${esc(x.uid)}">${esc(x.displayName||'Member')}</button><span>● Online</span></div>${x.uid===currentUser?.uid?'<span class="you-tag">YOU</span>':''}`;memberList.appendChild(div);if(x.uid!==currentUser?.uid){div.title='Open private chat';div.style.cursor='pointer';div.addEventListener('click',e=>{if(e.target.closest('.video-call-btn,.member-call-btn,.private-call'))return;e.preventDefault();e.stopPropagation();openPrivateChat(x)});const nameEl=div.querySelector('.private-member-name');nameEl.style.cursor='pointer';nameEl.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();openPrivateChat(x)})}})};const readPresence=snap=>{presenceMap=new Map();snap.forEach(d=>{const x=d.data();presenceMap.set(x.uid||d.id,{...x,uid:x.uid||d.id})});render()};const readUsers=snap=>{
-  usersMap=new Map();
-  userRoleStateReal.clear();
-  snap.forEach(d=>{
-    const x=d.data();
-    const uid=x.uid||d.id;
-    if(uid){
-      usersMap.set(uid,{...x,uid});
-      userRoleStateReal.set(String(uid),String(x.roleReal||'user'));
+async function subscribePresence(){
+  if(stopPresence)stopPresence();
+  if(stopUsersPresence)stopUsersPresence();
+  if(heartbeatPresenceRefresh)clearInterval(heartbeatPresenceRefresh);
+
+  const presenceRef=collection(db,'presence');
+  let presenceMap=new Map();
+
+  const onlineCutoff=()=>Date.now()-180000;
+  const render=()=>{
+    const m=[...presenceMap.values()]
+      .filter(x=>x.online===true&&((typeof x.lastSeen==='number'?x.lastSeen:(x.lastSeen?.toDate?.()?.getTime?.()||0))>=onlineCutoff()))
+      .sort((a,b)=>String(a.displayName||'').localeCompare(String(b.displayName||'')));
+
+    const debug=document.getElementById('presenceDebug');
+    if(debug)debug.textContent=`Presence: ${presenceMap.size} • Online: ${m.length} • Shown: ${Math.min(m.length,20)}`;
+    onlineCount.textContent=m.length;
+    onlineMembers.textContent=m.length;
+    memberList.innerHTML='';
+
+    if(!m.length){
+      memberList.innerHTML='<div class="empty-side">No members are online right now.</div>';
+      return;
     }
-  });
-  render();
-  syncAllMessageAdminBadgesReal();
-};try{const [freshPresence,freshUsers]=await Promise.all([getDocsFromServer(query(presenceRef)),getDocsFromServer(query(usersRef))]);readPresence(freshPresence);readUsers(freshUsers);console.log('[TUBAL HUB presence] fresh server:',freshPresence.size,'presence,',freshUsers.size,'users')}catch(e){console.error('[TUBAL HUB presence] fresh server read failed',e)}stopPresence=onSnapshot(query(presenceRef),readPresence,err=>console.error('[TUBAL HUB presence]',err));stopUsersPresence=onSnapshot(query(usersRef),readUsers,err=>console.error('[TUBAL HUB users presence]',err));heartbeatPresenceRefresh=setInterval(async()=>{try{const fresh=await getDocsFromServer(query(usersRef));readUsers(fresh)}catch(e){console.warn('[TUBAL HUB users refresh]',e)}},30000)}
+
+    m.slice(0,20).forEach(x=>{
+      const div=document.createElement('div');
+      div.className='member is-online';
+      div.dataset.uid=x.uid;
+      div.innerHTML=`${avatarHtml(x,'mini')}<div class="member-info"><button type="button" class="private-member-name" data-private-uid="${esc(x.uid)}">${esc(x.displayName||'Member')}</button><span>● Online</span></div>${x.uid===currentUser?.uid?'<span class="you-tag">YOU</span>':''}`;
+      memberList.appendChild(div);
+
+      if(x.uid!==currentUser?.uid){
+        div.title='Open private chat';
+        div.style.cursor='pointer';
+        div.addEventListener('click',e=>{
+          if(e.target.closest('.video-call-btn,.member-call-btn,.private-call'))return;
+          e.preventDefault();
+          e.stopPropagation();
+          openPrivateChat(x);
+        });
+        const nameEl=div.querySelector('.private-member-name');
+        nameEl.style.cursor='pointer';
+        nameEl.addEventListener('click',e=>{
+          e.preventDefault();
+          e.stopPropagation();
+          openPrivateChat(x);
+        });
+      }
+    });
+  };
+
+  const readPresence=snap=>{
+    presenceMap=new Map();
+    snap.forEach(d=>{
+      const x=d.data();
+      presenceMap.set(x.uid||d.id,{...x,uid:x.uid||d.id});
+    });
+    render();
+  };
+
+  stopPresence=onSnapshot(query(presenceRef),readPresence,err=>console.error('[TUBAL HUB presence]',err));
+}
 function dmTime(ts){
   const d=ts?.toDate?ts.toDate():(typeof ts==='number'?new Date(ts):null);
   if(!d)return '';
