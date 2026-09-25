@@ -1,49 +1,55 @@
 {
-  "version": "1.2.12",
-  "build": "2026-09-25_1020",
-  "releasedAtReal": "2026-09-25T10:20:00+08:00",
+  "version": "1.2.10",
+  "build": "2026-09-25_1015",
+  "releasedAtReal": "2026-09-25T10:15:00Z",
   "releasedByReal": "tubalrr",
   "updatesReal": [
     {
-      "typeReal": "FIX",
-      "scopeReal": "Global Chat Black Screen",
-      "detailReal": "Naibalik ang tamang closing ng Global Chat head style tag para hindi ma-parse bilang CSS ang buong page markup.",
-      "iconReal": "🩹"
+      "typeReal": "BUILD",
+      "scopeReal": "Single Source of Truth",
+      "detailReal": "version.json is the single version/build source: v1.2.10 • build 2026-09-25_1015.",
+      "iconReal": "✓"
     },
     {
       "typeReal": "FIX",
-      "scopeReal": "Global Chat Bot",
-      "detailReal": "Tinanggal ang lumang TUBAL HUB AI/BOT launcher at slash-command bot sa Global Chat. Ang bagong draggable TUBAL BOT ay nananatili sa homepage.",
-      "iconReal": "🧹"
+      "scopeReal": "System Update",
+      "detailReal": "The update action now clears browser caches/service workers and loads the latest site files; it does not claim to download files.",
+      "iconReal": "↻"
     },
     {
-      "typeReal": "FEAT",
-      "scopeReal": "Draggable TUBAL BOT",
-      "detailReal": "Maaaring i-drag ang TUBAL Bot sa ibang posisyon sa screen para hindi makasagabal. Naka-save ang last position sa browser at may viewport clamping.",
-      "iconReal": "🖐️"
-    },
-    {
-      "typeReal": "FEAT",
-      "scopeReal": "TUBAL BOT",
-      "detailReal": "May real chatbot sa homepage na bumabati gamit ang naka-save na user name at nagpapakita ng current browser data.",
+      "typeReal": "FIX",
+      "scopeReal": "Homepage Assistant",
+      "detailReal": "Homepage keeps one primary TUBAL BOT only. The duplicate Tubal AI assistant is removed from the homepage.",
       "iconReal": "🤖"
     },
     {
-      "typeReal": "FEAT",
-      "scopeReal": "Chat Knowledge",
-      "detailReal": "May knowledge para sa Payapang Isip, Shop, Community Feed, CTRLZONE, policies, real-data rule at version updates.",
-      "iconReal": "🧠"
+      "typeReal": "FIX",
+      "scopeReal": "Navigation",
+      "detailReal": "About and Contact now route to separate pages/about.html and pages/contact.html.",
+      "iconReal": "→"
     },
     {
       "typeReal": "UI",
-      "scopeReal": "Chatbot UI",
-      "detailReal": "Glass chat window na may REAL badge, Enter-to-send at responsive mobile layout.",
-      "iconReal": "💬"
+      "scopeReal": "Live Status",
+      "detailReal": "Footer shows version, build, and real local-data counts without loading placeholders.",
+      "iconReal": "LIVE"
     },
     {
       "typeReal": "FIX",
-      "scopeReal": "3-Dash Navigation",
-      "detailReal": "TUBAL Bot z-index 1000 habang ang fixed 3-dash menu ay z-index 1002 para hindi maharangan.",
+      "scopeReal": "Search",
+      "detailReal": "Search uses real browser journal/feed data plus the repository game catalog and routes game results to their real CTRLZONE pages.",
+      "iconReal": "⌕"
+    },
+    {
+      "typeReal": "UI",
+      "scopeReal": "Demo State",
+      "detailReal": "Empty states remain real by default; optional demo content is explicitly labeled [DEMO] and loads only after a user action.",
+      "iconReal": "DEMO"
+    },
+    {
+      "typeReal": "FIX",
+      "scopeReal": "3-Dash Safety",
+      "detailReal": "The fixed three-dash trigger remains 44px tappable at z-index 1002 and stays above homepage layers.",
       "iconReal": "☰"
     }
   ],
