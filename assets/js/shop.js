@@ -1,5 +1,5 @@
 import {app,auth} from "./firebase-config.js";
-import {getFirestore,collection,addDoc,serverTimestamp,onSnapshot} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+import {getFirestore,collection,addDoc,serverTimestamp,onSnapshot,getDocs} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 import {publishHubPost} from "./hub-content.js";
 
 const db=getFirestore(app);
@@ -125,7 +125,7 @@ function readLocal(key,fallback){
 function saveLocal(key,value){
   try{localStorage.setItem(key,JSON.stringify(value))}catch(_){}
 }
-function productById(id){return products.find(p=>p.id===id)}
+function productById(id){return [...realProducts,...products].find(p=>p.id===id)}
 function collectionProducts(){return [...realProducts,...products]}
 function brandMarkHtml(collection,small=false){
   if(collection==="th") return '<span class="mini-brand-logo th"><img src="../tubal-hub-logo.png" width="'+(small?22:28)+'" height="'+(small?22:28)+'" alt="TUBAL HUB"></span>';
