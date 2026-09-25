@@ -33,7 +33,7 @@ const galleryPool=[IMG.tshirt,IMG.hoodie,IMG.cap,IMG.backpack,IMG.mug,IMG.poster
 let realProducts=[];
 let realProductsUnsubscribe=null;
 const parseProductPrice=v=>{const n=Number(String(v??"").replace(/[^0-9.]/g,""));return Number.isFinite(n)?n:0};
-const normalizeRealProduct=x=>({id:"real-"+x.id,firestoreId:x.id,real:true,collection:"th",title:String(x.name||"Unnamed Product"),price:parseProductPrice(x.price),priceLabel:String(x.price||"Free"),original:0,originalLabel:"",image:String(x.imageUrl||"").trim()||IMG.tshirt,seller:"TUBAL HUB Shop",sellerInitials:"TH",online:false,stock:null,rating:null,badge:String(x.badge||"").trim(),description:String(x.description||""),details:String(x.description||""),sizes:[],colors:[],productUrl:String(x.productUrl||"").trim(),category:String(x.category||"products")});
+const normalizeRealProduct=x=>({id:"real-"+x.id,firestoreId:x.id,real:true,collection:"th",title:String(x.name||"Unnamed Product"),price:parseProductPrice(x.price),priceLabel:String(x.price||"Free"),original:0,originalLabel:"",image:String(x.imageUrl||"").trim(),seller:"TUBAL HUB Shop",sellerInitials:"TH",online:false,stock:null,rating:null,badge:String(x.badge||"").trim(),description:String(x.description||""),details:String(x.description||""),sizes:[],colors:[],productUrl:String(x.productUrl||"").trim(),category:String(x.category||"products")});
 function listenToRealProducts(){if(realProductsUnsubscribe)realProductsUnsubscribe();realProductsUnsubscribe=onSnapshot(collection(db,"products"),snap=>{realProducts=snap.docs.map(d=>normalizeRealProduct({id:d.id,...d.data()}));renderProducts();updateCounts()},e=>console.warn("[TUBAL HUB Shop] real products listener failed",e))}
 
 const products=[
@@ -204,7 +204,7 @@ function cardHtml(p,index){
   const actionHtml=isReal&&p.productUrl?'<a class="add-btn real-product-link" href="'+esc(p.productUrl)+'" target="_blank" rel="noopener noreferrer">Open Product</a>':'<button class="add-btn" data-add="'+esc(p.id)+'" type="button">Add to Cart</button>';
   return '<article class="product-card" data-product-id="'+esc(p.id)+'" style="--stagger:'+(index*.05)+'s">'+
     '<div class="product-visual">'+
-      '<img src="'+esc(p.image)+'" alt="'+esc(p.title)+'" loading="lazy" decoding="async">'+
+      (p.image?'<img src="'+esc(p.image)+'" alt="'+esc(p.title)+'" loading="lazy" decoding="async">':'<div class="product-no-image" aria-label="No product image">NO IMAGE</div>')+
       (p.badge?'<span class="product-badge">'+esc(p.badge)+'</span>':'')+
       (isReal?'':'<button class="quick-view-btn" data-quick="'+esc(p.id)+'" type="button" aria-label="Quick view '+esc(p.title)+'">◉</button>')+
     '</div>'+
