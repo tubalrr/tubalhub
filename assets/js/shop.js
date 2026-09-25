@@ -515,7 +515,17 @@ document.querySelectorAll(".payment-brand-logos img").forEach(img=>img.addEventL
   const btn=img.closest(".payment-method");
   if(btn){state.payment=btn.dataset.payment||"card";updatePaymentUI();burstAt(btn,6);requestAnimationFrame(()=>document.getElementById("cardholderName")?.focus());}
 }));
-function openOrderReview(){
+async function readPaymentReference(){
+  const ids={card:"cardNumber",bank:"bankReference",paypal:"paypalReference"};
+  const el=document.getElementById(ids[state.payment]||"");
+  return String(el?.value||"").trim().slice(0,160);
+}
+async function openOrderReview(){
+  const method=state.payment||"card";
+  const orderTotal=state.upgradeTarget
+    ? parseProductPrice(state.upgradeTarget.product.upgradePrice)
+    : total();
+
   if(state.upgradeTarget){
     try{
       const p=state.upgradeTarget.product, license=state.upgradeTarget.license;
@@ -523,7 +533,7 @@ function openOrderReview(){
         productId:p.firestoreId,
         licenseId:license.id,
         paymentMethod:method,
-        paymentReference:readPaymentReference()
+        paymentReference:await readPaymentReference()
       });
       state.upgradeTarget=null;
       burstAt(document.getElementById("placeOrderBtn"),12);
@@ -548,7 +558,7 @@ function openOrderReview(){
         return {productId:p?.firestoreId||p?.id,qty:x.qty};
       }),
       paymentMethod:method,
-      paymentReference:readPaymentReference()
+      paymentReference:await readPaymentReference()
     });
     const serverTotal=Number(result?.data?.total);
     const finalTotal=Number.isFinite(serverTotal)?serverTotal:orderTotal;
