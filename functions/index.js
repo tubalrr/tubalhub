@@ -737,6 +737,8 @@ exports.upgradeShopProductReal = onCall(async request => {
       uid: request.auth.uid,
       type: "upgrade",
       productId,
+      licenseId,
+      upgradeId: upgradeRef.id,
       total: upgradePrice,
       paymentMethod,
       paymentReference,
