@@ -173,6 +173,277 @@
   }
 })();
 
+/* =========================================================
+   TUBAL HUB REAL VIDEO MODAL
+   No video.html/videos.html navigation. The modal only plays
+   verified sources configured below; missing local MP4 files are
+   never referenced, so this UI does not manufacture 404s.
+   ========================================================= */
+(() => {
+  "use strict";
+
+  const videosReal = [
+    {
+      idReal: "tubal_intro",
+      titleReal: "TUBAL HUB — Three Brands One Hub Intro",
+      descReal: "Official TUBAL HUB intro • verified YouTube source",
+      thumbReal: "https://i.ytimg.com/vi/OJRTOKrbJgI/hqdefault.jpg",
+      youtubeReal: "https://www.youtube.com/embed/OJRTOKrbJgI?si=bL3-LIkCThxFBL_E",
+      isReal: true
+    },
+    {
+      idReal: "payapang_guide",
+      titleReal: "Payapang Isip — A quiet place for your thoughts",
+      descReal: "Real Payapang Isip feature guide • video source not configured in repo",
+      thumbReal: null,
+      youtubeReal: null,
+      localReal: null,
+      isReal: true
+    },
+    {
+      idReal: "ctrlzone_highlights",
+      titleReal: "CTRLZONE — Games Highlights",
+      descReal: "Real CTRLZONE catalog • local MP4 not present in repository",
+      thumbReal: null,
+      youtubeReal: null,
+      localReal: null,
+      isReal: true
+    },
+    {
+      idReal: "community_feed",
+      titleReal: "Community Feed — Real posts from browser",
+      descReal: "Real Feeds feature • local MP4 not present in repository",
+      thumbReal: null,
+      youtubeReal: null,
+      localReal: null,
+      isReal: true
+    }
+  ];
+
+  function safeText(value) {
+    return String(value ?? "").replace(/[&<>"']/g, ch => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+    }[ch]));
+  }
+
+  function pagePrefix() {
+    return location.pathname.includes("/pages/") ? "../" : "";
+  }
+
+  function injectVideoButtonReal() {
+    const existing = document.getElementById("videoBtnReal");
+    if (existing) return existing;
+
+    const candidates = [...document.querySelectorAll("a[href]")].filter(a => {
+      const href = String(a.getAttribute("href") || "").toLowerCase();
+      const text = String(a.textContent || "").trim().toLowerCase();
+      return href === "video.html" || href.endsWith("/videos") || href.endsWith("videos.html") || text === "video" || text === "videos" || text.includes("▶ videos");
+    });
+
+    const target = candidates[0];
+    if (!target) return null;
+
+    const button = document.createElement("button");
+    button.id = "videoBtnReal";
+    button.type = "button";
+    button.title = "TUBAL HUB Videos Real";
+    button.setAttribute("aria-label", "Open TUBAL HUB Videos");
+    button.className = target.className || "";
+    button.textContent = "📹";
+    button.style.cssText = "width:36px;height:36px;background:rgba(255,255,255,0.06);border:1px solid rgba(120,255,170,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:inherit;";
+    target.replaceWith(button);
+    return button;
+  }
+
+  function ensureVideoModalReal() {
+    let modal = document.getElementById("videoModalReal");
+    if (modal) return modal;
+
+    modal = document.createElement("div");
+    modal.id = "videoModalReal";
+    modal.setAttribute("role", "dialog");
+    modal.setAttribute("aria-modal", "true");
+    modal.setAttribute("aria-labelledby", "videoModalTitleReal");
+    modal.hidden = true;
+    modal.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);z-index:2000;display:none;align-items:center;justify-content:center;padding:20px;";
+    modal.innerHTML = `
+      <div style="width:100%;max-width:1100px;background:rgba(8,20,12,.98);border:1px solid rgba(29,255,145,.2);border-radius:24px;overflow:hidden;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 30px 100px rgba(0,0,0,.7);">
+        <div style="padding:16px 20px;background:linear-gradient(135deg,#0a1f12,#1dff91);display:flex;justify-content:space-between;align-items:center;gap:12px;">
+          <div>
+            <b id="videoModalTitleReal" style="color:#020604;font-size:14px;">TUBAL HUB Videos • Real</b>
+            <br><small style="color:#020604;opacity:.7;">Verified video sources only • no fake MP4 paths</small>
+          </div>
+          <button id="closeVideoReal" type="button" aria-label="Close videos" style="width:32px;height:32px;background:#020604;border:none;border-radius:50%;color:#fff;cursor:pointer;">✕</button>
+        </div>
+        <div style="display:grid;grid-template-columns:minmax(0,1fr) 320px;min-height:0;flex:1;overflow:hidden;">
+          <div style="background:#000;aspect-ratio:16/9;position:relative;min-height:240px;">
+            <iframe id="videoPlayerReal" title="TUBAL HUB Real Video Player" width="100%" height="100%" src="" frameborder="0" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture;web-share" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;display:none;"></iframe>
+            <video id="localVideoPlayerReal" controls playsinline preload="metadata" style="width:100%;height:100%;display:none;position:absolute;inset:0;background:#000;"></video>
+            <div id="videoPlaceholderReal" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:#fff;text-align:center;padding:24px;">
+              <span style="font-size:48px;">📹</span>
+              <strong>Select a real video</strong>
+              <p style="margin:0;opacity:.65;font-size:12px;">Only configured YouTube or existing local MP4 sources can play here.</p>
+            </div>
+            <div id="videoStatusReal" style="position:absolute;left:12px;bottom:12px;padding:6px 9px;border:1px solid rgba(29,255,145,.2);border-radius:999px;background:rgba(0,0,0,.65);color:#1dff91;font-size:9px;font-weight:800;letter-spacing:.5px;display:none;"></div>
+          </div>
+          <div id="videoListReal" style="background:rgba(0,0,0,.3);overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px;"></div>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+
+    modal.querySelector("#closeVideoReal")?.addEventListener("click", closeVideoReal);
+    modal.addEventListener("click", e => {
+      if (e.target === modal) closeVideoReal();
+    });
+    return modal;
+  }
+
+  function renderVideoListReal() {
+    const list = document.getElementById("videoListReal");
+    if (!list) return;
+    list.innerHTML = videosReal.map(v => {
+      const playable = !!(v.youtubeReal || v.localReal);
+      const thumb = v.thumbReal
+        ? `<img src="${safeText(v.thumbReal)}" alt="" loading="lazy" style="width:72px;height:46px;border-radius:8px;object-fit:cover;background:rgba(255,255,255,.06);flex-shrink:0;" onerror="this.remove()">`
+        : `<div aria-hidden="true" style="width:72px;height:46px;border-radius:8px;background:linear-gradient(135deg,#0a1f12,#16251c);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">📹</div>`;
+      return `
+        <button type="button" data-video-id="${safeText(v.idReal)}" ${playable ? "" : "disabled"}
+          style="width:100%;text-align:left;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:10px;display:flex;gap:10px;cursor:${playable ? "pointer" : "not-allowed"};opacity:${playable ? "1" : ".68"};transition:.2s;color:#fff;">
+          ${thumb}
+          <span style="display:block;flex:1;min-width:0;">
+            <b style="font-size:11px;display:block;white-space:normal;line-height:1.25;">${safeText(v.titleReal)}</b>
+            <small style="font-size:10px;opacity:.6;display:block;margin-top:3px;line-height:1.3;">${safeText(v.descReal)}</small>
+            <span style="font-size:8px;background:rgba(29,255,145,.15);color:#1dff91;padding:2px 6px;border-radius:20px;margin-top:5px;display:inline-block;">REAL • ${v.youtubeReal ? "YouTube" : (v.localReal ? "Local" : "SOURCE PENDING")}</span>
+          </span>
+        </button>
+      `;
+    }).join("");
+
+    list.querySelectorAll("[data-video-id]").forEach(btn => {
+      btn.addEventListener("click", () => playVideoReal(btn.dataset.videoId));
+      if (!btn.disabled) {
+        btn.addEventListener("mouseenter", () => btn.style.borderColor = "rgba(29,255,145,.3)");
+        btn.addEventListener("mouseleave", () => btn.style.borderColor = "rgba(255,255,255,.06)");
+      }
+    });
+  }
+
+  function playVideoReal(idReal) {
+    const v = videosReal.find(x => x.idReal === idReal);
+    if (!v) return;
+
+    const iframe = document.getElementById("videoPlayerReal");
+    const localVid = document.getElementById("localVideoPlayerReal");
+    const placeholder = document.getElementById("videoPlaceholderReal");
+    const status = document.getElementById("videoStatusReal");
+    if (!iframe || !localVid || !placeholder) return;
+
+    placeholder.style.display = "none";
+    if (status) {
+      status.style.display = "block";
+      status.textContent = v.youtubeReal ? "REAL • YOUTUBE" : (v.localReal ? "REAL • LOCAL MP4" : "REAL • SOURCE PENDING");
+    }
+
+    if (v.youtubeReal) {
+      localVid.pause();
+      localVid.removeAttribute("src");
+      localVid.style.display = "none";
+      iframe.src = v.youtubeReal;
+      iframe.style.display = "block";
+    } else if (v.localReal) {
+      iframe.src = "";
+      iframe.style.display = "none";
+      localVid.src = v.localReal;
+      localVid.style.display = "block";
+      localVid.load();
+      localVid.play().catch(() => {});
+    } else {
+      iframe.src = "";
+      localVid.pause();
+      localVid.removeAttribute("src");
+      localVid.style.display = "none";
+      placeholder.innerHTML = `
+        <span style="font-size:48px;">📹</span>
+        <strong>Real source not configured yet</strong>
+        <p style="margin:0;max-width:420px;opacity:.65;font-size:12px;">Walang verified YouTube URL o existing MP4 file sa repository para sa video na ito. Hindi ako gagamit ng placeholder o 404 path.</p>
+      `;
+      placeholder.style.display = "flex";
+    }
+  }
+
+  function openVideoReal() {
+    const button = document.getElementById("videoBtnReal");
+    const modal = ensureVideoModalReal();
+    if (!modal) return;
+    renderVideoListReal();
+    modal.hidden = false;
+    modal.style.display = "flex";
+    document.body.style.overflow = "hidden";
+    button?.setAttribute("aria-expanded", "true");
+  }
+
+  function closeVideoReal() {
+    const modal = document.getElementById("videoModalReal");
+    const iframe = document.getElementById("videoPlayerReal");
+    const localVid = document.getElementById("localVideoPlayerReal");
+    const placeholder = document.getElementById("videoPlaceholderReal");
+    const status = document.getElementById("videoStatusReal");
+    if (!modal) return;
+
+    if (iframe) iframe.src = "";
+    if (localVid) {
+      localVid.pause();
+      localVid.removeAttribute("src");
+      localVid.load();
+      localVid.style.display = "none";
+    }
+    if (placeholder) {
+      placeholder.innerHTML = `
+        <span style="font-size:48px;">📹</span>
+        <strong>Select a real video</strong>
+        <p style="margin:0;opacity:.65;font-size:12px;">Only configured YouTube or existing local MP4 sources can play here.</p>
+      `;
+      placeholder.style.display = "flex";
+    }
+    if (status) status.style.display = "none";
+    modal.style.display = "none";
+    modal.hidden = true;
+    document.body.style.overflow = "";
+    document.getElementById("videoBtnReal")?.setAttribute("aria-expanded", "false");
+  }
+
+  function initVideoReal() {
+    const button = injectVideoButtonReal();
+    ensureVideoModalReal();
+    if (button && button.dataset.videoReady !== "1") {
+      button.dataset.videoReady = "1";
+      button.addEventListener("click", openVideoReal);
+    }
+
+    document.addEventListener("keydown", e => {
+      if (e.key === "Escape" && document.getElementById("videoModalReal")?.style.display === "flex") closeVideoReal();
+    });
+
+    // Keep the 3-dash menu untouched; only add the video control behavior.
+    const dash = document.getElementById("sidebarToggle") || document.getElementById("sidebarMenuTrigger");
+    if (dash) dash.style.zIndex = "1002";
+  }
+
+  window.tubalHubVideoReal = Object.freeze({
+    videosReal,
+    open: openVideoReal,
+    close: closeVideoReal,
+    play: playVideoReal
+  });
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initVideoReal, { once: true });
+  } else {
+    initVideoReal();
+  }
+})();
+
 /* Shared real moderation + rate-limit guard for Global Chat messages and replies. */
 (() => {
   const BANNED_WORDS_REAL = [
