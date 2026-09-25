@@ -33,7 +33,7 @@ function ensureUi(){
   if(document.getElementById("thSearchOverlay"))return;
   document.body.insertAdjacentHTML("beforeend",
     '<div class="th-overlay th-search-overlay" id="thSearchOverlay" hidden style="display:none;pointer-events:none">'+
-      '<section class="th-search-modal" id="thSearchModal" role="dialog" aria-modal="true" aria-label="Global Search">'+
+      '<section class="th-search-modal" id="searchModalReal" role="dialog" aria-modal="true" aria-label="Global Search">'+
         '<div class="th-search-input-row">'+
           '<span class="th-search-input-icon" aria-hidden="true">⌕</span>'+
           '<input class="th-search-input" id="thGlobalSearchInput" autocomplete="off" spellcheck="false" placeholder="Search games, journals, shop... real data" aria-label="Search TUBAL HUB">'+
@@ -70,7 +70,7 @@ function open(q=""){
   modal.style.display="grid";
   modal.style.pointerEvents="auto";
   modal.classList.add("is-open");
-  document.getElementById("thSearchModal")?.classList.add("is-open");
+  document.getElementById("searchModalReal")?.classList.add("is-open");
   document.querySelector(".search-box")?.classList.add("is-open");
   if(topInput)topInput.value=q;
   input.value=q;
@@ -80,7 +80,7 @@ function open(q=""){
 function close(){
   if(!modal)return;
   modal.classList.remove("is-open");
-  document.getElementById("thSearchModal")?.classList.remove("is-open");
+  document.getElementById("searchModalReal")?.classList.remove("is-open");
   modal.style.pointerEvents="none";
   document.querySelector(".search-box")?.classList.remove("is-open");
   setTimeout(()=>{
