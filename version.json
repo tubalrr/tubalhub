@@ -1,9 +1,15 @@
 {
-  "version": "1.2.10",
-  "build": "2026-09-25_1015",
-  "releasedAtReal": "2026-09-25T10:15:00+08:00",
+  "version": "1.2.11",
+  "build": "2026-09-25_1017",
+  "releasedAtReal": "2026-09-25T10:17:00+08:00",
   "releasedByReal": "tubalrr",
   "updatesReal": [
+    {
+      "typeReal": "FIX",
+      "scopeReal": "Global Chat Bot",
+      "detailReal": "Tinanggal ang lumang TUBAL HUB AI/BOT launcher at slash-command bot sa Global Chat. Ang bagong draggable TUBAL BOT ay nananatili sa homepage.",
+      "iconReal": "🧹"
+    },
     {
       "typeReal": "FEAT",
       "scopeReal": "Draggable TUBAL BOT",
