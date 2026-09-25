@@ -439,7 +439,7 @@ exports.sendMessageReal = onCall(async request => {
     moderatedReal: !!moderation.flagged,
     flaggedReal: !!moderation.flagged,
     verifiedReal: true,
-    roleReal: (request.auth.token?.admin === true || request.auth.token?.email === "tubalrr@gmail.com") ? "admin" : "user",
+    roleReal: (request.auth.token?.admin === true) ? "admin" : "user",
     moderatedBy: "server"
   };
 
@@ -513,7 +513,7 @@ exports.sendGlobalMediaMessageReal = onCall(async request => {
 
   const name = displayNameFromRequest(request);
   const token = request.auth.token || {};
-  const roleReal = token.admin === true || token.email === "tubalrr@gmail.com" ? "admin" : "user";
+  const roleReal = token.admin === true ? "admin" : "user";
   const ref = await db.collection("globalChats").add({
     uid: request.auth.uid,
     displayName: name,
