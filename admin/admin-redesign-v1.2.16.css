@@ -499,3 +499,20 @@ body:after{display:none!important}#sidebarToggle{position:fixed!important;z-inde
 @media(max-width:650px){
   #shopProductList{max-height:360px!important}
 }
+
+
+/* SHOP CONTROL — scroll the whole Products panel so lower fields and product list are reachable */
+#shopProducts{
+  max-height:560px!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  scrollbar-width:thin!important;
+  scrollbar-color:#31506a rgba(255,255,255,.025)!important;
+}
+#shopProducts::-webkit-scrollbar{width:7px!important}
+#shopProducts::-webkit-scrollbar-track{background:rgba(255,255,255,.025)!important;border-radius:99px!important}
+#shopProducts::-webkit-scrollbar-thumb{background:#31506a!important;border-radius:99px!important;border:1px solid rgba(255,255,255,.06)!important}
+#shopProducts::-webkit-scrollbar-thumb:hover{background:#4a6b88!important}
+@media(max-width:650px){
+  #shopProducts{max-height:520px!important}
+}
