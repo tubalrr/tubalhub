@@ -777,7 +777,7 @@ function initFooterQr(){
   if(!box||box.dataset.ready==="1")return;
   box.dataset.ready="1";
   const img=document.createElement("img");
-  img.src="/assets/images/tubal-hub-footer-qr.png";
+  img.src="/assets/images/tubal-hub-footer-qr.svg";
   img.alt="TUBAL HUB QR code";
   img.loading="lazy";
   img.decoding="async";
