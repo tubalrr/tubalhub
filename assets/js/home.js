@@ -52,8 +52,8 @@ const state = {
 
 const $=(s,r=document)=>r.querySelector(s);
 const EMAIL_NOTIFY_CONFIG_REAL=Object.freeze({
-  serviceId:window.TUBAL_EMAILJS_CONFIG?.serviceId||"tubalhub_service_real",
-  templateId:window.TUBAL_EMAILJS_CONFIG?.templateId||"tubalhub_update_template",
+  serviceId:window.TUBAL_EMAILJS_CONFIG?.serviceId||"",
+  templateId:window.TUBAL_EMAILJS_CONFIG?.templateId||"",
   publicKey:window.TUBAL_EMAILJS_CONFIG?.publicKey||""
 });
 let emailJsReadyReal=false;
@@ -113,7 +113,7 @@ async function sendUpdateEmailReal(sub,newVersionData){
     build:String(newVersionData?.build||""),
     updates:updatesTextReal,
     phone:sub.phoneReal||"N/A",
-    message:"May bagong update sa TUBAL HUB!\\n\\nVersion: v"+String(newVersionData?.version||"")+" Build "+String(newVersionData?.build||"")+"\\n\\nAnong na-update:\\n"+updatesTextReal+"\\n\\nI-load ang latest:\\nhttps://tubalrr.github.io/tubalhub/?v="+encodeURIComponent(String(newVersionData?.version||""))
+    message:"May bagong update sa TUBAL HUB!\\n\\nVersion: v"+String(newVersionData?.version||"")+" Build "+String(newVersionData?.build||"")+"\\n\\nAnong na-update:\\n"+updatesTextReal+"\\n\\nI-load ang latest:\\nnew URL("./index.html",window.location.href).href+"?v="+encodeURIComponent(String(newVersionData?.version||""))
   };
   try{
     await window.emailjs.send(EMAIL_NOTIFY_CONFIG_REAL.serviceId,EMAIL_NOTIFY_CONFIG_REAL.templateId,params);
