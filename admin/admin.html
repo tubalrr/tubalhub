@@ -46,7 +46,16 @@ function runAdminSearch(value){
 }
 function firestoreError(e){if(e?.code==="permission-denied")return "Publishing blocked by Firestore Rules. Publish the latest firestore.rules in Firebase Console, then refresh.";return e?.message||"Firestore error"}
 async function loadSponsoredAds(){try{const snap=await getDocs(query(collection(db,"sponsors"),orderBy("createdAt","desc"),limit(20)));sponsoredAds=snap.docs.map(d=>({id:d.id,...d.data()}));renderSponsoredAds()}catch(e){console.warn(e);toast(firestoreError(e))}}
-function renderSponsoredAds(){const box=$("sponsoredAdList");if(!box)return;box.innerHTML=sponsoredAds.length?sponsoredAds.map(a=>'<div class="admin-item"><b>'+esc(a.titleReal||"Sponsored")+'</b><small>'+esc(a.descReal||"")+'</small><span>'+(a.isActive===false||a.isExpired===true?"INACTIVE":"ACTIVE")+'</span><button data-delete-sponsored="'+esc(a.id)+'">Delete</button></div>').join(""):'<small style="opacity:.5">No sponsored placements yet.</small>';box.querySelectorAll("[data-delete-sponsored]").forEach(btn=>btn.onclick=async()=>{try{await deleteDoc(doc(db,"sponsors",btn.dataset.deleteSponsored));toast("Sponsored deleted");await loadSponsoredAds()}catch(e){toast(firestoreError(e))}})}
+function renderSponsoredAds(){
+  const box=$("sponsoredAdList");if(!box)return;
+  box.innerHTML=sponsoredAds.length
+    ? sponsoredAds.map(a=>'<div class="admin-item"><b>Sponsored '+esc(a.sponsorSlot||"1")+'</b><strong>'+esc(a.titleReal||"Sponsored")+'</strong><small>'+esc(a.descReal||"")+'</small><span>'+(a.isActive===false||a.isExpired===true?"INACTIVE":"ACTIVE")+'</span><button data-delete-sponsored="'+esc(a.id)+'">Delete</button></div>').join("")
+    : '<small style="opacity:.5">No sponsored placements yet.</small>';
+  box.querySelectorAll("[data-delete-sponsored]").forEach(btn=>btn.onclick=async()=>{
+    try{await deleteDoc(doc(db,"sponsors",btn.dataset.deleteSponsored));toast("Sponsored deleted");await loadSponsoredAds()}
+    catch(e){toast(firestoreError(e))}
+  })
+}
 async function addSponsoredAd(){
   const slot=Number($("saSlot")?.value||1),title=String($("saTitle")?.value||"").trim(),text=String($("saText")?.value||"").trim(),imageUrl=String($("saImage")?.value||"").trim(),linkUrl=String($("saUrl")?.value||"").trim(),badge=String($("saBadge")?.value||"SPONSORED").trim()||"SPONSORED";
   if(!title){toast("Sponsor title required");return}
