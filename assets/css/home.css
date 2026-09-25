@@ -4643,7 +4643,7 @@ body.global-chat-page .global-chat-menu-toggle,
 body.global-chat-page #sidebarToggle{
   position:fixed!important;
   left:16px!important;
-  top:10px!important;
+  top:16px!important;
   width:44px!important;
   height:44px!important;
   min-width:44px!important;
