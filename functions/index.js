@@ -614,6 +614,43 @@ function normalizeShopItemsReal(items) {
   });
 }
 
+async function reserveShopOrderSlotReal(tx, uid) {
+  const ref = db.collection("shopRateLimits").doc(uid);
+  const snap = await tx.get(ref);
+  const now = Date.now();
+  const data = snap.exists ? snap.data() || {} : {};
+  const windowStart = Number(data.windowStartMs || 0);
+  const withinWindow = windowStart > 0 && now - windowStart < 60 * 60 * 1000;
+  const windowCount = withinWindow ? Number(data.windowCount || 0) : 0;
+  const pendingCount = Number(data.pendingCount || 0);
+
+  if (pendingCount >= 5) {
+    throw new HttpsError("resource-exhausted", "You already have the maximum number of pending shop orders.");
+  }
+  if (windowCount >= 10) {
+    throw new HttpsError("resource-exhausted", "Too many shop orders. Please try again later.");
+  }
+
+  tx.set(ref, {
+    uid,
+    windowStartMs: withinWindow ? windowStart : now,
+    windowCount: windowCount + 1,
+    pendingCount: pendingCount + 1,
+    updatedAt: FieldValue.serverTimestamp()
+  }, { merge: true });
+}
+
+async function releaseShopOrderSlotReal(tx, uid) {
+  const ref = db.collection("shopRateLimits").doc(uid);
+  const snap = await tx.get(ref);
+  if (!snap.exists) return;
+  const data = snap.data() || {};
+  tx.set(ref, {
+    pendingCount: Math.max(0, Number(data.pendingCount || 0) - 1),
+    updatedAt: FieldValue.serverTimestamp()
+  }, { merge: true });
+}
+
 async function getShopProductsReal(items) {
   const refs = items.map(item => db.collection("products").doc(item.productId));
   const snaps = await db.getAll(...refs);
@@ -658,8 +695,7 @@ exports.createShopOrderReal = onCall(async request => {
       productType,
       version: p.version ? String(p.version).slice(0, 80) : null,
       latestVersion: String(p.latestVersion || p.version || "1.0.0").slice(0, 80),
-      licenseType: String(p.license || "Standard").slice(0, 100),
-      downloadUrl: String(p.downloadUrl || "").slice(0, 3000)
+      licenseType: String(p.license || "Standard").slice(0, 100)
     });
   }
 
@@ -668,16 +704,19 @@ exports.createShopOrderReal = onCall(async request => {
   }
 
   const orderRef = db.collection("orders").doc();
-  await orderRef.set({
-    uid: request.auth.uid,
-    items: orderItems,
-    total,
-    paymentMethod,
-    paymentReference,
-    status: "pending_payment",
-    paymentVerified: false,
-    createdAt: FieldValue.serverTimestamp(),
-    createdByServer: true
+  await db.runTransaction(async tx => {
+    await reserveShopOrderSlotReal(tx, request.auth.uid);
+    tx.set(orderRef, {
+      uid: request.auth.uid,
+      items: orderItems,
+      total,
+      paymentMethod,
+      paymentReference,
+      status: "pending_payment",
+      paymentVerified: false,
+      createdAt: FieldValue.serverTimestamp(),
+      createdByServer: true
+    });
   });
 
   return {
@@ -731,6 +770,7 @@ exports.upgradeShopProductReal = onCall(async request => {
 
     const orderRef = db.collection("orders").doc();
     const upgradeRef = db.collection("upgrades").doc();
+    await reserveShopOrderSlotReal(tx, request.auth.uid);
     tx.set(orderRef, {
       uid: request.auth.uid,
       type: "upgrade",
@@ -801,6 +841,7 @@ exports.verifyShopOrderReal = onCall(async request => {
         throw new HttpsError("failed-precondition", "Only pending-payment orders can be rejected.");
       }
 
+      await releaseShopOrderSlotReal(tx, order.uid);
       tx.update(orderRef, {
         status: "rejected",
         paymentVerified: false,
@@ -908,6 +949,7 @@ exports.verifyShopOrderReal = onCall(async request => {
         createdByServer: true
       }, { merge: true });
 
+      await releaseShopOrderSlotReal(tx, order.uid);
       tx.update(orderRef, {
         status: "paid",
         paymentVerified: true,
@@ -960,6 +1002,7 @@ exports.verifyShopOrderReal = onCall(async request => {
       licenseIds.push(licenseId);
     }
 
+    await releaseShopOrderSlotReal(tx, order.uid);
     tx.update(orderRef, {
       status: "paid",
       paymentVerified: true,
@@ -974,6 +1017,54 @@ exports.verifyShopOrderReal = onCall(async request => {
   });
 
   return { success: true, ...result };
+});
+
+exports.getAuthorizedDownloadReal = onCall(async request => {
+  requireRealUser(request);
+
+  const licenseId = String(request.data?.licenseId || "").trim();
+  if (!licenseId) throw new HttpsError("invalid-argument", "License ID is required.");
+
+  const licenseSnap = await db.collection("licenses").doc(licenseId).get();
+  if (!licenseSnap.exists) throw new HttpsError("not-found", "License not found.");
+
+  const license = licenseSnap.data() || {};
+  if (license.uid !== request.auth.uid || license.status !== "paid") {
+    throw new HttpsError("permission-denied", "A paid license is required.");
+  }
+
+  const productId = String(license.productId || "").trim();
+  if (!productId) throw new HttpsError("failed-precondition", "License is missing its product.");
+
+  const secretSnap = await db.collection("productSecrets").doc(productId).get();
+  if (!secretSnap.exists) throw new HttpsError("not-found", "Protected download is not configured.");
+
+  const secret = secretSnap.data() || {};
+  const downloadPath = String(secret.downloadPath || "").trim();
+  const sourceUrl = String(secret.sourceUrl || "").trim();
+
+  if (downloadPath) {
+    if (!downloadPath.startsWith("shop-downloads/") || downloadPath.includes("..")) {
+      throw new HttpsError("failed-precondition", "Invalid protected download path.");
+    }
+    const file = getStorage().bucket().file(downloadPath);
+    const [exists] = await file.exists();
+    if (!exists) throw new HttpsError("not-found", "Protected download file not found.");
+
+    const [url] = await file.getSignedUrl({
+      version: "v4",
+      action: "read",
+      expires: Date.now() + 10 * 60 * 1000
+    });
+
+    return { success: true, url, expiresInSeconds: 600 };
+  }
+
+  if (sourceUrl) {
+    return { success: true, url: sourceUrl, protected: true };
+  }
+
+  throw new HttpsError("failed-precondition", "No protected download is configured.");
 });
 
 exports.sendPrivateMessageReal = onCall(async request => {
