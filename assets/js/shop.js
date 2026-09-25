@@ -524,56 +524,94 @@ async function readPaymentReference(){
   const el=document.getElementById(ids[state.payment]||"");
   return String(el?.value||"").trim().slice(0,160);
 }
-async function openOrderReview(){
+function closeOrderReview(){
+  const layer=document.getElementById("orderReviewLayer");
+  if(!layer)return;
+  layer.classList.remove("is-open");
+  setTimeout(()=>{if(!layer.classList.contains("is-open"))layer.hidden=true},220);
+}
+function openOrderSuccess(orderTotal,method,orderId){
+  const layer=document.getElementById("orderSuccessLayer");
+  if(!layer)return;
+  document.getElementById("orderNumber").textContent=orderId||"Pending";
+  document.getElementById("successTotal").textContent=money(orderTotal);
+  document.getElementById("successPayment").textContent=method==="bank"?"Bank Transfer":method==="paypal"?"PayPal":"Card";
+  layer.hidden=false;
+  requestAnimationFrame(()=>layer.classList.add("is-open"));
+}
+function closeOrderSuccess(){
+  const layer=document.getElementById("orderSuccessLayer");
+  if(!layer)return;
+  layer.classList.remove("is-open");
+  setTimeout(()=>{if(!layer.classList.contains("is-open"))layer.hidden=true},220);
+}
+function openOrderReview(){
+  if(!state.cart.length&&!state.upgradeTarget){notify("Your cart is empty.");return}
+  const layer=document.getElementById("orderReviewLayer");
+  if(!layer)return;
+  const items=document.getElementById("orderReviewItems");
+  const reviewSubtotal=document.getElementById("reviewSubtotal");
+  const reviewShipping=document.getElementById("reviewShipping");
+  const reviewTotal=document.getElementById("reviewTotal");
+  const reviewPayment=document.getElementById("reviewPayment");
+  if(state.upgradeTarget){
+    const p=state.upgradeTarget.product;
+    items.innerHTML='<div class="order-review-row"><span>'+esc(p.title)+' — Upgrade to v'+esc(p.latestVersion||p.version||"1.0.0")+'</span><b>'+money(parseProductPrice(p.upgradePrice))+'</b></div>';
+    reviewSubtotal.textContent=money(parseProductPrice(p.upgradePrice));
+    reviewShipping.textContent=money(0);
+    reviewTotal.textContent=money(parseProductPrice(p.upgradePrice));
+  }else{
+    items.innerHTML=state.cart.map(x=>{const p=productById(x.id);return p?'<div class="order-review-row"><span>'+esc(p.title)+' × '+x.qty+'</span><b>'+money(Number(p.price)*Number(x.qty))+'</b></div>':""}).join("");
+    reviewSubtotal.textContent=money(subtotal());
+    reviewShipping.textContent=money(shipping());
+    reviewTotal.textContent=money(total());
+  }
+  reviewPayment.textContent=state.payment==="bank"?"Bank Transfer":state.payment==="paypal"?"PayPal":"Card";
+  layer.hidden=false;
+  requestAnimationFrame(()=>layer.classList.add("is-open"));
+}
+async function placeOrder(){
   const method=state.payment||"card";
-  const orderTotal=state.upgradeTarget
-    ? parseProductPrice(state.upgradeTarget.product.upgradePrice)
-    : total();
-
+  const orderTotal=state.upgradeTarget?parseProductPrice(state.upgradeTarget.product.upgradePrice):total();
   if(state.upgradeTarget){
     try{
-      const p=state.upgradeTarget.product, license=state.upgradeTarget.license;
-      const result=await upgradeShopProductReal({
-        productId:p.firestoreId,
-        licenseId:license.id,
-        paymentMethod:method,
-        paymentReference:await readPaymentReference()
-      });
+      const p=state.upgradeTarget.product,license=state.upgradeTarget.license;
+      const result=await upgradeShopProductReal({productId:p.firestoreId,licenseId:license.id,paymentMethod:method,paymentReference:await readPaymentReference()});
       state.upgradeTarget=null;
       burstAt(document.getElementById("placeOrderBtn"),12);
-      openOrderSuccess(orderTotal,method,result?.data?.orderId);
       closeOrderReview();
-      return;
+      closeCheckout();
+      openOrderSuccess(orderTotal,method,result?.data?.orderId);
     }catch(e){
       console.error("[TUBAL HUB Shop] secure upgrade failed",e);
       notify("Upgrade could not be recorded. The secure shop service may need deployment.");
-      return;
     }
+    return;
   }
-
   const digitalItems=state.cart.map(x=>({row:x,p:productById(x.id)})).filter(x=>x.p?.real&&x.p.productType!=="physical");
   const physicalItems=state.cart.map(x=>({row:x,p:productById(x.id)})).filter(x=>!x.p?.real||x.p.productType==="physical");
   if(digitalItems.length&&physicalItems.length){notify("Digital and physical products must be purchased separately.");return}
-
   try{
     const result=await createShopOrderReal({
-      items:state.cart.map(x=>{
-        const p=productById(x.id);
-        return {productId:p?.firestoreId||p?.id,qty:x.qty};
-      }),
+      items:state.cart.map(x=>{const p=productById(x.id);return{productId:p?.firestoreId||p?.id,qty:x.qty}}),
       paymentMethod:method,
       paymentReference:await readPaymentReference()
     });
     const serverTotal=Number(result?.data?.total);
     const finalTotal=Number.isFinite(serverTotal)?serverTotal:orderTotal;
     burstAt(document.getElementById("placeOrderBtn"),12);
+    state.cart=[];saveCart();updateCartUI();
+    closeOrderReview();closeCheckout();closeCart();
     openOrderSuccess(finalTotal,method,result?.data?.orderId);
-    state.cart=[];saveCart();updateCartUI();closeOrderReview();closeCart();
   }catch(e){
     console.error("[TUBAL HUB Shop] secure order failed",e);
     notify("Order could not be recorded. The secure shop service may need deployment.");
   }
-});
+}
+document.getElementById("finishCheckout").addEventListener("click",()=>{closeCheckout();openOrderReview()});
+document.getElementById("placeOrderBtn").addEventListener("click",placeOrder);
+document.getElementById("backToPayment").addEventListener("click",()=>{closeOrderReview();openCheckout()});
+document.getElementById("closeOrderReview").addEventListener("click",closeOrderReview);
 document.getElementById("closeOrderSuccess").addEventListener("click",closeOrderSuccess);
 window.addEventListener("keydown",e=>{
   if(e.key!=="Escape")return;
