@@ -153,13 +153,8 @@ function total(){return subtotal()+shipping()}
 function saveCart(){saveLocal(CART_KEY,state.cart)}
 function loadCart(){
   const raw=readLocal(CART_KEY,null);
-  if(Array.isArray(raw)&&raw.length){state.cart=raw.filter(x=>productById(x.id)&&Number(x.qty)>0).map(x=>({id:x.id,qty:Math.min(10,Math.max(1,Number(x.qty)))}));return}
-  state.cart=[
-    {id:"th-tee",qty:1},
-    {id:"th-cap",qty:1},
-    {id:"pi-journal",qty:1}
-  ];
-  saveCart();
+  state.cart=Array.isArray(raw)?raw.filter(x=>productById(x.id)&&Number(x.qty)>0).map(x=>({id:x.id,qty:Math.min(10,Math.max(1,Number(x.qty)))})):[];
+  if(!raw)saveCart();
 }
 function loadWishlist(){state.wishlist=new Set(readLocal(WISH_KEY,[]))}
 function saveWishlist(){saveLocal(WISH_KEY,[...state.wishlist])}
