@@ -93,6 +93,72 @@ window.TUBAL_EMAILJS_CONFIG = Object.freeze({
   .footer-subscribe-fields-real input,.footer-subscribe-fields-real button{width:100%;min-width:0;flex:1 1 100%}
   .footer-subscribe-meta-real{align-items:flex-start;flex-direction:column}
 }
+.featured-game-sponsored-grid-real{
+  width:100%;
+  max-width:1280px;
+  margin:20px auto;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 320px;
+  gap:16px;
+  align-items:start;
+}
+#featuredGameReal{min-width:0}
+.sponsored-container-real{
+  min-height:200px;
+  padding:14px;
+  border:1px dashed rgba(255,255,255,.1);
+  border-radius:20px;
+  background:rgba(8,20,12,.4);
+  display:flex;
+  flex-direction:column;
+}
+.sponsored-container-head-real{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-bottom:12px;
+}
+.sponsored-container-head-real span:first-child{
+  font-size:10px;
+  letter-spacing:2px;
+  opacity:.3;
+  text-transform:uppercase;
+}
+.sponsored-container-head-real span:last-child{
+  font-size:8px;
+  background:rgba(255,255,255,.06);
+  color:rgba(255,255,255,.3);
+  padding:2px 8px;
+  border-radius:20px;
+}
+.sponsored-empty-real{
+  flex:1;
+  min-height:160px;
+  background:rgba(0,0,0,.2);
+  border-radius:14px;
+  border:1px dashed rgba(120,255,170,.1);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  text-align:center;
+}
+.sponsored-empty-real span{font-size:24px;opacity:.2}
+.sponsored-empty-real b{font-size:11px;opacity:.3;margin-top:8px}
+.sponsored-empty-real small{font-size:9px;opacity:.2;margin-top:4px}
+#sidebarMenuTrigger{
+  z-index:1002 !important;
+  position:fixed !important;
+}
+@media (max-width:768px){
+  .featured-game-sponsored-grid-real{
+    grid-template-columns:1fr;
+    gap:12px;
+  }
+  .sponsored-container-real{min-height:180px}
+}
 </style>    <script id="tubalHomeCssReload">
 (function(){
   var css=document.querySelector('link[data-tubal-home-css],link[href*="home.css"]');
@@ -242,7 +308,8 @@ window.TUBAL_EMAILJS_CONFIG = Object.freeze({
         <span class="bento-data-note" id="bentoSystemNote">Real site data only • No mock counters</span>
       </section>
 
- <section id="ctrlzoneCard" class="glass-card-real bento-card-real ctrlzone-featured-real" aria-labelledby="ctrlzoneFeaturedTitle">
+ <div id="featuredGameReal" class="featured-game-sponsored-grid-real">
+  <section id="ctrlzoneCard" class="glass-card-real bento-card-real ctrlzone-featured-real" aria-labelledby="ctrlzoneFeaturedTitle">
   <header class="ctrlzone-featured-header">
     <div class="ctrlzone-featured-brand">
       <img src="/assets/icons/ctrlzone-logo-real.png" alt="" width="32" height="32" loading="lazy" onerror="this.style.display='none'">
@@ -254,6 +321,19 @@ window.TUBAL_EMAILJS_CONFIG = Object.freeze({
   <div id="featuredGamesTrackReal" class="featured-games-track-real" aria-live="polite"></div>
   <div id="currentCatalogCount" class="current-catalog-count">0 games real</div>
 </section>
+
+  <aside id="sponsoredContainerReal" class="sponsored-container-real" aria-label="Sponsored">
+    <div class="sponsored-container-head-real">
+      <span>Sponsored</span>
+      <span>EMPTY</span>
+    </div>
+    <div class="sponsored-empty-real">
+      <span aria-hidden="true">📦</span>
+      <b>No Sponsor Yet</b>
+      <small>Empty container — ready for a future real sponsor.</small>
+    </div>
+  </aside>
+</div>
 
      <div class="bento-row bento-row-real" aria-label="Real TUBAL HUB Bento">
   <section class="glass-card-real bento-real-card bento-journal-real" aria-labelledby="bentoJournalTitle">
