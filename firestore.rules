@@ -378,7 +378,7 @@ service cloud.firestore {
         && request.resource.data.name is string
         && request.resource.data.name.size() > 0
         && request.resource.data.name.size() <= 200
-        && request.resource.data.category in ['mods', 'products', 'music']
+        && request.resource.data.category in ['merchandise', 'clothing', 'accessories', 'digital-products', 'apps-software', 'gaming', 'mods-addons', 'media', 'wellness', 'other']
         && request.resource.data.price is string
         && request.resource.data.price.size() <= 100
         && request.resource.data.description is string
@@ -393,7 +393,7 @@ service cloud.firestore {
         && request.resource.data.name is string
         && request.resource.data.name.size() > 0
         && request.resource.data.name.size() <= 200
-        && request.resource.data.category in ['mods', 'products', 'music']
+        && request.resource.data.category in ['merchandise', 'clothing', 'accessories', 'digital-products', 'apps-software', 'gaming', 'mods-addons', 'media', 'wellness', 'other']
         && request.resource.data.price is string
         && request.resource.data.price.size() <= 100
         && request.resource.data.description is string
