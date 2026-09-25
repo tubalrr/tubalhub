@@ -416,7 +416,7 @@ function updatePaymentUI(){
   const grid=document.querySelector(".payment-form-grid");
   if(grid){
     grid.innerHTML=state.payment==="card"
-      ? '<label class="payment-field-full">Cardholder name<input id="cardholderName" type="text" autocomplete="cc-name" placeholder="Full name" required></label><label class="payment-field-full">Card number<input id="cardNumber" type="text" inputmode="numeric" autocomplete="cc-number" maxlength="19" placeholder="1234 5678 9012 3456" required></label><label>Expiry date<input id="cardExpiry" type="text" inputmode="numeric" autocomplete="cc-exp" maxlength="5" placeholder="MM/YY" required></label><label>CVV<input id="cardCvv" type="password" inputmode="numeric" autocomplete="cc-csc" maxlength="4" placeholder="CVV" required></label>'
+      ? '<div class="payment-field-full payment-provider-note"><strong>Card payments are not connected.</strong><p>This template does not collect card numbers, expiry dates, or CVV. Connect a PCI-compliant payment provider before enabling card checkout.</p></div>'
       : state.payment==="bank"
       ? '<label class="payment-field-full">Account name<input id="bankName" type="text" autocomplete="name" placeholder="Account name" required></label><label class="payment-field-full">Bank reference<input id="bankReference" type="text" placeholder="Reference number" required></label>'
       : '<label class="payment-field-full">PayPal email<input id="paypalEmail" type="email" autocomplete="email" placeholder="you@example.com" required></label><label class="payment-field-full">PayPal reference<input id="paypalReference" type="text" placeholder="Payment reference" required></label>';
@@ -516,12 +516,16 @@ document.querySelectorAll(".payment-brand-logos img").forEach(img=>img.addEventL
   if(btn){state.payment=btn.dataset.payment||"card";updatePaymentUI();burstAt(btn,6);requestAnimationFrame(()=>document.getElementById("cardholderName")?.focus());}
 }));
 async function readPaymentReference(){
-  const ids={card:"cardNumber",bank:"bankReference",paypal:"paypalReference"};
+  const ids={bank:"bankReference",paypal:"paypalReference"};
   const el=document.getElementById(ids[state.payment]||"");
   return String(el?.value||"").trim().slice(0,160);
 }
 async function openOrderReview(){
   const method=state.payment||"card";
+  if(method==="card"){
+    notify("Card payments are not enabled in this template. Connect a PCI-compliant payment provider first.");
+    return;
+  }
   const orderTotal=state.upgradeTarget
     ? parseProductPrice(state.upgradeTarget.product.upgradePrice)
     : total();
