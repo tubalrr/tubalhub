@@ -269,3 +269,30 @@ body:after{display:none!important}#sidebarToggle{position:fixed!important;z-inde
     max-width:100%!important;
   }
 }
+
+
+/* REGISTERED MEMBERS + GLOBAL CHAT — EQUAL WIDTH */
+#members{
+  float:left!important;
+  width:49%!important;
+  max-width:none!important;
+  margin:0 0 15px!important;
+}
+#chat{
+  float:right!important;
+  width:49%!important;
+  max-width:none!important;
+  margin:0 0 15px!important;
+}
+#members .panel-head,#chat .panel-head{
+  margin-bottom:10px!important;
+  padding-bottom:9px!important;
+}
+#members .panel-head h2,#chat .panel-head h2{font-size:14px!important}
+@media(max-width:950px){
+  #members,#chat{
+    float:none!important;
+    width:100%!important;
+    max-width:100%!important;
+  }
+}
