@@ -1,7 +1,7 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>TUBAL HUB | Admin v1.2.16</title><link rel="stylesheet" href="admin-dashboard.css?v=1.2.16"><link rel="stylesheet" href="admin-redesign-v1.2.16.css?v=1.2.16"></head><body>
 <div class="admin-shell" id="app" hidden>
 <aside class="sidebar"><a class="brand" href="../index.html"><span class="brand-mark">T</span><span class="brand-copy"><b>TUBAL HUB</b><small>Admin v1.2.16</small></span></a><div class="side-label">ADMIN</div><nav>
-<a class="active" href="#dashboard">⌁ <span>Dashboard</span></a><a href="#members">♙ <span>Users</span><strong id="totalUsersReal">0</strong></a><a href="#chat">◉ <span>Live Chat Logs</span></a><a href="#members">⬢ <span>Moderation</span></a><a href="#sponsoredControl">⬔ <span>Sponsored Manager</span></a><a href="#facebookVideosPanel">▶ <span>Videos</span></a>
+<a class="active" href="#dashboard">⌁ <span>Dashboard</span></a><a href="#members">♙ <span>Users</span><strong id="totalUsersReal">0</strong></a><a href="#chat">◉ <span>Live Chat Logs</span></a><a href="#members">⬢ <span>Moderation</span></a><a href="#sponsoredControl">⬔ <span>Sponsored Manager</span></a>
 </nav><div class="storage-card"><div class="storage-label">Storage</div><div id="storageBadgeReal" class="storage-value">Not configured</div><div class="storage-progress"><span></span></div><div class="storage-note">Auto delete oldest 15 when full + 7 days expiry • 5GB safe</div></div></aside>
 <main class="dashboard"><header class="topbar"><div class="topbar-context">Homepage • No stale cache • No hardcoded ads • v1.2.16</div><div class="top-actions"><span id="adminEmail"></span><span class="badgeLiveReal"><i></i> Live • v1.2.16 • Empty real</span><button id="logout">Sign Out</button></div></header>
 <section class="dashboard-head" id="dashboard"><div><div class="eyebrow">TUBAL HUB / ADMIN</div><h1>Dashboard</h1></div><div class="secure-badge">FIREBASE AUTH</div></section>
@@ -73,12 +73,6 @@ function render(){
       <div><b>${esc(x.icon||"◈")} ${esc(x.name)}</b><p>${esc(x.description||"")}</p><small>${esc(x.category||"products")} • ${esc(x.price||"Free")}</small></div>
       <button data-del-product="${esc(x.id)}">×</button>
     </article>`).join("")||'<div class="empty">No shop products yet.</div>';
-
-  $("fbVideoList").innerHTML=fbVideos.map(x=>`
-    <article class="item">
-      <div><b>${esc(x.title||"Facebook Video")}</b><p>${esc(x.url||"")}</p></div>
-      <button data-del-fb="${esc(x.id)}">×</button>
-    </article>`).join("")||'<div class="empty">No Facebook videos yet.</div>';
 
   $("chatList").innerHTML=chats.map(x=>`
     <article class="item">
