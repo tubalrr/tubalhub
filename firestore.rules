@@ -67,16 +67,26 @@ service cloud.firestore {
     match /globalChats/{messageId} {
       allow read: if chatAllowed();
 
-      // TEXT messages must come from the trusted callable function.
-      // Client-created image/GIF documents remain allowed so existing media UI works;
-      // their captions are still checked by the server trigger.
+      // Text/image/GIF messages may be created by the authenticated user.
+      // Server moderation validates and cleans/deletes content after creation.
+      // Trusted callable sendMessageReal remains the preferred path for text.
       allow create: if chatAllowed()
         && ownsNew()
         && request.resource.data.channel in ['global-chat', 'payapang-isip', 'ctrlzone', 'shop-talk', 'announcements']
-        && request.resource.data.type in ['image', 'gif']
+        && (
+          (
+            request.resource.data.type == 'text'
+            && request.resource.data.text is string
+            && request.resource.data.text.size() > 0
+            && request.resource.data.text.size() <= 500
+          )
+          || (
+            request.resource.data.type in ['image', 'gif']
+            && request.resource.data.mediaUrl is string
+          )
+        )
         && !('isAdmin' in request.resource.data)
-        && !('roleReal' in request.resource.data)
-        && request.resource.data.mediaUrl is string;
+        && !('roleReal' in request.resource.data);
 
       // Message content is server-managed after creation.
       allow update: if adminUser();
