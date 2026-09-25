@@ -176,8 +176,8 @@ async function subscribeNotifyReal(){
   setSubscribeStatusReal("Saved locally","ready");
 
   const welcomeData={
-    version:"v"+String(document.getElementById("liveVersion")?.textContent||"v1.2.10").replace(/^v/i,""),
-    build:String(document.getElementById("liveBuild")?.textContent||"2026-09-25_1015"),
+    version:"v"+String(document.getElementById("liveVersion")?.textContent||"v1.2.16").replace(/^v/i,""),
+    build:String(document.getElementById("liveBuild")?.textContent||"2026-09-25_1216"),
     updates:"System update notifications enabled.",
     phone:phone||"N/A",
     message:"Welcome sa TUBAL HUB updates! Real release notifications lang ang ipapadala kapag may bagong version."
@@ -1184,8 +1184,8 @@ function updateLiveStatusReal(){
 }
 
 async function initFooter(){
-  const fallbackVersion="1.2.10";
-  const fallbackBuild="2026-09-25_1015";
+  const fallbackVersion="1.2.16";
+  const fallbackBuild="2026-09-25_1216";
   const setVersion=(version,build)=>{
     const cleanVersion=String(version||fallbackVersion).trim()||fallbackVersion;
     const cleanBuild=String(build||fallbackBuild).trim()||fallbackBuild;
@@ -1200,7 +1200,7 @@ async function initFooter(){
   updateLiveStatusReal();
 
   try{
-    const r=await fetch("version.json?v=1.2.10&t="+Date.now(),{cache:"no-store"});
+    const r=await fetch("version.json?v=1.2.16&t="+Date.now(),{cache:"no-store"});
     if(!r.ok)throw new Error("version "+r.status);
     const data=await r.json();
     setVersion(data?.version,data?.build);
@@ -1716,7 +1716,7 @@ async function renderRealData(){
 }
 async function loadBentoVersion(){
   try{
-    const response=await fetch(new URL("version.json?v=1.2.10&t="+Date.now(),document.baseURI).href,{cache:"no-store"});
+    const response=await fetch(new URL("version.json?v=1.2.16&t="+Date.now(),document.baseURI).href,{cache:"no-store"});
     if(!response.ok)throw new Error("version "+response.status);
     const data=await response.json();
     const version=String(data?.version||"").trim();
@@ -2265,7 +2265,7 @@ async function detectSystemUpdateReal(force=false){
 async function loadLatestVersionReal(){
   const data=systemUpdatePendingReal;
   const badge=document.getElementById("updateVersionBadgeReal");
-  const targetVersion=String(data?.version||badge?.textContent||"1.2.10").replace(/^v/i,"").trim()||"1.2.10";
+  const targetVersion=String(data?.version||badge?.textContent||"1.2.16").replace(/^v/i,"").trim()||"1.2.16";
 
   try{
     if("caches" in window){
