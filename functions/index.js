@@ -128,6 +128,53 @@ async function enforceRateLimitReal(uid) {
   });
 }
 
+
+async function markChatMediaExpiredReal(fileName, storagePath) {
+  const matches = new Map();
+
+  const queries = [
+    db.collection("globalChats").where("storagePath", "==", storagePath),
+    db.collection("globalChats").where("storagePathReal", "==", storagePath)
+  ];
+
+  if (fileName) {
+    queries.push(db.collection("globalChats").where("fileNameReal", "==", fileName));
+  }
+
+  for (const queryRef of queries) {
+    try {
+      const snap = await queryRef.get();
+      snap.forEach(docSnap => matches.set(docSnap.id, docSnap.ref));
+    } catch (error) {
+      logger.warn("Could not locate Global Chat media document.", {
+        fileName,
+        storagePath,
+        error: error?.message || String(error)
+      });
+    }
+  }
+
+  for (const ref of matches.values()) {
+    try {
+      await ref.update({
+        mediaUrl: FieldValue.delete(),
+        imageUrlReal: FieldValue.delete(),
+        hasImageReal: false,
+        imageExpiredReal: true,
+        expiredAt: FieldValue.serverTimestamp()
+      });
+    } catch (error) {
+      logger.warn("Could not mark Global Chat media document expired.", {
+        fileName,
+        storagePath,
+        error: error?.message || String(error)
+      });
+    }
+  }
+
+  return matches.size;
+}
+
 async function writeModerationLogReal(data) {
   await db.collection("moderationLogs").add(Object.assign({}, data, {
     createdAt: FieldValue.serverTimestamp(),
