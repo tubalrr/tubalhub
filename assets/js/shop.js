@@ -395,6 +395,7 @@ function setThemeFromStorage(){
   document.body.classList.remove("theme-midnight","theme-forest","theme-light");
   document.body.classList.add("theme-"+theme);
 }
+document.querySelectorAll(".quickview-layer").forEach(layer=>{layer.classList.remove("is-open");layer.hidden=true;});
 setThemeFromStorage();
 window.addEventListener("tubalhubthemechange",e=>{
   const t=e.detail?.theme||"midnight";
