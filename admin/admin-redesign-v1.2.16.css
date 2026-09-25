@@ -207,3 +207,43 @@ body:after{display:none!important}#sidebarToggle{position:fixed!important;z-inde
     max-width:100%!important;
   }
 }
+
+
+/* ANNOUNCEMENTS LEFT / GLOBAL CHAT RIGHT */
+#announcements{
+  float:left!important;
+  width:40%!important;
+  max-width:none!important;
+  margin:0 0 15px!important;
+}
+#chat{
+  float:right!important;
+  width:58%!important;
+  max-width:none!important;
+  margin:0 0 15px!important;
+}
+#announcements .form-grid{
+  grid-template-columns:1fr!important;
+  gap:7px!important;
+}
+#announcements .form-grid input,
+#announcements .form-grid textarea{
+  min-height:36px!important;
+  padding:8px 9px!important;
+  font-size:9px!important;
+}
+#announcements .form-grid textarea{min-height:58px!important}
+#announcements .form-grid button{min-height:38px!important;font-size:9px!important}
+#chat .panel-head,#announcements .panel-head{
+  margin-bottom:10px!important;
+  padding-bottom:9px!important;
+}
+#chat .panel-head h2,#announcements .panel-head h2{font-size:14px!important}
+@media(max-width:950px){
+  #announcements,#chat{
+    float:none!important;
+    display:block!important;
+    width:100%!important;
+    max-width:100%!important;
+  }
+}
