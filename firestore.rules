@@ -408,6 +408,53 @@ service cloud.firestore {
     }
 
     // =========================================================
+    // SHOP ORDERS / DIGITAL OWNERSHIP / VERSIONS
+    // =========================================================
+
+    match /productVersions/{versionId} {
+      allow read: if true;
+      allow create, update, delete: if adminUser();
+    }
+
+    match /orders/{orderId} {
+      allow create: if realUser()
+        && request.resource.data.uid == request.auth.uid;
+      allow read: if realUser()
+        && resource.data.uid == request.auth.uid;
+      allow update: if adminUser();
+      allow delete: if adminUser();
+    }
+
+    match /licenses/{licenseId} {
+      allow create: if realUser()
+        && request.resource.data.uid == request.auth.uid;
+      allow read: if realUser()
+        && resource.data.uid == request.auth.uid;
+      allow update: if realUser()
+        && resource.data.uid == request.auth.uid
+        && request.resource.data.uid == resource.data.uid;
+      allow delete: if adminUser();
+    }
+
+    match /downloads/{downloadId} {
+      allow create: if realUser()
+        && request.resource.data.uid == request.auth.uid;
+      allow read: if realUser()
+        && resource.data.uid == request.auth.uid;
+      allow update: if adminUser();
+      allow delete: if adminUser();
+    }
+
+    match /upgrades/{upgradeId} {
+      allow create: if realUser()
+        && request.resource.data.uid == request.auth.uid;
+      allow read: if realUser()
+        && resource.data.uid == request.auth.uid;
+      allow update: if adminUser();
+      allow delete: if adminUser();
+    }
+
+    // =========================================================
     // NOTIFICATIONS
     // =========================================================
 
