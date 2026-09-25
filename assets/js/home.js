@@ -294,30 +294,55 @@ function initSponsoredReal(){
   const container=document.getElementById("sponsoredContainerReal");
   if(!container||container.dataset.ready)return;
   container.dataset.ready="1";
-  const head=container.querySelector(".sponsored-container-head-real");
-  const body=container.querySelector(".sponsored-empty-real");
-  const render=(items)=>{
-    const active=items.filter(x=>x&&x.active!==false).sort((a,b)=>{
-      const ad=Date.parse(a.updatedAt||a.createdAt||"")||0, bd=Date.parse(b.updatedAt||b.createdAt||"")||0;
-      return bd-ad;
-    })[0];
+
+  const toMillis=value=>{
+    if(value?.toMillis)return value.toMillis();
+    if(value?.seconds!=null)return Number(value.seconds)*1000;
+    const parsed=Date.parse(value||"");
+    return Number.isFinite(parsed)?parsed:0;
+  };
+
+  const render=items=>{
+    const active=items
+      .filter(x=>x&&x.active===true)
+      .sort((a,b)=>toMillis(b.updatedAt||b.createdAt)-toMillis(a.updatedAt||a.createdAt))[0];
+
+    const head=container.querySelector(".sponsored-container-head-real");
+    const empty=container.querySelector(".sponsored-empty-real");
+
     if(!active){
       if(head)head.innerHTML="<span>Sponsored</span><span>EMPTY</span>";
-      if(body)body.outerHTML='<div class="sponsored-empty-real"><span aria-hidden="true">📦</span><b>No Sponsor Yet</b><small>Empty container — ready for a future real sponsor.</small></div>';
+      if(!empty)return;
       return;
     }
+
     const title=esc(active.title||"Sponsored");
     const text=esc(active.text||"");
     const image=String(active.imageUrl||"").trim();
     const url=String(active.linkUrl||"").trim();
     const badge=esc(active.badge||"SPONSORED");
+    const safeUrl=/^https?:\/\//i.test(url)?url:"";
+    const media=image&&/^https?:\/\//i.test(image)
+      ?'<img src="'+esc(image)+'" alt="" loading="lazy" decoding="async">'
+      :"";
+
     if(head)head.innerHTML='<span>Sponsored</span><span>'+badge+'</span>';
-    const safeUrl=/^https?:\\/\\//i.test(url)?url:"";
-    const media=image&&/^https?:\\/\\//i.test(image)?'<img src="'+esc(image)+'" alt="" loading="lazy" decoding="async">':"";
-    const card='<div class="sponsored-real-card">'+media+'<div class="sponsored-real-copy"><small>SPONSORED</small><strong>'+title+'</strong>'+(text?'<p>'+text+'</p>':"")+(safeUrl?'<a href="'+esc(safeUrl)+'" target="_blank" rel="noopener noreferrer">Learn More →</a>':"")+'</div></div>';
-    if(body)body.outerHTML=card;
+
+    const cardHtml='<div class="sponsored-real-card">'+media+
+      '<div class="sponsored-real-copy"><small>'+badge+'</small><strong>'+title+'</strong>'+
+      (text?'<p>'+text+'</p>':"")+
+      (safeUrl?'<a href="'+esc(safeUrl)+'" target="_blank" rel="noopener noreferrer">Learn More →</a>':"")+
+      '</div></div>';
+
+    if(empty)empty.outerHTML=cardHtml;
+    else{
+      const existing=container.querySelector(".sponsored-real-card");
+      if(existing)existing.outerHTML=cardHtml;
+      else container.insertAdjacentHTML("beforeend",cardHtml);
+    }
   };
-  const renderSnapshot=(snap)=>render(snap.docs.map(d=>({id:d.id,...d.data()})));
+
+  const renderSnapshot=snap=>render(snap.docs.map(d=>({id:d.id,...d.data()})));
   try{
     const q=query(collection(db,SPONSORED_COLLECTION_REAL),limit(20));
     onSnapshot(q,renderSnapshot,err=>console.warn("[TUBAL HUB Sponsored]",err));
