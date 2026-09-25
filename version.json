@@ -113,5 +113,79 @@
       "iconReal": "DEMO"
     }
   ],
-  "breakingReal": false
+  "breakingReal": false,
+  "changelog": [
+    {
+      "type": "FEAT",
+      "icon": "🧹",
+      "title": "Global Chat Storage Cleanup",
+      "desc": "Global Chat media now uses the existing global-chat/{uid}/ Storage path with a 40-file per-user cleanup threshold, deleting the oldest 15 before a new image/GIF upload and retrying once after a real quota-exceeded response."
+    },
+    {
+      "type": "FEAT",
+      "icon": "🛡",
+      "title": "Server Media Cleanup",
+      "desc": "Added cleanupOldImagesReal scheduled every 24 hours. It removes Global Chat media older than 7 days and then trims the remaining global-chat/ media to a maximum of 40 files."
+    },
+    {
+      "type": "UI",
+      "icon": "▣",
+      "title": "Storage Badge",
+      "desc": "Global Chat shows the authenticated user's real media count and actual stored MB for the existing chat-media folder. No fake 2 MB estimate is used."
+    },
+    {
+      "type": "SECURITY",
+      "icon": "🔒",
+      "title": "Storage Path Compatibility",
+      "desc": "Auto-cleanup follows the already deployed Firestore/Storage contract at global-chat/{uid}/ instead of introducing the unsupported globalChatUploads/ path."
+    },
+    {
+      "type": "SECURITY",
+      "icon": "🛡",
+      "title": "Production Chat Security",
+      "desc": "Added Cloud Functions server moderation, callable text/reply/private sends, client text-write denial, role field protection, Storage image validation, and the globalChats chronological composite index with a safe client fallback."
+    },
+    {
+      "type": "FEAT",
+      "icon": "🔗",
+      "title": "External Image Links",
+      "desc": "Global Chat now supports direct Imgur image URLs through the 🔗 button. Images use the existing chat renderer and the external URL only; no Firebase Storage upload is used."
+    },
+    {
+      "type": "FIX",
+      "icon": "📹",
+      "title": "Video Button Handler",
+      "desc": "The real 📹 top-bar button now receives a direct onclick handler plus a click-delegation fallback, so the Videos modal opens reliably even if the top bar is re-rendered."
+    },
+    {
+      "type": "SECURITY",
+      "icon": "🛡",
+      "title": "Server-Side Moderation",
+      "desc": "Production Cloud Functions now validate Global Chat, replies, and private text server-side. Direct client text creates/edits are denied by Firestore Rules; trusted callable functions write moderated text and server rate-limit state."
+    },
+    {
+      "type": "FIX",
+      "icon": "📹",
+      "title": "Top Bar Video",
+      "desc": "Global Chat and Home now use a real video modal instead of the missing videos.html/video.html route. Only verified YouTube sources or existing local MP4 files are playable; missing local files are never referenced."
+    },
+    {
+      "type": "FEAT",
+      "icon": "✉",
+      "title": "Gmail Update Subscribe",
+      "desc": "May opt-in footer subscription para sa real Gmail at optional phone contact, saved only in the subscriber browser with explicit consent."
+    },
+    {
+      "type": "FEAT",
+      "icon": "@",
+      "title": "EmailJS",
+      "desc": "Prepared ang real EmailJS v4 browser integration for update emails. Sending activates only after the owner supplies the real public key and configures the service/template."
+    },
+    {
+      "type": "BUILD",
+      "icon": "✓",
+      "title": "Single Source of Truth",
+      "desc": "version.json is the single version/build source: v1.2.15 • build 2026-09-25_1135."
+    }
+  ]
 }
