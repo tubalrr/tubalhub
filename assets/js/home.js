@@ -334,14 +334,11 @@ function initSponsoredReal(){
     if(safeLink){
       const sponsorLink=content.querySelector("[data-sponsor-link]");
       sponsorLink?.addEventListener("click",event=>{
-        event.stopPropagation();
-      },true);
-      sponsorLink?.addEventListener("pointerup",event=>{
-        if(event.button!==undefined&&event.button!==0)return;
+        event.preventDefault();
         event.stopPropagation();
         const url=sponsorLink.getAttribute("href");
         if(url)window.open(url,"_blank","noopener,noreferrer");
-      });
+      },true);
     }
   };
   try{
