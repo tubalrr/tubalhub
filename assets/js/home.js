@@ -177,7 +177,7 @@ function saveRealJournal(event){
     return;
   }
   const real=getRealJournals();
-  real.push({
+  real.unshift({
     id:Date.now(),
     titleReal:title,
     contentReal:content,
@@ -185,22 +185,106 @@ function saveRealJournal(event){
     createdAtReal:new Date().toISOString()
   });
   try{
-    localStorage.setItem(REAL_JOURNAL_KEY,JSON.stringify(real));
+    localStorage.setItem(REAL_JOURNAL_KEY,JSON.stringify(real.slice(0,50)));
     emitRealDataUpdate();
+    showHomeToast("Journal entry saved.");
   }catch(_){
     showHomeToast("Hindi na-save ang journal sa browser.");
   }
 }
+
+function editHomeJournalReal(id){
+  const real=getRealJournals();
+  const index=real.findIndex(item=>String(item?.id)===String(id));
+  if(index<0)return;
+  const entry=real[index];
+  const currentTitle=String(entry.titleReal||entry.title||"").trim();
+  const currentContent=String(entry.contentReal||entry.text||entry.content||"").trim();
+  const nextTitle=window.prompt("Edit journal title:",currentTitle);
+  if(nextTitle===null)return;
+  const cleanTitle=String(nextTitle).trim();
+  const nextContent=window.prompt("Edit journal entry:",currentContent);
+  if(nextContent===null)return;
+  const cleanContent=String(nextContent).trim();
+  if(!cleanTitle||!cleanContent){
+    showHomeToast("Hindi puwedeng walang title o journal.");
+    return;
+  }
+  real[index]={
+    ...entry,
+    titleReal:cleanTitle,
+    contentReal:cleanContent,
+    updatedAtReal:new Date().toISOString()
+  };
+  try{
+    localStorage.setItem(REAL_JOURNAL_KEY,JSON.stringify(real));
+    emitRealDataUpdate();
+    showHomeToast("Journal entry updated.");
+  }catch(_){
+    showHomeToast("Hindi na-update ang journal sa browser.");
+  }
+}
+
+function deleteHomeJournalReal(id){
+  const real=getRealJournals();
+  const index=real.findIndex(item=>String(item?.id)===String(id));
+  if(index<0)return;
+  const entry=real[index];
+  const title=String(entry?.titleReal||entry?.title||"this journal").trim();
+  if(!window.confirm("Delete this journal entry?\\n\\n"+title))return;
+  real.splice(index,1);
+  try{
+    localStorage.setItem(REAL_JOURNAL_KEY,JSON.stringify(real));
+    emitRealDataUpdate();
+    showHomeToast("Journal entry deleted.");
+  }catch(_){
+    showHomeToast("Hindi na-delete ang journal sa browser.");
+  }
+}
+
 function renderPayapangIsip(){
   const track=document.querySelector("#bentoJournalList")||document.querySelector("#payapangIsipTrack")||document.querySelector("#journalTrack");
   if(!track)return;
   const real=getRealJournalViews();
   if(real.length===0){
-    track.innerHTML='<div class="real-bento-empty" id="journalEmptyReal"><div class="empty-icon">🌿</div><p>Wala pa journal</p><small>Real entries mo dito lalabas</small><form id="realJournalForm" class="real-bento-form"><input name="titleReal" id="journalTitleReal" maxlength="100" placeholder="Real journal title" required><textarea name="contentReal" id="journalTextReal" maxlength="5000" placeholder="Isulat ang totoong journal mo..." required></textarea><div class="real-bento-actions"><button id="saveJournalReal" type="submit">🌿 Gumawa ng Real</button><a href="pages/payapang-isip.html">Open Payapang Isip →</a></div></form></div>';
-    $("#realJournalForm")?.addEventListener("submit",saveRealJournal,{once:true});
+    track.innerHTML='<div class="real-bento-empty" id="journalEmptyReal"><div class="empty-icon">🌿</div><p>Wala pa journal</p><small>Real entries mo dito lalabas</small><form id="realJournalForm" class="real-bento-form"><input name="titleReal" id="journalTitleReal" maxlength="100" placeholder="Real journal title" required><textarea name="contentReal" id="journalTextReal" maxlength="5000" placeholder="Isulat ang totoong journal mo..." required><\/textarea><div class="real-bento-actions"><button id="saveJournalReal" type="submit">🌿 Gumawa ng Real</button><a href="pages/payapang-isip.html">Open Payapang Isip →</a></div></form></div>';
+    const form=$("#realJournalForm");
+    if(form&&!form.dataset.bound){
+      form.dataset.bound="1";
+      form.addEventListener("submit",saveRealJournal);
+    }
     return;
   }
-  track.innerHTML=real.slice(0,3).map(entry=>'<article class="journal-item-real"><div class="journal-top"><span aria-hidden="true">'+esc(entry.mood||"🌿")+'</span><span class="journal-date">'+esc(formatDate(entry.createdAt))+'</span></div><h3>'+esc(entry.title||"")+'</h3><p>'+esc(entry.content.slice(0,160))+(entry.content.length>160?"…":"")+'</p></article>').join("");
+
+  track.innerHTML=real.slice(0,3).map(entry=>
+    '<article class="journal-item-real" data-journal-id="'+esc(entry.id)+'">'+
+      '<div class="journal-top">'+
+        '<span aria-hidden="true">'+esc(entry.mood||"🌿")+'</span>'+
+        '<span class="journal-date">'+esc(formatDate(entry.createdAt))+'</span>'+
+      '</div>'+
+      '<div class="journal-actions-real" aria-label="Journal actions">'+
+        '<button type="button" data-journal-edit="'+esc(entry.id)+'">Edit</button>'+
+        '<button type="button" data-journal-delete="'+esc(entry.id)+'">Delete</button>'+
+      '</div>'+
+      '<h3>'+esc(entry.title||"")+'</h3>'+
+      '<p>'+esc(entry.content.slice(0,160))+(entry.content.length>160?"…":"")+'</p>'+
+    '</article>'
+  ).join("");
+
+  if(!track.dataset.journalActionsBound){
+    track.dataset.journalActionsBound="1";
+    track.addEventListener("click",event=>{
+      const edit=event.target.closest?.("[data-journal-edit]");
+      const del=event.target.closest?.("[data-journal-delete]");
+      if(edit){
+        editHomeJournalReal(edit.dataset.journalEdit);
+        return;
+      }
+      if(del){
+        deleteHomeJournalReal(del.dataset.journalDelete);
+      }
+    });
+  }
 }
 
 function getRealMusicDatabaseExists(name){
