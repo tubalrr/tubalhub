@@ -115,11 +115,11 @@
     const marker = $("#chatBuildMarkerReal");
     const title = $("#globalChatVersionTitle");
 
-    let version = "1.2.10";
-    let build = "2026-09-25_1015";
+    let version = "1.2.16";
+    let build = "2026-09-25_1210";
 
     try {
-      const response = await fetch("../version.json?v=1.2.10&t=" + Date.now(), { cache: "no-store" });
+      const response = await fetch("../version.json?v=1.2.16&t=" + Date.now(), { cache: "no-store" });
       if (!response.ok) throw new Error("version " + response.status);
       const data = await response.json();
       if (String(data?.version || "").trim()) version = String(data.version).trim();
