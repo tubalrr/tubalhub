@@ -19,8 +19,8 @@
       "titleReal": "Mobile Legends: Bang Bang",
       "devReal": "Moonton",
       "linkReal": "pages/ctrlzone.html?game=mlbb",
-      "logoReal": "/assets/games/logos/mlbb.png",
-      "logoRealHD": "/assets/games/logos/mlbb@2x.png",
+      "logoReal": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Mobile%20Legends%20Logo.webp",
+      "logoRealHD": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Mobile%20Legends%20Logo.webp",
       "bannerReal": ""
     },
     {
@@ -40,8 +40,8 @@
       "titleReal": "Honor of Kings",
       "devReal": "Tencent",
       "linkReal": "pages/ctrlzone.html?game=hok",
-      "logoReal": "/assets/games/logos/hok.png",
-      "logoRealHD": "/assets/games/logos/hok@2x.png",
+      "logoReal": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Honor%20of%20Kings%20Wordmark%20Logo.png",
+      "logoRealHD": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Honor%20of%20Kings%20Wordmark%20Logo.png",
       "bannerReal": ""
     },
     {
@@ -61,8 +61,8 @@
       "titleReal": "Minecraft",
       "devReal": "Mojang",
       "linkReal": "pages/ctrlzone.html?game=minecraft",
-      "logoReal": "/assets/games/logos/minecraft.png",
-      "logoRealHD": "/assets/games/logos/minecraft@2x.png",
+      "logoReal": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Minecraft%20Logo-en.svg",
+      "logoRealHD": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Minecraft%20Logo-en.svg",
       "bannerReal": ""
     },
     {
@@ -82,8 +82,8 @@
       "titleReal": "Apex Legends",
       "devReal": "Electronic Arts",
       "linkReal": "pages/ctrlzone.html?game=apex",
-      "logoReal": "/assets/games/logos/apex.png",
-      "logoRealHD": "/assets/games/logos/apex@2x.png",
+      "logoReal": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Apex%20Legends%20logo.svg",
+      "logoRealHD": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Apex%20Legends%20logo.svg",
       "bannerReal": ""
     },
     {
@@ -103,8 +103,8 @@
       "titleReal": "VALORANT",
       "devReal": "Riot Games",
       "linkReal": "pages/ctrlzone.html?game=valorant",
-      "logoReal": "/assets/games/logos/valorant.png",
-      "logoRealHD": "/assets/games/logos/valorant@2x.png",
+      "logoReal": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Valorant%20logo.svg",
+      "logoRealHD": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Valorant%20logo.svg",
       "bannerReal": ""
     },
     {
@@ -124,8 +124,8 @@
       "titleReal": "Roblox",
       "devReal": "Roblox",
       "linkReal": "pages/ctrlzone.html?game=roblox",
-      "logoReal": "/assets/games/logos/roblox.png",
-      "logoRealHD": "/assets/games/logos/roblox@2x.png",
+      "logoReal": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Roblox%202022%20Logo.png",
+      "logoRealHD": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Roblox%202022%20Logo.png",
       "bannerReal": ""
     },
     {
@@ -145,8 +145,8 @@
       "titleReal": "Call of Duty: Warzone",
       "devReal": "Activision",
       "linkReal": "pages/ctrlzone.html?game=warzone",
-      "logoReal": "/assets/games/logos/warzone.png",
-      "logoRealHD": "/assets/games/logos/warzone@2x.png",
+      "logoReal": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Call%20of%20Duty%20Warzone%20Logo.png",
+      "logoRealHD": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Call%20of%20Duty%20Warzone%20Logo.png",
       "bannerReal": ""
     },
     {
@@ -166,8 +166,8 @@
       "titleReal": "Genshin Impact",
       "devReal": "HoYoverse",
       "linkReal": "pages/ctrlzone.html?game=genshin",
-      "logoReal": "/assets/games/logos/genshin.png",
-      "logoRealHD": "/assets/games/logos/genshin@2x.png",
+      "logoReal": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Genshin%20Impact%20wordmark.svg",
+      "logoRealHD": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Genshin%20Impact%20wordmark.svg",
       "bannerReal": ""
     },
     {
@@ -187,8 +187,8 @@
       "titleReal": "League of Legends",
       "devReal": "Riot Games",
       "linkReal": "pages/ctrlzone.html?game=lol",
-      "logoReal": "/assets/games/logos/lol.png",
-      "logoRealHD": "/assets/games/logos/lol@2x.png",
+      "logoReal": "https://commons.wikimedia.org/wiki/Special:Redirect/file/League%20of%20legends%20logo.png",
+      "logoRealHD": "https://commons.wikimedia.org/wiki/Special:Redirect/file/League%20of%20legends%20logo.png",
       "bannerReal": ""
     }
   ]
