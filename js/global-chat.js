@@ -712,6 +712,33 @@
     return { url, path };
   }
 
+  function installUploadButtonBridgeReal() {
+    const button = document.getElementById("imageBtn");
+    const imageInput = document.getElementById("imageInput");
+    const gifButton = document.getElementById("gifBtn");
+    const gifInput = document.getElementById("gifInput");
+    if (!button && !gifButton) return;
+
+    const openPicker = (input, event) => {
+      if (!input || input.disabled) return;
+      event.preventDefault();
+      event.stopPropagation();
+      input.click();
+    };
+
+    if (button && !button.dataset.storageClickReady) {
+      button.dataset.storageClickReady = "1";
+      button.type = "button";
+      button.addEventListener("click", event => openPicker(imageInput, event), true);
+    }
+
+    if (gifButton && !gifButton.dataset.storageClickReady) {
+      gifButton.dataset.storageClickReady = "1";
+      gifButton.type = "button";
+      gifButton.addEventListener("click", event => openPicker(gifInput, event), true);
+    }
+  }
+
   function installMediaInputBridgeReal() {
     const imageInput = document.getElementById("imageInput");
     const gifInput = document.getElementById("gifInput");
@@ -773,6 +800,7 @@
   async function initStorageReal() {
     if (!document.getElementById("chatContent")) return;
     ensureStorageBadgeReal();
+    installUploadButtonBridgeReal();
     installMediaInputBridgeReal();
     await showStorageUsageReal();
     window.clearInterval(window.__tubalHubStorageUsageTimerReal);
