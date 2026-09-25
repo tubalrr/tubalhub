@@ -551,3 +551,12 @@ body:after{display:none!important}#sidebarToggle{position:fixed!important;z-inde
   .dashboard{width:100%!important;max-width:100%!important;margin-left:0!important}
   .dashboard>.dashboard-grid{width:100%!important;grid-template-columns:1fr!important}
 }
+
+
+/* FINAL TOPBAR CLEANUP — no search, clear sign-out action */
+@media(min-width:951px){
+  .topbar .topbar-spacer{flex:1 1 auto!important;min-width:0!important}
+  .topbar .top-actions{margin-left:auto!important;display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:12px!important;white-space:nowrap!important}
+  .topbar #logout{display:inline-flex!important;align-items:center!important;justify-content:center!important;min-width:88px!important;height:38px!important;padding:0 16px!important;border:1px solid rgba(52,211,153,.42)!important;border-radius:10px!important;background:rgba(3,18,12,.95)!important;color:#e5fff1!important;font-size:10px!important;font-weight:800!important;cursor:pointer!important;pointer-events:auto!important;visibility:visible!important;opacity:1!important;position:relative!important;z-index:10001!important}
+}
+.admin-search-wrap,.admin-search,.admin-search-results{display:none!important}
