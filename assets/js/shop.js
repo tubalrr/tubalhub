@@ -448,6 +448,7 @@ document.getElementById("quickViewPlus").addEventListener("click",()=>{state.qui
 document.getElementById("quickViewAdd").addEventListener("click",()=>{if(state.current)addToCart(state.current.id,state.quickQty,document.getElementById("quickViewAdd"))});
 document.getElementById("quickViewBuy").addEventListener("click",()=>{if(state.current){if(state.current.real&&state.current.productType!=="physical"){const owned=licenseForProduct(state.current.firestoreId);closeQuick();if(owned){state.upgradeTarget={product:state.current,license:owned};openCheckout()}else{state.cart=[];addToCart(state.current.id,1,null,"buy");openCheckout()}}else buyProduct(state.current,state.quickQty)}});
 document.getElementById("quickViewUpgrade").addEventListener("click",()=>{if(state.current){const owned=licenseForProduct(state.current.firestoreId);if(owned){state.upgradeTarget={product:state.current,license:owned};closeQuick();openCheckout();}}});
+document.addEventListener("click",e=>{const b=e.target.closest("[data-upgrade]");if(!b)return;const p=productById(b.dataset.upgrade);const owned=p&&licenseForProduct(p.firestoreId);if(p&&owned){state.upgradeTarget={product:p,license:owned};openCheckout()}});
 document.getElementById("checkoutBtn").addEventListener("click",openCheckout);
 document.getElementById("closeCheckout").addEventListener("click",closeCheckout);
 document.getElementById("backCheckout").addEventListener("click",()=>{closeCheckout();burstAt(document.getElementById("backCheckout"),5)});
@@ -521,8 +522,9 @@ document.getElementById("placeOrderBtn").addEventListener("click",async()=>{
   if(state.upgradeTarget){
     try{
       const p=state.upgradeTarget.product, license=state.upgradeTarget.license;
-      const orderRef=await addDoc(collection(db,"orders"),{uid:user.uid,type:"upgrade",productId:p.firestoreId,total:orderTotal,paymentMethod:method,status:"paid",createdAt:serverTimestamp()});
+      const orderRef=await addDoc(collection(db,"orders"),{uid:user.uid,type:"upgrade",productId:p.firestoreId,total:orderTotal,paymentMethod:method,status:"placed",createdAt:serverTimestamp()});
       await addDoc(collection(db,"upgrades"),{uid:user.uid,orderId:orderRef.id,productId:p.firestoreId,fromVersion:license.ownedVersion,toVersion:p.latestVersion,price:p.upgradePrice||"Free",createdAt:serverTimestamp()});
+      await updateDoc(doc(db,"licenses",license.id),{ownedVersion:p.latestVersion,latestVersion:p.latestVersion,downloadUrl:p.downloadUrl||"",updatedAt:serverTimestamp()});
       await addDoc(collection(db,"downloads"),{uid:user.uid,orderId:orderRef.id,productId:p.firestoreId,version:p.latestVersion,downloadUrl:p.downloadUrl||"",createdAt:serverTimestamp()});
       ownedLicenses=ownedLicenses.map(x=>x.id===license.id?{...x,ownedVersion:p.latestVersion,latestVersion:p.latestVersion,downloadUrl:p.downloadUrl||""}:x);renderMyProducts();
       state.upgradeTarget=null;burstAt(document.getElementById("placeOrderBtn"),12);openOrderSuccess(orderTotal,method);closeOrderReview();return;
