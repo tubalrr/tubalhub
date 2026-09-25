@@ -434,3 +434,50 @@ body:after{display:none!important}#sidebarToggle{position:fixed!important;z-inde
 }
 #shopProducts .form-grid #addShopProduct:hover{filter:brightness(1.08)!important;transform:translateY(-1px)!important}
 @media(max-width:600px){#shopProducts .form-grid #addShopProduct{grid-column:1!important}}
+
+
+/* SHOP CONTROL — KEEP ALL PRODUCT FORM CONTROLS VISIBLE */
+#shopProducts .form-grid{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:7px!important;
+  align-items:stretch!important;
+}
+#shopProducts .form-grid input,
+#shopProducts .form-grid select{
+  width:100%!important;
+  min-width:0!important;
+  min-height:34px!important;
+  height:34px!important;
+  padding:7px 9px!important;
+  font-size:10px!important;
+}
+#shopProducts .form-grid textarea{
+  grid-column:1 / -1!important;
+  width:100%!important;
+  min-height:52px!important;
+  height:52px!important;
+  padding:7px 9px!important;
+  font-size:10px!important;
+}
+#shopProducts .form-grid #addShopProduct{
+  grid-column:1 / -1!important;
+  width:100%!important;
+  min-height:36px!important;
+  height:36px!important;
+  padding:8px 10px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  visibility:visible!important;
+  opacity:1!important;
+  position:relative!important;
+  z-index:50!important;
+}
+@media(max-width:950px){
+  #shopProducts .form-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+@media(max-width:600px){
+  #shopProducts .form-grid{grid-template-columns:1fr!important}
+  #shopProducts .form-grid textarea,#shopProducts .form-grid #addShopProduct{grid-column:1!important}
+}
