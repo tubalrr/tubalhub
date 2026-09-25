@@ -65,7 +65,7 @@ import {getFirestore,collection,getDocs,addDoc,deleteDoc,doc,query,where,orderBy
 import {getFunctions,httpsCallable} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-functions.js";
 const ADMIN_EMAIL="tubalrr@gmail.com",db=getFirestore(),shopFunctions=getFunctions(),analyticsFunctions=getFunctions(),getAdminAnalyticsReal=httpsCallable(analyticsFunctions,"getAdminAnalyticsReal"),verifyShopOrderReal=httpsCallable(shopFunctions,"verifyShopOrderReal"),migrateShopDownloadSecretsReal=httpsCallable(shopFunctions,"migrateShopDownloadSecretsReal"),$=id=>document.getElementById(id);
 let news=[],anns=[],members=[],chats=[],shopProducts=[],shopOrders=[],sponsoredAds=[];
-let presenceUnsubscribe=null,cleanupStatsUnsubscribe=null;
+let presenceUnsubscribe=null,cleanupStatsUnsubscribe=null,presenceUsers=[];
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
 function toast(m){$("toast").textContent=m;$("toast").classList.add("show");setTimeout(()=>$("toast").classList.remove("show"),3200)}
 function runAdminSearch(value){
@@ -145,7 +145,7 @@ function render(){
   $("totalUsersCard").textContent=members.length;
   $("totalUsersReal").textContent=members.length;
   $("totalMsgsReal").textContent=chats.length;
-  const onlineCount=members.filter(x=>x.online===true||x.isOnline===true||x.status==="online").length; $("onlineNowReal").textContent=String(onlineCount);
+  // Online Now is driven by the dedicated realtime presence collection.
 
   $("recentUsers").innerHTML=members.slice(0,6).map(x=>{
     const name=x.displayName||x.email||"Member";
@@ -288,11 +288,18 @@ async function getAnalyticsMessagesPaged(collectionName,startDate,endDate){
 async function load(){try{const [n,a,c,p,o]=await Promise.all([getDocs(query(collection(db,"news"),orderBy("createdAt","desc"),limit(100))),getDocs(query(collection(db,"announcements"),orderBy("createdAt","desc"),limit(100))),getDocs(query(collection(db,"globalChats"),orderBy("createdAt","desc"),limit(100))),getDocs(query(collection(db,"products"),orderBy("createdAt","desc"),limit(100))),getDocs(query(collection(db,"orders"),orderBy("createdAt","desc"),limit(100)))]);news=n.docs.map(d=>({id:d.id,...d.data()}));anns=a.docs.map(d=>({id:d.id,...d.data()}));chats=c.docs.map(d=>({id:d.id,...d.data()}));shopProducts=p.docs.map(d=>({id:d.id,...d.data()}));shopOrders=o.docs.map(d=>({id:d.id,...d.data()}));render()}catch(e){toast("Firestore error: "+e.message);render()}}
 function listenToPresence(){
   if(presenceUnsubscribe)presenceUnsubscribe();
-  presenceUnsubscribe=onSnapshot(collection(db,"users"),snap=>{
-    members=snap.docs.map(d=>({id:d.id,...d.data()}));
-    render();
+  presenceUnsubscribe=onSnapshot(collection(db,"presence"),snap=>{
+    const now=Date.now();
+    presenceUsers=snap.docs.map(d=>({id:d.id,...d.data()}));
+    const onlineCount=presenceUsers.filter(x=>{
+      if(x.online!==true)return false;
+      const v=x.lastSeen,ms=v?.toMillis?v.toMillis():Number(v?.seconds||0)*1000;
+      return ms>0 && now-ms<=Number(x.presenceWindowMs||45000);
+    }).length;
+    $("onlineNowReal").textContent=String(onlineCount);
   },e=>{
     console.warn("Presence listener:",e);
+    $("onlineNowReal").textContent="—";
     toast(firestoreError(e));
   });
 }
