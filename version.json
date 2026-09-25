@@ -1,9 +1,15 @@
 {
-  "version": "1.2.11",
-  "build": "2026-09-25_1017",
-  "releasedAtReal": "2026-09-25T10:17:00+08:00",
+  "version": "1.2.12",
+  "build": "2026-09-25_1020",
+  "releasedAtReal": "2026-09-25T10:20:00+08:00",
   "releasedByReal": "tubalrr",
   "updatesReal": [
+    {
+      "typeReal": "FIX",
+      "scopeReal": "Global Chat Black Screen",
+      "detailReal": "Naibalik ang tamang closing ng Global Chat head style tag para hindi ma-parse bilang CSS ang buong page markup.",
+      "iconReal": "🩹"
+    },
     {
       "typeReal": "FIX",
       "scopeReal": "Global Chat Bot",
