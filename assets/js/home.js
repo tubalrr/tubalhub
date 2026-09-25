@@ -296,7 +296,7 @@ function getRealGamePlayCount(id){
 }
 async function getRealGames(){
   try{
-    const response=await fetch('/data/games.json?t='+Date.now(),{cache:'no-store'});
+    const response=await fetch('data/games.json?t='+Date.now(),{cache:'no-store'});
     if(!response.ok)throw new Error('games.json '+response.status);
     const data=await response.json();
     const rows=Array.isArray(data)?data:(Array.isArray(data?.games)?data.games:[]);
@@ -777,7 +777,7 @@ function initFooterQr(){
   if(!box||box.dataset.ready==="1")return;
   box.dataset.ready="1";
   const img=document.createElement("img");
-  img.src="/assets/images/tubal-hub-footer-qr.svg";
+  img.src='assets/images/tubal-hub-footer-qr.svg';
   img.alt="TUBAL HUB QR code";
   img.loading="lazy";
   img.decoding="async";
