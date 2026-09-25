@@ -99,7 +99,7 @@ body{background:radial-gradient(circle at 75% 0%,#17345d55,transparent 30%),radi
     <div class="messages chat-messages" id="messages"><div class="chat-build-marker-real" id="chatBuildMarkerReal">Today</div><div class="empty-chat"><strong>No messages yet.</strong>Start the first conversation in Global Chat.</div></div>
     <div id="replyingBar" class="replying"><span>Replying to <b id="replyingName"></b></span><button id="cancelReply" type="button">Cancel</button></div>
     <form class="composer chat-composer" id="chatForm">
-      <div class="composer-tools"><button type="button" class="tool" id="imageBtn" title="Send image">▧</button><button type="button" class="tool" id="gifBtn" title="Send GIF file">GIF</button><button type="button" class="tool" id="emojiBtn" title="Emoji" aria-label="Emoji">☺</button></div>
+      <div class="composer-tools"><button type="button" class="tool" id="imageBtn" title="Upload image to Firebase">▧</button><button type="button" class="tool" id="imageLinkBtnReal" title="Send image by direct URL" aria-label="Send image by direct URL">🔗</button><button type="button" class="tool" id="gifBtn" title="Send GIF file">GIF</button><button type="button" class="tool" id="emojiBtn" title="Emoji" aria-label="Emoji">☺</button></div>
       <input id="messageInput" maxlength="500" placeholder="Mag chat ka dito... real message • hindi fake" autocomplete="off">
       <button class="send" id="sendButton" type="submit">Send ➤</button>
       <input id="imageInput" type="file" accept="image/png,image/jpeg,image/webp" hidden>
@@ -174,6 +174,7 @@ const lock=document.getElementById('chatLock'),content=document.getElementById('
 let currentUser=null,stopMessages=null,heartbeatTimer=null,stopPresence=null,stopUsersPresence=null,heartbeatPresenceRefresh=null,stopBanStatus=null,stopReactions=null,stopReplies=null,stopDmList=null,replyTarget=null,lastMessageTime=0,reactionState={};
 let activeChannelReal="general";
 let privateTarget=null,stopPrivateMessages=null,privateLastMessageTime=0;
+let pendingExternalImageUrlReal="";
 const emojis=['😀','😂','😍','🥰','😎','😭','😡','😮','👍','👎','❤️','🔥','💯','🎮','🎉','👏','🤣','🤔','😅','🙌','💚','✨','👀','🙏','🥳','😴','🤝','🚀','💀','😇','😱','🤩','💪','🌿','⭐','🎯','🏆','❤️‍🔥','🫶','😊'];
 function enableMemberNameClick(){if(!memberList||memberList.dataset.privateClickReady)return;memberList.dataset.privateClickReady='1';memberList.addEventListener('click',e=>{const nameBtn=e.target.closest?.('.private-member-name');if(!nameBtn)return;const member=nameBtn.closest?.('.member');if(!member)return;const uid=member.dataset.uid;if(!uid||uid===currentUser?.uid)return;const name=nameBtn.textContent||'Member';const img=member.querySelector('.mini img');e.preventDefault();e.stopPropagation();openPrivateChat({uid,displayName:name,photoURL:img?.src||''})},true)}
 
@@ -724,9 +725,69 @@ async function sendReply(text){
   return result?.data;
 }
 
-document.getElementById('imageBtn').onclick=()=>document.getElementById('imageInput').click();document.getElementById('imageInput').onchange=async e=>{const f=e.target.files?.[0];if(!f)return;sendButton.disabled=true;try{const x=await uploadMedia(f,'image');await sendMessage({type:'image',mediaUrl:x.url,storagePath:x.path,text:''})}catch(err){console.error(err);alert(err.message==='FILE_TOO_LARGE'?'Maximum file size is 8 MB.':'Image upload failed. Make sure Firebase Storage is enabled.')}finally{sendButton.disabled=false;e.target.value='';input.focus()}};document.getElementById('gifInput').onchange=async e=>{const f=e.target.files?.[0];if(!f)return;sendButton.disabled=true;try{const x=await uploadMedia(f,'gif');await sendMessage({type:'gif',isSticker:true,mediaUrl:x.url,storagePath:x.path,text:''});window.dispatchEvent(new CustomEvent('tubal-gif-uploaded',{detail:{url:x.url,storagePath:x.path,name:f.name||'GIF Sticker'}}));document.getElementById('gifStickerPicker')?.classList.remove('is-open');document.getElementById('gifStickerPicker').hidden=true;}catch(err){console.error(err);alert(err.message==='FILE_TOO_LARGE'?'Maximum file size is 8 MB.':'GIF upload failed. Make sure Firebase Storage is enabled.')}finally{sendButton.disabled=false;e.target.value='';input.focus()}};window.addEventListener('tubal-send-gif-sticker',async e=>{const d=e.detail||{};if(!d.url||sendButton.disabled)return;sendButton.disabled=true;try{await sendMessage({type:'gif',isSticker:true,mediaUrl:String(d.url),storagePath:String(d.storagePath||''),text:''})}catch(err){console.error(err);alert(err.message==='RATE_LIMIT'?'Please wait a moment before sending another GIF.':err.message==='MODERATION_BLOCKED'?'GIF blocked by TUBAL HUB moderation.':'GIF sticker was not sent. Check Firebase Firestore Rules.')}finally{sendButton.disabled=false;input.focus()}});
+document.getElementById('imageLinkBtnReal')?.addEventListener('click',()=>{
+  if(!isRealUser()){alert('Please login first.');return}
+  const url=prompt('Paste the direct Imgur image URL\\nExample: https://i.imgur.com/abc123.png');
+  const clean=String(url||'').trim();
+  if(!clean)return;
+
+  let parsed;
+  try{ parsed=new URL(clean); }catch(_){ alert('Invalid image URL.'); return; }
+
+  const host=parsed.hostname.toLowerCase();
+  const isImgur=host==='i.imgur.com';
+  const isImageExt=/\\.(png|jpe?g|webp|gif)$/i.test(parsed.pathname);
+  if(!isImgur||!isImageExt){
+    alert('Use a direct Imgur image URL like https://i.imgur.com/abc123.png');
+    return;
+  }
+
+  pendingExternalImageUrlReal=clean;
+  input.value='';
+  input.dataset.externalImageUrl=clean;
+  input.placeholder='Ready: Imgur image • press Send ➤';
+  input.focus();
+  showModerationNotice('🔗 Direct image ready. Press Send to post it without Firebase Storage.');
+});
+document.getElementById('imageBtn').onclick=()=>document.getElementById('imageInput').click();document.getElementById('imageInput').onchange=async e=>{const f=e.target.files?.[0];if(!f)return;sendButton.disabled=true;try{const x=await uploadMedia(f,'image');await sendMessage({type:'image',mediaUrl:x.url,storagePath:x.path,text:''})}catch(err){console.error(err);alert(err.message==='FILE_TOO_LARGE'?'Maximum file size is 8 MB.':'Image upload failed. Make sure Firebase Storage is enabled.')}finally{sendButton.disabled=false;e.target.value='';pendingExternalImageUrlReal='';input.removeAttribute('data-external-image-url');input.placeholder='Mag chat ka dito... real message • hindi fake';input.focus()}};document.getElementById('gifInput').onchange=async e=>{const f=e.target.files?.[0];if(!f)return;sendButton.disabled=true;try{const x=await uploadMedia(f,'gif');await sendMessage({type:'gif',isSticker:true,mediaUrl:x.url,storagePath:x.path,text:''});window.dispatchEvent(new CustomEvent('tubal-gif-uploaded',{detail:{url:x.url,storagePath:x.path,name:f.name||'GIF Sticker'}}));document.getElementById('gifStickerPicker')?.classList.remove('is-open');document.getElementById('gifStickerPicker').hidden=true;}catch(err){console.error(err);alert(err.message==='FILE_TOO_LARGE'?'Maximum file size is 8 MB.':'GIF upload failed. Make sure Firebase Storage is enabled.')}finally{sendButton.disabled=false;e.target.value='';input.focus()}};window.addEventListener('tubal-send-gif-sticker',async e=>{const d=e.detail||{};if(!d.url||sendButton.disabled)return;sendButton.disabled=true;try{await sendMessage({type:'gif',isSticker:true,mediaUrl:String(d.url),storagePath:String(d.storagePath||''),text:''})}catch(err){console.error(err);alert(err.message==='RATE_LIMIT'?'Please wait a moment before sending another GIF.':err.message==='MODERATION_BLOCKED'?'GIF blocked by TUBAL HUB moderation.':'GIF sticker was not sent. Check Firebase Firestore Rules.')}finally{sendButton.disabled=false;input.focus()}});
 document.getElementById('emojiBtn').onclick=e=>{e.preventDefault();e.stopPropagation();window.tubalEmojiPicker?.toggle()};cancelReply.onclick=clearReply;
-form.addEventListener('submit',async e=>{e.preventDefault();const text=input.value.trim();if(!text&&!replyTarget)return;if(!isRealUser()){alert('Please login first.');return}sendButton.disabled=true;try{if(replyTarget)await sendReply(text);else {await sendMessage({type:'text',text});}input.value='';}catch(err){console.error(err);alert(err.message==='RATE_LIMIT'?'Please wait a moment before sending another message.':err.message==='MODERATION_BLOCKED'?'Message blocked by TUBAL HUB AI moderation.':'Message was not sent. Check Firebase Firestore Rules.')}finally{sendButton.disabled=false;input.focus()}});
+form.addEventListener('submit',async e=>{
+  e.preventDefault();
+  const text=input.value.trim();
+  if(!text&&!replyTarget&&!pendingExternalImageUrlReal)return;
+  if(!isRealUser()){alert('Please login first.');return}
+  sendButton.disabled=true;
+  try{
+    if(replyTarget){
+      await sendReply(text);
+    }else if(pendingExternalImageUrlReal){
+      await sendMessage({
+        type:'image',
+        mediaUrl:pendingExternalImageUrlReal,
+        externalReal:true,
+        sourceReal:'imgur-direct'
+      });
+    }else{
+      await sendMessage({type:'text',text});
+    }
+    input.value='';
+    pendingExternalImageUrlReal='';
+    input.removeAttribute('data-external-image-url');
+    input.placeholder='Mag chat ka dito... real message • hindi fake';
+  }catch(err){
+    console.error(err);
+    alert(
+      err.code==='functions/resource-exhausted'||err.message==='RATE_LIMIT'
+        ?'Please wait a moment before sending another message.'
+        :err.code==='functions/invalid-argument'||err.message==='MODERATION_BLOCKED'
+          ?'Message blocked by server moderation.'
+          :'Message was not sent. Check your Firebase connection.'
+    );
+  }finally{
+    sendButton.disabled=false;
+    input.focus();
+  }
+});
 
 onAuthStateChanged(auth,async user=>{if(!user||user.isAnonymous){currentUser=null;lock.style.display='block';content.style.display='none';content.setAttribute('aria-hidden','true');if(stopMessages)stopMessages();if(stopPresence)stopPresence();if(stopReactions)stopReactions();if(stopReplies)stopReplies();if(stopDmList)stopDmList();window.__tubalDmList=[];renderDmList([]);reactionSnapshotReady=false;reactionState={};reactionUsersState={};if(stopBanStatus)stopBanStatus();if(window.__banPollTimer)clearInterval(window.__banPollTimer);if(stopPrivateMessages)stopPrivateMessages();privateTarget=null;document.getElementById('privateChatPanel').hidden=true;if(heartbeatTimer)clearInterval(heartbeatTimer);document.getElementById('profileName').textContent='TUBAL HUB';document.getElementById('profileStatus').textContent='● Login required';return}currentUser=user;lock.style.display='none';content.style.display='grid';content.setAttribute('aria-hidden','false');const name=user.displayName||user.email?.split('@')[0]||'Member';document.getElementById('profileName').textContent=name;document.getElementById('profileStatus').textContent='● Online';document.getElementById('profileAvatar').innerHTML=user.photoURL?`<img src="${esc(user.photoURL)}" alt="">`:esc(initials(name));sendButton.disabled=false;input.disabled=false;try{await updatePresence(user,true)}catch(e){console.error(e)}if(stopBanStatus)stopBanStatus();let chatAccessActive=false;const applyBanStatus=d=>{const until=d.banUntil?.toMillis?.()||d.banUntil?.toDate?.()?.getTime?.()||0;const banned=d.chatStatus==='banned'&&(until===0||until>Date.now());if(banned){input.disabled=true;sendButton.disabled=true;const banMessage='🚫 GLOBAL CHAT ACCESS BANNED'+(d.banReason?'\nReason: '+d.banReason+'.':'')+(until?'\nBan ends: '+new Date(until).toLocaleString()+'.':'\nPermanent ban.');const notice=document.getElementById('moderationNotice');if(notice){notice.textContent=banMessage;notice.className='moderation-notice show danger';clearTimeout(window.__moderationNoticeTimer);}setStatus('Chat access blocked while your ban is active.',true);if(stopMessages){stopMessages();stopMessages=null}if(stopReactions){stopReactions();stopReactions=null}if(stopReplies){stopReplies();stopReplies=null}chatAccessActive=false}else{input.disabled=false;sendButton.disabled=false;document.getElementById('moderationNotice').classList.remove('show');setStatus('Connected to TUBAL HUB');if(!chatAccessActive){subscribeMessages();subscribePresence();subscribeReactions();subscribeReplies();subscribeDirectMessages();chatAccessActive=true}}};stopBanStatus=onSnapshot(doc(db,'users',user.uid),snap=>applyBanStatus(snap.exists()?snap.data():{}),err=>console.error('Ban status listener failed:',err));const checkBanStatus=async()=>{try{const snap=await getDoc(doc(db,'users',user.uid));applyBanStatus(snap.exists()?snap.data():{});}catch(e){console.error('Ban status check failed:',e)}};await checkBanStatus();if(window.__banPollTimer)clearInterval(window.__banPollTimer);window.__banPollTimer=setInterval(checkBanStatus,3000);if(heartbeatTimer)clearInterval(heartbeatTimer);heartbeatTimer=setInterval(()=>updatePresence(currentUser,true).catch(()=>{}),20000)});
 document.addEventListener('visibilitychange',()=>{if(currentUser&&!document.hidden){updatePresence(currentUser,true).catch(()=>{});subscribePresence()}});window.addEventListener('pageshow',()=>{if(currentUser)updatePresence(currentUser,true).catch(()=>{})});window.addEventListener('focus',()=>{if(currentUser)updatePresence(currentUser,true).catch(()=>{})});window.addEventListener('beforeunload',()=>{if(currentUser)updatePresence(currentUser,false).catch(()=>{})});
@@ -734,7 +795,7 @@ document.addEventListener('visibilitychange',()=>{if(currentUser&&!document.hidd
 
 <script type="module" src="../assets/js/video-call.js?v=20260920-webRTC2"></script>
 
-<script src="../js/global-chat.js?v=1.2.13-videohandler1" defer></script>
+<script src="../js/global-chat.js?v=1.2.14-imgur1" defer></script>
 <script src="../assets/js/theme.js?v=20260922" defer></script>
 <script src="../assets/js/global-chat-emoji.js?v=20260924-v4" defer></script>
 <script src="../assets/js/global-chat-gif-stickers.js?v=20260924-v1" defer></script>
