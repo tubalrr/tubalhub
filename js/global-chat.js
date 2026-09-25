@@ -737,6 +737,12 @@
 
   function initStorageReal() {
     if (!document.getElementById("chatContent")) return;
+    if (!document.getElementById("globalMessageCount")) {
+      const count = document.createElement("span");
+      count.id = "globalMessageCount";
+      count.hidden = true;
+      document.body.appendChild(count);
+    }
     ensureStorageBadgeReal();
     installUploadButtonBridgeReal();
     installMediaInputBridgeReal();
