@@ -754,3 +754,9 @@ body.theme-light .payment-back:hover{
 .owned-product-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}.owned-product-actions .add-btn,.owned-product-actions .buy-now-btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;min-height:36px;padding:0 13px}
 .owned-current{font-size:9px;color:#1dff91;font-weight:800}
 @media(max-width:620px){.owned-product-card{align-items:flex-start;flex-direction:column}.owned-product-actions{justify-content:flex-start}}
+
+/* Real brand logos for Shop payment and sharing features */
+.pay-icons span{display:inline-flex;align-items:center;justify-content:center;min-width:38px;min-height:26px}
+.pay-icons img{display:block;width:auto;height:20px;max-width:42px;object-fit:contain}
+.share-row button{display:grid;place-items:center}
+.share-row button img{display:block;width:18px;height:18px;object-fit:contain}
