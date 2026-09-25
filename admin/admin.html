@@ -238,39 +238,43 @@ function renderAnalyticsReal(data){
   }).join("");
 }
 async function loadAnalyticsReal(){
+  // Read Firestore directly first. This keeps Admin Analytics independent of
+  // callable-function CORS/deployment state and uses only real Firestore data.
+  try{
+    const endDate=new Date();endDate.setHours(23,59,59,999);
+    const startDate=new Date(endDate);startDate.setDate(startDate.getDate()-29);startDate.setHours(0,0,0,0);
+    const [uSnap,gSnap,mSnap]=await Promise.all([
+      getDocs(collection(db,"users")),
+      getDocs(query(collection(db,"globalChats"),where("createdAt",">=",Timestamp.fromDate(startDate)),where("createdAt","<=",Timestamp.fromDate(endDate)),limit(10000))),
+      getDocs(query(collection(db,"messages"),where("createdAt",">=",Timestamp.fromDate(startDate)),where("createdAt","<=",Timestamp.fromDate(endDate)),limit(10000)))
+    ]);
+    const users=new Map(),days=[],active=new Map();
+    const dayKey=d=>{const x=new Date(d);x.setHours(0,0,0,0);return x.toISOString().slice(0,10)};
+    for(let i=0;i<30;i++){const d=new Date(startDate);d.setDate(startDate.getDate()+i);const k=dayKey(d);days.push({date:k,newUsers:0,messages:0,activeUsers:0});active.set(k,new Set());}
+    uSnap.docs.forEach(ds=>{const d=ds.data()||{},v=d.createdAt||d.registeredAt||d.created_at,t=v?.toDate?v.toDate():new Date(v||0);if(Number.isNaN(t.getTime()))return;users.set(ds.id,{uid:ds.id,name:String(d.displayName||d.email||ds.id).slice(0,120),created:t});if(t>=startDate&&t<=endDate){const row=days.find(x=>x.date===dayKey(t));if(row)row.newUsers++;}});
+    const hourly=Array(24).fill(0),totals=new Map();
+    [...gSnap.docs,...mSnap.docs].forEach(ds=>{const d=ds.data()||{},uid=String(d.uid||d.senderId||d.fromUid||"").trim(),v=d.createdAt,t=v?.toDate?v.toDate():new Date(v||0),row=days.find(x=>x.date===dayKey(t));if(!uid||Number.isNaN(t.getTime())||!row)return;row.messages++;active.get(row.date).add(uid);hourly[t.getHours()]++;totals.set(uid,(totals.get(uid)||0)+1);});
+    days.forEach(x=>x.activeUsers=active.get(x.date)?.size||0);
+    const todayKey=dayKey(new Date()),week=new Set();days.slice(-7).forEach(x=>(active.get(x.date)||new Set()).forEach(uid=>week.add(uid)));
+    const mostActiveUsers=Array.from(totals.entries()).sort((a,b)=>b[1]-a[1]).slice(0,10).map(([uid,count])=>({uid,name:users.get(uid)?.name||uid,messages:count}));
+    const retention={d1:null,d7:null,d30:null};
+    [1,7,30].forEach(n=>{const eligible=[];users.forEach(u=>{const t=new Date(u.created);t.setHours(0,0,0,0);t.setDate(t.getDate()+n);if(t<=new Date(endDate.getFullYear(),endDate.getMonth(),endDate.getDate()))eligible.push({u,t});});if(!eligible.length)return;const retained=eligible.filter(x=>(active.get(dayKey(x.t))||new Set()).has(x.u.uid)).length;retention["d"+n]={eligible:eligible.length,retained,rate:Number(((retained/eligible.length)*100).toFixed(1))};});
+    renderAnalyticsReal({generatedAt:new Date().toISOString(),scope:"Direct admin Firestore; activity is message-based",dau:(active.get(todayKey)||new Set()).size,wau:week.size,totalMessages30d:gSnap.size+mSnap.size,totalNewUsers30d:days.reduce((n,x)=>n+x.newUsers,0),days,hourly,mostActiveUsers,retention});
+    $("analyticsUpdated").textContent="Updated "+new Date().toLocaleString()+" • Direct Firestore";
+    return;
+  }catch(fallbackError){
+    console.warn("Direct admin Firestore analytics failed; trying callable:",fallbackError);
+  }
+
   try{
     const result=await getAdminAnalyticsReal({});
     const data=result?.data||{};
     if(Array.isArray(data.days)&&data.days.length){renderAnalyticsReal(data);return;}
     throw new Error("Analytics function returned no activity data.");
   }catch(e){
-    console.warn("Admin analytics callable unavailable; using direct admin Firestore fallback:",e);
-    try{
-      const end=new Date();end.setHours(23,59,59,999);
-      const start=new Date(end);start.setDate(start.getDate()-29);start.setHours(0,0,0,0);
-      const [uSnap,gSnap,mSnap]=await Promise.all([
-        getDocs(collection(db,"users")),
-        getDocs(query(collection(db,"globalChats"),where("createdAt",">=",Timestamp.fromDate(start)),where("createdAt","<=",Timestamp.fromDate(end)),limit(10000))),
-        getDocs(query(collection(db,"messages"),where("createdAt",">=",Timestamp.fromDate(start)),where("createdAt","<=",Timestamp.fromDate(end)),limit(10000)))
-      ]);
-      const users=new Map(),days=[],active=new Map();
-      const dayKey=d=>{const x=new Date(d);x.setHours(0,0,0,0);return x.toISOString().slice(0,10)};
-      for(let i=0;i<30;i++){const d=new Date(start);d.setDate(start.getDate()+i);const k=dayKey(d);days.push({date:k,newUsers:0,messages:0,activeUsers:0});active.set(k,new Set());}
-      uSnap.docs.forEach(ds=>{const d=ds.data()||{},v=d.createdAt||d.registeredAt||d.created_at,t=v?.toDate?v.toDate():new Date(v||0);if(Number.isNaN(t.getTime()))return;users.set(ds.id,{uid:ds.id,name:String(d.displayName||d.email||ds.id).slice(0,120),created:t});if(t>=start&&t<=end){const row=days.find(x=>x.date===dayKey(t));if(row)row.newUsers++;}});
-      const hourly=Array(24).fill(0),totals=new Map();
-      [...gSnap.docs,...mSnap.docs].forEach(ds=>{const d=ds.data()||{},uid=String(d.uid||d.senderId||d.fromUid||"").trim(),v=d.createdAt,t=v?.toDate?v.toDate():new Date(v||0),row=days.find(x=>x.date===dayKey(t));if(!uid||Number.isNaN(t.getTime())||!row)return;row.messages++;active.get(row.date).add(uid);hourly[t.getHours()]++;totals.set(uid,(totals.get(uid)||0)+1);});
-      days.forEach(x=>x.activeUsers=active.get(x.date)?.size||0);
-      const todayKey=dayKey(new Date()),week=new Set();days.slice(-7).forEach(x=>(active.get(x.date)||new Set()).forEach(uid=>week.add(uid)));
-      const mostActiveUsers=Array.from(totals.entries()).sort((a,b)=>b[1]-a[1]).slice(0,10).map(([uid,count])=>({uid,name:users.get(uid)?.name||uid,messages:count}));
-      const retention={d1:null,d7:null,d30:null};
-      [1,7,30].forEach(n=>{const eligible=[];users.forEach(u=>{const t=new Date(u.created);t.setHours(0,0,0,0);t.setDate(t.getDate()+n);if(t<=new Date(end.getFullYear(),end.getMonth(),end.getDate()))eligible.push({u,t});});if(!eligible.length)return;const retained=eligible.filter(x=>(active.get(dayKey(x.t))||new Set()).has(x.u.uid)).length;retention["d"+n]={eligible:eligible.length,retained,rate:Number(((retained/eligible.length)*100).toFixed(1))};});
-      renderAnalyticsReal({generatedAt:new Date().toISOString(),scope:"Direct admin Firestore fallback; activity is message-based",dau:(active.get(todayKey)||new Set()).size,wau:week.size,totalMessages30d:gSnap.size+mSnap.size,totalNewUsers30d:days.reduce((n,x)=>n+x.newUsers,0),days,hourly,mostActiveUsers,retention});
-      $("analyticsUpdated").textContent="Updated "+new Date().toLocaleString()+" • Direct Firestore";
-    }catch(fallbackError){
-      console.error("Admin analytics fallback failed:",fallbackError);
-      $("analyticsUpdated").textContent="Analytics unavailable: "+(fallbackError?.message||"Firestore error");
-      $("analyticsDau").textContent=$("analyticsWau").textContent=$("analyticsMessages").textContent=$("analyticsNewUsers").textContent="—";
-    }
+    console.error("Admin analytics unavailable:",e);
+    $("analyticsUpdated").textContent="Analytics unavailable: "+(e?.message||"Firestore error");
+    $("analyticsDau").textContent=$("analyticsWau").textContent=$("analyticsMessages").textContent=$("analyticsNewUsers").textContent="—";
   }
 }
 async function load(){try{const [n,a,c,p,o]=await Promise.all([getDocs(query(collection(db,"news"),orderBy("createdAt","desc"),limit(100))),getDocs(query(collection(db,"announcements"),orderBy("createdAt","desc"),limit(100))),getDocs(query(collection(db,"globalChats"),orderBy("createdAt","desc"),limit(100))),getDocs(query(collection(db,"products"),orderBy("createdAt","desc"),limit(100))),getDocs(query(collection(db,"orders"),orderBy("createdAt","desc"),limit(100)))]);news=n.docs.map(d=>({id:d.id,...d.data()}));anns=a.docs.map(d=>({id:d.id,...d.data()}));chats=c.docs.map(d=>({id:d.id,...d.data()}));shopProducts=p.docs.map(d=>({id:d.id,...d.data()}));shopOrders=o.docs.map(d=>({id:d.id,...d.data()}));render()}catch(e){toast("Firestore error: "+e.message);render()}}
