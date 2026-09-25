@@ -12,18 +12,9 @@
   <div class="panel-head"><div><small>UNIFIED PUBLISHER</small><h2>Publish Across the Hub</h2></div><span>HUB POSTS</span></div>
   <div class="form-grid">
     <select id="hpType"><option value="post">Post</option><option value="news">News</option><option value="product">Product</option><option value="game">Game</option><option value="video">Video</option><option value="event">Event</option><option value="announcement">Announcement</option><option value="story">Story</option></select>
-    <input id="hpTitle" placeholder="Title">
-    <input id="hpText" placeholder="Description / text">
-    <input id="hpImage" placeholder="Image URL (optional)">
-    <input id="hpMedia" placeholder="Video File URL (optional)">
-    <input id="hpUrl" placeholder="Link / Product URL (optional)">
-    <input id="hpPrice" placeholder="Price (product only)">
-    <input id="hpStock" placeholder="Stock (product only)">
-    <button id="publishHubContent">Publish to Hub →</button>
-  </div>
-  <small style="opacity:.55;display:block;margin-top:8px">Feeds always receives the item. The content type also routes it to its matching surface.</small>
+    <input id="hpTitle" placeholder="Title"><input id="hpText" placeholder="Description / text"><input id="hpImage" placeholder="Image URL (optional)"><input id="hpMedia" placeholder="Video File URL (optional)"><input id="hpUrl" placeholder="Link / Product URL (optional)"><input id="hpPrice" placeholder="Price (product only)"><input id="hpStock" placeholder="Stock (product only)"><button id="publishHubContent">Publish to Hub →</button>
+  </div><small style="opacity:.55;display:block;margin-top:8px">Feeds always receives the item. The content type also routes it to its matching surface.</small>
 </section>
-
 <section class="panel" id="sponsoredControl">
   <div class="panel-head"><div><small>SPONSORED CONTROL</small><h2>Sponsored Placement</h2></div><span>FIRESTORE</span></div>
   <div class="form-grid">
@@ -36,20 +27,11 @@
   </div>
   <small style="opacity:.55;display:block;margin-top:8px">Published ads appear automatically below Live Stats on the homepage. Only the latest active sponsor is shown.</small>
   <div id="sponsoredAdList"></div>
-</section><section class="panel" id="facebookVideosPanel">
-  <div class="panel-head"><div><small>SOCIAL VIDEO CONTROL</small><h2>Facebook Videos</h2></div><span>ADMIN ONLY</span></div>
-  <div class="form-grid fb-video-admin-form">
-    <input id="fvTitle" placeholder="Video title">
-    <input id="fvUrl" placeholder="Facebook URL (optional)">
-    <input id="fvVideoUrl" placeholder="Video File URL (MP4/WebM) — optional">
-    <input id="fvThumb" placeholder="Thumbnail URL (optional)">
-    <button id="addFbVideo">Add Facebook Video →</button><small class="fb-admin-note">For actual playback, enter a direct MP4/WebM video URL. Facebook links are shown as Open Video.</small>
-  </div>
-  <div id="fbVideoList"></div>
 </section>
-<section class="panel" id="shopProducts"><div class="panel-head"><div><small>SHOP CONTROL</small><h2>Products</h2></div><span>FIRESTORE</span></div><div class="form-grid"><input id="spName" placeholder="Product name"><select id="spCategory"><option value="mods">Mods</option><option value="products">Products</option><option value="music">Music & Media</option></select><input id="spPrice" placeholder="Price e.g. Free or ₱199"><input id="spIcon" placeholder="Icon / emoji e.g. 🧩"><input id="spBadge" placeholder="Badge e.g. NEW"><input id="spImage" placeholder="Image URL (optional)"><input id="spUrl" placeholder="Download / Product URL (optional)"><textarea id="spDescription" placeholder="Product description..."></textarea><button id="addShopProduct">Add Product →</button></div><div id="shopProductList"></div></section><section class="panel" id="content"><div class="panel-head"><div><small>CONTENT CONTROL</small><h2>News Manager</h2></div><span>FIRESTORE</span></div><div class="form-grid"><input id="nt" placeholder="News title"><input id="nd" placeholder="Date"><select id="nc"><option value="platform">Platform</option><option value="community">Community</option><option value="creator">Creator</option></select><input id="na" placeholder="Article link (optional)"><input id="ni" placeholder="Image URL (optional)"><textarea id="nx" placeholder="Write your news content..."></textarea><button id="addNews">Publish News →</button></div><div id="newsList"></div></section>
+<section class="panel" id="facebookVideosPanel"><div class="panel-head"><div><small>SOCIAL VIDEO CONTROL</small><h2>Facebook Videos</h2></div><span>ADMIN ONLY</span></div><div class="form-grid fb-video-admin-form"><input id="fvTitle" placeholder="Video title"><input id="fvUrl" placeholder="Facebook URL (optional)"><input id="fvVideoUrl" placeholder="Video File URL (MP4/WebM) — optional"><input id="fvThumb" placeholder="Thumbnail URL (optional)"><button id="addFbVideo">Add Facebook Video →</button><small class="fb-admin-note">For actual playback, enter a direct MP4/WebM video URL. Facebook links are shown as Open Video.</small></div><div id="fbVideoList"></div></section>
+<section class="panel" id="shopProducts"><div class="panel-head"><div><small>SHOP CONTROL</small><h2>Products</h2></div><span>FIRESTORE</span></div><div class="form-grid"><input id="spName" placeholder="Product name"><select id="spCategory"><option value="mods">Mods</option><option value="products">Products</option><option value="music">Music & Media</option></select><input id="spPrice" placeholder="Price e.g. Free or ₱199"><input id="spIcon" placeholder="Icon / emoji e.g. 🧩"><input id="spBadge" placeholder="Badge e.g. NEW"><input id="spImage" placeholder="Image URL (optional)"><input id="spUrl" placeholder="Download / Product URL (optional)"><textarea id="spDescription" placeholder="Product description..."></textarea><button id="addShopProduct">Add Product →</button></div><div id="shopProductList"></div></section>
+<section class="panel" id="content"><div class="panel-head"><div><small>CONTENT CONTROL</small><h2>News Manager</h2></div><span>FIRESTORE</span></div><div class="form-grid"><input id="nt" placeholder="News title"><input id="nd" placeholder="Date"><select id="nc"><option value="platform">Platform</option><option value="community">Community</option><option value="creator">Creator</option></select><input id="na" placeholder="Article link (optional)"><input id="ni" placeholder="Image URL (optional)"><textarea id="nx" placeholder="Write your news content..."></textarea><button id="addNews">Publish News →</button></div><div id="newsList"></div></section>
 <section class="panel"><div class="panel-head"><div><small>PLATFORM CONTROL</small><h2>Announcements</h2></div><span>FIRESTORE</span></div><div class="form-grid"><input id="at" placeholder="Announcement title"><textarea id="ax" placeholder="Write your announcement..."></textarea><button id="addAnn">Publish Announcement →</button></div><div id="annList"></div></section>
-
 <section class="panel" id="members"><div class="panel-head"><div><small>MEMBER CONTROL</small><h2>Registered Members</h2></div><span>MODERATION</span></div><div class="moderation-toolbar"><label>Ban duration <select id="banDuration"><option value="permanent">Permanent</option><option value="1h">1 hour</option><option value="6h">6 hours</option><option value="12h">12 hours</option><option value="1d">1 day</option><option value="3d">3 days</option><option value="7d">7 days</option><option value="30d">30 days</option></select></label><small>Ban expires automatically when the selected time ends.</small></div><div id="memberList" class="table-list"></div></section>
 <section class="panel" id="chat"><div class="panel-head"><div><small>COMMUNITY MODERATION</small><h2>Global Chat</h2></div><span>DELETE CONTROL</span></div><div id="chatList"></div></section>
 <div id="banModal" class="ban-modal" hidden><div class="ban-modal-card"><div class="ban-modal-head"><div><small>MEMBER MODERATION</small><h3>Ban Member</h3><p id="banTargetName">Member</p></div><button type="button" id="closeBanModal">×</button></div><div class="ban-options"><button type="button" data-duration="1h">1 Hour</button><button type="button" data-duration="6h">6 Hours</button><button type="button" data-duration="12h">12 Hours</button><button type="button" data-duration="1d">1 Day</button><button type="button" data-duration="3d">3 Days</button><button type="button" data-duration="7d">7 Days</button><button type="button" data-duration="30d">30 Days</button><button type="button" data-duration="permanent">Permanent</button></div><input id="banReasonInput" placeholder="Ban reason (optional)"><div class="ban-modal-actions"><button type="button" id="cancelBan">Cancel</button><button type="button" id="confirmBan">Confirm Ban</button></div></div></div><div id="toast" class="toast"></div><footer>© 2026 TUBAL HUB <span>•</span> Admin Control Center</footer></main></div>
@@ -60,139 +42,25 @@ import {onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/12.
 import {getFirestore,collection,getDocs,addDoc,deleteDoc,doc,query,orderBy,limit,serverTimestamp,updateDoc,Timestamp,writeBatch} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 const ADMIN_EMAIL="tubalrr@gmail.com",db=getFirestore(),$=id=>document.getElementById(id);
 let news=[],anns=[],members=[],chats=[],fbVideos=[],shopProducts=[],sponsoredAds=[];
-let news=[],anns=[],members=[],chats=[],fbVideos=[],shopProducts=[];
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
-function mirrorHubPost(batch,sourceRef,data){
-  batch.set(doc(db,"hubPosts",sourceRef.id),{
-    contentType:data.contentType||"post",
-    title:String(data.title||"").slice(0,240),
-    text:String(data.text||"").slice(0,4000),
-    imageUrl:String(data.imageUrl||"").slice(0,3000),
-    mediaUrl:String(data.mediaUrl||"").slice(0,3000),
-    productUrl:String(data.productUrl||"").slice(0,3000),
-    category:String(data.category||"").slice(0,80),
-    price:String(data.price??"").slice(0,100),
-    stock:String(data.stock??"").slice(0,80),
-    authorName:String(data.authorName||"TUBAL HUB").slice(0,120),
-    authorPhotoURL:String(data.authorPhotoURL||"").slice(0,3000),
-    createdBy:auth.currentUser.uid,
-    sourceCollection:String(data.sourceCollection||"admin").slice(0,80),
-    sourceId:sourceRef.id,
-    destinations:Array.isArray(data.destinations)?data.destinations.slice(0,10):["feeds"],
-    status:"published",
-    createdAt:serverTimestamp()
-  });
-}
 function toast(m){$("toast").textContent=m;$("toast").classList.add("show");setTimeout(()=>$("toast").classList.remove("show"),3200)}
-function firestoreError(e){
-  if(e?.code==="permission-denied") return "Publishing blocked by Firestore Rules. Publish the latest firestore.rules in Firebase Console, then refresh.";
-  return e?.message||"Firestore error";
-}
-async function loadSponsoredAds(){
-  try{
-    const snap=await getDocs(query(collection(db,"sponsoredAds"),orderBy("createdAt","desc"),limit(20)));
-    sponsoredAds=snap.docs.map(d=>({id:d.id,...d.data()}));
-    renderSponsoredAds();
-  }catch(e){console.warn(e);toast(firestoreError(e))}
-}
-function renderSponsoredAds(){
-  const box=$("sponsoredAdList");if(!box)return;
-  box.innerHTML=sponsoredAds.length?sponsoredAds.map(a=>'<div class="admin-item"><b>'+esc(a.title||"Sponsored")+'</b><small>'+esc(a.text||"")+'</small><span>'+(a.active===false?"INACTIVE":"ACTIVE")+'</span><button data-delete-sponsored="'+esc(a.id)+'">Delete</button></div>').join(""):'<small style="opacity:.5">No sponsored placements yet.</small>';
-  box.querySelectorAll("[data-delete-sponsored]").forEach(btn=>btn.onclick=async()=>{try{await deleteDoc(doc(db,"sponsoredAds",btn.dataset.deleteSponsored));toast("Sponsored deleted");await loadSponsoredAds()}catch(e){toast(firestoreError(e))}});
-}
-async function addSponsoredAd(){
-  const title=String($("saTitle")?.value||"").trim(),text=String($("saText")?.value||"").trim(),imageUrl=String($("saImage")?.value||"").trim(),linkUrl=String($("saUrl")?.value||"").trim(),badge=String($("saBadge")?.value||"SPONSORED").trim()||"SPONSORED";
-  if(!title){toast("Sponsor title required");return}
-  try{
-    const batch=writeBatch(db);
-    sponsoredAds.forEach(a=>batch.update(doc(db,"sponsoredAds",a.id),{active:false,updatedAt:serverTimestamp()}));
-    const ref=doc(collection(db,"sponsoredAds"));
-    batch.set(ref,{title,text,imageUrl,linkUrl,badge,active:true,createdBy:auth.currentUser.uid,createdAt:serverTimestamp(),updatedAt:serverTimestamp()});
-    await batch.commit();
-    ["saTitle","saText","saImage","saUrl"].forEach(id=>{const el=$(id);if(el)el.value=""});
-    toast("Sponsored published");await loadSponsoredAds();
-  }catch(e){toast(firestoreError(e))}
-}
-function render(){
- $("newsCount").textContent=news.length;$("annCount").textContent=anns.length;$("memberCount").textContent=members.length;$("chatCount").textContent=chats.length;
- $("newsList").innerHTML=news.map(x=>'<article class="item"><div><b>'+esc(x.title)+'</b><p>'+esc(x.text)+'</p><small>'+esc(x.date||"Latest")+' • '+esc(x.category||"platform")+'</small></div><div><button data-edit-news="'+x.id+'">×</button></article>').join("")||'<div class="empty">No news yet.</div>';
- $("annList").innerHTML=anns.map(x=>'<article class="item"><div><b>'+esc(x.title)+'</b><p>'+esc(x.text)+'</p></div><button data-del-ann="'+x.id+'">×</button></article>').join("")||'<div class="empty">No announcements yet.</div>';
- $("memberList").innerHTML=members.map(x=>{const until=x.banUntil?.toMillis?.()||0;const banned=x.chatStatus==="banned"&&(until===0||until>Date.now());const expiry=banned&&until?'<small class="ban-expiry">Until '+new Date(until).toLocaleString()+'</small>':'';return '<div class="member-row"><div class="member-main"><b class="member-name" data-member-ban="'+esc(x.uid||x.id)+'">'+esc(x.displayName||x.email||"Member")+'</b><small>'+esc(x.email||x.uid||"")+'</small>'+expiry+'</div><span class="member-status '+(banned?"banned":"active")+'">'+(banned?"BANNED":"ACTIVE")+'</span>'+(x.uid===auth.currentUser?.uid?"":banned?'<button class="member-action unban" data-unban="'+esc(x.uid||x.id)+'">Unban</button>':'<button class="member-action ban" data-ban="'+esc(x.uid||x.id)+'">Ban</button>')+'</div>'}).join("")||'<div class="empty">No member profiles found.</div>';
- $("shopProductList").innerHTML=shopProducts.map(x=>'<article class="item"><div><b>'+esc(x.icon||"◈")+' '+esc(x.name)+'</b><p>'+esc(x.description||"")+"</p><small>"+esc(x.category||"products")+" • "+esc(x.price||"Free")+"</small></div><button data-del-product=\""+x.id+"\">×</button></article>').join("")||'<div class="empty">No shop products yet.</div>';
- $("fbVideoList").innerHTML=fbVideos.map(x=>'<article class="item"><div><b>'+esc(x.title||"Facebook Video")+'</b><p>'+esc(x.url||"")+'</p></div><button data-del-fb="'+x.id+'">×</button></article>').join("")||'<div class="empty">No Facebook videos yet.</div>';
- $("chatList").innerHTML=chats.map(x=>'<article class="item"><div><b>'+esc(x.displayName||"Member")+'</b><p>'+esc(x.text||"")+'</p></div><button data-del-chat="'+x.id+'">×</button></article>').join("")||'<div class="empty">No chat messages found.</div>';
-}
-async function load(){
- try{
-  const [n,a,u,c,v,p]=await Promise.all([
-   getDocs(query(collection(db,"news"),orderBy("createdAt","desc"),limit(100))),
-   getDocs(query(collection(db,"announcements"),orderBy("createdAt","desc"),limit(100))),
-   getDocs(query(collection(db,"users"),limit(100))),
-   getDocs(query(collection(db,"globalChats"),orderBy("createdAt","desc"),limit(100))),
-   getDocs(query(collection(db,"facebookVideos"),orderBy("createdAt","desc"),limit(100))),
-   getDocs(query(collection(db,"products"),orderBy("createdAt","desc"),limit(100)))
-  ]);
-  news=n.docs.map(d=>({id:d.id,...d.data()}));anns=a.docs.map(d=>({id:d.id,...d.data()}));members=u.docs.map(d=>({id:d.id,...d.data()}));chats=c.docs.map(d=>({id:d.id,...d.data()}));fbVideos=v.docs.map(d=>({id:d.id,...d.data()}));shopProducts=p.docs.map(d=>({id:d.id,...d.data()}));render();
- }catch(e){toast("Firestore error: "+e.message);render()}
-}
-$("publishHubContent").onclick=async()=>{
- const contentType=$("hpType").value,title=$("hpTitle").value.trim(),text=$("hpText").value.trim(),imageUrl=$("hpImage").value.trim(),mediaUrl=$("hpMedia").value.trim(),productUrl=$("hpUrl").value.trim(),price=$("hpPrice").value.trim(),stock=$("hpStock").value.trim();
- if(!title||!text)return toast("Enter a title and text.");
- const destinations={post:["feeds","community"],news:["feeds","news"],product:["feeds","shop"],game:["feeds","games"],video:["feeds","news"],event:["feeds","events"],announcement:["feeds","news","community"],story:["feeds","news"]}[contentType]||["feeds"];
- try{
-  await addDoc(collection(db,"hubPosts"),{contentType,title,text,imageUrl,mediaUrl,productUrl,price,stock,category:contentType,authorName:"TUBAL HUB",authorPhotoURL:"",createdBy:auth.currentUser.uid,sourceCollection:"hubPosts",sourceId:"",destinations,status:"published",createdAt:serverTimestamp()});
-  ["hpTitle","hpText","hpImage","hpMedia","hpUrl","hpPrice","hpStock"].forEach(id=>$(id).value="");
-  toast("Published to "+destinations.join(" + ")+" .");
- }catch(e){toast(firestoreError(e))}
-};
-$("addShopProduct").onclick=async()=>{
- const name=$("spName").value.trim(),category=$("spCategory").value,price=$("spPrice").value.trim()||"Free",icon=$("spIcon").value.trim()||"◈",badge=$("spBadge").value.trim(),imageUrl=$("spImage").value.trim(),productUrl=$("spUrl").value.trim(),description=$("spDescription").value.trim();
- if(!name||!description)return toast("Enter product name and description.");
- try{
-  const batch=writeBatch(db),ref=doc(collection(db,"products"));
-  batch.set(ref,{name,category,price,icon,badge,imageUrl,productUrl,description,createdAt:serverTimestamp(),createdBy:auth.currentUser.uid});
-  mirrorHubPost(batch,ref,{contentType:"product",title:name,text:description,imageUrl,productUrl,category,price,authorName:"TUBAL HUB Shop",destinations:["feeds","shop"]});
-  await batch.commit();
-  ["spName","spPrice","spIcon","spBadge","spImage","spUrl","spDescription"].forEach(id=>$(id).value="");await load();toast("Shop product published to Shop + Feeds.");
- }catch(e){toast(firestoreError(e))}
-};
-$("addNews").onclick=async()=>{
- const title=$("nt").value.trim(),text=$("nx").value.trim(),date=$("nd").value.trim()||"Latest",category=$("nc").value,articleUrl=$("na").value.trim(),imageUrl=$("ni").value.trim();
- if(!title||!text)return toast("Enter title and content.");
- try{
-  const batch=writeBatch(db),ref=doc(collection(db,"news"));
-  batch.set(ref,{title,text,date,category,articleUrl,imageUrl,createdAt:serverTimestamp(),createdBy:auth.currentUser.uid});
-  mirrorHubPost(batch,ref,{contentType:"news",title,text,imageUrl,category,authorName:"TUBAL HUB News",destinations:["feeds","news"]});
-  await batch.commit();
-  ["nt","nx","nd","na","ni"].forEach(id=>$(id).value="");$("nc").value="platform";await load();toast("News published to News + Feeds.");
- }catch(e){toast(firestoreError(e))}
-};
-$("addFbVideo").onclick=async()=>{
- const title=$("fvTitle").value.trim()||"Facebook Video",url=$("fvUrl").value.trim(),videoUrl=$("fvVideoUrl").value.trim(),thumb=$("fvThumb").value.trim();
- if(!url&&!videoUrl)return toast("Enter a Facebook URL or Video File URL.");
- if(url){let parsed;try{parsed=new URL(url)}catch{return toast("Enter a valid Facebook URL.")}if(!/(^|\\.)facebook\\.com$/i.test(parsed.hostname))return toast("Facebook URL must use facebook.com.")}
- if(videoUrl){let vp;try{vp=new URL(videoUrl)}catch{return toast("Enter a valid Video File URL.")}if(vp.protocol!=="https:")return toast("Video File URL must use HTTPS.")}
- try{
-  const batch=writeBatch(db),ref=doc(collection(db,"facebookVideos"));
-  batch.set(ref,{title,url,videoUrl,thumbnail:thumb,createdAt:serverTimestamp(),createdBy:auth.currentUser.uid});
-  mirrorHubPost(batch,ref,{contentType:"video",title,text:title,imageUrl:thumb,mediaUrl:videoUrl,productUrl:url,authorName:"TUBAL HUB Video",destinations:["feeds","news"]});
-  await batch.commit();
-  $("fvTitle").value=$("fvUrl").value=$("fvVideoUrl").value=$("fvThumb").value="";await load();toast("Video published to Feeds + News.");
- }catch(e){toast(firestoreError(e))}
-};
-$("addAnn").onclick=async()=>{
- const title=$("at").value.trim(),text=$("ax").value.trim();if(!title||!text)return toast("Enter title and content.");
- try{
-  const batch=writeBatch(db),ref=doc(collection(db,"announcements"));
-  batch.set(ref,{title,text,createdAt:serverTimestamp(),createdBy:auth.currentUser.uid});
-  mirrorHubPost(batch,ref,{contentType:"announcement",title,text,authorName:"TUBAL HUB",destinations:["feeds","news","community"]});
-  await batch.commit();
-  $("at").value=$("ax").value="";await load();toast("Announcement published across Feeds + News + Community.");
- }catch(e){toast(firestoreError(e))}
-};
-document.addEventListener("click",async e=>{const name=e.target.closest("[data-member-ban]");if(name){const uid=name.dataset.memberBan;if(uid===auth.currentUser?.uid)return;const member=members.find(x=>(x.uid||x.id)===uid);window.__banTargetUid=uid;window.__banTargetName=member?.displayName||member?.email||"Member";window.__banDuration=null;$("banTargetName").textContent=window.__banTargetName;$("banReasonInput").value="";document.querySelectorAll(".ban-options button").forEach(x=>x.classList.remove("selected"));$("banModal").hidden=false;return}const b=e.target.closest("button");if(!b)return;try{if(b.dataset.delNews){if(!confirm("Delete this news article?"))return;await deleteDoc(doc(db,"news",b.dataset.delNews));await load();}if(b.dataset.editNews){const x=news.find(n=>n.id===b.dataset.editNews);if(!x)return;const title=prompt("News title:",x.title||"");if(title===null)return;const text=prompt("News content:",x.text||"");if(text===null)return;const date=prompt("Date:",x.date||"Latest");if(date===null)return;const category=prompt("Category (platform/community/creator):",x.category||"platform");if(category===null)return;await updateDoc(doc(db,"news",x.id),{title:title.trim(),text:text.trim(),date:date.trim()||"Latest",category:category.trim().toLowerCase()||"platform",updatedAt:serverTimestamp(),updatedBy:auth.currentUser.uid});await load();toast("News updated.");}if(b.dataset.delAnn){await deleteDoc(doc(db,"announcements",b.dataset.delAnn));await load();}if(b.dataset.delChat){await deleteDoc(doc(db,"globalChats",b.dataset.delChat));await load();}if(b.dataset.delFb){await deleteDoc(doc(db,"facebookVideos",b.dataset.delFb));await load();}if(b.dataset.delProduct){await deleteDoc(doc(db,"products",b.dataset.delProduct));await load();}if(b.dataset.ban){const reason=prompt("Ban reason (optional):","Violation of Global Chat rules");if(reason===null)return;const duration=b.dataset.banDuration||$("banDuration").value;let banUntil=null;if(duration!=="permanent"){const hours={"1h":1,"6h":6,"12h":12,"1d":24,"3d":72,"7d":168,"30d":720}[duration];banUntil=Timestamp.fromDate(new Date(Date.now()+hours*60*60*1000));}await updateDoc(doc(db,"users",b.dataset.ban),{chatStatus:"banned",banned:true,banReason:reason.trim()||"Global Chat rules violation",bannedAt:serverTimestamp(),bannedBy:auth.currentUser.uid,banUntil});await load();toast(duration==="permanent"?"Member permanently banned.":"Member banned until "+banUntil.toDate().toLocaleString()+".")}if(b.dataset.unban){if(!confirm("Unban this member from Global Chat?"))return;await updateDoc(doc(db,"users",b.dataset.unban),{chatStatus:"active",banned:false,banReason:null,bannedAt:null,bannedBy:null});await load();toast("Member unbanned.")}}catch(x){toast(x.message)}});
-document.querySelectorAll(".ban-options button").forEach(btn=>btn.onclick=()=>{window.__banDuration=btn.dataset.duration;document.querySelectorAll(".ban-options button").forEach(x=>x.classList.remove("selected"));btn.classList.add("selected")});$("closeBanModal").onclick=$("cancelBan").onclick=()=>{$("banModal").hidden=true};$("confirmBan").onclick=async()=>{const uid=window.__banTargetUid,duration=window.__banDuration;if(!uid||!duration)return toast("Select a ban duration.");let banUntil=null;if(duration!=="permanent"){const hours={"1h":1,"6h":6,"12h":12,"1d":24,"3d":72,"7d":168,"30d":720}[duration];banUntil=Timestamp.fromDate(new Date(Date.now()+hours*60*60*1000));}try{await updateDoc(doc(db,"users",uid),{chatStatus:"banned",banned:true,banReason:$("banReasonInput").value.trim()||"Global Chat rules violation",bannedAt:serverTimestamp(),bannedBy:auth.currentUser.uid,banUntil});$("banModal").hidden=true;await load();toast(duration==="permanent"?"Member permanently banned.":"Member banned until "+banUntil.toDate().toLocaleString()+".")}catch(e){toast(e.message)}};$("addSponsoredAd")?.addEventListener("click",addSponsoredAd);
-loadSponsoredAds();
+function firestoreError(e){if(e?.code==="permission-denied")return "Publishing blocked by Firestore Rules. Publish the latest firestore.rules in Firebase Console, then refresh.";return e?.message||"Firestore error"}
+async function loadSponsoredAds(){try{const snap=await getDocs(query(collection(db,"sponsoredAds"),orderBy("createdAt","desc"),limit(20)));sponsoredAds=snap.docs.map(d=>({id:d.id,...d.data()}));renderSponsoredAds()}catch(e){console.warn(e);toast(firestoreError(e))}}
+function renderSponsoredAds(){const box=$("sponsoredAdList");if(!box)return;box.innerHTML=sponsoredAds.length?sponsoredAds.map(a=>'<div class="admin-item"><b>'+esc(a.title||"Sponsored")+'</b><small>'+esc(a.text||"")+'</small><span>'+(a.active===false?"INACTIVE":"ACTIVE")+'</span><button data-delete-sponsored="'+esc(a.id)+'">Delete</button></div>').join(""):'<small style="opacity:.5">No sponsored placements yet.</small>';box.querySelectorAll("[data-delete-sponsored]").forEach(btn=>btn.onclick=async()=>{try{await deleteDoc(doc(db,"sponsoredAds",btn.dataset.deleteSponsored));toast("Sponsored deleted");await loadSponsoredAds()}catch(e){toast(firestoreError(e))}})}
+async function addSponsoredAd(){const title=String($("saTitle")?.value||"").trim(),text=String($("saText")?.value||"").trim(),imageUrl=String($("saImage")?.value||"").trim(),linkUrl=String($("saUrl")?.value||"").trim(),badge=String($("saBadge")?.value||"SPONSORED").trim()||"SPONSORED";if(!title){toast("Sponsor title required");return}try{const batch=writeBatch(db);sponsoredAds.forEach(a=>batch.update(doc(db,"sponsoredAds",a.id),{active:false,updatedAt:serverTimestamp()}));const ref=doc(collection(db,"sponsoredAds"));batch.set(ref,{title,text,imageUrl,linkUrl,badge,active:true,createdBy:auth.currentUser.uid,createdAt:serverTimestamp(),updatedAt:serverTimestamp()});await batch.commit();["saTitle","saText","saImage","saUrl"].forEach(id=>{const el=$(id);if(el)el.value=""});toast("Sponsored published");await loadSponsoredAds()}catch(e){toast(firestoreError(e))}}
+function mirrorHubPost(batch,sourceRef,data){batch.set(doc(db,"hubPosts",sourceRef.id),{contentType:data.contentType||"post",title:String(data.title||"").slice(0,240),text:String(data.text||"").slice(0,4000),imageUrl:String(data.imageUrl||"").slice(0,3000),mediaUrl:String(data.mediaUrl||"").slice(0,3000),productUrl:String(data.productUrl||"").slice(0,3000),category:String(data.category||"").slice(0,80),price:String(data.price??"").slice(0,100),stock:String(data.stock??"").slice(0,80),authorName:String(data.authorName||"TUBAL HUB").slice(0,120),authorPhotoURL:String(data.authorPhotoURL||"").slice(0,3000),createdBy:auth.currentUser.uid,sourceCollection:String(data.sourceCollection||"admin").slice(0,80),sourceId:sourceRef.id,destinations:Array.isArray(data.destinations)?data.destinations.slice(0,10):["feeds"],status:"published",createdAt:serverTimestamp()})}
+function render(){$("newsCount").textContent=news.length;$("annCount").textContent=anns.length;$("memberCount").textContent=members.length;$("chatCount").textContent=chats.length;$("newsList").innerHTML=news.map(x=>'<article class="item"><div><b>'+esc(x.title)+'</b><p>'+esc(x.text)+'</p><small>'+esc(x.date||"Latest")+' • '+esc(x.category||"platform")+'</small></div><div><button data-edit-news="'+x.id+'">×</button></article>').join("")||'<div class="empty">No news yet.</div>';$("annList").innerHTML=anns.map(x=>'<article class="item"><div><b>'+esc(x.title)+'</b><p>'+esc(x.text)+'</p></div><button data-del-ann="'+x.id+'">×</button></article>').join("")||'<div class="empty">No announcements yet.</div>';$("memberList").innerHTML=members.map(x=>{const until=x.banUntil?.toMillis?.()||0;const banned=x.chatStatus==="banned"&&(until===0||until>Date.now());const expiry=banned&&until?'<small class="ban-expiry">Until '+new Date(until).toLocaleString()+'</small>':'';return '<div class="member-row"><div class="member-main"><b class="member-name" data-member-ban="'+esc(x.uid||x.id)+'">'+esc(x.displayName||x.email||"Member")+'</b><small>'+esc(x.email||x.uid||"")+'</small>'+expiry+'</div><span class="member-status '+(banned?"banned":"active")+'">'+(banned?"BANNED":"ACTIVE")+'</span>'+(x.uid===auth.currentUser?.uid?"":banned?'<button class="member-action unban" data-unban="'+esc(x.uid||x.id)+'">Unban</button>':'<button class="member-action ban" data-ban="'+esc(x.uid||x.id)+'">Ban</button>')+'</div>'}).join("")||'<div class="empty">No member profiles found.</div>';$("shopProductList").innerHTML=shopProducts.map(x=>'<article class="item"><div><b>'+esc(x.icon||"◈")+' '+esc(x.name)+'</b><p>'+esc(x.description||"")+"</p><small>"+esc(x.category||"products")+" • "+esc(x.price||"Free")+"</small></div><button data-del-product=\""+x.id+"\">×</button></article>").join("")||'<div class="empty">No shop products yet.</div>';$("fbVideoList").innerHTML=fbVideos.map(x=>'<article class="item"><div><b>'+esc(x.title||"Facebook Video")+'</b><p>'+esc(x.url||"")+'</p></div><button data-del-fb="'+x.id+'">×</button></article>').join("")||'<div class="empty">No Facebook videos yet.</div>';$("chatList").innerHTML=chats.map(x=>'<article class="item"><div><b>'+esc(x.displayName||"Member")+'</b><p>'+esc(x.text||"")+'</p></div><button data-del-chat="'+x.id+'">×</button></article>').join("")||'<div class="empty">No chat messages found.</div>'}
+async function load(){try{const [n,a,u,c,v,p]=await Promise.all([getDocs(query(collection(db,"news"),orderBy("createdAt","desc"),limit(100))),getDocs(query(collection(db,"announcements"),orderBy("createdAt","desc"),limit(100))),getDocs(query(collection(db,"users"),limit(100))),getDocs(query(collection(db,"globalChats"),orderBy("createdAt","desc"),limit(100))),getDocs(query(collection(db,"facebookVideos"),orderBy("createdAt","desc"),limit(100))),getDocs(query(collection(db,"products"),orderBy("createdAt","desc"),limit(100)))]);news=n.docs.map(d=>({id:d.id,...d.data()}));anns=a.docs.map(d=>({id:d.id,...d.data()}));members=u.docs.map(d=>({id:d.id,...d.data()}));chats=c.docs.map(d=>({id:d.id,...d.data()}));fbVideos=v.docs.map(d=>({id:d.id,...d.data()}));shopProducts=p.docs.map(d=>({id:d.id,...d.data()}));render()}catch(e){toast("Firestore error: "+e.message);render()}}
+$("publishHubContent").onclick=async()=>{const contentType=$("hpType").value,title=$("hpTitle").value.trim(),text=$("hpText").value.trim(),imageUrl=$("hpImage").value.trim(),mediaUrl=$("hpMedia").value.trim(),productUrl=$("hpUrl").value.trim(),price=$("hpPrice").value.trim(),stock=$("hpStock").value.trim();if(!title||!text)return toast("Enter a title and text.");const destinations={post:["feeds","community"],news:["feeds","news"],product:["feeds","shop"],game:["feeds","games"],video:["feeds","news"],event:["feeds","events"],announcement:["feeds","news","community"],story:["feeds","news"]}[contentType]||["feeds"];try{await addDoc(collection(db,"hubPosts"),{contentType,title,text,imageUrl,mediaUrl,productUrl,price,stock,category:contentType,authorName:"TUBAL HUB",authorPhotoURL:"",createdBy:auth.currentUser.uid,sourceCollection:"hubPosts",sourceId:"",destinations,status:"published",createdAt:serverTimestamp()});["hpTitle","hpText","hpImage","hpMedia","hpUrl","hpPrice","hpStock"].forEach(id=>$(id).value="");toast("Published to "+destinations.join(" + ")+" .")}catch(e){toast(firestoreError(e))}};
+$("addShopProduct").onclick=async()=>{const name=$("spName").value.trim(),category=$("spCategory").value,price=$("spPrice").value.trim()||"Free",icon=$("spIcon").value.trim()||"◈",badge=$("spBadge").value.trim(),imageUrl=$("spImage").value.trim(),productUrl=$("spUrl").value.trim(),description=$("spDescription").value.trim();if(!name||!description)return toast("Enter product name and description.");try{const batch=writeBatch(db),ref=doc(collection(db,"products"));batch.set(ref,{name,category,price,icon,badge,imageUrl,productUrl,description,createdAt:serverTimestamp(),createdBy:auth.currentUser.uid});mirrorHubPost(batch,ref,{contentType:"product",title:name,text:description,imageUrl,productUrl,category,price,authorName:"TUBAL HUB Shop",destinations:["feeds","shop"]});await batch.commit();["spName","spPrice","spIcon","spBadge","spImage","spUrl","spDescription"].forEach(id=>$(id).value="");await load();toast("Shop product published to Shop + Feeds.")}catch(e){toast(firestoreError(e))}};
+$("addNews").onclick=async()=>{const title=$("nt").value.trim(),text=$("nx").value.trim(),date=$("nd").value.trim()||"Latest",category=$("nc").value,articleUrl=$("na").value.trim(),imageUrl=$("ni").value.trim();if(!title||!text)return toast("Enter title and content.");try{const batch=writeBatch(db),ref=doc(collection(db,"news"));batch.set(ref,{title,text,date,category,articleUrl,imageUrl,createdAt:serverTimestamp(),createdBy:auth.currentUser.uid});mirrorHubPost(batch,ref,{contentType:"news",title,text,imageUrl,category,authorName:"TUBAL HUB News",destinations:["feeds","news"]});await batch.commit();["nt","nx","nd","na","ni"].forEach(id=>$(id).value="");$("nc").value="platform";await load();toast("News published to News + Feeds.")}catch(e){toast(firestoreError(e))}};
+$("addFbVideo").onclick=async()=>{const title=$("fvTitle").value.trim()||"Facebook Video",url=$("fvUrl").value.trim(),videoUrl=$("fvVideoUrl").value.trim(),thumb=$("fvThumb").value.trim();if(!url&&!videoUrl)return toast("Enter a Facebook URL or Video File URL.");if(url){let parsed;try{parsed=new URL(url)}catch{return toast("Enter a valid Facebook URL.")}if(!/(^|\.)facebook\.com$/i.test(parsed.hostname))return toast("Facebook URL must use facebook.com.")}if(videoUrl){let vp;try{vp=new URL(videoUrl)}catch{return toast("Enter a valid Video File URL.")}if(vp.protocol!=="https:")return toast("Video File URL must use HTTPS.")}try{const batch=writeBatch(db),ref=doc(collection(db,"facebookVideos"));batch.set(ref,{title,url,videoUrl,thumbnail:thumb,createdAt:serverTimestamp(),createdBy:auth.currentUser.uid});mirrorHubPost(batch,ref,{contentType:"video",title,text:title,imageUrl:thumb,mediaUrl:videoUrl,productUrl:url,authorName:"TUBAL HUB Video",destinations:["feeds","news"]});await batch.commit();$("fvTitle").value=$("fvUrl").value=$("fvVideoUrl").value=$("fvThumb").value="";await load();toast("Video published to Feeds + News.")}catch(e){toast(firestoreError(e))}};
+$("addAnn").onclick=async()=>{const title=$("at").value.trim(),text=$("ax").value.trim();if(!title||!text)return toast("Enter title and content.");try{const batch=writeBatch(db),ref=doc(collection(db,"announcements"));batch.set(ref,{title,text,createdAt:serverTimestamp(),createdBy:auth.currentUser.uid});mirrorHubPost(batch,ref,{contentType:"announcement",title,text,authorName:"TUBAL HUB",destinations:["feeds","news","community"]});await batch.commit();$("at").value=$("ax").value="";await load();toast("Announcement published across Feeds + News + Community.")}catch(e){toast(firestoreError(e))}};
+document.addEventListener("click",async e=>{const name=e.target.closest("[data-member-ban]");if(name){const uid=name.dataset.memberBan;if(uid===auth.currentUser?.uid)return;const member=members.find(x=>(x.uid||x.id)===uid);window.__banTargetUid=uid;window.__banTargetName=member?.displayName||member?.email||"Member";window.__banDuration=null;$("banTargetName").textContent=window.__banTargetName;$("banReasonInput").value="";document.querySelectorAll(".ban-options button").forEach(x=>x.classList.remove("selected"));$("banModal").hidden=false;return}const b=e.target.closest("button");if(!b)return;try{if(b.dataset.delNews){if(!confirm("Delete this news article?"))return;await deleteDoc(doc(db,"news",b.dataset.delNews));await load()}if(b.dataset.editNews){const x=news.find(n=>n.id===b.dataset.editNews);if(!x)return;const title=prompt("News title:",x.title||"");if(title===null)return;const text=prompt("News content:",x.text||"");if(text===null)return;const date=prompt("Date:",x.date||"Latest");if(date===null)return;const category=prompt("Category (platform/community/creator):",x.category||"platform");if(category===null)return;await updateDoc(doc(db,"news",x.id),{title:title.trim(),text:text.trim(),date:date.trim()||"Latest",category:category.trim().toLowerCase()||"platform",updatedAt:serverTimestamp(),updatedBy:auth.currentUser.uid});await load();toast("News updated.")}if(b.dataset.delAnn){await deleteDoc(doc(db,"announcements",b.dataset.delAnn));await load()}if(b.dataset.delChat){await deleteDoc(doc(db,"globalChats",b.dataset.delChat));await load()}if(b.dataset.delFb){await deleteDoc(doc(db,"facebookVideos",b.dataset.delFb));await load()}if(b.dataset.delProduct){await deleteDoc(doc(db,"products",b.dataset.delProduct));await load()}if(b.dataset.ban){const reason=prompt("Ban reason (optional):","Violation of Global Chat rules");if(reason===null)return;const duration=b.dataset.banDuration||$("banDuration").value;let banUntil=null;if(duration!=="permanent"){const hours={"1h":1,"6h":6,"12h":12,"1d":24,"3d":72,"7d":168,"30d":720}[duration];banUntil=Timestamp.fromDate(new Date(Date.now()+hours*60*60*1000))}await updateDoc(doc(db,"users",b.dataset.ban),{chatStatus:"banned",banned:true,banReason:reason.trim()||"Global Chat rules violation",bannedAt:serverTimestamp(),bannedBy:auth.currentUser.uid,banUntil});await load();toast(duration==="permanent"?"Member permanently banned.":"Member banned until "+banUntil.toDate().toLocaleString())}if(b.dataset.unban){if(!confirm("Unban this member from Global Chat?"))return;await updateDoc(doc(db,"users",b.dataset.unban),{chatStatus:"active",banned:false,banReason:null,bannedAt:null,bannedBy:null});await load();toast("Member unbanned.")}}catch(x){toast(x.message)}});
+document.querySelectorAll(".ban-options button").forEach(btn=>btn.onclick=()=>{window.__banDuration=btn.dataset.duration;document.querySelectorAll(".ban-options button").forEach(x=>x.classList.remove("selected"));btn.classList.add("selected")});
+$("closeBanModal").onclick=$("cancelBan").onclick=()=>{$("banModal").hidden=true};
+$("confirmBan").onclick=async()=>{const uid=window.__banTargetUid,duration=window.__banDuration;if(!uid||!duration)return toast("Select a ban duration.");let banUntil=null;if(duration!=="permanent"){const hours={"1h":1,"6h":6,"12h":12,"1d":24,"3d":72,"7d":168,"30d":720}[duration];banUntil=Timestamp.fromDate(new Date(Date.now()+hours*60*60*1000))}try{await updateDoc(doc(db,"users",uid),{chatStatus:"banned",banned:true,banReason:$("banReasonInput").value.trim()||"Global Chat rules violation",bannedAt:serverTimestamp(),bannedBy:auth.currentUser.uid,banUntil});$("banModal").hidden=true;await load();toast(duration==="permanent"?"Member permanently banned.":"Member banned until "+banUntil.toDate().toLocaleString())}catch(e){toast(e.message)}};
+$("addSponsoredAd")?.addEventListener("click",addSponsoredAd);
 $("logout").onclick=()=>signOut(auth);
-onAuthStateChanged(auth,async user=>{if(!user||user.email?.toLowerCase()!==ADMIN_EMAIL){location.replace("login.html");return}$("adminEmail").textContent=user.email;$("loading").remove();$("app").hidden=false;await load()});
+onAuthStateChanged(auth,async user=>{if(!user||user.email?.toLowerCase()!==ADMIN_EMAIL){location.replace("login.html");return}$("adminEmail").textContent=user.email;$("loading").remove();$("app").hidden=false;await load();await loadSponsoredAds()});
 </script></body></html>
