@@ -1,3 +1,9 @@
+
+## 🧪 Real Data / Demo Mode
+
+TUBAL HUB follows a **Real data only - no fake** rule by default. Empty states intentionally stay empty when there is no saved or connected content. For a buyer/demo preview, optional demo content is loaded only when the buyer explicitly clicks **Load Demo Content (labeled as demo)**. Demo entries carry a visible **[DEMO]** label and are not used as real activity.
+
+All empty states are intentional. Real journals, feeds, cart data, and connected content appear only when actual data exists in browser storage, Firebase, or repository-backed JSON data.
 # TUBAL HUB
 
 **Three Brands. One Hub.**
