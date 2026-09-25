@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin Login | TUBAL HUB</title><link rel="stylesheet" href="admin-neon.css"></head>
 <body class="auth-page"><main class="auth-wrap"><form class="auth-card" id="loginForm">
 <img src="../tubal-hub-logo.png" alt="TUBAL HUB"><div class="eyebrow">SECURE ACCESS</div><h1>TUBAL HUB <em>ADMIN</em></h1><p>Sign in with the authorized administrator account.</p>
-<label>Email<input id="email" type="email" autocomplete="username" value="tubalrr@gmail.com" required></label>
+<label>Email<input id="email" type="email" autocomplete="username" value="" required></label>
 <label>Password<input id="password" type="password" autocomplete="current-password" required></label>
 <button type="submit">SIGN IN <b>→</b></button>
 <button type="button" id="resetBtn" class="reset-btn">FORGOT PASSWORD?</button>
@@ -11,21 +11,26 @@
 <script type="module">
 import {auth} from "../assets/js/firebase-config.js";
 import {signInWithEmailAndPassword,onAuthStateChanged,sendPasswordResetEmail} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
-const ADMIN_EMAIL="tubalrr@gmail.com";
 const form=document.getElementById("loginForm");
 const emailInput=document.getElementById("email");
 const passwordInput=document.getElementById("password");
 const resetBtn=document.getElementById("resetBtn");
 const status=document.getElementById("status");
 
-onAuthStateChanged(auth,user=>{
-  if(user){
-    if((user.email||"").toLowerCase()===ADMIN_EMAIL){
+onAuthStateChanged(auth,async user=>{
+  if(!user)return;
+  try{
+    const token=await user.getIdTokenResult();
+    if(token.claims.admin===true){
       location.replace("admin.html");
     }else{
       status.textContent="This account is not authorized.";
       status.className="status error";
     }
+  }catch(error){
+    console.error("Admin claim check failed:",error);
+    status.textContent="Could not verify administrator access.";
+    status.className="status error";
   }
 });
 
@@ -35,7 +40,8 @@ form.addEventListener("submit",async e=>{
   status.className="status";
   try{
     const c=await signInWithEmailAndPassword(auth,emailInput.value.trim(),passwordInput.value);
-    if((c.user.email||"").toLowerCase()!==ADMIN_EMAIL){
+    const token=await c.user.getIdTokenResult(true);
+    if(token.claims.admin!==true){
       await auth.signOut();
       throw new Error("This account is not authorized.");
     }
@@ -58,16 +64,11 @@ resetBtn.addEventListener("click",async()=>{
     status.className="status error";
     return;
   }
-  if(email.toLowerCase()!==ADMIN_EMAIL){
-    status.textContent="Password reset is only available for the authorized admin email.";
-    status.className="status error";
-    return;
-  }
   status.textContent="Sending password reset email…";
   status.className="status";
   try{
     await sendPasswordResetEmail(auth,email);
-    status.textContent="Password reset email sent. Check the inbox for tubalrr@gmail.com.";
+    status.textContent="Password reset email sent. Check the inbox for that address.";
     status.className="status success";
     passwordInput.value="";
   }catch(err){
