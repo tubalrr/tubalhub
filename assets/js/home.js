@@ -297,8 +297,22 @@ function initSponsorMotionReal(){
   style.textContent=".tubal-sponsor-card-real{position:relative;transform:translateZ(0);transition:transform .35s ease,box-shadow .35s ease}.tubal-sponsor-card-real:hover{transform:translateY(-3px) scale(1.008);box-shadow:0 14px 40px rgba(238,77,45,.18)}.tubal-sponsor-visual-real{position:relative;isolation:isolate;overflow:hidden}.tubal-sponsor-visual-real:after{content:\"\";position:absolute;inset:-20% -60%;background:linear-gradient(105deg,transparent 35%,rgba(255,255,255,.28) 50%,transparent 65%);transform:translateX(-45%);animation:tubalSponsorShine 3.8s ease-in-out infinite;pointer-events:none}.tubal-sponsor-fallback-real{animation:tubalSponsorPulse 2.8s ease-in-out infinite}.tubal-sponsor-badge-real{animation:tubalSponsorFloat 2.2s ease-in-out infinite}@keyframes tubalSponsorShine{0%,55%{transform:translateX(-55%)}100%{transform:translateX(55%)}}@keyframes tubalSponsorPulse{0%,100%{filter:saturate(1);transform:scale(1)}50%{filter:saturate(1.12);transform:scale(1.012)}}@keyframes tubalSponsorFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}@media(prefers-reduced-motion:reduce){.tubal-sponsor-card-real,.tubal-sponsor-visual-real:after,.tubal-sponsor-fallback-real,.tubal-sponsor-badge-real{animation:none!important;transition:none!important}}";
   document.head.appendChild(style);
 }
+function initSponsorClickGuardReal(){
+  if(window.__tubalSponsorClickGuardReal)return;
+  window.__tubalSponsorClickGuardReal=true;
+  document.addEventListener("click",event=>{
+    const link=event.target?.closest?.(".tubal-sponsor-card-real");
+    if(!link)return;
+    const url=String(link.getAttribute("href")||"").trim();
+    if(!/^https?:\/\//i.test(url))return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    window.location.assign(url);
+  },true);
+}
 function initSponsoredReal(){
   initSponsorMotionReal();
+  initSponsorClickGuardReal();
   const slots=[
     {container:"sponsoredContainerReal",content:"sponsoredContentReal",status:"sponsoredStatusReal",slot:1},
     {container:"sponsoredContainerReal2",content:"sponsoredContentReal2",status:"sponsoredStatusReal2",slot:2}
