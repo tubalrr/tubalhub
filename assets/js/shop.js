@@ -34,7 +34,7 @@ let realProducts=[];
 let realProductsUnsubscribe=null;
 const parseProductPrice=v=>{const n=Number(String(v??"").replace(/[^0-9.]/g,""));return Number.isFinite(n)?n:0};
 const normalizeRealProduct=x=>({id:"real-"+x.id,firestoreId:x.id,real:true,collection:"th",title:String(x.name||"Unnamed Product"),price:parseProductPrice(x.price),priceLabel:String(x.price||"Free"),original:0,originalLabel:"",image:String(x.imageUrl||"").trim(),seller:"TUBAL HUB Shop",sellerInitials:"TH",online:false,stock:null,rating:null,badge:String(x.badge||"").trim(),description:String(x.description||""),details:String(x.description||""),sizes:[],colors:[],productUrl:String(x.productUrl||"").trim(),category:String(x.category||"products"),productType:String(x.productType||"physical"),version:String(x.version||"1.0.0"),releaseDate:String(x.releaseDate||""),license:String(x.license||""),upgradePrice:String(x.upgradePrice||"Free"),latestVersion:String(x.latestVersion||x.version||"1.0.0"),downloadUrl:String(x.downloadUrl||""),includes:String(x.includes||""),changelog:String(x.changelog||"")});
-function listenToRealProducts(){if(realProductsUnsubscribe)realProductsUnsubscribe();realProductsUnsubscribe=onSnapshot(collection(db,"products"),snap=>{realProducts=snap.docs.map(d=>normalizeRealProduct({id:d.id,...d.data()}));renderProducts();updateCounts()},e=>console.warn("[TUBAL HUB Shop] real products listener failed",e))}
+function listenToRealProducts(){if(realProductsUnsubscribe)realProductsUnsubscribe();realProductsUnsubscribe=onSnapshot(collection(db,"products"),snap=>{realProducts=snap.docs.map(d=>normalizeRealProduct({id:d.id,...d.data()}));renderProducts();updateCounts();renderMyProducts()},e=>console.warn("[TUBAL HUB Shop] real products listener failed",e))}
 
 const products=[
   {id:"th-hoodie",collection:"th",title:"TH Signature Hoodie",price:1790,original:2290,image:IMG.hoodie,seller:"Rr Studio",sellerInitials:"Rr",online:true,stock:5,rating:4.8,badge:"NEW",description:"Premium-weight community hoodie with a clean TUBAL HUB finish.",details:"Soft-touch hoodie silhouette, relaxed fit, everyday community wear.",sizes:["S","M","L","XL"],colors:["Black","Forest","Stone"]},
@@ -335,24 +335,56 @@ function closeCart(){els.cartDrawer.classList.remove("open");els.cartDrawer.setA
 function shopNow(){document.getElementById("catalog").scrollIntoView({behavior:"smooth",block:"start"});burstAt(document.getElementById("heroShopNow"),6)}
 function galleryFor(p){return [p.image,galleryPool[(products.indexOf(p)+1)%galleryPool.length],galleryPool[(products.indexOf(p)+2)%galleryPool.length],galleryPool[(products.indexOf(p)+3)%galleryPool.length]]}
 
+function renderMyProducts(){
+  if(!els.myProductsSection)return;
+  const user=auth.currentUser;
+  if(!user||user.isAnonymous){els.myProductsSection.hidden=true;return}
+  els.myProductsSection.hidden=false;
+  els.myProductsStatus.textContent=ownedLicenses.length?ownedLicenses.length+" owned product"+(ownedLicenses.length===1?"":"s"):"No digital licenses yet";
+  els.myProductsGrid.innerHTML=ownedLicenses.map(l=>{const p=productById(l.productId);if(!p)return"";const latest=p.latestVersion||p.version||l.ownedVersion;const upgrade=latest!==l.ownedVersion;const history=upgradeHistory.filter(x=>x.productId===l.productId);return '<article class="owned-product-card"><div><b>'+esc(p.title)+'</b><span>Owned Version: v'+esc(l.ownedVersion)+'</span><span>License: '+esc(l.licenseType||p.license||"Standard")+'</span><span>Latest Version: v'+esc(latest)+'</span><div class="upgrade-history"><b>Purchase History</b><span>v'+esc(l.ownedVersion)+' → Purchased</span>'+history.map(x=>'<span>v'+esc(x.toVersion||"—")+' → Upgraded</span>').join("")+'</div></div><div class="owned-product-actions">'+(l.downloadUrl?'<a class="add-btn" href="'+esc(l.downloadUrl)+'" target="_blank" rel="noopener noreferrer">Download</a>':"")+(upgrade?'<button class="buy-now-btn" data-upgrade="'+esc(p.id)+'" type="button">Upgrade</button>':'<span class="owned-current">Up to date</span>')+'</div></article>'}).join("")||'<div class="shop-empty">No digital products owned yet.</div>';
+}
+function listenToOwnedProducts(user){
+  if(licenseUnsubscribe){licenseUnsubscribe();licenseUnsubscribe=null}
+  if(upgradeUnsubscribe){upgradeUnsubscribe();upgradeUnsubscribe=null}
+  ownedLicenses=[];upgradeHistory=[];
+  if(!user||user.isAnonymous){renderMyProducts();return}
+  const q=query(collection(db,"licenses"),where("uid","==",user.uid));
+  const uq=query(collection(db,"upgrades"),where("uid","==",user.uid));
+  licenseUnsubscribe=onSnapshot(q,snap=>{ownedLicenses=snap.docs.map(d=>({id:d.id,...d.data()}));renderMyProducts()},e=>{console.warn("[TUBAL HUB Shop] license listener failed",e);renderMyProducts()});
+  upgradeUnsubscribe=onSnapshot(uq,snap=>{upgradeHistory=snap.docs.map(d=>({id:d.id,...d.data()}));renderMyProducts()},e=>console.warn("[TUBAL HUB Shop] upgrade history listener failed",e));
+}
+
 function openQuick(id){
   const p=productById(id);if(!p)return;
-  state.current=p;state.quickQty=1;state.selectedSize=p.sizes[0]||"";state.selectedColor=p.colors[0]||"";
-  els.quickBadge.textContent=p.badge;
+  state.current=p;state.quickQty=1;state.selectedSize=(p.sizes||[])[0]||"";state.selectedColor=(p.colors||[])[0]||"";
+  els.quickBadge.textContent=p.badge||"";
   els.quickTitle.textContent=p.title;
   els.quickShop.innerHTML=brandMarkHtml(p.collection,true)+'<span>'+esc(p.seller)+'</span>';
-  els.quickPrice.textContent=money(p.price);
-  els.quickOriginal.textContent=money(p.original);
-  els.quickDescription.textContent=p.description;
-  els.quickStock.textContent=p.stock+" left";
-  els.quickDetails.textContent=p.details;
+  els.quickPrice.textContent=p.real?String(p.priceLabel||"Free"):money(p.price);
+  els.quickOriginal.textContent=p.real?"":money(p.original);
+  els.quickDescription.textContent=p.description||"";
+  const digital=p.real&&p.productType!=="physical";
+  els.quickDigitalMeta.hidden=!digital;
+  els.quickIncludes.hidden=!(digital&&p.includes);
+  if(digital){els.quickVersion.textContent=p.version||"—";els.quickLicense.textContent=p.license||"—";els.quickRelease.textContent=p.releaseDate||"—";els.quickIncludesText.textContent=p.includes||""}
+  els.quickStock.textContent=p.stock!=null?p.stock+" left":digital?"Digital delivery":"Available";
+  els.quickDetails.textContent=p.details||p.changelog||"";
   els.quickQty.textContent="1";
-  const imgs=galleryFor(p);
-  els.quickImage.src=imgs[0];
+  const imgs=p.image?[p.image]:galleryFor(p).filter(Boolean);
+  els.quickImage.src=imgs[0]||"";
   els.quickImage.alt=p.title;
   els.quickThumbs.innerHTML=imgs.map((src,i)=>'<button class="'+(i===0?"active":"")+'" data-thumb="'+i+'" type="button"><img src="'+esc(src)+'" alt=""></button>').join("");
-  els.quickSizes.innerHTML=p.sizes.map((v,i)=>'<button class="'+(i===0?"active":"")+'" data-size="'+esc(v)+'" type="button">'+esc(v)+'</button>').join("");
-  els.quickColors.innerHTML=p.colors.map((v,i)=>'<button class="'+(i===0?"active":"")+'" data-color="'+esc(v)+'" type="button">'+esc(v)+'</button>').join("");
+  els.quickSizes.innerHTML=(p.sizes||[]).map((v,i)=>'<button class="'+(i===0?"active":"")+'" data-size="'+esc(v)+'" type="button">'+esc(v)+'</button>').join("");
+  els.quickColors.innerHTML=(p.colors||[]).map((v,i)=>'<button class="'+(i===0?"active":"")+'" data-color="'+esc(v)+'" type="button">'+esc(v)+'</button>').join("");
+  const owned=digital?licenseForProduct(p.firestoreId):null;
+  const upgrade=owned&&p.latestVersion&&owned.ownedVersion!==p.latestVersion;
+  els.quickDownload.hidden=!(digital&&owned&&p.downloadUrl);
+  if(digital&&owned&&p.downloadUrl)els.quickDownload.href=p.downloadUrl;
+  els.quickUpgrade.hidden=!upgrade;
+  els.quickAdd.hidden=digital;
+  els.quickBuy.hidden=false;
+  els.quickQtyWrap.hidden=digital;
+  els.quickBuy.textContent=digital?(owned?"Upgrade / Buy":"Buy Now"):"Buy Now";
   els.quickLayer.hidden=false;
   requestAnimationFrame(()=>els.quickLayer.classList.add("is-open"));
 }
@@ -530,7 +562,7 @@ document.getElementById("placeOrderBtn").addEventListener("click",async()=>{
   const physicalItems=state.cart.map(x=>({row:x,p:productById(x.id)})).filter(x=>!x.p?.real||x.p.productType==="physical");
   if(digitalItems.length&&physicalItems.length){notify("Digital and physical products must be purchased separately.");return}
   try{
-    const orderRef=await addDoc(collection(db,"orders"),{uid:user.uid,items:state.cart.map(x=>{const p=productById(x.id);return {productId:p.firestoreId||p.id,title:p.title,qty:x.qty,price:p.priceLabel||p.price,productType:p.productType||"physical",version:p.version||null}}),total:orderTotal,paymentMethod:method,status:"paid",createdAt:serverTimestamp()});
+    const orderRef=await addDoc(collection(db,"orders"),{uid:user.uid,items:state.cart.map(x=>{const p=productById(x.id);return {productId:p.firestoreId||p.id,title:p.title,qty:x.qty,price:p.priceLabel||p.price,productType:p.productType||"physical",version:p.version||null}}),total:orderTotal,paymentMethod:method,status:"placed",createdAt:serverTimestamp()});
     if(digitalItems.length){
       for(const {row,p} of digitalItems){
         const licenseType=p.license||"Standard";
