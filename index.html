@@ -9,6 +9,14 @@
 <link rel="alternate" type="application/json" href="version.json" data-tubal-version-json>
 <title>TUBAL HUB — Three Brands. One Hub.</title>
 <link rel="icon" type="image/png" href="tubal-hub-logo.png">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+window.TUBAL_EMAILJS_CONFIG = Object.freeze({
+  publicKey: "",
+  serviceId: "tubalhub_service_real",
+  templateId: "tubalhub_update_template"
+});
+</script>
 <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://cdn.simpleicons.org" crossorigin>
 <link rel="stylesheet" href="assets/css/style.css?v=1.2.10">
@@ -25,6 +33,66 @@
 .hub-home .search-box .search-shortcut{position:relative!important;z-index:3!important}
 .th-search-input{display:block!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important}
 .th-search-input-row{position:relative;z-index:2}
+.footer-subscribe-real{
+  margin:16px 0 0;
+  padding:16px;
+  border:1px solid rgba(29,255,145,.15);
+  border-radius:20px;
+  background:rgba(0,0,0,.30);
+  box-shadow:inset 0 1px rgba(255,255,255,.03);
+}
+.footer-subscribe-head-real{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+}
+.footer-subscribe-head-real b{display:block;color:#f0fff7;font-size:12px;font-weight:800}
+.footer-subscribe-head-real p{margin:4px 0 10px;color:rgba(255,255,255,.58);font-size:11px}
+.footer-subscribe-kicker{display:block;margin-bottom:5px;color:#1dff91;font-size:9px;letter-spacing:1.6px;font-weight:800}
+.footer-subscribe-status-real{
+  flex:0 0 auto;
+  padding:4px 7px;
+  border:1px solid rgba(120,255,170,.16);
+  border-radius:999px;
+  color:rgba(255,255,255,.46);
+  font-size:8px;
+  font-weight:800;
+  letter-spacing:1px;
+}
+.footer-subscribe-status-real.is-ready{color:#1dff91;border-color:rgba(29,255,145,.34);background:rgba(29,255,145,.07)}
+.footer-subscribe-status-real.is-error{color:#ff9f9f;border-color:rgba(255,95,95,.28);background:rgba(255,95,95,.06)}
+.footer-subscribe-fields-real{display:flex;gap:8px;flex-wrap:wrap}
+.footer-subscribe-fields-real input{
+  flex:1;min-width:180px;
+  background:rgba(0,0,0,.40)!important;
+  border:1px solid rgba(120,255,170,.15)!important;
+  border-radius:12px!important;
+  padding:10px 14px!important;
+  color:#fff!important;font-size:12px!important;
+  outline:0!important;
+}
+.footer-subscribe-fields-real input:focus{border-color:rgba(29,255,145,.38)!important;box-shadow:0 0 0 3px rgba(29,255,145,.05)!important}
+.footer-subscribe-fields-real button{
+  background:linear-gradient(135deg,#1dff91,#7d5aff);
+  border:0;padding:10px 18px;border-radius:12px;
+  font-weight:800;color:#020604;cursor:pointer;
+}
+.footer-subscribe-fields-real button:disabled{opacity:.65;cursor:not-allowed}
+.footer-consent-real{display:flex;gap:8px;align-items:flex-start;margin-top:9px;color:rgba(255,255,255,.48);font-size:9px;line-height:1.45;cursor:pointer}
+.footer-consent-real input{margin-top:1px;accent-color:#1dff91}
+.footer-subscribe-meta-real{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:9px}
+.footer-subscribe-meta-real small{font-size:9px;line-height:1.45;color:rgba(255,255,255,.42)}
+.footer-subscribe-meta-real button{
+  flex:0 0 auto;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.04);color:rgba(255,255,255,.58);
+  border-radius:999px;padding:5px 8px;font-size:9px;cursor:pointer;
+}
+@media(max-width:600px){
+  .footer-subscribe-head-real{display:block}
+  .footer-subscribe-status-real{display:inline-flex;margin-top:8px}
+  .footer-subscribe-fields-real input,.footer-subscribe-fields-real button{width:100%;min-width:0;flex:1 1 100%}
+  .footer-subscribe-meta-real{align-items:flex-start;flex-direction:column}
+}
 </style>    <script id="tubalHomeCssReload">
 (function(){
   var css=document.querySelector('link[data-tubal-home-css],link[href*="home.css"]');
@@ -355,6 +423,31 @@
         <div class="bento-footer-row bento-footer-row-2">
           <section class="footer-service-column footer-status-panel"><h3>Site Status</h3><div class="footer-service-note">Current TUBAL HUB project status and real website access.</div><div class="footer-site-status-grid"><span><b>REAL</b>Project links</span><span><b>LOCAL</b>Browser data</span><span><b>LIVE</b>Website access</span><span class="verification-qr" id="footerQrCode" aria-label="TUBAL HUB website QR code"></span></div></section>
         </div>
+
+        <section id="subscribeUpdateReal" class="footer-subscribe-real" aria-labelledby="subscribeUpdateTitleReal">
+          <div class="footer-subscribe-head-real">
+            <div>
+              <span class="footer-subscribe-kicker">SYSTEM UPDATES</span>
+              <b id="subscribeUpdateTitleReal">📧 Get System Updates sa Gmail mo</b>
+              <p>Mag-sign up gamit ang sarili mong Gmail para makatanggap ng real TUBAL HUB release updates.</p>
+            </div>
+            <span id="notifySubscribeStatusReal" class="footer-subscribe-status-real" aria-live="polite">LOCAL</span>
+          </div>
+          <div class="footer-subscribe-fields-real">
+            <input id="notifyEmailReal" type="email" inputmode="email" autocomplete="email" placeholder="Gmail mo" aria-label="Gmail address">
+            <input id="notifyPhoneReal" type="tel" inputmode="tel" autocomplete="tel" placeholder="Phone # (optional)" aria-label="Phone number (optional)">
+            <button id="subscribeNotifyRealBtn" type="button">Subscribe Real</button>
+          </div>
+          <label class="footer-consent-real">
+            <input id="notifyConsentReal" type="checkbox">
+            <span>Pinapayagan ko ang TUBAL HUB na gamitin ang email na ito para sa system-update notifications. Consent is optional and can be removed from this browser.</span>
+          </label>
+          <div class="footer-subscribe-meta-real">
+            <small>Current release: <b id="notifyCurrentVersionReal">v1.2.10</b> • Saved locally in this browser • Email delivery uses EmailJS only when the owner has configured a real service/public key.</small>
+            <button id="unsubscribeNotifyRealBtn" type="button">Unsubscribe</button>
+          </div>
+        </section>
+
         <div class="bento-footer-row bento-footer-row-3">
           <div class="footer-country"><span class="footer-ph-circle" aria-label="Philippines">🇵🇭</span><span>Philippines</span></div>
           <div class="footer-follow"><strong>Follow Us</strong><div class="footer-follow-icons"><a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" aria-label="Facebook">ⓕ</a><a href="https://www.linkedin.com/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">in</a><a href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer" aria-label="YouTube">▶</a><a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">◎</a><a href="https://twitter.com/" target="_blank" rel="noopener noreferrer" aria-label="Twitter">𝕏</a><a href="https://www.tiktok.com/" target="_blank" rel="noopener noreferrer" aria-label="TikTok">♪</a></div></div>
