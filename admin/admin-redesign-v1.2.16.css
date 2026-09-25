@@ -29,11 +29,11 @@ body:before,body:after{display:none!important}
   margin:0 0 18px!important;border-bottom:1px solid #222!important;text-decoration:none!important;
 }
 .brand-mark{
-  width:32px!important;height:32px!important;flex:0 0 32px!important;display:grid!important;place-items:center!important;
-  border-radius:8px!important;background:#fff!important;color:#111!important;font-size:0!important;font-weight:800!important;
-  box-shadow:none!important;position:relative!important;overflow:hidden!important;
+  width:48px!important;height:48px!important;flex:0 0 48px!important;display:grid!important;place-items:center!important;
+  border-radius:10px!important;background:transparent!important;color:#fff!important;font-size:0!important;font-weight:800!important;
+  box-shadow:none!important;position:relative!important;overflow:visible!important;
 }
-.brand-mark img{width:100%!important;height:100%!important;object-fit:contain!important;display:block!important;position:relative!important;z-index:2!important}.brand-mark:after{
+.brand-mark img{width:48px!important;height:48px!important;max-width:48px!important;max-height:48px!important;object-fit:contain!important;display:block!important;position:relative!important;z-index:2!important;border:0!important;background:transparent!important;opacity:1!important;visibility:visible!important}.brand-mark:after{
   content:"";position:absolute;inset:-60%;background:linear-gradient(115deg,transparent 43%,rgba(255,255,255,.75) 50%,transparent 57%);
   transform:translateX(-70%) rotate(8deg);animation:logoShine 5s ease-in-out infinite;
 }
