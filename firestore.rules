@@ -229,8 +229,25 @@ service cloud.firestore {
           || request.auth.uid in resource.data.participants
         );
 
-      // Private text messages are written by sendPrivateMessageReal (Admin SDK).
-      allow create: if false;
+      // Preferred path is sendPrivateMessageReal (Admin SDK). This secure
+      // fallback keeps DMs working if the callable Function is temporarily
+      // unavailable, while preventing users from impersonating another sender.
+      allow create: if realUser()
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.senderId == request.auth.uid
+        && request.resource.data.receiverId is string
+        && request.resource.data.receiverId != request.auth.uid
+        && request.resource.data.participants is list
+        && request.resource.data.participants.size() == 2
+        && request.resource.data.participants[0] == request.auth.uid
+        && request.resource.data.participants[1] == request.resource.data.receiverId
+        && request.resource.data.type == 'text'
+        && request.resource.data.text is string
+        && request.resource.data.text.size() > 0
+        && request.resource.data.text.size() <= 500
+        && !('isAdmin' in request.resource.data)
+        && !('roleReal' in request.resource.data)
+        && !('moderatedBy' in request.resource.data);
 
       // No client-side content edits. Delete remains available to the sender/admin.
       allow update: if adminUser();
