@@ -1,3 +1,8 @@
+/* REAL SEARCH TEST CHECKLIST
+   TEST: type "valorant" → should show VALORANT with its real logo → Enter → pages/ctrlzone.html?game=valorant
+   TEST mobile: open search, type "valorant", tap the real result
+   REAL SOURCES: localStorage journals/feeds + /data/games.json + live Firestore content
+*/
 /* TUBAL HUB — Global Spotlight Search
    UI is independent of Firebase so the command palette never opens blank.
    Live Firestore content is loaded opportunistically after the UI is ready.
@@ -31,7 +36,7 @@ function ensureUi(){
       '<section class="th-search-modal" id="thSearchModal" role="dialog" aria-modal="true" aria-label="Global Search">'+
         '<div class="th-search-input-row">'+
           '<span class="th-search-input-icon" aria-hidden="true">⌕</span>'+
-          '<input class="th-search-input" id="thGlobalSearchInput" autocomplete="off" spellcheck="false" placeholder="Search TUBAL HUB..." aria-label="Search TUBAL HUB">'+
+          '<input class="th-search-input" id="thGlobalSearchInput" autocomplete="off" spellcheck="false" placeholder="Search games, journals, shop... real data" aria-label="Search TUBAL HUB">'+
           '<kbd class="th-search-esc">ESC</kbd>'+
           '<button class="th-search-clear" id="thSearchClear" type="button" aria-label="Clear search">×</button>'+
         '</div>'+
@@ -100,38 +105,166 @@ function shortcutData(){
   ];
 }
 
+function getRealJournals(){
+  const keys=["tubalhub_journals_real","tubalhub_journal"];
+  for(const key of keys){
+    try{
+      const raw=localStorage.getItem(key);
+      if(raw===null)continue;
+      const parsed=raw?JSON.parse(raw):[];
+      if(Array.isArray(parsed))return parsed;
+    }catch(_){}
+  }
+  return [];
+}
+
+function getRealFeeds(){
+  try{
+    const raw=localStorage.getItem("tubalhub_feeds");
+    const parsed=raw?JSON.parse(raw):[];
+    return Array.isArray(parsed)?parsed:[];
+  }catch(_){return []}
+}
+
+async function getRealGamesWithLogo(){
+  try{
+    const res=await fetch("data/games.json?v=1.2.10&t="+Date.now(),{cache:"no-store"});
+    if(!res.ok)throw new Error("games "+res.status);
+    const parsed=await res.json();
+    const rows=Array.isArray(parsed)?parsed:(Array.isArray(parsed?.games)?parsed.games:[]);
+    return rows.filter(game=>game&&game.idReal&&game.titleReal&&game.logoReal).map(game=>({
+      kind:"games",
+      id:String(game.idReal||game.id),
+      title:String(game.titleReal||game.title).trim(),
+      meta:[game.genre||"",game.devReal||game.dev||"CTRLZONE"].filter(Boolean).join(" · "),
+      image:String(game.logoReal||game.logo||"").trim(),
+      url:String(game.linkReal||("pages/ctrlzone.html?game="+encodeURIComponent(game.idReal||game.id)))
+    })).filter(game=>game.title&&game.image);
+  }catch(_){
+    return [];
+  }
+}
+
 async function loadLiveData(){
   const now=Date.now();
   if(cache&&now-cacheAt<60000)return cache;
-  const out={people:[],posts:[],products:[],games:[],events:[]};
+
+  const out={
+    people:[],
+    posts:[],
+    products:[],
+    games:[],
+    events:[]
+  };
+
+  // Local browser data is always considered real site data.
+  getRealJournals().forEach((entry,index)=>{
+    const title=String(entry?.titleReal||entry?.title||"").trim();
+    const content=String(entry?.contentReal||entry?.text||entry?.content||entry?.body||"").trim();
+    if(!title&&!content)return;
+    out.posts.push({
+      kind:"posts",
+      id:"journal-"+String(entry?.idReal||entry?.id||index),
+      title:title||content.slice(0,80),
+      author:"Payapang Isip",
+      meta:"Journal",
+      createdAt:new Date(entry?.createdAtReal||entry?.createdAt||0).getTime()||0,
+      url:"pages/payapang-isip.html"
+    });
+  });
+
+  getRealFeeds().forEach((entry,index)=>{
+    const title=String(entry?.titleReal||"").trim();
+    const text=String(entry?.textReal||entry?.text||entry?.contentReal||"").trim();
+    if(!title&&!text)return;
+    out.posts.push({
+      kind:"posts",
+      id:"feed-"+String(entry?.idReal||entry?.id||index),
+      title:title||text.slice(0,80),
+      author:String(entry?.userReal||entry?.author||"Member").trim()||"Member",
+      meta:"Community Feed",
+      image:String(entry?.imageReal||entry?.image||"").trim(),
+      createdAt:new Date(entry?.createdAtReal||entry?.createdAt||0).getTime()||0,
+      url:"pages/feeds.html"
+    });
+  });
+
   try{
     const cfg=await import("./firebase-config.js");
     const fs=await import("https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js");
     const db=fs.getFirestore(cfg.app);
-    const get=async(name,n)=>{try{return(await fs.getDocs(fs.query(fs.collection(db,name),fs.limit(n)))).docs}catch(_){return[]}};
-    const [users,hub,products,presence]=await Promise.all([get("users",100),get("hubPosts",200),get("products",100),get("presence",100)]);
-    const pmap=new Map(presence.map(d=>{const x=d.data();return[String(x.uid||d.id),x]}));
+    const get=async(name,n)=>{
+      try{return (await fs.getDocs(fs.query(fs.collection(db,name),fs.limit(n)))).docs}
+      catch(_){return []}
+    };
+    const [users,hub,products,presence]=await Promise.all([
+      get("users",100),
+      get("hubPosts",200),
+      get("products",100),
+      get("presence",100)
+    ]);
+
+    const pmap=new Map(presence.map(d=>{
+      const x=d.data();
+      return [String(x.uid||d.id),x];
+    }));
+
     out.people=users.map(d=>{
       const x=d.data(),p=pmap.get(String(x.uid||d.id));
-      return {kind:"people",id:d.id,title:x.displayName||x.name||"Member",meta:x.username?"@"+x.username:"Member",photo:x.photoURL||"",online:!!p?.online,url:"pages/profiles.html"};
+      return {
+        kind:"people",
+        id:d.id,
+        title:x.displayName||x.name||"Member",
+        meta:x.username?"@"+x.username:"Member",
+        photo:x.photoURL||"",
+        online:!!p?.online,
+        url:"pages/profiles.html"
+      };
     });
+
     hub.forEach(d=>{
       const x=d.data(),type=norm(x.contentType),dest=Array.isArray(x.destinations)?x.destinations.map(norm):[];
-      const title=String(x.title||x.text||"").trim();if(!title)return;
-      const base={id:d.id,title,author:x.authorName||"Member",image:x.imageUrl||x.image||"",createdAt:x.createdAt?.toMillis?.()||x.createdAt?.seconds*1000||0};
-      if(type==="post"&&(dest.length===0||dest.includes("feeds")))out.posts.push({...base,kind:"posts",meta:"by "+base.author,url:"pages/feeds.html"});
-      if(type==="game"&&(dest.length===0||dest.includes("games")))out.games.push({...base,kind:"games",meta:"CTRLZONE",url:"pages/ctrlzone.html"});
-      if(type==="event"&&(dest.length===0||dest.includes("events")))out.events.push({...base,kind:"events",meta:"Events",url:"pages/events.html"});
-      if(type==="news")out.posts.push({...base,kind:"posts",meta:"News · "+base.author,url:"pages/news.html"});
+      const title=String(x.title||x.text||"").trim();
+      if(!title)return;
+      const base={
+        id:d.id,
+        title,
+        author:x.authorName||"Member",
+        image:x.imageUrl||x.image||"",
+        createdAt:x.createdAt?.toMillis?.()||x.createdAt?.seconds*1000||0
+      };
+      if(type==="post"&&(dest.length===0||dest.includes("feeds"))){
+        out.posts.push({...base,kind:"posts",meta:"by "+base.author,url:"pages/feeds.html"});
+      }
+      if(type==="event"&&(dest.length===0||dest.includes("events"))){
+        out.events.push({...base,kind:"events",meta:"Events",url:"pages/events.html"});
+      }
+      if(type==="news"){
+        out.posts.push({...base,kind:"posts",meta:"News · "+base.author,url:"pages/news.html"});
+      }
     });
+
     out.products=products.map(d=>{
       const x=d.data();
-      return {id:d.id,title:String(x.name||x.title||"").trim(),price:x.price??"",shop:x.shopName||x.category||"Shop",image:x.imageUrl||x.image||"",kind:"products",url:"pages/shop.html"};
+      return {
+        id:d.id,
+        title:String(x.name||x.title||"").trim(),
+        price:x.price??"",
+        shop:x.shopName||x.category||"Shop",
+        image:x.imageUrl||x.image||"",
+        kind:"products",
+        url:"pages/shop.html"
+      };
     }).filter(x=>x.title);
   }catch(_){}
-  cache=out;cacheAt=now;return out;
-}
 
+  // Real repository catalog; no fake game rows are generated.
+  out.games=await getRealGamesWithLogo();
+
+  cache=out;
+  cacheAt=now;
+  return out;
+}
 function score(x,q){
   const terms=norm(q).split(/\s+/).filter(Boolean);
   const hay=norm([x.title,x.name,x.handle,x.author,x.shop,x.meta].join(" "));
@@ -242,6 +375,7 @@ function init(){
   topInput=document.querySelector(".search-box input");
   const box=document.querySelector(".search-box");
   if(topInput){
+    topInput.id="searchInputReal";
     topInput.removeAttribute("readonly");
     topInput.removeAttribute("tabindex");
     topInput.addEventListener("input",()=>{
