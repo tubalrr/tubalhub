@@ -181,3 +181,29 @@ body:after{display:none!important}#sidebarToggle{position:fixed!important;z-inde
     margin-right:0!important;
   }
 }
+
+
+/* PRODUCTS LEFT / NEWS RIGHT */
+#shopProducts{
+  float:left!important;
+  width:58%!important;
+  max-width:none!important;
+  margin:0 0 15px!important;
+}
+#content{
+  float:right!important;
+  width:40%!important;
+  max-width:none!important;
+  margin:0 0 15px!important;
+}
+#content + .panel{
+  clear:both!important;
+}
+@media(max-width:950px){
+  #shopProducts,#content{
+    float:none!important;
+    display:block!important;
+    width:100%!important;
+    max-width:100%!important;
+  }
+}
