@@ -660,3 +660,6 @@ body.theme-light .payment-back:hover{
   .payment-back{min-height:34px;padding:0 10px}
   .payment-back span{font-size:9px}
 }
+
+/* Keep modal layers truly hidden until JavaScript opens them. */
+.quickview-layer[hidden],#checkoutLayer[hidden]{display:none!important}
