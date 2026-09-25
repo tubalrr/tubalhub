@@ -431,7 +431,7 @@ function renderChatSnapshotReal(snap, channelValue, sourceReal){
     docs.forEach(item=>messages.appendChild(renderMessage(item.id,item.data)));
   }
 
-  globalMessageCount.textContent=String(docs.length);
+  if(globalMessageCount)globalMessageCount.textContent=String(docs.length);
 
   document.querySelectorAll('.channel-count-real').forEach(el=>{
     if(el.dataset.channelCount===activeChannelReal)el.textContent=String(docs.length);
@@ -448,40 +448,21 @@ function subscribeMessages(){
   if(stopMessages)stopMessages();
   const channelValue=activeChannelReal==='general'?'global-chat':activeChannelReal;
 
+  // Use a single-field channel query so Global Chat does not depend on
+  // a Firestore composite index. Results are sorted client-side in
+  // renderChatSnapshotReal() and capped to the latest 100 real messages.
   const qReal=query(
     collection(db,'globalChats'),
-    where('channel','==',channelValue),
-    where('createdAt','!=',null),
-    orderBy('createdAt','asc'),
-    limitToLast(100)
+    where('channel','==',channelValue)
   );
 
-  let fallbackUsed=false;
-
-  const attach=({queryValue,sourceReal})=>{
-    stopMessages=onSnapshot(queryValue,snap=>{
-      renderChatSnapshotReal(snap,channelValue,sourceReal);
-    },err=>{
-      console.error('[TUBAL HUB chat query]',sourceReal,err);
-
-      if(sourceReal==='indexed' && !fallbackUsed){
-        fallbackUsed=true;
-        if(stopMessages){stopMessages();stopMessages=null;}
-        setStatus('Index not ready • loading real messages with safe fallback…');
-        const qFallback=query(
-          collection(db,'globalChats'),
-          where('channel','==',channelValue)
-        );
-        attach({queryValue:qFallback,sourceReal:'fallback'});
-        return;
-      }
-
-      messages.innerHTML='<div class="empty-chat"><strong>Chat temporarily unavailable.</strong><span>Firestore could not load the real messages for this channel.</span></div>';
-      setStatus('Could not load this channel. Check Firebase access/rules.',true);
-    });
-  };
-
-  attach({queryValue:qReal,sourceReal:'indexed'});
+  stopMessages=onSnapshot(qReal,snap=>{
+    renderChatSnapshotReal(snap,channelValue,'realtime');
+  },err=>{
+    console.error('[TUBAL HUB chat query]',err);
+    messages.innerHTML='<div class="empty-chat"><strong>Chat temporarily unavailable.</strong><span>Firestore could not load the real messages for this channel.</span></div>';
+    setStatus('Could not load this channel. Check Firebase access/rules.',true);
+  });
 }
 function setActiveChannelReal(channel){
   const allowed=['general','payapang-isip','ctrlzone','shop-talk','announcements'];
