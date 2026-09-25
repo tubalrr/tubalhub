@@ -91,7 +91,14 @@
       <button class="payment-method" data-payment="paypal" type="button"><span class="payment-method-icon payment-brand-logos"><img src="https://cdn.simpleicons.org/paypal/003087" alt="PayPal"></span><span><b>PayPal</b><small>Pay with PayPal</small></span><i>✓</i></button>
     </div>
     <div class="payment-summary"><span>Total to pay</span><strong id="checkoutTotal">₱0</strong></div>
-    <div id="paymentFields" class="payment-fields"><label>Payment details<input id="paymentReference" type="text" inputmode="numeric" placeholder="Card ending or reference" autocomplete="off"></label></div>
+    <div id="paymentFields" class="payment-fields">
+<div class="payment-form-head"><b id="paymentFormTitle">Card details</b><span id="paymentFormBrand">VISA / MASTERCARD</span></div>
+<div class="payment-form-grid">
+<label class="payment-field-full">Cardholder name<input id="cardholderName" type="text" autocomplete="cc-name" placeholder="Full name"></label>
+<label class="payment-field-full">Card number<input id="cardNumber" type="text" inputmode="numeric" autocomplete="cc-number" maxlength="19" placeholder="1234 5678 9012 3456"></label>
+<label>Expiry date<input id="cardExpiry" type="text" inputmode="numeric" autocomplete="cc-exp" maxlength="5" placeholder="MM/YY"></label>
+<label>CVV<input id="cardCvv" type="password" inputmode="numeric" autocomplete="cc-csc" maxlength="4" placeholder="123"></label>
+</div></div>
     <div class="checkout-note">Demo checkout only. No real payment is processed or charged.</div>
     <button id="finishCheckout" class="gradient-btn checkout-confirm" type="button">Continue Payment →</button>
     <button id="closeCheckout" class="ghost-btn" type="button">Back to Shop</button>
