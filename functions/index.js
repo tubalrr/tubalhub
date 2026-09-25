@@ -4,7 +4,7 @@ const { onCall, HttpsError } = require("firebase-functions/v2/https");
 const { onDocumentCreated } = require("firebase-functions/v2/firestore");
 const { onSchedule } = require("firebase-functions/v2/scheduler");
 const { initializeApp } = require("firebase-admin/app");
-const { getFirestore, FieldValue } = require("firebase-admin/firestore");
+const { getFirestore, FieldValue, Timestamp } = require("firebase-admin/firestore");
 const { getStorage } = require("firebase-admin/storage");
 
 initializeApp();
@@ -1341,6 +1341,141 @@ exports.cleanupOldImagesReal = onSchedule("every 24 hours", async () => {
   });
 
   return null;
+});
+
+
+// Admin analytics: real Firestore activity only. No client-supplied counters.
+exports.getAdminAnalyticsReal = onCall(async request => {
+  requireAdminUser(request);
+
+  const now = new Date();
+  const end = new Date(now);
+  end.setHours(23, 59, 59, 999);
+  const start = new Date(end);
+  start.setDate(start.getDate() - 29);
+  start.setHours(0, 0, 0, 0);
+
+  const usersSnap = await db.collection("users").get();
+  const userMap = new Map();
+  const cohorts = [];
+  for (const snap of usersSnap.docs) {
+    const data = snap.data() || {};
+    const createdValue = data.createdAt || data.registeredAt || data.created_at;
+    const created = createdValue?.toDate ? createdValue.toDate() : new Date(createdValue || 0);
+    if (!Number.isNaN(created.getTime())) {
+      userMap.set(snap.id, {
+        uid: snap.id,
+        name: String(data.displayName || data.email || snap.id).slice(0, 120),
+        created
+      });
+      if (created >= start && created <= end) cohorts.push({uid: snap.id, created});
+    }
+  }
+
+  const messageCollections = ["globalChats", "messages"];
+  const allMessages = [];
+  for (const collectionName of messageCollections) {
+    const snap = await db.collection(collectionName)
+      .where("createdAt", ">=", Timestamp.fromDate(start))
+      .where("createdAt", "<=", Timestamp.fromDate(end))
+      .limit(50000)
+      .get();
+    for (const docSnap of snap.docs) {
+      const data = docSnap.data() || {};
+      const uid = String(data.uid || data.senderId || data.fromUid || "").trim();
+      const createdValue = data.createdAt;
+      const created = createdValue?.toDate ? createdValue.toDate() : new Date(createdValue || 0);
+      if (!uid || Number.isNaN(created.getTime())) continue;
+      allMessages.push({uid, created, collection: collectionName});
+    }
+  }
+
+  const dayKey = date => {
+    const d = new Date(date);
+    d.setHours(0, 0, 0, 0);
+    return d.toISOString().slice(0, 10);
+  };
+  const dayMap = new Map();
+  const activeByDay = new Map();
+  const hourly = Array.from({length: 24}, () => 0);
+  for (let i = 0; i < 30; i++) {
+    const d = new Date(start);
+    d.setDate(start.getDate() + i);
+    const key = dayKey(d);
+    dayMap.set(key, {date: key, newUsers: 0, messages: 0, activeUsers: 0});
+    activeByDay.set(key, new Set());
+  }
+
+  for (const user of userMap.values()) {
+    if (user.created >= start && user.created <= end) {
+      const key = dayKey(user.created);
+      if (dayMap.has(key)) dayMap.get(key).newUsers++;
+    }
+  }
+
+  const activeTotals = new Map();
+  for (const msg of allMessages) {
+    const key = dayKey(msg.created);
+    if (!dayMap.has(key)) continue;
+    dayMap.get(key).messages++;
+    activeByDay.get(key).add(msg.uid);
+    activeTotals.set(msg.uid, (activeTotals.get(msg.uid) || 0) + 1);
+    hourly[msg.created.getHours()]++;
+  }
+  for (const [key, set] of activeByDay) dayMap.get(key).activeUsers = set.size;
+
+  const sortedDays = Array.from(dayMap.values());
+  const todayKey = dayKey(now);
+  const todayActive = activeByDay.get(todayKey) || new Set();
+  const weekKeys = sortedDays.slice(-7).map(x => x.date);
+  const weekActive = new Set();
+  for (const key of weekKeys) for (const uid of (activeByDay.get(key) || [])) weekActive.add(uid);
+
+  const mostActiveUsers = Array.from(activeTotals.entries())
+    .sort((a,b) => b[1] - a[1])
+    .slice(0, 10)
+    .map(([uid, count]) => ({
+      uid,
+      name: userMap.get(uid)?.name || uid,
+      messages: count
+    }));
+
+  const retention = {d1: null, d7: null, d30: null};
+  for (const n of [1, 7, 30]) {
+    const eligible = cohorts.filter(c => {
+      const target = new Date(c.created);
+      target.setHours(0,0,0,0);
+      target.setDate(target.getDate() + n);
+      return target <= new Date(end.getFullYear(), end.getMonth(), end.getDate());
+    });
+    if (!eligible.length) continue;
+    let retained = 0;
+    for (const cohort of eligible) {
+      const target = new Date(cohort.created);
+      target.setHours(0,0,0,0);
+      target.setDate(target.getDate() + n);
+      const key = dayKey(target);
+      if ((activeByDay.get(key) || new Set()).has(cohort.uid)) retained++;
+    }
+    retention["d" + n] = {
+      eligible: eligible.length,
+      retained,
+      rate: Number(((retained / eligible.length) * 100).toFixed(1))
+    };
+  }
+
+  return {
+    generatedAt: new Date().toISOString(),
+    scope: "Firestore users + globalChats + messages; retention is message-based",
+    dau: todayActive.size,
+    wau: weekActive.size,
+    totalMessages30d: allMessages.length,
+    totalNewUsers30d: cohorts.length,
+    days: sortedDays,
+    hourly,
+    mostActiveUsers,
+    retention
+  };
 });
 
 logger.info("TUBAL HUB server moderation functions loaded.");
