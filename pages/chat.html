@@ -370,12 +370,17 @@ function subscribeReplies(){if(stopReplies)stopReplies();const q=query(collectio
 function subscribeMessages(){
   if(stopMessages)stopMessages();
   const channelValue=activeChannelReal==='general'?'global-chat':activeChannelReal;
-  const q=query(collection(db,'globalChats'),where('channel','==',channelValue),orderBy('createdAt','asc'),limit(100));
+  const q=query(collection(db,'globalChats'),where('channel','==',channelValue),limit(100));
   stopMessages=onSnapshot(q,snap=>{
     messages.innerHTML='<div class="chat-build-marker-real" id="chatBuildMarkerReal">Today</div>';
-    if(snap.empty)messages.innerHTML+='<div class="empty-chat"><strong>No messages in # '+esc(activeChannelReal)+'.</strong><span>This channel is empty until a real member posts here.</span></div>';
-    snap.forEach(d=>messages.appendChild(renderMessage(d.id,d.data())));
-    globalMessageCount.textContent=snap.size;
+    const docs=snap.docs.slice().sort((a,b)=>{
+      const ta=a.data()?.createdAt?.toMillis?.()||0;
+      const tb=b.data()?.createdAt?.toMillis?.()||0;
+      return ta-tb;
+    });
+    if(!docs.length)messages.innerHTML+='<div class="empty-chat"><strong>No messages in # '+esc(activeChannelReal)+'.</strong><span>This channel is empty until a real member posts here.</span></div>';
+    docs.forEach(d=>messages.appendChild(renderMessage(d.id,d.data())));
+    globalMessageCount.textContent=docs.length;
     document.querySelectorAll('.channel-count-real').forEach(el=>{
       if(el.dataset.channelCount===activeChannelReal)el.textContent=snap.size;
     });
