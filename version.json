@@ -1,44 +1,26 @@
 {
-  "version": "1.2.6",
-  "build": "2026-09-25_0940",
-  "releasedAtReal": "2026-09-25T09:40:00+08:00",
+  "version": "1.2.7",
+  "build": "2026-09-25_0952",
+  "releasedAtReal": "2026-09-25T09:52:00+08:00",
   "releasedByReal": "tubalrr",
   "updatesReal": [
     {
-      "typeReal": "FEAT",
-      "scopeReal": "System Update",
-      "detailReal": "May slide-in SYSTEM UPDATE container na lumalabas kapag may bagong deployed version at may real changelog.",
+      "typeReal": "BUILD",
+      "scopeReal": "Release",
+      "detailReal": "Na-publish ang bagong homepage build v1.2.7 para ma-detect ng open TUBAL HUB sessions ang latest deployed update.",
       "iconReal": "🚀"
     },
     {
-      "typeReal": "BUILD",
-      "scopeReal": "version.json",
-      "detailReal": "Pinalitan ang changelog structure para sa version, build, release time, author at typed real updates.",
-      "iconReal": "🔧"
-    },
-    {
       "typeReal": "FIX",
-      "scopeReal": "Homepage Data Paths",
-      "detailReal": "Inayos ang relative paths para sa data at local QR assets sa GitHub Pages /tubalhub deployment.",
+      "scopeReal": "Homepage",
+      "detailReal": "Kasama sa current deployed state ang real Payapang Isip data, real Featured Games logos, at fixed GitHub Pages asset paths.",
       "iconReal": "🛠️"
     },
     {
-      "typeReal": "FIX",
-      "scopeReal": "Payapang Isip",
-      "detailReal": "Featured card content ay kumukuha na ng actual page summary at section names mula sa Payapang Isip page.",
-      "iconReal": "🌿"
-    },
-    {
-      "typeReal": "UI",
-      "scopeReal": "Featured Games",
-      "detailReal": "Real game logos ang ginagamit sa Featured Games at initials lang ang fallback kapag walang logo file.",
-      "iconReal": "🎮"
-    },
-    {
-      "typeReal": "STYLE",
-      "scopeReal": "3-Dash Navigation",
-      "detailReal": "Pinanatili ang fixed top-left 3-dash menu at mas mataas na z-index para hindi maharangan ng update container.",
-      "iconReal": "☰"
+      "typeReal": "FEAT",
+      "scopeReal": "System Update",
+      "detailReal": "Active ang version.json changelog detector para maipakita ang bagong upload sa slide-in notification.",
+      "iconReal": "🔔"
     }
   ],
   "breakingReal": false
