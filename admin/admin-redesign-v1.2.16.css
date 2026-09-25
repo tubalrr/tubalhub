@@ -481,3 +481,21 @@ body:after{display:none!important}#sidebarToggle{position:fixed!important;z-inde
   #shopProducts .form-grid{grid-template-columns:1fr!important}
   #shopProducts .form-grid textarea,#shopProducts .form-grid #addShopProduct{grid-column:1!important}
 }
+
+
+/* PRODUCTS LIST — internal scrollbar so long product lists stay usable */
+#shopProductList{
+  max-height:420px!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  padding:2px 7px 6px 0!important;
+  scrollbar-width:thin!important;
+  scrollbar-color:#31506a transparent!important;
+}
+#shopProductList::-webkit-scrollbar{width:6px!important}
+#shopProductList::-webkit-scrollbar-track{background:rgba(255,255,255,.025)!important;border-radius:99px!important}
+#shopProductList::-webkit-scrollbar-thumb{background:#31506a!important;border-radius:99px!important;border:1px solid rgba(255,255,255,.05)!important}
+#shopProductList::-webkit-scrollbar-thumb:hover{background:#4a6b88!important}
+@media(max-width:650px){
+  #shopProductList{max-height:360px!important}
+}
