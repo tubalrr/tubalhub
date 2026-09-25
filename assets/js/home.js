@@ -313,7 +313,9 @@ function initSponsoredReal(){
     const image=String(data.imageUrlReal||"").trim();
     const link=String(data.linkReal||"").trim();
     const safeLink=/^https?:\/\//i.test(link)?link:"";
-    const imageHtml=/^https?:\/\//i.test(image)?'<img src="'+escAttr(image)+'" alt="" loading="lazy" decoding="async" onerror="this.outerHTML=\'<div style="height:140px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#ee4d2d,#ff7337);color:#fff;font-weight:800;font-size:20px;letter-spacing:1px;">SHOPEE</div>\'" style="width:100%;height:140px;object-fit:cover;display:block;">':'<div style="height:140px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#ee4d2d,#ff7337);color:#fff;font-weight:800;font-size:20px;letter-spacing:1px;">SHOPEE</div>';
+    const imageHtml=/^https?:\/\//i.test(image)
+      ? '<div style="position:relative;width:100%;height:140px;background:linear-gradient(135deg,#ee4d2d,#ff7337);display:flex;align-items:center;justify-content:center;overflow:hidden;"><div style="color:#fff;font-weight:800;font-size:20px;letter-spacing:1px;">SHOPEE</div><img src="'+escAttr(image)+'" alt="" loading="lazy" decoding="async" onerror="this.style.display=\'none\'" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;"></div>'
+      : '<div style="height:140px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#ee4d2d,#ff7337);color:#fff;font-weight:800;font-size:20px;letter-spacing:1px;">SHOPEE</div>';
     const body=imageHtml+'<div style="padding:10px;"><b style="font-size:12px;">'+title+'</b>'+(desc?'<p style="font-size:10px;opacity:.6;margin:4px 0 0;">'+desc+'</p>':"")+'</div>';
     status.textContent="LIVE";
     status.style.background="rgba(29,255,145,0.15)";
