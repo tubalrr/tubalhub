@@ -94,3 +94,37 @@ document.querySelectorAll('header nav a').forEach(a=>{if(a.href===location.href)
   });
   window.TUBAL_HUB_LICENSE={name:BRAND,copyright:'© 2026 TUBAL HUB',license:LICENSE_URL};
 })();
+
+
+/* TUBAL HUB — GLOBAL MAINTENANCE MODE */
+(function(){
+  const path=location.pathname||'';
+  if(path.includes('/admin/')) return;
+  let active=false;
+  const apply=enabled=>{
+    active=enabled===true;
+    let overlay=document.getElementById('tubalMaintenanceOverlay');
+    if(active && !overlay){
+      overlay=document.createElement('div');
+      overlay.id='tubalMaintenanceOverlay';
+      overlay.innerHTML='<div class="tubal-maintenance-card"><div class="tubal-maintenance-mark">TH</div><div class="tubal-maintenance-kicker">TUBAL HUB</div><h1>We’ll be back soon</h1><p>TUBAL HUB is temporarily under maintenance while we improve the platform.</p><small>Please check back shortly.</small></div>';
+      const style=document.createElement('style');
+      style.id='tubalMaintenanceStyle';
+      style.textContent='#tubalMaintenanceOverlay{position:fixed;inset:0;z-index:2147483000;display:grid;place-items:center;padding:24px;background:rgba(3,7,12,.97);color:#e5e7eb;font-family:Inter,system-ui,sans-serif}#tubalMaintenanceOverlay .tubal-maintenance-card{width:min(520px,100%);padding:42px 28px;text-align:center;border:1px solid rgba(148,163,184,.16);border-radius:28px;background:rgba(15,23,42,.9);box-shadow:0 30px 100px rgba(0,0,0,.5)}#tubalMaintenanceOverlay .tubal-maintenance-mark{width:58px;height:58px;margin:0 auto 18px;display:grid;place-items:center;border:1px solid rgba(52,211,153,.3);border-radius:18px;color:#a7f3d0;font-weight:900;letter-spacing:.08em}#tubalMaintenanceOverlay .tubal-maintenance-kicker{font-size:10px;letter-spacing:.2em;color:#6ee7b7;font-weight:800}#tubalMaintenanceOverlay h1{margin:10px 0 10px;font-size:30px;color:#f8fafc}#tubalMaintenanceOverlay p{margin:0 auto 12px;max-width:420px;line-height:1.6;color:#94a3b8}#tubalMaintenanceOverlay small{color:#64748b}';
+      document.head.appendChild(style);
+      document.body.appendChild(overlay);
+    }else if(!active && overlay){
+      overlay.remove();
+      document.getElementById('tubalMaintenanceStyle')?.remove();
+    }
+  };
+  const start=async()=>{
+    try{
+      const {app}=await import('./firebase-config.js');
+      const {getFirestore,doc,onSnapshot}=await import('https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js');
+      const db=getFirestore(app);
+      onSnapshot(doc(db,'systemSettings','maintenance'),snap=>apply(snap.exists()&&snap.data()?.enabled===true),()=>{});
+    }catch(e){console.warn('Maintenance mode unavailable',e)}
+  };
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
+})();
