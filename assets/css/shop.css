@@ -710,3 +710,14 @@ body.theme-light .payment-back:hover{
 .payment-brand-logos{display:flex;align-items:center;justify-content:center;gap:5px}
 .payment-brand-logos img{display:block;width:auto;height:22px;max-width:32px;object-fit:contain}
 .payment-bank-logo{display:flex!important;align-items:center;justify-content:center}
+
+/* Payment card form */
+.payment-form-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.payment-form-head b{font-size:.95rem;color:var(--shop-text,#fff)}
+.payment-form-head span{font-size:.7rem;font-weight:800;letter-spacing:.08em;opacity:.65}
+.payment-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.payment-form-grid label{display:grid;gap:7px;font-size:.75rem;font-weight:700}
+.payment-form-grid .payment-field-full{grid-column:1/-1}
+.payment-form-grid input{width:100%;box-sizing:border-box;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.055);color:inherit;border-radius:12px;padding:12px 13px;outline:none}
+.payment-form-grid input:focus{border-color:rgba(255,190,80,.75);box-shadow:0 0 0 3px rgba(255,190,80,.12)}
+@media(max-width:560px){.payment-form-grid{grid-template-columns:1fr}.payment-form-grid .payment-field-full{grid-column:auto}}
