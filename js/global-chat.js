@@ -416,9 +416,24 @@
   function initVideoReal() {
     const button = injectVideoButtonReal();
     ensureVideoModalReal();
-    if (button && button.dataset.videoReady !== "1") {
+    if (button) {
+      // Direct handler: the real top-bar button always opens the real video modal.
       button.dataset.videoReady = "1";
-      button.addEventListener("click", openVideoReal);
+      button.onclick = openVideoReal;
+      button.setAttribute("type", "button");
+      button.setAttribute("aria-haspopup", "dialog");
+    }
+
+    // Delegation fallback: keeps the video button working if another UI script
+    // replaces/re-renders the top bar button after this initializer runs.
+    if (!document.documentElement.dataset.tubalVideoDelegationReady) {
+      document.documentElement.dataset.tubalVideoDelegationReady = "1";
+      document.addEventListener("click", event => {
+        const target = event.target.closest?.("#videoBtnReal");
+        if (!target) return;
+        event.preventDefault();
+        openVideoReal();
+      }, true);
     }
 
     document.addEventListener("keydown", e => {
