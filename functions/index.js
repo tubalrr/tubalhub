@@ -599,17 +599,22 @@ exports.cleanupGlobalChatMediaReal = onCall(async request => {
   }
 
   if (entries.length < maxFiles) {
-    return { success: true, deleted: 0, beforeCount: entries.length, afterCount: entries.length };
+    return { success: true, deleted: 0, beforeCount: entries.length, afterCount: entries.length, expiredDocsUpdated: 0 };
   }
 
   entries.sort((a, b) => a.time - b.time);
   const oldest = entries.slice(0, 15);
   let deleted = 0;
+  let expiredDocsUpdated = 0;
 
   for (const item of oldest) {
     try {
       await item.file.delete();
       deleted++;
+      expiredDocsUpdated += await markChatMediaExpiredReal(
+        item.name.split("/").pop() || "",
+        item.name
+      );
     } catch (error) {
       logger.warn("Could not delete old Global Chat media before upload.", {
         name: item.name,
@@ -622,7 +627,8 @@ exports.cleanupGlobalChatMediaReal = onCall(async request => {
     success: true,
     deleted,
     beforeCount: entries.length,
-    afterCount: Math.max(0, entries.length - deleted)
+    afterCount: Math.max(0, entries.length - deleted),
+    expiredDocsUpdated
   };
 });
 
