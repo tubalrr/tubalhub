@@ -18,7 +18,7 @@
 <link rel="stylesheet" href="assets/css/home-premium.css?v=20260924">
 <link rel="stylesheet" href="assets/css/sidebar-premium.css?v=20260924-v9">
 <link rel="stylesheet" href="assets/css/home-agency.css?v=20260924-v2">
-<link rel="stylesheet" href="assets/css/home.css?v=20260925-journal-edit-delete" data-tubal-home-css>
+<link rel="stylesheet" href="assets/css/home.css?v=20260925-journal-edit-delete-chatbot" data-tubal-home-css>
 <link rel="stylesheet" href="assets/css/notification-search.css?v=20260924-ns9">
 <style>
 .hub-home .search-box{position:relative!important;z-index:200!important;pointer-events:auto!important}
@@ -397,6 +397,26 @@
   </div>
 </div>
 
+<!-- TUBAL HUB — REAL CHATBOT -->
+<div id="tubalChatbotReal" style="position:fixed;bottom:20px;right:20px;z-index:1000;font-family:inherit;">
+  <button id="chatToggleReal" type="button" aria-label="Open TUBAL Bot" aria-expanded="false" style="width:56px;height:56px;background:linear-gradient(135deg,#1dff91,#7d5aff);border:none;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;box-shadow:0 10px 30px rgba(29,255,145,0.4);">🤖</button>
+  <div id="chatWindowReal" role="dialog" aria-label="TUBAL Bot" style="position:absolute;bottom:70px;right:0;width:380px;max-width:90vw;height:480px;background:rgba(8,20,12,0.98);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(29,255,145,0.2);border-radius:24px;display:none;flex-direction:column;overflow:hidden;box-shadow:0 20px 80px rgba(0,0,0,0.6);">
+    <div style="background:linear-gradient(135deg,#0a1f12,#1dff91);padding:16px;display:flex;gap:12px;align-items:center;">
+      <div style="width:36px;height:36px;background:#020604;border-radius:50%;display:flex;align-items:center;justify-content:center;">🤖</div>
+      <div style="flex:1;">
+        <b id="chatbotNameReal" style="color:#020604;font-size:14px;display:block;">TUBAL BOT</b>
+        <small id="chatbotStatusReal" style="color:#020604;opacity:0.8;font-size:10px;">Online • Real site data</small>
+      </div>
+      <span style="background:#020604;color:#1dff91;font-size:9px;padding:4px 8px;border-radius:20px;">REAL</span>
+    </div>
+    <div id="chatMessagesReal" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;background:rgba(0,0,0,0.2);"></div>
+    <div style="padding:12px;background:rgba(0,0,0,0.3);border-top:1px solid rgba(255,255,255,0.06);display:flex;gap:8px;">
+      <input id="chatInputReal" autocomplete="off" placeholder="Tanong mo kay Tubal Bot..." aria-label="Message Tubal Bot" style="flex:1;background:rgba(0,0,0,0.4);border:1px solid rgba(120,255,170,0.15);border-radius:20px;padding:10px 14px;color:#fff;font-size:12px;outline:none;">
+      <button id="chatSendReal" type="button" aria-label="Send message" style="background:#1dff91;border:none;width:36px;height:36px;border-radius:50%;cursor:pointer;color:#020604;font-weight:800;">→</button>
+    </div>
+  </div>
+</div>
+
 <div class="cookie" id="cookieBox"><div><b>🍪 Cookies</b><span>We use cookies to improve your experience.</span></div><button id="acceptCookie">Accept</button></div>
 <script src="assets/js/app.js?v=20260924-top4"></script>
 <script src="assets/js/main.js?v=20260924-main3"></script>
@@ -405,7 +425,7 @@
 <script type="module" src="assets/js/search.js?v=20260924-ns9"></script>
 <script src="assets/js/sidebar-premium.js?v=20260924-v9"></script>
 <script src="assets/js/home-agency.js?v=20260924-v1"></script>
-<script type="module" src="assets/js/home.js?v=20260925-journal-edit-delete"></script>
+<script type="module" src="assets/js/home.js?v=20260925-journal-edit-delete-chatbot"></script>
 
   <script src="assets/js/ai-assistant.js?v=20260924-v2"></script>
 <!-- TUBAL HUB — Tubal AI Assistant -->
@@ -432,5 +452,6 @@
     </form>
   </section>
 </div>
+<script src="js/chatbot.js?v=20260925-real-chatbot2"></script>
 </body>
 </html>
