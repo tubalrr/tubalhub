@@ -1691,4 +1691,226 @@ function renderAllReal(){
     });
 }
 
+/* =========================================================
+   REAL SYSTEM UPDATE DETECTOR
+   Reads version.json and shows a slide-in changelog when
+   the deployed version changes.
+   ========================================================= */
+let lastVersionReal = localStorage.getItem('tubalhub_version_real') || '0.0.0';
+let lastCheckReal = 0;
+let systemUpdatePendingReal = null;
+
+const allowedUpdateTypesReal = new Set(['UI','STYLE','FEAT','FIX','PERF','BUILD']);
+
+function escSystemUpdateReal(value){
+  return String(value ?? '').replace(/[&<>"']/g, ch => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'
+  }[ch]));
+}
+
+function colorForUpdateTypeReal(type){
+  const colors = {
+    UI:'#7d5aff',
+    STYLE:'#ff9a3d',
+    FEAT:'#1dff91',
+    FIX:'#62b6ff',
+    PERF:'#ffd166',
+    BUILD:'#c8a6ff'
+  };
+  return colors[type] || '#1dff91';
+}
+
+function updateContainerShowReal(){
+  const cont=document.getElementById('systemUpdateContainer');
+  if(!cont)return;
+  cont.classList.add('is-visible');
+  cont.setAttribute('aria-hidden','false');
+}
+
+function hideSystemUpdateContainerReal(){
+  const cont=document.getElementById('systemUpdateContainer');
+  if(!cont)return;
+  cont.classList.remove('is-visible');
+  cont.setAttribute('aria-hidden','true');
+}
+
+function renderSystemUpdateListReal(data){
+  const list=document.getElementById('updateListReal');
+  const badge=document.getElementById('updateVersionBadgeReal');
+  const timeEl=document.getElementById('updateTimeReal');
+  if(!list)return;
+
+  const updates=Array.isArray(data?.updatesReal) ? data.updatesReal : [];
+  if(badge) badge.textContent='v'+String(data?.version||'—');
+  if(timeEl){
+    const released=String(data?.releasedAtReal||'').trim();
+    if(released){
+      const date=new Date(released);
+      timeEl.textContent=Number.isNaN(date.getTime())
+        ? 'just now'
+        : date.toLocaleTimeString('en-PH',{hour:'numeric',minute:'2-digit'});
+    }else{
+      timeEl.textContent='just now';
+    }
+  }
+
+  list.innerHTML=updates.map(item=>{
+    const typeRaw=String(item?.typeReal||'FIX').toUpperCase();
+    const type=allowedUpdateTypesReal.has(typeRaw)?typeRaw:'FIX';
+    const color=colorForUpdateTypeReal(type);
+    const scope=escSystemUpdateReal(item?.scopeReal||'Site');
+    const detail=escSystemUpdateReal(item?.detailReal||'Updated');
+    const icon=escSystemUpdateReal(item?.iconReal||'🔧');
+
+    return '<article class="system-update-item-real">'+
+      '<div class="system-update-item-icon-real" style="background:'+color+'1f">'+icon+'</div>'+
+      '<div class="system-update-item-copy-real">'+
+        '<div class="system-update-item-title-real">'+
+          '<span class="system-update-type-real" style="background:'+color+'">'+type+'</span>'+
+          '<b>'+scope+'</b>'+
+        '</div>'+
+        '<p>'+detail+'</p>'+
+      '</div>'+
+    '</article>';
+  }).join('');
+
+  if(!updates.length){
+    list.innerHTML='<div class="system-update-empty-real">Walang changelog entries sa version.json.</div>';
+  }
+}
+
+function showSystemUpdateContainerReal(data){
+  if(!data?.version)return;
+  systemUpdatePendingReal=data;
+  renderSystemUpdateListReal(data);
+  try{
+    localStorage.setItem('tubalhub_pending_update_real',JSON.stringify({
+      ver:String(data.version),
+      time:Date.now(),
+      data
+    }));
+  }catch(_){}
+  updateContainerShowReal();
+  try{
+    if(navigator.vibrate)navigator.vibrate([200,100,200,100,200]);
+  }catch(_){}
+}
+
+function semverPartsReal(value){
+  const parts=String(value||'0.0.0').split('.').map(n=>parseInt(n,10));
+  return [Number.isFinite(parts[0])?parts[0]:0,Number.isFinite(parts[1])?parts[1]:0,Number.isFinite(parts[2])?parts[2]:0];
+}
+
+function isVersionNewerReal(remote,local){
+  const a=semverPartsReal(remote),b=semverPartsReal(local);
+  for(let i=0;i<3;i++){
+    if(a[i]>b[i])return true;
+    if(a[i]<b[i])return false;
+  }
+  return String(remote)!==String(local);
+}
+
+async function detectSystemUpdateReal(force=false){
+  const now=Date.now();
+  if(!force && now-lastCheckReal<3000)return;
+  lastCheckReal=now;
+  try{
+    const res=await fetch('version.json?t='+Date.now(),{
+      cache:'no-store',
+      headers:{'Cache-Control':'no-cache','Pragma':'no-cache'}
+    });
+    if(!res.ok)return;
+    const data=await res.json();
+    const remoteVer=String(data?.version||'').trim();
+    if(!remoteVer)return;
+
+    const notified=localStorage.getItem('tubalhub_notified_ver_real')||'';
+    const versionChanged=isVersionNewerReal(remoteVer,lastVersionReal) || remoteVer!==lastVersionReal;
+
+    if((versionChanged || force) && (notified!==remoteVer || force)){
+      showSystemUpdateContainerReal(data);
+      localStorage.setItem('tubalhub_notified_ver_real',remoteVer);
+    }
+
+    localStorage.setItem('tubalhub_version_real',remoteVer);
+    lastVersionReal=remoteVer;
+
+    const liveVersion=document.getElementById('liveVersion');
+    if(liveVersion)liveVersion.textContent='v'+remoteVer;
+    const bentoVersion=document.getElementById('bentoVersion');
+    if(bentoVersion)bentoVersion.textContent='v'+remoteVer;
+  }catch(e){
+    console.log('[TUBAL HUB system update check]',e);
+  }
+}
+
+async function applySystemUpdateReal(){
+  const data=systemUpdatePendingReal;
+  const targetVersion=String(data?.version||document.getElementById('updateVersionBadgeReal')?.textContent||'').replace(/^v/i,'').trim();
+  if(targetVersion){
+    localStorage.setItem('tubalhub_version_real',targetVersion);
+    localStorage.setItem('tubalhub_notified_ver_real',targetVersion);
+  }
+  localStorage.removeItem('tubalhub_pending_update_real');
+
+  try{
+    if('caches' in window){
+      const keys=await caches.keys();
+      await Promise.all(keys.map(k=>caches.delete(k)));
+    }
+  }catch(_){}
+
+  try{
+    if('serviceWorker' in navigator){
+      const regs=await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map(r=>r.unregister()));
+    }
+  }catch(_){}
+
+  const url=new URL(location.href);
+  url.searchParams.set('update',String(Date.now()));
+  location.replace(url.href);
+}
+
+function initSystemUpdateReal(){
+  const cont=document.getElementById('systemUpdateContainer');
+  if(!cont)return;
+
+  cont.setAttribute('aria-hidden','true');
+
+  document.getElementById('updateNowRealBtn')?.addEventListener('click',applySystemUpdateReal);
+  document.getElementById('updateLaterRealBtn')?.addEventListener('click',hideSystemUpdateContainerReal);
+
+  window.addEventListener('load',()=>{
+    const pending=localStorage.getItem('tubalhub_pending_update_real');
+    if(pending){
+      try{
+        const p=JSON.parse(pending);
+        if(p?.data?.version && Date.now()-Number(p.time||0)<3600000){
+          systemUpdatePendingReal=p.data;
+          renderSystemUpdateListReal(p.data);
+          setTimeout(updateContainerShowReal,800);
+        }
+      }catch(_){}
+    }
+    detectSystemUpdateReal(false);
+  },{once:true});
+
+  setInterval(()=>detectSystemUpdateReal(false),15000);
+  window.addEventListener('focus',()=>detectSystemUpdateReal(false),{passive:true});
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)detectSystemUpdateReal(false)});
+  window.addEventListener('online',()=>detectSystemUpdateReal(false));
+
+  // Initial check: detects the deployed version, but does not force-repeat
+  // the same version on every reload.
+  detectSystemUpdateReal(false);
+}
+
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded',initSystemUpdateReal,{once:true});
+}else{
+  initSystemUpdateReal();
+}
+
+
 if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',renderAllReal,{once:true});}else{renderAllReal();}
