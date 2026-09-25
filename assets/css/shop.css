@@ -732,3 +732,8 @@ body.theme-light .payment-back:hover{
 .order-review-payment{padding:13px 0;font-size:.85rem}.order-review-payment strong{font-weight:800}
 .order-success-icon{width:62px;height:62px;border-radius:50%;display:grid;place-items:center;margin:20px auto;font-size:2rem;font-weight:900;border:1px solid rgba(120,220,150,.45);background:rgba(80,190,110,.12)}
 .order-success-summary{display:grid;gap:10px;margin-bottom:20px}.order-success-summary div{display:flex;justify-content:space-between;gap:15px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.09)}
+
+/* FINAL MODAL VISIBILITY SAFETY */
+.quickview-layer:not(.is-open){display:none!important}
+.quickview-layer.is-open{display:grid!important}
+.quickview-layer.is-open .checkout-modal{transform:scale(1);opacity:1}
