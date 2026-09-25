@@ -67,26 +67,10 @@ service cloud.firestore {
     match /globalChats/{messageId} {
       allow read: if chatAllowed();
 
-      // Text/image/GIF messages may be created by the authenticated user.
-      // Server moderation validates and cleans/deletes content after creation.
-      // Trusted callable sendMessageReal remains the preferred path for text.
-      allow create: if chatAllowed()
-        && ownsNew()
-        && request.resource.data.channel in ['global-chat', 'payapang-isip', 'ctrlzone', 'shop-talk', 'announcements']
-        && (
-          (
-            request.resource.data.type == 'text'
-            && request.resource.data.text is string
-            && request.resource.data.text.size() > 0
-            && request.resource.data.text.size() <= 500
-          )
-          || (
-            request.resource.data.type in ['image', 'gif']
-            && request.resource.data.mediaUrl is string
-          )
-        )
-        && !('isAdmin' in request.resource.data)
-        && !('roleReal' in request.resource.data);
+      // Global Chat writes are server-only. Client content must pass through
+      // sendMessageReal/sendGlobalMediaMessageReal for validation, rate limiting,
+      // moderation and trusted metadata.
+      allow create: if false;
 
       // Message content is server-managed after creation.
       allow update: if adminUser();
@@ -158,7 +142,11 @@ service cloud.firestore {
     // =========================================================
 
     match /users/{userId} {
-      allow read: if realUser();
+      // User documents are private. Admin/backend may read all; a member may
+      // read only their own profile. Public profile/presence data belongs in
+      // dedicated public collections.
+      allow read: if adminUser()
+        || (realUser() && userId == request.auth.uid);
 
       // Users may create their own profile, but role/admin/moderation fields
       // are server/admin managed and cannot be self-assigned.
@@ -459,41 +447,31 @@ service cloud.firestore {
     }
 
     match /orders/{orderId} {
-      allow create: if realUser()
-        && request.resource.data.uid == request.auth.uid;
+      // Order/ownership records are server-generated only.
+      allow create, update, delete: if adminUser();
       allow read: if realUser()
         && resource.data.uid == request.auth.uid;
-      allow update: if adminUser();
-      allow delete: if adminUser();
     }
 
     match /licenses/{licenseId} {
-      allow create: if realUser()
-        && request.resource.data.uid == request.auth.uid;
+      // Licenses are issued or upgraded only by trusted server code.
+      allow create, update, delete: if adminUser();
       allow read: if realUser()
         && resource.data.uid == request.auth.uid;
-      allow update: if realUser()
-        && resource.data.uid == request.auth.uid
-        && request.resource.data.uid == resource.data.uid;
-      allow delete: if adminUser();
     }
 
     match /downloads/{downloadId} {
-      allow create: if realUser()
-        && request.resource.data.uid == request.auth.uid;
+      // Download records are server-generated only.
+      allow create, update, delete: if adminUser();
       allow read: if realUser()
         && resource.data.uid == request.auth.uid;
-      allow update: if adminUser();
-      allow delete: if adminUser();
     }
 
     match /upgrades/{upgradeId} {
-      allow create: if realUser()
-        && request.resource.data.uid == request.auth.uid;
+      // Upgrade records are server-generated only.
+      allow create, update, delete: if adminUser();
       allow read: if realUser()
         && resource.data.uid == request.auth.uid;
-      allow update: if adminUser();
-      allow delete: if adminUser();
     }
 
     // =========================================================
