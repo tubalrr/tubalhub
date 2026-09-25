@@ -625,9 +625,13 @@
       textReal: caption,
       type,
       mediaUrl: url,
+      imageUrlReal: url,
       storagePath: path,
+      storagePathReal: path,
+      fileNameReal: safe.split("/").pop(),
       channel: channelMap[selected] || "global-chat",
       hasImageReal: type === "image",
+      imageExpiredReal: false,
       isSticker: type === "gif"
     });
 
