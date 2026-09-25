@@ -520,12 +520,20 @@ function closeOrderReview(){
   const layer=document.getElementById("orderReviewLayer");layer.classList.remove("is-open");
   setTimeout(()=>{if(!layer.classList.contains("is-open"))layer.hidden=true},220);
 }
-function openOrderSuccess(orderTotal,method){
-  const number="TH-"+Date.now().toString(36).toUpperCase();
+function readPaymentReference(){
+  const ids=["gcashReference","mayaReference","bankReference","paymentReference"];
+  for(const id of ids){
+    const value=String(document.getElementById(id)?.value||"").trim();
+    if(value)return value.slice(0,160);
+  }
+  return "";
+}
+function openOrderSuccess(orderTotal,method,orderId){
+  const number=String(orderId||"").trim()||"Pending";
   document.getElementById("orderNumber").textContent=number;
   document.getElementById("successTotal").textContent=money(orderTotal);
   document.getElementById("successPayment").textContent=method;
-  document.getElementById("orderSuccessCopy").textContent="Order "+number+" is ready for processing.";
+  document.getElementById("orderSuccessCopy").textContent="Order "+number+" was submitted and is pending manual payment verification. Digital ownership stays locked until Admin verifies payment.";
   document.getElementById("orderSuccessLayer").hidden=false;
   requestAnimationFrame(()=>document.getElementById("orderSuccessLayer").classList.add("is-open"));
 }
