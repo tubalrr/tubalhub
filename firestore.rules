@@ -350,6 +350,11 @@ service cloud.firestore {
       allow create, update, delete: if adminUser();
     }
 
+    match /events/{eventId} {
+      allow read: if true;
+      allow create, update, delete: if adminUser();
+    }
+
     match /facebookVideos/{videoId} {
       allow read: if true;
 
