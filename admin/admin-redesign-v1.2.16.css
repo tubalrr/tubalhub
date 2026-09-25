@@ -517,3 +517,37 @@ body:after{display:none!important}#sidebarToggle{position:fixed!important;z-inde
 @media(max-width:650px){
   #shopProducts{max-height:520px!important}
 }
+
+
+/* FINAL DASHBOARD WIDTH FIX — use the full content canvas on desktop */
+@media(min-width:951px){
+  .dashboard{
+    display:block!important;
+    width:calc(100% - 270px)!important;
+    max-width:none!important;
+    margin-left:270px!important;
+    padding:94px 32px 34px!important;
+  }
+  .dashboard>.topbar,
+  .dashboard>.dashboard-head,
+  .dashboard>.stats,
+  .dashboard>.dashboard-grid,
+  .dashboard>#shopProducts,
+  .dashboard>#content,
+  .dashboard>#eventsManager,
+  .dashboard>#announcements,
+  .dashboard>#members,
+  .dashboard>#chat,
+  .dashboard>footer{
+    width:100%!important;
+    max-width:none!important;
+    box-sizing:border-box!important;
+  }
+  .dashboard>.stats{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:15px!important}
+  .dashboard>.dashboard-grid{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:15px!important;margin-bottom:18px!important}
+  .dashboard>#shopProducts,.dashboard>#content,.dashboard>#eventsManager,.dashboard>#announcements,.dashboard>#members,.dashboard>#chat{float:none!important;display:block!important;width:100%!important;margin:0 0 15px!important}
+}
+@media(max-width:950px){
+  .dashboard{width:100%!important;max-width:100%!important;margin-left:0!important}
+  .dashboard>.dashboard-grid{width:100%!important;grid-template-columns:1fr!important}
+}
