@@ -439,7 +439,8 @@ service cloud.firestore {
 
     match /productVersions/{versionId} {
       allow read: if true;
-      allow create, update, delete: if adminUser();
+      allow create, update, delete: if adminUser()
+        && !('downloadUrl' in request.resource.data);
     }
 
     match /orders/{orderId} {
