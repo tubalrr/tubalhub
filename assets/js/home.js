@@ -242,12 +242,37 @@ function deleteHomeJournalReal(id){
   }
 }
 
+function demoFillReal(){
+  if(!window.confirm("Load demo content? Lahat may [DEMO] label. Ang real entries mo hindi io-overwrite."))return;
+  const demoEntry={
+    idReal:"demo-"+Date.now(),
+    titleReal:"[DEMO] First Calm Thought",
+    contentReal:"[DEMO] This is demo journal for the Gumroad preview.",
+    moodEmoji:"🌿",
+    createdAtReal:new Date().toISOString(),
+    isDemo:true
+  };
+  const current=getRealJournals();
+  if(current.some(entry=>entry?.isDemo===true && String(entry?.titleReal||"").startsWith("[DEMO]"))){
+    showHomeToast("Demo content is already loaded.");
+    return;
+  }
+  try{
+    localStorage.setItem(REAL_JOURNAL_KEY,JSON.stringify([...current,demoEntry].slice(0,50)));
+    emitRealDataUpdate();
+    location.reload();
+  }catch(_){
+    showHomeToast("Hindi na-save ang demo content sa browser.");
+  }
+}
+window.demoFillReal=demoFillReal;
+
 function renderPayapangIsip(){
   const track=document.querySelector("#bentoJournalList")||document.querySelector("#payapangIsipTrack")||document.querySelector("#journalTrack");
   if(!track)return;
   const real=getRealJournalViews();
   if(real.length===0){
-    track.innerHTML='<div class="real-bento-empty" id="journalEmptyReal"><div class="empty-icon">🌿</div><p>Wala pa journal</p><small>Real entries mo dito lalabas</small><form id="realJournalForm" class="real-bento-form"><input name="titleReal" id="journalTitleReal" maxlength="100" placeholder="Real journal title" required><textarea name="contentReal" id="journalTextReal" maxlength="5000" placeholder="Isulat ang totoong journal mo..." required><\/textarea><div class="real-bento-actions"><button id="saveJournalReal" type="submit">🌿 Gumawa ng Real</button><a href="pages/payapang-isip.html">Open Payapang Isip →</a></div></form></div>';
+    track.innerHTML='<div class="real-bento-empty" id="journalEmptyReal"><div class="empty-icon">🌿</div><p>0 items real</p><small>Real entries mo dito lalabas • No fake • For demo, try adding a journal.</small><form id="realJournalForm" class="real-bento-form"><input name="titleReal" id="journalTitleReal" maxlength="100" placeholder="Real journal title" required><textarea name="contentReal" id="journalTextReal" maxlength="5000" placeholder="Isulat ang totoong journal mo..." required><\/textarea><div class="real-bento-actions"><button id="saveJournalReal" type="submit">🌿 Gumawa ng Real</button><a href="pages/payapang-isip.html">Open Payapang Isip →</a></div><button type="button" class="demo-empty-real" onclick="demoFillReal()">Load Demo Content (labeled as demo)</button></div>';
     const form=$("#realJournalForm");
     if(form&&!form.dataset.bound){
       form.dataset.bound="1";
@@ -847,9 +872,9 @@ function initFooterMessages(){
   const button=$("#footerMessagesButton");
   if(!button)return;
   button.addEventListener("click",()=>{
-    const aiFab=$("#tubalAiFab");
-    if(aiFab){
-      aiFab.click();
+    const botToggle=$("#chatToggleReal");
+    if(botToggle){
+      botToggle.click();
     }else{
       window.location.href="pages/chat.html";
     }
@@ -870,22 +895,65 @@ function initFooterQr(){
   box.appendChild(img);
 }
 
+function readRealCollectionLength(keys){
+  for(const key of keys){
+    try{
+      const raw=localStorage.getItem(key);
+      if(raw===null)continue;
+      const parsed=raw?JSON.parse(raw):[];
+      if(Array.isArray(parsed))return parsed.length;
+    }catch(_){}
+  }
+  return 0;
+}
+
+function updateLiveStatusReal(){
+  const journals=readRealCollectionLength(["tubalhub_journals_real","tubalhub_journal"]);
+  const feeds=readRealCollectionLength(["tubalhub_feeds"]);
+  const cart=readRealCollectionLength(["tubalhub_cart_real","tubalhub-shop-cart-v1"]);
+  const el=$("#localDataStatus");
+  if(el)el.textContent=`${journals} journals • ${feeds} posts • ${cart} cart • real`;
+}
+
 async function initFooter(){
+  const fallbackVersion="1.2.10";
+  const fallbackBuild="2026-09-25_1015";
+  const setVersion=(version,build)=>{
+    const cleanVersion=String(version||fallbackVersion).trim()||fallbackVersion;
+    const cleanBuild=String(build||fallbackBuild).trim()||fallbackBuild;
+    const liveVersion=$("#liveVersion");
+    const liveBuild=$("#liveBuild");
+    if(liveVersion)liveVersion.textContent="v"+cleanVersion;
+    if(liveBuild)liveBuild.textContent=cleanBuild;
+    localStorage.setItem("tubalhub_version_real",cleanVersion);
+  };
+
+  setVersion(fallbackVersion,fallbackBuild);
+  updateLiveStatusReal();
+
   try{
-    const r=await fetch("version.json?t="+Date.now(),{cache:"no-store"});if(!r.ok)throw new Error();
+    const r=await fetch("version.json?v=1.2.10&t="+Date.now(),{cache:"no-store"});
+    if(!r.ok)throw new Error("version "+r.status);
     const data=await r.json();
-    const version=$("#homeVersion");if(version)version.textContent="v"+(data.version||"—");
-  }catch(_){const version=$("#homeVersion");if(version)version.textContent="Version unavailable"}
+    setVersion(data?.version,data?.build);
+  }catch(_){
+    setVersion(fallbackVersion,fallbackBuild);
+  }
+
   const update=()=>$("#homeOnlineDot")?.classList.toggle("offline",!navigator.onLine);
   update();
   const textEl=$("#homeOnlineText");
   if(textEl)textEl.textContent=navigator.onLine?"Online":"Offline";
   addEventListener("online",()=>{update();if(textEl)textEl.textContent="Online"});
   addEventListener("offline",()=>{update();if(textEl)textEl.textContent="Offline"});
-  try{
-    const bytes=[...Array(localStorage.length)].reduce((sum,_,i)=>{const k=localStorage.key(i)||"",v=localStorage.getItem(k)||"";return sum+(k.length+v.length)*2},0);
-    const storage=$("#homeStorage");if(storage)storage.textContent=(bytes/1024).toFixed(1)+" KB local data";
-  }catch(_){}
+
+  updateLiveStatusReal();
+  addEventListener("storage",event=>{
+    if(["tubalhub_journals_real","tubalhub_journal","tubalhub_feeds","tubalhub_cart_real","tubalhub-shop-cart-v1"].includes(event.key||"")){
+      updateLiveStatusReal();
+    }
+  });
+
   initFooterSpotlight();
   initFooterMessages();
   initFooterQr();
@@ -1762,7 +1830,7 @@ function renderAllReal(){
   const cartEl=document.getElementById('cartCountReal');
   if(cartEl)cartEl.textContent=cart.length+' '+(cart.length===1?'item':'items')+' real';
 
-  fetch('data/games.json?update='+Date.now(),{cache:'no-store'})
+  fetch('data/games.json?v=1.2.10&t='+Date.now(),{cache:'no-store'})
     .then(r=>{if(!r.ok)throw new Error('games.json '+r.status);return r.json()})
     .then(games=>{
       const rows=Array.isArray(games)?games:(Array.isArray(games.games)?games.games:[]);
@@ -1777,7 +1845,7 @@ function renderAllReal(){
 
 /* =========================================================
    REAL SYSTEM UPDATE DETECTOR
-   Reads version.json and shows a slide-in changelog when
+   Reads version.json as the single source of truth and shows a slide-in changelog when
    the deployed version changes.
    ========================================================= */
 let lastVersionReal = localStorage.getItem('tubalhub_version_real') || '0.0.0';
@@ -1899,7 +1967,7 @@ async function detectSystemUpdateReal(force=false){
   if(!force && now-lastCheckReal<3000)return;
   lastCheckReal=now;
   try{
-    const res=await fetch('version.json?t='+Date.now(),{
+    const res=await fetch('version.json?v=1.2.10&t='+Date.now(),{
       cache:'no-store',
       headers:{'Cache-Control':'no-cache','Pragma':'no-cache'}
     });
@@ -1928,41 +1996,38 @@ async function detectSystemUpdateReal(force=false){
   }
 }
 
-async function applySystemUpdateReal(){
+async function loadLatestVersionReal(){
   const data=systemUpdatePendingReal;
-  const targetVersion=String(data?.version||document.getElementById('updateVersionBadgeReal')?.textContent||'').replace(/^v/i,'').trim();
-  if(targetVersion){
-    localStorage.setItem('tubalhub_version_real',targetVersion);
-    localStorage.setItem('tubalhub_notified_ver_real',targetVersion);
-  }
-  localStorage.removeItem('tubalhub_pending_update_real');
+  const badge=document.getElementById("updateVersionBadgeReal");
+  const targetVersion=String(data?.version||badge?.textContent||"1.2.10").replace(/^v/i,"").trim()||"1.2.10";
 
   try{
-    if('caches' in window){
+    if("caches" in window){
       const keys=await caches.keys();
       await Promise.all(keys.map(k=>caches.delete(k)));
     }
   }catch(_){}
 
   try{
-    if('serviceWorker' in navigator){
+    if("serviceWorker" in navigator){
       const regs=await navigator.serviceWorker.getRegistrations();
       await Promise.all(regs.map(r=>r.unregister()));
     }
   }catch(_){}
 
-  const url=new URL(location.href);
-  url.searchParams.set('update',String(Date.now()));
-  location.replace(url.href);
-}
+  localStorage.setItem("tubalhub_version_real",targetVersion);
+  localStorage.removeItem("tubalhub_pending_update_real");
+  localStorage.setItem("tubalhub_notified_ver_real",targetVersion);
 
+  location.href=location.pathname+"?v="+encodeURIComponent(targetVersion)+"&t="+Date.now();
+}
 function initSystemUpdateReal(){
   const cont=document.getElementById('systemUpdateContainer');
   if(!cont)return;
 
   cont.setAttribute('aria-hidden','true');
 
-  document.getElementById('updateNowRealBtn')?.addEventListener('click',applySystemUpdateReal);
+  document.getElementById('updateNowRealBtn')?.addEventListener('click',loadLatestVersionReal);
   document.getElementById('updateLaterRealBtn')?.addEventListener('click',hideSystemUpdateContainerReal);
 
   window.addEventListener('load',()=>{
