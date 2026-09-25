@@ -146,3 +146,38 @@ body:after{display:none!important}#sidebarToggle{position:fixed!important;z-inde
 #newsList .item p{font-size:8px!important;line-height:1.35!important;margin:2px 0!important}
 #newsList .item small{font-size:7px!important}
 @media(max-width:950px){#content{max-width:100%!important}}
+
+
+/* PRODUCTS + NEWS — compact two-column layout */
+#shopProducts{
+  display:inline-block!important;
+  vertical-align:top!important;
+  width:calc(58% - 8px)!important;
+  max-width:none!important;
+  margin-right:12px!important;
+}
+#content{
+  display:inline-block!important;
+  vertical-align:top!important;
+  width:calc(42% - 8px)!important;
+  max-width:none!important;
+  margin-right:0!important;
+  margin-bottom:13px!important;
+}
+#content .form-grid{grid-template-columns:1fr!important}
+#content .panel-head h2{font-size:14px!important}
+#content .form-grid input,#content .form-grid textarea,#content .form-grid select{
+  min-height:36px!important;
+  padding:8px 9px!important;
+  font-size:9px!important;
+}
+#content .form-grid textarea{min-height:58px!important}
+#content .form-grid button{min-height:38px!important;font-size:9px!important}
+@media(max-width:950px){
+  #shopProducts,#content{
+    display:block!important;
+    width:100%!important;
+    max-width:100%!important;
+    margin-right:0!important;
+  }
+}
