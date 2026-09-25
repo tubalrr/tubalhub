@@ -760,15 +760,34 @@ async function sendMessage(payload){
   if(blocked){alert('🛡️ TUBAL HUB AI MODERATION\n\n'+blocked);throw new Error('MODERATION_BLOCKED');}
 
   if(payload?.type==='text'){
-    const result=await sendMessageFnReal({
-      text:String(payload.text||'').trim(),
-      channel:activeChannelReal
-    });
-    lastMessageTime=Date.now();
-    if(result?.data?.moderated){
-      showModerationNotice('🛡️ Server moderation cleaned this message before publishing.');
+    const cleanText=String(payload.text||'').trim();
+    try{
+      const result=await sendMessageFnReal({text:cleanText,channel:activeChannelReal});
+      lastMessageTime=Date.now();
+      if(result?.data?.moderated)showModerationNotice('🛡️ Server moderation cleaned this message before publishing.');
+      return result?.data;
+    }catch(fnError){
+      console.warn('[TUBAL HUB] sendMessageReal unavailable; using Firestore fallback.',fnError);
+      // Keep chat usable if the callable deployment is temporarily unavailable.
+      // Firestore Rules require a real authenticated owner; the server trigger still moderates it.
+      const uid=currentUser.uid;
+      const name=currentUser.displayName||currentUser.email?.split('@')[0]||'Member';
+      const channel=activeChannelReal==='general'?'global-chat':activeChannelReal;
+      const ref=await addDoc(collection(db,'globalChats'),{
+        uid,
+        displayName:name,
+        name,
+        email:currentUser.email||'',
+        photoURL:currentUser.photoURL||'',
+        createdAt:serverTimestamp(),
+        text:cleanText,
+        textReal:cleanText,
+        type:'text',
+        channel
+      });
+      lastMessageTime=Date.now();
+      return {success:true,id:ref.id,fallback:true};
     }
-    return result?.data;
   }
 
   // Images/GIFs remain direct Firebase Storage + Firestore writes.
