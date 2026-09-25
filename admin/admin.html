@@ -244,7 +244,7 @@ async function getAnalyticsMessagesPaged(collectionName,startDate,endDate){
     where("createdAt",">=",Timestamp.fromDate(startDate)),
     where("createdAt","<=",Timestamp.fromDate(endDate))
   ));
-  return snap.docs;
+  return snap;
 }
   // Read Firestore directly first. This keeps Admin Analytics independent of
   // callable-function CORS/deployment state and uses only real Firestore data.
