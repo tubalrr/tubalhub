@@ -40,7 +40,7 @@ TUBAL HUB may use copyright notices, attribution markers, asset identifiers, tec
 
 ## 9. Reporting Unauthorized Use
 
-Suspected unauthorized use may be reported to **tubalrr@gmail.com**. Include the relevant URL, the original TUBAL HUB page or asset, and supporting evidence. Reports are reviewed manually and do not by themselves establish infringement.
+Suspected unauthorized use may be reported to **YOUR_SUPPORT_EMAIL**. Include the relevant URL, the original TUBAL HUB page or asset, and supporting evidence. Reports are reviewed manually and do not by themselves establish infringement.
 
 ## 10. License Verification
 
@@ -50,7 +50,7 @@ Paid or downloadable products may use account, purchase, or license verification
 
 For permission requests, licensing questions, or copyright reports:
 
-**Email:** tubalrr@gmail.com
+**Email:** YOUR_SUPPORT_EMAIL
 
 ## 12. Changes
 
