@@ -1,8 +1,12 @@
 import {app,auth} from "./firebase-config.js";
-import {getFirestore,collection,addDoc,serverTimestamp,onSnapshot,getDocs,query,where,doc,updateDoc} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+import {getFirestore,collection,onSnapshot,getDocs,query,where} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 import {onAuthStateChanged} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+import {getFunctions,httpsCallable} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-functions.js";
 
 const db=getFirestore(app);
+const shopFunctions=getFunctions(app);
+const createShopOrderReal=httpsCallable(shopFunctions,"createShopOrderReal");
+const upgradeShopProductReal=httpsCallable(shopFunctions,"upgradeShopProductReal");
 const CART_KEY="tubalhub-shop-cart-v2";
 const WISH_KEY="tubalhub-shop-wishlist-v1";
 const THEME_KEY="tubalhub-theme";
@@ -549,33 +553,53 @@ document.getElementById("placeOrderBtn").addEventListener("click",async()=>{
   const method={card:"Card • Visa / Mastercard",bank:"Bank Transfer",paypal:"PayPal"}[state.payment]||"Card";
   const user=auth.currentUser;
   if(!user||user.isAnonymous){notify("Sign in with a real account to create an order or license.");return}
+
   if(state.upgradeTarget){
     try{
       const p=state.upgradeTarget.product, license=state.upgradeTarget.license;
-      const orderRef=await addDoc(collection(db,"orders"),{uid:user.uid,type:"upgrade",productId:p.firestoreId,total:orderTotal,paymentMethod:method,status:"placed",createdAt:serverTimestamp()});
-      await addDoc(collection(db,"upgrades"),{uid:user.uid,orderId:orderRef.id,productId:p.firestoreId,fromVersion:license.ownedVersion,toVersion:p.latestVersion,price:p.upgradePrice||"Free",createdAt:serverTimestamp()});
-      await updateDoc(doc(db,"licenses",license.id),{ownedVersion:p.latestVersion,latestVersion:p.latestVersion,downloadUrl:p.downloadUrl||"",updatedAt:serverTimestamp()});
-      await addDoc(collection(db,"downloads"),{uid:user.uid,orderId:orderRef.id,productId:p.firestoreId,version:p.latestVersion,downloadUrl:p.downloadUrl||"",createdAt:serverTimestamp()});
-      ownedLicenses=ownedLicenses.map(x=>x.id===license.id?{...x,ownedVersion:p.latestVersion,latestVersion:p.latestVersion,downloadUrl:p.downloadUrl||""}:x);renderMyProducts();
-      state.upgradeTarget=null;burstAt(document.getElementById("placeOrderBtn"),12);openOrderSuccess(orderTotal,method);closeOrderReview();return;
-    }catch(e){console.error(e);notify("Upgrade could not be recorded. Check Firestore Rules.");return}
+      const result=await upgradeShopProductReal({
+        productId:p.firestoreId,
+        licenseId:license.id,
+        paymentMethod:method
+      });
+      const latestVersion=result?.data?.latestVersion||p.latestVersion;
+      ownedLicenses=ownedLicenses.map(x=>x.id===license.id
+        ? {...x,ownedVersion:latestVersion,latestVersion,downloadUrl:p.downloadUrl||""}
+        : x);
+      renderMyProducts();
+      state.upgradeTarget=null;
+      burstAt(document.getElementById("placeOrderBtn"),12);
+      openOrderSuccess(orderTotal,method);
+      closeOrderReview();
+      return;
+    }catch(e){
+      console.error("[TUBAL HUB Shop] secure upgrade failed",e);
+      notify("Upgrade could not be recorded. The secure shop service may need deployment.");
+      return;
+    }
   }
+
   const digitalItems=state.cart.map(x=>({row:x,p:productById(x.id)})).filter(x=>x.p?.real&&x.p.productType!=="physical");
   const physicalItems=state.cart.map(x=>({row:x,p:productById(x.id)})).filter(x=>!x.p?.real||x.p.productType==="physical");
   if(digitalItems.length&&physicalItems.length){notify("Digital and physical products must be purchased separately.");return}
+
   try{
-    const orderRef=await addDoc(collection(db,"orders"),{uid:user.uid,items:state.cart.map(x=>{const p=productById(x.id);return {productId:p.firestoreId||p.id,title:p.title,qty:x.qty,price:p.priceLabel||p.price,productType:p.productType||"physical",version:p.version||null}}),total:orderTotal,paymentMethod:method,status:"placed",createdAt:serverTimestamp()});
-    if(digitalItems.length){
-      for(const {row,p} of digitalItems){
-        const licenseType=p.license||"Standard";
-        await addDoc(collection(db,"licenses"),{uid:user.uid,orderId:orderRef.id,productId:p.firestoreId,productName:p.title,ownedVersion:p.version||"1.0.0",licenseType,latestVersion:p.latestVersion||p.version||"1.0.0",downloadUrl:p.downloadUrl||"",createdAt:serverTimestamp(),updatedAt:serverTimestamp()});
-        await addDoc(collection(db,"downloads"),{uid:user.uid,orderId:orderRef.id,productId:p.firestoreId,version:p.version||"1.0.0",downloadUrl:p.downloadUrl||"",createdAt:serverTimestamp()});
-      }
-    }
+    const result=await createShopOrderReal({
+      items:state.cart.map(x=>{
+        const p=productById(x.id);
+        return {productId:p?.firestoreId||p?.id,qty:x.qty};
+      }),
+      paymentMethod:method
+    });
+    const serverTotal=Number(result?.data?.total);
+    const finalTotal=Number.isFinite(serverTotal)?serverTotal:orderTotal;
     burstAt(document.getElementById("placeOrderBtn"),12);
-    openOrderSuccess(orderTotal,method);
+    openOrderSuccess(finalTotal,method);
     state.cart=[];saveCart();updateCartUI();closeOrderReview();closeCart();
-  }catch(e){console.error(e);notify("Order could not be recorded. Check Firestore Rules.");}
+  }catch(e){
+    console.error("[TUBAL HUB Shop] secure order failed",e);
+    notify("Order could not be recorded. The secure shop service may need deployment.");
+  }
 });
 document.getElementById("closeOrderSuccess").addEventListener("click",closeOrderSuccess);
 window.addEventListener("keydown",e=>{
