@@ -14,10 +14,6 @@ const THEME_KEY="tubalhub-theme";
 const money=n=>"₱"+Number(n||0).toLocaleString("en-PH",{maximumFractionDigits:0});
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
 
-const THEME_KEY="tubalhub-theme";
-const money=n=>"₱"+Number(n||0).toLocaleString("en-PH",{maximumFractionDigits:0});
-const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
-
 const IMG={
   tshirt:"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=700&q=84",
   shirt:"https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=700&q=84",
@@ -41,6 +37,10 @@ const IMG={
 const galleryPool=[IMG.tshirt,IMG.hoodie,IMG.cap,IMG.backpack,IMG.mug,IMG.poster];
 let realProducts=[];
 let realProductsUnsubscribe=null;
+let ownedLicenses=[];
+let upgradeHistory=[];
+let licenseUnsubscribe=null;
+let upgradeUnsubscribe=null;
 const parseProductPrice=v=>{const n=Number(String(v??"").replace(/[^0-9.]/g,""));return Number.isFinite(n)?n:0};
 const normalizeRealProduct=x=>({id:"real-"+x.id,firestoreId:x.id,real:true,collection:"th",title:String(x.name||"Unnamed Product"),price:parseProductPrice(x.price),priceLabel:String(x.price||"Free"),original:0,originalLabel:"",image:String(x.imageUrl||"").trim(),seller:"TUBAL HUB Shop",sellerInitials:"TH",online:false,stock:null,rating:null,badge:String(x.badge||"").trim(),description:String(x.description||""),details:String(x.description||""),sizes:[],colors:[],productUrl:String(x.productUrl||"").trim(),category:String(x.category||"products"),productType:String(x.productType||"physical"),version:String(x.version||"1.0.0"),releaseDate:String(x.releaseDate||""),license:String(x.license||""),upgradePrice:String(x.upgradePrice||"Free"),latestVersion:String(x.latestVersion||x.version||"1.0.0"),includes:String(x.includes||""),changelog:String(x.changelog||"")});
 function listenToRealProducts(){if(realProductsUnsubscribe)realProductsUnsubscribe();realProductsUnsubscribe=onSnapshot(collection(db,"products"),snap=>{realProducts=snap.docs.map(d=>normalizeRealProduct({id:d.id,...d.data()}));renderProducts();updateCounts();renderMyProducts()},e=>console.warn("[TUBAL HUB Shop] real products listener failed",e))}
