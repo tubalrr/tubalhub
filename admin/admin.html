@@ -1,14 +1,57 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>TUBAL HUB | Admin v1.2.16</title><link rel="stylesheet" href="admin-dashboard.css?v=1.2.16"><link rel="stylesheet" href="admin-redesign-v1.2.16.css?v=20260925-signoutfix"></head><body><button id="sidebarToggle" type="button" aria-label="Toggle sidebar" aria-expanded="true"><span></span><span></span><span></span></button>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>TUBAL HUB | Admin v1.2.16</title><link rel="stylesheet" href="admin-dashboard.css?v=1.2.16"><link rel="stylesheet" href="admin-redesign-v1.2.16.css?v=20260925-signoutfix"><style>
+.analytics-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:18px}
+.analytics-card{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:18px}
+.analytics-card span{display:block;font-size:12px;opacity:.65;text-transform:uppercase;letter-spacing:.08em}
+.analytics-card strong{display:block;font-size:30px;margin-top:8px}
+.analytics-card small{display:block;margin-top:6px;opacity:.55}
+.analytics-layout{display:grid;grid-template-columns:1.7fr 1fr;gap:18px}
+.analytics-chart,.analytics-list{min-height:260px}
+.analytics-bars{height:220px;display:flex;align-items:flex-end;gap:5px;padding:18px 4px 4px}
+.analytics-bar-wrap{height:100%;flex:1;display:flex;align-items:flex-end;justify-content:center;min-width:0}
+.analytics-bar{width:100%;max-width:18px;border-radius:6px 6px 2px 2px;background:linear-gradient(180deg,#8df7c5,#39b989);min-height:2px}
+.analytics-bar-label{font-size:8px;opacity:.45;margin-top:5px;white-space:nowrap}
+.analytics-list-row{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.07)}
+.analytics-list-row:last-child{border-bottom:0}
+.analytics-list-row b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.analytics-list-row span{opacity:.7;white-space:nowrap}
+.analytics-hour-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:5px;align-items:end;height:170px}
+.analytics-hour{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
+.analytics-hour i{display:block;width:100%;max-width:22px;border-radius:4px 4px 1px 1px;background:#69d8ad;min-height:2px}
+.analytics-hour small{font-size:8px;opacity:.45;margin-top:4px}
+.analytics-retention{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.analytics-retention-card{padding:14px;border-radius:14px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07)}
+.analytics-retention-card b{font-size:22px;display:block;margin-top:6px}
+.analytics-empty{padding:30px;text-align:center;opacity:.55}
+@media(max-width:900px){.analytics-grid,.analytics-layout{grid-template-columns:1fr 1fr}.analytics-layout{grid-template-columns:1fr}.analytics-retention{grid-template-columns:1fr}}
+@media(max-width:560px){.analytics-grid{grid-template-columns:1fr 1fr}.analytics-hour-grid{grid-template-columns:repeat(6,1fr)}}
+</style></head><body><button id="sidebarToggle" type="button" aria-label="Toggle sidebar" aria-expanded="true"><span></span><span></span><span></span></button>
 <div class="admin-shell" id="app" hidden>
 <aside class="sidebar"><a class="brand" href="../index.html"><span class="brand-mark"><img src="../tubal-hub-logo.png?v=aurora-1.2.16" alt="TUBAL HUB logo"></span><span class="brand-copy"><b>TUBAL HUB</b><small>Admin v1.2.16</small></span></a><div class="side-label">ADMIN</div><nav>
-<a class="active" href="#dashboard">⌁ <span>Dashboard</span></a><a href="#members">♙ <span>Users</span><strong id="totalUsersReal">0</strong></a><a href="#chat">◉ <span>Live Chat Logs</span></a><a href="#members">⬢ <span>Moderation</span></a><a href="#sponsoredControl">⬔ <span>Sponsored Manager</span></a><a href="#shopOrders">▣ <span>Shop Orders</span></a><a href="#systemSettings">⚙ <span>System Settings</span></a>
+<a class="active" href="#dashboard">⌁ <span>Dashboard</span></a><a href="#members">♙ <span>Users</span><strong id="totalUsersReal">0</strong></a><a href="#chat">◉ <span>Live Chat Logs</span></a><a href="#members">⬢ <span>Moderation</span></a><a href="#sponsoredControl">⬔ <span>Sponsored Manager</span></a><a href="#shopOrders">▣ <span>Shop Orders</span></a><a href="#analytics">◌ <span>Analytics</span></a><a href="#systemSettings">⚙ <span>System Settings</span></a>
 </nav><div class="storage-card"><div class="storage-label">Storage</div><div id="storageBadgeReal" class="storage-value">0 deleted</div><div class="storage-progress"><span></span></div><div class="storage-note">Server cleanup: expired media + excess files</div></div></aside>
 <main class="dashboard"><header class="topbar"><div class="topbar-spacer" aria-hidden="true"></div><div class="top-actions"><span id="adminEmail"></span><span class="badgeLiveReal"><i></i> Live • v1.2.16 • Empty real</span><button id="logout">Sign Out</button></div></header>
 <section class="dashboard-head" id="dashboard"><div><div class="eyebrow">TUBAL HUB / ADMIN</div><h1>Dashboard</h1></div><div class="secure-badge">FIREBASE AUTH</div></section>
 <section class="stats"><div class="stat"><span>Total users</span><strong id="totalUsersCard">0</strong><b>Registered users</b></div><div class="stat"><span>Messages</span><strong id="totalMsgsReal">0</strong><b>No broken URL • fileNameReal • v1.2.16</b></div><div class="stat"><span>Online now</span><strong><i class="dotReal"></i><span id="onlineNowReal">—</span></strong><b>Realtime</b></div><div class="stat"><span>Auto cleaned</span><strong id="blockedReal">—</strong><b>Real cleanup • 7-day expiry / 40-file cap</b></div></section>
 <section class="dashboard-grid"><section class="panel recent-panel"><div class="panel-head"><div><h2>Recent users</h2><p>Same function • di sira • v1.2.16</p></div><span>USERS</span></div><div id="recentUsers" class="recent-users"></div></section>
 <section class="panel sponsor-dashboard" id="sponsoredControl"><div class="panel-head"><div><h2>Sponsored Manager</h2><p>Sa ilalim ng Live Stats • Empty real • Dynamic Firestore</p></div><span>FIRESTORE</span></div><div class="sponsorBoxReal"><div class="sponsor-icon">◫</div><b>No sponsor yet</b><p>Empty lang real • ready for future sponsor<br>Walang hardcoded "Your Sponsor Here"</p><small>Firestore: sponsors • isActive == true</small></div><div class="form-grid sponsor-form"><select id="saSlot"><option value="1">Sponsored 1</option><option value="2">Sponsored 2</option></select><input id="saTitle" placeholder="Sponsor title"><input id="saText" placeholder="Sponsor description"><input id="saImage" placeholder="Image URL (optional)"><input id="saUrl" placeholder="Sponsor / product URL (optional)"><input id="saBadge" placeholder="Badge e.g. SPONSORED" value="SPONSORED"><button type="button" id="addSponsoredAd">Publish Sponsored →</button></div><small class="form-note">Published ads appear automatically below Live Stats on the homepage. One active sponsor per slot • Sponsored 1 and Sponsored 2</small><div id="sponsoredAdList"></div></section></section>
-<section class="panel" id="systemSettings"><div class="panel-head"><div><small>SYSTEM SETTINGS</small><h2>System Settings</h2><p>Control public site availability</p></div><span>FIRESTORE</span></div><div class="system-setting-row"><div><b>Maintenance mode</b><small>Temporarily show a maintenance screen to visitors. Admin access stays available.</small></div><label class="switchReal"><input id="maintenanceMode" type="checkbox"><span></span></label></div><div id="maintenanceStatus" class="system-setting-status">Loading setting…</div></section><section class="panel" id="shopProducts"><div class="panel-head"><div><small>SHOP CONTROL</small><h2>Products</h2><p>Physical + Digital + Versioned products</p></div><span>FIRESTORE</span></div><div class="form-grid"><input id="spName" placeholder="Product name"><select id="spProductType"><option value="physical">Physical</option><option value="digital-product">Digital Product</option><option value="website-template">Website Template</option><option value="app-software">App / Software</option><option value="game-mod">Game / Mod</option></select><select id="spCategory"><option value="merchandise">Merchandise</option><option value="clothing">Clothing</option><option value="accessories">Accessories</option><option value="digital-products">Digital Products</option><option value="apps-software">Apps & Software</option><option value="gaming">Gaming</option><option value="mods-addons">Mods & Add-ons</option><option value="media">Media</option><option value="wellness">Wellness</option><option value="other">Other</option></select><input id="spVersion" placeholder="Version e.g. 1.2.16"><input id="spReleaseDate" type="date" title="Release date"><input id="spLicense" placeholder="License e.g. Personal / Commercial"><input id="spUpgradePrice" placeholder="Upgrade price e.g. ₱299 or Free"><input id="spLatestVersion" placeholder="Latest version e.g. 1.2.16"><input id="spPrice" placeholder="Price e.g. Free or ₱999"><input id="spIcon" placeholder="Icon / emoji e.g. 🧩"><input id="spBadge" placeholder="Badge e.g. NEW"><input id="spImage" placeholder="Image URL (optional)"><input id="spUrl" placeholder="Product URL (optional)"><input id="spDownloadUrl" placeholder="Protected download path or source (server only)"><textarea id="spDescription" placeholder="Product description..."></textarea><textarea id="spIncludes" placeholder="What's included..."></textarea><textarea id="spChangelog" placeholder="Changelog..."></textarea><button id="addShopProduct">Publish Product →</button></div><div id="shopProductList"></div></section>
+<section class="panel" id="analytics">
+<div class="panel-head"><div><small>REAL FIRESTORE ANALYTICS</small><h2>Analytics</h2><p id="analyticsUpdated">Loading real activity data…</p></div><span>SERVER</span></div>
+<div class="analytics-grid">
+<div class="analytics-card"><span>DAU</span><strong id="analyticsDau">—</strong><small>Unique active users today</small></div>
+<div class="analytics-card"><span>WAU</span><strong id="analyticsWau">—</strong><small>Unique active users • last 7 days</small></div>
+<div class="analytics-card"><span>Messages / 30d</span><strong id="analyticsMessages">—</strong><small>Global + private messages</small></div>
+<div class="analytics-card"><span>New Users / 30d</span><strong id="analyticsNewUsers">—</strong><small>Based on user creation date</small></div>
+</div>
+<div class="analytics-layout">
+<section class="panel analytics-chart"><div class="panel-head"><div><h2>Messages per Day</h2><p>Actual Firestore message timestamps</p></div><span>30 DAYS</span></div><div id="messagesChart" class="analytics-bars"></div></section>
+<section class="panel analytics-list"><div class="panel-head"><div><h2>Most Active Users</h2><p>Message activity in the last 30 days</p></div><span>TOP 10</span></div><div id="activeUsersList"></div></section>
+</div>
+<div class="analytics-layout">
+<section class="panel analytics-chart"><div class="panel-head"><div><h2>Peak Hours</h2><p>Message activity by local server hour</p></div><span>24H</span></div><div id="peakHours" class="analytics-hour-grid"></div></section>
+<section class="panel"><div class="panel-head"><div><h2>User Growth</h2><p>New registered users per day</p></div><span>30 DAYS</span></div><div id="newUsersChart" class="analytics-bars"></div></section>
+</div>
+<section class="panel"><div class="panel-head"><div><h2>Retention</h2><p>Real message-based cohort retention</p></div><span>D1 / D7 / D30</span></div><div id="retentionGrid" class="analytics-retention"></div></section>
+</section><section class="panel" id="systemSettings"><div class="panel-head"><div><small>SYSTEM SETTINGS</small><h2>System Settings</h2><p>Control public site availability</p></div><span>FIRESTORE</span></div><div class="system-setting-row"><div><b>Maintenance mode</b><small>Temporarily show a maintenance screen to visitors. Admin access stays available.</small></div><label class="switchReal"><input id="maintenanceMode" type="checkbox"><span></span></label></div><div id="maintenanceStatus" class="system-setting-status">Loading setting…</div></section><section class="panel" id="shopProducts"><div class="panel-head"><div><small>SHOP CONTROL</small><h2>Products</h2><p>Physical + Digital + Versioned products</p></div><span>FIRESTORE</span></div><div class="form-grid"><input id="spName" placeholder="Product name"><select id="spProductType"><option value="physical">Physical</option><option value="digital-product">Digital Product</option><option value="website-template">Website Template</option><option value="app-software">App / Software</option><option value="game-mod">Game / Mod</option></select><select id="spCategory"><option value="merchandise">Merchandise</option><option value="clothing">Clothing</option><option value="accessories">Accessories</option><option value="digital-products">Digital Products</option><option value="apps-software">Apps & Software</option><option value="gaming">Gaming</option><option value="mods-addons">Mods & Add-ons</option><option value="media">Media</option><option value="wellness">Wellness</option><option value="other">Other</option></select><input id="spVersion" placeholder="Version e.g. 1.2.16"><input id="spReleaseDate" type="date" title="Release date"><input id="spLicense" placeholder="License e.g. Personal / Commercial"><input id="spUpgradePrice" placeholder="Upgrade price e.g. ₱299 or Free"><input id="spLatestVersion" placeholder="Latest version e.g. 1.2.16"><input id="spPrice" placeholder="Price e.g. Free or ₱999"><input id="spIcon" placeholder="Icon / emoji e.g. 🧩"><input id="spBadge" placeholder="Badge e.g. NEW"><input id="spImage" placeholder="Image URL (optional)"><input id="spUrl" placeholder="Product URL (optional)"><input id="spDownloadUrl" placeholder="Protected download path or source (server only)"><textarea id="spDescription" placeholder="Product description..."></textarea><textarea id="spIncludes" placeholder="What's included..."></textarea><textarea id="spChangelog" placeholder="Changelog..."></textarea><button id="addShopProduct">Publish Product →</button></div><div id="shopProductList"></div></section>
 <section class="panel" id="shopOrders"><div class="panel-head"><div><small>SHOP CONTROL</small><h2>Orders & Payment Verification</h2><p>Pending manual payments • server unlock after approval</p></div><span>SECURE SERVER</span></div><div style="display:flex;gap:10px;flex-wrap:wrap;margin:0 0 14px"><button type="button" id="migrateShopDownloads">Protect Existing Download URLs →</button><small style="opacity:.7;align-self:center">Moves legacy product download URLs into private server-only storage.</small></div><div id="shopOrderList"></div></section>
 <section class="panel" id="content"><div class="panel-head"><div><small>CONTENT CONTROL</small><h2>News Manager</h2></div><span>FIRESTORE</span></div><div class="form-grid"><input id="nt" placeholder="News title"><input id="nd" placeholder="Date"><select id="nc"><option value="platform">Platform</option><option value="community">Community</option><option value="creator">Creator</option></select><input id="na" placeholder="Article link (optional)"><input id="ni" placeholder="Image URL (optional)"><textarea id="nx" placeholder="Write your news content..."></textarea><button id="addNews">Publish News →</button></div><div id="newsList"></div></section>
 <section class="panel" id="eventsManager"><div class="panel-head"><div><small>COMMUNITY CONTROL</small><h2>Events Manager</h2></div><span>FIRESTORE</span></div><div class="form-grid"><input id="et" placeholder="Event title"><input id="ed" type="date" title="Event date"><input id="etime" type="time" title="Event time"><input id="el" placeholder="Location / platform"><textarea id="ex" placeholder="Write your event details..."></textarea><button id="addEvent">Publish Event →</button></div><div id="eventListAdmin"></div></section><section class="panel" id="announcements"><div class="panel-head"><div><small>PLATFORM CONTROL</small><h2>Announcements</h2></div><span>FIRESTORE</span></div><div class="form-grid"><input id="at" placeholder="Announcement title"><textarea id="ax" placeholder="Write your announcement..."></textarea><button id="addAnn">Publish Announcement →</button></div><div id="annList"></div></section>
@@ -20,7 +63,7 @@ import {auth} from "../assets/js/firebase-config.js";
 import {onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 import {getFirestore,collection,getDocs,addDoc,deleteDoc,doc,query,orderBy,limit,serverTimestamp,updateDoc,Timestamp,writeBatch,onSnapshot,setDoc} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 import {getFunctions,httpsCallable} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-functions.js";
-const ADMIN_EMAIL="tubalrr@gmail.com",db=getFirestore(),shopFunctions=getFunctions(),verifyShopOrderReal=httpsCallable(shopFunctions,"verifyShopOrderReal"),migrateShopDownloadSecretsReal=httpsCallable(shopFunctions,"migrateShopDownloadSecretsReal"),$=id=>document.getElementById(id);
+const ADMIN_EMAIL="tubalrr@gmail.com",db=getFirestore(),shopFunctions=getFunctions(),analyticsFunctions=getFunctions(),getAdminAnalyticsReal=httpsCallable(analyticsFunctions,"getAdminAnalyticsReal"),verifyShopOrderReal=httpsCallable(shopFunctions,"verifyShopOrderReal"),migrateShopDownloadSecretsReal=httpsCallable(shopFunctions,"migrateShopDownloadSecretsReal"),$=id=>document.getElementById(id);
 let news=[],anns=[],members=[],chats=[],shopProducts=[],shopOrders=[],sponsoredAds=[];
 let presenceUnsubscribe=null,cleanupStatsUnsubscribe=null;
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
@@ -159,6 +202,51 @@ function render(){
     '<article class="item"><div><b>'+esc(x.displayName||"Member")+'</b><p>'+esc(x.text||"")+'</p></div><button data-del-chat="'+esc(x.id)+'">×</button></article>'
   ).join("")||'<div class="empty">No chat messages found.</div>';
 }
+
+function renderAnalyticsReal(data){
+  const num=v=>Number(v||0).toLocaleString("en-PH");
+  $("analyticsDau").textContent=num(data?.dau);
+  $("analyticsWau").textContent=num(data?.wau);
+  $("analyticsMessages").textContent=num(data?.totalMessages30d);
+  $("analyticsNewUsers").textContent=num(data?.totalNewUsers30d);
+  $("analyticsUpdated").textContent=data?.generatedAt?"Updated "+new Date(data.generatedAt).toLocaleString():"No analytics timestamp";
+
+  const days=Array.isArray(data?.days)?data.days:[];
+  const maxMsg=Math.max(1,...days.map(x=>Number(x.messages||0)));
+  $("messagesChart").innerHTML=days.length
+    ? days.map(x=>'<div class="analytics-bar-wrap" title="'+esc(x.date)+': '+num(x.messages)+' messages"><div style="height:'+Math.max(2,(Number(x.messages||0)/maxMsg)*100)+'%;width:100%;display:flex;align-items:flex-end;justify-content:center"><i class="analytics-bar"></i></div></div>').join("")
+    : '<div class="analytics-empty">No message activity found.</div>';
+
+  const maxNew=Math.max(1,...days.map(x=>Number(x.newUsers||0)));
+  $("newUsersChart").innerHTML=days.length
+    ? days.map(x=>'<div class="analytics-bar-wrap" title="'+esc(x.date)+': '+num(x.newUsers)+' new users"><div style="height:'+Math.max(2,(Number(x.newUsers||0)/maxNew)*100)+'%;width:100%;display:flex;align-items:flex-end;justify-content:center"><i class="analytics-bar"></i></div></div>').join("")
+    : '<div class="analytics-empty">No new-user activity found.</div>';
+
+  const active=Array.isArray(data?.mostActiveUsers)?data.mostActiveUsers:[];
+  $("activeUsersList").innerHTML=active.length
+    ? active.map((x,i)=>'<div class="analytics-list-row"><b>'+(i+1)+'. '+esc(x.name||x.uid)+'</b><span>'+num(x.messages)+' messages</span></div>').join("")
+    : '<div class="analytics-empty">No message activity found.</div>';
+
+  const hours=Array.isArray(data?.hourly)?data.hourly:Array(24).fill(0);
+  const maxHour=Math.max(1,...hours);
+  $("peakHours").innerHTML=hours.map((v,i)=>'<div class="analytics-hour" title="'+String(i).padStart(2,"0")+':00 — '+num(v)+' messages"><i style="height:'+Math.max(2,(Number(v||0)/maxHour)*100)+'%"></i><small>'+String(i).padStart(2,"0")+'</small></div>').join("");
+
+  const retention=data?.retention||{};
+  $("retentionGrid").innerHTML=[["d1","D1"],["d7","D7"],["d30","D30"]].map(([key,label])=>{
+    const r=retention[key];
+    return '<div class="analytics-retention-card"><span>'+label+' retention</span><b>'+(r?String(r.rate)+'%':'—')+'</b><small>'+(r?String(r.retained)+' of '+String(r.eligible)+' eligible users':'Not enough completed cohort data yet')+'</small></div>';
+  }).join("");
+}
+async function loadAnalyticsReal(){
+  try{
+    const result=await getAdminAnalyticsReal({});
+    renderAnalyticsReal(result?.data||{});
+  }catch(e){
+    console.warn("Admin analytics:",e);
+    $("analyticsUpdated").textContent="Analytics unavailable: "+(e?.message||"server error");
+    $("analyticsDau").textContent=$("analyticsWau").textContent=$("analyticsMessages").textContent=$("analyticsNewUsers").textContent="—";
+  }
+}
 async function load(){try{const [n,a,c,p,o]=await Promise.all([getDocs(query(collection(db,"news"),orderBy("createdAt","desc"),limit(100))),getDocs(query(collection(db,"announcements"),orderBy("createdAt","desc"),limit(100))),getDocs(query(collection(db,"globalChats"),orderBy("createdAt","desc"),limit(100))),getDocs(query(collection(db,"products"),orderBy("createdAt","desc"),limit(100))),getDocs(query(collection(db,"orders"),orderBy("createdAt","desc"),limit(100)))]);news=n.docs.map(d=>({id:d.id,...d.data()}));anns=a.docs.map(d=>({id:d.id,...d.data()}));chats=c.docs.map(d=>({id:d.id,...d.data()}));shopProducts=p.docs.map(d=>({id:d.id,...d.data()}));shopOrders=o.docs.map(d=>({id:d.id,...d.data()}));render()}catch(e){toast("Firestore error: "+e.message);render()}}
 function listenToPresence(){
   if(presenceUnsubscribe)presenceUnsubscribe();
@@ -201,5 +289,5 @@ if(sidebarToggle&&sidebar){
   });
 }
 $("logout").onclick=()=>signOut(auth);
-onAuthStateChanged(auth,async user=>{if(!user||user.email?.toLowerCase()!==ADMIN_EMAIL){location.replace("login.html");return}$("adminEmail").textContent=user.email;$("loading").remove();$("app").hidden=false;await load();listenToPresence();listenToCleanupStats();await loadMaintenanceSetting();await loadSponsoredAds()});
+onAuthStateChanged(auth,async user=>{if(!user||user.email?.toLowerCase()!==ADMIN_EMAIL){location.replace("login.html");return}$("adminEmail").textContent=user.email;$("loading").remove();$("app").hidden=false;await load();listenToPresence();listenToCleanupStats();await loadMaintenanceSetting();await loadSponsoredAds();await loadAnalyticsReal()});
 </script></body></html>
