@@ -5,19 +5,28 @@ import {
   browserLocalPersistence
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
+// GUMROAD TEMPLATE:
+// Replace every value below with the Firebase Web App config from the BUYER'S
+// Firebase project. Never paste a Firebase Admin private key or service-account
+// JSON into this client-side file.
 const firebaseConfig = {
-  apiKey: "AIzaSyBBfE3xfu4BRz7Jwd4GoscJ_jW_x-GXjUk",
-  authDomain: "tubalhub.firebaseapp.com",
-  projectId: "tubalhub",
-  storageBucket: "tubalhub.firebasestorage.app",
-  messagingSenderId: "741686139338",
-  appId: "1:741686139338:web:dc80d9c37a9e8b4da79733"
+  apiKey: "YOUR_FIREBASE_WEB_API_KEY",
+  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT_ID.firebasestorage.app",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_FIREBASE_WEB_APP_ID"
 };
 
-const app = initializeApp(firebaseConfig);
+const isConfigured = !Object.values(firebaseConfig).some(value =>
+  String(value).includes("YOUR_")
+);
 
-// Keep Firebase Auth lightweight during startup.
-// The popup/redirect resolver is loaded only when Google sign-in is actually used.
+if (!isConfigured) {
+  console.warn("[TUBAL HUB] Firebase is not configured. Follow the Gumroad setup guide before running the site.");
+}
+
+const app = initializeApp(firebaseConfig);
 const auth = initializeAuth(app, {
   persistence: [
     indexedDBLocalPersistence,
