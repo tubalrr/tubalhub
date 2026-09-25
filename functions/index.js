@@ -1378,7 +1378,7 @@ exports.getAdminAnalyticsReal = onCall(async request => {
     const snap = await db.collection(collectionName)
       .where("createdAt", ">=", Timestamp.fromDate(start))
       .where("createdAt", "<=", Timestamp.fromDate(end))
-      .limit(50000)
+      .limit(10000)
       .get();
     for (const docSnap of snap.docs) {
       const data = docSnap.data() || {};
