@@ -21,7 +21,7 @@ If you find a website or downloadable product that appears to use TUBAL HUB mate
 - screenshots or other supporting evidence
 - your contact information
 
-Email: tubalrr@gmail.com
+Email: YOUR_SUPPORT_EMAIL
 
 Reports are reviewed manually. A report does not automatically establish infringement, and TUBAL HUB may request additional information before taking action.
 
