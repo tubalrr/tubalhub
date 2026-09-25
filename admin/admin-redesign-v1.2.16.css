@@ -296,3 +296,23 @@ body:after{display:none!important}#sidebarToggle{position:fixed!important;z-inde
     max-width:100%!important;
   }
 }
+
+
+/* ALL SIDE-BY-SIDE CONTAINERS — EQUAL HEIGHT */
+#shopProducts,#content,#announcements,#chat,#members{
+  min-height:420px!important;
+  height:420px!important;
+}
+#shopProducts .form-grid,#content .form-grid,#announcements .form-grid{
+  align-content:start!important;
+}
+#shopProductList,#newsList,#annList,#membersContent,#chatContent{
+  max-height:270px!important;
+  overflow:auto!important;
+}
+@media(max-width:950px){
+  #shopProducts,#content,#announcements,#chat,#members{
+    height:auto!important;
+    min-height:0!important;
+  }
+}
