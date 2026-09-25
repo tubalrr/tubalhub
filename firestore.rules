@@ -68,7 +68,7 @@ service cloud.firestore {
     // =========================================================
 
     match /globalChats/{messageId} {
-      allow read: if chatAllowed();
+      allow read: if adminUser() || chatAllowed();
 
       // Global Chat writes are server-only. Client content must pass through
       // sendMessageReal/sendGlobalMediaMessageReal for validation, rate limiting,
