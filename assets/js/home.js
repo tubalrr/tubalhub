@@ -329,17 +329,8 @@ function initSponsoredReal(){
     status.style.background="rgba(29,255,145,0.15)";
     status.style.color="#1dff91";
     content.innerHTML=safeLink
-      ? '<a class="tubal-sponsor-card-real" data-sponsor-link="'+escAttr(safeLink)+'" href="'+escAttr(safeLink)+'" target="_blank" rel="noopener noreferrer" aria-label="Open sponsored promotion: '+title+'" style="display:block;background:rgba(0,0,0,.3);border-radius:12px;overflow:hidden;text-decoration:none;color:#fff;border:1px solid rgba(255,215,0,.2);cursor:pointer;pointer-events:auto;position:relative;z-index:9999;touch-action:manipulation;">'+body+'</a>'
+      ? '<a class="tubal-sponsor-card-real" href="'+escAttr(safeLink)+'" target="_self" rel="noopener noreferrer" aria-label="Open sponsored promotion: '+title+'" style="display:block;background:rgba(0,0,0,.3);border-radius:12px;overflow:hidden;text-decoration:none;color:#fff;border:1px solid rgba(255,215,0,.2);cursor:pointer;pointer-events:auto;position:relative;z-index:9999;touch-action:manipulation;">'+body+'</a>'
       : '<div style="display:block;background:rgba(0,0,0,.3);border-radius:12px;overflow:hidden;color:#fff;border:1px solid rgba(255,215,0,.2);">'+body+'</div>';
-    if(safeLink){
-      const sponsorLink=content.querySelector("[data-sponsor-link]");
-      sponsorLink?.addEventListener("click",event=>{
-        event.preventDefault();
-        event.stopPropagation();
-        const url=sponsorLink.getAttribute("href");
-        if(url)window.open(url,"_blank","noopener,noreferrer");
-      },true);
-    }
   };
   try{
     const q=query(collection(db,"sponsors"),limit(20));
