@@ -89,7 +89,7 @@ function render(){
   $("totalUsersCard").textContent=members.length;
   $("totalUsersReal").textContent=members.length;
   $("totalMsgsReal").textContent=chats.length;
-  $("onlineNowReal").textContent=members.filter(x=>x.online===true||x.isOnline===true||x.status==="online").length||"—";
+  const onlineCount=members.filter(x=>x.online===true||x.isOnline===true||x.status==="online").length; $("onlineNowReal").textContent=String(onlineCount);
 
   $("recentUsers").innerHTML=members.slice(0,6).map(x=>{
     const name=x.displayName||x.email||"Member";
