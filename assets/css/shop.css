@@ -679,8 +679,8 @@ body.theme-light .payment-back:hover{
   .payment-back span{font-size:9px}
 }
 
-/* Keep modal layers truly hidden until JavaScript opens them. */
-.quickview-layer[hidden],#checkoutLayer[hidden]{display:none!important}
+/* Keep every modal layer truly hidden until JavaScript opens it. */
+.quickview-layer[hidden],.quickview-layer[aria-hidden="true"],#checkoutLayer[hidden],#orderReviewLayer[hidden],#orderSuccessLayer[hidden]{display:none!important}
 
 
 /* Main Shop tabs now mirror the Admin product categories. */
