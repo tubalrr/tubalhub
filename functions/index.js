@@ -642,11 +642,11 @@ async function reserveShopOrderSlotReal(tx, uid) {
 
 async function releaseShopOrderSlotReal(tx, uid) {
   const ref = db.collection("shopRateLimits").doc(uid);
-  const snap = await tx.get(ref);
-  if (!snap.exists) return;
-  const data = snap.data() || {};
+  // Do not read here: this helper is called after other transaction writes.
+  // Firestore requires all transaction reads to happen before writes.
   tx.set(ref, {
-    pendingCount: Math.max(0, Number(data.pendingCount || 0) - 1),
+    uid,
+    pendingCount: FieldValue.increment(-1),
     updatedAt: FieldValue.serverTimestamp()
   }, { merge: true });
 }
