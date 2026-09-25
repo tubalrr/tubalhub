@@ -9,6 +9,12 @@ service firebase.storage {
     }
 
     // Existing Global Chat media uploads: max 8 MB and image-only MIME types.
+    // Paid digital products are server-delivered through short-lived signed URLs.
+    // Direct client reads/writes are blocked on this prefix.
+    match /shop-downloads/{allPaths=**} {
+      allow read, write: if false;
+    }
+
     match /global-chat/{userId}/{fileName} {
       allow read: if realUser();
 
