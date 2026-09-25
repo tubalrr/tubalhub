@@ -158,14 +158,27 @@ function burst(el,count){
     dot.animate([{transform:"translate(-50%,-50%) scale(1)",opacity:1},{transform:"translate(calc(-50% + "+dx+"px),calc(-50% + "+dy+"px)) scale(.2)",opacity:0}],{duration:450,fill:"forwards",easing:"cubic-bezier(.34,1.56,.64,1)"}).onfinish=()=>dot.remove();
   }
 }
-function markAllRead(){
+async function markAllRead(){
   const rows=[...document.querySelectorAll(".th-notification-row.is-unread")];
   rows.forEach((row,i)=>row.animate([{transform:"translateX(0)",opacity:1},{transform:"translateX(34px)",opacity:0}],{duration:260,delay:i*12,fill:"forwards",easing:"cubic-bezier(.16,1,.3,1)"}));
-  const finish=async()=>{
-    if(me&&items.some(x=>x.remote)){const batch=firestoreApi.writeBatch(db);items.filter(x=>x.remote&&!x.read).slice(0,450).forEach(n=>batch.update(firestoreApi.doc(db,"notifications",n.id),{read:true}));try{await batch.commit()}catch(e){console.warn("[TUBAL HUB] mark notifications read",e)}}
-    items=items.map(x=>Object.assign({},x,{read:true}));save();setTimeout(render,270+Math.min(rows.length,10)*12);
-  };
-  finish();
+
+  // Persist local/system notifications as read as well. Otherwise the
+  // Firestore listener can re-add the old unread local items after render.
+  localSystemItems=localSystemItems.map(n=>Object.assign({},n,{read:true}));
+  saveLocalSystem();
+
+  const unreadRemote=items.filter(x=>x.remote&&!x.read).slice(0,450);
+  if(me&&unreadRemote.length){
+    const batch=writeBatch(db);
+    unreadRemote.forEach(n=>batch.update(doc(db,"notifications",n.id),{read:true}));
+    try{await batch.commit()}
+    catch(e){console.warn("[TUBAL HUB] mark notifications read",e)}
+  }
+
+  items=items.map(x=>Object.assign({},x,{read:true}));
+  save();
+  setBadge();
+  setTimeout(render,270+Math.min(rows.length,10)*12);
 }
 async function clearAll(){
   if(DEMO_MODE){items=[];save();render();return}
