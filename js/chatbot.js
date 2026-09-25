@@ -177,6 +177,122 @@
     status.textContent=name ? "Welcome "+displayName(name)+" • Online" : "Online • Real site data";
   }
 
+  function makeDraggableReal(){
+    const root=$("tubalChatbotReal");
+    const toggle=$("chatToggleReal");
+    const win=$("chatWindowReal");
+    if(!root || !toggle || !win) return;
+
+    const POS_KEY="tubalhub_chatbot_position_real";
+    let dragging=false;
+    let moved=false;
+    let startX=0;
+    let startY=0;
+    let startLeft=0;
+    let startTop=0;
+    let suppressClick=false;
+
+    root.style.touchAction="none";
+    root.style.userSelect="none";
+    toggle.style.touchAction="none";
+    toggle.style.cursor="grab";
+
+    function clampPosition(left,top){
+      const rect=root.getBoundingClientRect();
+      const maxLeft=Math.max(6,window.innerWidth-rect.width-6);
+      const maxTop=Math.max(6,window.innerHeight-rect.height-6);
+      return {
+        left:Math.min(Math.max(6,left),maxLeft),
+        top:Math.min(Math.max(6,top),maxTop)
+      };
+    }
+
+    function applyPosition(left,top,save=true){
+      const p=clampPosition(left,top);
+      root.style.left=p.left+"px";
+      root.style.top=p.top+"px";
+      root.style.right="auto";
+      root.style.bottom="auto";
+      if(save){
+        try{localStorage.setItem(POS_KEY,JSON.stringify(p));}catch(_){}
+      }
+    }
+
+    function restorePosition(){
+      try{
+        const raw=localStorage.getItem(POS_KEY);
+        if(!raw) return;
+        const p=JSON.parse(raw);
+        if(Number.isFinite(p?.left) && Number.isFinite(p?.top)) applyPosition(p.left,p.top,false);
+      }catch(_){}
+    }
+
+    function pointFor(event){
+      return {x:event.clientX,y:event.clientY};
+    }
+
+    function startDrag(event){
+      if(event.pointerType==="mouse" && event.button!==0) return;
+      const target=event.target;
+      if(target && target.closest && target.closest("input,textarea,button,a,select")){ return; }
+      const rect=root.getBoundingClientRect();
+      const p=pointFor(event);
+      dragging=true;
+      moved=false;
+      startX=p.x;
+      startY=p.y;
+      startLeft=rect.left;
+      startTop=rect.top;
+      root.style.transition="none";
+      if(toggle) toggle.style.cursor="grabbing";
+      try{event.currentTarget.setPointerCapture(event.pointerId);}catch(_){}
+    }
+
+    function moveDrag(event){
+      if(!dragging) return;
+      const p=pointFor(event);
+      const dx=p.x-startX;
+      const dy=p.y-startY;
+      if(Math.abs(dx)>5 || Math.abs(dy)>5) moved=true;
+      if(!moved) return;
+      applyPosition(startLeft+dx,startTop+dy,true);
+      event.preventDefault();
+    }
+
+    function endDrag(event){
+      if(!dragging) return;
+      dragging=false;
+      root.style.transition="";
+      if(toggle) toggle.style.cursor="grab";
+      if(moved) suppressClick=true;
+      try{event.currentTarget.releasePointerCapture(event.pointerId);}catch(_){}
+    }
+
+    // Drag the floating bot or its header. Input/buttons stay clickable.
+    [toggle,win].forEach(handle=>{
+      handle.addEventListener("pointerdown",startDrag);
+      handle.addEventListener("pointermove",moveDrag,{passive:false});
+      handle.addEventListener("pointerup",endDrag);
+      handle.addEventListener("pointercancel",endDrag);
+    });
+
+    toggle.addEventListener("click",event=>{
+      if(suppressClick){
+        suppressClick=false;
+        event.preventDefault();
+        event.stopImmediatePropagation();
+      }
+    },true);
+
+    window.addEventListener("resize",()=>{
+      const rect=root.getBoundingClientRect();
+      if(!Number.isFinite(rect.left)||!Number.isFinite(rect.top)) return;
+      applyPosition(rect.left,rect.top,true);
+    });
+
+    restorePosition();
+  }
+
   function initReal(){
     const toggle=$("chatToggleReal");
     const win=$("chatWindowReal");
@@ -185,6 +301,7 @@
     if(!toggle||!win||!send||!input) return;
 
     setStatus();
+    makeDraggableReal();
 
     toggle.addEventListener("click",()=>{
       const open=win.style.display==="flex";
