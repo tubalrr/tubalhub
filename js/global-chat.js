@@ -3,6 +3,8 @@
    Firebase Global Chat implementation in pages/chat.html.
    No hardcoded community messages or fake online users are generated here.
 */
+const TUBAL_VERSION_REAL = "1.2.16";
+
 (() => {
   "use strict";
 
@@ -115,11 +117,11 @@
     const marker = $("#chatBuildMarkerReal");
     const title = $("#globalChatVersionTitle");
 
-    let version = "1.2.16";
-    let build = "2026-09-25_1210";
+    let version = TUBAL_VERSION_REAL;
+    let build = "2026-09-25_1216";
 
     try {
-      const response = await fetch("../version.json?v=1.2.16&t=" + Date.now(), { cache: "no-store" });
+      const response = await fetch("../version.json?v=" + TUBAL_VERSION_REAL + "&t=" + Date.now(), { cache: "no-store" });
       if (!response.ok) throw new Error("version " + response.status);
       const data = await response.json();
       if (String(data?.version || "").trim()) version = String(data.version).trim();
