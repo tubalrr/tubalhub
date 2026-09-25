@@ -1043,7 +1043,23 @@ async function loadRealPageTitle(path,targetId){
     const parsed=new DOMParser().parseFromString(pageHtml,"text/html");
     const title=String(parsed?.title||"").trim();
     if(title&&$(targetId))$(targetId).textContent=title;
-  }catch(_){}
+
+    if(path.indexOf("payapang-isip.html")!==-1){
+      const summary=String(parsed?.querySelector(".hero-copy")?.textContent||"").replace(/\s+/g," ").trim();
+      const summaryEl=$("#featuredPeaceSummary");
+      if(summary&&summaryEl)summaryEl.textContent=summary;
+
+      const sectionNames=[...parsed.querySelectorAll(".pi-section .section-heading h2")]
+        .map(el=>String(el.textContent||"").replace(/\s+/g," ").trim())
+        .filter(Boolean);
+      const preview=$("#featuredJournalPreview");
+      if(preview&&sectionNames.length){
+        preview.innerHTML=sectionNames.slice(0,6).map(name=>
+          '<div class="featured-preview-item"><span class="featured-preview-mood" aria-hidden="true">•</span><div><strong>'+esc(name)+'</strong><small>Real section from Payapang Isip</small></div></div>'
+        ).join("");
+      }
+    }
+  }catch(_){}  
 }
 function drawFeaturedMusicWave(){
   if(!state.analyser)return;const bars=[...document.querySelectorAll("#featuredMusicWave i")],data=new Uint8Array(state.analyser.frequencyBinCount);
