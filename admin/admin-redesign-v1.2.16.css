@@ -65,3 +65,50 @@ body:after{display:none!important}#sidebarToggle{position:fixed!important;z-inde
 @media(max-width:950px){
   #shopProducts{max-width:100%!important}
 }
+
+
+/* PRODUCT CONTAINERS — compact */
+#shopProductList{
+  max-width:760px!important;
+  margin-top:10px!important;
+}
+#shopProductList .item{
+  width:100%!important;
+  max-width:760px!important;
+  padding:9px 11px!important;
+  min-height:0!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:10px!important;
+  border:1px solid rgba(148,163,184,.10)!important;
+  border-radius:10px!important;
+  margin-top:7px!important;
+  background:rgba(255,255,255,.025)!important;
+}
+#shopProductList .item > div{
+  min-width:0!important;
+}
+#shopProductList .item b{
+  font-size:11px!important;
+}
+#shopProductList .item p{
+  margin:3px 0!important;
+  font-size:9px!important;
+  line-height:1.35!important;
+}
+#shopProductList .item small{
+  font-size:8px!important;
+}
+#shopProductList .item button{
+  flex:0 0 28px!important;
+  width:28px!important;
+  height:28px!important;
+  min-height:28px!important;
+  padding:0!important;
+  border-radius:8px!important;
+}
+@media(max-width:950px){
+  #shopProductList{max-width:100%!important}
+  #shopProductList .item{max-width:100%!important}
+}
