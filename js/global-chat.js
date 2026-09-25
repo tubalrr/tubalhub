@@ -492,8 +492,9 @@
 
 /* =========================================================
    TUBAL HUB — GLOBAL CHAT STORAGE AUTO-CLEANUP REAL
-   Uses the existing Firebase path: global-chat/{uid}/...
-   Keeps the visible three-dash control untouched.
+   Client never lists the Storage bucket. Cleanup is requested
+   through a trusted callable function to avoid browser CORS/list
+   failures. Existing three-dash control remains untouched.
    ========================================================= */
 (() => {
   "use strict";
@@ -501,110 +502,44 @@
   const MAX_IMAGES_REAL = 40;
   const MAX_SIZE_REAL = 8 * 1024 * 1024;
   const ALLOWED_MIME_REAL = ["image/jpeg", "image/png", "image/webp", "image/gif"];
-  let storageApiPromiseReal = null;
+  let apiPromiseReal = null;
 
-  async function storageApiReal() {
-    if (!storageApiPromiseReal) {
-      storageApiPromiseReal = Promise.all([
+  async function apiReal() {
+    if (!apiPromiseReal) {
+      apiPromiseReal = Promise.all([
         import("https://www.gstatic.com/firebasejs/12.19.0/firebase-storage.js"),
-        import("https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js"),
+        import("https://www.gstatic.com/firebasejs/12.19.0/firebase-functions.js"),
         import("../assets/js/firebase-config.js")
-      ]).then(([storageMod, firestoreMod, configMod]) => ({
-        getStorage: storageMod.getStorage,
-        ref: storageMod.ref,
-        listAll: storageMod.listAll,
-        getMetadata: storageMod.getMetadata,
-        deleteObject: storageMod.deleteObject,
-        uploadBytes: storageMod.uploadBytes,
-        getDownloadURL: storageMod.getDownloadURL,
-        getFirestore: firestoreMod.getFirestore,
-        collection: firestoreMod.collection,
-        addDoc: firestoreMod.addDoc,
-        serverTimestamp: firestoreMod.serverTimestamp,
+      ]).then(([storageMod, functionsMod, configMod]) => ({
+        ...storageMod,
         app: configMod.app,
-        auth: configMod.auth
+        auth: configMod.auth,
+        functions: functionsMod.getFunctions(configMod.app),
+        httpsCallable: functionsMod.httpsCallable
       }));
     }
-    return storageApiPromiseReal;
-  }
-
-  function channelToFirestoreReal(value) {
-    const map = {
-      general: "global-chat",
-      "payapang-isip": "payapang-isip",
-      ctrlzone: "ctrlzone",
-      "shop-talk": "shop-talk",
-      announcements: "announcements"
-    };
-    return map[String(value || "")] || "global-chat";
-  }
-
-  function showStorageNoticeReal(message) {
-    const notice = document.getElementById("moderationNotice");
-    if (!notice) return;
-    notice.textContent = message;
-    notice.className = "moderation-notice show";
-    window.clearTimeout(window.__tubalHubStorageNoticeTimerReal);
-    window.__tubalHubStorageNoticeTimerReal = window.setTimeout(() => {
-      notice.classList.remove("show");
-    }, 5000);
-  }
-
-  async function listOwnChatFilesReal() {
-    const api = await storageApiReal();
-    const user = api.auth?.currentUser;
-    if (!user || user.isAnonymous) return { user: null, files: [] };
-
-    const storage = api.getStorage(api.app);
-    const folderRef = api.ref(storage, "global-chat/" + user.uid);
-    const result = await api.listAll(folderRef);
-    const files = await Promise.all(result.items.map(async fileRef => {
-      try {
-        const metadata = await api.getMetadata(fileRef);
-        return {
-          ref: fileRef,
-          name: fileRef.name,
-          time: Date.parse(metadata.timeCreated || "") || 0,
-          size: Number(metadata.size || 0)
-        };
-      } catch (_) {
-        return { ref: fileRef, name: fileRef.name, time: 0, size: 0 };
-      }
-    }));
-
-    files.sort((a, b) => a.time - b.time);
-    return { user, files };
+    return apiPromiseReal;
   }
 
   async function autoDeleteOldReal() {
     try {
-      const { files } = await listOwnChatFilesReal();
-      const beforeCount = files.length;
-      if (beforeCount < MAX_IMAGES_REAL) {
-        return { didDelete: false, deleted: 0, beforeCount, afterCount: beforeCount };
+      const api = await apiReal();
+      const user = api.auth?.currentUser;
+      if (!user || user.isAnonymous) {
+        return { didDelete: false, deleted: 0, beforeCount: 0, afterCount: 0 };
       }
 
-      const api = await storageApiReal();
-      const oldest = files.slice(0, 15);
-      let deleted = 0;
-
-      for (const item of oldest) {
-        try {
-          await api.deleteObject(item.ref);
-          deleted++;
-        } catch (error) {
-          console.warn("Global Chat auto-delete failed:", item.name, error);
-        }
-      }
-
+      const cleanupFn = api.httpsCallable(api.functions, "cleanupGlobalChatMediaReal");
+      const result = await cleanupFn({});
+      const data = result?.data || {};
       return {
-        didDelete: deleted > 0,
-        deleted,
-        beforeCount,
-        afterCount: Math.max(0, beforeCount - deleted)
+        didDelete: Number(data.deleted || 0) > 0,
+        deleted: Number(data.deleted || 0),
+        beforeCount: Number(data.beforeCount || 0),
+        afterCount: Number(data.afterCount || 0)
       };
     } catch (error) {
-      console.warn("Global Chat storage cleanup unavailable:", error);
+      console.warn("Global Chat server cleanup unavailable:", error);
       return { didDelete: false, deleted: 0, beforeCount: 0, afterCount: 0, error };
     }
   }
@@ -613,35 +548,33 @@
     if (!file) throw new Error("NO_FILE");
     if (file.size > MAX_SIZE_REAL) throw new Error("FILE_TOO_LARGE");
     if (!ALLOWED_MIME_REAL.includes(file.type)) throw new Error("FILE_TYPE_NOT_ALLOWED");
+
     const cleanup = await autoDeleteOldReal();
     if (cleanup.didDelete) {
-      showStorageNoticeReal("🧹 Storage cleanup: " + cleanup.deleted + " oldest Global Chat media deleted before upload.");
+      showStorageNoticeReal("🧹 Auto-cleanup removed " + cleanup.deleted + " oldest Global Chat media before upload.");
     }
     return cleanup;
   }
 
-  async function showStorageUsageReal() {
+  function showStorageNoticeReal(message) {
+    const notice = document.getElementById("moderationNotice");
+    if (!notice) return;
+    notice.textContent = message;
+    notice.className = "moderation-notice show";
+    window.clearTimeout(window.__tubalHubStorageNoticeTimerReal);
+    window.__tubalHubStorageNoticeTimerReal = window.setTimeout(() => notice.classList.remove("show"), 5000);
+  }
+
+  function setStorageBadgeReal(message) {
     const badge = document.getElementById("storageBadgeReal");
-    if (!badge) return;
-
-    try {
-      const { files } = await listOwnChatFilesReal();
-      const count = files.length;
-      const bytes = files.reduce((sum, item) => sum + Number(item.size || 0), 0);
-      const mb = (bytes / (1024 * 1024)).toFixed(1);
-
-      badge.textContent = count + "/" + MAX_IMAGES_REAL + " media • " + mb + " MB";
-      badge.title = "Your Global Chat media • auto-cleanup begins at " + MAX_IMAGES_REAL + " files.";
-      badge.style.background = count >= Math.ceil(MAX_IMAGES_REAL * 0.8)
-        ? "rgba(255,180,50,.16)"
-        : "rgba(29,255,145,.1)";
-    } catch (_) {
-      badge.textContent = "Storage: checking…";
+    if (badge) {
+      badge.textContent = message;
+      badge.title = "Firebase Storage cleanup: maximum 40 media files per authenticated member.";
     }
   }
 
   async function uploadAndCreateMediaReal(file, type) {
-    const api = await storageApiReal();
+    const api = await apiReal();
     const user = api.auth?.currentUser;
     if (!user || user.isAnonymous) throw new Error("LOGIN_REQUIRED");
 
@@ -652,42 +585,48 @@
     const storage = api.getStorage(api.app);
     const storageRef = api.ref(storage, path);
 
-    let uploadSnapshot;
+    let snapshot;
     try {
-      uploadSnapshot = await api.uploadBytes(storageRef, file, { contentType: file.type });
+      snapshot = await api.uploadBytes(storageRef, file, { contentType: file.type });
     } catch (error) {
       if (error?.code !== "storage/quota-exceeded") throw error;
       const cleanup = await autoDeleteOldReal();
       if (!cleanup.deleted) throw error;
-      showStorageNoticeReal("🧹 Storage quota cleanup completed. Retrying the upload once.");
-      uploadSnapshot = await api.uploadBytes(storageRef, file, { contentType: file.type });
+      showStorageNoticeReal("🧹 Storage quota cleanup completed. Retrying upload once.");
+      snapshot = await api.uploadBytes(storageRef, file, { contentType: file.type });
     }
 
-    const url = await api.getDownloadURL(uploadSnapshot.ref);
+    const url = await api.getDownloadURL(snapshot.ref);
     const uid = user.uid;
-
-    if (window.tubalHubChatGuardReal?.isRateLimitedReal?.(uid)) {
-      throw new Error("RATE_LIMIT");
-    }
+    if (window.tubalHubChatGuardReal?.isRateLimitedReal?.(uid)) throw new Error("RATE_LIMIT");
 
     const input = document.getElementById("messageInput");
     const caption = type === "image" ? String(input?.value || "").trim() : "";
-    const channel = channelToFirestoreReal(document.querySelector(".channelReal.active")?.dataset.channel || "general");
+    const channelMap = {
+      general: "global-chat",
+      "payapang-isip": "payapang-isip",
+      ctrlzone: "ctrlzone",
+      "shop-talk": "shop-talk",
+      announcements: "announcements"
+    };
+    const selected = document.querySelector(".channelReal.active")?.dataset.channel || "general";
     const displayName = user.displayName || user.email?.split("@")[0] || "Member";
 
-    await api.addDoc(api.collection(api.getFirestore(api.app), "globalChats"), {
+    const firestoreMod = await import("https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js");
+    const db = firestoreMod.getFirestore(api.app);
+    await firestoreMod.addDoc(firestoreMod.collection(db, "globalChats"), {
       uid,
       displayName,
       name: displayName,
       email: user.email || "",
       photoURL: user.photoURL || "",
-      createdAt: api.serverTimestamp(),
+      createdAt: firestoreMod.serverTimestamp(),
       text: caption,
       textReal: caption,
       type,
       mediaUrl: url,
       storagePath: path,
-      channel,
+      channel: channelMap[selected] || "global-chat",
       hasImageReal: type === "image",
       isSticker: type === "gif"
     });
@@ -708,17 +647,15 @@
       }
     }
 
-    showStorageUsageReal();
+    setStorageBadgeReal("Auto-cleanup active • max " + MAX_IMAGES_REAL);
     return { url, path };
   }
 
   function installUploadButtonBridgeReal() {
-    const button = document.getElementById("imageBtn");
+    const imageButton = document.getElementById("imageBtn");
     const imageInput = document.getElementById("imageInput");
     const gifButton = document.getElementById("gifBtn");
     const gifInput = document.getElementById("gifInput");
-    if (!button && !gifButton) return;
-
     const openPicker = (input, event) => {
       if (!input || input.disabled) return;
       event.preventDefault();
@@ -726,10 +663,10 @@
       input.click();
     };
 
-    if (button && !button.dataset.storageClickReady) {
-      button.dataset.storageClickReady = "1";
-      button.type = "button";
-      button.addEventListener("click", event => openPicker(imageInput, event), true);
+    if (imageButton && !imageButton.dataset.storageClickReady) {
+      imageButton.dataset.storageClickReady = "1";
+      imageButton.type = "button";
+      imageButton.addEventListener("click", event => openPicker(imageInput, event), true);
     }
 
     if (gifButton && !gifButton.dataset.storageClickReady) {
@@ -755,17 +692,21 @@
 
       try {
         await uploadAndCreateMediaReal(file, type);
+        showStorageNoticeReal("✅ Media uploaded successfully.");
       } catch (error) {
         console.error("Global Chat media upload failed:", error);
         const msg = error?.message;
+        const code = error?.code;
         if (msg === "FILE_TOO_LARGE") showStorageNoticeReal("Maximum file size is 8 MB.");
         else if (msg === "FILE_TYPE_NOT_ALLOWED") showStorageNoticeReal("Image files only: JPG, PNG, WEBP, or GIF.");
-        else if (msg === "RATE_LIMIT") showStorageNoticeReal("Please wait a moment before sending another media item.");
-        else if (msg === "LOGIN_REQUIRED") showStorageNoticeReal("Please login first.");
-        else showStorageNoticeReal("Media upload failed. Check Firebase Storage and Firestore Rules.");
+        else if (msg === "RATE_LIMIT" || code === "functions/resource-exhausted") showStorageNoticeReal("Please wait a moment before sending another media item.");
+        else if (msg === "LOGIN_REQUIRED" || code === "functions/unauthenticated") showStorageNoticeReal("Please login first.");
+        else if (code === "storage/unauthorized" || code === "storage/unknown") showStorageNoticeReal("Firebase Storage access is unavailable. Check the Firebase billing plan and Storage Rules.");
+        else showStorageNoticeReal("Media upload failed. Check Firebase Storage access and deployment.");
       } finally {
         if (sendButton) sendButton.disabled = false;
         target.value = "";
+        setStorageBadgeReal("Auto-cleanup active • max " + MAX_IMAGES_REAL);
       }
     };
 
@@ -773,7 +714,6 @@
       imageInput.dataset.storageBridgeReady = "1";
       imageInput.addEventListener("change", event => bridge(event, "image"), true);
     }
-
     if (gifInput && !gifInput.dataset.storageBridgeReady) {
       gifInput.dataset.storageBridgeReady = "1";
       gifInput.addEventListener("change", event => bridge(event, "gif"), true);
@@ -781,30 +721,26 @@
   }
 
   function ensureStorageBadgeReal() {
-    const badgeExisting = document.getElementById("storageBadgeReal");
-    if (badgeExisting) return badgeExisting;
-
+    const existing = document.getElementById("storageBadgeReal");
+    if (existing) return existing;
     const actions = document.querySelector(".center-actions");
     if (!actions) return null;
 
     const badge = document.createElement("span");
     badge.id = "storageBadgeReal";
     badge.style.cssText = "font-size:9px;opacity:.75;background:rgba(29,255,145,.1);padding:5px 8px;border-radius:20px;display:inline-block;margin-left:8px;white-space:nowrap;border:1px solid rgba(255,255,255,.08);";
-    badge.textContent = "Checking storage... 0/40";
-
+    badge.textContent = "Auto-cleanup active • max 40";
     const membersButton = document.getElementById("openMembers");
     actions.insertBefore(badge, membersButton || actions.firstChild);
     return badge;
   }
 
-  async function initStorageReal() {
+  function initStorageReal() {
     if (!document.getElementById("chatContent")) return;
     ensureStorageBadgeReal();
     installUploadButtonBridgeReal();
     installMediaInputBridgeReal();
-    await showStorageUsageReal();
-    window.clearInterval(window.__tubalHubStorageUsageTimerReal);
-    window.__tubalHubStorageUsageTimerReal = window.setInterval(showStorageUsageReal, 10000);
+    setStorageBadgeReal("Auto-cleanup active • max " + MAX_IMAGES_REAL);
   }
 
   window.tubalHubStorageAutoDeleteReal = Object.freeze({
@@ -812,8 +748,7 @@
     MAX_SIZE_REAL,
     ALLOWED_MIME_REAL,
     autoDeleteOldReal,
-    prepareUploadReal,
-    showStorageUsageReal
+    prepareUploadReal
   });
 
   if (document.readyState === "loading") {
@@ -822,3 +757,4 @@
     initStorageReal();
   }
 })();
+
