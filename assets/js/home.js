@@ -50,6 +50,217 @@ const state = {
 };
 
 const $=(s,r=document)=>r.querySelector(s);
+const EMAIL_NOTIFY_CONFIG_REAL=Object.freeze({
+  serviceId:window.TUBAL_EMAILJS_CONFIG?.serviceId||"tubalhub_service_real",
+  templateId:window.TUBAL_EMAILJS_CONFIG?.templateId||"tubalhub_update_template",
+  publicKey:window.TUBAL_EMAILJS_CONFIG?.publicKey||""
+});
+let emailJsReadyReal=false;
+
+function initEmailJsReal(){
+  if(emailJsReadyReal)return true;
+  const sdk=window.emailjs;
+  if(!sdk||!EMAIL_NOTIFY_CONFIG_REAL.publicKey)return false;
+  try{
+    sdk.init({publicKey:EMAIL_NOTIFY_CONFIG_REAL.publicKey,limitRate:{id:"tubalhub-updates",throttle:1000}});
+    emailJsReadyReal=true;
+    return true;
+  }catch(error){
+    console.warn("[TUBAL HUB EmailJS init]",error);
+    return false;
+  }
+}
+
+function getRealSubscribers(){
+  try{
+    const raw=localStorage.getItem("tubalhub_subscribers_real");
+    const parsed=raw?JSON.parse(raw):[];
+    if(!Array.isArray(parsed))return[];
+    return parsed.filter(sub=>String(sub?.emailReal||"").trim());
+  }catch(_){return[]}
+}
+
+function saveRealSubscribers(rows){
+  localStorage.setItem("tubalhub_subscribers_real",JSON.stringify(rows));
+}
+
+function normalizeRealGmail(value){
+  return String(value||"").trim().toLowerCase();
+}
+
+function isRealGmail(value){
+  return /^[^\\s@]+@gmail\\.com$/i.test(String(value||"").trim());
+}
+
+function setSubscribeStatusReal(text,type=""){
+  const el=$("#notifySubscribeStatusReal");
+  if(!el)return;
+  el.textContent=text;
+  el.classList.toggle("is-ready",type==="ready");
+  el.classList.toggle("is-error",type==="error");
+}
+
+async function sendUpdateEmailReal(sub,newVersionData){
+  if(!initEmailJsReal())return {sent:false,reason:"not-configured"};
+  const updatesTextReal=(Array.isArray(newVersionData?.updatesReal)?newVersionData.updatesReal:[])
+    .map(u=>String(u?.typeReal||"FIX")+" - "+String(u?.scopeReal||"Site")+": "+String(u?.detailReal||"Updated"))
+    .join("\\n");
+  const params={
+    to_email:String(sub.emailReal||""),
+    to_name:String(sub.emailReal||"").split("@")[0],
+    version:"v"+String(newVersionData?.version||""),
+    build:String(newVersionData?.build||""),
+    updates:updatesTextReal,
+    phone:sub.phoneReal||"N/A",
+    message:"May bagong update sa TUBAL HUB!\\n\\nVersion: v"+String(newVersionData?.version||"")+" Build "+String(newVersionData?.build||"")+"\\n\\nAnong na-update:\\n"+updatesTextReal+"\\n\\nI-load ang latest:\\nhttps://tubalrr.github.io/tubalhub/?v="+encodeURIComponent(String(newVersionData?.version||""))
+  };
+  try{
+    await window.emailjs.send(EMAIL_NOTIFY_CONFIG_REAL.serviceId,EMAIL_NOTIFY_CONFIG_REAL.templateId,params);
+    return {sent:true};
+  }catch(error){
+    console.warn("[TUBAL HUB EmailJS send]",error);
+    return {sent:false,reason:"send-failed",error};
+  }
+}
+
+async function subscribeNotifyReal(){
+  const emailEl=$("#notifyEmailReal");
+  const phoneEl=$("#notifyPhoneReal");
+  const consentEl=$("#notifyConsentReal");
+  const btn=$("#subscribeNotifyRealBtn");
+  const email=normalizeRealGmail(emailEl?.value);
+  const phone=String(phoneEl?.value||"").trim();
+
+  if(!isRealGmail(email)){
+    setSubscribeStatusReal("Gmail required","error");
+    alert("Lagay mo ang real Gmail address mo.");
+    emailEl?.focus();
+    return;
+  }
+  if(!consentEl?.checked){
+    setSubscribeStatusReal("Consent required","error");
+    alert("I-check muna ang consent para sa update emails.");
+    consentEl?.focus();
+    return;
+  }
+
+  const subs=getRealSubscribers();
+  if(subs.some(s=>normalizeRealGmail(s.emailReal)===email)){
+    setSubscribeStatusReal("Already subscribed","ready");
+    alert("Naka-subscribe ka na real: "+email);
+    return;
+  }
+
+  const record={
+    emailReal:email,
+    phoneReal:phone||null,
+    subscribedAtReal:new Date().toISOString(),
+    isReal:true,
+    sourceReal:"footer subscribe",
+    consentReal:true
+  };
+
+  try{
+    saveRealSubscribers([...subs,record]);
+  }catch(error){
+    setSubscribeStatusReal("Save failed","error");
+    alert("Hindi na-save ang subscription sa browser.");
+    return;
+  }
+
+  if(btn){
+    btn.disabled=true;
+    btn.textContent="Saving Real...";
+  }
+  setSubscribeStatusReal("Saved locally","ready");
+
+  const welcomeData={
+    version:"v"+String(document.getElementById("liveVersion")?.textContent||"v1.2.10").replace(/^v/i,""),
+    build:String(document.getElementById("liveBuild")?.textContent||"2026-09-25_1015"),
+    updates:"System update notifications enabled.",
+    phone:phone||"N/A",
+    message:"Welcome sa TUBAL HUB updates! Real release notifications lang ang ipapadala kapag may bagong version."
+  };
+
+  const sent=await sendUpdateEmailReal(record,{
+    version:welcomeData.version.replace(/^v/i,""),
+    build:welcomeData.build,
+    updatesReal:[{typeReal:"FEAT",scopeReal:"Update Email",detailReal:"Na-enable ang opt-in email notifications para sa TUBAL HUB releases.",iconReal:"✉"}]
+  });
+
+  if(btn){
+    btn.disabled=false;
+    btn.textContent=sent.sent?"✓ Subscribed Real":"✓ Saved Real";
+  }
+  if(sent.sent){
+    setSubscribeStatusReal("EMAIL READY","ready");
+    showHomeToast("Subscribed. Welcome email sent.");
+  }else{
+    setSubscribeStatusReal("LOCAL ONLY","ready");
+    showHomeToast("Subscription saved locally. EmailJS is not configured yet.");
+  }
+}
+
+function unsubscribeNotifyReal(){
+  localStorage.removeItem("tubalhub_subscribers_real");
+  localStorage.removeItem("tubalhub_last_email_notify_real");
+  const email=$("#notifyEmailReal");
+  const phone=$("#notifyPhoneReal");
+  const consent=$("#notifyConsentReal");
+  if(email)email.value="";
+  if(phone)phone.value="";
+  if(consent)consent.checked=false;
+  setSubscribeStatusReal("LOCAL","ready");
+  showHomeToast("Update email subscription removed from this browser.");
+}
+
+async function notifySubscribersOnUpdateReal(newVersionData){
+  const subs=getRealSubscribers();
+  if(!subs.length)return;
+  const version=String(newVersionData?.version||"").trim();
+  if(!version)return;
+
+  try{
+    const last=safeJson(localStorage.getItem("tubalhub_last_email_notify_real"),null);
+    if(last?.version===version)return;
+  }catch(_){}
+
+  if(!initEmailJsReal()){
+    console.log("[TUBAL HUB update email] saved subscribers:",subs.length,"• EmailJS not configured");
+    return;
+  }
+
+  let sentCount=0;
+  for(const sub of subs){
+    const result=await sendUpdateEmailReal(sub,newVersionData);
+    if(result.sent)sentCount++;
+    // EmailJS documents a 1 request/second limit; keep the client loop paced.
+    await new Promise(resolve=>setTimeout(resolve,1100));
+  }
+
+  localStorage.setItem("tubalhub_last_email_notify_real",JSON.stringify({
+    version,
+    sentAt:new Date().toISOString(),
+    count:subs.length,
+    sentCount
+  }));
+  console.log("[TUBAL HUB update email] version:",version,"saved subscribers:",subs.length,"sent:",sentCount);
+}
+
+function initRealEmailSubscribe(){
+  const btn=$("#subscribeNotifyRealBtn");
+  const unsub=$("#unsubscribeNotifyRealBtn");
+  if(btn&&!btn.dataset.ready){
+    btn.dataset.ready="1";
+    btn.addEventListener("click",subscribeNotifyReal);
+  }
+  if(unsub&&!unsub.dataset.ready){
+    unsub.dataset.ready="1";
+    unsub.addEventListener("click",unsubscribeNotifyReal);
+  }
+  setSubscribeStatusReal(initEmailJsReal()?"EMAIL READY":"LOCAL","ready");
+}
+
 const $$=(s,r=document)=>[...r.querySelectorAll(s)];
 const esc=value=>String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
 const safeJson=(key,fallback=[])=>{
@@ -1573,6 +1784,7 @@ function init(){
   initBento();
   initFeaturedWebsiteSlider();
   initFooter();
+  initRealEmailSubscribe();
   initFooterNewsletter();
   initFooterSmoothLinks();
   initScrollReveal();
@@ -1981,6 +2193,7 @@ async function detectSystemUpdateReal(force=false){
 
     if((versionChanged || force) && (notified!==remoteVer || force)){
       showSystemUpdateContainerReal(data);
+      await notifySubscribersOnUpdateReal(data);
       localStorage.setItem('tubalhub_notified_ver_real',remoteVer);
     }
 
