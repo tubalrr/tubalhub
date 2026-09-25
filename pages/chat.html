@@ -374,7 +374,6 @@ function subscribeMessages(){
     collection(db,'globalChats'),
     where('channel','==',channelValue),
     where('createdAt','!=',null),
-    orderBy('channel','asc'),
     orderBy('createdAt','asc'),
     limitToLast(100)
   );
