@@ -187,6 +187,7 @@ function filteredProducts(){
   const q=state.query.trim().toLowerCase();
   let list=collectionProducts();
   if(q)list=list.filter(p=>(p.title+" "+p.seller+" "+p.description).toLowerCase().includes(q));
+  if(state.categoryFilter!=="all")list=list.filter(p=>String(p.category||"").toLowerCase()===state.categoryFilter);
   if(state.stockFilter==="in-stock")list=list.filter(p=>p.stock>0);
   if(state.priceFilter==="under-1000")list=list.filter(p=>p.price<1000);
   if(state.priceFilter==="1000-2500")list=list.filter(p=>p.price>=1000&&p.price<=2500);
@@ -419,7 +420,7 @@ window.addEventListener("tubalhubthemechange",e=>{
 });
 
 document.addEventListener("click",async e=>{
-  const collectionBtn=e.target.closest?.(".collection-tab");if(collectionBtn){state.collection=collectionBtn.dataset.collection;state.query="";els.search.value="";state.stockFilter="all";state.priceFilter="all";document.querySelectorAll(".filter-chip").forEach(b=>b.classList.remove("active"));document.querySelector('[data-stock-filter="all"]')?.classList.add("active");document.querySelectorAll("[data-price-filter]").forEach(b=>{if(b.dataset.priceFilter==="all")b.classList.add("active")});updateCollectionUI();return}
+  const collectionBtn=e.target.closest?.(".collection-tab");if(collectionBtn){state.collection=collectionBtn.dataset.collection;state.query="";state.categoryFilter="all";els.search.value="";state.stockFilter="all";state.priceFilter="all";document.querySelectorAll(".filter-chip").forEach(b=>b.classList.remove("active"));document.querySelector('[data-category-filter="all"]')?.classList.add("active");document.querySelector('[data-stock-filter="all"]')?.classList.add("active");document.querySelectorAll("[data-price-filter]").forEach(b=>{if(b.dataset.priceFilter==="all")b.classList.add("active")});updateCollectionUI();return}
   const add=e.target.closest?.("[data-add]");if(add){addToCart(add.dataset.add,1,add);return}
   const wish=e.target.closest?.("[data-wishlist]");if(wish){toggleWishlist(wish.dataset.wishlist,wish);return}
   const quick=e.target.closest?.("[data-quick]");if(quick){openQuick(quick.dataset.quick);return}
@@ -430,6 +431,7 @@ document.addEventListener("click",async e=>{
   const size=e.target.closest?.("[data-size]");if(size&&state.current){state.selectedSize=size.dataset.size;els.quickSizes.querySelectorAll("button").forEach(b=>b.classList.toggle("active",b===size));return}
   const color=e.target.closest?.("[data-color]");if(color&&state.current){state.selectedColor=color.dataset.color;els.quickColors.querySelectorAll("button").forEach(b=>b.classList.toggle("active",b===color));return}
   const share=e.target.closest?.("[data-share]");if(share&&state.current){shareProduct(state.current,share.dataset.share);return}
+  const category=e.target.closest?.("[data-category-filter]");if(category){state.categoryFilter=category.dataset.categoryFilter;document.querySelectorAll("[data-category-filter]").forEach(b=>b.classList.toggle("active",b===category));renderProducts();return}
   const stock=e.target.closest?.("[data-stock-filter]");if(stock){state.stockFilter=stock.dataset.stockFilter;document.querySelectorAll("[data-stock-filter]").forEach(b=>b.classList.toggle("active",b===stock));renderProducts();return}
   const price=e.target.closest?.("[data-price-filter]");if(price){state.priceFilter=price.dataset.priceFilter;document.querySelectorAll("[data-price-filter]").forEach(b=>b.classList.toggle("active",b===price));renderProducts();return}
 });
