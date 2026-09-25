@@ -572,6 +572,24 @@ exports.sendPrivateMessageReal = onCall(async request => {
 
 
 
+async function recordCleanupStatsReal(data) {
+  const ref = db.collection("systemStats").doc("storageCleanup");
+  const deleted = Number(data.deleted || 0);
+  const deletedByAge = Number(data.deletedByAge || 0);
+  const deletedByCount = Number(data.deletedByCount || 0);
+  await ref.set({
+    isReal: true,
+    deletedByAge: FieldValue.increment(deletedByAge),
+    deletedByCount: FieldValue.increment(deletedByCount),
+    totalDeleted: FieldValue.increment(deleted),
+    lastRunAt: FieldValue.serverTimestamp(),
+    lastRunDeleted: deleted,
+    lastRunExpired: deletedByAge,
+    lastRunCountCap: deletedByCount,
+    updatedAt: FieldValue.serverTimestamp()
+  }, { merge: true });
+}
+
 exports.cleanupGlobalChatMediaReal = onCall(async request => {
   requireRealUser(request);
 
@@ -599,7 +617,9 @@ exports.cleanupGlobalChatMediaReal = onCall(async request => {
   }
 
   if (entries.length < maxFiles) {
-    return { success: true, deleted: 0, beforeCount: entries.length, afterCount: entries.length, expiredDocsUpdated: 0 };
+    await recordCleanupStatsReal({deleted, deletedByAge: 0, deletedByCount: deleted});
+
+  return { success: true, deleted: 0, beforeCount: entries.length, afterCount: entries.length, expiredDocsUpdated: 0 };
   }
 
   entries.sort((a, b) => a.time - b.time);
@@ -706,6 +726,12 @@ exports.cleanupOldImagesReal = onSchedule("every 24 hours", async () => {
       });
     }
   }
+
+  await recordCleanupStatsReal({
+    deleted: deletedByAge + deletedByCount,
+    deletedByAge,
+    deletedByCount
+  });
 
   logger.info("TUBAL HUB Global Chat media cleanup complete.", {
     scanned: files.length,
