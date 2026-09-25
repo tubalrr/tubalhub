@@ -69,8 +69,10 @@ service cloud.firestore {
 
       allow create: if chatAllowed()
         && ownsNew()
-        && request.resource.data.channel == 'global-chat'
+        && request.resource.data.channel in ['global-chat', 'payapang-isip', 'ctrlzone', 'shop-talk', 'announcements']
         && request.resource.data.type in ['text', 'image', 'gif']
+        && !('isAdmin' in request.resource.data)
+        && !('roleReal' in request.resource.data)
         && (
           request.resource.data.type != 'text'
           || (
@@ -105,6 +107,9 @@ service cloud.firestore {
       allow create: if chatAllowed()
         && ownsNew()
         && request.resource.data.messageId is string
+        && request.resource.data.uid == request.auth.uid
+        && !('isAdmin' in request.resource.data)
+        && !('roleReal' in request.resource.data)
         && request.resource.data.text is string
         && request.resource.data.text.size() > 0
         && request.resource.data.text.size() <= 500;
