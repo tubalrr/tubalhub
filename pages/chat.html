@@ -370,31 +370,55 @@ function subscribeReplies(){if(stopReplies)stopReplies();const q=query(collectio
 function subscribeMessages(){
   if(stopMessages)stopMessages();
   const channelValue=activeChannelReal==='general'?'global-chat':activeChannelReal;
+
+  // IMPORTANT: use only the channel filter here.
+  // Combining channel + createdAt ordering requires a Firestore composite index
+  // and was causing the live chat listener to fail. We sort the returned real
+  // channel messages locally and keep the newest 100.
   const q=query(
     collection(db,'globalChats'),
-    where('channel','==',channelValue),
-    where('createdAt','!=',null),
-    orderBy('createdAt','asc'),
-    limitToLast(100)
+    where('channel','==',channelValue)
   );
+
   stopMessages=onSnapshot(q,snap=>{
+    const channelDocs=snap.docs
+      .map(d=>({id:d.id,data:d.data()}))
+      .filter(item=>item.data?.channel===channelValue)
+      .sort((a,b)=>{
+        const ta=a.data?.createdAt?.toMillis?.()
+          ?? a.data?.createdAt?.toDate?.()?.getTime?.()
+          ?? (typeof a.data?.createdAt==='number'?a.data.createdAt:0);
+        const tb=b.data?.createdAt?.toMillis?.()
+          ?? b.data?.createdAt?.toDate?.()?.getTime?.()
+          ?? (typeof b.data?.createdAt==='number'?b.data.createdAt:0);
+        return ta-tb || a.id.localeCompare(b.id);
+      });
+
+    const latestDocs=channelDocs.slice(-100);
+
     messages.innerHTML='<div class="chat-build-marker-real" id="chatBuildMarkerReal">Today</div>';
-    if(!snap.docs.length){
+
+    if(!latestDocs.length){
       messages.innerHTML+='<div class="empty-chat"><strong>No messages in # '+esc(activeChannelReal)+'.</strong><span>This channel is empty until a real member posts here.</span></div>';
     }else{
-      // Firestore already returns the latest 100 in ascending createdAt order.
-      snap.docs.forEach(d=>messages.appendChild(renderMessage(d.id,d.data())));
+      latestDocs.forEach(item=>messages.appendChild(renderMessage(item.id,item.data)));
     }
-    globalMessageCount.textContent=snap.size;
+
+    globalMessageCount.textContent=String(latestDocs.length);
+
     document.querySelectorAll('.channel-count-real').forEach(el=>{
-      if(el.dataset.channelCount===activeChannelReal)el.textContent=snap.size;
+      if(el.dataset.channelCount===activeChannelReal)el.textContent=String(latestDocs.length);
     });
+
     messages.scrollTop=messages.scrollHeight;
-    setStatus(`Live • # ${activeChannelReal} • ${snap.size} real message${snap.size===1?'':'s'}`);
-    window.dispatchEvent(new CustomEvent('tubalhub-chat-channel-loaded',{detail:{channel:activeChannelReal,count:snap.size}}));
+    setStatus(`Live • # ${activeChannelReal} • ${latestDocs.length} real message${latestDocs.length===1?'':'s'}`);
+    window.dispatchEvent(new CustomEvent('tubalhub-chat-channel-loaded',{
+      detail:{channel:activeChannelReal,count:latestDocs.length}
+    }));
   },err=>{
     console.error('[TUBAL HUB chat query]',err);
-    setStatus('Could not load this channel. Firestore may require a composite index: globalChats channel ASC + createdAt ASC.',true);
+    messages.innerHTML='<div class="empty-chat"><strong>Chat temporarily unavailable.</strong><span>Firestore could not load the real messages for this channel.</span></div>';
+    setStatus('Could not load this channel. Check Firebase access/rules.',true);
   });
 }
 function setActiveChannelReal(channel){
@@ -693,7 +717,7 @@ document.addEventListener('visibilitychange',()=>{if(currentUser&&!document.hidd
 
 <script type="module" src="../assets/js/video-call.js?v=20260920-webRTC2"></script>
 
-<script src="../js/global-chat.js?v=1.2.10-chatfix1" defer></script>
+<script src="../js/global-chat.js?v=1.2.11-chatfix2" defer></script>
 <script src="../assets/js/theme.js?v=20260922" defer></script>
 <script src="../assets/js/global-chat-emoji.js?v=20260924-v4" defer></script>
 <script src="../assets/js/global-chat-gif-stickers.js?v=20260924-v1" defer></script>
