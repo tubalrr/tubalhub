@@ -1,26 +1,26 @@
 {
-  "version": "1.2.7",
-  "build": "2026-09-25_0952",
-  "releasedAtReal": "2026-09-25T09:52:00+08:00",
+  "version": "1.2.8",
+  "build": "2026-09-25_1000",
+  "releasedAtReal": "2026-09-25T10:00:00+08:00",
   "releasedByReal": "tubalrr",
   "updatesReal": [
     {
-      "typeReal": "BUILD",
-      "scopeReal": "Release",
-      "detailReal": "Na-publish ang bagong homepage build v1.2.7 para ma-detect ng open TUBAL HUB sessions ang latest deployed update.",
-      "iconReal": "🚀"
+      "typeReal": "FEAT",
+      "scopeReal": "Journal",
+      "detailReal": "Posted journal entries sa homepage ay may Edit at Delete actions gamit ang real local data.",
+      "iconReal": "📝"
     },
     {
       "typeReal": "FIX",
-      "scopeReal": "Homepage",
-      "detailReal": "Kasama sa current deployed state ang real Payapang Isip data, real Featured Games logos, at fixed GitHub Pages asset paths.",
-      "iconReal": "🛠️"
+      "scopeReal": "Journal Storage",
+      "detailReal": "Journal save flow ay gumagamit na ng latest real entries at pinapanatili ang edit/delete changes sa localStorage.",
+      "iconReal": "🔧"
     },
     {
-      "typeReal": "FEAT",
-      "scopeReal": "System Update",
-      "detailReal": "Active ang version.json changelog detector para maipakita ang bagong upload sa slide-in notification.",
-      "iconReal": "🔔"
+      "typeReal": "UI",
+      "scopeReal": "Journal Actions",
+      "detailReal": "Naglagay ng visible Edit at Delete controls sa bawat posted journal card.",
+      "iconReal": "✏️"
     }
   ],
   "breakingReal": false
