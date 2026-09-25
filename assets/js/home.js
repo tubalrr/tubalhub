@@ -290,7 +290,15 @@ const HUB_HERO_MESSAGES=[
   ["Shop & Profiles","Explore the Hub shop and creator/profile features while keeping the experience connected in one place."],
   ["One Connected Hub","Use the sidebar to move between Home, Feeds, Chat, Brands, Community, Shop and other TUBAL HUB features."]
 ];
+function initSponsorMotionReal(){
+  if(document.getElementById("tubalSponsorMotionReal"))return;
+  const style=document.createElement("style");
+  style.id="tubalSponsorMotionReal";
+  style.textContent=".tubal-sponsor-card-real{position:relative;transform:translateZ(0);transition:transform .35s ease,box-shadow .35s ease}.tubal-sponsor-card-real:hover{transform:translateY(-3px) scale(1.008);box-shadow:0 14px 40px rgba(238,77,45,.18)}.tubal-sponsor-visual-real{position:relative;isolation:isolate;overflow:hidden}.tubal-sponsor-visual-real:after{content:\"\";position:absolute;inset:-20% -60%;background:linear-gradient(105deg,transparent 35%,rgba(255,255,255,.28) 50%,transparent 65%);transform:translateX(-45%);animation:tubalSponsorShine 3.8s ease-in-out infinite;pointer-events:none}.tubal-sponsor-fallback-real{animation:tubalSponsorPulse 2.8s ease-in-out infinite}.tubal-sponsor-badge-real{animation:tubalSponsorFloat 2.2s ease-in-out infinite}@keyframes tubalSponsorShine{0%,55%{transform:translateX(-55%)}100%{transform:translateX(55%)}}@keyframes tubalSponsorPulse{0%,100%{filter:saturate(1);transform:scale(1)}50%{filter:saturate(1.12);transform:scale(1.012)}}@keyframes tubalSponsorFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}@media(prefers-reduced-motion:reduce){.tubal-sponsor-card-real,.tubal-sponsor-visual-real:after,.tubal-sponsor-fallback-real,.tubal-sponsor-badge-real{animation:none!important;transition:none!important}}";
+  document.head.appendChild(style);
+}
 function initSponsoredReal(){
+  initSponsorMotionReal();
   const slots=[
     {container:"sponsoredContainerReal",content:"sponsoredContentReal",status:"sponsoredStatusReal",slot:1},
     {container:"sponsoredContainerReal2",content:"sponsoredContentReal2",status:"sponsoredStatusReal2",slot:2}
@@ -314,14 +322,14 @@ function initSponsoredReal(){
     const link=String(data.linkReal||"").trim();
     const safeLink=/^https?:\/\//i.test(link)?link:"";
     const imageHtml=/^https?:\/\//i.test(image)
-      ? '<div style="position:relative;width:100%;height:140px;background:linear-gradient(135deg,#ee4d2d,#ff7337);display:flex;align-items:center;justify-content:center;overflow:hidden;"><div style="color:#fff;font-weight:800;font-size:20px;letter-spacing:1px;">SHOPEE</div><img src="'+escAttr(image)+'" alt="" loading="lazy" decoding="async" onerror="this.style.display=\'none\'" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;"></div>'
-      : '<div style="height:140px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#ee4d2d,#ff7337);color:#fff;font-weight:800;font-size:20px;letter-spacing:1px;">SHOPEE</div>';
+      ? '<div class="tubal-sponsor-visual-real" style="position:relative;width:100%;height:140px;background:linear-gradient(135deg,#ee4d2d,#ff7337);display:flex;align-items:center;justify-content:center;overflow:hidden;"><div class="tubal-sponsor-fallback-real" style="color:#fff;font-weight:800;font-size:20px;letter-spacing:1px;">SHOPEE</div><img src="'+escAttr(image)+'" alt="" loading="lazy" decoding="async" onerror="this.style.display=\'none\'" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;"></div>'
+      : '<div class="tubal-sponsor-visual-real tubal-sponsor-fallback-real" style="height:140px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#ee4d2d,#ff7337);color:#fff;font-weight:800;font-size:20px;letter-spacing:1px;">SHOPEE</div>';
     const body=imageHtml+'<div style="padding:10px;"><b style="font-size:12px;">'+title+'</b>'+(desc?'<p style="font-size:10px;opacity:.6;margin:4px 0 0;">'+desc+'</p>':"")+'</div>';
     status.textContent="LIVE";
     status.style.background="rgba(29,255,145,0.15)";
     status.style.color="#1dff91";
     content.innerHTML=safeLink
-      ? '<a href="'+escAttr(safeLink)+'" target="_blank" rel="noopener noreferrer" style="display:block;background:rgba(0,0,0,.3);border-radius:12px;overflow:hidden;text-decoration:none;color:#fff;border:1px solid rgba(255,215,0,.2);">'+body+'</a>'
+      ? '<a class="tubal-sponsor-card-real" href="'+escAttr(safeLink)+'" target="_blank" rel="noopener noreferrer" style="display:block;background:rgba(0,0,0,.3);border-radius:12px;overflow:hidden;text-decoration:none;color:#fff;border:1px solid rgba(255,215,0,.2);">'+body+'</a>'
       : '<div style="display:block;background:rgba(0,0,0,.3);border-radius:12px;overflow:hidden;color:#fff;border:1px solid rgba(255,215,0,.2);">'+body+'</div>';
   };
   try{
