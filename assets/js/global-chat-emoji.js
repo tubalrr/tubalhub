@@ -3,10 +3,10 @@
    Runtime data source: Unicode Emoji latest dataset.
    ========================================================= */
 (function(){
-  const DATA_URLS=[
-    'https://www.unicode.org/Public/emoji/latest/emoji-test.txt',
-    'https://raw.githubusercontent.com/unicode-org/emoji/main/data/emoji-test.txt'
-  ];
+  // Keep the picker self-contained on GitHub Pages.
+  // External Unicode datasets are intentionally not fetched at runtime,
+  // so CORS/404 failures cannot spam the browser console.
+  const DATA_URLS=[];
   const FALLBACK=[
     ['😀','grinning face'],['😃','grinning face with big eyes'],['😄','grinning face with smiling eyes'],['😁','beaming face with smiling eyes'],
     ['😆','grinning squinting face'],['😅','grinning face with sweat'],['😂','face with tears of joy'],['🤣','rolling on the floor laughing'],
