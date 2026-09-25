@@ -405,7 +405,7 @@ function getRealGamePlayCount(id){
 }
 async function getRealGames(){
   try{
-    const response=await fetch('data/games.json?t='+Date.now(),{cache:'no-store'});
+    const response=await fetch('data/games.json?v=1.2.10&t='+Date.now(),{cache:'no-store'});
     if(!response.ok)throw new Error('games.json '+response.status);
     const data=await response.json();
     const rows=Array.isArray(data)?data:(Array.isArray(data?.games)?data.games:[]);
@@ -1448,7 +1448,7 @@ async function renderRealData(){
 }
 async function loadBentoVersion(){
   try{
-    const response=await fetch(new URL("version.json",document.baseURI).href,{cache:"no-store"});
+    const response=await fetch(new URL("version.json?v=1.2.10&t="+Date.now(),document.baseURI).href,{cache:"no-store"});
     if(!response.ok)throw new Error("version "+response.status);
     const data=await response.json();
     const version=String(data?.version||"").trim();
