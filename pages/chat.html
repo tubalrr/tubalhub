@@ -163,9 +163,13 @@ body{background:radial-gradient(circle at 75% 0%,#17345d55,transparent 30%),radi
 import { app, auth } from "../assets/js/firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 import { getFirestore, collection, addDoc, query, orderBy, limit, limitToLast, onSnapshot, doc, setDoc, getDoc, deleteDoc, serverTimestamp, where, updateDoc, getDocsFromServer } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-functions.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-storage.js";
 
-const db=getFirestore(app), storage=getStorage(app);
+const db=getFirestore(app), storage=getStorage(app), functionsReal=getFunctions(app);
+const sendMessageFnReal=httpsCallable(functionsReal,'sendMessageReal');
+const sendReplyFnReal=httpsCallable(functionsReal,'sendReplyReal');
+const sendPrivateMessageFnReal=httpsCallable(functionsReal,'sendPrivateMessageReal');
 const lock=document.getElementById('chatLock'),content=document.getElementById('chatContent'),messages=document.getElementById('messages'),form=document.getElementById('chatForm'),input=document.getElementById('messageInput'),sendButton=document.getElementById('sendButton'),statusEl=document.getElementById('chatStatus'),memberList=document.getElementById('memberList'),onlineCount=document.getElementById('onlineCount'),onlineMembers=document.getElementById('onlineMembers'),globalMessageCount=document.getElementById('globalMessageCount'),replyingBar=document.getElementById('replyingBar'),replyingName=document.getElementById('replyingName'),cancelReply=document.getElementById('cancelReply'),emojiPicker=document.getElementById('emojiPicker');
 let currentUser=null,stopMessages=null,heartbeatTimer=null,stopPresence=null,stopUsersPresence=null,heartbeatPresenceRefresh=null,stopBanStatus=null,stopReactions=null,stopReplies=null,stopDmList=null,replyTarget=null,lastMessageTime=0,reactionState={};
 let activeChannelReal="general";
@@ -633,10 +637,18 @@ function renderPrivateMessage(id,d){const me=d.senderId===currentUser?.uid;const
 function subscribePrivateMessages(){if(stopPrivateMessages)stopPrivateMessages();if(!privateTarget||!isRealUser())return;const q=query(collection(db,'messages'),where('participants','array-contains',currentUser.uid),limit(200));stopPrivateMessages=onSnapshot(q,snap=>{const list=[];snap.forEach(s=>{const d=s.data();if(Array.isArray(d.participants)&&d.participants.includes(privateTarget.uid))list.push({id:s.id,data:d})});list.sort((a,b)=>(a.data.createdAt?.toMillis?.()||0)-(b.data.createdAt?.toMillis?.()||0));const box=document.getElementById('privateMessages');box.innerHTML='';if(!list.length)box.innerHTML='<div class="private-empty">No private messages yet. Say hello! 👋</div>';else{list.forEach(x=>box.appendChild(renderPrivateMessage(x.id,x.data)));box.scrollTop=box.scrollHeight;}},err=>{console.error(err);document.getElementById('privateMessages').innerHTML='<div class="private-empty error">Private chat is unavailable. Check Firestore Rules.</div>'})}
 function openPrivateChat(target){if(!isRealUser()||!target?.uid||target.uid===currentUser.uid)return;privateTarget={uid:target.uid,displayName:target.displayName||'Member',photoURL:target.photoURL||''};const panel=document.getElementById('privateChatPanel');const name=document.getElementById('privateChatName'),avatar=document.getElementById('privateChatAvatar'),status=document.getElementById('privateChatStatus'),box=document.getElementById('privateMessages');name.textContent=privateTarget.displayName;avatar.innerHTML=privateAvatarHtml(privateTarget);status.textContent='● Online';panel.hidden=false;box.innerHTML='<div class="private-empty">Loading messages…</div>';requestAnimationFrame(()=>{document.getElementById('privateInput')?.focus();subscribePrivateMessages()})}
 function closePrivateChat(){privateTarget=null;if(stopPrivateMessages){stopPrivateMessages();stopPrivateMessages=null}document.getElementById('privateChatPanel').hidden=true}
-async function sendPrivateMessage(text){if(!privateTarget||!isRealUser())return;const now=Date.now();if(now-privateLastMessageTime<700)throw new Error('RATE_LIMIT');privateLastMessageTime=now;await addDoc(collection(db,'messages'),{uid:currentUser.uid,senderId:currentUser.uid,receiverId:privateTarget.uid,participants:[currentUser.uid,privateTarget.uid],displayName:currentUser.displayName||currentUser.email?.split('@')[0]||'Member',senderPhotoURL:currentUser.photoURL||'',text,type:'text',createdAt:serverTimestamp()})}
+async function sendPrivateMessage(text){
+  if(!privateTarget||!isRealUser())return;
+  const result=await sendPrivateMessageFnReal({
+    text:String(text||'').trim(),
+    receiverId:privateTarget.uid
+  });
+  privateLastMessageTime=Date.now();
+  return result?.data;
+}
 document.getElementById('closePrivateChat').onclick=closePrivateChat;
 document.getElementById('privateVideoCall').onclick=()=>{if(privateTarget)window.dispatchEvent(new CustomEvent('tubalhub-private-call',{detail:privateTarget}))};
-document.getElementById('privateForm').addEventListener('submit',async e=>{e.preventDefault();const field=document.getElementById('privateInput'),text=field.value.trim();if(!text||!privateTarget)return;const btn=e.submitter||e.currentTarget.querySelector('button[type="submit"]');btn.disabled=true;try{await sendPrivateMessage(text);field.value=''}catch(err){console.error(err);alert(err.message==='RATE_LIMIT'?'Please wait a moment.':'Private message was not sent. Check Firestore Rules.')}finally{btn.disabled=false;field.focus()}});
+document.getElementById('privateForm').addEventListener('submit',async e=>{e.preventDefault();const field=document.getElementById('privateInput'),text=field.value.trim();if(!text||!privateTarget)return;const btn=e.submitter||e.currentTarget.querySelector('button[type="submit"]');btn.disabled=true;try{await sendPrivateMessage(text);field.value=''}catch(err){console.error(err);alert(err.code==='functions/resource-exhausted'?'Please wait a moment.':err.code==='functions/invalid-argument'?'Message blocked by server moderation.':'Private message was not sent. Check Firebase Functions deployment.')}finally{btn.disabled=false;field.focus()}});
 async function uploadMedia(file,type){if(!isRealUser())throw new Error('LOGIN_REQUIRED');if(!file)return;const max=8*1024*1024;if(file.size>max)throw new Error('FILE_TOO_LARGE');const safe=file.name.replace(/[^a-zA-Z0-9._-]/g,'_');const path=`global-chat/${currentUser.uid}/${Date.now()}_${safe}`;const storageRef=ref(storage,path);await uploadBytes(storageRef,file,{contentType:file.type});return {url:await getDownloadURL(storageRef),path}}
 function moderationResultReal(text){
   const result=window.tubalHubChatGuardReal?.moderateTextReal?.(text);
@@ -663,11 +675,21 @@ async function sendMessage(payload){
   const status=await getModerationStatus();
   const blocked=moderationBlocked(status);
   if(blocked){alert('🛡️ TUBAL HUB AI MODERATION\n\n'+blocked);throw new Error('MODERATION_BLOCKED');}
+
   if(payload?.type==='text'){
-    const mod=moderationResultReal(payload.text);
-    if(!mod.allowed){moderationWarning();throw new Error('MODERATION_BLOCKED');}
-    payload={...payload,text:mod.cleanText};
+    const result=await sendMessageFnReal({
+      text:String(payload.text||'').trim(),
+      channel:activeChannelReal
+    });
+    lastMessageTime=Date.now();
+    if(result?.data?.moderated){
+      showModerationNotice('🛡️ Server moderation cleaned this message before publishing.');
+    }
+    return result?.data;
   }
+
+  // Images/GIFs remain direct Firebase Storage + Firestore writes.
+  // Server trigger validates any accompanying text/caption after creation.
   const uid=currentUser.uid;
   const limited=window.tubalHubChatGuardReal?.isRateLimitedReal?.(uid) ?? (Date.now()-lastMessageTime<2000);
   if(limited)throw new Error('RATE_LIMIT');
@@ -688,23 +710,18 @@ async function sendReply(text){
   const status=await getModerationStatus();
   const blocked=moderationBlocked(status);
   if(blocked){alert('🛡️ TUBAL HUB AI MODERATION\n\n'+blocked);throw new Error('MODERATION_BLOCKED');}
-  const mod=moderationResultReal(text);
-  if(!mod.allowed){moderationWarning();throw new Error('MODERATION_BLOCKED');}
-  const uid=currentUser.uid;
-  const limited=window.tubalHubChatGuardReal?.isRateLimitedReal?.(uid) ?? (Date.now()-lastMessageTime<2000);
-  if(limited)throw new Error('RATE_LIMIT');
-  lastMessageTime=Date.now();
-  await addDoc(collection(db,'globalChatReplies'),{
+
+  const result=await sendReplyFnReal({
+    text:String(text||'').trim(),
     messageId:replyTarget.messageId,
-    parentReplyId:replyTarget.parentReplyId||null,
-    uid,
-    displayName:currentUser.displayName||currentUser.email?.split('@')[0]||'Member',
-    email:currentUser.email||'',
-    text:mod.cleanText,
-    createdAt:serverTimestamp(),
-    moderatedReal:!!mod.hadBadWord
+    parentReplyId:replyTarget.parentReplyId||null
   });
+  lastMessageTime=Date.now();
   clearReply();
+  if(result?.data?.moderated){
+    showModerationNotice('🛡️ Server moderation cleaned this reply before publishing.');
+  }
+  return result?.data;
 }
 
 document.getElementById('imageBtn').onclick=()=>document.getElementById('imageInput').click();document.getElementById('imageInput').onchange=async e=>{const f=e.target.files?.[0];if(!f)return;sendButton.disabled=true;try{const x=await uploadMedia(f,'image');await sendMessage({type:'image',mediaUrl:x.url,storagePath:x.path,text:''})}catch(err){console.error(err);alert(err.message==='FILE_TOO_LARGE'?'Maximum file size is 8 MB.':'Image upload failed. Make sure Firebase Storage is enabled.')}finally{sendButton.disabled=false;e.target.value='';input.focus()}};document.getElementById('gifInput').onchange=async e=>{const f=e.target.files?.[0];if(!f)return;sendButton.disabled=true;try{const x=await uploadMedia(f,'gif');await sendMessage({type:'gif',isSticker:true,mediaUrl:x.url,storagePath:x.path,text:''});window.dispatchEvent(new CustomEvent('tubal-gif-uploaded',{detail:{url:x.url,storagePath:x.path,name:f.name||'GIF Sticker'}}));document.getElementById('gifStickerPicker')?.classList.remove('is-open');document.getElementById('gifStickerPicker').hidden=true;}catch(err){console.error(err);alert(err.message==='FILE_TOO_LARGE'?'Maximum file size is 8 MB.':'GIF upload failed. Make sure Firebase Storage is enabled.')}finally{sendButton.disabled=false;e.target.value='';input.focus()}};window.addEventListener('tubal-send-gif-sticker',async e=>{const d=e.detail||{};if(!d.url||sendButton.disabled)return;sendButton.disabled=true;try{await sendMessage({type:'gif',isSticker:true,mediaUrl:String(d.url),storagePath:String(d.storagePath||''),text:''})}catch(err){console.error(err);alert(err.message==='RATE_LIMIT'?'Please wait a moment before sending another GIF.':err.message==='MODERATION_BLOCKED'?'GIF blocked by TUBAL HUB moderation.':'GIF sticker was not sent. Check Firebase Firestore Rules.')}finally{sendButton.disabled=false;input.focus()}});
