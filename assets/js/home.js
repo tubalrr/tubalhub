@@ -332,7 +332,7 @@ function initSponsoredReal(){
           return ms(b.updatedAt||b.createdAt)-ms(a.updatedAt||a.createdAt);
         });
       slots.forEach(slot=>{
-        const item=active.find(x=>Number(x.sponsorSlot||0)===slot.slot);
+        const item=active.find(x=>{const assigned=Number(x.sponsorSlot||0);return assigned===slot.slot||(slot.slot===1&&!assigned);});
         renderSlot(slot,item);
       });
     },err=>{
