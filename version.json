@@ -1,9 +1,15 @@
 {
-  "version": "1.2.9",
-  "build": "2026-09-25_1014",
-  "releasedAtReal": "2026-09-25T10:14:00+08:00",
+  "version": "1.2.10",
+  "build": "2026-09-25_1015",
+  "releasedAtReal": "2026-09-25T10:15:00+08:00",
   "releasedByReal": "tubalrr",
   "updatesReal": [
+    {
+      "typeReal": "FEAT",
+      "scopeReal": "Draggable TUBAL BOT",
+      "detailReal": "Maaaring i-drag ang TUBAL Bot sa ibang posisyon sa screen para hindi makasagabal. Naka-save ang last position sa browser at may viewport clamping.",
+      "iconReal": "🖐️"
+    },
     {
       "typeReal": "FEAT",
       "scopeReal": "TUBAL BOT",
