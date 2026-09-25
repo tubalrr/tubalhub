@@ -66,7 +66,8 @@ const products=[
 ];
 
 const state={
-  collection:"th",
+  collection:"all",
+  categoryFilter:"all",
   query:"",
   stockFilter:"all",
   priceFilter:"all",
@@ -125,7 +126,7 @@ function saveLocal(key,value){
   try{localStorage.setItem(key,JSON.stringify(value))}catch(_){}
 }
 function productById(id){return products.find(p=>p.id===id)}
-function collectionProducts(){return [...realProducts,...products].filter(p=>p.collection===state.collection)}
+function collectionProducts(){return [...realProducts,...products]}
 function brandMarkHtml(collection,small=false){
   if(collection==="th") return '<span class="mini-brand-logo th"><img src="../tubal-hub-logo.png" width="'+(small?22:28)+'" height="'+(small?22:28)+'" alt="TUBAL HUB"></span>';
   if(collection==="payapang") return '<span class="mini-brand-logo pi" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M31 6C19 6 10 12 10 22c0 7 5 12 12 12 9 0 12-10 9-28Z"/><path d="M8 33c4-7 10-12 18-16"/></svg></span>';
@@ -231,15 +232,23 @@ function renderProducts(){
 }
 function updateCollectionUI(){
   document.querySelectorAll(".collection-tab").forEach(btn=>{
-    const active=btn.dataset.collection===state.collection;
+    const active=btn.dataset.categoryTab===state.categoryFilter;
     btn.classList.toggle("active",active);
     btn.setAttribute("aria-selected",active?"true":"false");
   });
-  const name={th:"TUBAL HUB",payapang:"PAYAPANG ISIP",ctrlzone:"CTRLZONE"}[state.collection];
-  document.getElementById("catalogTitle").textContent=name;
+  const names={all:"ALL CATEGORIES",merchandise:"MERCHANDISE",clothing:"CLOTHING",accessories:"ACCESSORIES","digital-products":"DIGITAL PRODUCTS","apps-software":"APPS & SOFTWARE",gaming:"GAMING","mods-addons":"MODS & ADD-ONS",media:"MEDIA",wellness:"WELLNESS",other:"OTHER"};
+  document.getElementById("catalogTitle").textContent=names[state.categoryFilter]||"ALL CATEGORIES";
   renderProducts();
 }
-function updateCounts(){const all=[...realProducts,...products];const counts={th:all.filter(p=>p.collection==="th").length,payapang:all.filter(p=>p.collection==="payapang").length,ctrlzone:all.filter(p=>p.collection==="ctrlzone").length};document.getElementById("count-th").textContent=counts.th+" products";document.getElementById("count-payapang").textContent=counts.payapang+" products";document.getElementById("count-ctrlzone").textContent=counts.ctrlzone+" products"}
+function updateCounts(){
+  const all=[...realProducts,...products];
+  const categories=["all","merchandise","clothing","accessories","digital-products","apps-software","gaming","mods-addons","media","wellness","other"];
+  categories.forEach(cat=>{
+    const n=cat==="all"?all.length:all.filter(p=>String(p.category||"").toLowerCase()===cat).length;
+    const el=document.getElementById("count-category-"+cat);
+    if(el)el.textContent=n+" "+(n===1?"product":"products");
+  });
+}
 
 function updateCartUI(){
   const count=cartCount();
@@ -420,7 +429,7 @@ window.addEventListener("tubalhubthemechange",e=>{
 });
 
 document.addEventListener("click",async e=>{
-  const collectionBtn=e.target.closest?.(".collection-tab");if(collectionBtn){state.collection=collectionBtn.dataset.collection;state.query="";state.categoryFilter="all";els.search.value="";state.stockFilter="all";state.priceFilter="all";document.querySelectorAll(".filter-chip").forEach(b=>b.classList.remove("active"));document.querySelector('[data-category-filter="all"]')?.classList.add("active");document.querySelector('[data-stock-filter="all"]')?.classList.add("active");document.querySelectorAll("[data-price-filter]").forEach(b=>{if(b.dataset.priceFilter==="all")b.classList.add("active")});updateCollectionUI();return}
+  const categoryTab=e.target.closest?.(".collection-tab[data-category-tab]");if(categoryTab){state.categoryFilter=categoryTab.dataset.categoryTab||"all";state.query="";els.search.value="";state.stockFilter="all";state.priceFilter="all";document.querySelectorAll(".filter-chip").forEach(b=>b.classList.remove("active"));document.querySelector('[data-category-filter="'+state.categoryFilter+'"]')?.classList.add("active");document.querySelector('[data-stock-filter="all"]')?.classList.add("active");document.querySelectorAll("[data-price-filter]").forEach(b=>{if(b.dataset.priceFilter==="all")b.classList.add("active")});updateCollectionUI();return}
   const add=e.target.closest?.("[data-add]");if(add){addToCart(add.dataset.add,1,add);return}
   const wish=e.target.closest?.("[data-wishlist]");if(wish){toggleWishlist(wish.dataset.wishlist,wish);return}
   const quick=e.target.closest?.("[data-quick]");if(quick){openQuick(quick.dataset.quick);return}
