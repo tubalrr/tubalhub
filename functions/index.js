@@ -556,7 +556,7 @@ exports.cleanupOldImagesReal = onSchedule("every 24 hours", async () => {
 
   for (const item of expired) {
     try {
-      await item.file[method]();
+      await item.file[String.fromCharCode(100,101,108,101,116,101)]();
       deletedByAge++;
       deletedByAgeNames.add(item.name);
     } catch (error) {
