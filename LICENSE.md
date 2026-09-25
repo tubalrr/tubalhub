@@ -6,60 +6,56 @@ All rights reserved.
 
 ## 1. Ownership
 
-Unless otherwise stated, the TUBAL HUB website, branding, logos, original graphics, UI designs, written content, and original code are owned by TUBAL HUB or their respective rights holders.
+Unless otherwise stated, the TUBAL HUB website, branding, logos, original graphics, UI designs, written content, documentation, and original code are owned by TUBAL HUB or their respective rights holders.
 
 ## 2. Permission
 
-You may view and use the website for personal, non-commercial purposes.
+You may access and use TUBAL HUB for personal, non-commercial purposes.
 
-You may not copy, reproduce, redistribute, sell, sublicense, publish, or create a substantially similar public website from TUBAL HUB materials without prior written permission.
+No permission is granted to copy, reproduce, redistribute, resell, sublicense, publish, mirror, or create a substantially similar public website from TUBAL HUB materials without prior written permission.
 
-## 3. Trademarks
+## 3. Trademarks and Branding
 
-“TUBAL HUB” and associated logos, names, and branding may not be used in a way that suggests endorsement, sponsorship, or affiliation without permission.
+“TUBAL HUB” and associated logos, names, branding, and visual identity may not be used in a way that suggests ownership, endorsement, sponsorship, or affiliation without permission.
 
 ## 4. Third-Party Materials
 
-Third-party libraries, Firebase services, fonts, media, icons, and other external materials remain subject to their own licenses and terms. This license does not transfer ownership of those materials.
+Third-party libraries, Firebase services, fonts, media, icons, APIs, and other external materials remain subject to their own licenses and terms. This license does not transfer ownership of third-party materials.
 
 ## 5. User Content
 
-Content submitted by users remains subject to the applicable TUBAL HUB Terms and does not automatically become property of TUBAL HUB.
+Content submitted or created by users remains subject to the applicable TUBAL HUB Terms and does not automatically become property of TUBAL HUB.
 
-## 6. Software and Downloads
+## 6. Software and Digital Products
 
-Any downloadable software, digital content, mods, templates, or other files may have separate license terms. Where a separate license is provided, that license controls the relevant item.
+Downloadable software, digital products, templates, mods, assets, or other files may have separate license terms. If a separate license is provided with a product, that license controls the relevant product.
 
 ## 7. No Warranty
 
-The website and its materials are provided on an “as is” and “as available” basis. TUBAL HUB makes no warranty that the website or its materials will always be available, error-free, or suitable for every purpose.
+TUBAL HUB materials are provided on an “as is” and “as available” basis. TUBAL HUB does not guarantee uninterrupted availability, error-free operation, or suitability for a particular purpose.
 
-## 8. Copy Protection and Attribution
+## 8. Copyright Protection
 
-TUBAL HUB may use technical deterrents, copyright notices, attribution markers, asset identifiers, and other reasonable measures to discourage unauthorized copying. These measures are not intended to guarantee that publicly accessible website code can never be inspected or copied.
+TUBAL HUB may use copyright notices, attribution markers, asset identifiers, technical deterrents, and other reasonable measures to discourage unauthorized copying. Publicly accessible website code may still be inspected as permitted by applicable law.
 
 ## 9. Reporting Unauthorized Use
 
-Suspected unauthorized copies may be reported to **tubalrr@gmail.com** with the relevant URL, original TUBAL HUB page or asset, and supporting evidence. Reports are reviewed manually and do not by themselves establish infringement.
+Suspected unauthorized use may be reported to **tubalrr@gmail.com**. Include the relevant URL, the original TUBAL HUB page or asset, and supporting evidence. Reports are reviewed manually and do not by themselves establish infringement.
 
-## 10. Monitoring
+## 10. License Verification
 
-TUBAL HUB may periodically review public websites, repositories, and other publicly accessible sources for possible unauthorized use. Monitoring is not guaranteed to detect every copy.
+Paid or downloadable products may use account, purchase, or license verification where technically supported. A client-side website alone cannot securely enforce a purchase license; secure verification requires appropriate server-side or payment-provider controls.
 
-## 11. Downloads and License Verification
-
-Downloadable or paid digital products may use separate license terms and, where technically supported, account or purchase verification. A client-side website alone cannot securely enforce a purchase license; secure verification requires a trusted server or payment provider.
-
-## 12. Contact
+## 11. Contact
 
 For permission requests, licensing questions, or copyright reports:
 
 **Email:** tubalrr@gmail.com
 
-## 13. Changes
+## 12. Changes
 
-TUBAL HUB may update this license when the website, content, or distribution model changes.
+TUBAL HUB may update this license when the website, content, products, or distribution model changes.
 
-**Last updated:** September 24, 2026
+**Last updated:** September 25, 2026
 
-This is a website-use license draft and should be reviewed for your specific ownership, third-party licenses, and applicable law before being treated as a formal legal instrument.
+This license is a website-use license draft and should be reviewed with qualified legal counsel for specific ownership, enforcement, third-party licensing, and applicable-law questions.
