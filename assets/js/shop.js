@@ -78,7 +78,8 @@ const state={
   selectedSize:"",
   selectedColor:"",
   filterOpen:false,
-  payment:"card"
+  payment:"card",
+  upgradeTarget:null
 };
 
 const els={
@@ -335,6 +336,7 @@ function closeCart(){els.cartDrawer.classList.remove("open");els.cartDrawer.setA
 function shopNow(){document.getElementById("catalog").scrollIntoView({behavior:"smooth",block:"start"});burstAt(document.getElementById("heroShopNow"),6)}
 function galleryFor(p){return [p.image,galleryPool[(products.indexOf(p)+1)%galleryPool.length],galleryPool[(products.indexOf(p)+2)%galleryPool.length],galleryPool[(products.indexOf(p)+3)%galleryPool.length]]}
 
+function licenseForProduct(id){return ownedLicenses.find(x=>x.productId===id)||null}
 function renderMyProducts(){
   if(!els.myProductsSection)return;
   const user=auth.currentUser;
