@@ -24,6 +24,7 @@ const REAL_FEED_KEY = "tubalhub_feeds";
 const LEGACY_JOURNAL_KEY = "payapang-isip-journal-v1";
 const JOURNAL_KEYS = [REAL_JOURNAL_KEY,LEGACY_JOURNAL_KEY,"payapang-journal"];
 const FEED_KEYS = [REAL_FEED_KEY];
+const SPONSORED_COLLECTION_REAL = "sponsoredAds";
 const REAL_MUSIC_DB = "tubalhub_db";
 const REAL_MUSIC_STORE = "music";
 const MUSIC_DB = "tubalhub-ai-music";
@@ -289,6 +290,39 @@ const HUB_HERO_MESSAGES=[
   ["Shop & Profiles","Explore the Hub shop and creator/profile features while keeping the experience connected in one place."],
   ["One Connected Hub","Use the sidebar to move between Home, Feeds, Chat, Brands, Community, Shop and other TUBAL HUB features."]
 ];
+function initSponsoredReal(){
+  const container=document.getElementById("sponsoredContainerReal");
+  if(!container||container.dataset.ready)return;
+  container.dataset.ready="1";
+  const head=container.querySelector(".sponsored-container-head-real");
+  const body=container.querySelector(".sponsored-empty-real");
+  const render=(items)=>{
+    const active=items.filter(x=>x&&x.active!==false).sort((a,b)=>{
+      const ad=Date.parse(a.updatedAt||a.createdAt||"")||0, bd=Date.parse(b.updatedAt||b.createdAt||"")||0;
+      return bd-ad;
+    })[0];
+    if(!active){
+      if(head)head.innerHTML="<span>Sponsored</span><span>EMPTY</span>";
+      if(body)body.outerHTML='<div class="sponsored-empty-real"><span aria-hidden="true">📦</span><b>No Sponsor Yet</b><small>Empty container — ready for a future real sponsor.</small></div>';
+      return;
+    }
+    const title=esc(active.title||"Sponsored");
+    const text=esc(active.text||"");
+    const image=String(active.imageUrl||"").trim();
+    const url=String(active.linkUrl||"").trim();
+    const badge=esc(active.badge||"SPONSORED");
+    if(head)head.innerHTML='<span>Sponsored</span><span>'+badge+'</span>';
+    const safeUrl=/^https?:\\/\\//i.test(url)?url:"";
+    const media=image&&/^https?:\\/\\//i.test(image)?'<img src="'+esc(image)+'" alt="" loading="lazy" decoding="async">':"";
+    const card='<div class="sponsored-real-card">'+media+'<div class="sponsored-real-copy"><small>SPONSORED</small><strong>'+title+'</strong>'+(text?'<p>'+text+'</p>':"")+(safeUrl?'<a href="'+esc(safeUrl)+'" target="_blank" rel="noopener noreferrer">Learn More →</a>':"")+'</div></div>';
+    if(body)body.outerHTML=card;
+  };
+  const renderSnapshot=(snap)=>render(snap.docs.map(d=>({id:d.id,...d.data()})));
+  try{
+    const q=query(collection(db,SPONSORED_COLLECTION_REAL),limit(20));
+    onSnapshot(q,renderSnapshot,err=>console.warn("[TUBAL HUB Sponsored]",err));
+  }catch(err){console.warn("[TUBAL HUB Sponsored init]",err)}
+}
 function initHubHeroMessages(){
   const box=$("#bentoHeroMessage"),title=$("#bentoHeroMessageTitle"),textEl=$("#bentoHeroMessageText"),dots=$("#bentoHeroMessageDots");
   if(!box||!title||!textEl)return;
@@ -1785,6 +1819,7 @@ function init(){
   initFeaturedWebsiteSlider();
   initFooter();
   initRealEmailSubscribe();
+  initSponsoredReal();
   initFooterNewsletter();
   initFooterSmoothLinks();
   initScrollReveal();
