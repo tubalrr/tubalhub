@@ -687,3 +687,8 @@ body.theme-light .payment-back:hover{
   color:rgba(255,255,255,.42);
   background:rgba(255,255,255,.035);
 }
+
+
+.payment-brand-logos{display:flex;align-items:center;justify-content:center;gap:6px}
+.payment-brand-logos img{display:block;width:auto;height:25px;max-width:52px;object-fit:contain}
+.payment-bank-logo{font-size:9px!important;font-weight:800;letter-spacing:.08em}
