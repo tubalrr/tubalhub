@@ -521,13 +521,19 @@ body:after{display:none!important}#sidebarToggle{position:fixed!important;z-inde
 
 /* FINAL DASHBOARD WIDTH FIX — use the full content canvas on desktop */
 @media(min-width:951px){
+  html,body{width:100%!important;max-width:100%!important;overflow-x:hidden!important}
+  .admin-shell{width:100%!important;max-width:100%!important;overflow-x:hidden!important}
   .dashboard{
     display:block!important;
-    width:calc(100% - 270px)!important;
-    max-width:none!important;
+    box-sizing:border-box!important;
+    width:calc(100vw - 270px)!important;
+    max-width:calc(100vw - 270px)!important;
+    min-width:0!important;
     margin-left:270px!important;
-    padding:94px 32px 34px!important;
+    padding:94px 24px 34px!important;
+    overflow-x:hidden!important;
   }
+  .dashboard>*{box-sizing:border-box!important;max-width:100%!important;min-width:0!important}
   .dashboard>.topbar,
   .dashboard>.dashboard-head,
   .dashboard>.stats,
