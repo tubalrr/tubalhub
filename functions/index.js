@@ -2,8 +2,10 @@
 const { logger } = require("firebase-functions");
 const { onCall, HttpsError } = require("firebase-functions/v2/https");
 const { onDocumentCreated } = require("firebase-functions/v2/firestore");
+const { onSchedule } = require("firebase-functions/v2/scheduler");
 const { initializeApp } = require("firebase-admin/app");
 const { getFirestore, FieldValue } = require("firebase-admin/firestore");
+const { getStorage } = require("firebase-admin/storage");
 
 initializeApp();
 const db = getFirestore();
@@ -519,6 +521,80 @@ exports.sendPrivateMessageReal = onCall(async request => {
     moderated: !!moderation.flagged,
     cleanText: moderation.cleanText
   };
+});
+
+
+exports.cleanupOldImagesReal = onSchedule("every 24 hours", async () => {
+  const bucket = getStorage().bucket();
+  const prefix = "global-chat/";
+  const maxFiles = 40;
+  const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
+  const now = Date.now();
+
+  const [files] = await bucket.getFiles({ prefix });
+  const entries = [];
+
+  for (const file of files) {
+    try {
+      const [metadata] = await file.getMetadata();
+      entries.push({
+        file,
+        name: file.name,
+        time: Date.parse(metadata.timeCreated || "") || 0
+      });
+    } catch (error) {
+      logger.warn("Could not read Global Chat media metadata.", {
+        name: file.name,
+        error: error?.message || String(error)
+      });
+    }
+  }
+
+  const expired = entries.filter(item => item.time > 0 && now - item.time > sevenDaysMs);
+  let deletedByAge = 0;
+
+  for (const item of expired) {
+    try {
+      await item.file.delete();
+      deletedByAge++;
+    } catch (error) {
+      logger.warn("Could not delete expired Global Chat media.", {
+        name: item.name,
+        error: error?.message || String(error)
+      });
+    }
+  }
+
+  const deletedByAgeNames = new Set(
+    expired.slice(0, expired.length).map(item => item.name)
+  );
+  const remaining = entries
+    .filter(item => !deletedByAgeNames.has(item.name))
+    .sort((a, b) => a.time - b.time);
+
+  const excess = Math.max(0, remaining.length - maxFiles);
+  let deletedByCount = 0;
+
+  for (let i = 0; i < excess; i++) {
+    try {
+      await remaining[i].file.delete();
+      deletedByCount++;
+    } catch (error) {
+      logger.warn("Could not delete excess Global Chat media.", {
+        name: remaining[i].name,
+        error: error?.message || String(error)
+      });
+    }
+  }
+
+  logger.info("TUBAL HUB Global Chat media cleanup complete.", {
+    scanned: files.length,
+    deletedByAge,
+    deletedByCount,
+    remainingEstimated: Math.max(0, remaining.length - deletedByCount)
+  });
+
+  return null;
 });
 
 logger.info("TUBAL HUB server moderation functions loaded.");
