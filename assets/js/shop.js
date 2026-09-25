@@ -1,5 +1,5 @@
 import {app,auth} from "./firebase-config.js";
-import {getFirestore,collection,addDoc,serverTimestamp} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+import {getFirestore,collection,addDoc,serverTimestamp,onSnapshot} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 import {publishHubPost} from "./hub-content.js";
 
 const db=getFirestore(app);
@@ -30,6 +30,11 @@ const IMG={
 };
 
 const galleryPool=[IMG.tshirt,IMG.hoodie,IMG.cap,IMG.backpack,IMG.mug,IMG.poster];
+let realProducts=[];
+let realProductsUnsubscribe=null;
+const parseProductPrice=v=>{const n=Number(String(v??"").replace(/[^0-9.]/g,""));return Number.isFinite(n)?n:0};
+const normalizeRealProduct=x=>({id:"real-"+x.id,firestoreId:x.id,real:true,collection:"th",title:String(x.name||"Unnamed Product"),price:parseProductPrice(x.price),priceLabel:String(x.price||"Free"),original:0,originalLabel:"",image:String(x.imageUrl||"").trim()||IMG.tshirt,seller:"TUBAL HUB Shop",sellerInitials:"TH",online:false,stock:null,rating:null,badge:String(x.badge||"").trim(),description:String(x.description||""),details:String(x.description||""),sizes:[],colors:[],productUrl:String(x.productUrl||"").trim(),category:String(x.category||"products")});
+function listenToRealProducts(){if(realProductsUnsubscribe)realProductsUnsubscribe();realProductsUnsubscribe=onSnapshot(collection(db,"products"),snap=>{realProducts=snap.docs.map(d=>normalizeRealProduct({id:d.id,...d.data()}));renderProducts();updateCounts()},e=>console.warn("[TUBAL HUB Shop] real products listener failed",e))}
 
 const products=[
   {id:"th-hoodie",collection:"th",title:"TH Signature Hoodie",price:1790,original:2290,image:IMG.hoodie,seller:"Rr Studio",sellerInitials:"Rr",online:true,stock:5,rating:4.8,badge:"NEW",description:"Premium-weight community hoodie with a clean TUBAL HUB finish.",details:"Soft-touch hoodie silhouette, relaxed fit, everyday community wear.",sizes:["S","M","L","XL"],colors:["Black","Forest","Stone"]},
@@ -120,7 +125,7 @@ function saveLocal(key,value){
   try{localStorage.setItem(key,JSON.stringify(value))}catch(_){}
 }
 function productById(id){return products.find(p=>p.id===id)}
-function collectionProducts(){return products.filter(p=>p.collection===state.collection)}
+function collectionProducts(){return [...realProducts,...products].filter(p=>p.collection===state.collection)}
 function brandMarkHtml(collection,small=false){
   if(collection==="th") return '<span class="mini-brand-logo th"><img src="../tubal-hub-logo.png" width="'+(small?22:28)+'" height="'+(small?22:28)+'" alt="TUBAL HUB"></span>';
   if(collection==="payapang") return '<span class="mini-brand-logo pi" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M31 6C19 6 10 12 10 22c0 7 5 12 12 12 9 0 12-10 9-28Z"/><path d="M8 33c4-7 10-12 18-16"/></svg></span>';
@@ -191,21 +196,25 @@ function filteredProducts(){
 
 function cardHtml(p,index){
   const wished=state.wishlist.has(p.id);
+  const isReal=Boolean(p.real);
+  const priceHtml=isReal?'<strong class="product-price">'+esc(p.priceLabel)+'</strong>':'<strong class="product-price">'+money(p.price)+'</strong><span class="product-original">'+money(p.original)+'</span>';
+  const metaHtml=isReal?'<div class="product-rating-row"><span>REAL ADMIN PRODUCT</span><span>'+esc(p.category)+'</span></div>':'<div class="product-rating-row"><span>⭐ '+p.rating.toFixed(1)+'</span><span>Premium listing</span><span class="stock-low">'+p.stock+' left</span></div>';
+  const actionHtml=isReal&&p.productUrl?'<a class="add-btn real-product-link" href="'+esc(p.productUrl)+'" target="_blank" rel="noopener noreferrer">Open Product</a>':'<button class="add-btn" data-add="'+esc(p.id)+'" type="button">Add to Cart</button>';
   return '<article class="product-card" data-product-id="'+esc(p.id)+'" style="--stagger:'+(index*.05)+'s">'+
     '<div class="product-visual">'+
       '<img src="'+esc(p.image)+'" alt="'+esc(p.title)+'" loading="lazy" decoding="async">'+
-      '<span class="product-badge">'+esc(p.badge)+'</span>'+
-      '<button class="quick-view-btn" data-quick="'+esc(p.id)+'" type="button" aria-label="Quick view '+esc(p.title)+'">◉</button>'+
+      (p.badge?'<span class="product-badge">'+esc(p.badge)+'</span>':'')+
+      (isReal?'':'<button class="quick-view-btn" data-quick="'+esc(p.id)+'" type="button" aria-label="Quick view '+esc(p.title)+'">◉</button>')+
     '</div>'+
     '<div class="product-info">'+
       '<h3 class="product-title">'+esc(p.title)+'</h3>'+
       '<div class="product-shop product-shop-brand">'+brandMarkHtml(p.collection,true)+'<span>'+esc(p.seller)+'</span></div>'+
-      '<div class="product-price-row"><strong class="product-price">'+money(p.price)+'</strong><span class="product-original">'+money(p.original)+'</span></div>'+
-      '<div class="product-rating-row"><span>⭐ '+p.rating.toFixed(1)+'</span><span>Premium listing</span><span class="stock-low">'+p.stock+' left</span></div>'+
+      '<div class="product-price-row">'+priceHtml+'</div>'+
+      metaHtml+
       '<div class="seller-row">'+
-        '<div class="seller-avatar">'+esc(p.sellerInitials)+'<i class="seller-status '+(p.online?"online":"")+'"></i></div>'+
-        '<div class="seller-copy"><strong>'+esc(p.seller)+'</strong><span>'+ (p.online?"Online":"Offline") +'</span></div>'+
-        '<div class="seller-actions"><button class="wishlist-btn '+(wished?"active":"")+'" data-wishlist="'+esc(p.id)+'" type="button" aria-label="'+(wished?"Remove from wishlist":"Add to wishlist")+'">'+(wished?"♥":"♡")+'</button><button class="add-btn" data-add="'+esc(p.id)+'" type="button">Add to Cart</button></div>'+
+        '<div class="seller-avatar">'+esc(p.sellerInitials)+'</div>'+
+        '<div class="seller-copy"><strong>'+esc(p.seller)+'</strong><span>'+ (isReal?"From Admin":"Catalog Demo") +'</span></div>'+
+        '<div class="seller-actions"><button class="wishlist-btn '+(wished?"active":"")+'" data-wishlist="'+esc(p.id)+'" type="button" aria-label="'+(wished?"Remove from wishlist":"Add to wishlist")+'">'+(wished?"♥":"♡")+'</button>'+actionHtml+'</div>'+
       '</div>'+
     '</div>'+
   '</article>';
@@ -229,7 +238,7 @@ function updateCollectionUI(){
   document.getElementById("catalogTitle").textContent=name;
   renderProducts();
 }
-function updateCounts(){const counts={th:products.filter(p=>p.collection==="th").length,payapang:products.filter(p=>p.collection==="payapang").length,ctrlzone:products.filter(p=>p.collection==="ctrlzone").length};document.getElementById("count-th").textContent=counts.th+" products";document.getElementById("count-payapang").textContent=counts.payapang+" products";document.getElementById("count-ctrlzone").textContent=counts.ctrlzone+" products"}
+function updateCounts(){const all=[...realProducts,...products];const counts={th:all.filter(p=>p.collection==="th").length,payapang:all.filter(p=>p.collection==="payapang").length,ctrlzone:all.filter(p=>p.collection==="ctrlzone").length};document.getElementById("count-th").textContent=counts.th+" products";document.getElementById("count-payapang").textContent=counts.payapang+" products";document.getElementById("count-ctrlzone").textContent=counts.ctrlzone+" products"}
 
 function updateCartUI(){
   const count=cartCount();
@@ -461,5 +470,5 @@ window.addEventListener("keydown",e=>{
   else if(els.cartDrawer.classList.contains("open"))closeCart();
 });
 
-loadCart();loadWishlist();updateCounts();updateCartUI();updateCollectionUI();
+loadCart();loadWishlist();updateCounts();updateCartUI();updateCollectionUI();listenToRealProducts();
 setTimeout(()=>burstAt(document.getElementById("heroShopNow"),6),450);
