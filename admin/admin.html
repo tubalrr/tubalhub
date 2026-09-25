@@ -23,7 +23,7 @@
     <input id="saImage" placeholder="Image URL (optional)">
     <input id="saUrl" placeholder="Sponsor / product URL (optional)">
     <input id="saBadge" placeholder="Badge e.g. SPONSORED" value="SPONSORED">
-    <button id="addSponsoredAd">Publish Sponsored →</button>
+    <button type="button" id="addSponsoredAd">Publish Sponsored →</button>
   </div>
   <small style="opacity:.55;display:block;margin-top:8px">Published ads appear automatically below Live Stats on the homepage. Only the latest active sponsor is shown.</small>
   <div id="sponsoredAdList"></div>
@@ -60,7 +60,7 @@ document.addEventListener("click",async e=>{const name=e.target.closest("[data-m
 document.querySelectorAll(".ban-options button").forEach(btn=>btn.onclick=()=>{window.__banDuration=btn.dataset.duration;document.querySelectorAll(".ban-options button").forEach(x=>x.classList.remove("selected"));btn.classList.add("selected")});
 $("closeBanModal").onclick=$("cancelBan").onclick=()=>{$("banModal").hidden=true};
 $("confirmBan").onclick=async()=>{const uid=window.__banTargetUid,duration=window.__banDuration;if(!uid||!duration)return toast("Select a ban duration.");let banUntil=null;if(duration!=="permanent"){const hours={"1h":1,"6h":6,"12h":12,"1d":24,"3d":72,"7d":168,"30d":720}[duration];banUntil=Timestamp.fromDate(new Date(Date.now()+hours*60*60*1000))}try{await updateDoc(doc(db,"users",uid),{chatStatus:"banned",banned:true,banReason:$("banReasonInput").value.trim()||"Global Chat rules violation",bannedAt:serverTimestamp(),bannedBy:auth.currentUser.uid,banUntil});$("banModal").hidden=true;await load();toast(duration==="permanent"?"Member permanently banned.":"Member banned until "+banUntil.toDate().toLocaleString())}catch(e){toast(e.message)}};
-$("addSponsoredAd")?.addEventListener("click",addSponsoredAd);
+$("addSponsoredAd")?.addEventListener("click",async e=>{e.preventDefault();await addSponsoredAd();});
 $("logout").onclick=()=>signOut(auth);
 onAuthStateChanged(auth,async user=>{if(!user||user.email?.toLowerCase()!==ADMIN_EMAIL){location.replace("login.html");return}$("adminEmail").textContent=user.email;$("loading").remove();$("app").hidden=false;await load();await loadSponsoredAds()});
 </script></body></html>
