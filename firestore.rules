@@ -20,10 +20,7 @@ service cloud.firestore {
     // Long-term, migrate this to a Firebase custom admin claim.
     function adminUser() {
       return realUser()
-        && (
-          request.auth.token.admin == true
-          || request.auth.token.email == 'tubalrr@gmail.com'
-        );
+        && request.auth.token.admin == true;
     }
 
     function ownsNew() {
