@@ -446,6 +446,33 @@ document.querySelectorAll(".payment-brand-logos img").forEach(img=>img.addEventL
   const btn=img.closest(".payment-method");
   if(btn){state.payment=btn.dataset.payment||"card";updatePaymentUI();burstAt(btn,6);requestAnimationFrame(()=>document.getElementById("cardholderName")?.focus());}
 }));
+function openOrderReview(){
+  document.getElementById("reviewSubtotal").textContent=money(subtotal());
+  document.getElementById("reviewShipping").textContent=money(shipping());
+  document.getElementById("reviewTotal").textContent=money(total());
+  document.getElementById("reviewPayment").textContent={card:"Card • Visa / Mastercard",bank:"Bank Transfer",paypal:"PayPal"}[state.payment]||"Card";
+  const list=document.getElementById("orderReviewItems");
+  list.innerHTML=state.cart.map(item=>{const p=productById(item.id);if(!p)return"";return '<div class="order-review-item"><img src="'+esc(p.image)+'" alt=""><div><strong>'+esc(p.title)+'</strong><span>Qty '+item.qty+'</span></div><b>'+money(p.price*item.qty)+'</b></div>'}).join("");
+  els.checkoutLayer.classList.remove("is-open");
+  setTimeout(()=>{els.checkoutLayer.hidden=true;const layer=document.getElementById("orderReviewLayer");layer.hidden=false;requestAnimationFrame(()=>layer.classList.add("is-open"))},220);
+}
+function closeOrderReview(){
+  const layer=document.getElementById("orderReviewLayer");layer.classList.remove("is-open");
+  setTimeout(()=>{if(!layer.classList.contains("is-open"))layer.hidden=true},220);
+}
+function openOrderSuccess(orderTotal,method){
+  const number="TH-"+Date.now().toString(36).toUpperCase();
+  document.getElementById("orderNumber").textContent=number;
+  document.getElementById("successTotal").textContent=money(orderTotal);
+  document.getElementById("successPayment").textContent=method;
+  document.getElementById("orderSuccessCopy").textContent="Order "+number+" is ready for processing.";
+  document.getElementById("orderSuccessLayer").hidden=false;
+  requestAnimationFrame(()=>document.getElementById("orderSuccessLayer").classList.add("is-open"));
+}
+function closeOrderSuccess(){
+  const layer=document.getElementById("orderSuccessLayer");layer.classList.remove("is-open");
+  setTimeout(()=>{if(!layer.classList.contains("is-open"))layer.hidden=true},220);
+}
 els.checkoutLayer.addEventListener("click",e=>{if(e.target===els.checkoutLayer)closeCheckout()});
 document.getElementById("finishCheckout").addEventListener("click",()=>{
   const form=document.getElementById("paymentFields");
@@ -453,14 +480,27 @@ document.getElementById("finishCheckout").addEventListener("click",()=>{
   let valid=true;
   required.forEach(input=>{if(!String(input.value||"").trim()){input.reportValidity?.();valid=false;}});
   if(!valid)return;
-  const orderTotal=total();
-  const method={card:"Card",bank:"Bank Transfer",paypal:"PayPal"}[state.payment]||"Card";
   burstAt(document.getElementById("finishCheckout"),12);
-  notify("Order ready: "+method+" • "+money(orderTotal));
+  openOrderReview();
 });
+document.getElementById("closeOrderReview").addEventListener("click",closeOrderReview);
+document.getElementById("backToPayment").addEventListener("click",()=>{
+  closeOrderReview();
+  setTimeout(()=>{els.checkoutLayer.hidden=false;requestAnimationFrame(()=>els.checkoutLayer.classList.add("is-open"))},220);
+});
+document.getElementById("placeOrderBtn").addEventListener("click",()=>{
+  const orderTotal=total();
+  const method={card:"Card • Visa / Mastercard",bank:"Bank Transfer",paypal:"PayPal"}[state.payment]||"Card";
+  burstAt(document.getElementById("placeOrderBtn"),12);
+  openOrderSuccess(orderTotal,method);
+  state.cart=[];saveCart();updateCartUI();closeOrderReview();closeCart();
+});
+document.getElementById("closeOrderSuccess").addEventListener("click",closeOrderSuccess);
 window.addEventListener("keydown",e=>{
   if(e.key!=="Escape")return;
   if(!els.quickLayer.hidden)closeQuick();
+  else if(!document.getElementById("orderSuccessLayer").hidden)closeOrderSuccess();
+  else if(!document.getElementById("orderReviewLayer").hidden)closeOrderReview();
   else if(!els.checkoutLayer.hidden)closeCheckout();
   else if(els.cartDrawer.classList.contains("open"))closeCart();
 });
