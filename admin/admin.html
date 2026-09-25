@@ -61,7 +61,7 @@
 <div id="toast" class="toast"></div><footer>© 2026 TUBAL HUB • Admin Control Center • v1.2.16</footer></main></div><div id="loading" class="loading">Checking administrator access…</div><script type="module">
 import {auth} from "../assets/js/firebase-config.js";
 import {onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
-import {getFirestore,collection,getDocs,addDoc,deleteDoc,doc,query,where,orderBy,limit,serverTimestamp,updateDoc,Timestamp,writeBatch,onSnapshot,setDoc} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+import {getFirestore,collection,getDocs,addDoc,deleteDoc,doc,query,where,orderBy,limit,startAfter,serverTimestamp,updateDoc,Timestamp,writeBatch,onSnapshot,setDoc} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 import {getFunctions,httpsCallable} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-functions.js";
 const ADMIN_EMAIL="tubalrr@gmail.com",db=getFirestore(),shopFunctions=getFunctions(),analyticsFunctions=getFunctions(),getAdminAnalyticsReal=httpsCallable(analyticsFunctions,"getAdminAnalyticsReal"),verifyShopOrderReal=httpsCallable(shopFunctions,"verifyShopOrderReal"),migrateShopDownloadSecretsReal=httpsCallable(shopFunctions,"migrateShopDownloadSecretsReal"),$=id=>document.getElementById(id);
 let news=[],anns=[],members=[],chats=[],shopProducts=[],shopOrders=[],sponsoredAds=[];
@@ -238,6 +238,25 @@ function renderAnalyticsReal(data){
   }).join("");
 }
 async function loadAnalyticsReal(){
+async function getAnalyticsMessagesPaged(collectionName,startDate,endDate){
+  const docs=[];
+  let cursor=null;
+  while(true){
+    let q=query(
+      collection(db,collectionName),
+      where("createdAt",">=",Timestamp.fromDate(startDate)),
+      where("createdAt","<=",Timestamp.fromDate(endDate)),
+      orderBy("createdAt","asc"),
+      limit(10000)
+    );
+    if(cursor)q=query(q,startAfter(cursor));
+    const snap=await getDocs(q);
+    docs.push(...snap.docs);
+    if(snap.size<10000)break;
+    cursor=snap.docs[snap.docs.length-1];
+  }
+  return docs;
+}
   // Read Firestore directly first. This keeps Admin Analytics independent of
   // callable-function CORS/deployment state and uses only real Firestore data.
   try{
@@ -245,8 +264,8 @@ async function loadAnalyticsReal(){
     const startDate=new Date(endDate);startDate.setDate(startDate.getDate()-29);startDate.setHours(0,0,0,0);
     const [uSnap,gSnap,mSnap]=await Promise.all([
       getDocs(collection(db,"users")),
-      getDocs(query(collection(db,"globalChats"),where("createdAt",">=",Timestamp.fromDate(startDate)),where("createdAt","<=",Timestamp.fromDate(endDate)),limit(10000))),
-      getDocs(query(collection(db,"messages"),where("createdAt",">=",Timestamp.fromDate(startDate)),where("createdAt","<=",Timestamp.fromDate(endDate)),limit(10000)))
+      getAnalyticsMessagesPaged("globalChats",startDate,endDate),
+      getAnalyticsMessagesPaged("messages",startDate,endDate)
     ]);
     const users=new Map(),days=[],active=new Map();
     const dayKey=d=>{const x=new Date(d);x.setHours(0,0,0,0);return x.toISOString().slice(0,10)};
