@@ -65,7 +65,7 @@ function render(){
           ${expiry}
         </div>
         <span class="member-status ${banned?"banned":"active"}">${banned?"BANNED":"ACTIVE"}</span>
-        ${x.uid===auth.currentUser?.uid?"":banned?`<button class="member-action unban" data-unban="${esc(x.uid||x.id)}">Unban</button>`:`<button class="member-action ban" data-ban="${esc(x.uid||x.id)}">Ban</button>`}
+        ${x.uid===auth.currentUser?.uid?"":banned?\`<button class="member-action unban" data-unban="${esc(x.uid||x.id)}">Unban</button>\`:\`<button class="member-action ban" data-ban="${esc(x.uid||x.id)}">Ban</button>\`}
       </div>`;
   }).join("")||'<div class="empty">No member profiles found.</div>';
 
