@@ -751,25 +751,8 @@ async function sendPrivateMessage(text){
     privateLastMessageTime=Date.now();
     return result?.data;
   }catch(fnError){
-    console.warn('[TUBAL HUB] sendPrivateMessageReal unavailable; using Firestore fallback.',fnError);
-    // Keep private chat usable if the callable Function is temporarily unavailable.
-    // Firestore Rules only allow the authenticated sender to create their own DM.
-    const uid=currentUser.uid;
-    const receiverId=privateTarget.uid;
-    const ref=await addDoc(collection(db,'messages'),{
-      uid,
-      senderId:uid,
-      receiverId,
-      participants:[uid,receiverId],
-      displayName:currentUser.displayName||currentUser.email?.split('@')[0]||'Member',
-      senderPhotoURL:currentUser.photoURL||'',
-      text:cleanText,
-      textReal:cleanText,
-      type:'text',
-      createdAt:serverTimestamp()
-    });
-    privateLastMessageTime=Date.now();
-    return {success:true,id:ref.id,fallback:true};
+    console.error('[TUBAL HUB] secure private message failed.',fnError);
+    throw fnError;
   }
 }
 document.getElementById('closePrivateChat').onclick=closePrivateChat;
