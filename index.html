@@ -98,13 +98,17 @@ window.TUBAL_EMAILJS_CONFIG = Object.freeze({
   max-width:1280px;
   margin:20px auto;
   display:grid;
-  grid-template-columns:minmax(0,1fr) 320px;
+  grid-template-columns:minmax(0,1fr);
   gap:16px;
   align-items:start;
 }
 #featuredGameReal{min-width:0}
 .sponsored-container-real{
-  min-height:200px;
+  width:100%;
+  max-width:1280px;
+  box-sizing:border-box;
+  min-height:150px;
+  margin:0 auto 16px;
   padding:14px;
   border:1px dashed rgba(255,255,255,.1);
   border-radius:20px;
@@ -148,7 +152,8 @@ window.TUBAL_EMAILJS_CONFIG = Object.freeze({
 .sponsored-empty-real span{font-size:24px;opacity:.2}
 .sponsored-empty-real b{font-size:11px;opacity:.3;margin-top:8px}
 .sponsored-empty-real small{font-size:9px;opacity:.2;margin-top:4px}
-#sidebarMenuTrigger{
+#sidebarMenuTrigger,
+#sidebarToggle{
   z-index:1002 !important;
   position:fixed !important;
 }
@@ -308,6 +313,18 @@ window.TUBAL_EMAILJS_CONFIG = Object.freeze({
         <span class="bento-data-note" id="bentoSystemNote">Real site data only • No mock counters</span>
       </section>
 
+<aside id="sponsoredContainerReal" class="sponsored-container-real" aria-label="Sponsored">
+  <div class="sponsored-container-head-real">
+    <span>Sponsored</span>
+    <span>EMPTY</span>
+  </div>
+  <div class="sponsored-empty-real">
+    <span aria-hidden="true">📦</span>
+    <b>No Sponsor Yet</b>
+    <small>Empty container — ready for a future real sponsor.</small>
+  </div>
+</aside>
+
  <div id="featuredGameReal" class="featured-game-sponsored-grid-real">
   <section id="ctrlzoneCard" class="glass-card-real bento-card-real ctrlzone-featured-real" aria-labelledby="ctrlzoneFeaturedTitle">
   <header class="ctrlzone-featured-header">
@@ -322,17 +339,6 @@ window.TUBAL_EMAILJS_CONFIG = Object.freeze({
   <div id="currentCatalogCount" class="current-catalog-count">0 games real</div>
 </section>
 
-  <aside id="sponsoredContainerReal" class="sponsored-container-real" aria-label="Sponsored">
-    <div class="sponsored-container-head-real">
-      <span>Sponsored</span>
-      <span>EMPTY</span>
-    </div>
-    <div class="sponsored-empty-real">
-      <span aria-hidden="true">📦</span>
-      <b>No Sponsor Yet</b>
-      <small>Empty container — ready for a future real sponsor.</small>
-    </div>
-  </aside>
 </div>
 
      <div class="bento-row bento-row-real" aria-label="Real TUBAL HUB Bento">
