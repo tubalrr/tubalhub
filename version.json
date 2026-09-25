@@ -5,6 +5,18 @@
   "releasedByReal": "tubalrr",
   "updatesReal": [
     {
+      "typeReal": "FEAT",
+      "scopeReal": "Gmail Update Subscribe",
+      "detailReal": "May opt-in footer subscription para sa real Gmail at optional phone contact, saved only in the subscriber browser with explicit consent.",
+      "iconReal": "✉"
+    },
+    {
+      "typeReal": "FEAT",
+      "scopeReal": "EmailJS",
+      "detailReal": "Prepared ang real EmailJS v4 browser integration for update emails. Sending activates only after the owner supplies the real public key and configures the service/template.",
+      "iconReal": "@"
+    },
+    {
       "typeReal": "BUILD",
       "scopeReal": "Single Source of Truth",
       "detailReal": "version.json is the single version/build source: v1.2.10 • build 2026-09-25_1015.",
