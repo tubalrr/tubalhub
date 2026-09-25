@@ -334,5 +334,5 @@ if(sidebarToggle&&sidebar){
   });
 }
 $("logout").onclick=()=>signOut(auth);
-onAuthStateChanged(auth,async user=>{if(!user||user.email?.toLowerCase()!==ADMIN_EMAIL){location.replace("login.html");return}$("adminEmail").textContent=user.email;$("loading").remove();$("app").hidden=false;await load();listenToPresence();listenToCleanupStats();await loadMaintenanceSetting();await loadSponsoredAds();await loadAnalyticsReal()});
+onAuthStateChanged(auth,async user=>{if(!user){location.replace("login.html");return}try{const token=await user.getIdTokenResult();if(token.claims.admin!==true){location.replace("login.html");return}}catch(error){console.error("Admin claim verification failed:",error);location.replace("login.html");return}$("adminEmail").textContent=user.email||"";$("loading").remove();$("app").hidden=false;await load();listenToPresence();listenToCleanupStats();await loadMaintenanceSetting();await loadSponsoredAds();await loadAnalyticsReal()});
 </script></body></html>
