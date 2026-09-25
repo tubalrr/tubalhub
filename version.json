@@ -1,9 +1,33 @@
 {
-  "version": "1.2.15",
-  "build": "2026-09-25_1135",
-  "releasedAtReal": "2026-09-25T03:35:00Z",
+  "version": "1.2.16",
+  "build": "2026-09-25_1210",
+  "releasedAtReal": "2026-09-25T04:10:00Z",
   "releasedByReal": "tubalrr",
   "updatesReal": [
+    {
+      "typeReal": "FEAT",
+      "scopeReal": "Global Chat Storage Cleanup",
+      "detailReal": "Global Chat media now uses the existing global-chat/{uid}/ Storage path with a 40-file per-user cleanup threshold, deleting the oldest 15 before a new image/GIF upload and retrying once after a real quota-exceeded response.",
+      "iconReal": "🧹"
+    },
+    {
+      "typeReal": "FEAT",
+      "scopeReal": "Server Media Cleanup",
+      "detailReal": "Added cleanupOldImagesReal scheduled every 24 hours. It removes Global Chat media older than 7 days and then trims the remaining global-chat/ media to a maximum of 40 files.",
+      "iconReal": "🛡"
+    },
+    {
+      "typeReal": "UI",
+      "scopeReal": "Storage Badge",
+      "detailReal": "Global Chat shows the authenticated user's real media count and actual stored MB for the existing chat-media folder. No fake 2 MB estimate is used.",
+      "iconReal": "▣"
+    },
+    {
+      "typeReal": "SECURITY",
+      "scopeReal": "Storage Path Compatibility",
+      "detailReal": "Auto-cleanup follows the already deployed Firestore/Storage contract at global-chat/{uid}/ instead of introducing the unsupported globalChatUploads/ path.",
+      "iconReal": "🔒"
+    },
     {
       "typeReal": "SECURITY",
       "scopeReal": "Production Chat Security",
@@ -87,12 +111,6 @@
       "scopeReal": "Demo State",
       "detailReal": "Empty states remain real by default; optional demo content is explicitly labeled [DEMO] and loads only after a user action.",
       "iconReal": "DEMO"
-    },
-    {
-      "typeReal": "FIX",
-      "scopeReal": "3-Dash Safety",
-      "detailReal": "The fixed three-dash trigger remains 44px tappable at z-index 1002 and stays above homepage layers.",
-      "iconReal": "☰"
     }
   ],
   "breakingReal": false
