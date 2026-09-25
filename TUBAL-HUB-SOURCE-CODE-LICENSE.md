@@ -58,4 +58,4 @@ Any refund or dispute terms are governed by the active Gumroad product policy an
 
 For licensing questions:
 
-tubalrr@gmail.com
+YOUR_SUPPORT_EMAIL
