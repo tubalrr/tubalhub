@@ -379,7 +379,7 @@ function updatePaymentUI(){
   if(copy)copy.textContent=cartCount()+" items ready • "+data.title+" selected.";
 }
 function openCheckout(){
-  if(!state.cart.length)return;
+  if(!state.cart.length&&!state.upgradeTarget)return;
   els.checkoutTotal.textContent=money(total());
   els.checkoutLayer.hidden=false;
   updatePaymentUI();
@@ -446,7 +446,7 @@ els.quickLayer.addEventListener("click",e=>{if(e.target===els.quickLayer)closeQu
 document.getElementById("quickViewMinus").addEventListener("click",()=>{state.quickQty=Math.max(1,state.quickQty-1);els.quickQty.textContent=state.quickQty});
 document.getElementById("quickViewPlus").addEventListener("click",()=>{state.quickQty=Math.min(10,state.quickQty+1);els.quickQty.textContent=state.quickQty});
 document.getElementById("quickViewAdd").addEventListener("click",()=>{if(state.current)addToCart(state.current.id,state.quickQty,document.getElementById("quickViewAdd"))});
-document.getElementById("quickViewBuy").addEventListener("click",()=>{if(state.current){if(state.current.real&&state.current.productType!=="physical"){closeQuick();state.cart=[];addToCart(state.current.id,1,null,"buy");openCheckout();}else buyProduct(state.current,state.quickQty)}});
+document.getElementById("quickViewBuy").addEventListener("click",()=>{if(state.current){if(state.current.real&&state.current.productType!=="physical"){const owned=licenseForProduct(state.current.firestoreId);closeQuick();if(owned){state.upgradeTarget={product:state.current,license:owned};openCheckout()}else{state.cart=[];addToCart(state.current.id,1,null,"buy");openCheckout()}}else buyProduct(state.current,state.quickQty)}});
 document.getElementById("quickViewUpgrade").addEventListener("click",()=>{if(state.current){const owned=licenseForProduct(state.current.firestoreId);if(owned){state.upgradeTarget={product:state.current,license:owned};closeQuick();openCheckout();}}});
 document.getElementById("checkoutBtn").addEventListener("click",openCheckout);
 document.getElementById("closeCheckout").addEventListener("click",closeCheckout);
