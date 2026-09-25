@@ -524,6 +524,61 @@ exports.sendPrivateMessageReal = onCall(async request => {
 });
 
 
+
+exports.cleanupGlobalChatMediaReal = onCall(async request => {
+  requireRealUser(request);
+
+  const uid = request.auth.uid;
+  const prefix = "global-chat/" + uid + "/";
+  const maxFiles = 40;
+  const bucket = getStorage().bucket();
+  const [files] = await bucket.getFiles({ prefix });
+
+  const entries = [];
+  for (const file of files) {
+    try {
+      const [metadata] = await file.getMetadata();
+      entries.push({
+        file,
+        name: file.name,
+        time: Date.parse(metadata.timeCreated || "") || 0
+      });
+    } catch (error) {
+      logger.warn("Could not inspect Global Chat media before upload.", {
+        name: file.name,
+        error: error?.message || String(error)
+      });
+    }
+  }
+
+  if (entries.length < maxFiles) {
+    return { success: true, deleted: 0, beforeCount: entries.length, afterCount: entries.length };
+  }
+
+  entries.sort((a, b) => a.time - b.time);
+  const oldest = entries.slice(0, 15);
+  let deleted = 0;
+
+  for (const item of oldest) {
+    try {
+      await item.file.delete();
+      deleted++;
+    } catch (error) {
+      logger.warn("Could not delete old Global Chat media before upload.", {
+        name: item.name,
+        error: error?.message || String(error)
+      });
+    }
+  }
+
+  return {
+    success: true,
+    deleted,
+    beforeCount: entries.length,
+    afterCount: Math.max(0, entries.length - deleted)
+  };
+});
+
 exports.cleanupOldImagesReal = onSchedule("every 24 hours", async () => {
   const bucket = getStorage().bucket();
   const prefix = "global-chat/";
