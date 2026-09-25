@@ -247,3 +247,25 @@ body:after{display:none!important}#sidebarToggle{position:fixed!important;z-inde
     max-width:100%!important;
   }
 }
+
+
+/* PRODUCTS + NEWS — EQUAL WIDTH */
+#shopProducts{
+  float:left!important;
+  width:49%!important;
+  max-width:none!important;
+  margin:0 0 15px!important;
+}
+#content{
+  float:right!important;
+  width:49%!important;
+  max-width:none!important;
+  margin:0 0 15px!important;
+}
+@media(max-width:950px){
+  #shopProducts,#content{
+    float:none!important;
+    width:100%!important;
+    max-width:100%!important;
+  }
+}
