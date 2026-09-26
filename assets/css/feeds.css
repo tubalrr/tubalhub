@@ -797,3 +797,109 @@ body.feeds-page{
   .post-media{max-height:none}
   .product-card,.game-card{margin:0 10px!important}
 }
+
+
+/* =========================================================
+   FEEDS UPGRADE — CURATED DISCOVERY
+   ========================================================= */
+.feed-featured{
+  margin:0 0 18px;
+  padding:14px;
+  border:1px solid rgba(99,223,255,.11);
+  border-radius:14px;
+  background:linear-gradient(145deg,rgba(11,17,23,.88),rgba(6,10,15,.94));
+  box-shadow:0 18px 55px rgba(0,0,0,.28),inset 0 1px rgba(255,255,255,.035);
+}
+.feed-featured-head{
+  display:flex;align-items:end;justify-content:space-between;gap:12px;margin-bottom:11px;
+}
+.feed-eyebrow{
+  display:block;color:#607987;font-size:7px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;margin-bottom:4px;
+}
+.feed-featured-head h2{
+  margin:0;color:#ecf8fb;font:300 22px/1.05 "Playfair Display","Cormorant Garamond",Georgia,serif;
+}
+.feed-mini-link{
+  border:0;background:transparent;color:#7192a0;font-size:8px;letter-spacing:.1em;text-transform:uppercase;padding:5px 0;
+}
+.feed-mini-link:hover{color:#9defff}
+.feed-featured-track{
+  display:flex;gap:10px;overflow:auto;padding-bottom:3px;scrollbar-width:none;
+}
+.feed-featured-track::-webkit-scrollbar{display:none}
+.featured-item{
+  flex:0 0 136px;padding:0;text-align:left;border:1px solid rgba(99,223,255,.08);border-radius:10px;
+  background:rgba(255,255,255,.02);color:#dbe9ee;overflow:hidden;transition:transform .2s ease,border-color .2s ease,background .2s ease;
+}
+.featured-item:hover{transform:translateY(-2px);border-color:rgba(99,223,255,.2);background:rgba(99,223,255,.025)}
+.featured-media{display:block;aspect-ratio:4/5;background:#0a1016;overflow:hidden}
+.featured-media img{width:100%;height:100%;object-fit:cover;display:block;filter:none}
+.featured-media>span{height:100%;display:grid;place-items:center;color:#5f7a87;font-size:8px;letter-spacing:.18em}
+.featured-copy{display:block;padding:9px}
+.featured-copy b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:9px;font-weight:600}
+.featured-copy small{display:block;margin-top:5px;color:#67dec9;font-size:9px}
+.quick-view-trigger{
+  position:absolute!important;right:10px;bottom:10px;z-index:3;
+  min-height:30px;padding:0 10px;border:1px solid rgba(99,223,255,.22);border-radius:8px;
+  background:rgba(4,8,12,.86);color:#dffbff;font-size:7px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  opacity:0;transform:translateY(4px);transition:opacity .18s ease,transform .18s ease;
+}
+.product-media:hover .quick-view-trigger{opacity:1;transform:none}
+.quick-view-trigger:hover{border-color:rgba(99,223,255,.42);background:rgba(7,15,20,.94)}
+.post-action.saved{color:#78ead4!important;background:rgba(99,223,255,.065)!important;border-color:rgba(99,223,255,.16)!important}
+.product-media{position:relative}
+.feed-quick-backdrop{
+  position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:18px;
+  background:rgba(1,4,7,.86);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+}
+.feed-quick-backdrop[hidden]{display:none}
+.feed-quick-modal{
+  position:relative;width:min(780px,100%);max-height:min(90vh,820px);overflow:auto;
+  display:grid;grid-template-columns:minmax(0,1.05fr) minmax(280px,.95fr);
+  background:#0a0f14;border:1px solid rgba(99,223,255,.15);border-radius:16px;
+  box-shadow:0 30px 110px rgba(0,0,0,.58),0 0 35px rgba(99,223,255,.04);
+}
+.feed-quick-close{
+  position:absolute;right:14px;top:14px;z-index:4;border:1px solid rgba(99,223,255,.11);border-radius:8px;
+  background:rgba(4,8,12,.78);color:#9bb0bb;padding:7px 9px;font-size:7px;letter-spacing:.1em;text-transform:uppercase;
+}
+.feed-quick-media{min-height:420px;background:#06090d;display:grid;place-items:center}
+.feed-quick-media img{width:100%;height:100%;max-height:700px;object-fit:cover;display:block}
+.feed-quick-placeholder{color:#49616d;font-size:9px;letter-spacing:.16em}
+.feed-quick-copy{padding:34px 30px 28px;display:flex;flex-direction:column;justify-content:center}
+.feed-quick-meta{color:#627985;font-size:7px;letter-spacing:.14em;text-transform:uppercase}
+.feed-quick-copy h2{margin:10px 0 0;color:#f0fbfe;font:300 31px/1.08 "Playfair Display","Cormorant Garamond",Georgia,serif}
+.feed-quick-price{margin-top:10px;color:#69e4ce;font-size:13px}
+.feed-quick-stock{margin-top:8px;color:#88a0aa;font-size:8px;letter-spacing:.1em;text-transform:uppercase}
+.feed-quick-copy p{margin:18px 0 0;color:#9cb1ba;font-size:10px;line-height:1.75}
+.feed-quick-actions{display:flex;gap:8px;margin-top:24px}
+.feed-quick-actions .gradient-btn{min-height:38px;padding:0 14px;border-radius:9px}
+.feed-quick-save{
+  min-height:38px;padding:0 15px;border:1px solid rgba(99,223,255,.13);border-radius:9px;background:transparent;color:#a7bcc5;font-size:8px;letter-spacing:.1em;text-transform:uppercase;
+}
+.feed-quick-save.saved{color:#71e5cf;border-color:rgba(99,223,255,.25);background:rgba(99,223,255,.05)}
+.recently-viewed-card{overflow:hidden}
+.recent-item{
+  width:100%;display:flex;gap:9px;align-items:center;padding:9px 11px;border:0;border-top:1px solid rgba(99,223,255,.055);
+  background:transparent;color:#e3edf1;text-align:left;cursor:pointer;
+}
+.recent-item:hover{background:rgba(99,223,255,.035)}
+.recent-thumb{width:34px;height:42px;flex:0 0 34px;border-radius:5px;background:#0a1016;overflow:hidden;display:grid;place-items:center}
+.recent-thumb img{width:100%;height:100%;object-fit:cover}
+.recent-item span:last-child{min-width:0;display:block}
+.recent-item b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:8px;font-weight:600}
+.recent-item small{display:block;margin-top:3px;color:#6c8792;font-size:7px}
+@media(max-width:900px){
+  .feed-quick-modal{grid-template-columns:1fr;max-width:560px}
+  .feed-quick-media{max-height:48vh;min-height:280px}
+  .feed-quick-copy{padding:24px}
+}
+@media(max-width:640px){
+  .feed-featured{margin-bottom:14px;padding:11px}
+  .featured-item{flex-basis:118px}
+  .feed-featured-head h2{font-size:19px}
+  .quick-view-trigger{opacity:1;transform:none}
+  .feed-quick-modal{border-radius:12px}
+  .feed-quick-copy h2{font-size:26px}
+  .post-actions{grid-template-columns:repeat(2,1fr)!important}
+}
