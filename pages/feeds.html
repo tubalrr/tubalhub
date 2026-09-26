@@ -164,7 +164,7 @@
     <div class="comments-reaction-bar" id="commentReactionBar"></div>
     <div class="comment-list" id="commentList"></div>
     <div class="typing-indicator" id="typingIndicator" hidden><span></span><span></span><span></span><em>typing…</em></div>
-    <div class="comment-composer">
+    <form class="comment-composer" id="commentComposer">
       <div class="comment-avatar with-status" id="commentAvatar">U<span class="avatar-status" aria-hidden="true"></span></div>
       <div class="comment-input-shell">
         <input id="commentInput" maxlength="1000" placeholder="Write a comment…" autocomplete="off">
@@ -177,7 +177,7 @@
       </div>
       <button class="send-comment-btn" id="sendComment" type="submit">➤</button>
       <input id="commentPhotoInput" type="file" accept="image/*" hidden>
-    </div>
+    </form>
     <div class="emoji-picker" id="emojiPicker" hidden>
       <div class="emoji-head"><span>Emoji</span><input id="emojiSearch" type="search" placeholder="Search emoji…" autocomplete="off"></div>
       <div class="emoji-grid" id="emojiGrid"></div>
