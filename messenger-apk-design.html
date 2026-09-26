@@ -41,64 +41,281 @@ body{background:linear-gradient(135deg,#fafaf9,#f0f0f0);padding:22px 16px 34px}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 #22c55e44}50%{box-shadow:0 0 0 4px #22c55e00}}
 @media(max-width:1020px){.phones{gap:18px}.phone{transform:none}}
 @media(max-width:700px){body{padding:12px 8px}.page-title{font-size:11px}.phones{flex-direction:column;align-items:center}.apk-specs{font-size:9px}}
+
+.live-loading{padding:22px 14px;text-align:center;color:#9ca3af;font-size:11px}
+.live-error{padding:16px 14px;text-align:center;color:#ef4444;font-size:11px;line-height:1.5}
+.chat.live-chat{cursor:pointer}
+.chat.live-chat:active{background:#eef6ff}
+.avatar img,.mini-avatar img,.big-avatar img{width:100%;height:100%;object-fit:cover;border-radius:inherit}
+.mini-avatar img{display:block}.big-avatar img{display:block}
+.live-empty{padding:30px 16px;text-align:center;color:#9ca3af;font-size:11px;line-height:1.5}
+.message-link{color:inherit;text-decoration:underline;word-break:break-word}
 </style>
 </head>
 <body>
 <div class="page-title">TUBAL HUB MESSENGER APK DESIGN <span>• v1.2.16 • Beautiful • 12/10</span></div>
 <div class="phones">
 
-<section class="phone"><div class="screen"><div class="notch"></div><div class="app">
+<section class="phone" id="phoneList"><div class="screen"><div class="notch"></div><div class="app">
   <div class="brand"><div class="logo">T</div><b>TUBAL HUB</b><small>v1.2.16</small></div>
   <div class="search">Search Tubal <b>＋</b></div>
-  <div class="stories">
+  <div class="stories" id="liveStories">
     <div class="story"><div class="story-avatar"><div>YOU</div><span class="plus">+</span></div>Your Story</div>
     <div class="story"><div class="story-avatar"><div>JT</div></div>Juan</div>
     <div class="story"><div class="story-avatar"><div>MR</div></div>Maria</div>
     <div class="story"><div class="story-avatar"><div>AK</div></div>Alex</div>
   </div>
-  <div class="list">
-    <div class="sponsor"><div class="eyebrow">Sponsored • Empty real • Dynamic Firestore</div><strong>No sponsor yet</strong><p>Walang hardcoded ad</p></div>
-    <div class="chat active"><div class="avatar">JT<span class="online"></span></div><div class="copy"><b>JuanTubal</b><p>No broken URL • fileNameReal • v1.2.16</p></div><div class="rightmeta">10:24<br><span class="unread">2</span></div></div>
-    <div class="chat"><div class="avatar">MR</div><div class="copy"><b>Maria</b><p>Image • 5GB safe</p></div><div class="rightmeta">09:41</div></div>
-    <div class="chat"><div class="avatar">AK<span class="online"></span></div><div class="copy"><b>Alex</b><p>See you later</p></div><div class="rightmeta">Yesterday</div></div>
-    <div class="chat"><div class="avatar">TH</div><div class="copy"><b>TUBAL HUB</b><p>Community updates</p></div><div class="rightmeta">Mon</div></div>
-  </div>
+  <div class="list" id="liveChatList"><div class="live-loading">Connecting to TUBAL HUB…</div></div>
   <nav class="nav"><button class="active"><b>◉</b>Chats</button><button><b>♙</b>Users</button><button><b>◉</b>Live</button><button><b>▶</b>Videos</button></nav>
 </div></div></section>
 
-<section class="phone"><div class="screen"><div class="notch"></div><div class="app">
-  <header class="conv-head"><span class="back">‹</span><div class="mini-avatar">JT</div><div class="who"><b>JuanTubal</b><span>● Online now</span></div><button class="head-icon">☎</button><button class="head-icon">▣</button></header>
+<section class="phone" id="phoneChat"><div class="screen"><div class="notch"></div><div class="app">
+  <header class="conv-head"><span class="back">‹</span><div class="mini-avatar" id="liveChatAvatar">M</div><div class="who"><b id="liveChatName">Select a member</b><span id="liveChatStatus">● Offline</span></div><button class="head-icon">☎</button><button class="head-icon">▣</button></header>
   <div class="storage">24/40 • 60% • Auto delete oldest 15</div>
-  <main class="messages">
-    <div class="msg"><div class="bubble">Hey! Kumusta? 👋</div><div class="time">10:20</div></div>
-    <div class="msg sent"><div class="bubble">Okay naman. Messenger UI update tayo ngayon. <span class="checks">✓✓</span></div><div class="time">10:21</div></div>
-    <div class="msg"><div class="image-bubble"><div class="fake-image">▧</div><div class="file">fileNameReal</div></div><div class="time">10:22</div></div>
-    <div class="msg sent"><div class="bubble">5GB safe. Auto cleanup enabled. <span class="checks">✓✓</span></div><div class="time">10:23</div></div>
-    <div class="system">Auto cleaned 15 oldest • 7 days expiry • 5GB safe</div>
-    <div class="msg"><div class="expired">🗑️<br>Image expired - auto deleted<br>to save 5GB</div><div class="time">10:24</div></div>
-  </main>
-  <form class="composer" onsubmit="return false"><button class="tool">⌕</button><input class="input" placeholder="Message..."><button class="tool">☺</button><button class="send">→</button></form>
+  <main class="messages" id="liveMessages"><div class="live-loading">Select a member to start chatting.</div></main>
+  <form id="liveComposer" class="composer"><button class="tool">⌕</button><input id="liveMessageInput" class="input" maxlength="500" placeholder="Message..." autocomplete="off"><button class="tool">☺</button><button class="send">→</button></form>
 </div></div></section>
 
-<section class="phone"><div class="screen"><div class="notch"></div><div class="app">
-  <div class="profile-head"><div class="big-avatar">JT<span class="online"></span></div><h2>JuanTubal</h2><p>@juan_tubal</p><div class="online-text">● Online</div></div>
-  <div class="stats">
-    <div class="stat"><i>💬</i><strong>8,921</strong><small>Messages</small></div>
-    <div class="stat"><i>▧</i><strong>24/40</strong><small>Images</small></div>
-    <div class="stat"><i>●</i><strong>42</strong><small>Online</small></div>
+<section class="phone" id="phoneProfile"><div class="screen"><div class="notch"></div><div class="app">
+  <div class="profile-head" id="liveProfileHead">
+    <div class="big-avatar" id="liveProfileAvatar">M</div>
+    <h2 id="liveProfileName">No member selected</h2>
+    <p id="liveProfileHandle">Sign in to use Messenger</p>
+    <div class="online-text" id="liveProfileStatus">● Offline</div>
   </div>
-  <div class="section"><div class="section-title">Media <span>24/40</span></div><div class="media-grid"><div class="tile">▧</div><div class="tile">▧</div><div class="tile expired">Expired</div></div></div>
-  <div class="section"><div class="section-title">Sponsored Manager preview</div><div class="sponsor"><div style="font-size:24px;text-align:center">＋</div><strong style="text-align:center">No sponsor yet</strong><p style="text-align:center">Empty lang real • ready for future sponsor • Walang hardcoded Your Sponsor Here</p><div style="font:500 8px JetBrains Mono;text-align:center;margin-top:7px">Firestore sponsors where isActive==true</div></div></div>
+  <div class="stats" id="liveStats">
+    <div class="stat"><i>💬</i><strong id="statMessages">0</strong><small>Messages</small></div>
+    <div class="stat"><i>●</i><strong id="statPresence">Offline</strong><small>Status</small></div>
+    <div class="stat"><i>UID</i><strong id="statUid">—</strong><small>Member</small></div>
+  </div>
+  <div class="section"><div class="section-title">Messenger status</div><div class="sponsor"><strong id="liveMediaStatus">Select a conversation to view its live message history.</strong><p>Only real Firestore messages are displayed here.</p></div></div>
+  <div class="section"><div class="section-title">Sponsored Manager preview</div><div class="sponsor"><div style="font-size:24px;text-align:center">＋</div><strong id="liveSponsorTitle" style="text-align:center">No sponsor data configured</strong><p id="liveSponsorText" style="text-align:center">This Messenger build does not invent sponsor content.</p></div></div>
   <div class="actions">
     <div class="action"><span>🔕</span>Mute<span class="chev">›</span></div>
     <div class="action danger"><span>🚫</span>Block<span class="chev">›</span></div>
     <div class="action"><span>⚠️</span>Report<span class="chev">›</span></div>
     <div class="action"><span>🗑️</span>Clear Chat<span class="chev">›</span></div>
   </div>
-  <div class="footer-note">TUBAL HUB Messenger • v1.2.16 • No stale cache • No broken URL • 5GB safe • fileNameReal • imageExpiredReal</div>
+  <div class="footer-note">TUBAL HUB Messenger • v1.2.16 • Firebase Auth + Firestore • Real users + real messages</div>
 </div></div></section>
 </div>
 <div class="apk-specs">
-  <span><b>Package</b> com.tubalhub.messenger</span><span><b>Version</b> 1.2.16</span><span><b>Size</b> 15MB</span><span><b>Min SDK</b> 24</span><span><b>Target</b> 34</span><span><b>Permissions</b> INTERNET + READ_MEDIA_IMAGES</span><span><b>Features</b> fileNameReal + imageExpiredReal + autoDelete 40 max + 7 days + 5GB safe + Sponsored Empty real</span><span><b>Cache</b> No stale v1.2.14-imgur1</span>
+  <span><b>Package</b> com.tubalhub.messenger</span><span><b>Version</b> 1.2.16</span><span><b>Mode</b> WebView-ready</span><span><b>Min SDK</b> 24</span><span><b>Target</b> 34</span><span><b>Permissions</b> INTERNET + READ_MEDIA_IMAGES</span><span><b>Features</b> Firebase Auth + Firestore real users + real private messages + live presence</span><span><b>Cache</b> No stale v1.2.14-imgur1</span>
 </div>
+
+<script type="module">
+import { app, auth } from "./assets/js/firebase-config.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+import {
+  getFirestore, collection, query, where, onSnapshot, getDocs, addDoc, limit
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+
+const db = getFirestore(app);
+const $ = id => document.getElementById(id);
+const esc = value => {
+  const d = document.createElement("div");
+  d.textContent = value ?? "";
+  return d.innerHTML;
+};
+const initials = name => (name || "Member").trim().split(/\s+/).slice(0,2).map(x => x[0]).join("").toUpperCase() || "M";
+const msOf = d => d?.createdAt?.toMillis?.() || d?.createdAt?.seconds * 1000 || (d?.createdAt instanceof Date ? d.createdAt.getTime() : 0) || 0;
+const nameOf = u => u?.displayName || u?.name || u?.email?.split("@")[0] || "Member";
+const avatarHtml = (u, cls="") => u?.photoURL
+  ? '<img class="'+cls+'" src="'+esc(u.photoURL)+'" alt="">'
+  : esc(initials(nameOf(u)));
+
+let me = null;
+let selected = null;
+let users = [];
+let presence = new Map();
+let messages = [];
+let stopPresence = null;
+let stopMessages = null;
+let stopAllMessages = null;
+
+function setAuthMessage(text, error=false){
+  $("liveChatList").innerHTML = '<div class="'+(error ? "live-error" : "live-loading")+'">'+esc(text)+'</div>';
+}
+
+function updateHeader(){
+  if(!selected) return;
+  $("liveChatAvatar").innerHTML = avatarHtml(selected);
+  $("liveChatName").textContent = nameOf(selected);
+  const online = presence.get(selected.uid)?.online === true;
+  $("liveChatStatus").textContent = online ? "● Online now" : "● Offline";
+  $("liveChatStatus").style.color = online ? "#22c55e" : "#9ca3af";
+}
+
+function updateProfile(){
+  if(!selected) {
+    $("liveProfileAvatar").textContent = me ? initials(nameOf(me)) : "M";
+    $("liveProfileName").textContent = me ? nameOf(me) : "No member selected";
+    $("liveProfileHandle").textContent = me ? (me.email || "Signed in") : "Sign in to use Messenger";
+    $("liveProfileStatus").textContent = me ? "● You are signed in" : "● Offline";
+    $("statMessages").textContent = "0";
+    $("statPresence").textContent = "—";
+    $("statUid").textContent = "—";
+    return;
+  }
+  $("liveProfileAvatar").innerHTML = avatarHtml(selected);
+  $("liveProfileName").textContent = nameOf(selected);
+  $("liveProfileHandle").textContent = selected.email || ("UID: " + selected.uid.slice(0,10) + "…");
+  const online = presence.get(selected.uid)?.online === true;
+  $("liveProfileStatus").textContent = online ? "● Online now" : "● Offline";
+  $("liveProfileStatus").style.color = online ? "#22c55e" : "#9ca3af";
+  const mine = messages.filter(m => m.senderId === selected.uid || m.receiverId === selected.uid);
+  $("statMessages").textContent = String(mine.length);
+  $("statPresence").textContent = online ? "Online" : "Offline";
+  $("statUid").textContent = selected.uid.slice(0,8);
+}
+
+function renderStories(){
+  const active = users.filter(u => u.uid !== me?.uid).slice(0,4);
+  $("liveStories").innerHTML =
+    '<div class="story"><div class="story-avatar"><div>'+esc(me ? initials(nameOf(me)) : "YOU")+'</div><span class="plus">+</span></div>You</div>' +
+    active.map(u => '<button type="button" class="story" data-story="'+esc(u.uid)+'" style="border:0;background:none;padding:0;font:inherit;cursor:pointer"><div class="story-avatar"><div>'+avatarHtml(u)+'</div></div>'+esc(nameOf(u).split(" ")[0])+'</button>').join("");
+  $("liveStories").querySelectorAll("[data-story]").forEach(btn => btn.onclick = () => selectUser(btn.dataset.story));
+}
+
+function latestFor(uid){
+  return messages.filter(m => Array.isArray(m.participants) && m.participants.includes(uid)).sort((a,b)=>msOf(b)-msOf(a))[0];
+}
+
+function renderChatList(){
+  const others = users.filter(u => u.uid !== me?.uid);
+  const ordered = others.slice().sort((a,b) => (msOf(latestFor(b.uid)) - msOf(latestFor(a.uid))));
+  if(!ordered.length){
+    $("liveChatList").innerHTML = '<div class="live-empty">No other registered members are available yet.</div>';
+    return;
+  }
+  $("liveChatList").innerHTML = ordered.map(u => {
+    const last = latestFor(u.uid);
+    const online = presence.get(u.uid)?.online === true;
+    const selectedClass = selected?.uid === u.uid ? " active" : "";
+    const preview = last ? (last.senderId === me.uid ? "You: " : "") + (last.text || "") : "Start a new conversation";
+    const time = last ? new Date(msOf(last)).toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"}) : "";
+    return '<button type="button" class="chat live-chat'+selectedClass+'" data-uid="'+esc(u.uid)+'">' +
+      '<div class="avatar">'+avatarHtml(u)+' '+(online ? '<span class="online"></span>' : '')+'</div>' +
+      '<div class="copy"><b>'+esc(nameOf(u))+'</b><p>'+esc(preview)+'</p></div>' +
+      '<div class="rightmeta">'+esc(time)+'</div></button>';
+  }).join("");
+  $("liveChatList").querySelectorAll("[data-uid]").forEach(btn => btn.onclick = () => selectUser(btn.dataset.uid));
+}
+
+function renderMessages(){
+  if(!selected){
+    $("liveMessages").innerHTML = '<div class="live-empty">Choose a real TUBAL HUB member from the first screen.</div>';
+    updateProfile();
+    return;
+  }
+  const list = messages.filter(m => Array.isArray(m.participants) && m.participants.includes(selected.uid))
+    .sort((a,b)=>msOf(a)-msOf(b));
+  if(!list.length){
+    $("liveMessages").innerHTML = '<div class="live-empty">No messages yet.<br>Send the first real Firestore message.</div>';
+  } else {
+    $("liveMessages").innerHTML = list.map(m => {
+      const sent = m.senderId === me.uid;
+      const text = esc(m.text || "");
+      const time = new Date(msOf(m)).toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"});
+      return '<div class="msg '+(sent ? "sent" : "")+'"><div class="bubble">'+text+'</div><div class="time">'+time+(sent ? ' <span class="checks">✓</span>' : '')+'</div></div>';
+    }).join("");
+    $("liveMessages").scrollTop = $("liveMessages").scrollHeight;
+  }
+  updateHeader();
+  updateProfile();
+  renderChatList();
+}
+
+function selectUser(uid){
+  selected = users.find(u => u.uid === uid) || null;
+  renderChatList();
+  renderMessages();
+  $("liveMessageInput").focus();
+}
+
+async function loadUsers(){
+  const snap = await getDocs(query(collection(db,"users"), limit(100)));
+  users = snap.docs.map(d => ({uid:d.id, ...d.data()})).filter(u => u.uid !== me.uid);
+  renderStories();
+  renderChatList();
+}
+
+function watchPresence(){
+  if(stopPresence) stopPresence();
+  stopPresence = onSnapshot(query(collection(db,"presence"), limit(100)), snap => {
+    presence = new Map();
+    snap.forEach(d => presence.set(d.id, d.data()));
+    renderStories();
+    renderChatList();
+    updateHeader();
+    updateProfile();
+  }, err => console.error("[TUBAL HUB] presence", err));
+}
+
+function watchMessages(){
+  if(stopAllMessages) stopAllMessages();
+  const q = query(collection(db,"messages"), where("participants","array-contains",me.uid), limit(200));
+  stopAllMessages = onSnapshot(q, snap => {
+    messages = snap.docs.map(d => ({id:d.id, ...d.data()}));
+    renderChatList();
+    renderMessages();
+  }, err => {
+    console.error("[TUBAL HUB] messages", err);
+    $("liveMessages").innerHTML = '<div class="live-error">Could not load messages.<br>Check Firebase Auth and Firestore Rules.</div>';
+  });
+}
+
+$("liveComposer").addEventListener("submit", async e => {
+  e.preventDefault();
+  const input = $("liveMessageInput");
+  const text = input.value.trim();
+  if(!me || !selected || !text) return;
+  const send = $("liveComposer").querySelector(".send");
+  send.disabled = true;
+  try {
+    await addDoc(collection(db,"messages"), {
+      uid: me.uid,
+      senderId: me.uid,
+      receiverId: selected.uid,
+      participants: [me.uid, selected.uid],
+      displayName: nameOf(me),
+      senderPhotoURL: me.photoURL || "",
+      text,
+      type: "text",
+      createdAt: new Date()
+    });
+    input.value = "";
+    input.focus();
+  } catch(err) {
+    console.error("[TUBAL HUB] send message", err);
+    alert("Hindi na-send. Siguraduhing naka-sign in at tama ang Firestore Rules.");
+  } finally {
+    send.disabled = false;
+  }
+});
+
+$("phoneList").querySelector(".nav button:nth-child(2)")?.addEventListener("click", () => {
+  $("liveChatList").scrollTo({top:0,behavior:"smooth"});
+});
+
+onAuthStateChanged(auth, async user => {
+  me = user && !user.isAnonymous ? user : null;
+  selected = null;
+  if(!me){
+    setAuthMessage("Mag-sign in muna sa TUBAL HUB para gamitin ang Messenger.", true);
+    $("liveMessages").innerHTML = '<div class="live-empty">Firebase Auth required.</div>';
+    updateProfile();
+    return;
+  }
+  try {
+    await loadUsers();
+    watchPresence();
+    watchMessages();
+    updateProfile();
+  } catch(err) {
+    console.error("[TUBAL HUB] messenger startup", err);
+    setAuthMessage("Connected to Firebase, pero hindi mabasa ang member data.", true);
+  }
+});
+</script>
 </body></html>
