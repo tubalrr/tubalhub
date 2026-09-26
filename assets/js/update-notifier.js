@@ -151,6 +151,8 @@
       desc: String(item?.desc || "")
     })).filter(item => item.title && item.desc) : [];
     return {
+      product: String(data?.product || ""),
+      manifestType: String(data?.manifestType || ""),
       version: String(data?.version || ""),
       date: String(data?.date || data?.time || ""),
       time: String(data?.time || ""),
@@ -160,6 +162,8 @@
   }
 
   function validate(data) {
+    if (data.product && data.product !== "TUBAL HUB Website") throw new Error("Wrong update manifest product");
+    if (data.manifestType && data.manifestType !== "website") throw new Error("Wrong update manifest type");
     if (!data.version) throw new Error("version.json missing version");
     if (!data.changelog.length) throw new Error("version.json missing changelog");
     return data;
