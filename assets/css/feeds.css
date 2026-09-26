@@ -253,3 +253,102 @@ body.theme-light.feeds-page .trend-copy b{color:#26372d}
 .active-game-row .contact-dot{width:8px;height:8px;flex:0 0 8px;border-radius:50%}
 .theme-light .active-game-copy b,.theme-light .suggested-copy b{color:#26372d}
 .theme-light .active-game-row,.theme-light .suggested-row{border-top-color:#e5e7eb}
+
+
+/* =========================================================
+   TUBAL HUB FEEDS — AURORA GLASS THEME
+   Replaces the previous visual palette on the Feeds page.
+   ========================================================= */
+body.feeds-page,
+body.feeds-page.theme-midnight,
+body.feeds-page.theme-forest,
+body.feeds-page.theme-light{
+  --fd-green:#63f7c5;
+  --fd-purple:#9b7cff;
+  --fd-red:#ff5d76;
+  --fd-bg:#070814;
+  --fd-panel:rgba(15,18,36,.72);
+  --fd-panel-2:rgba(10,12,27,.9);
+  --fd-line:rgba(151,176,255,.16);
+  --fd-text:#f4f7ff;
+  --fd-muted:#8e98b3;
+  --fd-shadow:0 24px 90px rgba(0,0,0,.42);
+  --fd-radius:24px;
+  color:var(--fd-text);
+  background-color:#070814!important;
+  background-image:
+    radial-gradient(680px 480px at 8% -8%,rgba(99,247,197,.16),transparent 66%),
+    radial-gradient(650px 520px at 96% 8%,rgba(155,124,255,.17),transparent 64%),
+    radial-gradient(720px 520px at 50% 100%,rgba(82,107,255,.09),transparent 68%),
+    linear-gradient(180deg,#090b1b 0%,#070814 48%,#060711 100%)!important;
+}
+body.feeds-page:before{
+  background:
+    linear-gradient(120deg,transparent 0 34%,rgba(255,255,255,.022) 35%,transparent 36%),
+    linear-gradient(300deg,transparent 0 62%,rgba(99,247,197,.018) 63%,transparent 64%),
+    radial-gradient(520px 320px at var(--mx,70%) var(--my,12%),rgba(155,124,255,.08),transparent 72%)!important;
+}
+.feeds-header{
+  border-bottom-color:rgba(164,174,255,.13)!important;
+  background:rgba(7,8,20,.68)!important;
+  box-shadow:0 14px 45px rgba(0,0,0,.24),inset 0 -1px rgba(255,255,255,.025);
+}
+.feeds-header:after{
+  content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(99,247,197,.58),rgba(155,124,255,.6),transparent);
+  opacity:.7;pointer-events:none;
+}
+.feeds-header .brand img{filter:drop-shadow(0 0 18px rgba(99,247,197,.24)) drop-shadow(0 0 26px rgba(155,124,255,.15))!important}
+.feeds-header nav a{color:#9aa4bf!important}
+.feeds-header nav a:hover{color:#eef4ff!important;background:rgba(255,255,255,.045)!important;border-color:rgba(151,176,255,.1)!important}
+.feeds-header nav a.active{color:#061118!important;background:linear-gradient(135deg,#63f7c5,#a18cff)!important;border-color:transparent!important;box-shadow:0 7px 28px rgba(99,247,197,.12)!important}
+.feeds-panel,.post-card,.feed-toolbar,.feeds-stories-wrap{
+  border-color:rgba(151,176,255,.12)!important;
+  background:linear-gradient(145deg,rgba(18,21,42,.76),rgba(9,11,25,.84))!important;
+  box-shadow:0 22px 76px rgba(0,0,0,.28),inset 0 1px rgba(255,255,255,.035),0 0 0 1px rgba(155,124,255,.018)!important;
+}
+.feeds-panel:hover,.post-card:hover,.feed-toolbar:hover,.feeds-stories-wrap:hover{
+  border-color:rgba(99,247,197,.18)!important;
+  box-shadow:0 28px 90px rgba(0,0,0,.34),0 0 34px rgba(99,247,197,.045),inset 0 1px rgba(255,255,255,.045)!important;
+}
+.create-post,.feed-toolbar,.feeds-stories-wrap{backdrop-filter:blur(24px)!important;-webkit-backdrop-filter:blur(24px)!important}
+.section-kicker,.feeds-strip-title span,.feeds-side-title{color:#7180a3!important}
+.create-trigger,.feed-search,.feed-sort{
+  background:rgba(255,255,255,.045)!important;
+  border-color:rgba(151,176,255,.11)!important;
+  color:#eef4ff!important;
+}
+.create-trigger:hover,.feed-search:focus,.feed-sort:focus{border-color:rgba(99,247,197,.27)!important;box-shadow:0 0 0 3px rgba(99,247,197,.045)!important}
+.create-action,.feed-filter,.feed-menu-item,.post-action{
+  background:rgba(255,255,255,.035)!important;
+  border-color:rgba(151,176,255,.08)!important;
+  color:#aab4cf!important;
+}
+.create-action:hover,.feed-filter:hover,.feed-menu-item:hover,.post-action:hover{
+  background:linear-gradient(135deg,rgba(99,247,197,.085),rgba(155,124,255,.075))!important;
+  border-color:rgba(99,247,197,.18)!important;
+  color:#f3f7ff!important;
+}
+.feed-filter.active{background:linear-gradient(135deg,rgba(99,247,197,.18),rgba(155,124,255,.16))!important;color:#ebfff8!important;border-color:rgba(99,247,197,.24)!important}
+.post-action.reacted,.buy-btn,.gradient-btn,.send-comment-btn{background:linear-gradient(135deg,#63f7c5,#9b7cff)!important;color:#071018!important;box-shadow:0 10px 34px rgba(99,247,197,.13)!important}
+.action-live,.live-dot,.contact-dot.online,.post-status.online{background:#ff5d76!important;box-shadow:0 0 13px rgba(255,93,118,.62)!important}
+.story-card{border-color:rgba(151,176,255,.11)!important;background:linear-gradient(160deg,rgba(21,24,48,.78),rgba(10,12,28,.9))!important}
+.story-card:hover{border-color:rgba(99,247,197,.2)!important;transform:translateY(-2px)}
+.story-card.active-story{box-shadow:0 0 0 1px rgba(99,247,197,.16),0 0 28px rgba(99,247,197,.07)!important}
+.post-caption,.post-body{color:#c0c8dc!important}.post-meta b,.feed-article-content h3,.product-info h3,.game-info h3{color:#f4f7ff!important}
+.post-meta span,.comment-time,.feed-side-meta,.active-game-copy span,.suggested-copy small{color:#7f8aa7!important}
+.product-card,.game-card,.feed-article-content{border-color:rgba(151,176,255,.11)!important;background:rgba(255,255,255,.03)!important}
+.product-media,.game-cover{background:linear-gradient(145deg,#12162b,#080a18)!important}
+.reaction-summary,.comment-bubble,.share-tile,.mini-tool,.tool-btn{background:rgba(255,255,255,.045)!important;border-color:rgba(151,176,255,.09)!important}
+.reaction-summary:hover,.share-tile:hover{background:rgba(99,247,197,.08)!important;border-color:rgba(99,247,197,.2)!important}
+.reaction-picker{background:rgba(12,15,31,.94)!important;border-color:rgba(151,176,255,.14)!important;box-shadow:0 18px 52px rgba(0,0,0,.58),0 0 32px rgba(155,124,255,.11)!important}
+.reaction-choice{background:rgba(255,255,255,.055)!important;border-color:rgba(151,176,255,.1)!important}
+.feed-empty{border-color:rgba(151,176,255,.12)!important;background:rgba(255,255,255,.018)!important;color:#7d89a6!important}
+.feed-empty strong{color:#eef4ff!important}
+.share-modal,.glass-modal{background:rgba(9,12,26,.94)!important;border-color:rgba(151,176,255,.14)!important}
+.feed-media-viewer{background:rgba(3,4,12,.91)!important}
+
+@media(max-width:640px){
+  .feeds-header{background:rgba(7,8,20,.84)!important}
+  .feeds-panel,.post-card,.feed-toolbar,.feeds-stories-wrap{border-radius:20px!important}
+}
