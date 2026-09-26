@@ -903,3 +903,19 @@ body.feeds-page{
   .feed-quick-copy h2{font-size:26px}
   .post-actions{grid-template-columns:repeat(2,1fr)!important}
 }
+
+
+/* FIX: keep new feed posts clear of the filter bar while scrolling */
+.feed-toolbar{
+  position:relative!important;
+  top:auto!important;
+  z-index:8!important;
+  margin-bottom:22px!important;
+}
+#feedList{
+  position:relative;
+  z-index:1;
+}
+.post-card{
+  scroll-margin-top:96px;
+}
