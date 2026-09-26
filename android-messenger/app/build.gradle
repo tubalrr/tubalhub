@@ -17,8 +17,8 @@ android {
             buildConfig true
         }
 
-        versionCode 1221
-        versionName '1.2.21'
+        versionCode 1222
+        versionName '1.2.22'
     }
 
     lint {
