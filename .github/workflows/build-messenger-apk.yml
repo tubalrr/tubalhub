@@ -1,6 +1,7 @@
 name: Build and Publish TUBAL HUB Messenger APK
 # Release is triggered manually or when this release workflow changes.
 # CI validation: rebuild current messenger-apk branch after release/login changes.
+# Validate restored MainActivity source before the signed release is refreshed.
 
 on:
   workflow_dispatch:
