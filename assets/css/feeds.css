@@ -352,3 +352,158 @@ body.feeds-page:before{
   .feeds-header{background:rgba(7,8,20,.84)!important}
   .feeds-panel,.post-card,.feed-toolbar,.feeds-stories-wrap{border-radius:20px!important}
 }
+
+
+/* =========================================================
+   TUBAL HUB FEEDS — FUTURISTIC HUD THEME
+   ========================================================= */
+body.feeds-page,
+body.feeds-page.theme-midnight,
+body.feeds-page.theme-forest,
+body.feeds-page.theme-light{
+  --fd-green:#00f5ff;
+  --fd-purple:#8b5cf6;
+  --fd-red:#ff3864;
+  --fd-bg:#03050b;
+  --fd-panel:rgba(6,11,22,.78);
+  --fd-panel-2:rgba(4,8,17,.94);
+  --fd-line:rgba(0,245,255,.16);
+  --fd-text:#ecfbff;
+  --fd-muted:#71879a;
+  --fd-shadow:0 24px 80px rgba(0,0,0,.58);
+  --fd-radius:14px;
+  color:var(--fd-text);
+  background-color:#03050b!important;
+  background-image:
+    linear-gradient(rgba(0,245,255,.028) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(139,92,246,.026) 1px,transparent 1px),
+    radial-gradient(700px 500px at 14% -8%,rgba(0,245,255,.12),transparent 65%),
+    radial-gradient(680px 520px at 96% 12%,rgba(139,92,246,.13),transparent 65%),
+    linear-gradient(180deg,#050812 0%,#03050b 58%,#020409 100%)!important;
+  background-size:32px 32px,32px 32px,auto,auto,auto!important;
+}
+body.feeds-page:after{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;opacity:.42;
+  background:repeating-linear-gradient(180deg,transparent 0 3px,rgba(0,245,255,.018) 4px,transparent 5px);
+  mix-blend-mode:screen;
+}
+body.feeds-page:before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:-2;
+  background:radial-gradient(460px 360px at var(--mx,78%) var(--my,10%),rgba(0,245,255,.08),transparent 70%)!important;
+}
+.feeds-header{
+  position:sticky;
+  border-bottom:1px solid rgba(0,245,255,.16)!important;
+  background:rgba(3,5,11,.78)!important;
+  box-shadow:0 12px 50px rgba(0,0,0,.46),inset 0 -1px rgba(139,92,246,.08);
+}
+.feeds-header:before{
+  content:"";position:absolute;left:12px;right:12px;bottom:-1px;height:1px;
+  background:linear-gradient(90deg,transparent,#00f5ff 30%,#8b5cf6 70%,transparent);
+  opacity:.8;pointer-events:none;
+}
+.feeds-header .brand img{
+  filter:drop-shadow(0 0 10px rgba(0,245,255,.28)) drop-shadow(0 0 22px rgba(139,92,246,.16))!important;
+}
+.feeds-header .brand span{letter-spacing:.11em!important;text-transform:uppercase}
+.feeds-header .brand small{color:#516579!important;letter-spacing:.2em!important}
+.feeds-header nav a{
+  color:#6e8498!important;border-radius:8px!important;border:1px solid transparent!important;
+  text-transform:uppercase;letter-spacing:.1em;
+}
+.feeds-header nav a:hover{
+  color:#d9fbff!important;background:rgba(0,245,255,.045)!important;border-color:rgba(0,245,255,.12)!important;
+}
+.feeds-header nav a.active{
+  color:#031014!important;background:linear-gradient(135deg,#00f5ff,#7dd3fc)!important;
+  box-shadow:0 0 24px rgba(0,245,255,.2)!important;text-shadow:none!important;
+}
+.feeds-panel,.post-card,.feed-toolbar,.feeds-stories-wrap{
+  position:relative;
+  border:1px solid rgba(0,245,255,.12)!important;
+  border-radius:14px!important;
+  background:linear-gradient(150deg,rgba(8,14,28,.88),rgba(3,7,15,.9))!important;
+  box-shadow:0 22px 70px rgba(0,0,0,.45),inset 0 1px rgba(255,255,255,.035),inset 0 0 40px rgba(0,245,255,.015)!important;
+  backdrop-filter:blur(18px)!important;-webkit-backdrop-filter:blur(18px)!important;
+}
+.feeds-panel:before,.post-card:before,.feed-toolbar:before,.feeds-stories-wrap:before{
+  content:"";position:absolute;left:12px;top:-1px;width:72px;height:2px;
+  background:linear-gradient(90deg,#00f5ff,#8b5cf6);box-shadow:0 0 12px rgba(0,245,255,.35);pointer-events:none;z-index:2;
+}
+.feeds-panel:after,.post-card:after,.feed-toolbar:after,.feeds-stories-wrap:after{
+  content:"";position:absolute;right:12px;bottom:-1px;width:42px;height:1px;background:rgba(139,92,246,.7);box-shadow:0 0 10px rgba(139,92,246,.3);pointer-events:none;z-index:2;
+}
+.feeds-panel:hover,.post-card:hover,.feed-toolbar:hover,.feeds-stories-wrap:hover{
+  border-color:rgba(0,245,255,.24)!important;
+  box-shadow:0 26px 90px rgba(0,0,0,.55),0 0 30px rgba(0,245,255,.045),inset 0 1px rgba(255,255,255,.045)!important;
+}
+.create-trigger,.feed-search,.feed-sort{
+  background:rgba(1,5,12,.68)!important;border:1px solid rgba(0,245,255,.11)!important;
+  color:#e9fbff!important;border-radius:10px!important;
+}
+.create-trigger:hover,.feed-search:focus,.feed-sort:focus{
+  border-color:rgba(0,245,255,.3)!important;box-shadow:0 0 0 3px rgba(0,245,255,.035),0 0 18px rgba(0,245,255,.06)!important;
+}
+.create-action,.feed-filter,.feed-menu-item,.post-action{
+  background:linear-gradient(180deg,rgba(255,255,255,.036),rgba(255,255,255,.018))!important;
+  border:1px solid rgba(0,245,255,.075)!important;color:#8299aa!important;border-radius:9px!important;
+}
+.create-action:hover,.feed-filter:hover,.feed-menu-item:hover,.post-action:hover{
+  background:rgba(0,245,255,.055)!important;border-color:rgba(0,245,255,.2)!important;color:#e8fbff!important;
+}
+.feed-filter.active{
+  background:linear-gradient(135deg,rgba(0,245,255,.16),rgba(139,92,246,.16))!important;
+  border-color:rgba(0,245,255,.25)!important;color:#eafcff!important;
+}
+.post-action.reacted,.buy-btn,.gradient-btn,.send-comment-btn{
+  background:linear-gradient(135deg,#00f5ff,#8b5cf6)!important;color:#02070d!important;
+  box-shadow:0 0 24px rgba(0,245,255,.12)!important;
+}
+.action-live,.live-dot,.contact-dot.online,.post-status.online{
+  background:#ff3864!important;box-shadow:0 0 14px rgba(255,56,100,.7)!important;
+}
+.story-card{
+  border:1px solid rgba(0,245,255,.1)!important;border-radius:12px!important;
+  background:linear-gradient(160deg,rgba(9,16,32,.88),rgba(3,7,15,.95))!important;
+}
+.story-card:hover{border-color:rgba(0,245,255,.25)!important;box-shadow:0 0 24px rgba(0,245,255,.06)}
+.post-meta b,.feed-article-content h3,.product-info h3,.game-info h3{color:#eafaff!important}
+.post-caption,.post-body{color:#a6bac8!important}
+.post-meta span,.comment-time,.feed-side-meta,.active-game-copy span,.suggested-copy small{color:#617587!important}
+.product-card,.game-card,.feed-article-content{
+  border-color:rgba(0,245,255,.1)!important;background:rgba(255,255,255,.018)!important;border-radius:11px!important;
+}
+.product-media,.game-cover{background:linear-gradient(145deg,#0a1222,#02050b)!important}
+.reaction-summary,.comment-bubble,.share-tile,.mini-tool,.tool-btn{
+  background:rgba(255,255,255,.035)!important;border-color:rgba(0,245,255,.08)!important;
+}
+.reaction-summary:hover,.share-tile:hover{background:rgba(0,245,255,.055)!important;border-color:rgba(0,245,255,.18)!important}
+.reaction-picker,.share-modal,.glass-modal{
+  background:rgba(3,7,17,.96)!important;border-color:rgba(0,245,255,.16)!important;
+  box-shadow:0 25px 90px rgba(0,0,0,.7),0 0 36px rgba(0,245,255,.06)!important;
+}
+.reaction-choice{background:rgba(255,255,255,.04)!important;border-color:rgba(0,245,255,.08)!important}
+.feed-empty{border-color:rgba(0,245,255,.12)!important;background:rgba(0,245,255,.012)!important;color:#62798b!important}
+.feed-empty strong{color:#e7faff!important}
+.feed-search::placeholder,.create-trigger::placeholder{color:#4e6578!important}
+.post-actions{border-top-color:rgba(0,245,255,.07)!important}
+.reaction-summary-row,.post-stats{border-color:rgba(0,245,255,.07)!important}
+.contact-avatar,.comment-avatar{
+  background:linear-gradient(135deg,#8b5cf6,#00f5ff)!important;border-color:rgba(0,245,255,.14)!important;
+}
+.suggested-plus{background:rgba(0,245,255,.06)!important;border-color:rgba(0,245,255,.16)!important;color:#00f5ff!important}
+.feed-notice{background:rgba(3,7,17,.96)!important;border-color:rgba(0,245,255,.18)!important;color:#e8fbff!important}
+.section-kicker,.feeds-strip-title span,.feeds-side-title,.feed-menu-item span:last-child{
+  letter-spacing:.14em!important;text-transform:uppercase!important;
+}
+.feed-toolbar .feed-filter-row:before{
+  content:"FILTER / CHANNEL";display:block;width:100%;margin-bottom:7px;color:#3f5d70;font-size:6px;letter-spacing:.18em;font-weight:900;
+}
+.create-post .create-actions:before{
+  content:"TRANSMISSION TO FEED";display:block;grid-column:1/-1;color:#405c70;font-size:6px;letter-spacing:.18em;font-weight:900;margin-bottom:-1px;
+}
+@media(max-width:640px){
+  .feeds-panel,.post-card,.feed-toolbar,.feeds-stories-wrap{border-radius:11px!important}
+  .feeds-header{background:rgba(3,5,11,.9)!important}
+  .feed-toolbar .feed-filter-row:before{margin-bottom:3px}
+}
