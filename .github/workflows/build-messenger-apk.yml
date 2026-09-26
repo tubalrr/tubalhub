@@ -91,12 +91,13 @@ jobs:
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.2.20
-          name: TUBAL HUB Messenger v1.2.20
+          tag_name: v1.2.21
+          name: TUBAL HUB Messenger v1.2.21
           body: |
-            TUBAL HUB Messenger v1.2.20
+            TUBAL HUB Messenger v1.2.21
 
-            Redesigned Android login with Google Account sign-in.
+            Redesigned Android login screen for phones.
+            Improved Google Account sign-in presentation.
             Improved self-update handling and release verification.
           files: |
             android-messenger/release/TUBAL-HUB-Messenger-release.apk
