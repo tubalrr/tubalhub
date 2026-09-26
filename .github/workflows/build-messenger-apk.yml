@@ -56,8 +56,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          printf '%s' "$MESSENGER_KEYSTORE_BASE64" | base64 --decode > messenger-release.jks
-          test -s messenger-release.jks || { echo "::error::Signing keystore is empty."; exit 1; }
+          printf '%s' "$MESSENGER_KEYSTORE_BASE64" | base64 --decode > app/messenger-release.jks
+          test -s app/messenger-release.jks || { echo "::error::Signing keystore is empty."; exit 1; }
 
       - name: Build signed release APK
         shell: bash
