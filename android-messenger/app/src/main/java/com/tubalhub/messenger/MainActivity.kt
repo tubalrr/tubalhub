@@ -1,6 +1,11 @@
 package com.tubalhub.messenger
 
 import android.os.Bundle
+import android.net.Uri
+import android.provider.Settings
+import java.io.File
+import java.net.HttpURLConnection
+import java.net.URL
 import android.content.Intent
 import androidx.appcompat.app.AlertDialog
 import android.Manifest
@@ -29,10 +34,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.messaging.FirebaseMessaging
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.google.android.play.core.appupdate.AppUpdateManager
-import com.google.android.play.core.appupdate.AppUpdateManagerFactory
-import com.google.android.play.core.install.model.AppUpdateType
-import com.google.android.play.core.install.model.UpdateAvailability
+import androidx.core.content.FileProvider
+import org.json.JSONObject
 
 class MainActivity : AppCompatActivity() {
     private val auth by lazy { FirebaseAuth.getInstance() }
@@ -53,8 +56,8 @@ class MainActivity : AppCompatActivity() {
     private var pinnedMessageId: String? = null
     private var typingLabel: TextView? = null
     private var pinnedLabel: TextView? = null
-    private lateinit var appUpdateManager: AppUpdateManager
-    private val updateRequestCode = 1216
+    private val updateManifestUrl = "https://raw.githubusercontent.com/tubalrr/tubalhub/messenger-apk/version.json"
+    private var updateDialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,45 +66,86 @@ class MainActivity : AppCompatActivity() {
         root.setBackgroundColor(0xFF03100D.toInt())
         window.statusBarColor = 0xFF03100D.toInt()
         window.navigationBarColor = 0xFF020807.toInt()
-        appUpdateManager = AppUpdateManagerFactory.create(this)
-        checkForPlayStoreUpdate()
+        checkForSelfUpdate()
         if (auth.currentUser == null) showLogin() else showMessenger()
         if (android.os.Build.VERSION.SDK_INT >= 33 && ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 1001)
         }
     }
 
-    private fun checkForPlayStoreUpdate() {
-        appUpdateManager.appUpdateInfo
-            .addOnSuccessListener { info ->
-                val available = info.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
-                val allowed = info.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
-                if (available && allowed) {
-                    appUpdateManager.startUpdateFlowForResult(
-                        info,
-                        AppUpdateType.IMMEDIATE,
-                        this,
-                        updateRequestCode
-                    )
+    private fun checkForSelfUpdate() {
+        Thread {
+            try {
+                val connection = URL(updateManifestUrl).openConnection() as HttpURLConnection
+                connection.connectTimeout = 8000
+                connection.readTimeout = 8000
+                connection.requestMethod = "GET"
+                val body = connection.inputStream.bufferedReader().use { it.readText() }
+                connection.disconnect()
+                val json = JSONObject(body)
+                val latestVersionCode = json.optInt("versionCode", BuildConfig.VERSION_CODE)
+                val latestVersionName = json.optString("versionName", BuildConfig.VERSION_NAME)
+                val apkUrl = json.optString("apkUrl", "")
+                val notes = json.optString("notes", "New TUBAL HUB Messenger update is available.")
+                if (latestVersionCode > BuildConfig.VERSION_CODE && apkUrl.isNotBlank()) {
+                    runOnUiThread { showSelfUpdateDialog(latestVersionName, apkUrl, notes) }
                 }
+            } catch (e: Exception) {
+                Log.d("TUBAL_HUB_UPDATE", "Self-update check skipped", e)
             }
-            .addOnFailureListener { Log.d("TUBAL_HUB_UPDATE", "Play update check unavailable", it) }
+        }.start()
     }
 
-    override fun onResume() {
-        super.onResume()
-        if (::appUpdateManager.isInitialized) {
-            appUpdateManager.appUpdateInfo.addOnSuccessListener { info ->
-                if (info.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
-                    appUpdateManager.startUpdateFlowForResult(
-                        info,
-                        AppUpdateType.IMMEDIATE,
-                        this,
-                        updateRequestCode
-                    )
-                }
+    private fun showSelfUpdateDialog(versionName: String, apkUrl: String, notes: String) {
+        if (isFinishing) return
+        updateDialog?.dismiss()
+        updateDialog = AlertDialog.Builder(this)
+            .setTitle("TUBAL HUB Messenger • Update available")
+            .setMessage("Version " + versionName + " is ready.\n\n" + notes + "\n\nDownload the APK and install it. Android may ask you to allow installs from this source.")
+            .setNegativeButton("Later", null)
+            .setPositiveButton("Download & Install") { _, _ -> downloadAndInstallUpdate(apkUrl) }
+            .create()
+        updateDialog?.show()
+    }
+
+    private fun downloadAndInstallUpdate(apkUrl: String) {
+        Toast.makeText(this, "Downloading update…", Toast.LENGTH_LONG).show()
+        Thread {
+            try {
+                val connection = URL(apkUrl).openConnection() as HttpURLConnection
+                connection.connectTimeout = 15000
+                connection.readTimeout = 30000
+                connection.instanceFollowRedirects = true
+                connection.requestMethod = "GET"
+                connection.connect()
+                if (connection.responseCode !in 200..299) throw IllegalStateException("HTTP " + connection.responseCode)
+                val dir = File(cacheDir, "updates").apply { mkdirs() }
+                val apkFile = File(dir, "TUBAL-HUB-Messenger-update.apk")
+                connection.inputStream.use { input -> apkFile.outputStream().use { output -> input.copyTo(output, 8192) } }
+                connection.disconnect()
+                runOnUiThread { installDownloadedApk(apkFile) }
+            } catch (e: Exception) {
+                Log.e("TUBAL_HUB_UPDATE", "Update download failed", e)
+                runOnUiThread { Toast.makeText(this, "Update download failed: " + (e.localizedMessage ?: "Check your internet connection."), Toast.LENGTH_LONG).show() }
             }
+        }.start()
+    }
+
+    private fun installDownloadedApk(apkFile: File) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O && !packageManager.canRequestPackageInstalls()) {
+            AlertDialog.Builder(this)
+                .setTitle("Allow APK installation")
+                .setMessage("Android needs permission to install TUBAL HUB Messenger updates from this source.")
+                .setNegativeButton("Cancel", null)
+                .setPositiveButton("Open Settings") { _, _ -> startActivity(Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, Uri.parse("package:" + packageName))) }
+                .show()
+            return
         }
+        val apkUri = FileProvider.getUriForFile(this, packageName + ".fileprovider", apkFile)
+        startActivity(Intent(Intent.ACTION_VIEW).apply {
+            setDataAndType(apkUri, "application/vnd.android.package-archive")
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK)
+        })
     }
 
     private fun showLogin() {
