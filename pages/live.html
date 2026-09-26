@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Live Studio | TUBAL HUB</title>
+<link rel="stylesheet" href="../assets/css/global-theme.css?v=20260926-live1">
+<style>
+:root{color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:#020604;color:#effff6;font-family:Inter,system-ui,sans-serif}
+a{color:inherit;text-decoration:none}
+.live-page{width:min(1180px,calc(100% - 28px));margin:auto;padding:22px 0 48px}
+.live-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px}
+.live-brand{display:flex;align-items:center;gap:12px;font-weight:900}
+.live-brand img{width:44px;height:44px;border-radius:14px;border:1px solid rgba(120,255,170,.18)}
+.live-brand small{display:block;margin-top:3px;color:#71877c;font-size:9px;letter-spacing:1.4px}
+.back-btn{padding:10px 14px;border:1px solid rgba(255,255,255,.09);border-radius:999px;background:rgba(255,255,255,.04);font-size:10px;font-weight:800}
+.live-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(280px,.7fr);gap:16px}
+.live-panel{border:1px solid rgba(120,255,170,.12);border-radius:24px;background:rgba(7,16,11,.82);box-shadow:0 24px 80px rgba(0,0,0,.42);overflow:hidden}
+.stage{position:relative;aspect-ratio:16/9;background:#000;display:grid;place-items:center}
+#preview{width:100%;height:100%;object-fit:cover;display:block}
+.stage-empty{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:25px;background:radial-gradient(circle at 50% 35%,rgba(29,255,145,.09),transparent 50%)}
+.stage-empty[hidden]{display:none}
+.stage-empty strong{display:block;font-size:18px}.stage-empty span{display:block;margin-top:7px;color:#789086;font-size:10px}
+.live-badge{position:absolute;left:14px;top:14px;padding:7px 10px;border-radius:999px;background:rgba(255,45,45,.92);font-size:9px;font-weight:900;letter-spacing:1px;display:none}.live-badge.on{display:block}
+.stage-status{position:absolute;right:14px;top:14px;padding:7px 10px;border-radius:999px;background:rgba(0,0,0,.62);border:1px solid rgba(255,255,255,.08);font-size:9px;color:#a9bbb1}
+.live-body{padding:18px}
+.live-body h1{margin:0;font-size:24px}.live-body p{margin:7px 0 0;color:#75897f;font-size:10px;line-height:1.55}
+.live-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+button,input{font:inherit}
+.btn{height:40px;padding:0 15px;border:1px solid rgba(255,255,255,.09);border-radius:999px;background:rgba(255,255,255,.045);color:#effff6;cursor:pointer;font-size:10px;font-weight:900}
+.btn.primary{border:0;background:linear-gradient(135deg,#1dff91,#7d5aff);color:#020604}
+.btn.danger{background:rgba(255,70,70,.1);border-color:rgba(255,90,90,.25);color:#ffaaaa}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.side{padding:18px}
+.side h2{font-size:13px;margin:0 0 14px}.field{margin-bottom:12px}.field label{display:block;color:#6f8279;font-size:8px;font-weight:900;letter-spacing:1px;margin:0 0 6px}.field input{width:100%;height:40px;border:1px solid rgba(255,255,255,.08);border-radius:12px;background:rgba(0,0,0,.25);color:#fff;padding:0 11px;outline:0;font-size:10px}.field input:focus{border-color:rgba(29,255,145,.3)}
+.status-box{margin-top:16px;padding:12px;border:1px dashed rgba(120,255,170,.12);border-radius:15px;color:#7d9187;font-size:9px;line-height:1.55}.status-box strong{display:block;color:#dff9e9;margin-bottom:4px}
+.viewer-list{margin-top:16px}.viewer-list b{display:block;font-size:9px;margin-bottom:8px}.viewer-item{padding:8px 9px;border-top:1px solid rgba(255,255,255,.05);font-size:9px;color:#879990}
+.notice{position:fixed;left:50%;bottom:20px;transform:translate(-50%,15px);opacity:0;pointer-events:none;padding:10px 14px;border-radius:999px;background:rgba(4,10,7,.94);border:1px solid rgba(120,255,170,.16);font-size:9px;transition:.2s;z-index:20}.notice.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:850px){.live-grid{grid-template-columns:1fr}.live-page{width:min(100% - 16px,700px)}}
+</style>
+</head>
+<body>
+<main class="live-page">
+<header class="live-head">
+  <a class="live-brand" href="../index.html"><img src="../tubal-hub-logo.png" alt="TUBAL HUB"><span>TUBAL HUB<small>LIVE STUDIO</small></span></a>
+  <a class="back-btn" href="feeds.html">← Back to Feeds</a>
+</header>
+<section class="live-grid">
+  <div class="live-panel">
+    <div class="stage">
+      <video id="preview" autoplay muted playsinline></video>
+      <div id="stageEmpty" class="stage-empty"><div><strong>Live Studio</strong><span>Camera preview will appear here after you allow camera access.</span></div></div>
+      <span id="liveBadge" class="live-badge">● LIVE</span>
+      <span id="stageStatus" class="stage-status">Camera off</span>
+    </div>
+    <div class="live-body">
+      <h1 id="liveTitleView">Start a Live Video</h1>
+      <p>Use your camera and microphone for a real browser-based live session. The session is published only while you keep it live.</p>
+      <div class="live-actions">
+        <button id="cameraBtn" class="btn primary" type="button">Enable Camera</button>
+        <button id="goLiveBtn" class="btn" type="button" disabled>Go Live</button>
+        <button id="stopLiveBtn" class="btn danger" type="button" hidden>End Live</button>
+      </div>
+    </div>
+  </div>
+  <aside class="live-panel side">
+    <h2>Live Details</h2>
+    <div class="field"><label for="titleInput">LIVE TITLE</label><input id="titleInput" maxlength="100" placeholder="What are you live about?"></div>
+    <div class="status-box"><strong id="accountStatus">Checking account…</strong><span id="accountText">Sign in is required before starting a public live session.</span></div>
+    <div class="viewer-list"><b>LIVE STATUS</b><div id="viewerList" class="viewer-item">No viewers connected yet.</div></div>
+  </aside>
+</section>
+</main>
+<div id="notice" class="notice" role="status"></div>
+<script type="module">
+import {app,auth} from "../assets/js/firebase-config.js";
+import {onAuthStateChanged} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+import {getFirestore,doc,setDoc,deleteDoc,onSnapshot,serverTimestamp} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+
+const db=getFirestore(app);
+const $=id=>document.getElementById(id);
+const preview=$("preview"),cameraBtn=$("cameraBtn"),goLiveBtn=$("goLiveBtn"),stopLiveBtn=$("stopLiveBtn");
+let user=null,stream=null,liveRef=null,stopDoc=null,live=false;
+
+function notice(msg){const n=$("notice");n.textContent=msg;n.classList.add("show");clearTimeout(notice.t);notice.t=setTimeout(()=>n.classList.remove("show"),2600)}
+function setStageStatus(t){$("stageStatus").textContent=t}
+function setAccount(u){
+  user=u&&!u.isAnonymous?u:null;
+  $("accountStatus").textContent=user?("Signed in as "+(user.displayName||user.email?.split("@")[0]||"Member")):"Sign in required";
+  $("accountText").textContent=user?"You can start a real live session from this browser.":"Open Login first, then return to Live Studio.";
+  if(!user){goLiveBtn.disabled=true;cameraBtn.disabled=true;return}
+  cameraBtn.disabled=false;
+}
+async function enableCamera(){
+  if(!user){notice("Please sign in first.");return}
+  try{
+    stream=await navigator.mediaDevices.getUserMedia({video:{width:{ideal:1280},height:{ideal:720},facingMode:"user"},audio:true});
+    preview.srcObject=stream;
+    $("stageEmpty").hidden=true;setStageStatus("Camera ready");
+    cameraBtn.textContent="Camera Ready";cameraBtn.disabled=true;goLiveBtn.disabled=false;
+    notice("Camera and microphone are ready.");
+  }catch(e){
+    console.error(e);notice(e?.name==="NotAllowedError"?"Camera/mic permission was blocked. Allow access in your browser.":"Could not open the camera.");
+  }
+}
+async function startLive(){
+  if(!user||!stream)return;
+  const title=$("titleInput").value.trim()||"TUBAL HUB Live";
+  liveRef=doc(db,"liveStreams",user.uid);
+  try{
+    await setDoc(liveRef,{uid:user.uid,hostName:user.displayName||user.email?.split("@")[0]||"Member",hostPhotoURL:user.photoURL||"",title,active:true,createdAt:serverTimestamp(),updatedAt:serverTimestamp()},{merge:true});
+    live=true;$("liveBadge").classList.add("on");$("stageStatus").textContent="LIVE";$("liveTitleView").textContent=title;
+    goLiveBtn.hidden=true;stopLiveBtn.hidden=false;
+    notice("You are LIVE.");
+    watchOwnLive();
+  }catch(e){console.error(e);notice(e?.code==="permission-denied"?"Firebase Rules blocked the live session.":"Could not start the live session.")}
+}
+function watchOwnLive(){
+  if(!liveRef)return;
+  stopDoc?.();
+  stopDoc=onSnapshot(liveRef,s=>{
+    if(!s.exists()||s.data()?.active!==true){if(live)finishLocal(false)}
+  },()=>{});
+}
+async function stopLive(){
+  if(!liveRef)return finishLocal(true);
+  try{await setDoc(liveRef,{active:false,endedAt:serverTimestamp(),updatedAt:serverTimestamp()},{merge:true})}catch(e){console.warn(e)}
+  finishLocal(true);
+}
+function finishLocal(show=true){
+  live=false;stopDoc?.();stopDoc=null;
+  if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}
+  preview.srcObject=null;$("liveBadge").classList.remove("on");setStageStatus("Camera off");
+  cameraBtn.textContent="Enable Camera";cameraBtn.disabled=!user;goLiveBtn.disabled=true;goLiveBtn.hidden=false;stopLiveBtn.hidden=true;
+  if(show)notice("Live ended.");
+}
+window.addEventListener("beforeunload",()=>{if(live&&liveRef)navigator.sendBeacon?.("",new Blob())});
+cameraBtn.addEventListener("click",enableCamera);goLiveBtn.addEventListener("click",startLive);stopLiveBtn.addEventListener("click",stopLive);
+onAuthStateChanged(auth,setAccount);
+</script>
+</body>
+</html>
