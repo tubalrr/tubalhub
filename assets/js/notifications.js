@@ -44,7 +44,7 @@ function saveLocalSystem(){try{localStorage.setItem(LOCAL_SYSTEM_KEY,JSON.string
 export function addNotification(data={}){
   const id=String(data.id||("system-"+Date.now()+"-"+Math.random().toString(36).slice(2,8)));
   if(localSystemItems.some(x=>String(x.id)===id))return localSystemItems.find(x=>String(x.id)===id);
-  const n={id:id,type:data.type||"system",name:"TUBAL HUB",title:data.title||"Website Updated!",preview:data.message||"",time:Date.now(),read:data.unread===true?false:true,url:"index.html",icon:data.icon||"🔔"};
+  const n={id:id,type:data.type||"system",category:data.category||"system",name:data.actorName||"TUBAL HUB",title:data.title||"Website Update",preview:data.message||"",time:Date.now(),read:data.unread===true?false:true,url:data.url||"index.html",icon:data.icon||"🔔"};
   localSystemItems=[n,...localSystemItems].slice(0,50);
   saveLocalSystem();
   items=[...localSystemItems,...items.filter(x=>x.remote)];
@@ -61,8 +61,8 @@ function demoLoad(){
 function save(){try{localStorage.setItem(KEY,JSON.stringify(items))}catch(_){}}
 function ensureUi(){
   if(document.getElementById("thNotificationOverlay"))return;
-  const tabs=["all","mentions","shop","games","system"].map(t=>'<button class="th-notification-tab '+(t==="all"?"active":"")+'" data-notification-tab="'+t+'" type="button">'+t.charAt(0).toUpperCase()+t.slice(1)+'</button>').join("");
-  const note=DEMO_MODE?'<div class="th-notification-demo-note">Local preview data · live Firestore notifications appear automatically when available.</div>':"";
+  const tabs=["all","feeds","messenger","community","system"].map(t=>'<button class="th-notification-tab '+(t==="all"?"active":"")+'" data-notification-tab="'+t+'" type="button">'+t.charAt(0).toUpperCase()+t.slice(1)+'</button>').join("");
+  const note='<div class="th-notification-demo-note">Real activity only · notifications appear when an actual TUBAL HUB event is recorded.</div>';
   document.body.insertAdjacentHTML("beforeend",
     '<div class="th-overlay th-notification-backdrop" id="thNotificationOverlay" hidden></div>'+
     '<aside class="th-notification-panel" id="thNotificationPanel" aria-hidden="true">'+
@@ -113,14 +113,16 @@ function setBadge(){
 }
 function group(ms){const age=Date.now()-Number(ms||0);return age<86400000?"Today":age<172800000?"Yesterday":"Earlier"}
 function time(ms){const d=new Date(ms);return Number.isNaN(d.getTime())?"":d.toLocaleTimeString([], {hour:"numeric",minute:"2-digit"})}
-function filtered(){return items.filter(n=>{
-  if(activeTab==="all")return true;
-  if(activeTab==="mentions")return n.type==="comment";
-  if(activeTab==="shop")return n.type==="shop";
-  if(activeTab==="games")return n.type==="game";
-  if(activeTab==="system")return n.type==="system"||n.type==="achievement";
-  return true;
-}).sort((a,b)=>Number(b.time||0)-Number(a.time||0))}
+function notificationCategory(n){
+  const explicit=String(n.category||"").toLowerCase();
+  if(["feeds","messenger","community","system"].includes(explicit))return explicit;
+  const type=String(n.type||"").toLowerCase();
+  if(["message","messenger","chat","dm"].includes(type))return "messenger";
+  if(["follow","community","member","mention"].includes(type))return "community";
+  if(["like","comment","reply","post","feed"].includes(type))return "feeds";
+  return "system";
+}
+function filtered(){return items.filter(n=>activeTab==="all"||notificationCategory(n)===activeTab).sort((a,b)=>Number(b.time||0)-Number(a.time||0))}
 function rowHtml(n,i){
   const avatar=n.photoURL?'<img src="'+esc(n.photoURL)+'" alt="">':esc((n.name||"TUBAL HUB").charAt(0).toUpperCase());
   const status=n.online===true?'<span class="th-notif-status online" title="Online"></span>':n.online===false?'<span class="th-notif-status offline" title="Offline"></span>':"";
@@ -205,7 +207,7 @@ function watchRemote(){
   const q=query(collection(db,"notifications"),where("recipientUid","==",me.uid),limit(100));
   stopRemote=onSnapshot(q,snap=>{
     const remote=snap.docs.map(d=>{const x=d.data();return{
-      id:d.id,remote:true,type:x.type||"system",name:x.actorName||"TUBAL HUB",photoURL:x.actorPhotoURL||"",online:x.actorOnline===true,
+      id:d.id,remote:true,type:x.type||"system",category:x.category||notificationCategory({type:x.type||"system"}),name:x.actorName||"TUBAL HUB",photoURL:x.actorPhotoURL||"",online:x.actorOnline===true,
       read:x.read===true,title:x.title||"New activity",preview:x.preview||"",time:x.createdAt?.toMillis?.()||x.createdAt?.seconds*1000||Date.now(),url:x.url||"",productImage:x.productImage||""
     }});
     if(remote.length){items=[...localSystemItems,...remote];render()}else if(!items.length){items=DEMO_MODE?demoLoad():[...localSystemItems];render()}
