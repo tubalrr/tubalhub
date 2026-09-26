@@ -47,6 +47,7 @@ class MainActivity : AppCompatActivity() {
     private var stopTyping: com.google.firebase.firestore.ListenerRegistration? = null
     private var typingOffRunnable: Runnable? = null
     private var pinnedMessageId: String? = null
+    private var typingLabel: TextView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -365,7 +366,7 @@ class MainActivity : AppCompatActivity() {
             orientation = LinearLayout.VERTICAL
             setPadding(4, 4, 4, 4)
         }
-        val typingLabel = text("").apply {
+        typingLabel = text("").apply {
             textSize = 11f
             setTextColor(0xFF55A8FF.toInt())
             visibility = View.GONE
@@ -813,12 +814,7 @@ class MainActivity : AppCompatActivity() {
             }
     }
 
-    private fun findTypingLabel(): TextView {
-        val page = root.findViewWithTag<TextView>("typingLabel")
-        if (page != null) return page
-        val candidate = root.findViewsWithText("", mutableListOf()).firstOrNull() as? TextView
-        return candidate ?: TextView(this).also { it.tag = "typingLabel" }
-    }
+    private fun findTypingLabel(): TextView = typingLabel ?: TextView(this).also { typingLabel = it }
 
     private fun pinMessage(messageId: String) {
         db.collection("messages").document(messageId).update(
