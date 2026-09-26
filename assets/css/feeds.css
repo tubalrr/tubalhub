@@ -2358,3 +2358,150 @@ body.feeds-page *{
 .suggested-plus{
   color:#1877F2!important;
 }
+
+/* =========================================================
+   FEEDS SIDE DISCOVERY / PROMO CARDS
+   Static navigation promos only — no fake metrics or members.
+   ========================================================= */
+.side-discover-card,
+.side-promo-feature{
+  padding:14px!important;
+  overflow:hidden;
+}
+.side-discover-card .feeds-side-title,
+.side-promo-feature .feeds-side-title{
+  margin-bottom:10px!important;
+}
+.side-promo{
+  display:grid;
+  grid-template-columns:78px minmax(0,1fr);
+  gap:11px;
+  align-items:center;
+  padding:10px;
+  border:1px solid #E4E6E9!important;
+  border-radius:16px;
+  background:#FFFFFF!important;
+  margin-top:8px;
+  transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease,background .2s ease;
+}
+.side-promo:hover{
+  transform:translateY(-2px);
+  background:#F8F9FA!important;
+  border-color:#D5D9DD!important;
+  box-shadow:0 4px 12px rgba(0,0,0,.06);
+}
+.side-promo-art{
+  min-height:76px;
+  display:grid;
+  place-items:center;
+  border-radius:13px;
+  background:linear-gradient(135deg,#EEF2F6,#F8F9FA)!important;
+  border:1px solid #E1E4E8;
+  overflow:hidden;
+  position:relative;
+}
+.side-promo-art:after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:radial-gradient(circle at 25% 20%,rgba(24,119,242,.16),transparent 42%);
+  pointer-events:none;
+}
+.side-promo-art span{
+  position:relative;
+  z-index:1;
+  font-size:28px;
+}
+.side-promo-copy{
+  min-width:0;
+}
+.side-promo-copy strong{
+  display:block;
+  color:#1C1E21!important;
+  font:700 13px/1.2 Inter,system-ui,sans-serif;
+  margin-bottom:4px;
+}
+.side-promo-copy p{
+  margin:0 0 7px;
+  color:#65676B!important;
+  font:500 10px/1.4 Inter,system-ui,sans-serif;
+}
+.side-promo-copy a{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  text-decoration:none;
+  color:#1877F2!important;
+  font:700 10px/1 Inter,system-ui,sans-serif;
+}
+.side-promo-copy a:hover{
+  text-decoration:underline;
+}
+.side-promo-banner{
+  border-radius:16px;
+  padding:16px;
+  background:linear-gradient(135deg,#F7F9FB 0%,#EEF3F8 55%,#E8F1FB 100%)!important;
+  border:1px solid #DCE3EA;
+  position:relative;
+  overflow:hidden;
+}
+.side-promo-banner:after{
+  content:"";
+  position:absolute;
+  width:120px;
+  height:120px;
+  border-radius:50%;
+  right:-44px;
+  top:-42px;
+  background:rgba(24,119,242,.10);
+  pointer-events:none;
+}
+.side-promo-label{
+  display:inline-block;
+  margin-bottom:7px;
+  color:#65676B!important;
+  font:800 8px/1 Inter,system-ui,sans-serif;
+  letter-spacing:.13em;
+  text-transform:uppercase;
+}
+.side-promo-banner strong{
+  display:block;
+  color:#1C1E21!important;
+  font:800 16px/1.15 "Space Grotesk",Inter,sans-serif;
+  position:relative;
+  z-index:1;
+}
+.side-promo-banner p{
+  margin:7px 0 11px;
+  color:#65676B!important;
+  font:500 10px/1.45 Inter,system-ui,sans-serif;
+  max-width:230px;
+  position:relative;
+  z-index:1;
+}
+.side-promo-banner a{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:32px;
+  padding:0 12px;
+  border-radius:999px;
+  background:#1877F2!important;
+  color:#FFFFFF!important;
+  text-decoration:none;
+  font:700 10px/1 Inter,system-ui,sans-serif;
+  position:relative;
+  z-index:1;
+}
+.side-promo-banner a:hover{
+  background:#166FE5!important;
+}
+@media(max-width:1100px){
+  .side-discover-card,
+  .side-promo-feature{display:none!important;}
+}
+@media(max-width:760px){
+  .side-promo{
+    grid-template-columns:68px minmax(0,1fr);
+  }
+}
