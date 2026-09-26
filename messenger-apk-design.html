@@ -50,6 +50,7 @@ body{background:linear-gradient(135deg,#fafaf9,#f0f0f0);padding:22px 16px 34px}
 .mini-avatar img{display:block}.big-avatar img{display:block}
 .live-empty{padding:30px 16px;text-align:center;color:#9ca3af;font-size:11px;line-height:1.5}
 .message-link{color:inherit;text-decoration:underline;word-break:break-word}
+.private-feature{font-size:10px;color:#6b7280;text-align:center;padding:4px 8px}.typing-live{color:#3b82f6}.private-reply{border-left:2px solid #3b82f6;background:#f3f7ff;border-radius:8px;padding:5px 7px;margin-bottom:5px;font-size:9px;color:#64748b}.private-actions{display:none;gap:4px;flex-wrap:wrap;margin-top:4px}.msg.longpress .private-actions{display:flex}.private-actions button{border:1px solid #dbe3ef;background:#fff;border-radius:8px;padding:4px 6px;font-size:9px;cursor:pointer}.reaction-chip{font-size:9px;background:#f0f7ff;border-radius:99px;padding:3px 6px;display:inline-block;margin-top:3px}.pinbar{display:none;margin:5px 9px;padding:6px 8px;background:#eff6ff;border-radius:9px;font-size:9px;color:#475569}.pinbar.show{display:block}
 </style>
 </head>
 <body>
@@ -73,7 +74,7 @@ body{background:linear-gradient(135deg,#fafaf9,#f0f0f0);padding:22px 16px 34px}
   <header class="conv-head"><span class="back">‹</span><div class="mini-avatar" id="liveChatAvatar">M</div><div class="who"><b id="liveChatName">Select a member</b><span id="liveChatStatus">● Offline</span></div><button class="head-icon">☎</button><button class="head-icon">▣</button></header>
   <div class="storage" id="liveStorage">Live Firestore • text messages</div>
   <main class="messages" id="liveMessages"><div class="live-loading">Select a member to start chatting.</div></main>
-  <form id="liveComposer" class="composer"><button class="tool">⌕</button><input id="liveMessageInput" class="input" maxlength="500" placeholder="Message..." autocomplete="off"><button class="tool">☺</button><button class="send">→</button></form>
+  <div id="liveTyping" class="private-feature typing-live"></div><div id="livePinbar" class="pinbar"></div><div id="liveReplybar" class="private-feature"></div><form id="liveComposer" class="composer"><button type="button" class="tool" id="liveReplyCancel">↩</button><input id="liveMessageInput" class="input" maxlength="500" placeholder="Message..." autocomplete="off"><button type="button" class="tool">☺</button><button type="submit" class="send">→</button></form>
 </div></div></section>
 
 <section class="phone" id="phoneProfile"><div class="screen"><div class="notch"></div><div class="app">
@@ -107,13 +108,19 @@ body{background:linear-gradient(135deg,#fafaf9,#f0f0f0);padding:22px 16px 34px}
 import { app, auth } from "./assets/js/firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 import {
-  getFirestore, collection, query, where, onSnapshot, getDocs, addDoc, limit
+  getFirestore, collection, query, where, onSnapshot, doc, limit
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-functions.js";
 
 const db = getFirestore(app);
+const functionsReal = getFunctions(app);
+const getMessengerMembersFn = httpsCallable(functionsReal, "getMessengerMembersReal");
+const sendPrivateMessageFn = httpsCallable(functionsReal, "sendPrivateMessageReal");
+const updatePrivateMessageFn = httpsCallable(functionsReal, "updatePrivateMessageReal");
+const setPrivateTypingFn = httpsCallable(functionsReal, "setPrivateTypingReal");
 
 const messengerLoginUrl = new URL("/tubalhub/pages/login.html", window.location.origin);
-messengerLoginUrl.searchParams.set("returnTo", "./messenger-apk-design.html");
+messengerLoginUrl.searchParams.set("returnTo", "/tubalhub/messenger-apk-design.html");
 
 const messengerAuthGate = document.createElement("div");
 messengerAuthGate.id = "messengerAuthGate";
@@ -163,6 +170,10 @@ let messages = [];
 let stopPresence = null;
 let stopMessages = null;
 let stopAllMessages = null;
+let stopTyping = null;
+let selectedTypingTimer = null;
+let typingOffTimer = null;
+let replyTarget = null;
 
 function setAuthMessage(text, error=false){
   $("liveChatList").innerHTML = '<div class="'+(error ? "live-error" : "live-loading")+'">'+esc(text)+'</div>';
@@ -246,10 +257,31 @@ function renderMessages(){
   } else {
     $("liveMessages").innerHTML = list.map(m => {
       const sent = m.senderId === me.uid;
-      const text = esc(m.text || "");
+      const deleted = m.deletedReal === true || m.type === "deleted";
+      const text = deleted ? "This message was unsent." : (m.text || "");
       const time = new Date(msOf(m)).toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"});
-      return '<div class="msg '+(sent ? "sent" : "")+'"><div class="bubble">'+text+'</div><div class="time">'+time+(sent ? ' <span class="checks">✓</span>' : '')+'</div></div>';
+      const checks = !sent ? "" : (m.seenAt ? '<span class="checks" style="color:#3b82f6">✓✓</span>' : (m.deliveredAt ? '<span class="checks">✓✓</span>' : '<span class="checks">✓</span>'));
+      const reply = m.replyTo?.preview ? '<div class="private-reply">↩ '+esc(m.replyTo.name||"Member")+': '+esc(m.replyTo.preview)+'</div>' : "";
+      const reactions = Object.entries(m.reactionsReal||{}).reduce((a,[,e]) => { a[e]=(a[e]||0)+1; return a; }, {});
+      const reactHtml = Object.entries(reactions).map(([e,n])=>'<span class="reaction-chip">'+e+' '+n+'</span>').join("");
+      const actions = deleted ? "" : '<div class="private-actions">'+['😂','❤️','🔥','😮','😢'].map(e=>'<button type="button" data-react="'+esc(e)+'">'+e+'</button>').join("")+'<button type="button" data-reply>↩ Reply</button><button type="button" data-pin>📌 Pin</button>'+(sent?'<button type="button" data-edit>✎ Edit</button><button type="button" data-delete>Unsend</button>':"")+'</div>';
+      return '<div class="msg '+(sent ? "sent" : "")+'" data-message-id="'+esc(m.id)+'">'+reply+'<div class="bubble">'+esc(text)+(m.editedReal&&!deleted?' <small>(edited)</small>':"")+'</div><div class="time">'+time+" "+checks+'</div>'+reactHtml+actions+'</div>';
     }).join("");
+    $("liveMessages").querySelectorAll(".msg").forEach(row=>{
+      let timer;
+      row.addEventListener("pointerdown",()=>{timer=setTimeout(()=>row.classList.add("longpress"),500)},{passive:true});
+      ["pointerup","pointercancel","pointerleave"].forEach(x=>row.addEventListener(x,()=>clearTimeout(timer)));
+      row.addEventListener("click",async e=>{
+        const id=row.dataset.messageId, m=list.find(x=>x.id===id), b=e.target.closest("button"); if(!m||!b)return;
+        try{
+          if(b.dataset.react) await updatePrivateMessageFn({messageId:id,action:"react",emoji:b.dataset.react});
+          else if(b.dataset.reply!==undefined){replyTarget={messageId:id,name:m.displayName||nameOf(selected),preview:String(m.text||"").slice(0,160)};$("liveReplybar").textContent="↩ Replying to "+replyTarget.name+": "+replyTarget.preview;}
+          else if(b.dataset.pin!==undefined) await updatePrivateMessageFn({messageId:id,action:"pin"});
+          else if(b.dataset.edit!==undefined){const next=prompt("Edit message",m.text||"");if(next?.trim())await updatePrivateMessageFn({messageId:id,action:"edit",text:next.trim()});}
+          else if(b.dataset.delete!==undefined) await updatePrivateMessageFn({messageId:id,action:"delete"});
+        }catch(err){alert(err?.message||"Message action failed.");}
+      });
+    });
     $("liveMessages").scrollTop = $("liveMessages").scrollHeight;
   }
   updateHeader();
@@ -262,11 +294,12 @@ function selectUser(uid){
   renderChatList();
   renderMessages();
   $("liveMessageInput").focus();
+  watchTyping();
 }
 
 async function loadUsers(){
-  const snap = await getDocs(query(collection(db,"users"), limit(100)));
-  users = snap.docs.map(d => ({uid:d.id, ...d.data()})).filter(u => u.uid !== me.uid);
+  const result = await getMessengerMembersFn();
+  users = (result.data?.members || []).filter(u => u.uid !== me.uid);
   renderStories();
   renderChatList();
 }
@@ -304,17 +337,14 @@ $("liveComposer").addEventListener("submit", async e => {
   const send = $("liveComposer").querySelector(".send");
   send.disabled = true;
   try {
-    await addDoc(collection(db,"messages"), {
-      uid: me.uid,
-      senderId: me.uid,
-      receiverId: selected.uid,
-      participants: [me.uid, selected.uid],
-      displayName: nameOf(me),
-      senderPhotoURL: me.photoURL || "",
+    await sendPrivateMessageFn({
       text,
-      type: "text",
-      createdAt: new Date()
+      receiverId: selected.uid,
+      fileNameReal: "",
+      replyTo: replyTarget
     });
+    replyTarget = null;
+    $("liveReplybar").textContent = "";
     input.value = "";
     input.focus();
   } catch(err) {
@@ -325,6 +355,25 @@ $("liveComposer").addEventListener("submit", async e => {
   }
 });
 
+function setTyping(typing){
+  if(!me||!selected)return;
+  clearTimeout(typingOffTimer);
+  if(selectedTypingTimer)clearTimeout(selectedTypingTimer);
+  selectedTypingTimer=setTimeout(()=>setPrivateTypingFn({receiverId:selected.uid,typing}).catch(()=>{}),100);
+  if(typing) typingOffTimer=setTimeout(()=>setTyping(false),1400);
+}
+function watchTyping(){
+  if(stopTyping)stopTyping();
+  if(!selected||!me)return;
+  stopTyping=onSnapshot(doc(db,"typing",selected.uid+"_"+me.uid),snap=>{
+    const d=snap.exists()?snap.data():null;
+    const fresh=d?.typing===true && Date.now()-(d.updatedAt?.toMillis?.()||0)<5000;
+    $("liveTyping").textContent=fresh ? nameOf(selected)+" is typing... •••" : "";
+  });
+}
+$("liveMessageInput").addEventListener("input",()=>setTyping(true));
+$("liveMessageInput").addEventListener("blur",()=>setTyping(false));
+$("liveReplyCancel").onclick=()=>{replyTarget=null;$("liveReplybar").textContent=""};
 $("phoneList").querySelector(".nav button:nth-child(2)")?.addEventListener("click", () => {
   $("liveChatList").scrollTo({top:0,behavior:"smooth"});
 });
