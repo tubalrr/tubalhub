@@ -499,7 +499,7 @@ class MainActivity : AppCompatActivity() {
 
         val sendCode = button("Send SMS Code").apply {
             textSize = 14f
-            background = rounded(0xFF173B2D, 15f)
+            background = rounded(0xFF173B2D.toInt(), 15f)
             setTextColor(0xFF7DFFB4.toInt())
             typeface = Typeface.create("sans-serif", Typeface.BOLD)
         }
