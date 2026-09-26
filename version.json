@@ -1,8 +1,8 @@
 {
   "product": "TUBAL HUB Messenger",
   "manifestType": "android-apk",
-  "versionCode": 1219,
-  "versionName": "1.2.19",
+  "versionCode": 1220,
+  "versionName": "1.2.20",
   "apkUrl": "https://github.com/tubalrr/tubalhub/releases/latest/download/TUBAL-HUB-Messenger-release.apk",
-  "notes": ["Login update prompt is shown once per version.", "Improved self-update behavior.", "Improved login and authentication flow.", "Bug fixes and performance improvements."]
+  "notes": ["Redesigned Android login screen.", "Added a dedicated Google Account sign-in card.", "Improved Google account selection messaging.", "Bug fixes and performance improvements."]
 }
