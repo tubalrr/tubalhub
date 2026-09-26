@@ -13,11 +13,37 @@ android {
         minSdk 23
         targetSdk 35
 
-    buildFeatures {
-        buildConfig true
-    }
+        buildFeatures {
+            buildConfig true
+        }
+
         versionCode 1217
         versionName '1.2.17'
+    }
+
+    signingConfigs {
+        release {
+            def storeFilePath = project.findProperty('MESSENGER_STORE_FILE')
+            def storePasswordValue = project.findProperty('MESSENGER_STORE_PASSWORD')
+            def keyAliasValue = project.findProperty('MESSENGER_KEY_ALIAS')
+            def keyPasswordValue = project.findProperty('MESSENGER_KEY_PASSWORD')
+
+            if (storeFilePath && storePasswordValue && keyAliasValue && keyPasswordValue) {
+                storeFile file(storeFilePath)
+                storePassword storePasswordValue
+                keyAlias keyAliasValue
+                keyPassword keyPasswordValue
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            if (project.findProperty('MESSENGER_STORE_FILE')) {
+                signingConfig signingConfigs.release
+            }
+            minifyEnabled false
+        }
     }
 
     compileOptions {
