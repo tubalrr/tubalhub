@@ -96,28 +96,8 @@ async function loadPeople(){
     renderContacts();renderBirthdays?.();updateAvatarStatus();renderActiveGames();renderSuggested();
   }catch(e){console.warn("[Feeds] people unavailable",e)}
 }
-
-function localFeedItems(){
-  try{
-    const raw=JSON.parse(localStorage.getItem("tubalhub_feeds")||"null");
-    if(!Array.isArray(raw))return[];
-    return raw.map((x,i)=>({
-      id:x.id||("local-"+i),type:x.type==="game"?"game":"product",
-      title:x.productName||x.title||x.name||"Scanned item",
-      description:x.description||"",text:x.description||"",
-      image:x.image||x.imageUrl||x.media||"",mediaUrl:x.mediaUrl||"",
-      url:x.url||x.productUrl||"",productUrl:x.productUrl||x.url||"",
-      price:x.price??"",stock:x.stock??"",
-      author:x.author||x.shopName||"TUBAL HUB",photo:x.photo||x.authorPhotoURL||"",
-      uid:x.uid||"",createdAt:x.createdAt||Date.now(),
-      likes:Number(x.likes||0),comments:Number(x.comments||0),shares:Number(x.shares||0),
-      sourceCollection:"local",sourceId:x.id||("local-"+i),contentType:"product"
-    })).filter(x=>x.id);
-  }catch(_){return[]}
-}
-
 function buildFeed(){
-  const raw=[...state.hubPosts.map(hubItem),...state.products,...localFeedItems(),...games.map(gameItem)];
+  const raw=[...state.hubPosts.map(hubItem),...state.products,...games.map(gameItem)];
   const seen=new Set();state.items=raw.filter(x=>{const k=contentKey(x);if(seen.has(k))return false;seen.add(k);return true});
   renderStories();renderFeed(true);renderSponsored();renderTrending();renderActiveGames();renderSuggested();
 }
@@ -192,7 +172,7 @@ function renderFeed(reset){
   const list=visible(),box=document.getElementById("feedList");if(!box||state.loading)return;
   if(reset){state.page=0;box.innerHTML=""}
   const start=state.page*state.pageSize,slice=list.slice(start,start+state.pageSize);
-  if(!slice.length&&state.page===0){box.innerHTML="<div class='feed-empty'><strong>No noise today.</strong><span>Published TUBAL HUB content will appear here.</span></div>";return}
+  if(!slice.length&&state.page===0){box.innerHTML="<div class='feed-empty'><strong>No posts in your feed</strong><span>Published TUBAL HUB content will appear here.</span></div>";return}
   state.loading=true;const sk=document.createElement("div");sk.className="load-more-skeleton";sk.innerHTML="<div class='skeleton'></div>";box.appendChild(sk);
   setTimeout(()=>{sk.remove();const frag=document.createDocumentFragment();slice.forEach(x=>{const wrap=document.createElement("div");wrap.innerHTML=postMarkup(x);frag.appendChild(wrap.firstElementChild)});box.appendChild(frag);state.page++;state.loading=false;bindPosts()},100);
 }
@@ -590,7 +570,7 @@ function setupUI(){
   if(uiReady)return;uiReady=true;
   document.body.addEventListener("pointermove",e=>{document.body.style.setProperty("--mx",e.clientX+"px");document.body.style.setProperty("--my",e.clientY+"px");const card=e.target.closest(".post-card,.feeds-panel,.feed-toolbar");if(card){const r=card.getBoundingClientRect();card.style.setProperty("--card-mx",((e.clientX-r.left)/Math.max(1,r.width)*100)+"%");card.style.setProperty("--card-my",((e.clientY-r.top)/Math.max(1,r.height)*100)+"%")}}, {passive:true});
   document.querySelectorAll(".feed-filter").forEach(b=>b.addEventListener("click",()=>{state.savedMode=false;state.filter=b.dataset.filter||"all";document.querySelectorAll(".feed-filter").forEach(x=>x.classList.toggle("active",x===b));renderFeed(true)}));
-  document.getElementById("feedSearch")?.addEventListener("input",e=>{state.query=e.target.value;renderFeed(true)});\n  window.addEventListener("tubalhub-local-feed",()=>{buildFeed();showNotice("New item added to the feed.",true)});\n  window.addEventListener("storage",e=>{if(e.key==="tubalhub_feeds")buildFeed()});
+  document.getElementById("feedSearch")?.addEventListener("input",e=>{state.query=e.target.value;renderFeed(true)});
   document.getElementById("feedSort")?.addEventListener("change",e=>{state.sort=e.target.value;renderFeed(true)});
   document.getElementById("createPostTrigger")?.addEventListener("click",openPostModal);
   document.getElementById("liveAction")?.addEventListener("click",()=>{window.location.assign(new URL("live.html",window.location.href).href)});
