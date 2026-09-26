@@ -919,3 +919,199 @@ body.feeds-page{
 .post-card{
   scroll-margin-top:96px;
 }
+
+
+/* =========================================================
+   TUBAL HUB FEEDS — GRAY / CHARCOAL TEMPLATE
+   VISUAL ONLY — existing functionality untouched.
+   ========================================================= */
+body.feeds-page{
+  --fd-green:#B8BEC3;
+  --fd-purple:#7F878E;
+  --fd-bg:#151719;
+  --fd-panel:rgba(31,34,37,.94);
+  --fd-panel-2:rgba(24,27,29,.97);
+  --fd-line:rgba(190,197,202,.14);
+  --fd-text:#ECEFF1;
+  --fd-muted:#8D959B;
+  background:
+    radial-gradient(850px 480px at 12% -10%,rgba(190,197,202,.055),transparent 68%),
+    radial-gradient(780px 520px at 94% 8%,rgba(127,135,142,.055),transparent 66%),
+    linear-gradient(180deg,#17191B 0%,#121416 58%,#101214 100%)!important;
+}
+body.feeds-page:before{
+  background:
+    linear-gradient(rgba(255,255,255,.014) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.012) 1px,transparent 1px)!important;
+  background-size:34px 34px!important;
+}
+.feeds-header{
+  background:rgba(18,20,22,.94)!important;
+  border-bottom-color:rgba(190,197,202,.16)!important;
+  box-shadow:0 10px 38px rgba(0,0,0,.32),inset 0 -1px rgba(255,255,255,.03)!important;
+}
+.feeds-header:before{
+  background:linear-gradient(90deg,transparent,#AEB5BA 30%,#777F86 70%,transparent)!important;
+  opacity:.55!important;
+}
+.feeds-header nav a{
+  color:#899197!important;
+}
+.feeds-header nav a:hover{
+  color:#EFF2F4!important;
+  background:rgba(190,197,202,.045)!important;
+  border-color:rgba(190,197,202,.11)!important;
+}
+.feeds-header nav a.active{
+  color:#17191B!important;
+  background:linear-gradient(135deg,#D8DDE0,#9EA6AC)!important;
+  box-shadow:0 0 22px rgba(190,197,202,.13)!important;
+}
+.feeds-panel,.post-card,.feed-toolbar,.feeds-stories-wrap{
+  border-color:rgba(190,197,202,.12)!important;
+  background:linear-gradient(150deg,rgba(32,35,38,.94),rgba(20,23,25,.97))!important;
+  box-shadow:0 18px 55px rgba(0,0,0,.34),inset 0 1px rgba(255,255,255,.035)!important;
+}
+.feeds-panel:hover,.post-card:hover,.feed-toolbar:hover,.feeds-stories-wrap:hover{
+  border-color:rgba(190,197,202,.21)!important;
+  box-shadow:0 24px 72px rgba(0,0,0,.42),0 0 24px rgba(190,197,202,.025),inset 0 1px rgba(255,255,255,.045)!important;
+}
+.section-kicker,.feeds-strip-title span,.feeds-side-title{
+  color:#899197!important;
+}
+.feed-menu-item{
+  color:#A5ADB3!important;
+}
+.feed-menu-item:hover{
+  background:rgba(190,197,202,.045)!important;
+  border-color:rgba(190,197,202,.1)!important;
+  color:#F1F3F4!important;
+}
+.feed-menu-item.active{
+  color:#17191B!important;
+  background:linear-gradient(135deg,#C9CED2,#858D94)!important;
+  box-shadow:0 0 22px rgba(190,197,202,.08)!important;
+}
+.feed-menu-icon{
+  background:rgba(255,255,255,.045)!important;
+  border-color:rgba(190,197,202,.1)!important;
+}
+.create-trigger,.feed-search,.feed-sort{
+  background:rgba(12,14,16,.72)!important;
+  border-color:rgba(190,197,202,.13)!important;
+  color:#EEF1F3!important;
+}
+.create-trigger:hover,.feed-search:focus,.feed-sort:focus{
+  border-color:rgba(190,197,202,.25)!important;
+  box-shadow:0 0 0 3px rgba(190,197,202,.035)!important;
+}
+.create-action,.feed-filter,.post-action{
+  background:rgba(255,255,255,.025)!important;
+  border-color:rgba(190,197,202,.09)!important;
+  color:#9CA5AB!important;
+}
+.create-action:hover,.feed-filter:hover,.post-action:hover{
+  background:rgba(190,197,202,.055)!important;
+  border-color:rgba(190,197,202,.16)!important;
+  color:#EEF1F3!important;
+}
+.feed-filter.active{
+  background:rgba(190,197,202,.08)!important;
+  border-color:rgba(190,197,202,.2)!important;
+  color:#E9ECEE!important;
+}
+.post-action.reacted{
+  background:rgba(190,197,202,.085)!important;
+  color:#F1F3F4!important;
+  box-shadow:none!important;
+}
+.action-live,.live-dot,.contact-dot.online,.post-status.online{
+  background:#9AA1A6!important;
+  box-shadow:0 0 10px rgba(190,197,202,.26)!important;
+}
+.story-card{
+  border-color:rgba(190,197,202,.13)!important;
+  background:linear-gradient(160deg,#2A2E32,#171A1D)!important;
+}
+.story-card:hover{
+  border-color:rgba(190,197,202,.25)!important;
+  box-shadow:0 16px 38px rgba(0,0,0,.42)!important;
+}
+.story-card.active-story{
+  box-shadow:0 0 0 1px rgba(190,197,202,.19),0 14px 30px rgba(0,0,0,.32)!important;
+}
+.story-card.active-story .story-avatar{
+  box-shadow:0 0 0 2px #AEB5BA!important;
+}
+.post-meta b,.feed-article-content h3,.product-info h3,.game-info h3{
+  color:#EEF1F3!important;
+}
+.post-caption,.post-body{
+  color:#B9C0C5!important;
+}
+.post-meta span,.comment-time,.feed-side-meta,.active-game-copy span,.suggested-copy small{
+  color:#7F888E!important;
+}
+.product-card,.game-card,.feed-article-content{
+  border-color:rgba(190,197,202,.1)!important;
+  background:rgba(255,255,255,.018)!important;
+}
+.product-media,.game-cover{
+  background:linear-gradient(145deg,#2A2E32,#15181B)!important;
+}
+.product-price{
+  color:#C0C6CA!important;
+}
+.stock-pill{
+  border-color:rgba(190,197,202,.13)!important;
+  background:rgba(190,197,202,.035)!important;
+  color:#9DA5AA!important;
+}
+.buy-btn,.play-btn{
+  border-color:rgba(190,197,202,.14)!important;
+  background:rgba(190,197,202,.035)!important;
+  color:#D9DEE1!important;
+}
+.buy-btn:hover,.play-btn:hover{
+  border-color:rgba(190,197,202,.25)!important;
+  background:rgba(190,197,202,.065)!important;
+}
+.reaction-summary,.comment-bubble,.share-tile,.mini-tool,.tool-btn{
+  background:rgba(255,255,255,.025)!important;
+  border-color:rgba(190,197,202,.09)!important;
+}
+.reaction-summary:hover,.share-tile:hover{
+  background:rgba(190,197,202,.045)!important;
+  border-color:rgba(190,197,202,.17)!important;
+}
+.reaction-picker,.share-modal,.glass-modal{
+  background:rgba(23,26,29,.98)!important;
+  border-color:rgba(190,197,202,.14)!important;
+  box-shadow:0 24px 80px rgba(0,0,0,.62)!important;
+}
+.reaction-choice{
+  background:rgba(255,255,255,.035)!important;
+  border-color:rgba(190,197,202,.08)!important;
+}
+.feed-empty{
+  border-color:rgba(190,197,202,.1)!important;
+  background:rgba(255,255,255,.012)!important;
+  color:#858E94!important;
+}
+.feed-empty strong{
+  color:#B6BEC3!important;
+}
+.feed-notice{
+  background:rgba(24,27,30,.97)!important;
+  border-color:rgba(190,197,202,.15)!important;
+  color:#E8ECEE!important;
+}
+.gradient-btn,.send-comment-btn{
+  background:linear-gradient(135deg,#C7CDD1,#8D969D)!important;
+  color:#17191B!important;
+  box-shadow:0 8px 22px rgba(0,0,0,.22)!important;
+}
+@media(max-width:640px){
+  .feeds-header{background:rgba(18,20,22,.97)!important}
+  .feeds-panel,.post-card,.feed-toolbar,.feeds-stories-wrap{border-radius:12px!important}
+}
