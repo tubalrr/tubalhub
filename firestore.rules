@@ -222,10 +222,7 @@ service cloud.firestore {
 
     match /messages/{messageId} {
       allow read: if realUser()
-        && (
-          adminUser()
-          || request.auth.uid in resource.data.participants
-        );
+        && (adminUser() || request.auth.uid in resource.data.participants);
 
       allow create: if realUser()
         && request.resource.data.uid == request.auth.uid
@@ -239,38 +236,29 @@ service cloud.firestore {
         && request.resource.data.text is string
         && request.resource.data.text.size() > 0
         && request.resource.data.text.size() <= 500
-        && request.resource.data.type == 'text'
-        && (!('replyToMessageId' in request.resource.data) || request.resource.data.replyToMessageId is string)
-        && (!('replyToText' in request.resource.data) || (request.resource.data.replyToText is string && request.resource.data.replyToText.size() <= 500));
+        && request.resource.data.type == 'text';
 
       allow update: if realUser()
+        && request.auth.uid in resource.data.participants
         && (
           adminUser()
           || (
-            resource.data.uid == request.auth.uid
-            && resource.data.senderId == request.auth.uid
-            && request.resource.data.uid == resource.data.uid
-            && request.resource.data.senderId == resource.data.senderId
-            && request.resource.data.receiverId == resource.data.receiverId
-            && request.resource.data.participants == resource.data.participants
-            && request.resource.data.type == resource.data.type
-            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['text', 'editedAt'])
-            && request.resource.data.text is string
-            && request.resource.data.text.size() > 0
-            && request.resource.data.text.size() <= 500
+            resource.data.senderId == request.auth.uid
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+              'text','textReal','editedReal','editedAt','editHistoryReal',
+              'deletedReal','deletedAt','type','fileNameReal',
+              'replyTo','reactionsReal','pinnedReal','pinnedAt','pinnedBy'
+            ])
+          )
+          || (
+            resource.data.receiverId == request.auth.uid
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['deliveredAt','seenAt'])
           )
         );
 
-      // SECURITY FIX: delete uses resource.data, not request.resource.data.
-      allow delete: if realUser()
-        && (
-          adminUser()
-          || (
-            resource.data.uid == request.auth.uid
-            && resource.data.senderId == request.auth.uid
-          )
-        );
+      allow delete: if false;
     }
+
 
     // =========================================================
     // PRIVATE MESSAGE REACTIONS
@@ -299,6 +287,23 @@ service cloud.firestore {
 
       allow delete: if realUser()
         && resource.data.uid == request.auth.uid;
+    }
+
+    // =========================================================
+    // PRIVATE TYPING INDICATORS
+    // =========================================================
+    match /typing/{typingId} {
+      allow read: if realUser()
+        && request.auth.uid in resource.data.participants;
+      allow create, update: if realUser()
+        && request.resource.data.senderId == request.auth.uid
+        && request.resource.data.receiverId is string
+        && request.resource.data.receiverId != request.auth.uid
+        && request.resource.data.participants is list
+        && request.auth.uid in request.resource.data.participants
+        && request.resource.data.receiverId in request.resource.data.participants
+        && request.resource.data.typing is bool;
+      allow delete: if realUser() && resource.data.senderId == request.auth.uid;
     }
 
     // =========================================================
