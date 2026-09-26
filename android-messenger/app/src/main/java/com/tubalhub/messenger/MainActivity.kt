@@ -101,7 +101,6 @@ class MainActivity : AppCompatActivity() {
                 }
                 val latestVersionCode = json.optInt("versionCode", BuildConfig.VERSION_CODE)
                 val latestVersionName = json.optString("versionName", BuildConfig.VERSION_NAME)
-                val manifestApkUrl = json.optString("apkUrl", "")
                 val apkUrl = "https://github.com/tubalrr/tubalhub/releases/download/v" + latestVersionName + "/TUBAL-HUB-Messenger-release.apk"
                 val notes = if (json.opt("notes") is org.json.JSONArray) {
                     val array = json.optJSONArray("notes")
