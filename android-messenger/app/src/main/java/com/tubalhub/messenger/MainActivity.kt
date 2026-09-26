@@ -100,7 +100,12 @@ class MainActivity : AppCompatActivity() {
                 val apkUrl = json.optString("apkUrl", "")
                 val notes = json.optString("notes", "New TUBAL HUB Messenger update is available.")
                 if (latestVersionCode > BuildConfig.VERSION_CODE && apkUrl.isNotBlank()) {
-                    runOnUiThread { showSelfUpdateDialog(latestVersionName, apkUrl, notes) }
+                    val prefs = getSharedPreferences("tubalhub_update", MODE_PRIVATE)
+                    val alreadyShown = prefs.getInt("prompted_version_code", -1) == latestVersionCode
+                    if (!alreadyShown) {
+                        prefs.edit().putInt("prompted_version_code", latestVersionCode).apply()
+                        runOnUiThread { showSelfUpdateDialog(latestVersionName, apkUrl, notes) }
+                    }
                 }
             } catch (e: Exception) {
                 Log.d("TUBAL_HUB_UPDATE", "Self-update check skipped", e)
