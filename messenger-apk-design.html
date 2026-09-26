@@ -108,7 +108,7 @@ body{background:linear-gradient(135deg,#fafaf9,#f0f0f0);padding:22px 16px 34px}
 import { app, auth } from "./assets/js/firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 import {
-  getFirestore, collection, query, where, onSnapshot, doc, limit
+  getFirestore, collection, query, where, onSnapshot, doc, limit, setDoc, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-functions.js";
 
@@ -168,6 +168,8 @@ let users = [];
 let presence = new Map();
 let messages = [];
 let stopPresence = null;
+let stopMemberDirectory = null;
+let presenceHeartbeat = null;
 let stopMessages = null;
 let stopAllMessages = null;
 let stopTyping = null;
@@ -297,23 +299,68 @@ function selectUser(uid){
   watchTyping();
 }
 
+async function publishOwnPresence(){
+  if(!me) return;
+  await setDoc(doc(db,"presence",me.uid),{
+    uid: me.uid,
+    displayName: nameOf(me),
+    photoURL: me.photoURL || "",
+    online: true,
+    updatedAt: serverTimestamp()
+  },{merge:true});
+  clearInterval(presenceHeartbeat);
+  presenceHeartbeat = setInterval(()=>{
+    if(!me) return;
+    setDoc(doc(db,"presence",me.uid),{
+      uid: me.uid,
+      displayName: nameOf(me),
+      photoURL: me.photoURL || "",
+      online: true,
+      updatedAt: serverTimestamp()
+    },{merge:true}).catch(()=>{});
+  },30000);
+}
+
 async function loadUsers(){
-  const result = await getMessengerMembersFn();
-  users = (result.data?.members || []).filter(u => u.uid !== me.uid);
+  try{
+    const result = await getMessengerMembersFn();
+    users = (result.data?.members || []).filter(u => u.uid !== me.uid);
+  }catch(err){
+    console.warn("[TUBAL HUB] callable member directory unavailable; using presence directory", err);
+    users = Array.from(presence.entries())
+      .map(([uid,d])=>({uid,displayName:d?.displayName||"Member",photoURL:d?.photoURL||""}))
+      .filter(u => u.uid !== me.uid && u.displayName);
+  }
   renderStories();
   renderChatList();
 }
 
 function watchPresence(){
   if(stopPresence) stopPresence();
+  if(stopMemberDirectory) stopMemberDirectory();
   stopPresence = onSnapshot(query(collection(db,"presence"), limit(100)), snap => {
     presence = new Map();
-    snap.forEach(d => presence.set(d.id, d.data()));
+    const directory = [];
+    snap.forEach(d => {
+      const data = d.data() || {};
+      presence.set(d.id, data);
+      if(d.id !== me?.uid && data.displayName){
+        directory.push({
+          uid:d.id,
+          displayName:String(data.displayName).slice(0,120),
+          photoURL:String(data.photoURL||"").slice(0,1000)
+        });
+      }
+    });
+    if(directory.length) users = directory;
     renderStories();
     renderChatList();
     updateHeader();
     updateProfile();
-  }, err => console.error("[TUBAL HUB] presence", err));
+  }, err => {
+    console.error("[TUBAL HUB] presence", err);
+    if(!users.length) setAuthMessage("Hindi ma-load ang member directory. Subukan ulit.", true);
+  });
 }
 
 function watchMessages(){
@@ -328,6 +375,13 @@ function watchMessages(){
     $("liveMessages").innerHTML = '<div class="live-error">Could not load messages.<br>Check Firebase Auth and Firestore Rules.</div>';
   });
 }
+
+window.addEventListener("beforeunload",()=>{
+  clearInterval(presenceHeartbeat);
+  if(me){
+    setDoc(doc(db,"presence",me.uid),{online:false,updatedAt:serverTimestamp()},{merge:true}).catch(()=>{});
+  }
+});
 
 $("liveComposer").addEventListener("submit", async e => {
   e.preventDefault();
@@ -390,13 +444,18 @@ onAuthStateChanged(auth, async user => {
   }
   messengerAuthGate.style.display = "none";
   try {
-    await loadUsers();
+    await publishOwnPresence();
     watchPresence();
+    await loadUsers();
     watchMessages();
     updateProfile();
   } catch(err) {
     console.error("[TUBAL HUB] messenger startup", err);
-    setAuthMessage("Connected to Firebase, pero hindi mabasa ang member data.", true);
+    users = [];
+    renderStories();
+    renderChatList();
+    watchMessages();
+    updateProfile();
   }
 });
 </script>
