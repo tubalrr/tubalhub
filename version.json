@@ -1,11 +1,11 @@
 {
   "product": "TUBAL HUB Messenger",
   "manifestType": "android-apk",
-  "versionCode": 1217,
-  "versionName": "1.2.17",
-  "apkUrl": "https://github.com/tubalrr/tubalhub/releases/download/v1.2.17/TUBAL-HUB-Messenger-release.apk",
+  "versionCode": 1221,
+  "versionName": "1.2.21",
+  "apkUrl": "https://github.com/tubalrr/tubalhub/releases/download/v1.2.21/TUBAL-HUB-Messenger-release.apk",
   "notes": [
-    "No new Android update is published yet.",
-    "The updater will only advertise a version after its GitHub Release APK is available."
+    "TUBAL HUB Messenger 1.2.21 is now available.",
+    "This release uses the permanent release signing key for future in-app updates."
   ]
 }
