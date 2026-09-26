@@ -39,7 +39,7 @@
     '<section class="th-scan-modal" role="dialog" aria-modal="true" aria-labelledby="thScanTitle">' +
       '<div class="th-scan-head"><h2 class="th-scan-title" id="thScanTitle">Scan item</h2><button class="th-scan-close" type="button">Close</button></div>' +
       '<div class="th-scan-body">' +
-        '<div class="th-scan-stage"><video id="thScanVideo" playsinline muted></video><div class="th-scan-guide"></div></div>' +
+        '<div class="th-scan-stage"><video id="thScanVideo" playsinline muted></video><div id="thScanReader" style="display:none;width:100%;height:100%"></div><div class="th-scan-guide"></div></div>' +
         '<div class="th-scan-copy" id="thScanCopy">Align a QR code or barcode inside the guide.</div>' +
         '<div class="th-scan-manual"><input id="thScanManual" placeholder="Enter QR / barcode value"><button class="th-scan-add" type="button">Add</button></div>' +
       '</div>' +
@@ -47,6 +47,7 @@
   document.body.appendChild(backdrop);
 
   const video = backdrop.querySelector("#thScanVideo");
+  const reader = backdrop.querySelector("#thScanReader");
   const copy = backdrop.querySelector("#thScanCopy");
   const manual = backdrop.querySelector("#thScanManual");
   const close = backdrop.querySelector(".th-scan-close");
@@ -128,7 +129,10 @@
 
     try{
       if(!window.Html5Qrcode) await loadScript("https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js");
-      qr = new Html5Qrcode("__tubalhub_embed_reader");
+      video.style.display="none";
+      reader.style.display="block";
+      qr = new Html5Qrcode("thScanReader");
+      await qr.start({facingMode:"environment"},{fps:10,qrbox:{width:240,height:240}},decoded=>post(decoded),()=>{});
     }catch(e){
       copy.textContent = "Automatic scan is unavailable here. Enter the code below.";
     }
@@ -149,6 +153,8 @@
     if(timer) clearTimeout(timer);
     timer = null;
     if(qr){ try{qr.stop().catch(()=>{});qr.clear();}catch(e){} qr=null; }
+    if(reader){ reader.innerHTML=""; reader.style.display="none"; }
+    if(video){ video.style.display="block"; }
     if(stream){ stream.getTracks().forEach(t=>t.stop()); stream=null; }
     if(video) video.srcObject = null;
   }
