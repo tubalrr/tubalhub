@@ -2,191 +2,687 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Feeds | TUBAL HUB</title>
-<link rel="stylesheet" href="../assets/css/platform-pages.css">
-<link rel="stylesheet" href="../assets/css/global-theme.css?v=20260922">
-<link rel="stylesheet" href="../assets/css/premium-logos.css?v=20260924-logo1">
-<link rel="stylesheet" href="../assets/css/feeds.css?v=20260926-future3">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0E0E0C">
+<title>Feeds / TUBAL HUB</title>
+<style>
+:root{
+  --noir:#0E0E0C;
+  --paper:#FFFBF2;
+  --gold:#C6A87D;
+  --sage:#8C958D;
+  --clay:#B07A5B;
+  --line:#E8E2DC;
+  --ink:#171713;
+  --muted:#7B827B;
+  --radius:2px;
+}
+*{box-sizing:border-box}
+html{background:var(--noir);scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--noir);
+  color:var(--paper);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-weight:400;
+  letter-spacing:.02em;
+}
+button,input{font:inherit}
+button{cursor:pointer}
+a{color:inherit}
+::selection{background:var(--gold);color:var(--noir)}
+.app{min-height:100vh}
+.header{
+  width:min(1120px,calc(100% - 32px));
+  margin:0 auto;
+  padding:22px 0 20px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  border-bottom:1px solid rgba(140,149,141,.28);
+  position:relative;
+  z-index:10;
+}
+.brand{
+  display:flex;
+  align-items:baseline;
+  gap:10px;
+  text-decoration:none;
+}
+.brand-main{
+  font-family:"Playfair Display","Cormorant Garamond",Georgia,serif;
+  font-size:20px;
+  font-weight:300;
+  letter-spacing:.015em;
+}
+.brand-sub{
+  color:var(--sage);
+  font-size:9px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+}
+.header-actions{display:flex;align-items:center;gap:8px}
+.gold-btn{
+  appearance:none;
+  border:1px solid var(--gold);
+  border-radius:2px;
+  background:var(--gold);
+  color:var(--noir);
+  min-width:68px;
+  height:32px;
+  padding:0 13px;
+  font-size:10px;
+  font-weight:500;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+.gold-btn:hover{background:#d3b98f}
+.main{padding:26px 0 108px}
+.feed-wrap{width:min(640px,calc(100% - 28px));margin:0 auto}
+.intro{
+  padding:14px 0 20px;
+  display:flex;
+  justify-content:space-between;
+  gap:18px;
+  align-items:end;
+}
+.intro h1{
+  margin:0;
+  font-family:"Playfair Display","Cormorant Garamond",Georgia,serif;
+  font-size:34px;
+  line-height:1.05;
+  font-weight:300;
+  letter-spacing:-.015em;
+}
+.intro p{
+  max-width:260px;
+  margin:0;
+  color:var(--sage);
+  font-size:11px;
+  line-height:1.7;
+  text-align:right;
+}
+.search-row{
+  padding:0 0 22px;
+}
+.search{
+  width:100%;
+  height:40px;
+  border:1px solid rgba(140,149,141,.48);
+  border-radius:2px;
+  outline:0;
+  background:transparent;
+  color:var(--paper);
+  padding:0 12px;
+  font-size:11px;
+  letter-spacing:.04em;
+}
+.search::placeholder{color:rgba(140,149,141,.78)}
+.search:focus{border-color:var(--gold)}
+.stories{
+  display:flex;
+  gap:12px;
+  overflow-x:auto;
+  padding:0 0 24px;
+  scrollbar-width:none;
+}
+.stories::-webkit-scrollbar{display:none}
+.story{
+  flex:0 0 56px;
+  width:56px;
+  height:56px;
+  border-radius:50%;
+  border:1px solid var(--sage);
+  background:var(--noir);
+  padding:0;
+  color:var(--paper);
+  display:grid;
+  place-items:center;
+  font-family:"Playfair Display","Cormorant Garamond",Georgia,serif;
+  font-size:15px;
+  font-weight:300;
+  letter-spacing:0;
+}
+.story.active{border:2px solid var(--gold)}
+.story-label{
+  display:block;
+  margin:-18px 0 18px;
+  color:var(--sage);
+  font-size:8px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  opacity:.85;
+}
+.card{
+  background:var(--paper);
+  color:var(--ink);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  margin:0 0 22px;
+  overflow:hidden;
+}
+.card-head{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  padding:14px 14px 12px;
+}
+.avatar{
+  width:24px;height:24px;border-radius:50%;
+  background:var(--noir);
+  color:var(--paper);
+  display:grid;place-items:center;
+  font-size:8px;font-weight:500;
+  letter-spacing:0;
+  flex:0 0 24px;
+}
+.meta{min-width:0;display:flex;align-items:baseline;gap:8px}
+.name{
+  font-size:11px;
+  font-weight:500;
+  letter-spacing:.03em;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.time{
+  color:var(--sage);
+  font-size:8px;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  white-space:nowrap;
+}
+.media{
+  position:relative;
+  width:100%;
+  aspect-ratio:4/5;
+  background:#eee8df;
+  overflow:hidden;
+}
+.media img{
+  width:100%;height:100%;object-fit:cover;display:block;
+}
+.card-foot{padding:14px}
+.product-row{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:10px;
+  align-items:start;
+}
+.product-name{
+  margin:0;
+  font-family:"Playfair Display","Cormorant Garamond",Georgia,serif;
+  font-size:21px;
+  font-weight:300;
+  line-height:1.12;
+}
+.price{
+  margin-top:6px;
+  color:var(--gold);
+  font-size:12px;
+  letter-spacing:.03em;
+}
+.stock{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:6px;
+  color:var(--sage);
+  font-size:8px;
+  letter-spacing:.11em;
+  text-transform:uppercase;
+  margin-bottom:12px;
+}
+.stock-dot{width:6px;height:6px;border-radius:50%;background:var(--sage);display:inline-block}
+.stock-dot.low{background:var(--gold)}
+.stock-dot.sold{background:var(--clay)}
+.view{
+  display:inline-block;
+  border:0;
+  background:none;
+  padding:0;
+  color:var(--ink);
+  text-decoration:underline;
+  text-underline-offset:4px;
+  font-size:9px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+}
+.view:hover{color:var(--gold)}
+.noise{
+  padding:72px 0;
+  text-align:center;
+  color:var(--sage);
+  font-family:"Playfair Display","Cormorant Garamond",Georgia,serif;
+  font-size:27px;
+  font-weight:300;
+}
+.noise small{
+  display:block;
+  margin-top:8px;
+  font-family:Inter,ui-sans-serif,system-ui,sans-serif;
+  font-size:9px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+.scanner-fab{
+  position:fixed;
+  right:22px;
+  bottom:22px;
+  width:56px;height:56px;
+  border:1px solid var(--gold);
+  border-radius:50%;
+  background:var(--gold);
+  color:var(--noir);
+  font-size:9px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  z-index:40;
+}
+.modal-backdrop{
+  position:fixed;inset:0;
+  background:rgba(14,14,12,.88);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+  z-index:100;
+}
+.modal-backdrop.open{display:flex}
+.modal{
+  width:min(560px,100%);
+  max-height:min(88vh,760px);
+  overflow:auto;
+  background:var(--paper);
+  color:var(--ink);
+  border:1px solid var(--line);
+  border-radius:2px;
+}
+.modal-head{
+  padding:16px;
+  border-bottom:1px solid var(--line);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.modal-title{
+  margin:0;
+  font-family:"Playfair Display","Cormorant Garamond",Georgia,serif;
+  font-size:25px;
+  font-weight:300;
+}
+.text-btn{
+  border:0;background:none;padding:0;color:var(--sage);
+  font-size:9px;letter-spacing:.1em;text-transform:uppercase;
+}
+.scanner-body{padding:16px}
+.scan-stage{
+  position:relative;
+  aspect-ratio:4/3;
+  border:1px solid var(--sage);
+  background:#11110e;
+  overflow:hidden;
+}
+#reader{width:100%;height:100%}
+#reader video{width:100%!important;height:100%!important;object-fit:cover}
+.scan-guide{
+  position:absolute;inset:18% 14%;
+  border:1px solid rgba(198,168,125,.8);
+  pointer-events:none;
+}
+.scan-copy{padding:12px 0 4px;color:var(--sage);font-size:10px;line-height:1.6}
+.scan-manual{
+  margin-top:12px;
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:8px;
+}
+.scan-manual input{
+  width:100%;height:36px;border:1px solid var(--sage);border-radius:2px;background:transparent;
+  padding:0 10px;color:var(--ink);font-size:10px;outline:0;
+}
+.scan-manual input:focus{border-color:var(--gold)}
+.embed-box{
+  border-top:1px solid rgba(140,149,141,.28);
+  margin-top:54px;padding:26px 0 0;
+}
+.embed-box h2{
+  margin:0 0 8px;
+  font-family:"Playfair Display","Cormorant Garamond",Georgia,serif;
+  font-size:22px;font-weight:300;
+}
+.embed-box p{margin:0 0 12px;color:var(--sage);font-size:10px;line-height:1.7}
+.embed-code{
+  width:100%;min-height:74px;resize:vertical;
+  border:1px solid var(--sage);border-radius:2px;
+  background:transparent;color:var(--paper);padding:11px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:9px;line-height:1.6;
+}
+.copy-wrap{display:flex;justify-content:flex-end;margin-top:8px}
+.footer-note{
+  padding:34px 0 0;
+  text-align:center;color:rgba(140,149,141,.6);
+  font-size:8px;letter-spacing:.12em;text-transform:uppercase;
+}
+@media(max-width:640px){
+  .header{width:min(100% - 24px,640px);padding:17px 0}
+  .brand-sub{display:none}
+  .main{padding-top:16px}
+  .feed-wrap{width:min(100% - 20px,640px)}
+  .intro{align-items:start;flex-direction:column}
+  .intro h1{font-size:30px}
+  .intro p{text-align:left;max-width:310px}
+  .scanner-fab{right:16px;bottom:16px}
+}
+</style>
 </head>
-<body class="feeds-page theme-midnight">
-<header class="feeds-header">
-  <a class="brand" href="../index.html">
-    <img src="../tubal-hub-logo.png" width="48" height="48" alt="TUBAL HUB">
-    <span>TUBAL HUB<small>FEEDS • SHOP • CONNECT</small></span>
-  </a>
-  <nav>
-    <a href="../index.html">Home</a><a class="active" href="feeds.html">Feeds</a><a href="shop.html">Shop</a>
-    <a href="ctrlzone.html#games">Games</a><a href="news.html">News</a><a href="community.html">Community</a><a href="chat.html">Global Chat</a>
-  </nav>
-</header>
+<body>
+<div id="root"></div>
 
-<main class="feeds-shell">
-  <div class="feeds-layout">
-    <aside class="feeds-rail left-rail">
-      <section class="feeds-panel feeds-menu">
-        <div class="section-kicker">TUBAL HUB</div><h3>Navigate</h3>
-        <a class="feed-menu-item active" href="feeds.html"><span class="feed-menu-icon">◌</span><span>Feeds</span></a>
-        <a class="feed-menu-item" href="shop.html"><span class="feed-menu-icon">⌂</span><span>Shop</span></a>
-        <a class="feed-menu-item" href="ctrlzone.html#games"><span class="feed-menu-icon">✦</span><span>Games</span></a>
-        <a class="feed-menu-item" href="news.html"><span class="feed-menu-icon">▷</span><span>Videos & News</span></a>
-        <a class="feed-menu-item" href="shop.html#catalog"><span class="feed-menu-icon">⌁</span><span>Marketplace</span></a>
-        <button class="feed-menu-item" id="savedMenu" type="button"><span class="feed-menu-icon">◇</span><span>Saved</span></button>
-        <a class="feed-menu-item" href="community.html"><span class="feed-menu-icon">◎</span><span>Community</span></a>
-      </section>
-      <section class="feeds-panel feed-side-meta">
-        <strong>ORIGINAL FEED</strong>
-        <p>Published TUBAL HUB content flows here from its real source. No placeholder members or invented engagement totals.</p>
-      </section>
-    </aside>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script>
+(function(){
+  const FEED_KEY = "tubalhub_feeds";
+  const scannedKey = "tubalhub_scan";
 
-    <section class="feeds-center">
-      <section class="feeds-stories-wrap">
-        <div class="feeds-strip-title"><span>STORIES</span><small>REAL COMMUNITY CONTENT</small></div>
-        <div class="feeds-stories" id="stories" aria-label="Stories">
-          <button class="story-card create" id="createStory" type="button"><span class="story-plus">+</span><strong>Create Story</strong></button>
-        </div>
-      </section>
+  const svg = (label, tone) => {
+    const bg = tone || "#e8e2dc";
+    const safe = String(label || "TUBAL HUB").replace(/[<>&"]/g,"");
+    const xml =
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000">' +
+      '<rect width="800" height="1000" fill="' + bg + '"/>' +
+      '<rect x="72" y="76" width="656" height="848" fill="#fffbf2" stroke="#0e0e0c" stroke-width="2"/>' +
+      '<circle cx="400" cy="366" r="148" fill="#0e0e0c"/>' +
+      '<circle cx="400" cy="366" r="118" fill="#fffbf2"/>' +
+      '<path d="M330 430h140" stroke="#0e0e0c" stroke-width="3"/>' +
+      '<text x="400" y="145" text-anchor="middle" fill="#0e0e0c" font-size="23" font-family="Georgia,serif">' + safe + '</text>' +
+      '<text x="400" y="710" text-anchor="middle" fill="#0e0e0c" font-size="18" letter-spacing="4" font-family="Arial,sans-serif">TUBAL HUB</text>' +
+      '<text x="400" y="750" text-anchor="middle" fill="#8c958d" font-size="13" letter-spacing="2" font-family="Arial,sans-serif">QUIETLY CURATED</text>' +
+      '</svg>';
+    return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(xml);
+  };
 
-      <section class="feeds-panel create-post" aria-label="Create post">
-        <div class="create-top">
-          <div class="feed-avatar with-status" id="createAvatar">U<span class="avatar-status" aria-hidden="true"></span></div>
-          <button class="create-trigger" id="createPostTrigger" type="button">What's on your mind?</button>
-        </div>
-        <div class="create-actions">
-          <button class="create-action video" type="button" id="liveAction"><span class="action-live"></span>Live Video</button>
-          <button class="create-action" type="button" id="photoAction"><span class="action-glyph">⌑</span>Photo / Video</button>
-          <button class="create-action product" type="button" id="productAction"><span class="action-glyph">⌂</span>Product / Shop</button>
-        </div>
-      </section>
+  const fallbackFeeds = [
+    {id:"fallback-1",author:"TUBAL EDIT",avatar:"T",time:"2h ago",productName:"Stoneware Table Vessel",price:"₱1,280",stock:"In stock",image:svg("STONEWARE","#ddd6cc"),url:"../pages/shop.html"},
+    {id:"fallback-2",author:"ATELIER NORTH",avatar:"A",time:"4h ago",productName:"Everyday Canvas Tote",price:"₱890",stock:"Low stock",image:svg("CANVAS","#d4d0c7"),url:"../pages/shop.html"},
+    {id:"fallback-3",author:"OBJECT ROOM",avatar:"O",time:"6h ago",productName:"Brushed Steel Desk Set",price:"₱1,650",stock:"In stock",image:svg("DESK SET","#cecac1"),url:"../pages/shop.html"},
+    {id:"fallback-4",author:"TUBAL SELECT",avatar:"S",time:"8h ago",productName:"Soft Linen Overshirt",price:"₱1,920",stock:"In stock",image:svg("LINEN","#e0d9cd"),url:"../pages/shop.html"},
+    {id:"fallback-5",author:"FORM / HOME",avatar:"F",time:"11h ago",productName:"Minimal Ceramic Lamp",price:"₱2,240",stock:"Low stock",image:svg("LAMP","#d8d2c6"),url:"../pages/shop.html"},
+    {id:"fallback-6",author:"TUBAL MARKET",avatar:"M",time:"1d ago",productName:"Handbound Daily Notebook",price:"₱540",stock:"In stock",image:svg("NOTEBOOK","#e2ddd4"),url:"../pages/shop.html"}
+  ];
 
-      <div class="feed-toolbar">
-        <div class="feed-filter-row">
-          <button class="feed-filter active" data-filter="all" type="button">All</button>
-          <button class="feed-filter" data-filter="products" type="button">Shop Products</button>
-          <button class="feed-filter" data-filter="games" type="button">Games</button>
-          <button class="feed-filter" data-filter="videos" type="button">Videos</button>
-        </div>
-        <input class="feed-search" id="feedSearch" type="search" placeholder="Search your feed..." autocomplete="off">
-        <select class="feed-sort" id="feedSort" aria-label="Sort feed"><option value="latest">Latest</option><option value="popular">Popular</option></select>
-      </div>
+  function loadFeeds(){
+    try{
+      const raw = localStorage.getItem(FEED_KEY);
+      if(!raw) return fallbackFeeds;
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed : fallbackFeeds;
+    }catch(e){ return fallbackFeeds; }
+  }
 
-      <div id="feedList" aria-live="polite">
-        <div class="skeleton"></div><div class="skeleton"></div>
-      </div>
-      <div id="feedSentinel" class="feed-sentinel" aria-hidden="true"></div>
-    </section>
+  function saveFeeds(items){
+    localStorage.setItem(FEED_KEY, JSON.stringify(items.slice(0,100)));
+    window.dispatchEvent(new StorageEvent("storage",{key:FEED_KEY,newValue:JSON.stringify(items)}));
+  }
 
-    <aside class="feeds-rail right-rail">
-      <section class="feeds-panel sponsored-card">
-        <div class="feeds-side-title">Sponsored</div>
-        <div id="sponsoredBox"><div class="feed-side-meta">No sponsored product published.</div></div>
-      </section>
-      <section class="feeds-panel trending-card">
-        <div class="feeds-side-title">Trending Now</div>
-        <div id="trendingNow"><div class="feed-side-meta">No trending content yet.</div></div>
-      </section>
-      <section class="feeds-panel active-games-card">
-        <div class="feeds-side-title">Active in Games</div>
-        <div id="activeGames"><div class="feed-side-meta">No live game activity yet.</div></div>
-      </section>
-      <section class="feeds-panel suggested-card">
-        <div class="feeds-side-title">Suggested for you</div>
-        <div id="suggestedForYou"><div class="feed-side-meta">No member suggestions yet.</div></div>
-      </section>
-    </aside>
-  </div>
-</main>
+  function makeFeedFromScan(code){
+    const clean = String(code || "").trim();
+    return {
+      id:"scan-" + Date.now(),
+      author:"SCANNED ITEM",
+      avatar:"S",
+      time:"now",
+      productName:"Scanned item · " + clean,
+      price:"Price on request",
+      stock:"In stock",
+      image:svg("SCANNED ITEM","#dcd6ca"),
+      url:"../pages/shop.html?code=" + encodeURIComponent(clean),
+      scanCode:clean,
+      source:"scanner"
+    };
+  }
 
-<!-- SHARE -->
-<div class="share-backdrop" id="shareBackdrop" aria-hidden="true"></div>
-<section class="share-modal" id="shareModal" role="dialog" aria-modal="true" aria-labelledby="shareTitle">
-  <div class="share-grab"></div>
-  <div class="share-head"><div><small>SHARE CONTENT</small><h2 id="shareTitle">Share post</h2></div><button class="modal-x" id="closeShare" type="button" aria-label="Close share">×</button></div>
-  <div class="share-now-row">
-    <input id="shareNote" type="text" maxlength="300" placeholder="Add a message before you share…">
-    <button id="shareToHub" class="share-post-btn" type="button">Post</button>
-  </div>
-  <div class="share-grid" id="shareGrid">
-    <button class="share-tile facebook" data-share="facebook" type="button"><span class="share-icon">f</span><span class="share-label">Facebook</span></button>
-    <button class="share-tile messenger" data-share="messenger" type="button"><span class="share-icon">⌁</span><span class="share-label">Messenger</span></button>
-    <button class="share-tile whatsapp" data-share="whatsapp" type="button"><span class="share-icon">◔</span><span class="share-label">WhatsApp</span></button>
-    <button class="share-tile xshare" data-share="x" type="button"><span class="share-icon">X</span><span class="share-label">X / Twitter</span></button>
-    <button class="share-tile instagram" data-share="instagram" type="button"><span class="share-icon">◎</span><span class="share-label">Instagram</span></button>
-    <button class="share-tile copy" data-share="copy" type="button"><span class="share-icon">⌘</span><span class="share-label">Copy Link</span></button>
-    <button class="share-tile telegram" data-share="telegram" type="button"><span class="share-icon">➤</span><span class="share-label">Telegram</span></button>
-    <button class="share-tile email" data-share="email" type="button"><span class="share-icon">@</span><span class="share-label">Email</span></button>
-    <button class="share-tile discord" data-share="discord" type="button"><span class="share-icon">◈</span><span class="share-label">Discord</span></button>
-  </div>
-  <div class="share-link-row">
-    <div class="share-link-copy"><span>LINK</span><input id="shareUrl" readonly></div>
-    <button id="copyShare" class="gradient-btn" type="button">Copy</button>
-  </div>
-  <button id="nativeShare" class="native-share-btn" type="button">Use device share</button>
-</section>
+  function consumeScan(){
+    try{
+      const params = new URLSearchParams(window.location.search);
+      const encoded = params.get("tubalhub_scan");
+      if(!encoded) return null;
+      const raw = decodeURIComponent(encoded);
+      const item = makeFeedFromScan(raw);
+      const current = loadFeeds().filter(x => !String(x.id).startsWith("fallback-"));
+      const merged = [item,...current];
+      saveFeeds(merged);
+      const cleanUrl = window.location.pathname + window.location.hash;
+      window.history.replaceState({},document.title,cleanUrl);
+      return item;
+    }catch(e){ return null; }
+  }
 
-<!-- REACTION WHO -->
-<div class="glass-modal-layer" id="reactionWhoModal" role="dialog" aria-modal="true" aria-labelledby="reactionWhoTitle" hidden>
-  <section class="glass-modal">
-    <div class="share-head"><div><small>REACTIONS</small><h2 id="reactionWhoTitle">Who reacted</h2></div><button class="modal-x" type="button" data-close-modal="reactionWhoModal">×</button></div>
-    <div class="reaction-who-list" id="reactionWhoList"></div>
-  </section>
-</div>
+  window.TUBALHUB_FEED_BRIDGE = {
+    addScan:function(code){
+      const item = makeFeedFromScan(code);
+      const existing = loadFeeds().filter(x => !String(x.id).startsWith("fallback-"));
+      saveFeeds([item,...existing]);
+      window.dispatchEvent(new CustomEvent("tubalhub-feed-added",{detail:item}));
+      return item;
+    }
+  };
 
-<!-- CREATE POST -->
-<div class="glass-modal-layer" id="postModal" role="dialog" aria-modal="true" aria-labelledby="postTitle" hidden>
-  <form class="glass-modal feed-post-modal" id="postForm">
-    <div class="share-head"><div><small>PUBLISH</small><h2 id="postTitle">Create post</h2></div><button class="modal-x" id="cancelPostX" type="button">×</button></div>
-    <textarea id="postText" maxlength="2000" placeholder="Share something with the TUBAL HUB community…"></textarea>
-    <div class="upload-preview" id="postPreview" hidden></div>
-    <input id="postImageInput" type="file" accept="image/*,video/*" hidden>
-    <div class="modal-tools"><button type="button" class="tool-btn" id="postAttach">⌑ Photo / Video</button><span id="postFileName">No media attached</span></div>
-    <div class="feed-modal-actions"><button type="button" id="cancelPost">Cancel</button><button class="gradient-btn" id="publishPostBtn" type="submit">Publish</button></div>
-  </form>
-</div>
+  window.TUBALHUB_FEEDS = {loadFeeds,saveFeeds,makeFeedFromScan,consumeScan};
+})();
 
-<!-- COMMENTS -->
-<div class="glass-modal-layer" id="commentModal" role="dialog" aria-modal="true" aria-labelledby="commentTitle" hidden>
-  <section class="glass-modal comments-modal">
-    <div class="share-head"><div><small>COMMUNITY</small><h2 id="commentTitle">Comments</h2></div><button type="button" id="closeComments" class="modal-x" aria-label="Close comments">×</button></div>
-    <div class="comments-reaction-bar" id="commentReactionBar"></div>
-    <div class="comment-list" id="commentList"></div>
-    <div class="typing-indicator" id="typingIndicator" hidden><span></span><span></span><span></span><em>typing…</em></div>
-    <div class="comment-composer">
-      <div class="comment-avatar with-status" id="commentAvatar">U<span class="avatar-status" aria-hidden="true"></span></div>
-      <div class="comment-input-shell">
-        <input id="commentInput" maxlength="1000" placeholder="Write a comment…" autocomplete="off">
-        <div class="composer-tools">
-          <button type="button" class="mini-tool" id="emojiButton" title="Emoji">☺</button>
-          <button type="button" class="mini-tool" id="commentPhotoButton" title="Photo">⌑</button>
-          <button type="button" class="mini-tool" id="commentGifButton" title="GIF">GIF</button>
-          <button type="button" class="mini-tool" id="commentStickerButton" title="Sticker">✦</button>
-        </div>
-      </div>
-      <button class="send-comment-btn" id="sendComment" type="submit">➤</button>
-      <input id="commentPhotoInput" type="file" accept="image/*" hidden>
-    </div>
-    <div class="emoji-picker" id="emojiPicker" hidden>
-      <div class="emoji-head"><span>Emoji</span><input id="emojiSearch" type="search" placeholder="Search emoji…" autocomplete="off"></div>
-      <div class="emoji-grid" id="emojiGrid"></div>
-      <button class="emoji-more" id="emojiMore" type="button">Load more emoji</button>
-    </div>
-    <div class="comment-photo-preview" id="commentPhotoPreview" hidden></div>
-  </section>
-</div>
+const h = React.createElement;
 
-<!-- CONFIRM DELETE -->
-<div class="glass-modal-layer" id="deleteModal" role="dialog" aria-modal="true" aria-labelledby="deleteTitle" hidden>
-  <section class="glass-modal confirm-modal">
-    <small>COMMENT CONTROL</small><h2 id="deleteTitle">Delete comment?</h2><p>This removes the comment from your local feed and from Firebase when the remote rule allows it.</p>
-    <div class="confirm-actions"><button type="button" data-close-modal="deleteModal">Cancel</button><button type="button" class="danger-btn" id="confirmDelete">Delete</button></div>
-  </section>
-</div>
+function FeedApp(){
+  const bridge = window.TUBALHUB_FEEDS;
+  const [feeds,setFeeds] = React.useState(bridge.loadFeeds());
+  const [query,setQuery] = React.useState("");
+  const [scannerOpen,setScannerOpen] = React.useState(false);
+  const [activeStory,setActiveStory] = React.useState(0);
+  const [scanMessage,setScanMessage] = React.useState("Align a QR code or barcode inside the guide.");
 
-<div class="feed-notice" id="feedNotice" role="status" aria-live="polite"></div>
+  React.useEffect(()=>{
+    const incoming = bridge.consumeScan();
+    if(incoming) setFeeds(bridge.loadFeeds());
+    const onAdd = () => setFeeds(bridge.loadFeeds());
+    window.addEventListener("tubalhub-feed-added",onAdd);
+    return ()=>window.removeEventListener("tubalhub-feed-added",onAdd);
+  },[]);
 
-<script type="module" src="../assets/js/feeds.js?v=20260924-f7"></script>
-<script src="../assets/js/theme.js?v=20260922" defer></script>
-<script type="module" src="../assets/js/presence.js?v=20260923"></script>
+  const filtered = feeds.filter(item =>
+    String(item.productName || "").toLowerCase().includes(query.trim().toLowerCase())
+  );
+
+  function openScanner(){ setScanMessage("Align a QR code or barcode inside the guide."); setScannerOpen(true); }
+  function closeScanner(){ setScannerOpen(false); }
+
+  React.useEffect(()=>{
+    if(!scannerOpen) return;
+    let qr = null;
+    let stopped = false;
+    async function start(){
+      if(!window.Html5Qrcode){
+        setScanMessage("Scanner library is unavailable. Enter the code below.");
+        return;
+      }
+      qr = new Html5Qrcode("reader");
+      try{
+        await qr.start(
+          {facingMode:"environment"},
+          {
+            fps:10,
+            qrbox:{width:240,height:240},
+            aspectRatio:1.333333,
+            formatsToSupport:[
+              Html5QrcodeSupportedFormats.QR_CODE,
+              Html5QrcodeSupportedFormats.CODE_128,
+              Html5QrcodeSupportedFormats.CODE_39,
+              Html5QrcodeSupportedFormats.CODE_93,
+              Html5QrcodeSupportedFormats.EAN_13,
+              Html5QrcodeSupportedFormats.EAN_8,
+              Html5QrcodeSupportedFormats.UPC_A,
+              Html5QrcodeSupportedFormats.UPC_E
+            ]
+          },
+          decoded=>{
+            if(stopped) return;
+            stopped = true;
+            try{ qr.stop().catch(()=>{}); }catch(e){}
+            const item = window.TUBALHUB_FEED_BRIDGE.addScan(decoded);
+            setFeeds(window.TUBALHUB_FEEDS.loadFeeds());
+            setScanMessage("Added to feed: " + item.productName);
+            setTimeout(()=>setScannerOpen(false),650);
+          },
+          ()=>{}
+        );
+      }catch(err){
+        setScanMessage("Camera could not start. Check camera permission or enter the code below.");
+      }
+    }
+    start();
+    return ()=>{
+      stopped = true;
+      if(qr){ try{ qr.stop().then(()=>qr.clear()).catch(()=>{}); }catch(e){} }
+    };
+  },[scannerOpen]);
+
+  function manualScan(){
+    const input = document.getElementById("manualCode");
+    const value = input && input.value.trim();
+    if(!value) return;
+    const item = window.TUBALHUB_FEED_BRIDGE.addScan(value);
+    setFeeds(window.TUBALHUB_FEEDS.loadFeeds());
+    setScanMessage("Added to feed: " + item.productName);
+    setTimeout(()=>setScannerOpen(false),500);
+  }
+
+  function sell(){
+    window.location.href="../pages/shop.html";
+  }
+
+  return h("div",{className:"app"},
+    h("header",{className:"header"},
+      h("a",{className:"brand",href:"../index.html"},
+        h("span",{className:"brand-main"},"FEEDS / TUBAL HUB"),
+        h("span",{className:"brand-sub"},"Quiet community hub")
+      ),
+      h("div",{className:"header-actions"},
+        h("button",{className:"gold-btn",onClick:openScanner},"Scan"),
+        h("button",{className:"gold-btn",onClick:sell},"Sell")
+      )
+    ),
+    h("main",{className:"main"},
+      h("div",{className:"feed-wrap"},
+        h("section",{className:"intro"},
+          h("div",null,h("h1",null,"A quieter way to browse.")),
+          h("p",null,"Objects, stories and releases from the TUBAL HUB community. No engagement counters. No noise.")
+        ),
+        h("div",{className:"search-row"},
+          h("input",{className:"search",value:query,onChange:e=>setQuery(e.target.value),placeholder:"Search products offline",ariaLabel:"Search products"})
+        ),
+        h("div",{className:"stories",ariaLabel:"Stories"},
+          feeds.slice(0,10).map((item,i)=>
+            h("button",{key:item.id,className:"story "+(i===activeStory?"active":""),onClick:()=>setActiveStory(i),title:item.author},
+              String(item.avatar || item.author || "T").slice(0,2).toUpperCase()
+            )
+          )
+        ),
+        h("div",{className:"story-label"},activeStory < feeds.length ? String(feeds[activeStory].author || "TUBAL HUB") : "TUBAL HUB"),
+        filtered.length
+          ? filtered.map(item => h(FeedCard,{key:item.id,item:onNormalize(item)}))
+          : h("div",{className:"noise"},
+              "No noise today.",
+              h("small",null,query ? "Try another product name." : "The feed is quiet.")
+            ),
+        h("section",{className:"embed-box"},
+          h("h2",null,"Bring Scan to your shop."),
+          h("p",null,"Add the TUBAL HUB scanner to a shop site with one script. A scanned code is bridged into this feed and stored locally."),
+          h("textarea",{className:"embed-code",readOnly:true,value:'<script src="https://tubalrr.github.io/tubalhub/embed.js"></script>',onFocus:e=>e.target.select()}),
+          h("div",{className:"copy-wrap"},
+            h("button",{className:"gold-btn",onClick:async()=>{
+              try{
+                await navigator.clipboard.writeText('<script src="https://tubalrr.github.io/tubalhub/embed.js"></script>');
+                e.currentTarget.textContent="Copied";
+                setTimeout(()=>e.currentTarget.textContent="Copy code",1200);
+              }catch(err){}
+            }},"Copy code")
+          )
+        ),
+        h("div",{className:"footer-note"},"TUBAL HUB · Atelier Noir · local-first feed")
+      )
+    ),
+    h("button",{className:"scanner-fab",onClick:openScanner,ariaLabel:"Open scanner"},"Scan"),
+    h("div",{className:"modal-backdrop "+(scannerOpen?"open":""),onMouseDown:e=>{if(e.target===e.currentTarget)closeScanner()}},
+      h("section",{className:"modal",role:"dialog","aria-modal":"true","aria-labelledby":"scannerTitle"},
+        h("div",{className:"modal-head"},
+          h("h2",{className:"modal-title",id:"scannerTitle"},"Scan item"),
+          h("button",{className:"text-btn",onClick:closeScanner},"Close")
+        ),
+        h("div",{className:"scanner-body"},
+          h("div",{className:"scan-stage"},
+            h("div",{id:"reader"}),
+            h("div",{className:"scan-guide"})
+          ),
+          h("div",{className:"scan-copy"},scanMessage),
+          h("div",{className:"scan-manual"},
+            h("input",{id:"manualCode",placeholder:"Enter QR / barcode value"}),
+            h("button",{className:"gold-btn",onClick:manualScan},"Add")
+          )
+        )
+      )
+    )
+  );
+}
+
+function onNormalize(item){
+  return {
+    ...item,
+    author:item.author || "TUBAL HUB",
+    avatar:item.avatar || String(item.author || "T").slice(0,1).toUpperCase(),
+    time:item.time || "now",
+    productName:item.productName || item.name || "Untitled item",
+    price:item.price || item.amount || "Price on request",
+    stock:item.stock || "In stock",
+    image:item.image || item.media || window.TUBALHUB_FEEDS.makeFeedFromScan(item.id || "item").image,
+    url:item.url || item.link || "../pages/shop.html"
+  };
+}
+
+function FeedCard({item}){
+  const stock = String(item.stock || "").toLowerCase();
+  const sold = stock.includes("sold") || stock.includes("out");
+  const low = stock.includes("low") || stock.includes("few");
+  return h("article",{className:"card"},
+    h("div",{className:"card-head"},
+      h("div",{className:"avatar"},String(item.avatar).slice(0,2).toUpperCase()),
+      h("div",{className:"meta"},
+        h("span",{className:"name"},item.author),
+        h("span",{className:"time"},item.time)
+      )
+    ),
+    h("div",{className:"media"},h("img",{src:item.image,alt:item.productName,loading:"lazy"})),
+    h("div",{className:"card-foot"},
+      h("div",{className:"product-row"},
+        h("div",null,
+          h("h2",{className:"product-name"},item.productName),
+          h("div",{className:"price"},item.price)
+        ),
+        h("div",null,
+          h("div",{className:"stock"},
+            h("span",{className:"stock-dot "+(sold?"sold":low?"low":""),"aria-hidden":"true"}),
+            sold ? "Sold out" : low ? "Low stock" : "In stock"
+          ),
+          h("a",{className:"view",href:item.url || "../pages/shop.html"},"View")
+        )
+      )
+    )
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(h(FeedApp));
+</script>
 </body>
 </html>
