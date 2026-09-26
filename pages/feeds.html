@@ -581,7 +581,7 @@ function FeedApp(){
           h("p",null,"Objects, stories and releases from the TUBAL HUB community. No engagement counters. No noise.")
         ),
         h("div",{className:"search-row"},
-          h("input",{className:"search",value:query,onChange:e=>setQuery(e.target.value),placeholder:"Search products offline",ariaLabel:"Search products"})
+          h("input",{className:"search",value:query,onChange:e=>setQuery(e.target.value),placeholder:"Search products offline","aria-label":"Search products"})
         ),
         h("div",{className:"stories",ariaLabel:"Stories"},
           feeds.slice(0,10).map((item,i)=>
@@ -602,7 +602,7 @@ function FeedApp(){
           h("p",null,"Add the TUBAL HUB scanner to a shop site with one script. A scanned code is bridged into this feed and stored locally."),
           h("textarea",{className:"embed-code",readOnly:true,value:'<script src="https://tubalrr.github.io/tubalhub/embed.js"></script>',onFocus:e=>e.target.select()}),
           h("div",{className:"copy-wrap"},
-            h("button",{className:"gold-btn",onClick:async()=>{
+            h("button",{className:"gold-btn",onClick:async(e)=>{
               try{
                 await navigator.clipboard.writeText('<script src="https://tubalrr.github.io/tubalhub/embed.js"></script>');
                 e.currentTarget.textContent="Copied";
