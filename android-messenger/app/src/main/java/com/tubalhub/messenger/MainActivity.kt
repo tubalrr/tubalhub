@@ -1751,20 +1751,20 @@ class MainActivity : AppCompatActivity() {
                 .setItems(actions.toTypedArray()) { _, which ->
                     when (actions[which]) {
                         "Group info" -> AlertDialog.Builder(this).setTitle(name)
-                            .setMessage(if (description.isBlank()) "No description set.
-
-Invite:
-" + inviteLink else description + "
-
-Invite:
-" + inviteLink)
+                            .setMessage(
+                                if (description.isBlank()) {
+                                    "No description set.\n\nInvite:\n$inviteLink"
+                                } else {
+                                    "$description\n\nInvite:\n$inviteLink"
+                                }
+                            )
                             .setPositiveButton("OK", null).show()
                         "Copy invite link" -> {
                             val clipboard = getSystemService(CLIPBOARD_SERVICE) as android.content.ClipboardManager
                             clipboard.setPrimaryClip(android.content.ClipData.newPlainText("TUBAL HUB group invite", inviteLink))
                             toast("Invite link copied.")
                         }
-                        "Share invite link" -> shareText("Join my TUBAL HUB group "" + name + "": " + inviteLink)
+                        "Share invite link" -> shareText("Join my TUBAL HUB group \"$name\": $inviteLink")
                         "Rename group" -> promptGroupTextEdit(groupId, "Rename group", name, 80, "name")
                         "Edit description" -> promptGroupTextEdit(groupId, "Edit description", description, 240, "description")
                         "Add members" -> showAddGroupMembersDialog(groupId, memberIds)
