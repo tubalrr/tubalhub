@@ -1,5 +1,4 @@
 name: Build and Publish TUBAL HUB Messenger APK
-# Auto-release trigger for Messenger self-updates
 
 on:
   workflow_dispatch:
@@ -17,14 +16,14 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: android-messenger
     env:
       MESSENGER_KEYSTORE_BASE64: ${{ secrets.MESSENGER_KEYSTORE_BASE64 }}
       MESSENGER_STORE_PASSWORD: ${{ secrets.MESSENGER_KEYSTORE_PASSWORD }}
       MESSENGER_KEY_ALIAS: ${{ secrets.MESSENGER_KEY_ALIAS }}
       MESSENGER_KEY_PASSWORD: ${{ secrets.MESSENGER_KEY_PASSWORD }}
-    defaults:
-      run:
-        working-directory: android-messenger
 
     steps:
       - name: Checkout
@@ -41,27 +40,40 @@ jobs:
         with:
           gradle-version: '8.10'
 
-      - name: Prepare signing key
-        if: ${{ env.MESSENGER_KEYSTORE_BASE64 != '' }}
+      - name: Validate signing configuration
+        shell: bash
         run: |
+          set -euo pipefail
+          test -n "$MESSENGER_KEYSTORE_BASE64" || { echo "::error::MESSENGER_KEYSTORE_BASE64 is missing."; exit 1; }
+          test -n "$MESSENGER_STORE_PASSWORD" || { echo "::error::MESSENGER_KEYSTORE_PASSWORD is missing."; exit 1; }
+          test -n "$MESSENGER_KEY_ALIAS" || { echo "::error::MESSENGER_KEY_ALIAS is missing."; exit 1; }
+          test -n "$MESSENGER_KEY_PASSWORD" || { echo "::error::MESSENGER_KEY_PASSWORD is missing."; exit 1; }
+
+      - name: Restore stable signing key
+        shell: bash
+        run: |
+          set -euo pipefail
           printf '%s' "$MESSENGER_KEYSTORE_BASE64" | base64 --decode > messenger-release.jks
+          test -s messenger-release.jks || { echo "::error::Signing keystore is empty."; exit 1; }
 
       - name: Build signed release APK
-        if: ${{ env.MESSENGER_KEYSTORE_BASE64 != '' }}
+        shell: bash
         run: |
-          gradle assembleRelease --no-daemon             -PMESSENGER_STORE_FILE=messenger-release.jks             -PMESSENGER_STORE_PASSWORD="$MESSENGER_STORE_PASSWORD"             -PMESSENGER_KEY_ALIAS="$MESSENGER_KEY_ALIAS"             -PMESSENGER_KEY_PASSWORD="$MESSENGER_KEY_PASSWORD"
+          set -euo pipefail
+          gradle assembleRelease --no-daemon \
+            -PMESSENGER_STORE_FILE=messenger-release.jks \
+            -PMESSENGER_STORE_PASSWORD="$MESSENGER_STORE_PASSWORD" \
+            -PMESSENGER_KEY_ALIAS="$MESSENGER_KEY_ALIAS" \
+            -PMESSENGER_KEY_PASSWORD="$MESSENGER_KEY_PASSWORD"
 
-      - name: Require stable signing key
-        if: ${{ env.MESSENGER_KEYSTORE_BASE64 == '' }}
+      - name: Verify release APK
+        shell: bash
         run: |
-          echo "::error::Stable Messenger signing key is not configured."
-          echo "Set the four Messenger signing secrets before publishing an APK."
-          exit 1
-
-      - name: Prepare release APK
-        run: |
+          set -euo pipefail
+          APK="app/build/outputs/apk/release/TUBAL-HUB-Messenger-release.apk"
+          test -s "$APK" || { echo "::error::Release APK was not created."; exit 1; }
           mkdir -p release
-          cp app/build/outputs/apk/release/TUBAL-HUB-Messenger-release.apk release/TUBAL-HUB-Messenger-release.apk
+          cp "$APK" release/TUBAL-HUB-Messenger-release.apk
           sha256sum release/TUBAL-HUB-Messenger-release.apk > release/TUBAL-HUB-Messenger-release.apk.sha256
 
       - name: Upload workflow artifact
@@ -81,8 +93,8 @@ jobs:
           body: |
             TUBAL HUB Messenger v1.2.20
 
-            The APK is published for the TUBAL HUB Messenger in-app self-update system.
-            For unattended future updates, keep the same Android signing key in the repository secrets.
+            Redesigned Android login with Google Account sign-in.
+            Improved self-update handling and release verification.
           files: |
             android-messenger/release/TUBAL-HUB-Messenger-release.apk
             android-messenger/release/TUBAL-HUB-Messenger-release.apk.sha256
