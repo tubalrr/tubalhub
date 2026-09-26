@@ -1,4 +1,5 @@
 name: Build and Publish TUBAL HUB Messenger APK
+# Auto-release trigger for Messenger self-updates
 
 on:
   workflow_dispatch:
