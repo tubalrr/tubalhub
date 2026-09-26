@@ -1239,6 +1239,20 @@ exports.setPrivateTypingReal = onCall(async request => {
   return { success: true };
 });
 
+exports.getMessengerMembersReal = onCall(async request => {
+  requireRealUser(request);
+  const snap = await db.collection("users").limit(100).get();
+  const members = snap.docs.map(doc => {
+    const d = doc.data() || {};
+    return {
+      uid: doc.id,
+      displayName: String(d.displayName || d.name || "Member").slice(0,120),
+      photoURL: String(d.photoURL || "").slice(0,1000)
+    };
+  }).filter(x => x.uid);
+  return { success: true, members };
+});
+
 exports.sendPrivateMessageReal = onCall(async request => {
   requireRealUser(request);
 
