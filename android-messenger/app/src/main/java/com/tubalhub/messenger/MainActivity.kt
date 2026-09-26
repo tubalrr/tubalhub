@@ -98,8 +98,23 @@ class MainActivity : AppCompatActivity() {
                 val latestVersionCode = json.optInt("versionCode", BuildConfig.VERSION_CODE)
                 val latestVersionName = json.optString("versionName", BuildConfig.VERSION_NAME)
                 val apkUrl = json.optString("apkUrl", "")
-                val notes = json.optString("notes", "New TUBAL HUB Messenger update is available.")
+                val notes = if (json.opt("notes") is org.json.JSONArray) {
+                    val array = json.optJSONArray("notes")
+                    buildString {
+                        for (i in 0 until (array?.length() ?: 0)) {
+                            val item = array?.optString(i)?.trim().orEmpty()
+                            if (item.isNotBlank()) append("• ").append(item).append("\n")
+                        }
+                    }.trim()
+                } else {
+                    json.optString("notes", "New TUBAL HUB Messenger update is available.")
+                }
                 if (latestVersionCode > BuildConfig.VERSION_CODE && apkUrl.isNotBlank()) {
+                    val releaseReady = isReleaseApkReady(apkUrl, latestVersionName)
+                    if (!releaseReady) {
+                        Log.d("TUBAL_HUB_UPDATE", "Manifest is newer, but its GitHub Release APK is not published yet.")
+                        return@Thread
+                    }
                     val prefs = getSharedPreferences("tubalhub_update", MODE_PRIVATE)
                     val alreadyShown = prefs.getInt("prompted_version_code", -1) == latestVersionCode
                     if (!alreadyShown) {
@@ -111,6 +126,24 @@ class MainActivity : AppCompatActivity() {
                 Log.d("TUBAL_HUB_UPDATE", "Self-update check skipped", e)
             }
         }.start()
+    }
+
+    private fun isReleaseApkReady(apkUrl: String, versionName: String): Boolean {
+        return try {
+            val connection = URL(apkUrl).openConnection() as HttpURLConnection
+            connection.connectTimeout = 8000
+            connection.readTimeout = 8000
+            connection.instanceFollowRedirects = false
+            connection.requestMethod = "HEAD"
+            connection.connect()
+            val location = connection.getHeaderField("Location").orEmpty()
+            connection.disconnect()
+            val expectedTag = "v" + versionName
+            connection.responseCode in 300..399 && location.contains("/releases/download/$expectedTag/")
+        } catch (e: Exception) {
+            Log.d("TUBAL_HUB_UPDATE", "Release readiness check failed", e)
+            false
+        }
     }
 
     private fun showSelfUpdateDialog(versionName: String, apkUrl: String, notes: String) {
