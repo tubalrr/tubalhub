@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="../assets/css/platform-pages.css">
 <link rel="stylesheet" href="../assets/css/global-theme.css?v=20260922">
 <link rel="stylesheet" href="../assets/css/premium-logos.css?v=20260924-logo1">
-<link rel="stylesheet" href="../assets/css/feeds.css?v=20260926-future3">
+<link rel="stylesheet" href="../assets/css/feeds.css?v=20260926-upgrade1">
 </head>
 <body class="feeds-page theme-midnight">
 <header class="feeds-header">
@@ -60,6 +60,14 @@
         </div>
       </section>
 
+      <section class="feed-featured" aria-label="Featured Collection">
+        <div class="feed-featured-head">
+          <div><span class="feed-eyebrow">CURATED</span><h2>Featured Collection</h2></div>
+          <button type="button" class="feed-mini-link" id="featuredViewAll">View all</button>
+        </div>
+        <div class="feed-featured-track" id="featuredCollection"></div>
+      </section>
+
       <div class="feed-toolbar">
         <div class="feed-filter-row">
           <button class="feed-filter active" data-filter="all" type="button">All</button>
@@ -93,6 +101,10 @@
       <section class="feeds-panel suggested-card">
         <div class="feeds-side-title">Suggested for you</div>
         <div id="suggestedForYou"><div class="feed-side-meta">No member suggestions yet.</div></div>
+      </section>
+      <section class="feeds-panel recently-viewed-card">
+        <div class="feeds-side-title">Recently viewed</div>
+        <div id="recentlyViewed"><div class="feed-side-meta">Nothing viewed yet.</div></div>
       </section>
     </aside>
   </div>
@@ -182,6 +194,25 @@
     <div class="confirm-actions"><button type="button" data-close-modal="deleteModal">Cancel</button><button type="button" class="danger-btn" id="confirmDelete">Delete</button></div>
   </section>
 </div>
+
+<div class="feed-quick-backdrop" id="feedQuickBackdrop" hidden>
+  <section class="feed-quick-modal" role="dialog" aria-modal="true" aria-labelledby="feedQuickTitle">
+    <button type="button" class="feed-quick-close" id="feedQuickClose" aria-label="Close quick view">Close</button>
+    <div class="feed-quick-media" id="feedQuickMedia"></div>
+    <div class="feed-quick-copy">
+      <div class="feed-quick-meta" id="feedQuickMeta"></div>
+      <h2 id="feedQuickTitle"></h2>
+      <div class="feed-quick-price" id="feedQuickPrice"></div>
+      <div class="feed-quick-stock" id="feedQuickStock"></div>
+      <p id="feedQuickDescription"></p>
+      <div class="feed-quick-actions">
+        <button type="button" class="gradient-btn" id="feedQuickOpen">Open in Shop</button>
+        <button type="button" class="feed-quick-save" id="feedQuickSave">Save</button>
+      </div>
+    </div>
+  </section>
+</div>
+
 
 <div class="feed-notice" id="feedNotice" role="status" aria-live="polite"></div>
 
