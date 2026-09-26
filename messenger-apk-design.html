@@ -112,7 +112,7 @@ import {
 
 const db = getFirestore(app);
 
-const messengerLoginUrl = new URL("./pages/login.html", window.location.href);
+const messengerLoginUrl = new URL("/tubalhub/pages/login.html", window.location.origin);
 messengerLoginUrl.searchParams.set("returnTo", "./messenger-apk-design.html");
 
 const messengerAuthGate = document.createElement("div");
