@@ -73,6 +73,8 @@ class MainActivity : AppCompatActivity() {
     private var groupListView: LinearLayout? = null
     private var groupAdminButton: Button? = null
     private var chatTitleView: TextView? = null
+    private var selectedGlobalChat = false
+    private var stopGlobalMessages: com.google.firebase.firestore.ListenerRegistration? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -843,11 +845,16 @@ class MainActivity : AppCompatActivity() {
             background = rounded(0xFF0A1D18.toInt(), 22f)
             setPadding(6, 6, 6, 6)
         }
-        listOf("CHATS", "MEMBERS", "CALLS", "MORE").forEachIndexed { index, label ->
+        listOf("GLOBAL", "LIVE NOW", "CHATS", "MORE").forEachIndexed { index, label ->
             val b = button(label).apply {
-                textSize = 12f
+                textSize = 11.5f
                 setTextColor(if (index == 0) 0xFF03100D.toInt() else 0xFFB8C9C2.toInt())
                 background = rounded(if (index == 0) 0xFF19D98B.toInt() else 0x00172A25, 16f)
+            }
+            when (label) {
+                "GLOBAL" -> b.setOnClickListener { openGlobalChat() }
+                "LIVE NOW" -> b.setOnClickListener { showLiveNowDialog() }
+                "CHATS" -> b.setOnClickListener { toast("Select a member below for a private chat.") }
             }
             tabs.addView(b, LinearLayout.LayoutParams(0, 48, 1f))
         }
@@ -898,6 +905,72 @@ class MainActivity : AppCompatActivity() {
         )
 
 
+
+        val globalTitle = text("TUBAL HUB GLOBAL").apply {
+            textSize = 19f
+            typeface = Typeface.DEFAULT_BOLD
+            setTextColor(0xFFF0FFF8.toInt())
+            setPadding(4, 18, 4, 10)
+        }
+        page.addView(globalTitle)
+
+        val globalCard = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(16, 16, 16, 16)
+            background = GradientDrawable(
+                GradientDrawable.Orientation.TL_BR,
+                intArrayOf(0xFF0E2D22.toInt(), 0xFF081713.toInt())
+            ).apply {
+                cornerRadius = 24f
+                setStroke(1, 0x337DFFB4)
+            }
+        }
+
+        val globalHeader = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+        }
+        val liveDot = TextView(this).apply {
+            text = "●"
+            textSize = 17f
+            gravity = Gravity.CENTER
+            setTextColor(0xFF39FF88.toInt())
+            val pulse = AlphaAnimation(0.35f, 1f).apply {
+                duration = 850L
+                repeatMode = AlphaAnimation.REVERSE
+                repeatCount = AlphaAnimation.INFINITE
+            }
+            startAnimation(pulse)
+        }
+        globalHeader.addView(liveDot, LinearLayout.LayoutParams(28, 34))
+        globalHeader.addView(LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            addView(text("Global Chat").apply {
+                textSize = 16f
+                typeface = Typeface.DEFAULT_BOLD
+                setTextColor(0xFFF0FFF8.toInt())
+            })
+            addView(text("Everyone in TUBAL HUB • real-time Firestore room").apply {
+                textSize = 11f
+                setTextColor(0xFF78948A.toInt())
+            })
+        }, LinearLayout.LayoutParams(0, -2, 1f))
+        val openGlobal = button("OPEN").apply {
+            textSize = 11f
+            background = rounded(0xFF19D98B.toInt(), 15f)
+            setTextColor(0xFF03100D.toInt())
+            typeface = Typeface.DEFAULT_BOLD
+        }
+        openGlobal.setOnClickListener { openGlobalChat() }
+        globalHeader.addView(openGlobal, LinearLayout.LayoutParams(-2, 44))
+        globalCard.addView(globalHeader)
+        globalCard.addView(text("One shared room for all authenticated members. @mentions are highlighted.").apply {
+            textSize = 11.5f
+            setTextColor(0xFF91AAA0.toInt())
+            setPadding(28, 10, 0, 0)
+        })
+        page.addView(globalCard, LinearLayout.LayoutParams(-1, -2))
+        
         val groupsTitle = text("Groups").apply {
             textSize = 19f
             typeface = Typeface.DEFAULT_BOLD
@@ -945,7 +1018,7 @@ class MainActivity : AppCompatActivity() {
         joinGroup.setOnClickListener { showJoinGroupDialog() }
         loadGroups(groupList, me.uid)
 
-        val usersTitle = text("Members").apply {
+        val usersTitle = text("Live Now • 0").apply {
             textSize = 19f
             typeface = Typeface.DEFAULT_BOLD
             setTextColor(0xFFF0FFF8.toInt())
@@ -963,25 +1036,63 @@ class MainActivity : AppCompatActivity() {
         // Use the public-safe presence directory instead of private users/.
         // Firestore rules intentionally allow members to read presence but not
         // other users' private profile documents.
-        db.collection("presence").get().addOnSuccessListener { snap ->
-            users.removeAllViews()
-            snap.documents.forEach { doc ->
-                if (doc.id == me.uid) return@forEach
-                val name = doc.getString("displayName") ?: "Member"
-                val row = button("●   " + name).apply {
-                    gravity = Gravity.CENTER_VERTICAL
-                    setTextColor(0xFFEAF7F0.toInt())
-                    background = rounded(0xFF10241F.toInt(), 18f)
-                    setPadding(18, 0, 18, 0)
+        db.collection("presence")
+            .addSnapshotListener { snap, error ->
+                if (error != null || snap == null) {
+                    usersTitle.text = "Live Now"
+                    users.removeAllViews()
+                    users.addView(text("Could not load live members."))
+                    return@addSnapshotListener
                 }
-                row.setOnClickListener { openChat(doc.id, name) }
-                users.addView(row, LinearLayout.LayoutParams(-1, 54).apply { bottomMargin = 8 })
+                val onlineDocs = snap.documents.filter { it.getBoolean("online") == true }
+                    .sortedBy { it.getString("displayName")?.lowercase().orEmpty() }
+                usersTitle.text = "Live Now • " + onlineDocs.size
+                users.removeAllViews()
+                onlineDocs.forEach { doc ->
+                    val name = doc.getString("displayName")?.trim().orEmpty().ifBlank { "Member" }
+                    val username = doc.getString("username")?.trim().orEmpty().ifBlank {
+                        usernameForMember(name, doc.getString("email"))
+                    }
+                    val row = LinearLayout(this).apply {
+                        orientation = LinearLayout.HORIZONTAL
+                        gravity = Gravity.CENTER_VERTICAL
+                        setPadding(14, 8, 14, 8)
+                        background = rounded(0xFF10241F.toInt(), 18f)
+                    }
+                    val dot = TextView(this).apply {
+                        text = "●"
+                        textSize = 15f
+                        gravity = Gravity.CENTER
+                        setTextColor(0xFF39FF88.toInt())
+                        val pulse = AlphaAnimation(0.35f, 1f).apply {
+                            duration = 900L
+                            repeatMode = AlphaAnimation.REVERSE
+                            repeatCount = AlphaAnimation.INFINITE
+                        }
+                        startAnimation(pulse)
+                    }
+                    row.addView(dot, LinearLayout.LayoutParams(28, 46))
+                    val info = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+                    info.addView(text(name).apply {
+                        textSize = 13.5f
+                        typeface = Typeface.DEFAULT_BOLD
+                        setTextColor(0xFFEAF7F0.toInt())
+                    })
+                    info.addView(text("@$username • online now").apply {
+                        textSize = 10.5f
+                        setTextColor(0xFF6FCC9C.toInt())
+                    })
+                    row.addView(info, LinearLayout.LayoutParams(0, -2, 1f))
+                    if (doc.id != me.uid) row.setOnClickListener { openChat(doc.id, name) }
+                    users.addView(row, LinearLayout.LayoutParams(-1, 62).apply { bottomMargin = 8 })
+                }
+                if (onlineDocs.isEmpty()) {
+                    users.addView(text("No members are online right now.").apply {
+                        textSize = 12f
+                        setTextColor(0xFF6F8B80.toInt())
+                    })
+                }
             }
-            if (users.childCount == 0) users.addView(text("No other members found yet."))
-        }.addOnFailureListener {
-            users.removeAllViews()
-            users.addView(text("Could not load the Messenger directory."))
-        }
 
         val chatHeader = LinearLayout(this).apply {
             gravity = Gravity.CENTER_VERTICAL
@@ -1782,6 +1893,8 @@ Invite:
     }
 
     private fun openGroupChat(groupId: String, name: String) {
+        selectedGlobalChat = false
+        stopGlobalMessages?.remove()
         selectedUid = null
         selectedName = "Group"
         selectedGroupId = groupId
@@ -1872,7 +1985,199 @@ Invite:
         }.addOnFailureListener { e -> toast(e.localizedMessage ?: "Group message failed.") }
     }
 
+    private fun showLiveNowDialog() {
+        val me = auth.currentUser ?: return showLogin()
+        val list = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(8, 4, 8, 4)
+        }
+        val countLabel = text("Loading online members…").apply {
+            textSize = 12f
+            setTextColor(0xFF6F8B80.toInt())
+            setPadding(4, 0, 4, 10)
+        }
+        list.addView(countLabel)
+        val scroll = ScrollView(this).apply { isVerticalScrollBarEnabled = false }
+        val members = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+        scroll.addView(members)
+        list.addView(scroll, LinearLayout.LayoutParams(-1, 330))
+        val dialog = AlertDialog.Builder(this)
+            .setTitle("LIVE NOW")
+            .setView(list)
+            .setPositiveButton("Done", null)
+            .create()
+        val registration = db.collection("presence").addSnapshotListener { snap, error ->
+            if (error != null || snap == null) {
+                countLabel.text = "Live status unavailable."
+                return@addSnapshotListener
+            }
+            val online = snap.documents.filter { it.getBoolean("online") == true }
+                .sortedBy { it.getString("displayName")?.lowercase().orEmpty() }
+            countLabel.text = online.size.toString() + " members online now"
+            members.removeAllViews()
+            online.forEach { doc ->
+                val name = doc.getString("displayName")?.trim().orEmpty().ifBlank { "Member" }
+                val username = doc.getString("username")?.trim().orEmpty().ifBlank {
+                    usernameForMember(name, doc.getString("email"))
+                }
+                val row = LinearLayout(this).apply {
+                    orientation = LinearLayout.HORIZONTAL
+                    gravity = Gravity.CENTER_VERTICAL
+                    setPadding(12, 8, 12, 8)
+                    background = rounded(0xFF10241F.toInt(), 16f)
+                }
+                row.addView(TextView(this).apply {
+                    text = "●"
+                    textSize = 14f
+                    gravity = Gravity.CENTER
+                    setTextColor(0xFF39FF88.toInt())
+                    val pulse = AlphaAnimation(0.3f, 1f).apply {
+                        duration = 900L
+                        repeatMode = AlphaAnimation.REVERSE
+                        repeatCount = AlphaAnimation.INFINITE
+                    }
+                    startAnimation(pulse)
+                }, LinearLayout.LayoutParams(28, 44))
+                row.addView(text(name).apply {
+                    textSize = 13.5f
+                    typeface = Typeface.DEFAULT_BOLD
+                    setTextColor(0xFFEAF7F0.toInt())
+                }, LinearLayout.LayoutParams(0, -2, 1f))
+                row.addView(text(if (doc.id == me.uid) "You" else "@" + username).apply {
+                    textSize = 10.5f
+                    setTextColor(0xFF6FCC9C.toInt())
+                })
+                if (doc.id != me.uid) row.setOnClickListener { dialog.dismiss(); openChat(doc.id, name) }
+                members.addView(row, LinearLayout.LayoutParams(-1, 58).apply { bottomMargin = 7 })
+            }
+            if (online.isEmpty()) {
+                members.addView(text("No one is online right now.").apply {
+                    textSize = 12f
+                    setTextColor(0xFF6F8B80.toInt())
+                    setPadding(4, 8, 4, 8)
+                })
+            }
+        }
+        dialog.setOnDismissListener { registration.remove() }
+        dialog.show()
+    }
+
+    private fun openGlobalChat() {
+        selectedGlobalChat = true
+        selectedGroupId = null
+        selectedGroupName = "Group"
+        selectedUid = null
+        stopMessages?.remove()
+        stopGroupMessages?.remove()
+        stopTyping?.remove()
+        stopGlobalMessages?.remove()
+        videoCallButton?.visibility = View.GONE
+        videoCallButton?.isEnabled = false
+        groupAdminButton?.visibility = View.GONE
+        chatTitleView?.text = "GLOBAL • TUBAL HUB"
+        messageInput?.hint = "Message everyone…"
+        messageBox?.removeAllViews()
+        messageBox?.addView(text("Connecting to Global Chat…").apply {
+            setTextColor(0xFF78948A.toInt())
+        })
+        subscribeGlobalMessages()
+    }
+
+    private fun subscribeGlobalMessages() {
+        stopGlobalMessages?.remove()
+        if (!selectedGlobalChat) return
+        stopGlobalMessages = db.collection("globalChats")
+            .whereEqualTo("channel", "global-chat")
+            .limit(200)
+            .addSnapshotListener { snap, error ->
+                if (error != null || snap == null) {
+                    messageBox?.removeAllViews()
+                    messageBox?.addView(text("Could not load Global Chat. Check your connection."))
+                    return@addSnapshotListener
+                }
+                renderGlobalMessages(snap.documents.sortedBy {
+                    it.getTimestamp("createdAt")?.toDate()?.time ?: 0L
+                })
+            }
+    }
+
+    private fun renderGlobalMessages(items: List<com.google.firebase.firestore.DocumentSnapshot>) {
+        val meUid = auth.currentUser?.uid ?: return
+        messageBox?.removeAllViews()
+        if (items.isEmpty()) {
+            messageBox?.addView(text("No global messages yet. Be the first to say hello.").apply {
+                setTextColor(0xFF78948A.toInt())
+            })
+            return
+        }
+        items.forEach { doc ->
+            val uid = doc.getString("uid").orEmpty()
+            val sender = doc.getString("displayName")?.trim().orEmpty().ifBlank { "Member" }
+            val username = doc.getString("username")?.trim().orEmpty().ifBlank {
+                usernameForMember(sender, doc.getString("email"))
+            }
+            val body = doc.getString("text").orEmpty()
+            val card = LinearLayout(this).apply {
+                orientation = LinearLayout.VERTICAL
+                setPadding(12, 10, 12, 10)
+                background = rounded(if (uid == meUid) 0xFF123A2B.toInt() else 0xFF0C1F19.toInt(), 18f)
+            }
+            card.addView(text(if (uid == meUid) "You • @" + username else sender + " • @" + username).apply {
+                textSize = 10f
+                typeface = Typeface.DEFAULT_BOLD
+                setTextColor(if (uid == meUid) 0xFF7DFFB4.toInt() else 0xFF9CB7AC.toInt())
+                setPadding(0, 0, 0, 5)
+            })
+            card.addView(TextView(this).apply {
+                textSize = 15f
+                setTextColor(0xFFEAF7F0.toInt())
+                text = highlightedMentions(body)
+            })
+            val created = doc.getTimestamp("createdAt")?.toDate()?.time ?: 0L
+            card.addView(text(if (created > 0L) android.text.format.DateFormat.format(
+                "hh:mm a", java.util.Date(created)
+            ).toString() else "").apply {
+                textSize = 9f
+                setTextColor(0xFF719085.toInt())
+                setPadding(0, 7, 0, 0)
+            })
+            messageBox?.addView(card, LinearLayout.LayoutParams(-1, -2).apply { bottomMargin = 8 })
+        }
+    }
+
+    private fun sendGlobalMessage() {
+        val me = auth.currentUser ?: return
+        val body = messageInput?.text?.toString()?.trim().orEmpty()
+        if (body.isEmpty()) return
+        if (body.length > 500) return toast("Message is limited to 500 characters.")
+        val name = me.displayName ?: me.email?.substringBefore("@") ?: "Member"
+        val username = usernameForMember(name, me.email)
+        val mentions = Regex("@[A-Za-z0-9_]{1,30}").findAll(body)
+            .map { it.value.removePrefix("@") }.distinct().take(20).toList()
+        db.collection("globalChats").add(mapOf(
+            "uid" to me.uid,
+            "senderId" to me.uid,
+            "displayName" to name,
+            "username" to username,
+            "email" to (me.email ?: ""),
+            "channel" to "global-chat",
+            "type" to "text",
+            "text" to body,
+            "mentions" to mentions,
+            "createdAt" to com.google.firebase.firestore.FieldValue.serverTimestamp()
+        )).addOnSuccessListener {
+            messageInput?.setText("")
+            messageInput?.hint = "Message everyone…"
+        }.addOnFailureListener { e ->
+            toast(e.localizedMessage ?: "Global message failed.")
+        }
+    }
+
     private fun sendMessage() {
+        if (selectedGlobalChat) {
+            sendGlobalMessage()
+            return
+        }
         if (selectedGroupId != null) {
             sendGroupMessage()
             return
