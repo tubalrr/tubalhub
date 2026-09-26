@@ -70,7 +70,7 @@ jobs:
       - name: Upload workflow artifact
         uses: actions/upload-artifact@v4
         with:
-          name: TUBAL-HUB-Messenger-v1.2.19
+          name: TUBAL-HUB-Messenger-v1.2.20
           path: |
             android-messenger/release/TUBAL-HUB-Messenger-release.apk
             android-messenger/release/TUBAL-HUB-Messenger-release.apk.sha256
@@ -79,10 +79,10 @@ jobs:
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.2.19
-          name: TUBAL HUB Messenger v1.2.19
+          tag_name: v1.2.20
+          name: TUBAL HUB Messenger v1.2.20
           body: |
-            TUBAL HUB Messenger v1.2.19
+            TUBAL HUB Messenger v1.2.20
 
             The APK is published for the TUBAL HUB Messenger in-app self-update system.
             For unattended future updates, keep the same Android signing key in the repository secrets.
