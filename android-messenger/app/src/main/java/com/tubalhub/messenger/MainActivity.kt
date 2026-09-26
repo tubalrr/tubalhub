@@ -226,9 +226,32 @@ class MainActivity : AppCompatActivity() {
             setPadding(0, 14, 0, 8)
         }
 
-        val google = button("Continue with Google").apply {
-            background = rounded(0xFF111522.toInt(), 10f)
-            setTextColor(0xFFFFFFFF.toInt())
+        val googleAccountCard = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(16, 14, 16, 14)
+            background = rounded(0xFF111922.toInt(), 16f)
+        }
+        googleAccountCard.addView(text("GOOGLE ACCOUNT").apply {
+            textSize = 11f
+            typeface = Typeface.DEFAULT_BOLD
+            setTextColor(0xFF8FA59B.toInt())
+            setPadding(0, 0, 0, 4)
+        })
+        googleAccountCard.addView(text("Continue with your Google account").apply {
+            textSize = 15f
+            typeface = Typeface.DEFAULT_BOLD
+            setTextColor(0xFFF4FFF9.toInt())
+            setPadding(0, 0, 0, 3)
+        })
+        googleAccountCard.addView(text("Choose an account securely with Google").apply {
+            textSize = 12f
+            setTextColor(0xFFAABBB3.toInt())
+            setPadding(0, 0, 0, 8)
+        })
+        val google = button("G   Continue with Google Account").apply {
+            background = rounded(0xFFFFFFFF.toInt(), 12f)
+            setTextColor(0xFF202124.toInt())
+            typeface = Typeface.DEFAULT_BOLD
         }
         val guest = button("Continue as Guest").apply {
             background = rounded(0xFF101713.toInt(), 10f)
@@ -276,7 +299,8 @@ class MainActivity : AppCompatActivity() {
         card.addView(password, LinearLayout.LayoutParams(-1, 52))
         card.addView(login, LinearLayout.LayoutParams(-1, 52).apply { topMargin = 14 })
         card.addView(divider)
-        card.addView(google, LinearLayout.LayoutParams(-1, 52).apply { topMargin = 4 })
+        card.addView(googleAccountCard, LinearLayout.LayoutParams(-1, -2).apply { topMargin = 4 })
+        card.addView(google, LinearLayout.LayoutParams(-1, 54).apply { topMargin = 8 })
         card.addView(guest, LinearLayout.LayoutParams(-1, 52).apply { topMargin = 8 })
         card.addView(phoneTitle)
         card.addView(phone, LinearLayout.LayoutParams(-1, 52))
@@ -319,7 +343,7 @@ class MainActivity : AppCompatActivity() {
 
         google.setOnClickListener {
             setBusy(true)
-            status.text = "Opening Google sign-in…"
+            status.text = "Choose your Google account…"
             signInWithGoogle(status, login, google)
         }
 
