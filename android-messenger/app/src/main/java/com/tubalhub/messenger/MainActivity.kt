@@ -83,6 +83,11 @@ class MainActivity : AppCompatActivity() {
                 val body = connection.inputStream.bufferedReader().use { it.readText() }
                 connection.disconnect()
                 val json = JSONObject(body)
+                val product = json.optString("product", "")
+                val manifestType = json.optString("manifestType", "")
+                if (product != "TUBAL HUB Messenger" || manifestType != "android-apk") {
+                    throw IllegalStateException("Wrong update manifest")
+                }
                 val latestVersionCode = json.optInt("versionCode", BuildConfig.VERSION_CODE)
                 val latestVersionName = json.optString("versionName", BuildConfig.VERSION_NAME)
                 val apkUrl = json.optString("apkUrl", "")
