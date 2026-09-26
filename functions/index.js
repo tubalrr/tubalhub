@@ -1317,6 +1317,115 @@ exports.sendPrivateMessageReal = onCall(async request => {
 
 
 
+async function getGlobalChatMediaSettingsReal() {
+  const defaults = {
+    maxFilesPerUser: 40,
+    expiryDays: 7,
+    globalMaxBytes: 5 * 1024 * 1024 * 1024
+  };
+  try {
+    const snap = await db.collection("systemSettings").doc("globalChatMedia").get();
+    const data = snap.exists ? (snap.data() || {}) : {};
+    return {
+      maxFilesPerUser: Math.min(200, Math.max(1, Number(data.maxFilesPerUser || defaults.maxFilesPerUser))),
+      expiryDays: Math.min(30, Math.max(1, Number(data.expiryDays || defaults.expiryDays))),
+      globalMaxBytes: Math.min(5 * 1024 * 1024 * 1024, Math.max(256 * 1024 * 1024, Number(data.globalMaxBytes || defaults.globalMaxBytes)))
+    };
+  } catch (error) {
+    logger.warn("Using default Global Chat media settings.", {error: error?.message || String(error)});
+    return defaults;
+  }
+}
+
+exports.getGlobalChatMediaStorageReal = onCall(async request => {
+  requireRealUser(request);
+  const uid = request.auth.uid;
+  const settings = await getGlobalChatMediaSettingsReal();
+  const prefix = "global-chat/" + uid + "/";
+  const bucket = getStorage().bucket();
+  const [files] = await bucket.getFiles({prefix});
+  const items = [];
+
+  for (const file of files) {
+    try {
+      const [metadata] = await file.getMetadata();
+      const size = Number(metadata.size || 0);
+      const createdAt = metadata.timeCreated || "";
+      let url = "";
+      try {
+        const [signed] = await file.getSignedUrl({
+          action: "read",
+          expires: Date.now() + 15 * 60 * 1000
+        });
+        url = signed;
+      } catch (_) {}
+      items.push({
+        name: file.name.split("/").pop() || file.name,
+        path: file.name,
+        size,
+        sizeMB: Number((size / (1024 * 1024)).toFixed(2)),
+        createdAt,
+        url
+      });
+    } catch (error) {
+      logger.warn("Could not inspect user Global Chat media.", {error: error?.message || String(error)});
+    }
+  }
+
+  items.sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  const totalBytes = items.reduce((sum,item) => sum + item.size, 0);
+
+  return {
+    success: true,
+    settings,
+    count: items.length,
+    totalBytes,
+    totalMB: Number((totalBytes / (1024 * 1024)).toFixed(2)),
+    percent: Math.min(100, Math.round((items.length / settings.maxFilesPerUser) * 100)),
+    items
+  };
+});
+
+exports.deleteGlobalChatMediaReal = onCall(async request => {
+  requireRealUser(request);
+  const uid = request.auth.uid;
+  const storagePath = String(request.data?.storagePath || "").trim();
+  if (!storagePath || !storagePath.startsWith("global-chat/" + uid + "/")) {
+    throw new HttpsError("permission-denied", "Invalid media ownership.");
+  }
+
+  const bucket = getStorage().bucket();
+  const file = bucket.file(storagePath);
+  try {
+    await file.delete();
+  } catch (error) {
+    if (error?.code !== 404) {
+      throw new HttpsError("internal", "Could not delete the image.");
+    }
+  }
+
+  await markChatMediaExpiredReal(storagePath.split("/").pop() || "", storagePath);
+  return {success: true, storagePath};
+});
+
+exports.updateGlobalChatMediaSettingsReal = onCall(async request => {
+  requireAdminUser(request);
+  const current = await getGlobalChatMediaSettingsReal();
+  const maxFilesPerUser = Math.min(200, Math.max(1, Math.floor(Number(request.data?.maxFilesPerUser ?? current.maxFilesPerUser))));
+  const expiryDays = Math.min(30, Math.max(1, Math.floor(Number(request.data?.expiryDays ?? current.expiryDays))));
+  const globalMaxBytes = Math.min(5 * 1024 * 1024 * 1024, Math.max(256 * 1024 * 1024, Math.floor(Number(request.data?.globalMaxBytes ?? current.globalMaxBytes))));
+
+  await db.collection("systemSettings").doc("globalChatMedia").set({
+    maxFilesPerUser,
+    expiryDays,
+    globalMaxBytes,
+    updatedAt: FieldValue.serverTimestamp(),
+    updatedBy: request.auth.uid
+  }, {merge:true});
+
+  return {success:true, settings:{maxFilesPerUser, expiryDays, globalMaxBytes}};
+});
+
 async function recordCleanupStatsReal(data) {
   const ref = db.collection("systemStats").doc("storageCleanup");
   const deleted = Number(data.deleted || 0);
@@ -1340,7 +1449,8 @@ exports.cleanupGlobalChatMediaReal = onCall(async request => {
 
   const uid = request.auth.uid;
   const prefix = "global-chat/" + uid + "/";
-  const maxFiles = 40;
+  const settings = await getGlobalChatMediaSettingsReal();
+  const maxFiles = settings.maxFilesPerUser;
   const bucket = getStorage().bucket();
   const [files] = await bucket.getFiles({ prefix });
 
@@ -1399,9 +1509,10 @@ exports.cleanupGlobalChatMediaReal = onCall(async request => {
 
 exports.cleanupOldImagesReal = onSchedule("every 24 hours", async () => {
   const bucket = getStorage().bucket();
+  const settings = await getGlobalChatMediaSettingsReal();
   const prefix = "global-chat/";
-  const maxFiles = 40;
-  const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
+  const maxFiles = settings.maxFilesPerUser;
+  const sevenDaysMs = settings.expiryDays * 24 * 60 * 60 * 1000;
   const now = Date.now();
 
   const [files] = await bucket.getFiles({ prefix });
