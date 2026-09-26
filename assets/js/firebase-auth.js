@@ -14,6 +14,18 @@ import {
 const $ = (id) => document.getElementById(id);
 const message = (id, text) => { const el = $(id); if (el) el.textContent = text; };
 
+function authReturnUrl() {
+  const raw = new URLSearchParams(window.location.search).get("returnTo");
+  if (!raw) return authReturnUrl();
+  try {
+    const target = new URL(raw, window.location.href);
+    if (target.origin !== window.location.origin) return authReturnUrl();
+    return target.href;
+  } catch {
+    return authReturnUrl();
+  }
+}
+
 function friendlyAuthError(code) {
   switch (code) {
     case "auth/invalid-email": return "Please enter a valid email address.";
@@ -72,7 +84,7 @@ if (signupForm) {
 
       // The account is already signed in by createUserWithEmailAndPassword.
       // Use replace() so the mobile browser does not remain on the signup page.
-      window.location.replace(new URL("../index.html", window.location.href).href);
+      window.location.replace(authReturnUrl());
     } catch (error) {
       message("signupMessage", friendlyAuthError(error.code));
     }
@@ -90,7 +102,7 @@ if (loginForm) {
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      window.location.replace(new URL("../index.html", window.location.href).href);
+      window.location.replace(authReturnUrl());
     } catch (error) {
       message("loginMessage", friendlyAuthError(error.code));
     }
@@ -123,7 +135,7 @@ if (googleButtons.length) {
         );
 
         if (result?.user) {
-          window.location.replace(new URL("../index.html", window.location.href).href);
+          window.location.replace(authReturnUrl());
         }
       } catch (error) {
         console.error("Google sign-in failed:", error);
@@ -151,7 +163,7 @@ guestButtons.forEach((button) => {
     message(button.dataset.messageTarget || "loginMessage", "");
     try {
       await signInAnonymously(auth);
-      window.location.replace(new URL("../index.html", window.location.href).href);
+      window.location.replace(authReturnUrl());
     } catch (error) {
       message(button.dataset.messageTarget || "loginMessage", friendlyAuthError(error.code));
     }
@@ -213,7 +225,7 @@ if (phoneVerifyButton) {
 
     try {
       await confirmationResult.confirm(code);
-      window.location.replace(new URL("../index.html", window.location.href).href);
+      window.location.replace(authReturnUrl());
     } catch (error) {
       message("phoneMessage", friendlyAuthError(error.code));
     }
