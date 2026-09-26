@@ -1,5 +1,7 @@
 package com.tubalhub.messenger
 
+// Messenger self-update pipeline release trigger
+
 import android.os.Bundle
 import android.net.Uri
 import android.provider.Settings
