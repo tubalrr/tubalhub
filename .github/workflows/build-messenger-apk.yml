@@ -1,7 +1,13 @@
 name: Build and Publish TUBAL HUB Messenger APK
+# Release is triggered manually or when this release workflow changes.
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - messenger-apk
+    paths:
+      - .github/workflows/build-messenger-apk.yml
 
 permissions:
   contents: write
