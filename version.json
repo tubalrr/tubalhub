@@ -1,8 +1,8 @@
 {
   "product": "TUBAL HUB Messenger",
   "manifestType": "android-apk",
-  "versionCode": 1216,
-  "versionName": "1.2.16",
+  "versionCode": 1217,
+  "versionName": "1.2.17",
   "apkUrl": "https://github.com/tubalrr/tubalhub/releases/latest/download/TUBAL-HUB-Messenger-release.apk",
-  "notes": "TUBAL HUB Messenger self-update is ready."
+  "notes": "TUBAL HUB Messenger 1.2.17 — self-update package."
 }
