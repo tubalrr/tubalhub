@@ -134,16 +134,18 @@ class MainActivity : AppCompatActivity() {
 
     private fun isReleaseApkReady(apkUrl: String, versionName: String): Boolean {
         return try {
+            if (!apkUrl.contains("/releases/download/v$versionName/TUBAL-HUB-Messenger-release.apk")) {
+                return false
+            }
             val connection = URL(apkUrl).openConnection() as HttpURLConnection
-            connection.connectTimeout = 8000
-            connection.readTimeout = 8000
-            connection.instanceFollowRedirects = false
+            connection.connectTimeout = 10000
+            connection.readTimeout = 10000
+            connection.instanceFollowRedirects = true
             connection.requestMethod = "HEAD"
             connection.connect()
-            val location = connection.getHeaderField("Location").orEmpty()
+            val ready = connection.responseCode in 200..299
             connection.disconnect()
-            val expectedTag = "v" + versionName
-            connection.responseCode in 300..399 && location.contains("/releases/download/$expectedTag/")
+            ready
         } catch (e: Exception) {
             Log.d("TUBAL_HUB_UPDATE", "Release readiness check failed", e)
             false
