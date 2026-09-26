@@ -21,6 +21,10 @@ import androidx.credentials.GetCredentialRequest
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.PhoneAuthCredential
+import com.google.firebase.auth.PhoneAuthOptions
+import com.google.firebase.auth.PhoneAuthProvider
+import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.launch
 import android.graphics.Typeface
 import android.graphics.Color
@@ -59,6 +63,8 @@ class MainActivity : AppCompatActivity() {
     private var pinnedLabel: TextView? = null
     private val updateManifestUrl = "https://raw.githubusercontent.com/tubalrr/tubalhub/messenger-apk/version.json"
     private var updateDialog: AlertDialog? = null
+    private var phoneVerificationId: String? = null
+    private var phoneResendingToken: PhoneAuthProvider.ForceResendingToken? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -175,93 +181,260 @@ class MainActivity : AppCompatActivity() {
         }
         page.addView(logo, LinearLayout.LayoutParams(86, 86).apply { bottomMargin = 18 })
 
-        val heading = TextView(this).apply {
+        page.addView(TextView(this).apply {
             text = "TUBAL HUB"
             textSize = 28f
             gravity = Gravity.CENTER
             setTextColor(0xFFF0FFF8.toInt())
             typeface = Typeface.DEFAULT_BOLD
-        }
-        page.addView(heading)
-
-        val sub = TextView(this).apply {
-            text = "Messenger"
-            textSize = 21f
+        })
+        page.addView(TextView(this).apply {
+            text = "Login to your TUBAL HUB account."
+            textSize = 15f
             gravity = Gravity.CENTER
-            setTextColor(0xFF36E6A3.toInt())
-            typeface = Typeface.DEFAULT_BOLD
-        }
-        page.addView(sub)
-
-        page.addView(text("Connect • Chat • Share • Together").apply {
-            gravity = Gravity.CENTER
-            setTextColor(0xFFA9BDB6.toInt())
-            setPadding(0, 4, 0, 26)
+            setTextColor(0xFFAEBBB2.toInt())
+            setPadding(0, 4, 0, 18)
         })
 
         val card = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(18, 20, 18, 20)
-            background = rounded(0xFF0A1D18.toInt(), 26f)
+            background = rounded(0xFF0A1D18.toInt(), 20f)
         }
 
+        val emailLabel = text("Email").apply { textSize = 13f; setTextColor(0xFFD5DED8.toInt()) }
         val email = input("Email", false)
+        val passwordLabel = text("Password").apply { textSize = 13f; setTextColor(0xFFD5DED8.toInt()); setPadding(10, 12, 10, 4) }
         val password = input("Password", true)
-        val login = button("LOGIN").apply {
-            background = rounded(0xFF19D98B.toInt(), 18f)
-            setTextColor(0xFF03100D.toInt())
+
+        val login = button("Login with Email").apply {
+            background = rounded(0xFF7CFF4D.toInt(), 10f)
+            setTextColor(0xFF071008.toInt())
             typeface = Typeface.DEFAULT_BOLD
         }
-        val google = button("CONTINUE WITH GOOGLE").apply {
-            background = rounded(0xFF172A25.toInt(), 18f)
-            setTextColor(0xFFEAF7F0.toInt())
+
+        val divider = text("OR").apply {
+            gravity = Gravity.CENTER
+            textSize = 12f
+            typeface = Typeface.DEFAULT_BOLD
+            setTextColor(0xFF718076.toInt())
+            setPadding(0, 14, 0, 8)
         }
+
+        val google = button("Continue with Google").apply {
+            background = rounded(0xFF111522.toInt(), 10f)
+            setTextColor(0xFFFFFFFF.toInt())
+        }
+        val guest = button("Continue as Guest").apply {
+            background = rounded(0xFF101713.toInt(), 10f)
+            setTextColor(0xFFFFFFFF.toInt())
+        }
+
+        val phoneTitle = text("Phone Number").apply {
+            textSize = 16f
+            typeface = Typeface.DEFAULT_BOLD
+            setTextColor(0xFFDCE7DF.toInt())
+            setPadding(10, 20, 10, 6)
+        }
+        val phone = input("+63 9XX XXX XXXX", false).apply {
+            inputType = android.text.InputType.TYPE_CLASS_PHONE
+        }
+        val sendCode = button("Send SMS Code").apply {
+            background = rounded(0xFF0D1C12.toInt(), 10f)
+            setTextColor(0xFF39FF88.toInt())
+        }
+        val code = input("6-digit code", false).apply {
+            inputType = android.text.InputType.TYPE_CLASS_NUMBER
+        }
+        val verifyCode = button("Verify Code").apply {
+            background = rounded(0xFF0D1C12.toInt(), 10f)
+            setTextColor(0xFF39FF88.toInt())
+        }
+        val phoneStatus = text("").apply {
+            textSize = 13f
+            setTextColor(0xFFFF8D8D.toInt())
+            setPadding(10, 6, 10, 0)
+        }
+        code.visibility = View.GONE
+        verifyCode.visibility = View.GONE
+
         val status = text("").apply {
             gravity = Gravity.CENTER
             setPadding(6, 12, 6, 2)
-            setTextColor(0xFFFFB4AB.toInt())
+            setTextColor(0xFFFF8D8D.toInt())
+            textSize = 13f
         }
 
-        card.addView(email)
-        card.addView(password, LinearLayout.LayoutParams(-1, -2).apply { topMargin = 8 })
-        card.addView(login, LinearLayout.LayoutParams(-1, 54).apply { topMargin = 18 })
-        card.addView(google, LinearLayout.LayoutParams(-1, 54).apply { topMargin = 10 })
+        card.addView(emailLabel)
+        card.addView(email, LinearLayout.LayoutParams(-1, 52).apply { topMargin = 2 })
+        card.addView(passwordLabel)
+        card.addView(password, LinearLayout.LayoutParams(-1, 52))
+        card.addView(login, LinearLayout.LayoutParams(-1, 52).apply { topMargin = 14 })
+        card.addView(divider)
+        card.addView(google, LinearLayout.LayoutParams(-1, 52).apply { topMargin = 4 })
+        card.addView(guest, LinearLayout.LayoutParams(-1, 52).apply { topMargin = 8 })
+        card.addView(phoneTitle)
+        card.addView(phone, LinearLayout.LayoutParams(-1, 52))
+        card.addView(sendCode, LinearLayout.LayoutParams(-1, 52).apply { topMargin = 8 })
+        card.addView(code, LinearLayout.LayoutParams(-1, 52).apply { topMargin = 8 })
+        card.addView(verifyCode, LinearLayout.LayoutParams(-1, 52).apply { topMargin = 8 })
+        card.addView(phoneStatus)
         card.addView(status)
 
         page.addView(card, LinearLayout.LayoutParams(-1, -2))
-        page.addView(text("Sign in using your existing TUBAL HUB account.").apply {
+        page.addView(text("Create an account on the website if you don't have one yet.").apply {
             gravity = Gravity.CENTER
             setTextColor(0xFF78918A.toInt())
             textSize = 12f
             setPadding(8, 18, 8, 8)
         })
 
+        fun setBusy(busy: Boolean) {
+            login.isEnabled = !busy
+            google.isEnabled = !busy
+            guest.isEnabled = !busy
+        }
+
         login.setOnClickListener {
-            login.isEnabled = false
-            google.isEnabled = false
+            val e = email.text.toString().trim()
+            val p = password.text.toString()
+            if (e.isEmpty() || p.isEmpty()) {
+                status.text = "Enter your email and password."
+                return@setOnClickListener
+            }
+            setBusy(true)
             status.text = "Signing in…"
-            auth.signInWithEmailAndPassword(email.text.toString().trim(), password.text.toString())
+            auth.signInWithEmailAndPassword(e, p)
                 .addOnSuccessListener { showMessenger() }
-                .addOnFailureListener { e ->
-                    status.text = when (e) {
-                        is com.google.firebase.auth.FirebaseAuthInvalidCredentialsException -> "Incorrect email or password."
-                        is com.google.firebase.auth.FirebaseAuthInvalidUserException -> "Account not found or disabled."
-                        else -> e.localizedMessage ?: "Login failed."
-                    }
-                    login.isEnabled = true
-                    google.isEnabled = true
+                .addOnFailureListener { error ->
+                    status.text = nativeAuthError(error)
+                    setBusy(false)
                 }
         }
+
         google.setOnClickListener {
-            login.isEnabled = false
-            google.isEnabled = false
+            setBusy(true)
             status.text = "Opening Google sign-in…"
             signInWithGoogle(status, login, google)
+        }
+
+        guest.setOnClickListener {
+            setBusy(true)
+            status.text = "Signing in as Guest…"
+            auth.signInAnonymously()
+                .addOnSuccessListener { showMessenger() }
+                .addOnFailureListener { error ->
+                    status.text = nativeAuthError(error)
+                    setBusy(false)
+                }
+        }
+
+        sendCode.setOnClickListener {
+            val number = phone.text.toString().trim()
+            if (number.isEmpty()) {
+                phoneStatus.text = "Enter your phone number first."
+                return@setOnClickListener
+            }
+            sendCode.isEnabled = false
+            phoneStatus.setTextColor(0xFFAEBBB2.toInt())
+            phoneStatus.text = "Sending SMS code…"
+            startPhoneVerification(number, phoneStatus, sendCode, code, verifyCode)
+        }
+
+        verifyCode.setOnClickListener {
+            val verificationId = phoneVerificationId
+            val smsCode = code.text.toString().trim()
+            if (verificationId.isNullOrBlank()) {
+                phoneStatus.text = "Send the verification code first."
+                return@setOnClickListener
+            }
+            if (smsCode.isEmpty()) {
+                phoneStatus.text = "Enter the 6-digit code."
+                return@setOnClickListener
+            }
+            verifyCode.isEnabled = false
+            phoneStatus.setTextColor(0xFFAEBBB2.toInt())
+            phoneStatus.text = "Verifying code…"
+            val credential = PhoneAuthProvider.getCredential(verificationId, smsCode)
+            auth.signInWithCredential(credential)
+                .addOnSuccessListener { showMessenger() }
+                .addOnFailureListener { error ->
+                    phoneStatus.setTextColor(0xFFFF8D8D.toInt())
+                    phoneStatus.text = nativeAuthError(error)
+                    verifyCode.isEnabled = true
+                }
         }
 
         scroll.addView(page)
         root.addView(scroll, LinearLayout.LayoutParams(-1, -1))
         setContentView(root)
+    }
+
+    private fun startPhoneVerification(
+        phoneNumber: String,
+        status: TextView,
+        sendButton: Button,
+        codeInput: EditText,
+        verifyButton: Button
+    ) {
+        val callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+            override fun onVerificationCompleted(credential: PhoneAuthCredential) {
+                status.setTextColor(0xFFAEBBB2.toInt())
+                status.text = "Phone verified. Signing in…"
+                auth.signInWithCredential(credential)
+                    .addOnSuccessListener { showMessenger() }
+                    .addOnFailureListener { error ->
+                        status.setTextColor(0xFFFF8D8D.toInt())
+                        status.text = nativeAuthError(error)
+                        sendButton.isEnabled = true
+                    }
+            }
+
+            override fun onVerificationFailed(e: com.google.firebase.FirebaseException) {
+                status.setTextColor(0xFFFF8D8D.toInt())
+                status.text = nativeAuthError(e)
+                sendButton.isEnabled = true
+            }
+
+            override fun onCodeSent(
+                verificationId: String,
+                token: PhoneAuthProvider.ForceResendingToken
+            ) {
+                phoneVerificationId = verificationId
+                phoneResendingToken = token
+                codeInput.visibility = View.VISIBLE
+                verifyButton.visibility = View.VISIBLE
+                status.setTextColor(0xFF39FF88.toInt())
+                status.text = "Verification code sent by SMS."
+                sendButton.isEnabled = true
+            }
+        }
+
+        val options = PhoneAuthOptions.newBuilder(auth)
+            .setPhoneNumber(phoneNumber)
+            .setTimeout(60L, TimeUnit.SECONDS)
+            .setActivity(this)
+            .setCallbacks(callbacks)
+            .build()
+
+        PhoneAuthProvider.verifyPhoneNumber(options)
+    }
+
+    private fun nativeAuthError(error: Exception): String {
+        return when ((error as? com.google.firebase.auth.FirebaseAuthException)?.errorCode) {
+            "ERROR_INVALID_EMAIL" -> "Please enter a valid email address."
+            "ERROR_INVALID_CREDENTIAL" -> "Incorrect email or password."
+            "ERROR_USER_NOT_FOUND" -> "Account not found or disabled."
+            "ERROR_WRONG_PASSWORD" -> "Incorrect email or password."
+            "ERROR_TOO_MANY_REQUESTS" -> "Too many attempts. Please try again later."
+            "ERROR_OPERATION_NOT_ALLOWED" -> "This sign-in method is not enabled in Firebase."
+            "ERROR_INVALID_PHONE_NUMBER" -> "Enter a valid phone number with country code, e.g. +63..."
+            "ERROR_QUOTA_EXCEEDED" -> "SMS quota reached. Please try again later."
+            "ERROR_SESSION_EXPIRED" -> "The verification session expired. Send a new SMS code."
+            "ERROR_INVALID_VERIFICATION_CODE" -> "The verification code is invalid."
+            "ERROR_MISSING_PHONE_NUMBER" -> "Enter your phone number first."
+            else -> error.localizedMessage ?: "Authentication failed. Please try again."
+        }
     }
 
     private fun signInWithGoogle(status: TextView, login: Button, google: Button) {
