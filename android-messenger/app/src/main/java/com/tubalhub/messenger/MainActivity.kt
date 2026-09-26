@@ -31,7 +31,7 @@ import java.util.HashMap
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Timestamp
+import com.google.firebase.Timestamp
 import com.google.firebase.messaging.FirebaseMessaging
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
