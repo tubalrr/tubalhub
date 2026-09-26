@@ -62,15 +62,41 @@ jobs:
           printf '%s' "$MESSENGER_KEYSTORE_BASE64" | base64 --decode > app/messenger-release.jks
           test -s app/messenger-release.jks || { echo "::error::Signing keystore is empty."; exit 1; }
 
+      - name: Detect valid signing password
+        shell: bash
+        run: |
+          set -euo pipefail
+          KEYSTORE="$PWD/app/messenger-release.jks"
+          SIGNING_PASSWORD=""
+          for CANDIDATE in "$MESSENGER_STORE_PASSWORD" "$MESSENGER_KEY_PASSWORD"; do
+            if [ -z "$CANDIDATE" ]; then
+              continue
+            fi
+            if keytool -list -keystore "$KEYSTORE" -storepass "$CANDIDATE" -alias "$MESSENGER_KEY_ALIAS" >/dev/null 2>&1; then
+              SIGNING_PASSWORD="$CANDIDATE"
+              break
+            fi
+          done
+          if [ -z "$SIGNING_PASSWORD" ]; then
+            echo "::error::Neither configured Messenger password secret can open the permanent signing keystore. Update the GitHub secret values from the private signing setup."
+            exit 1
+          fi
+          echo "Permanent Messenger signing keystore validated."
+          {
+            echo "SIGNING_PASSWORD<<EOF"
+            echo "$SIGNING_PASSWORD"
+            echo "EOF"
+          } >> "$GITHUB_ENV"
+
       - name: Build signed release APK
         shell: bash
         run: |
           set -euo pipefail
           gradle assembleRelease --no-daemon \
             -PMESSENGER_STORE_FILE=messenger-release.jks \
-            -PMESSENGER_STORE_PASSWORD="$MESSENGER_STORE_PASSWORD" \
+            -PMESSENGER_STORE_PASSWORD="$SIGNING_PASSWORD" \
             -PMESSENGER_KEY_ALIAS="$MESSENGER_KEY_ALIAS" \
-            -PMESSENGER_KEY_PASSWORD="$MESSENGER_KEY_PASSWORD"
+            -PMESSENGER_KEY_PASSWORD="$SIGNING_PASSWORD"
 
       - name: Verify release APK
         shell: bash
