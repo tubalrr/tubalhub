@@ -403,7 +403,9 @@ $("liveComposer").addEventListener("submit", async e => {
     input.focus();
   } catch(err) {
     console.error("[TUBAL HUB] send message", err);
-    alert("Hindi na-send. Siguraduhing naka-sign in at tama ang Firestore Rules.");
+    const code = String(err?.code || "unknown").replace(/^functions\//, "");
+    const message = String(err?.message || "Unknown Firebase error.");
+    alert("Hindi na-send.\n\nFirebase: " + code + "\n" + message);
   } finally {
     send.disabled = false;
   }
