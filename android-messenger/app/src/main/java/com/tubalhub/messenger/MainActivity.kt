@@ -445,11 +445,14 @@ class MainActivity : AppCompatActivity() {
         usersScroll.addView(users)
         page.addView(usersScroll, LinearLayout.LayoutParams(-1, 230))
 
-        db.collection("users").get().addOnSuccessListener { snap ->
+        // Use the public-safe presence directory instead of private users/.
+        // Firestore rules intentionally allow members to read presence but not
+        // other users' private profile documents.
+        db.collection("presence").get().addOnSuccessListener { snap ->
             users.removeAllViews()
             snap.documents.forEach { doc ->
                 if (doc.id == me.uid) return@forEach
-                val name = doc.getString("displayName") ?: doc.getString("email")?.substringBefore("@") ?: "Member"
+                val name = doc.getString("displayName") ?: "Member"
                 val row = button("●   " + name).apply {
                     gravity = Gravity.CENTER_VERTICAL
                     setTextColor(0xFFEAF7F0.toInt())
@@ -459,8 +462,11 @@ class MainActivity : AppCompatActivity() {
                 row.setOnClickListener { openChat(doc.id, name) }
                 users.addView(row, LinearLayout.LayoutParams(-1, 54).apply { bottomMargin = 8 })
             }
-            if (users.childCount == 0) users.addView(text("No other members found."))
-        }.addOnFailureListener { users.addView(text("Could not load members.")) }
+            if (users.childCount == 0) users.addView(text("No other members found yet."))
+        }.addOnFailureListener {
+            users.removeAllViews()
+            users.addView(text("Could not load the Messenger directory."))
+        }
 
         val chatHeader = LinearLayout(this).apply {
             gravity = Gravity.CENTER_VERTICAL
