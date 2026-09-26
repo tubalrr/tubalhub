@@ -210,7 +210,7 @@ class MainActivity : AppCompatActivity() {
         root.setBackgroundColor(0xFF020B08.toInt())
 
         val scroll = ScrollView(this).apply {
-            fillViewport = true
+            setFillViewport(true)
             isVerticalScrollBarEnabled = false
         }
         val page = LinearLayout(this).apply {
