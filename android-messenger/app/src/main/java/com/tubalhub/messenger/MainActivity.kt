@@ -31,6 +31,7 @@ import java.util.HashMap
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Timestamp
 import com.google.firebase.messaging.FirebaseMessaging
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -819,7 +820,7 @@ class MainActivity : AppCompatActivity() {
                         return@addOnSuccessListener
                     }
                     val history = (snap.get("editHistoryReal") as? List<*>)?.toMutableList() ?: mutableListOf()
-                    history.add(mapOf("text" to (snap.getString("text") ?: ""), "editedAt" to com.google.firebase.firestore.Timestamp.now()))
+                    history.add(mapOf("text" to (snap.getString("text") ?: ""), "editedAt" to Timestamp.now()))
                     ref.update(mapOf("text" to newText, "textReal" to newText, "editedReal" to true, "editedAt" to com.google.firebase.firestore.FieldValue.serverTimestamp(), "editHistoryReal" to history.takeLast(10)))
                 }.addOnFailureListener { e -> toast(e.localizedMessage ?: "Edit failed.") }
             }
@@ -922,7 +923,7 @@ class MainActivity : AppCompatActivity() {
             .addSnapshotListener { snap, _ ->
                 val label = findTypingLabel()
                 val data = snap?.data
-                val fresh = data?.getBoolean("typing") == true
+                val fresh = data?.get("typing") as? Boolean == true
                 if (fresh) {
                     label.visibility = View.VISIBLE
                     label.text = selectedName + " is typing...  •••"
