@@ -1276,7 +1276,17 @@ exports.sendPrivateMessageReal = onCall(async request => {
     text: moderation.cleanText,
     textReal: moderation.cleanText,
     type: "text",
+    fileNameReal: String(request.data?.fileNameReal || "").slice(0, 255),
+    replyTo: request.data?.replyTo && typeof request.data.replyTo === "object" ? {
+      messageId: String(request.data.replyTo.messageId || "").slice(0, 120),
+      name: String(request.data.replyTo.name || "").slice(0, 120),
+      preview: String(request.data.replyTo.preview || "").slice(0, 160)
+    } : null,
     createdAt: FieldValue.serverTimestamp(),
+    deliveredAt: null,
+    seenAt: null,
+    reactionsReal: {},
+    pinnedReal: false,
     moderatedReal: !!moderation.flagged,
     flaggedReal: !!moderation.flagged,
     verifiedReal: true,
