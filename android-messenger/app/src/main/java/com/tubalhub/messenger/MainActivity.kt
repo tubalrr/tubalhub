@@ -21,6 +21,8 @@ import android.graphics.Typeface
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.view.View
+import android.view.animation.AlphaAnimation
+import java.util.HashMap
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -41,6 +43,10 @@ class MainActivity : AppCompatActivity() {
     private var incomingCallListener: com.google.firebase.firestore.ListenerRegistration? = null
     private var replyToId: String? = null
     private var replyToText: String? = null
+    private var replyToName: String? = null
+    private var stopTyping: com.google.firebase.firestore.ListenerRegistration? = null
+    private var typingOffRunnable: Runnable? = null
+    private var pinnedMessageId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -359,6 +365,21 @@ class MainActivity : AppCompatActivity() {
             orientation = LinearLayout.VERTICAL
             setPadding(4, 4, 4, 4)
         }
+        val typingLabel = text("").apply {
+            textSize = 11f
+            setTextColor(0xFF55A8FF.toInt())
+            visibility = View.GONE
+        }
+        page.addView(typingLabel, LinearLayout.LayoutParams(-1, 30))
+
+        val replyBar = text("").apply {
+            textSize = 11f
+            setTextColor(0xFF9DFFE0.toInt())
+            visibility = View.GONE
+            setOnClickListener { clearReply() }
+        }
+        page.addView(replyBar, LinearLayout.LayoutParams(-1, 36))
+
         val chatScroll = ScrollView(this).apply {
             background = rounded(0xFF061611.toInt(), 20f)
             setPadding(8, 8, 8, 8)
@@ -385,6 +406,12 @@ class MainActivity : AppCompatActivity() {
         composer.addView(send, LinearLayout.LayoutParams(56, 56))
         page.addView(composer)
 
+        messageInput?.setOnFocusChangeListener { _, hasFocus -> if (!hasFocus) setTyping(false) }
+        messageInput?.addTextChangedListener(object : android.text.TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { if (s?.isNotEmpty() == true) setTyping(true) }
+            override fun afterTextChanged(s: android.text.Editable?) = Unit
+        })
         send.setOnClickListener { sendMessage() }
 
         scroll.addView(page)
@@ -408,6 +435,7 @@ class MainActivity : AppCompatActivity() {
         messageBox?.removeAllViews()
         messageBox?.addView(text("Chat with " + name))
         subscribeMessages()
+        subscribeTyping()
     }
 
     private fun startVideoCall() {
@@ -476,6 +504,7 @@ class MainActivity : AppCompatActivity() {
                 val items = snap.documents
                     .filter { (it.get("participants") as? List<*>)?.contains(target) == true }
                     .sortedBy { it.getTimestamp("createdAt")?.toDate()?.time ?: 0L }
+                items.filter { it.getString("receiverId") == me.uid && it.getTimestamp("seenAt") == null }.forEach { markMessageSeen(it.id) }
                 loadReactionSummary(items)
             }
     }
@@ -538,9 +567,24 @@ class MainActivity : AppCompatActivity() {
                 true
             }
 
-            val msg = text(sender + ": " + messageText)
+            val replyPreview = it.get("replyTo") as? Map<*, *>
+            if (replyPreview != null) {
+                val preview = text("↩ " + (replyPreview["name"] ?: "Member") + ": " + (replyPreview["preview"] ?: ""))
+                preview.textSize = 11f
+                preview.setTextColor(0xFF8EB7E8.toInt())
+                card.addView(preview)
+            }
+            val msg = text(sender + ": " + messageText + if (it.getBoolean("editedReal") == true) "  (edited)" else "")
             msg.setTypeface(null, Typeface.NORMAL)
             card.addView(msg)
+
+            val reactionsReal = it.get("reactionsReal") as? Map<*, *> ?: emptyMap<String, Any>()
+            if (reactionsReal.isNotEmpty()) {
+                val liveCounts = reactionsReal.values.groupingBy { value -> value.toString() }.eachCount()
+                val reactionSummary = text(liveCounts.entries.joinToString("  ") { entry -> entry.key + " " + entry.value })
+                reactionSummary.textSize = 13f
+                card.addView(reactionSummary)
+            }
 
             val summary = counts[messageId]
                 ?.filterValues { count -> count > 0 }
@@ -555,7 +599,7 @@ class MainActivity : AppCompatActivity() {
 
             val reactionsRow = LinearLayout(this)
             reactionsRow.orientation = LinearLayout.HORIZONTAL
-            listOf("👍", "❤️", "😂", "😮", "😢", "😡").forEach { emoji ->
+            listOf("😂", "❤️", "🔥", "😮", "😢").forEach { emoji ->
                 val b = Button(this)
                 b.text = if (mine[messageId] == emoji) "✓$emoji" else emoji
                 b.setPadding(6, 0, 6, 0)
@@ -593,7 +637,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showMessageActions(messageId: String, messageText: String, mine: Boolean) {
-        val actions = mutableListOf("Reply", "React")
+        val actions = mutableListOf("Reply", "React", "Pin")
         if (mine) {
             actions.add("Edit")
             actions.add("Delete")
@@ -604,6 +648,7 @@ class MainActivity : AppCompatActivity() {
                 when (actions[which]) {
                     "Reply" -> startReply(messageId, messageText)
                     "React" -> showReactionPicker(messageId)
+                    "Pin" -> pinMessage(messageId)
                     "Edit" -> editMessage(messageId, messageText)
                     "Delete" -> deleteMessage(messageId)
                 }
@@ -614,12 +659,13 @@ class MainActivity : AppCompatActivity() {
     private fun startReply(messageId: String, messageText: String) {
         replyToId = messageId
         replyToText = messageText
+        replyToName = selectedName
         messageInput?.hint = "Replying: " + messageText.take(45)
         messageInput?.requestFocus()
     }
 
     private fun showReactionPicker(messageId: String) {
-        val emojis = arrayOf("👍", "❤️", "😂", "😮", "😢", "😡")
+        val emojis = arrayOf("😂", "❤️", "🔥", "😮", "😢")
         AlertDialog.Builder(this)
             .setTitle("React")
             .setItems(emojis) { _, which -> reactToMessage(messageId, emojis[which]) }
@@ -644,12 +690,17 @@ class MainActivity : AppCompatActivity() {
                     toast("Message is limited to 500 characters.")
                     return@setPositiveButton
                 }
-                db.collection("messages").document(messageId).update(
-                    mapOf(
-                        "text" to newText,
-                        "editedAt" to com.google.firebase.firestore.FieldValue.serverTimestamp()
-                    )
-                ).addOnFailureListener { e -> toast(e.localizedMessage ?: "Edit failed.") }
+                val ref = db.collection("messages").document(messageId)
+                ref.get().addOnSuccessListener { snap ->
+                    val created = snap.getTimestamp("createdAt")?.toDate()?.time ?: 0L
+                    if (created > 0L && System.currentTimeMillis() - created > 10 * 60 * 1000) {
+                        toast("Edit is only available within 10 minutes.")
+                        return@addOnSuccessListener
+                    }
+                    val history = (snap.get("editHistoryReal") as? List<*>)?.toMutableList() ?: mutableListOf()
+                    history.add(mapOf("text" to (snap.getString("text") ?: ""), "editedAt" to com.google.firebase.firestore.Timestamp.now()))
+                    ref.update(mapOf("text" to newText, "textReal" to newText, "editedReal" to true, "editedAt" to com.google.firebase.firestore.FieldValue.serverTimestamp(), "editHistoryReal" to history.takeLast(10)))
+                }.addOnFailureListener { e -> toast(e.localizedMessage ?: "Edit failed.") }
             }
             .show()
     }
@@ -660,8 +711,15 @@ class MainActivity : AppCompatActivity() {
             .setMessage("This message will be removed from the chat.")
             .setNegativeButton("Cancel", null)
             .setPositiveButton("Delete") { _, _ ->
-                db.collection("messages").document(messageId).delete()
-                    .addOnFailureListener { e -> toast(e.localizedMessage ?: "Delete failed.") }
+                val ref = db.collection("messages").document(messageId)
+                ref.get().addOnSuccessListener { snap ->
+                    val created = snap.getTimestamp("createdAt")?.toDate()?.time ?: 0L
+                    if (created > 0L && System.currentTimeMillis() - created > 10 * 60 * 1000) {
+                        toast("Unsend is only available within 10 minutes.")
+                        return@addOnSuccessListener
+                    }
+                    ref.update(mapOf("deletedReal" to true, "deletedAt" to com.google.firebase.firestore.FieldValue.serverTimestamp(), "text" to "", "textReal" to "", "type" to "deleted", "fileNameReal" to ""))
+                }.addOnFailureListener { e -> toast(e.localizedMessage ?: "Delete failed.") }
             }
             .show()
     }
@@ -682,18 +740,90 @@ class MainActivity : AppCompatActivity() {
                 "displayName" to (me.displayName ?: me.email?.substringBefore("@") ?: "Member"),
                 "senderPhotoURL" to (me.photoUrl?.toString() ?: ""),
                 "text" to body,
+                "textReal" to body,
+                "fileNameReal" to "",
                 "type" to "text",
                 "createdAt" to com.google.firebase.firestore.FieldValue.serverTimestamp(),
-                "replyToMessageId" to replyToId,
-                "replyToText" to replyToText
+                "deliveredAt" to null,
+                "seenAt" to null,
+                "reactionsReal" to emptyMap<String, String>(),
+                "pinnedReal" to false,
+                "replyTo" to if (replyToId != null) mapOf("messageId" to replyToId, "name" to (replyToName ?: "Member"), "preview" to (replyToText ?: "")) else null
             )
         ).addOnSuccessListener {
             messageInput?.setText("")
             messageInput?.hint = "Message…"
-            replyToId = null
-            replyToText = null
+            clearReply()
+            setTyping(false)
         }
             .addOnFailureListener { e -> toast(e.localizedMessage ?: "Send failed.") }
+    }
+
+    private fun clearReply() {
+        replyToId = null
+        replyToText = null
+        replyToName = null
+        messageInput?.hint = "Type a message…"
+    }
+
+    private fun markMessageSeen(messageId: String) {
+        val me = auth.currentUser ?: return
+        val ref = db.collection("messages").document(messageId)
+        ref.update(
+            mapOf(
+                "deliveredAt" to com.google.firebase.firestore.FieldValue.serverTimestamp(),
+                "seenAt" to com.google.firebase.firestore.FieldValue.serverTimestamp()
+            )
+        ).addOnFailureListener { Log.d("TUBAL_HUB_CHAT", "seen update blocked", it) }
+    }
+
+    private fun setTyping(typing: Boolean) {
+        val me = auth.currentUser ?: return
+        val target = selectedUid ?: return
+        val id = me.uid + "_" + target
+        db.collection("typing").document(id).set(
+            mapOf(
+                "senderId" to me.uid,
+                "receiverId" to target,
+                "participants" to listOf(me.uid, target),
+                "typing" to typing,
+                "updatedAt" to com.google.firebase.firestore.FieldValue.serverTimestamp()
+            ),
+            com.google.firebase.firestore.SetOptions.merge()
+        )
+    }
+
+    private fun subscribeTyping() {
+        stopTyping?.remove()
+        val me = auth.currentUser ?: return
+        val target = selectedUid ?: return
+        stopTyping = db.collection("typing").document(target + "_" + me.uid)
+            .addSnapshotListener { snap, _ ->
+                val label = findTypingLabel()
+                val data = snap?.data
+                val fresh = data?.getBoolean("typing") == true
+                if (fresh) {
+                    label.visibility = View.VISIBLE
+                    label.text = selectedName + " is typing...  •••"
+                    label.startAnimation(AlphaAnimation(0.45f, 1f).apply { duration = 650; repeatCount = AlphaAnimation.INFINITE; repeatMode = AlphaAnimation.REVERSE })
+                } else {
+                    label.clearAnimation()
+                    label.visibility = View.GONE
+                }
+            }
+    }
+
+    private fun findTypingLabel(): TextView {
+        val page = root.findViewWithTag<TextView>("typingLabel")
+        if (page != null) return page
+        val candidate = root.findViewsWithText("", mutableListOf()).firstOrNull() as? TextView
+        return candidate ?: TextView(this).also { it.tag = "typingLabel" }
+    }
+
+    private fun pinMessage(messageId: String) {
+        db.collection("messages").document(messageId).update(
+            mapOf("pinnedReal" to true, "pinnedAt" to com.google.firebase.firestore.FieldValue.serverTimestamp(), "pinnedBy" to auth.currentUser?.uid)
+        ).addOnSuccessListener { pinnedMessageId = messageId }.addOnFailureListener { toast(it.localizedMessage ?: "Pin failed.") }
     }
 
     private fun rounded(color: Int, radius: Float): GradientDrawable =
@@ -741,6 +871,7 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         stopMessages?.remove()
         incomingCallListener?.remove()
+        stopTyping?.remove()
         super.onDestroy()
     }
 }
