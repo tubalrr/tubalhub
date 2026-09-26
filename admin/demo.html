@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TUBAL HUB | Admin Demo</title>
+<link rel="stylesheet" href="admin-neon.css">
+<link rel="stylesheet" href="admin-dashboard.css?v=1.2.16">
+<style>
+.demo-banner{margin:18px auto 0;max-width:1100px;padding:14px 18px;border:1px solid rgba(141,247,197,.28);background:rgba(141,247,197,.06);border-radius:16px;color:#dfffee}
+.demo-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:18px auto;max-width:1100px;padding:0 18px}
+.demo-card{padding:20px;border:1px solid rgba(255,255,255,.09);border-radius:18px;background:rgba(255,255,255,.04)}
+.demo-card span{display:block;opacity:.65;font-size:12px;text-transform:uppercase;letter-spacing:.08em}
+.demo-card strong{display:block;font-size:30px;margin-top:8px}
+.demo-panel{max-width:1100px;margin:18px auto;padding:22px 18px;border:1px solid rgba(255,255,255,.09);border-radius:22px;background:rgba(255,255,255,.04)}
+.demo-list{display:grid;gap:10px;margin-top:12px}
+.demo-row{display:flex;justify-content:space-between;gap:16px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.07)}
+.demo-row:last-child{border-bottom:0}
+.readonly{opacity:.62}
+@media(max-width:800px){.demo-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.demo-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="demo-banner">
+<strong>ADMIN DEMO • READ-ONLY</strong><br>
+This is a safe preview for visitors/buyers. It uses demo values only and has no Firebase admin privileges, no real users, no real messages, and no write actions.
+</header>
+<section class="demo-grid">
+<div class="demo-card"><span>Total users</span><strong>24</strong><small>Demo data</small></div>
+<div class="demo-card"><span>Messages</span><strong>186</strong><small>Demo data</small></div>
+<div class="demo-card"><span>Online now</span><strong>7</strong><small>Demo data</small></div>
+<div class="demo-card"><span>Auto cleaned</span><strong>12</strong><small>Demo data</small></div>
+</section>
+<section class="demo-panel">
+<h2>Recent users</h2>
+<div class="demo-list">
+<div class="demo-row"><span>Demo Member 01</span><span class="readonly">demo@example.invalid</span></div>
+<div class="demo-row"><span>Demo Member 02</span><span class="readonly">demo@example.invalid</span></div>
+<div class="demo-row"><span>Demo Member 03</span><span class="readonly">demo@example.invalid</span></div>
+</div>
+</section>
+<section class="demo-panel">
+<h2>Global Chat Logs</h2>
+<div class="demo-list">
+<div class="demo-row"><span>Demo message preview</span><span class="readonly">Read-only</span></div>
+<div class="demo-row"><span>Another demo message</span><span class="readonly">Read-only</span></div>
+</div>
+</section>
+<section class="demo-panel">
+<h2>Shop Orders</h2>
+<div class="demo-list">
+<div class="demo-row"><span>Demo Website Template</span><span class="readonly">PENDING • DEMO</span></div>
+<div class="demo-row"><span>Demo Digital Product</span><span class="readonly">PAID • DEMO</span></div>
+</div>
+</section>
+<section class="demo-panel">
+<h2>Analytics</h2>
+<div class="demo-list">
+<div class="demo-row"><span>DAU</span><span>8 • DEMO</span></div>
+<div class="demo-row"><span>WAU</span><span>19 • DEMO</span></div>
+<div class="demo-row"><span>Messages / 30d</span><span>186 • DEMO</span></div>
+</div>
+</section>
+<p style="text-align:center;margin:24px"><a href="login.html">← Back to Admin Login</a></p>
+</body>
+</html>
