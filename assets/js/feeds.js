@@ -129,24 +129,6 @@ function reactionUsers(postId){
   return rows;
 }
 function shareTotal(item){return Number(item?.shares||0)+Number(state.shareCounts[item?.id]||0)}
-function isSaved(postId){return state.saved.has(postId)}
-function toggleSaved(postId){
-  if(!postId)return;
-  const saved=isSaved(postId);
-  saved?state.saved.delete(postId):state.saved.add(postId);
-  writeLocal("tubalhub-feed-saved",[...state.saved]);
-  const card=document.querySelector(".post-card[data-id='"+CSS.escape(postId)+"']");
-  const btn=card?.querySelector("[data-action='save']");
-  if(btn){
-    const active=isSaved(postId);
-    btn.classList.toggle("saved",active);
-    btn.setAttribute("aria-pressed",String(active));
-    btn.querySelector("[data-save-icon]")?.replaceChildren(document.createTextNode(active?"★":"☆"));
-    btn.querySelector("[data-save-label]")?.replaceChildren(document.createTextNode(active?"Saved":"Save"));
-  }
-  showNotice(saved?"Removed from Saved.":"Saved to your feed.",!saved);
-  if(state.savedMode)renderFeed(true);
-}
 function reactionLabel(postId){const k=currentReaction(postId);return k?REACTIONS[k].label:"Like"}
 function reactionIcon(postId){const k=currentReaction(postId);return k?REACTIONS[k].emoji:"👍"}
 
@@ -165,15 +147,15 @@ function renderReactionZone(x){
   return "<div class='reaction-zone'><div class='reaction-summary-row'>"+reactionSummaryMarkup(x.id)+"</div></div>";
 }
 function postMarkup(x){
-  const caption=x.text||x.description||"",reacted=!!currentReaction(x.id),shares=shareTotal(x),saved=isSaved(x.id);
+  const caption=x.text||x.description||"",reacted=!!currentReaction(x.id),shares=shareTotal(x);
   let body="";
-  if(x.type==="product")body="<div class='product-card'><div class='product-media'>"+(x.image?"<img src='"+esc(x.image)+"' alt='' loading='lazy' class='feed-clickable-media'>":"◈")+"</div><div class='product-info'><div class='product-info-top'><div><h3>"+esc(x.title)+"</h3><div class='product-price'>"+(x.price!==""?"₱"+esc(x.price):"")+"</div></div>"+(x.stock!==""?"<span class='stock-pill'>"+esc(x.stock)+" in stock</span>":"")+"</div><button class='buy-btn' data-buy='"+esc(x.id)+"' type='button'>Open in Shop</button></div></div>";
-  else if(x.type==="game")body="<div class='game-card'><div class='game-cover'>"+(x.image?"<img src='"+esc(x.image)+"' alt='' loading='lazy' class='feed-clickable-media'>":"<b>"+esc(x.title.slice(0,2))+"</b>")+"</div><div class='game-info'><h3>"+esc(x.title)+"</h3><p>"+esc(x.description)+"</p><a class='play-btn' href='"+esc(x.url)+"' target='_blank' rel='noopener'>Open Game →</a></div></div>";
+  if(x.type==="product")body="<div class='product-card'><div class='product-media'>"+(x.image?"<img src='"+esc(x.image)+"' alt='' loading='lazy'>":"◈")+"</div><div class='product-info'><div class='product-info-top'><div><h3>"+esc(x.title)+"</h3><div class='product-price'>"+(x.price!==""?"₱"+esc(x.price):"")+"</div></div>"+(x.stock!==""?"<span class='stock-pill'>"+esc(x.stock)+" in stock</span>":"")+"</div><button class='buy-btn' data-buy='"+esc(x.id)+"' type='button'>Open in Shop</button></div></div>";
+  else if(x.type==="game")body="<div class='game-card'><div class='game-cover'>"+(x.image?"<img src='"+esc(x.image)+"' alt='' loading='lazy'>":"<b>"+esc(x.title.slice(0,2))+"</b>")+"</div><div class='game-info'><h3>"+esc(x.title)+"</h3><p>"+esc(x.description)+"</p><a class='play-btn' href='"+esc(x.url)+"' target='_blank' rel='noopener'>Open Game →</a></div></div>";
   else if(x.type==="video"&&x.mediaUrl)body="<video class='post-media feed-video' controls preload='metadata' src='"+esc(x.mediaUrl)+"'></video>";
   else if(x.type==="audio"&&x.mediaUrl)body="<audio class='post-audio' controls preload='metadata' src='"+esc(x.mediaUrl)+"'></audio>";
-  else if(x.image)body="<img class='post-media feed-clickable-media' src='"+esc(x.image)+"' alt='' loading='lazy'>";
+  else if(x.image)body="<img class='post-media' src='"+esc(x.image)+"' alt='' loading='lazy'>";
   else if(x.title)body="<div class='feed-article-content'><h3>"+esc(x.title)+"</h3><p>"+esc(x.description||x.text||"")+"</p></div>";
-  return "<article class='post-card' data-id='"+esc(x.id)+"'><div class='post-head'>"+avatarMarkup({uid:x.uid,displayName:x.author,photoURL:x.photo})+"<div class='post-meta'><b>"+esc(x.author||"Member")+"</b><span>"+esc(timeLabel(x.createdAt))+" · Everyone</span></div>"+(x.sponsored?"<span class='post-sponsor'>Sponsored</span>":"")+"<span class='post-status "+(onlineOf(x.uid)?"online":"")+"' aria-label='"+(onlineOf(x.uid)?"Online":"Offline")+"'></span></div><div class='post-body'>"+(caption?"<p class='post-caption'>"+esc(caption)+"</p>":"")+body+"</div>"+renderReactionZone(x)+"<div class='post-footer'><div class='post-stats'><span class='like-stat' data-react-total>"+(totalPostReactions(x.id,x)||"No reactions yet")+(totalPostReactions(x.id,x)?" reactions":"")+"</span><span>"+(x.comments?esc(x.comments)+" comments":"")+(shares?" · <span class='share-count-pop' data-share-count>"+shares+" shares</span>":"")+"</span></div><div class='post-actions'><button class='post-action react-icon "+(reacted?"reacted":"")+"' data-action='react' type='button'><span class='reaction-main-icon'>"+reactionIcon(x.id)+"</span><span data-reaction-label>"+reactionLabel(x.id)+"</span></button><button class='post-action' data-action='comment' type='button'>Comment</button><button class='post-action' data-action='share' type='button'>Share</button><button class='post-action save-action '+(saved?" saved":"")+"' data-action='save' type='button' aria-pressed='"+(saved?"true":"false")+"'><span data-save-icon>"+(saved?"★":"☆")+"</span><span data-save-label>"+(saved?"Saved":"Save")+"</span></button></div></div></article>";
+  return "<article class='post-card' data-id='"+esc(x.id)+"'><div class='post-head'>"+avatarMarkup({uid:x.uid,displayName:x.author,photoURL:x.photo})+"<div class='post-meta'><b>"+esc(x.author||"Member")+"</b><span>"+esc(timeLabel(x.createdAt))+" · Everyone</span></div>"+(x.sponsored?"<span class='post-sponsor'>Sponsored</span>":"")+"<span class='post-status "+(onlineOf(x.uid)?"online":"")+"' aria-label='"+(onlineOf(x.uid)?"Online":"Offline")+"'></span></div><div class='post-body'>"+(caption?"<p class='post-caption'>"+esc(caption)+"</p>":"")+body+"</div>"+renderReactionZone(x)+"<div class='post-footer'><div class='post-stats'><span class='like-stat' data-react-total>"+(totalPostReactions(x.id,x)||"No reactions yet")+(totalPostReactions(x.id,x)?" reactions":"")+"</span><span>"+(x.comments?esc(x.comments)+" comments":"")+(shares?" · <span class='share-count-pop' data-share-count>"+shares+" shares</span>":"")+"</span></div><div class='post-actions'><button class='post-action react-icon "+(reacted?"reacted":"")+"' data-action='react' type='button'><span class='reaction-main-icon'>"+reactionIcon(x.id)+"</span><span data-reaction-label>"+reactionLabel(x.id)+"</span></button><button class='post-action' data-action='comment' type='button'>Comment</button><button class='post-action' data-action='share' type='button'>Share</button></div></div></article>";
 }
 function renderStories(){
   const box=document.getElementById("stories");if(!box)return;
@@ -315,50 +297,12 @@ function bindPost(card){
   });
   card.querySelector("[data-action='comment']")?.addEventListener("click",()=>openComments(card.dataset.id));
   card.querySelector("[data-action='share']")?.addEventListener("click",()=>openShareModal(card.dataset.id));
-  card.querySelector("[data-action='save']")?.addEventListener("click",()=>toggleSaved(card.dataset.id));
-  card.querySelectorAll(".feed-clickable-media").forEach(img=>img.addEventListener("click",()=>openMediaViewer(card.dataset.id)));
   card.querySelector("[data-open-reactors]")?.addEventListener("click",()=>openReactors(card.dataset.id));
   card.querySelectorAll("[data-open-reactors]").forEach(b=>b.addEventListener("click",()=>openReactors(card.dataset.id)));
   card.querySelector("[data-buy]")?.addEventListener("click",()=>location.href="shop.html");
   if(totalPostReactions(card.dataset.id,state.items.find(x=>x.id===card.dataset.id))>=10)card.classList.add("high-reaction");
 }
 function bindPosts(){document.querySelectorAll(".post-card").forEach(bindPost)}
-
-let mediaViewerItems=[],mediaViewerIndex=0;
-function collectMedia(){
-  return [...document.querySelectorAll(".post-card .feed-clickable-media")].map(el=>({
-    src:el.currentSrc||el.src,
-    caption:el.closest(".post-card")?.querySelector(".post-caption")?.textContent||""
-  })).filter(x=>x.src);
-}
-function renderMediaViewer(){
-  const v=document.getElementById("feedMediaViewer"),img=document.getElementById("feedMediaImage");
-  if(!v||!img||!mediaViewerItems.length)return;
-  const item=mediaViewerItems[mediaViewerIndex];
-  img.src=item.src;
-  const c=document.getElementById("feedMediaCaption");if(c)c.textContent=item.caption;
-  const n=document.getElementById("feedMediaCounter");if(n)n.textContent=(mediaViewerIndex+1)+" / "+mediaViewerItems.length;
-  v.hidden=false;v.setAttribute("aria-hidden","false");document.body.classList.add("media-viewer-open");
-  document.getElementById("feedMediaPrev")?.toggleAttribute("hidden",mediaViewerItems.length<2);
-  document.getElementById("feedMediaNext")?.toggleAttribute("hidden",mediaViewerItems.length<2);
-}
-function openMediaViewer(postId){
-  mediaViewerItems=collectMedia();
-  const current=document.querySelector(".post-card[data-id='"+CSS.escape(postId)+"'] .feed-clickable-media");
-  const src=current?.currentSrc||current?.src;
-  mediaViewerIndex=Math.max(0,mediaViewerItems.findIndex(x=>x.src===src));
-  renderMediaViewer();
-}
-function closeMediaViewer(){
-  const v=document.getElementById("feedMediaViewer");if(!v)return;
-  v.hidden=true;v.setAttribute("aria-hidden","true");document.body.classList.remove("media-viewer-open");
-}
-function stepMediaViewer(delta){
-  if(mediaViewerItems.length<2)return;
-  mediaViewerIndex=(mediaViewerIndex+delta+mediaViewerItems.length)%mediaViewerItems.length;
-  renderMediaViewer();
-}
-
 async function addReact(postId,reaction){
   if(!state.auth){showNotice("Sign in to react.");return}
   const d=reactionData(postId),before=totalPostReactions(postId,state.items.find(x=>x.id===postId));
@@ -628,15 +572,6 @@ function setupUI(){
   document.querySelectorAll(".feed-filter").forEach(b=>b.addEventListener("click",()=>{state.savedMode=false;state.filter=b.dataset.filter||"all";document.querySelectorAll(".feed-filter").forEach(x=>x.classList.toggle("active",x===b));renderFeed(true)}));
   document.getElementById("feedSearch")?.addEventListener("input",e=>{state.query=e.target.value;renderFeed(true)});
   document.getElementById("feedSort")?.addEventListener("change",e=>{state.sort=e.target.value;renderFeed(true)});
-  document.getElementById("feedRefresh")?.addEventListener("click",async()=>{
-    const b=document.getElementById("feedRefresh");if(b)b.disabled=true;
-    try{await Promise.all([loadPeople(),loadProducts()]);buildFeed();showNotice("Feed refreshed.",true)}
-    finally{if(b)b.disabled=false}
-  });
-  document.getElementById("feedMediaClose")?.addEventListener("click",closeMediaViewer);
-  document.getElementById("feedMediaPrev")?.addEventListener("click",()=>stepMediaViewer(-1));
-  document.getElementById("feedMediaNext")?.addEventListener("click",()=>stepMediaViewer(1));
-  document.getElementById("feedMediaViewer")?.addEventListener("click",e=>{if(e.target.id==="feedMediaViewer")closeMediaViewer()});
   document.getElementById("createPostTrigger")?.addEventListener("click",openPostModal);
   document.getElementById("liveAction")?.addEventListener("click",()=>{window.location.assign(new URL("live.html",window.location.href).href)});
   document.getElementById("photoAction")?.addEventListener("click",openPostModal);
@@ -668,10 +603,7 @@ function setupUI(){
   document.getElementById("reactionWhoModal")?.addEventListener("click",e=>{if(e.target.id==="reactionWhoModal")e.currentTarget.hidden=true});
   document.getElementById("postModal")?.addEventListener("click",e=>{if(e.target.id==="postModal")closePostModal()});
   document.getElementById("commentModal")?.addEventListener("click",e=>{if(e.target.id==="commentModal")closeComments()});
-  document.addEventListener("keydown",e=>{
-    if(e.key==="Escape"){closeReactionPicker();closeShareModal();closeMediaViewer();if(!document.getElementById("commentModal").hidden)closeComments()}
-    if(!document.getElementById("feedMediaViewer")?.hidden){if(e.key==="ArrowLeft")stepMediaViewer(-1);if(e.key==="ArrowRight")stepMediaViewer(1)}
-  });
+  document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeReactionPicker();closeShareModal();if(!document.getElementById("commentModal").hidden)closeComments()}});
   document.getElementById("savedMenu")?.addEventListener("click",()=>{state.savedMode=true;state.filter="all";document.querySelectorAll(".feed-filter").forEach(x=>x.classList.remove("active"));renderFeed(true)});
   const sentinel=document.getElementById("feedSentinel");if(sentinel&&"IntersectionObserver" in window){const observer=new IntersectionObserver(en=>{if(!en[0].isIntersecting||state.loading)return;if(state.page<Math.ceil(visible().length/state.pageSize))renderFeed(false)},{rootMargin:"700px 0px"});observer.observe(sentinel)}
   setupTyping();
