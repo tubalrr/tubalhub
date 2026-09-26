@@ -72,18 +72,43 @@ textarea,input,select{width:100%;border:1px solid var(--line);background:#071321
 
 <script>
 const templates={
-TUTORIAL:`Act as a Tubal Hub tutorial content creator. Gawan mo ako ng tutorial script tungkol sa [TOPIC].
+TUTORIAL:`Act as a Tubal Hub tutorial content creator. Gawan mo ako ng complete tutorial video script tungkol sa [TOPIC].
 
-Gawin itong Taglish, natural at beginner-friendly. Maglagay ng strong hook sa unang 10–15 seconds, 3–5 clear steps, practical examples, suggested screen recordings/on-screen text, at CTA na “Mag-subscribe at mag-comment.”
+STYLE:
+- Taglish, natural at pang-beginner
+- Simple explanations, step-by-step
+- Hindi robotic at hindi OA
+- Huwag mag-imbento ng facts, features o results
+- Kung may kulang na information, markahan ito bilang [CHECK/VERIFY]
+
+STRUCTURE:
+HOOK — FIRST 10 SECONDS:
+Gumawa ng malakas pero hindi misleading na hook. Dapat agad sabihin kung ano ang matututunan ng viewer at bakit sulit nilang panoorin hanggang dulo.
+
+INTRO:
+Maikling Tubal Hub intro at malinaw na sabihin ang goal ng tutorial.
+
+STEP-BY-STEP:
+Gumamit ng 3–5 steps lamang. Para sa BAWAT STEP, ibigay:
+- Step title
+- Spoken narration/script
+- Exact screen guide: ano ang dapat ipakita sa screen, saan mag-click/tap, at ano ang dapat i-highlight
+- Suggested on-screen text
+- Optional B-roll kung kailangan
+- Beginner tip o warning kung relevant
+
+OUTRO + CTA:
+Magbigay ng maikling recap, then natural CTA para mag-follow/subscribe, mag-comment ng susunod na tutorial topic, at mag-share kung nakatulong.
 
 Ibigay:
-1. SEO-friendly title
-2. 3 thumbnail text ideas
-3. Full video script
-4. Suggested on-screen text
-5. Description
-6. Relevant hashtags
-7. Suggested B-roll`,
+1. Viral-style pero non-misleading title
+2. 3 short thumbnail text options
+3. Complete video script
+4. 3–5 step screen guide
+5. On-screen text per step
+6. Description
+7. Relevant hashtags
+8. Suggested B-roll`,
 VLOG:`Act as a Tubal Hub vlog content strategist. Gawan mo ako ng natural na vlog tungkol sa [TOPIC].
 
 Style: casual barkada-style Taglish, hindi robotic. Maglagay ng hook, 3 main highlights, light/funny moment, honest real-talk section at natural CTA.
