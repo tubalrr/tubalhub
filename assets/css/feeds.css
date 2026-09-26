@@ -507,3 +507,293 @@ body.feeds-page:before{
   .feeds-header{background:rgba(3,5,11,.9)!important}
   .feed-toolbar .feed-filter-row:before{margin-bottom:3px}
 }
+
+
+/* =========================================================
+   TUBAL HUB FEEDS — VISUAL POLISH
+   CSS ONLY: preserves existing feed structure and behavior.
+   ========================================================= */
+.feeds-page{
+  --fd-green:#63f7c5;
+  --fd-purple:#8b7cf6;
+  --fd-cyan:#65dfff;
+  --fd-bg:#070a0d;
+  --fd-panel:rgba(13,18,22,.82);
+  --fd-line:rgba(151,176,190,.14);
+}
+body.feeds-page{
+  background:
+    radial-gradient(900px 520px at 12% -10%,rgba(99,247,197,.075),transparent 68%),
+    radial-gradient(800px 540px at 92% 4%,rgba(139,124,246,.075),transparent 66%),
+    linear-gradient(180deg,#070a0d 0%,#05070a 56%,#040608 100%)!important;
+}
+.feeds-header{
+  min-height:70px!important;
+  padding:10px 20px!important;
+  border-bottom:1px solid rgba(99,223,255,.11)!important;
+  background:rgba(5,8,11,.86)!important;
+  box-shadow:0 10px 34px rgba(0,0,0,.26),inset 0 -1px rgba(255,255,255,.025)!important;
+}
+.feeds-header .brand{
+  gap:12px!important;
+}
+.feeds-header .brand img{
+  width:44px!important;height:44px!important;
+  filter:drop-shadow(0 0 16px rgba(99,223,255,.18)) drop-shadow(0 0 20px rgba(139,124,246,.12))!important;
+}
+.feeds-header nav{
+  gap:6px!important;
+}
+.feeds-header nav a{
+  min-height:34px;
+  display:inline-flex!important;
+  align-items:center;
+  padding:0 11px!important;
+  font-size:8px!important;
+  letter-spacing:.12em!important;
+  border-radius:9px!important;
+}
+.feeds-header nav a.active{
+  box-shadow:0 0 0 1px rgba(99,223,255,.16),0 8px 26px rgba(99,223,255,.11)!important;
+}
+.feeds-shell{
+  width:min(1500px,calc(100% - 30px))!important;
+  padding:22px 0 86px!important;
+}
+.feeds-layout{
+  gap:20px!important;
+}
+.feeds-panel,.post-card,.feed-toolbar,.feeds-stories-wrap{
+  border-color:rgba(99,223,255,.11)!important;
+  background:linear-gradient(145deg,rgba(13,19,25,.9),rgba(7,11,16,.94))!important;
+}
+.feeds-panel:hover,.post-card:hover,.feed-toolbar:hover,.feeds-stories-wrap:hover{
+  border-color:rgba(99,223,255,.2)!important;
+  box-shadow:0 24px 72px rgba(0,0,0,.42),0 0 24px rgba(99,223,255,.035),inset 0 1px rgba(255,255,255,.045)!important;
+}
+.feeds-stories-wrap{
+  padding:4px 4px 10px!important;
+}
+.feeds-strip-title{
+  padding:4px 4px 9px!important;
+}
+.feeds-strip-title span{
+  color:#8ea2ad!important;
+  letter-spacing:.17em!important;
+}
+.feeds-strip-title small{
+  color:#536875!important;
+}
+.feeds-stories{
+  gap:12px!important;
+  padding:2px 4px 10px!important;
+}
+.story-card{
+  flex-basis:126px!important;
+  height:178px!important;
+  border-radius:16px!important;
+  border-color:rgba(111,226,246,.13)!important;
+  background:linear-gradient(160deg,#101923,#071018)!important;
+}
+.story-card:hover{
+  transform:translateY(-5px) scale(1.015)!important;
+  border-color:rgba(99,223,255,.28)!important;
+  box-shadow:0 16px 38px rgba(0,0,0,.42),0 0 22px rgba(99,223,255,.055)!important;
+}
+.story-card.active-story{
+  box-shadow:0 0 0 1px rgba(99,247,197,.18),0 14px 30px rgba(0,0,0,.3)!important;
+}
+.create-post{
+  margin-top:4px!important;
+}
+.create-top{
+  padding:15px 16px!important;
+}
+.create-trigger{
+  height:42px!important;
+  border-radius:11px!important;
+  background:rgba(255,255,255,.025)!important;
+}
+.create-actions{
+  gap:8px!important;
+  padding:9px!important;
+  border-top:1px solid rgba(99,223,255,.075)!important;
+}
+.create-action{
+  min-height:40px!important;
+  border:1px solid rgba(99,223,255,.065)!important;
+  border-radius:10px!important;
+}
+.create-action:hover{
+  transform:translateY(-1px)!important;
+}
+.feed-toolbar{
+  padding:12px!important;
+  gap:10px!important;
+  background:rgba(8,12,17,.78)!important;
+  border-radius:12px!important;
+}
+.feed-filter{
+  min-height:34px!important;
+  padding:0 12px!important;
+  border:1px solid transparent!important;
+  border-radius:9px!important;
+}
+.feed-filter.active{
+  border-color:rgba(99,223,255,.18)!important;
+  background:linear-gradient(135deg,rgba(99,223,255,.09),rgba(139,124,246,.09))!important;
+  color:#dffcff!important;
+}
+.feed-search{
+  height:36px!important;
+  border-radius:10px!important;
+  background:rgba(2,6,10,.56)!important;
+}
+.post-card{
+  overflow:hidden!important;
+}
+.post-head{
+  min-height:62px;
+  padding:13px 15px!important;
+}
+.post-meta b{
+  font-size:10px!important;
+  letter-spacing:.02em!important;
+}
+.post-meta span{
+  color:#708692!important;
+}
+.post-body{
+  background:linear-gradient(180deg,rgba(255,255,255,.006),transparent)!important;
+}
+.post-caption{
+  font-size:11px!important;
+  line-height:1.7!important;
+  color:#b3c1c8!important;
+}
+.post-media,.product-media,.game-cover{
+  background:#080d12!important;
+}
+.post-media{
+  max-height:720px;
+}
+.product-card,.game-card{
+  overflow:hidden!important;
+  border:1px solid rgba(99,223,255,.08)!important;
+  border-radius:12px!important;
+  margin:0 14px!important;
+  background:rgba(255,255,255,.015)!important;
+}
+.product-info,.game-info{
+  padding:15px!important;
+}
+.product-info h3,.game-info h3{
+  font-size:20px!important;
+  line-height:1.18!important;
+}
+.product-price{
+  font-weight:600!important;
+  color:#73efd0!important;
+}
+.stock-pill{
+  border:1px solid rgba(99,247,197,.12)!important;
+  padding:5px 8px!important;
+  border-radius:999px!important;
+  background:rgba(99,247,197,.035)!important;
+}
+.buy-btn,.play-btn{
+  display:inline-flex!important;
+  align-items:center;
+  justify-content:center;
+  min-height:34px;
+  padding:0 12px!important;
+  border:1px solid rgba(99,223,255,.12)!important;
+  border-radius:8px!important;
+  text-decoration:none!important;
+  color:#cbfaff!important;
+  background:rgba(99,223,255,.035)!important;
+}
+.buy-btn:hover,.play-btn:hover{
+  border-color:rgba(99,223,255,.24)!important;
+  background:rgba(99,223,255,.07)!important;
+}
+.post-footer{
+  border-top:1px solid rgba(99,223,255,.075)!important;
+}
+.post-stats{
+  padding:10px 15px!important;
+  color:#687e89!important;
+}
+.post-actions{
+  gap:7px!important;
+  padding:8px!important;
+}
+.post-action{
+  min-height:36px!important;
+  border:1px solid rgba(99,223,255,.065)!important;
+  border-radius:9px!important;
+}
+.post-action.reacted{
+  background:linear-gradient(135deg,rgba(99,223,255,.11),rgba(139,124,246,.10))!important;
+  color:#d8fbff!important;
+}
+.reaction-zone{
+  padding:4px 15px 10px!important;
+}
+.reaction-summary-inner{
+  min-height:25px;
+}
+.feed-empty{
+  min-height:250px;
+  display:flex!important;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  border:1px dashed rgba(99,223,255,.11)!important;
+  border-radius:14px!important;
+  background:rgba(8,12,17,.58)!important;
+}
+.feed-empty strong{
+  font-size:24px!important;
+  color:#a9bac2!important;
+}
+.sponsored-card,.trending-card,.active-games-card,.suggested-card{
+  overflow:hidden!important;
+}
+.feeds-side-title{
+  padding:14px 14px 10px!important;
+  letter-spacing:.16em!important;
+}
+.trending-item,.active-game-row,.suggested-row{
+  min-height:52px!important;
+}
+.trending-item:hover,.suggested-row:hover{
+  background:rgba(99,223,255,.035)!important;
+}
+.contact-avatar{
+  border-color:rgba(99,223,255,.12)!important;
+}
+.feed-notice{
+  border-radius:10px!important;
+  padding:10px 14px!important;
+  background:rgba(9,14,19,.96)!important;
+  border-color:rgba(99,223,255,.14)!important;
+}
+@media(max-width:1220px){
+  .feeds-shell{width:min(100% - 24px,960px)!important}
+}
+@media(max-width:920px){
+  .feeds-shell{width:min(100% - 18px,700px)!important}
+  .feeds-header{padding:9px 14px!important}
+}
+@media(max-width:640px){
+  .feeds-header .brand img{width:40px!important;height:40px!important}
+  .feeds-header .brand span{font-size:11px!important}
+  .feeds-shell{width:min(100% - 14px,700px)!important}
+  .story-card{flex-basis:112px!important;height:160px!important}
+  .create-actions{grid-template-columns:1fr!important}
+  .feed-toolbar{padding:10px!important}
+  .post-head{padding:12px!important}
+  .post-media{max-height:none}
+  .product-card,.game-card{margin:0 10px!important}
+}
