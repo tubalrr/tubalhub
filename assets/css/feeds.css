@@ -1442,3 +1442,371 @@ body.feeds-page:before{
     background:rgba(255,255,255,.96)!important;
   }
 }
+
+
+/* =========================================================
+   PURE LIGHT FEEDS — NO VISIBLE BLACK / DARK SURFACES
+   VISUAL ONLY — existing functionality untouched.
+   ========================================================= */
+html,
+body.feeds-page{
+  background:#FFFFFF!important;
+  color:#202326!important;
+}
+body.feeds-page:before,
+body.feeds-page:after{
+  display:none!important;
+}
+.feeds-header{
+  background:#FFFFFF!important;
+  border-bottom:1px solid #E5E7E9!important;
+  box-shadow:0 5px 18px rgba(32,35,38,.045)!important;
+}
+.feeds-header:before{
+  background:linear-gradient(90deg,transparent,#D7DBDE 35%,#E7E9EA 65%,transparent)!important;
+  opacity:1!important;
+}
+.feeds-header .brand,
+.feeds-header .brand span{
+  color:#202326!important;
+}
+.feeds-header .brand small{
+  color:#8A9095!important;
+}
+.feeds-header nav a{
+  color:#7A8186!important;
+}
+.feeds-header nav a:hover{
+  color:#202326!important;
+  background:#F2F3F4!important;
+  border-color:#E1E4E6!important;
+}
+.feeds-header nav a.active{
+  color:#FFFFFF!important;
+  background:#30353A!important;
+  box-shadow:none!important;
+}
+.feeds-panel,
+.post-card,
+.feed-toolbar,
+.feeds-stories-wrap{
+  background:#FFFFFF!important;
+  border-color:#E1E4E6!important;
+  box-shadow:0 5px 20px rgba(32,35,38,.045)!important;
+}
+.feeds-panel:hover,
+.post-card:hover,
+.feed-toolbar:hover,
+.feeds-stories-wrap:hover{
+  background:#FFFFFF!important;
+  border-color:#D6DADE!important;
+  box-shadow:0 7px 24px rgba(32,35,38,.055)!important;
+}
+.feed-menu-item{
+  background:#FFFFFF!important;
+  color:#6F767B!important;
+  border-color:transparent!important;
+}
+.feed-menu-item:hover{
+  background:#F5F6F7!important;
+  color:#202326!important;
+  border-color:#E2E5E7!important;
+}
+.feed-menu-item.active{
+  background:#F0F1F2!important;
+  color:#202326!important;
+  box-shadow:none!important;
+  border-color:#D9DDE0!important;
+}
+.feed-menu-icon{
+  background:#F7F8F8!important;
+  border-color:#E1E4E6!important;
+  color:#6F767B!important;
+}
+.feed-menu-item.active .feed-menu-icon{
+  background:#FFFFFF!important;
+  border-color:#D6DADC!important;
+}
+.create-post,
+.create-post *{
+  --dark-surface:none;
+}
+.create-post{
+  background:#FFFFFF!important;
+}
+.create-trigger,
+.feed-search,
+.feed-sort{
+  background:#FFFFFF!important;
+  color:#262A2D!important;
+  border-color:#D9DDE0!important;
+}
+.create-trigger::placeholder,
+.feed-search::placeholder{
+  color:#9AA0A5!important;
+}
+.create-trigger:hover,
+.feed-search:focus,
+.feed-sort:focus{
+  background:#FFFFFF!important;
+  border-color:#BFC5C9!important;
+  box-shadow:0 0 0 3px rgba(32,35,38,.045)!important;
+}
+.create-action,
+.feed-filter,
+.post-action{
+  background:#FFFFFF!important;
+  color:#6D7479!important;
+  border-color:#E0E3E5!important;
+}
+.create-action:hover,
+.feed-filter:hover,
+.post-action:hover{
+  background:#F3F4F5!important;
+  color:#202326!important;
+  border-color:#D3D7DA!important;
+}
+.feed-filter.active{
+  background:#ECEEEF!important;
+  color:#202326!important;
+  border-color:#D4D8DB!important;
+}
+.story-card{
+  background:#F4F5F5!important;
+  color:#202326!important;
+  border-color:#D7DBDE!important;
+  box-shadow:0 5px 18px rgba(32,35,38,.055)!important;
+}
+.story-card:hover{
+  background:#EFF1F2!important;
+  border-color:#C8CDD1!important;
+  box-shadow:0 7px 22px rgba(32,35,38,.07)!important;
+}
+.story-card.active-story{
+  background:#F7F8F8!important;
+  box-shadow:0 0 0 2px #C8CDD1,0 7px 22px rgba(32,35,38,.06)!important;
+}
+.story-card .story-media{
+  background:#F0F1F2!important;
+}
+.feed-avatar,
+.comment-avatar,
+.contact-avatar,
+.reaction-avatar{
+  background:#E9ECEE!important;
+  color:#4E565B!important;
+  border-color:#D5D9DC!important;
+  box-shadow:none!important;
+}
+.post-card,
+.post-body,
+.post-footer,
+.product-card,
+.game-card,
+.feed-article-content{
+  background:#FFFFFF!important;
+}
+.post-meta b,
+.feed-article-content h3,
+.product-info h3,
+.game-info h3{
+  color:#202326!important;
+}
+.post-caption,
+.post-body,
+.feed-article-content p{
+  color:#50585D!important;
+}
+.post-meta span,
+.comment-time,
+.feed-side-meta,
+.active-game-copy span,
+.suggested-copy small{
+  color:#8A9196!important;
+}
+.post-status{
+  display:none!important;
+}
+.product-card,
+.game-card{
+  border-color:#E1E4E6!important;
+}
+.product-media,
+.game-cover{
+  background:#F1F2F3!important;
+}
+.product-media img,
+.game-cover img,
+.post-media{
+  filter:none!important;
+}
+.product-price{
+  color:#30363A!important;
+}
+.stock-pill{
+  color:#737A7F!important;
+  background:#F3F4F4!important;
+  border-color:#D9DDDF!important;
+}
+.buy-btn,
+.play-btn{
+  color:#30353A!important;
+  background:#F5F6F6!important;
+  border-color:#D2D6D9!important;
+}
+.buy-btn:hover,
+.play-btn:hover{
+  background:#ECEEEF!important;
+  border-color:#BEC4C8!important;
+}
+.post-footer,
+.post-stats,
+.post-actions,
+.reaction-summary-row{
+  background:#FFFFFF!important;
+  border-color:#E1E4E6!important;
+}
+.reaction-summary,
+.comment-bubble,
+.share-tile,
+.mini-tool,
+.tool-btn,
+.reaction-choice{
+  background:#F7F8F8!important;
+  color:#5E666B!important;
+  border-color:#E0E3E5!important;
+}
+.reaction-summary:hover,
+.share-tile:hover{
+  background:#EEF0F1!important;
+  border-color:#CDD2D5!important;
+}
+.reaction-picker,
+.share-modal,
+.glass-modal{
+  background:#FFFFFF!important;
+  color:#202326!important;
+  border-color:#DDE1E3!important;
+  box-shadow:0 14px 45px rgba(32,35,38,.12)!important;
+}
+.glass-modal-layer,
+.share-backdrop{
+  background:rgba(255,255,255,.82)!important;
+}
+.feed-empty{
+  background:#FFFFFF!important;
+  border-color:#E0E3E5!important;
+  color:#8A9196!important;
+}
+.feed-empty strong{
+  color:#6B7378!important;
+}
+.feed-notice{
+  background:#FFFFFF!important;
+  color:#202326!important;
+  border-color:#DDE1E3!important;
+  box-shadow:0 8px 26px rgba(32,35,38,.1)!important;
+}
+.gradient-btn,
+.send-comment-btn{
+  background:#30353A!important;
+  color:#FFFFFF!important;
+  border-color:#30353A!important;
+  box-shadow:0 5px 14px rgba(32,35,38,.1)!important;
+}
+.action-live,
+.live-dot,
+.contact-dot.online,
+.post-status.online{
+  background:#7D858A!important;
+  box-shadow:none!important;
+}
+.trending-item,
+.active-game-row,
+.suggested-row,
+.recent-item{
+  background:#FFFFFF!important;
+  color:#3C4348!important;
+}
+.trending-item:hover,
+.active-game-row:hover,
+.suggested-row:hover,
+.recent-item:hover{
+  background:#F5F6F6!important;
+}
+.trend-rank{
+  background:#F4F5F6!important;
+  border-color:#DEE2E4!important;
+  color:#626A6F!important;
+}
+.suggested-plus{
+  background:#F2F3F4!important;
+  border-color:#D9DDE0!important;
+  color:#646C71!important;
+}
+.sponsored-art,
+.recent-thumb{
+  background:#F2F3F4!important;
+}
+.feed-quick-backdrop,
+.atelier-scan-backdrop{
+  background:rgba(255,255,255,.88)!important;
+}
+.feed-quick-modal,
+.atelier-scan-modal{
+  background:#FFFFFF!important;
+  color:#202326!important;
+  border-color:#DDE1E3!important;
+  box-shadow:0 18px 55px rgba(32,35,38,.12)!important;
+}
+.feed-quick-media,
+.atelier-reader{
+  background:#F1F2F3!important;
+  border-color:#D1D5D8!important;
+}
+.feed-quick-close,
+.atelier-close{
+  background:#FFFFFF!important;
+  color:#737A7F!important;
+  border-color:#DDE1E3!important;
+}
+.feed-quick-copy h2,
+.atelier-scan-head h2{
+  color:#202326!important;
+}
+.feed-quick-meta,
+.feed-quick-stock,
+.atelier-scan-head small,
+.atelier-scan-body #atelierScanStatus{
+  color:#8A9196!important;
+}
+.feed-quick-price{
+  color:#30363A!important;
+}
+.feed-quick-save{
+  background:#FFFFFF!important;
+  color:#5F676C!important;
+  border-color:#D9DDE0!important;
+}
+.feed-quick-save.saved{
+  background:#F0F1F2!important;
+  color:#30363A!important;
+  border-color:#C9CED1!important;
+}
+.feed-quick-placeholder{
+  color:#969DA1!important;
+}
+.atelier-manual input{
+  background:#FFFFFF!important;
+  color:#202326!important;
+  border-color:#C9CED1!important;
+}
+.atelier-manual input:focus{
+  border-color:#9DA4A9!important;
+}
+@media(max-width:640px){
+  .feeds-header,
+  .feed-toolbar{
+    background:#FFFFFF!important;
+  }
+}
