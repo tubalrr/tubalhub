@@ -391,14 +391,41 @@ class MainActivity : AppCompatActivity() {
         val meUid = me.uid
         registerFcmToken(meUid)
         listenForIncomingCalls(meUid)
-        logout.setOnClickListener { stopMessages?.remove(); auth.signOut(); showLogin() }
+        logout.setOnClickListener {
+            db.collection("presence").document(me.uid).set(
+                mapOf(
+                    "online" to false,
+                    "updatedAt" to com.google.firebase.firestore.FieldValue.serverTimestamp()
+                ),
+                com.google.firebase.firestore.SetOptions.merge()
+            )
+            stopMessages?.remove()
+            auth.signOut()
+            showLogin()
+        }
+
+        val memberName = me.displayName ?: me.email?.substringBefore("@") ?: "Member"
+        val memberPhoto = me.photoUrl?.toString() ?: ""
 
         db.collection("users").document(me.uid).set(
             mapOf(
                 "uid" to me.uid,
-                "displayName" to (me.displayName ?: me.email?.substringBefore("@") ?: "Member"),
+                "displayName" to memberName,
                 "email" to (me.email ?: ""),
-                "photoURL" to (me.photoUrl?.toString() ?: "")
+                "photoURL" to memberPhoto
+            ),
+            com.google.firebase.firestore.SetOptions.merge()
+        )
+
+        // Public-safe Messenger directory/presence. This avoids exposing private
+        // user documents and lets the web Messenger resolve members directly.
+        db.collection("presence").document(me.uid).set(
+            mapOf(
+                "uid" to me.uid,
+                "displayName" to memberName,
+                "photoURL" to memberPhoto,
+                "online" to true,
+                "updatedAt" to com.google.firebase.firestore.FieldValue.serverTimestamp()
             ),
             com.google.firebase.firestore.SetOptions.merge()
         )
