@@ -444,7 +444,7 @@ onAuthStateChanged(auth, async user => {
   }
   messengerAuthGate.style.display = "none";
   try {
-    await publishOwnPresence();
+    await publishOwnPresence().catch(err => console.warn("[TUBAL HUB] presence publish", err));
     watchPresence();
     await loadUsers();
     watchMessages();
