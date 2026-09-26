@@ -79,7 +79,7 @@ jobs:
       - name: Upload workflow artifact
         uses: actions/upload-artifact@v4
         with:
-          name: TUBAL-HUB-Messenger-v1.2.20
+          name: TUBAL-HUB-Messenger-v1.2.21
           path: |
             android-messenger/release/TUBAL-HUB-Messenger-release.apk
             android-messenger/release/TUBAL-HUB-Messenger-release.apk.sha256
