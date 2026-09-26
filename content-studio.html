@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="description" content="Tubal Hub Content Studio — Tutorial, Vlog, Reaction and Review Master Prompt Pack">
+<title>Tubal Hub — Content Studio</title>
+<style>
+:root{--bg:#07111f;--panel:#0d1a2b;--panel2:#101f33;--line:rgba(255,255,255,.1);--text:#f4f7fb;--muted:#9cafc4;--accent:#5ee7ff;--accent2:#8b7cff;--good:#54e6a8}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 15% 0%,#12365a 0,transparent 35%),radial-gradient(circle at 90% 10%,#30236b 0,transparent 32%),var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;min-height:100vh}
+button,input,textarea,select{font:inherit}button{cursor:pointer}
+.wrap{width:min(1180px,calc(100% - 32px));margin:auto}
+.top{padding:42px 0 24px}.brand{display:flex;align-items:center;gap:12px}.dot{width:14px;height:14px;border-radius:50%;background:var(--accent);box-shadow:0 0 25px var(--accent)}
+h1{font-size:clamp(34px,5vw,64px);line-height:1;margin:22px 0 12px;letter-spacing:-2px}.lead{color:var(--muted);max-width:760px;font-size:17px;line-height:1.65}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:24px 0}.btn{border:1px solid var(--line);background:rgba(255,255,255,.06);color:var(--text);padding:11px 15px;border-radius:12px}.btn.primary{background:linear-gradient(135deg,var(--accent),#7f9cff);color:#06101d;border:0;font-weight:800}.btn:hover{transform:translateY(-1px)}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;padding:20px 0 50px}.card{background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.035));border:1px solid var(--line);border-radius:22px;padding:22px;backdrop-filter:blur(18px);box-shadow:0 18px 60px rgba(0,0,0,.22)}.card.full{grid-column:1/-1}.card h2{margin:0 0 8px;font-size:21px}.card p{color:var(--muted);line-height:1.55;margin-top:5px}.tag{display:inline-flex;padding:5px 9px;border-radius:999px;background:rgba(94,231,255,.1);color:var(--accent);font-size:12px;font-weight:800;margin-bottom:12px}
+textarea,input,select{width:100%;border:1px solid var(--line);background:#071321;color:var(--text);border-radius:13px;padding:13px;outline:none}textarea{min-height:180px;resize:vertical}input:focus,textarea:focus,select:focus{border-color:rgba(94,231,255,.55);box-shadow:0 0 0 3px rgba(94,231,255,.08)}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:11px}.copy{background:rgba(84,230,168,.1);color:var(--good);border:1px solid rgba(84,230,168,.25)}
+.result{margin-top:28px;display:none}.result.show{display:block}.resultbox{white-space:pre-wrap;background:#050d17;border:1px solid var(--line);border-radius:16px;padding:18px;line-height:1.65;color:#dfe9f5;max-height:600px;overflow:auto}
+.small{font-size:12px;color:var(--muted)}.footer{padding:0 0 35px;color:var(--muted);font-size:13px}
+@media(max-width:760px){.grid{grid-template-columns:1fr}.card.full{grid-column:auto}h1{letter-spacing:-1px}.wrap{width:min(100% - 20px,1180px)}}
+</style>
+</head>
+<body>
+<header class="top wrap">
+  <div class="brand"><span class="dot"></span><strong>TUBAL HUB</strong><span class="small">CONTENT STUDIO</span></div>
+  <h1>Turn any topic into a video.</h1>
+  <p class="lead">A built-in Master Prompt Pack for Tutorial, Vlog, Reaction, Review, Gaming and All-in-One content. Enter your topic, choose a format, then copy the generated prompt.</p>
+  <div class="toolbar">
+    <a class="btn" href="./index.html">← Back to Tubal Hub</a>
+    <button class="btn" onclick="document.getElementById('studio').scrollIntoView()">Open Studio</button>
+  </div>
+</header>
+
+<main id="studio" class="wrap">
+<section class="grid">
+  <article class="card full">
+    <span class="tag">CONTENT BUILDER</span>
+    <h2>Your topic</h2>
+    <p>Palitan ang topic at gamitin ang generated master prompt sa AI tool na gusto mo.</p>
+    <input id="topic" placeholder="Halimbawa: Paano gamitin ang Tubal Hub Messenger">
+    <div class="actions">
+      <select id="type" style="max-width:230px">
+        <option>TUTORIAL</option><option>VLOG</option><option>REACTION</option><option>REVIEW</option><option>GAMING</option><option>NEWS</option><option>STORY</option>
+      </select>
+      <select id="platform" style="max-width:230px">
+        <option>FACEBOOK</option><option>YOUTUBE</option><option>TIKTOK</option><option>REELS</option>
+      </select>
+      <button class="btn primary" onclick="generate()">Generate Master Prompt</button>
+      <button class="btn" onclick="clearAll()">Clear</button>
+    </div>
+  </article>
+
+  <article class="card"><span class="tag">01</span><h2>Tutorial</h2><p>Step-by-step, beginner-friendly Taglish content.</p><button class="btn primary" onclick="usePreset('TUTORIAL')">Use Template</button></article>
+  <article class="card"><span class="tag">02</span><h2>Vlog</h2><p>Casual barkada-style storytelling with highlights and real talk.</p><button class="btn primary" onclick="usePreset('VLOG')">Use Template</button></article>
+  <article class="card"><span class="tag">03</span><h2>Reaction</h2><p>Original commentary guide without reproducing the source video.</p><button class="btn primary" onclick="usePreset('REACTION')">Use Template</button></article>
+  <article class="card"><span class="tag">04</span><h2>Review</h2><p>First impression, features, pros, cons, value and final thoughts.</p><button class="btn primary" onclick="usePreset('REVIEW')">Use Template</button></article>
+
+  <article class="card full">
+    <span class="tag">05 · ALL-IN-ONE</span>
+    <h2>Generated Master Prompt</h2>
+    <div id="result" class="resultbox">Your prompt will appear here.</div>
+    <div class="actions">
+      <button class="btn copy" onclick="copyPrompt()">Copy Prompt</button>
+      <span id="status" class="small"></span>
+    </div>
+  </article>
+</section>
+</main>
+
+<footer class="footer wrap">Tubal Hub Content Studio · Original content workflow · No fake facts, fake statistics or misleading claims.</footer>
+
+<script>
+const templates={
+TUTORIAL:`Act as a Tubal Hub tutorial content creator. Gawan mo ako ng tutorial script tungkol sa [TOPIC].
+
+Gawin itong Taglish, natural at beginner-friendly. Maglagay ng strong hook sa unang 10–15 seconds, 3–5 clear steps, practical examples, suggested screen recordings/on-screen text, at CTA na “Mag-subscribe at mag-comment.”
+
+Ibigay:
+1. SEO-friendly title
+2. 3 thumbnail text ideas
+3. Full video script
+4. Suggested on-screen text
+5. Description
+6. Relevant hashtags
+7. Suggested B-roll`,
+VLOG:`Act as a Tubal Hub vlog content strategist. Gawan mo ako ng natural na vlog tungkol sa [TOPIC].
+
+Style: casual barkada-style Taglish, hindi robotic. Maglagay ng hook, 3 main highlights, light/funny moment, honest real-talk section at natural CTA.
+
+Ibigay:
+1. 5 title options
+2. 3 thumbnail text ideas
+3. Full vlog flow/script
+4. Description
+5. Hashtags
+6. Suggested B-roll shots`,
+REACTION:`Act as a Tubal Hub reaction-video strategist. Gumawa ng reaction guide tungkol sa [TOPIC].
+
+Gumawa lamang ng original commentary guide. Huwag i-reproduce ang buong source video o mahahabang copyrighted dialogue.
+
+Ibigay:
+1. Opening hook
+2. Introduction
+3. Suggested pause/comment points
+4. Honest observations
+5. Funny/light reactions kung appropriate
+6. Questions para sa audience
+7. Final thoughts
+8. CTA
+9. 5 title options
+10. 3 thumbnail text ideas`,
+REVIEW:`Act as a Tubal Hub review content strategist. Gawan mo ako ng honest review tungkol sa [TOPIC].
+
+Format:
+- Hook
+- First impression
+- Main features
+- Pros
+- Cons
+- Actual experience/evidence
+- Who is it for?
+- Sulit ba?
+- Final thoughts
+
+Huwag gumawa ng claims na walang supporting information. Kung kulang ang facts, sabihin kung ano ang kailangang i-check.
+
+Ibigay:
+1. SEO title
+2. 5 alternative titles
+3. 3 thumbnail concepts
+4. Full script
+5. Description
+6. Keywords
+7. Hashtags
+8. Suggested B-roll`,
+GAMING:`Act as a Tubal Hub gaming content strategist. Gumawa ng energetic pero natural na Pinoy/Taglish gaming video package tungkol sa [TOPIC].
+
+Ibigay:
+1. 5 clickable but non-misleading titles
+2. 3 short thumbnail texts
+3. 0–15s hook
+4. Full commentary script
+5. Key gameplay moments to highlight
+6. Funny/reaction lines
+7. CTA
+8. Description
+9. SEO keywords
+10. Hashtags`,
+NEWS:`Act as a Tubal Hub information-video strategist. Gumawa ng factual video outline tungkol sa [TOPIC].
+
+Huwag mag-imbento ng facts. Ihiwalay ang verified facts, analysis at claims. Kung current/recent ang topic, sabihin kung anong sources at dates ang dapat i-check.
+
+Ibigay:
+1. 5 titles
+2. 3 thumbnail texts
+3. Hook
+4. Structured script
+5. Source checklist
+6. Description
+7. Keywords
+8. Hashtags`,
+STORY:`Act as a Tubal Hub storytelling strategist. Gumawa ng engaging Taglish story video tungkol sa [TOPIC].
+
+Ibigay:
+1. 5 titles
+2. 3 thumbnail texts
+3. Strong opening hook
+4. Beginning, middle and ending
+5. Narration script
+6. Suggested visuals/B-roll
+7. Emotional but natural CTA
+8. Description and hashtags`
+};
+
+function usePreset(type){document.getElementById('type').value=type;document.getElementById('topic').focus();window.scrollTo({top:0,behavior:'smooth'})}
+function generate(){
+ const topic=document.getElementById('topic').value.trim()||'[TOPIC]';
+ const type=document.getElementById('type').value;
+ const platform=document.getElementById('platform').value;
+ let prompt=templates[type].replaceAll('[TOPIC]',topic);
+ prompt+=`\n\nPLATFORM: ${platform}
+TARGET AUDIENCE: Pinoy viewers, adults and young adults
+TUBAL HUB STYLE:
+- Natural Taglish
+- Engaging pero hindi OA
+- Useful entertainment/information
+- Walang fake information
+- Walang misleading clickbait
+- Original commentary/script
+- Huwag mag-reproduce ng copyrighted material nang mahaba.`;
+ document.getElementById('result').textContent=prompt;
+ document.getElementById('status').textContent='Prompt generated.';
+ document.getElementById('result').classList.add('show');
+}
+async function copyPrompt(){
+ const text=document.getElementById('result').textContent;
+ if(!text||text==='Your prompt will appear here.')return;
+ try{await navigator.clipboard.writeText(text);document.getElementById('status').textContent='Copied to clipboard ✓'}
+ catch(e){document.getElementById('status').textContent='Copy failed — select the prompt manually.'}
+}
+function clearAll(){document.getElementById('topic').value='';document.getElementById('result').textContent='Your prompt will appear here.';document.getElementById('result').classList.remove('show');document.getElementById('status').textContent=''}
+</script>
+</body>
+</html>
