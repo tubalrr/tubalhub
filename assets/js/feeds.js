@@ -573,7 +573,7 @@ function setupUI(){
   document.getElementById("feedSearch")?.addEventListener("input",e=>{state.query=e.target.value;renderFeed(true)});
   document.getElementById("feedSort")?.addEventListener("change",e=>{state.sort=e.target.value;renderFeed(true)});
   document.getElementById("createPostTrigger")?.addEventListener("click",openPostModal);
-  document.getElementById("liveAction")?.addEventListener("click",()=>location.href="live.html");
+  document.getElementById("liveAction")?.addEventListener("click",()=>{window.location.assign(new URL("live.html",window.location.href).href)});
   document.getElementById("photoAction")?.addEventListener("click",openPostModal);
   document.getElementById("productAction")?.addEventListener("click",()=>location.href="shop.html");
   document.getElementById("postForm")?.addEventListener("submit",publishPost);
