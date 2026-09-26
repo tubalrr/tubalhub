@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>TUBAL HUB Messenger APK Design • v1.2.16</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0a0a0b;--paper:#fafafa;--muted:#6b7280;--line:#e5e7eb;--soft:#f0f0f0;--blue:#3b82f6;--blue2:#60a5fa;--green:#22c55e}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Inter,system-ui,sans-serif;color:var(--ink)}
+body{background:linear-gradient(135deg,#fafaf9,#f0f0f0);padding:22px 16px 34px}
+.page-title{text-align:center;font-size:14px;font-weight:700;letter-spacing:.02em;margin:4px 0 22px}
+.page-title span{color:#6b7280;font-weight:600}
+.phones{display:flex;justify-content:center;align-items:flex-start;gap:24px;flex-wrap:wrap;padding:18px 0}
+.phone{width:316px;padding:8px;border:8px solid #1a1a1a;border-radius:40px;background:#1a1a1a;box-shadow:0 20px 60px rgba(0,0,0,.15);position:relative}
+.screen{width:300px;height:650px;border-radius:32px;overflow:hidden;background:#fff;position:relative}
+.notch{position:absolute;z-index:30;top:0;left:50%;transform:translateX(-50%);width:120px;height:20px;background:#000;border-radius:0 0 12px 12px}
+.app{height:100%;display:flex;flex-direction:column;padding-top:20px}
+.brand{height:50px;display:flex;align-items:center;gap:9px;padding:0 14px;border-bottom:1px solid #f0f0f0}
+.logo{width:28px;height:28px;border-radius:8px;background:#fff;color:#000;display:grid;place-items:center;font-weight:900;font-size:16px;box-shadow:0 1px 4px #0002}
+.brand b{font-size:14px}.brand small{font-size:9px;color:#9ca3af;margin-left:auto;font-family:"JetBrains Mono",monospace}
+.search{margin:12px 14px 8px;height:38px;background:#f0f0f0;border:0;border-radius:12px;padding:0 12px;display:flex;align-items:center;color:#9ca3af;font-size:13px}.search b{margin-left:auto;color:#111;font-size:20px}
+.stories{display:flex;gap:12px;overflow:hidden;padding:8px 14px 12px;border-bottom:1px solid #f0f0f0}
+.story{width:56px;flex:0 0 56px;text-align:center;font-size:10px;color:#555}.story-avatar{width:56px;height:56px;border-radius:50%;padding:3px;background:linear-gradient(135deg,#1dff91,#00d4ff);position:relative;margin-bottom:4px}.story-avatar>div{width:100%;height:100%;border-radius:50%;background:linear-gradient(145deg,#dbeafe,#f5d0fe);display:grid;place-items:center;font-weight:800}.plus{position:absolute;right:-1px;bottom:-1px;width:20px;height:20px;border-radius:50%;background:#3b82f6;color:#fff;display:grid;place-items:center;border:2px solid #fff;font-size:13px}
+.list{overflow:auto;flex:1}.sponsor{margin:10px 12px;border:1px dashed #e5e7eb;background:#f9fafb;border-radius:12px;padding:10px 12px}.eyebrow{font-size:9px;letter-spacing:.08em;color:#6b7280;text-transform:uppercase}.sponsor strong{display:block;font-size:12px;margin-top:4px}.sponsor p{margin:3px 0 0;color:#9ca3af;font-size:10px}
+.chat{display:flex;gap:10px;padding:11px 13px;border-left:3px solid transparent}.chat.active{background:#f0f7ff;border-left-color:#3b82f6}.avatar{width:46px;height:46px;flex:0 0 46px;border-radius:50%;background:linear-gradient(145deg,#a5b4fc,#f0abfc);display:grid;place-items:center;font-weight:800;position:relative}.online{position:absolute;right:-1px;bottom:-1px;width:10px;height:10px;border-radius:50%;background:#22c55e;border:2px solid #fff;animation:pulse 1.8s infinite}.copy{min-width:0;flex:1}.copy b{display:block;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.copy p{margin:3px 0 0;color:#6b7280;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rightmeta{text-align:right;color:#9ca3af;font-size:10px}.unread{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;background:#3b82f6;color:#fff;font-size:10px;font-weight:700;margin-top:6px}
+.nav{height:58px;border-top:1px solid #e5e7eb;display:grid;grid-template-columns:repeat(4,1fr);background:#fff}.nav button{border:0;background:transparent;font-size:9px;color:#9ca3af}.nav button b{display:block;font-size:20px;margin-bottom:2px}.nav button.active{color:#3b82f6}
+.conv-head{height:54px;display:flex;align-items:center;gap:8px;padding:0 12px;border-bottom:1px solid #e5e7eb}.back{font-size:22px}.mini-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#1dff91,#00d4ff);display:grid;place-items:center;font-size:11px;font-weight:800}.who{min-width:0;flex:1}.who b{font-size:13px;display:block}.who span{font-size:10px;color:#22c55e}.head-icon{border:0;background:transparent;font-size:17px}
+.storage{text-align:center;margin:8px auto 3px;background:#f0f0f0;border-radius:99px;padding:5px 9px;font:500 9px "JetBrains Mono",monospace;color:#555}
+.messages{flex:1;overflow:auto;padding:10px 13px;background:#fafaf9;background-image:radial-gradient(#e5e7eb 1px,transparent 1px);background-size:20px 20px}
+.msg{max-width:73%;margin:6px 0}.msg.sent{margin-left:auto}.bubble{background:#fff;border:1px solid #e5e7eb;border-radius:20px 20px 20px 4px;padding:9px 12px;box-shadow:0 1px 2px #0000000d;font-size:12px;line-height:1.45}.sent .bubble{background:linear-gradient(135deg,#3b82f6,#60a5fa);border:0;color:#fff;border-radius:20px 20px 4px 20px}.time{font-size:9px;color:#9ca3af;margin:3px 5px}.sent .time{text-align:right}.checks{font-size:10px;opacity:.8}.image-bubble{padding:4px;background:#fff;border:1px solid #e5e7eb;border-radius:18px}.image-bubble .fake-image{height:150px;border-radius:14px;background:linear-gradient(135deg,#dbeafe,#d1fae5 45%,#fce7f3);display:grid;place-items:center;color:#64748b;font-size:32px}.file{font:500 9px "JetBrains Mono",monospace;color:#6b7280;padding:6px}.expired{background:#f3f4f6;border:1px dashed #d1d5db;border-radius:16px;padding:18px;text-align:center;color:#6b7280;font-size:10px}.system{text-align:center;margin:8px auto;background:#f0f0f0;border-radius:99px;padding:5px 9px;width:max-content;max-width:100%;font-size:9px;color:#6b7280}
+.composer{height:58px;background:#fff;border-top:1px solid #e5e7eb;padding:9px;display:flex;gap:7px;align-items:center}.tool{border:0;background:transparent;color:#6b7280;font-size:18px}.input{height:38px;flex:1;border:0;background:#f0f0f0;border-radius:24px;padding:0 13px;font:13px Inter;outline:0}.input:focus{box-shadow:0 0 0 2px #3b82f633}.send{width:36px;height:36px;border:0;border-radius:50%;background:#3b82f6;color:#fff;font-size:18px}
+.profile-head{text-align:center;padding:26px 16px 12px}.big-avatar{width:80px;height:80px;border-radius:50%;margin:0 auto 9px;background:linear-gradient(135deg,#1dff91,#00d4ff);display:grid;place-items:center;font-size:25px;font-weight:800;position:relative}.big-avatar .online{width:13px;height:13px;right:2px;bottom:4px}.profile-head h2{margin:0;font-size:19px}.profile-head p{margin:3px 0;color:#6b7280;font-size:11px}.online-text{font-size:10px;color:#22c55e}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:8px 12px}.stat{background:#f9fafb;border:1px solid #e5e7eb;border-radius:12px;padding:9px 3px;text-align:center}.stat i{font-style:normal;font-size:16px}.stat strong{display:block;font:600 14px "JetBrains Mono",monospace;margin:3px 0}.stat small{font-size:8px;text-transform:uppercase;color:#6b7280}
+.section{padding:8px 13px}.section-title{font-size:12px;font-weight:700;margin-bottom:7px;display:flex;justify-content:space-between}.media-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}.tile{height:70px;border-radius:8px;background:linear-gradient(135deg,#dbeafe,#fce7f3);display:grid;place-items:center;color:#64748b;font-size:18px}.tile.expired{font-size:9px;background:#f3f4f6;color:#9ca3af}
+.actions{border-top:1px solid #f0f0f0;margin-top:4px}.action{height:38px;display:flex;align-items:center;gap:9px;border-bottom:1px solid #f0f0f0;font-size:11px}.action span:first-child{font-size:16px}.action .chev{margin-left:auto;color:#9ca3af}.danger{color:#ef4444}
+.footer-note{text-align:center;color:#9ca3af;font-size:8px;padding:9px 14px;line-height:1.5}
+.apk-specs{max-width:900px;margin:20px auto 0;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:14px;display:flex;justify-content:center;gap:14px;flex-wrap:wrap;font-size:10px;color:#4b5563}.apk-specs b{color:#111}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 #22c55e44}50%{box-shadow:0 0 0 4px #22c55e00}}
+@media(max-width:1020px){.phones{gap:18px}.phone{transform:none}}
+@media(max-width:700px){body{padding:12px 8px}.page-title{font-size:11px}.phones{flex-direction:column;align-items:center}.apk-specs{font-size:9px}}
+
+.live-loading{padding:22px 14px;text-align:center;color:#9ca3af;font-size:11px}
+.live-error{padding:16px 14px;text-align:center;color:#ef4444;font-size:11px;line-height:1.5}
+.chat.live-chat{cursor:pointer}
+.chat.live-chat:active{background:#eef6ff}
+.avatar img,.mini-avatar img,.big-avatar img{width:100%;height:100%;object-fit:cover;border-radius:inherit}
+.mini-avatar img{display:block}.big-avatar img{display:block}
+.live-empty{padding:30px 16px;text-align:center;color:#9ca3af;font-size:11px;line-height:1.5}
+.message-link{color:inherit;text-decoration:underline;word-break:break-word}
+</style>
+</head>
+<body>
+<div class="page-title">TUBAL HUB MESSENGER APK <span>• v1.2.16 • LIVE FIRESTORE • 3-SCREEN PREMIUM</span></div>
+<div class="phones">
+
+<section class="phone" id="phoneList"><div class="screen"><div class="notch"></div><div class="app">
+  <div class="brand"><div class="logo">T</div><b>TUBAL HUB</b><small>v1.2.16</small></div>
+  <div class="search">Search Tubal <b>＋</b></div>
+  <div class="stories" id="liveStories">
+    <div class="story"><div class="story-avatar"><div>YOU</div><span class="plus">+</span></div>Your Story</div>
+    <div class="story"><div class="story-avatar"><div>JT</div></div>Juan</div>
+    <div class="story"><div class="story-avatar"><div>MR</div></div>Maria</div>
+    <div class="story"><div class="story-avatar"><div>AK</div></div>Alex</div>
+  </div>
+  <div class="list" id="liveChatList"><div class="live-loading">Connecting to TUBAL HUB…</div></div>
+  <nav class="nav"><button class="active"><b>◉</b>Chats</button><button><b>♙</b>Users</button><button><b>◉</b>Live</button><button><b>▶</b>Videos</button></nav>
+</div></div></section>
+
+<section class="phone" id="phoneChat"><div class="screen"><div class="notch"></div><div class="app">
+  <header class="conv-head"><span class="back">‹</span><div class="mini-avatar" id="liveChatAvatar">M</div><div class="who"><b id="liveChatName">Select a member</b><span id="liveChatStatus">● Offline</span></div><button class="head-icon">☎</button><button class="head-icon">▣</button></header>
+  <div class="storage" id="liveStorage">Live Firestore • text messages</div>
+  <main class="messages" id="liveMessages"><div class="live-loading">Select a member to start chatting.</div></main>
+  <form id="liveComposer" class="composer"><button class="tool">⌕</button><input id="liveMessageInput" class="input" maxlength="500" placeholder="Message..." autocomplete="off"><button class="tool">☺</button><button class="send">→</button></form>
+</div></div></section>
+
+<section class="phone" id="phoneProfile"><div class="screen"><div class="notch"></div><div class="app">
+  <div class="profile-head" id="liveProfileHead">
+    <div class="big-avatar" id="liveProfileAvatar">M</div>
+    <h2 id="liveProfileName">No member selected</h2>
+    <p id="liveProfileHandle">Sign in to use Messenger</p>
+    <div class="online-text" id="liveProfileStatus">● Offline</div>
+  </div>
+  <div class="stats" id="liveStats">
+    <div class="stat"><i>💬</i><strong id="statMessages">0</strong><small>Messages</small></div>
+    <div class="stat"><i>●</i><strong id="statPresence">Offline</strong><small>Status</small></div>
+    <div class="stat"><i>UID</i><strong id="statUid">—</strong><small>Member</small></div>
+  </div>
+  <div class="section"><div class="section-title">Messenger status</div><div class="sponsor"><strong id="liveMediaStatus">Select a conversation to view its live message history.</strong><p>Only real Firestore messages are displayed here.</p></div></div>
+  <div class="section"><div class="section-title">Sponsored Manager preview</div><div class="sponsor"><div style="font-size:24px;text-align:center">＋</div><strong id="liveSponsorTitle" style="text-align:center">No sponsor data configured</strong><p id="liveSponsorText" style="text-align:center">This Messenger build does not invent sponsor content.</p></div></div>
+  <div class="actions">
+    <div class="action"><span>🔕</span>Mute<span class="chev">›</span></div>
+    <div class="action danger"><span>🚫</span>Block<span class="chev">›</span></div>
+    <div class="action"><span>⚠️</span>Report<span class="chev">›</span></div>
+    <div class="action"><span>🗑️</span>Clear Chat<span class="chev">›</span></div>
+  </div>
+  <div class="footer-note">TUBAL HUB Messenger • v1.2.16 • Firebase Auth + Firestore • Real users + real messages</div>
+</div></div></section>
+</div>
+<div class="apk-specs">
+  <span><b>Package</b> com.tubalhub.messenger</span><span><b>Version</b> 1.2.16</span><span><b>Mode</b> WebView-ready</span><span><b>Min SDK</b> 24</span><span><b>Target</b> 34</span><span><b>Permissions</b> INTERNET + READ_MEDIA_IMAGES</span><span><b>Features</b> Firebase Auth + Firestore real users + real private messages + live presence</span><span><b>Cache</b> No stale v1.2.14-imgur1</span>
+</div>
+
+<script type="module">
+import { app, auth } from "./assets/js/firebase-config.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+import {
+  getFirestore, collection, query, where, onSnapshot, getDocs, addDoc, limit
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+
+const db = getFirestore(app);
+const $ = id => document.getElementById(id);
+const esc = value => {
+  const d = document.createElement("div");
+  d.textContent = value ?? "";
+  return d.innerHTML;
+};
+const initials = name => (name || "Member").trim().split(/\s+/).slice(0,2).map(x => x[0]).join("").toUpperCase() || "M";
+const msOf = d => d?.createdAt?.toMillis?.() || d?.createdAt?.seconds * 1000 || (d?.createdAt instanceof Date ? d.createdAt.getTime() : 0) || 0;
+const nameOf = u => u?.displayName || u?.name || u?.email?.split("@")[0] || "Member";
+const avatarHtml = (u, cls="") => u?.photoURL
+  ? '<img class="'+cls+'" src="'+esc(u.photoURL)+'" alt="">'
+  : esc(initials(nameOf(u)));
+
+let me = null;
+let selected = null;
+let users = [];
+let presence = new Map();
+let messages = [];
+let stopPresence = null;
+let stopMessages = null;
+let stopAllMessages = null;
+
+function setAuthMessage(text, error=false){
+  $("liveChatList").innerHTML = '<div class="'+(error ? "live-error" : "live-loading")+'">'+esc(text)+'</div>';
+}
+
+function updateHeader(){
+  if(!selected) return;
+  $("liveChatAvatar").innerHTML = avatarHtml(selected);
+  $("liveChatName").textContent = nameOf(selected);
+  const online = presence.get(selected.uid)?.online === true;
+  $("liveChatStatus").textContent = online ? "● Online now" : "● Offline";
+  $("liveChatStatus").style.color = online ? "#22c55e" : "#9ca3af";
+}
+
+function updateProfile(){
+  if(!selected) {
+    $("liveProfileAvatar").textContent = me ? initials(nameOf(me)) : "M";
+    $("liveProfileName").textContent = me ? nameOf(me) : "No member selected";
+    $("liveProfileHandle").textContent = me ? (me.email || "Signed in") : "Sign in to use Messenger";
+    $("liveProfileStatus").textContent = me ? "● You are signed in" : "● Offline";
+    $("statMessages").textContent = "0";
+    $("statPresence").textContent = "—";
+    $("statUid").textContent = "—";
+    return;
+  }
+  $("liveProfileAvatar").innerHTML = avatarHtml(selected);
+  $("liveProfileName").textContent = nameOf(selected);
+  $("liveProfileHandle").textContent = selected.email || ("UID: " + selected.uid.slice(0,10) + "…");
+  const online = presence.get(selected.uid)?.online === true;
+  $("liveProfileStatus").textContent = online ? "● Online now" : "● Offline";
+  $("liveProfileStatus").style.color = online ? "#22c55e" : "#9ca3af";
+  const mine = messages.filter(m => m.senderId === selected.uid || m.receiverId === selected.uid);
+  $("statMessages").textContent = String(mine.length);
+  $("statPresence").textContent = online ? "Online" : "Offline";
+  $("statUid").textContent = selected.uid.slice(0,8);
+}
+
+function renderStories(){
+  const active = users.filter(u => u.uid !== me?.uid).slice(0,4);
+  $("liveStories").innerHTML =
+    '<div class="story"><div class="story-avatar"><div>'+esc(me ? initials(nameOf(me)) : "YOU")+'</div><span class="plus">+</span></div>You</div>' +
+    active.map(u => '<button type="button" class="story" data-story="'+esc(u.uid)+'" style="border:0;background:none;padding:0;font:inherit;cursor:pointer"><div class="story-avatar"><div>'+avatarHtml(u)+'</div></div>'+esc(nameOf(u).split(" ")[0])+'</button>').join("");
+  $("liveStories").querySelectorAll("[data-story]").forEach(btn => btn.onclick = () => selectUser(btn.dataset.story));
+}
+
+function latestFor(uid){
+  return messages.filter(m => Array.isArray(m.participants) && m.participants.includes(uid)).sort((a,b)=>msOf(b)-msOf(a))[0];
+}
+
+function renderChatList(){
+  const others = users.filter(u => u.uid !== me?.uid);
+  const ordered = others.slice().sort((a,b) => (msOf(latestFor(b.uid)) - msOf(latestFor(a.uid))));
+  if(!ordered.length){
+    $("liveChatList").innerHTML = '<div class="live-empty">No other registered members are available yet.</div>';
+    return;
+  }
+  $("liveChatList").innerHTML = ordered.map(u => {
+    const last = latestFor(u.uid);
+    const online = presence.get(u.uid)?.online === true;
+    const selectedClass = selected?.uid === u.uid ? " active" : "";
+    const preview = last ? (last.senderId === me.uid ? "You: " : "") + (last.text || "") : "Start a new conversation";
+    const time = last ? new Date(msOf(last)).toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"}) : "";
+    return '<button type="button" class="chat live-chat'+selectedClass+'" data-uid="'+esc(u.uid)+'">' +
+      '<div class="avatar">'+avatarHtml(u)+' '+(online ? '<span class="online"></span>' : '')+'</div>' +
+      '<div class="copy"><b>'+esc(nameOf(u))+'</b><p>'+esc(preview)+'</p></div>' +
+      '<div class="rightmeta">'+esc(time)+'</div></button>';
+  }).join("");
+  $("liveChatList").querySelectorAll("[data-uid]").forEach(btn => btn.onclick = () => selectUser(btn.dataset.uid));
+}
+
+function renderMessages(){
+  if(!selected){
+    $("liveMessages").innerHTML = '<div class="live-empty">Choose a real TUBAL HUB member from the first screen.</div>';
+    updateProfile();
+    return;
+  }
+  const list = messages.filter(m => Array.isArray(m.participants) && m.participants.includes(selected.uid))
+    .sort((a,b)=>msOf(a)-msOf(b));
+  if(!list.length){
+    $("liveMessages").innerHTML = '<div class="live-empty">No messages yet.<br>Send the first real Firestore message.</div>';
+  } else {
+    $("liveMessages").innerHTML = list.map(m => {
+      const sent = m.senderId === me.uid;
+      const text = esc(m.text || "");
+      const time = new Date(msOf(m)).toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"});
+      return '<div class="msg '+(sent ? "sent" : "")+'"><div class="bubble">'+text+'</div><div class="time">'+time+(sent ? ' <span class="checks">✓</span>' : '')+'</div></div>';
+    }).join("");
+    $("liveMessages").scrollTop = $("liveMessages").scrollHeight;
+  }
+  updateHeader();
+  updateProfile();
+  renderChatList();
+}
+
+function selectUser(uid){
+  selected = users.find(u => u.uid === uid) || null;
+  renderChatList();
+  renderMessages();
+  $("liveMessageInput").focus();
+}
+
+async function loadUsers(){
+  const snap = await getDocs(query(collection(db,"users"), limit(100)));
+  users = snap.docs.map(d => ({uid:d.id, ...d.data()})).filter(u => u.uid !== me.uid);
+  renderStories();
+  renderChatList();
+}
+
+function watchPresence(){
+  if(stopPresence) stopPresence();
+  stopPresence = onSnapshot(query(collection(db,"presence"), limit(100)), snap => {
+    presence = new Map();
+    snap.forEach(d => presence.set(d.id, d.data()));
+    renderStories();
+    renderChatList();
+    updateHeader();
+    updateProfile();
+  }, err => console.error("[TUBAL HUB] presence", err));
+}
+
+function watchMessages(){
+  if(stopAllMessages) stopAllMessages();
+  const q = query(collection(db,"messages"), where("participants","array-contains",me.uid), limit(200));
+  stopAllMessages = onSnapshot(q, snap => {
+    messages = snap.docs.map(d => ({id:d.id, ...d.data()}));
+    renderChatList();
+    renderMessages();
+  }, err => {
+    console.error("[TUBAL HUB] messages", err);
+    $("liveMessages").innerHTML = '<div class="live-error">Could not load messages.<br>Check Firebase Auth and Firestore Rules.</div>';
+  });
+}
+
+$("liveComposer").addEventListener("submit", async e => {
+  e.preventDefault();
+  const input = $("liveMessageInput");
+  const text = input.value.trim();
+  if(!me || !selected || !text) return;
+  const send = $("liveComposer").querySelector(".send");
+  send.disabled = true;
+  try {
+    await addDoc(collection(db,"messages"), {
+      uid: me.uid,
+      senderId: me.uid,
+      receiverId: selected.uid,
+      participants: [me.uid, selected.uid],
+      displayName: nameOf(me),
+      senderPhotoURL: me.photoURL || "",
+      text,
+      type: "text",
+      createdAt: new Date()
+    });
+    input.value = "";
+    input.focus();
+  } catch(err) {
+    console.error("[TUBAL HUB] send message", err);
+    alert("Hindi na-send. Siguraduhing naka-sign in at tama ang Firestore Rules.");
+  } finally {
+    send.disabled = false;
+  }
+});
+
+$("phoneList").querySelector(".nav button:nth-child(2)")?.addEventListener("click", () => {
+  $("liveChatList").scrollTo({top:0,behavior:"smooth"});
+});
+
+onAuthStateChanged(auth, async user => {
+  me = user && !user.isAnonymous ? user : null;
+  selected = null;
+  if(!me){
+    setAuthMessage("Mag-sign in muna sa TUBAL HUB para gamitin ang Messenger.", true);
+    $("liveMessages").innerHTML = '<div class="live-empty">Firebase Auth required.</div>';
+    updateProfile();
+    return;
+  }
+  try {
+    await loadUsers();
+    watchPresence();
+    watchMessages();
+    updateProfile();
+  } catch(err) {
+    console.error("[TUBAL HUB] messenger startup", err);
+    setAuthMessage("Connected to Firebase, pero hindi mabasa ang member data.", true);
+  }
+});
+</script>
+</body></html>
