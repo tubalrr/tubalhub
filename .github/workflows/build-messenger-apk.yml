@@ -52,11 +52,12 @@ jobs:
         run: |
           gradle assembleRelease --no-daemon             -PMESSENGER_STORE_FILE=messenger-release.jks             -PMESSENGER_STORE_PASSWORD="$MESSENGER_STORE_PASSWORD"             -PMESSENGER_KEY_ALIAS="$MESSENGER_KEY_ALIAS"             -PMESSENGER_KEY_PASSWORD="$MESSENGER_KEY_PASSWORD"
 
-      - name: Build debug fallback
+      - name: Require stable signing key
         if: ${{ secrets.MESSENGER_KEYSTORE_BASE64 == '' }}
         run: |
-          echo "::warning::MESSENGER_KEYSTORE_BASE64 is not configured. Building debug APK. Install this build manually once; future self-updates require a stable signing key."
-          gradle assembleDebug --no-daemon
+          echo "::error::Stable Messenger signing key is not configured."
+          echo "Set the four Messenger signing secrets before publishing an APK."
+          exit 1
 
       - name: Prepare release APK
         run: |
