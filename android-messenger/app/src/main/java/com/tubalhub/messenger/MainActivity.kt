@@ -206,155 +206,190 @@ class MainActivity : AppCompatActivity() {
 
     private fun showLogin() {
         root.removeAllViews()
-        root.setPadding(20, 48, 20, 20)
+        root.setPadding(14, 18, 14, 10)
+        root.setBackgroundColor(0xFF020B08.toInt())
 
-        val scroll = ScrollView(this)
+        val scroll = ScrollView(this).apply {
+            fillViewport = true
+            isVerticalScrollBarEnabled = false
+        }
         val page = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             gravity = Gravity.CENTER_HORIZONTAL
-            setPadding(4, 12, 4, 20)
+            setPadding(8, 10, 8, 28)
         }
 
-        val logo = TextView(this).apply {
+        fun spacer(height: Int) = Space(this).apply {
+            layoutParams = LinearLayout.LayoutParams(1, height)
+        }
+
+        fun sectionLabel(title: String, subtitle: String? = null): LinearLayout {
+            val box = LinearLayout(this).apply {
+                orientation = LinearLayout.VERTICAL
+                setPadding(4, 0, 4, 0)
+            }
+            box.addView(text(title).apply {
+                textSize = 11f
+                typeface = Typeface.DEFAULT_BOLD
+                setTextColor(0xFF7DFFB4.toInt())
+                setPadding(4, 0, 4, 4)
+                letterSpacing = 0.08f
+            })
+            if (!subtitle.isNullOrBlank()) {
+                box.addView(text(subtitle).apply {
+                    textSize = 12f
+                    setTextColor(0xFF78928A.toInt())
+                    setPadding(4, 0, 4, 8)
+                })
+            }
+            return box
+        }
+
+        val brandMark = TextView(this).apply {
             text = "TH"
+            textSize = 26f
+            gravity = Gravity.CENTER
+            setTextColor(0xFF052319.toInt())
+            typeface = Typeface.create("sans-serif", Typeface.BOLD)
+            background = rounded(0xFF7DFFB4.toInt(), 28f)
+            elevation = 10f
+        }
+        page.addView(brandMark, LinearLayout.LayoutParams(68, 68).apply { topMargin = 8; bottomMargin = 16 })
+
+        page.addView(text("Welcome back").apply {
             textSize = 30f
             gravity = Gravity.CENTER
-            setTextColor(0xFF9DFFE0.toInt())
-            typeface = Typeface.DEFAULT_BOLD
-            background = rounded(0xFF0D4034.toInt(), 70f)
-        }
-        page.addView(logo, LinearLayout.LayoutParams(86, 86).apply { bottomMargin = 18 })
-
-        page.addView(TextView(this).apply {
-            text = "TUBAL HUB"
-            textSize = 28f
-            gravity = Gravity.CENTER
-            setTextColor(0xFFF0FFF8.toInt())
-            typeface = Typeface.DEFAULT_BOLD
+            typeface = Typeface.create("sans-serif", Typeface.BOLD)
+            setTextColor(0xFFF2FFF8.toInt())
+            setPadding(0, 0, 0, 4)
         })
-        page.addView(TextView(this).apply {
-            text = "Login to your TUBAL HUB account."
-            textSize = 15f
+
+        page.addView(text("Sign in to continue to TUBAL HUB Messenger").apply {
+            textSize = 14f
             gravity = Gravity.CENTER
-            setTextColor(0xFFAEBBB2.toInt())
-            setPadding(0, 4, 0, 18)
+            setTextColor(0xFF91A79F.toInt())
+            setPadding(8, 0, 8, 18)
         })
 
         val card = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
-            setPadding(18, 20, 18, 20)
-            background = rounded(0xFF0A1D18.toInt(), 20f)
+            setPadding(18, 18, 18, 18)
+            background = rounded(0xFF071612.toInt(), 24f)
+            elevation = 8f
         }
 
-        val emailLabel = text("Email").apply { textSize = 13f; setTextColor(0xFFD5DED8.toInt()) }
-        val email = input("Email", false)
-        val passwordLabel = text("Password").apply { textSize = 13f; setTextColor(0xFFD5DED8.toInt()); setPadding(10, 12, 10, 4) }
+        val emailSection = sectionLabel("EMAIL SIGN-IN", "Use your TUBAL HUB account credentials.")
+        card.addView(emailSection)
+        val email = input("Email address", false)
+        email.setSingleLine(true)
+        card.addView(email, LinearLayout.LayoutParams(-1, 54).apply { topMargin = 6 })
+
         val password = input("Password", true)
+        password.setSingleLine(true)
+        card.addView(password, LinearLayout.LayoutParams(-1, 54).apply { topMargin = 10 })
 
-        val login = button("Login with Email").apply {
-            background = rounded(0xFF7CFF4D.toInt(), 10f)
-            setTextColor(0xFF071008.toInt())
+        val login = button("Sign in with Email").apply {
+            textSize = 15f
+            background = rounded(0xFF7DFFB4.toInt(), 14f)
+            setTextColor(0xFF04130D.toInt())
             typeface = Typeface.DEFAULT_BOLD
         }
+        card.addView(login, LinearLayout.LayoutParams(-1, 54).apply { topMargin = 14 })
 
-        val divider = text("OR").apply {
+        card.addView(text("OR").apply {
             gravity = Gravity.CENTER
-            textSize = 12f
-            typeface = Typeface.DEFAULT_BOLD
-            setTextColor(0xFF718076.toInt())
-            setPadding(0, 14, 0, 8)
-        }
-
-        val googleAccountCard = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            setPadding(16, 14, 16, 14)
-            background = rounded(0xFF111922.toInt(), 16f)
-        }
-        googleAccountCard.addView(text("GOOGLE ACCOUNT").apply {
             textSize = 11f
             typeface = Typeface.DEFAULT_BOLD
-            setTextColor(0xFF8FA59B.toInt())
-            setPadding(0, 0, 0, 4)
+            setTextColor(0xFF5F756D.toInt())
+            setPadding(0, 14, 0, 10)
+            letterSpacing = 0.15f
         })
-        googleAccountCard.addView(text("Continue with your Google account").apply {
+
+        val google = button("Continue with Google").apply {
             textSize = 15f
-            typeface = Typeface.DEFAULT_BOLD
-            setTextColor(0xFFF4FFF9.toInt())
-            setPadding(0, 0, 0, 3)
-        })
-        googleAccountCard.addView(text("Choose an account securely with Google").apply {
-            textSize = 12f
-            setTextColor(0xFFAABBB3.toInt())
-            setPadding(0, 0, 0, 8)
-        })
-        val google = button("G   Continue with Google Account").apply {
-            background = rounded(0xFFFFFFFF.toInt(), 12f)
-            setTextColor(0xFF202124.toInt())
+            background = rounded(0xFFFFFFFF.toInt(), 14f)
+            setTextColor(0xFF1F2522.toInt())
             typeface = Typeface.DEFAULT_BOLD
         }
+        card.addView(google, LinearLayout.LayoutParams(-1, 54))
+
         val guest = button("Continue as Guest").apply {
-            background = rounded(0xFF101713.toInt(), 10f)
-            setTextColor(0xFFFFFFFF.toInt())
+            textSize = 14f
+            background = rounded(0xFF10221C.toInt(), 14f)
+            setTextColor(0xFFDDF6E9.toInt())
+        }
+        card.addView(guest, LinearLayout.LayoutParams(-1, 52).apply { topMargin = 10 })
+
+        card.addView(spacer(18))
+
+        val phoneCard = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(14, 14, 14, 14)
+            background = rounded(0xFF0A211A.toInt(), 18f)
         }
 
-        val phoneTitle = text("Phone Number").apply {
-            textSize = 16f
-            typeface = Typeface.DEFAULT_BOLD
-            setTextColor(0xFFDCE7DF.toInt())
-            setPadding(10, 20, 10, 6)
-        }
+        phoneCard.addView(sectionLabel("PHONE SIGN-IN", "We'll send a one-time verification code by SMS."))
+
         val phone = input("+63 9XX XXX XXXX", false).apply {
             inputType = android.text.InputType.TYPE_CLASS_PHONE
+            setSingleLine(true)
         }
+        phoneCard.addView(phone, LinearLayout.LayoutParams(-1, 54).apply { topMargin = 4 })
+
+        val phoneRow = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+        }
+
         val sendCode = button("Send SMS Code").apply {
-            background = rounded(0xFF0D1C12.toInt(), 10f)
-            setTextColor(0xFF39FF88.toInt())
+            textSize = 14f
+            background = rounded(0xFF17382B.toInt(), 13f)
+            setTextColor(0xFF7DFFB4.toInt())
+            typeface = Typeface.DEFAULT_BOLD
         }
-        val code = input("6-digit code", false).apply {
+        phoneRow.addView(sendCode, LinearLayout.LayoutParams(0, 50, 1f))
+
+        phoneCard.addView(phoneRow, LinearLayout.LayoutParams(-1, 50).apply { topMargin = 10 })
+
+        val code = input("6-digit verification code", false).apply {
             inputType = android.text.InputType.TYPE_CLASS_NUMBER
+            setSingleLine(true)
         }
-        val verifyCode = button("Verify Code").apply {
-            background = rounded(0xFF0D1C12.toInt(), 10f)
-            setTextColor(0xFF39FF88.toInt())
+        phoneCard.addView(code, LinearLayout.LayoutParams(-1, 54).apply { topMargin = 10 })
+
+        val verifyCode = button("Verify & Sign In").apply {
+            textSize = 14f
+            background = rounded(0xFF7DFFB4.toInt(), 13f)
+            setTextColor(0xFF04130D.toInt())
+            typeface = Typeface.DEFAULT_BOLD
         }
+        phoneCard.addView(verifyCode, LinearLayout.LayoutParams(-1, 50).apply { topMargin = 10 })
+
         val phoneStatus = text("").apply {
-            textSize = 13f
-            setTextColor(0xFFFF8D8D.toInt())
-            setPadding(10, 6, 10, 0)
+            textSize = 12f
+            setPadding(4, 8, 4, 0)
+            setTextColor(0xFF91A79F.toInt())
         }
+        phoneCard.addView(phoneStatus)
+
         code.visibility = View.GONE
         verifyCode.visibility = View.GONE
+        card.addView(phoneCard, LinearLayout.LayoutParams(-1, -2))
 
         val status = text("").apply {
             gravity = Gravity.CENTER
-            setPadding(6, 12, 6, 2)
-            setTextColor(0xFFFF8D8D.toInt())
-            textSize = 13f
+            textSize = 12f
+            setPadding(8, 14, 8, 2)
+            setTextColor(0xFFFF9F9F.toInt())
         }
-
-        card.addView(emailLabel)
-        card.addView(email, LinearLayout.LayoutParams(-1, 52).apply { topMargin = 2 })
-        card.addView(passwordLabel)
-        card.addView(password, LinearLayout.LayoutParams(-1, 52))
-        card.addView(login, LinearLayout.LayoutParams(-1, 52).apply { topMargin = 14 })
-        card.addView(divider)
-        card.addView(googleAccountCard, LinearLayout.LayoutParams(-1, -2).apply { topMargin = 4 })
-        card.addView(google, LinearLayout.LayoutParams(-1, 54).apply { topMargin = 8 })
-        card.addView(guest, LinearLayout.LayoutParams(-1, 52).apply { topMargin = 8 })
-        card.addView(phoneTitle)
-        card.addView(phone, LinearLayout.LayoutParams(-1, 52))
-        card.addView(sendCode, LinearLayout.LayoutParams(-1, 52).apply { topMargin = 8 })
-        card.addView(code, LinearLayout.LayoutParams(-1, 52).apply { topMargin = 8 })
-        card.addView(verifyCode, LinearLayout.LayoutParams(-1, 52).apply { topMargin = 8 })
-        card.addView(phoneStatus)
         card.addView(status)
 
         page.addView(card, LinearLayout.LayoutParams(-1, -2))
-        page.addView(text("Create an account on the website if you don't have one yet.").apply {
+        page.addView(text("New here? Create your account on the TUBAL HUB website.").apply {
             gravity = Gravity.CENTER
-            setTextColor(0xFF78918A.toInt())
             textSize = 12f
-            setPadding(8, 18, 8, 8)
+            setTextColor(0xFF617B72.toInt())
+            setPadding(12, 16, 12, 8)
         })
 
         fun setBusy(busy: Boolean) {
@@ -364,17 +399,19 @@ class MainActivity : AppCompatActivity() {
         }
 
         login.setOnClickListener {
-            val e = email.text.toString().trim()
-            val p = password.text.toString()
-            if (e.isEmpty() || p.isEmpty()) {
+            val eMail = email.text.toString().trim()
+            val pass = password.text.toString()
+            if (eMail.isEmpty() || pass.isEmpty()) {
                 status.text = "Enter your email and password."
                 return@setOnClickListener
             }
             setBusy(true)
+            status.setTextColor(0xFF9FE8C0.toInt())
             status.text = "Signing in…"
-            auth.signInWithEmailAndPassword(e, p)
+            auth.signInWithEmailAndPassword(eMail, pass)
                 .addOnSuccessListener { showMessenger() }
                 .addOnFailureListener { error ->
+                    status.setTextColor(0xFFFF9F9F.toInt())
                     status.text = nativeAuthError(error)
                     setBusy(false)
                 }
@@ -382,16 +419,19 @@ class MainActivity : AppCompatActivity() {
 
         google.setOnClickListener {
             setBusy(true)
+            status.setTextColor(0xFF9FE8C0.toInt())
             status.text = "Choose your Google account…"
             signInWithGoogle(status, login, google)
         }
 
         guest.setOnClickListener {
             setBusy(true)
+            status.setTextColor(0xFF9FE8C0.toInt())
             status.text = "Signing in as Guest…"
             auth.signInAnonymously()
                 .addOnSuccessListener { showMessenger() }
                 .addOnFailureListener { error ->
+                    status.setTextColor(0xFFFF9F9F.toInt())
                     status.text = nativeAuthError(error)
                     setBusy(false)
                 }
@@ -400,11 +440,12 @@ class MainActivity : AppCompatActivity() {
         sendCode.setOnClickListener {
             val number = phone.text.toString().trim()
             if (number.isEmpty()) {
+                phoneStatus.setTextColor(0xFFFF9F9F.toInt())
                 phoneStatus.text = "Enter your phone number first."
                 return@setOnClickListener
             }
             sendCode.isEnabled = false
-            phoneStatus.setTextColor(0xFFAEBBB2.toInt())
+            phoneStatus.setTextColor(0xFF9FE8C0.toInt())
             phoneStatus.text = "Sending SMS code…"
             startPhoneVerification(number, phoneStatus, sendCode, code, verifyCode)
         }
@@ -413,21 +454,23 @@ class MainActivity : AppCompatActivity() {
             val verificationId = phoneVerificationId
             val smsCode = code.text.toString().trim()
             if (verificationId.isNullOrBlank()) {
+                phoneStatus.setTextColor(0xFFFF9F9F.toInt())
                 phoneStatus.text = "Send the verification code first."
                 return@setOnClickListener
             }
-            if (smsCode.isEmpty()) {
-                phoneStatus.text = "Enter the 6-digit code."
+            if (smsCode.length != 6) {
+                phoneStatus.setTextColor(0xFFFF9F9F.toInt())
+                phoneStatus.text = "Enter the 6-digit verification code."
                 return@setOnClickListener
             }
             verifyCode.isEnabled = false
-            phoneStatus.setTextColor(0xFFAEBBB2.toInt())
+            phoneStatus.setTextColor(0xFF9FE8C0.toInt())
             phoneStatus.text = "Verifying code…"
             val credential = PhoneAuthProvider.getCredential(verificationId, smsCode)
             auth.signInWithCredential(credential)
                 .addOnSuccessListener { showMessenger() }
                 .addOnFailureListener { error ->
-                    phoneStatus.setTextColor(0xFFFF8D8D.toInt())
+                    phoneStatus.setTextColor(0xFFFF9F9F.toInt())
                     phoneStatus.text = nativeAuthError(error)
                     verifyCode.isEnabled = true
                 }
