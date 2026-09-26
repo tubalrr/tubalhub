@@ -48,6 +48,7 @@ class MainActivity : AppCompatActivity() {
     private var typingOffRunnable: Runnable? = null
     private var pinnedMessageId: String? = null
     private var typingLabel: TextView? = null
+    private var pinnedLabel: TextView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -362,16 +363,26 @@ class MainActivity : AppCompatActivity() {
         chatHeader.addView(videoCallButton, LinearLayout.LayoutParams(-2, 48))
         page.addView(chatHeader)
 
+        val pinnedView = text("").apply {
+            textSize = 11f
+            setTextColor(0xFF9DFFE0.toInt())
+            visibility = View.GONE
+            setPadding(12, 6, 12, 6)
+        }
+        pinnedLabel = pinnedView
+        page.addView(pinnedView, LinearLayout.LayoutParams(-1, -2))
+
         messageBox = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(4, 4, 4, 4)
         }
-        typingLabel = text("").apply {
+        val typingView = text("").apply {
             textSize = 11f
             setTextColor(0xFF55A8FF.toInt())
             visibility = View.GONE
         }
-        page.addView(typingLabel, LinearLayout.LayoutParams(-1, 30))
+        typingLabel = typingView
+        page.addView(typingView, LinearLayout.LayoutParams(-1, 30))
 
         val replyBar = text("").apply {
             textSize = 11f
@@ -555,6 +566,13 @@ class MainActivity : AppCompatActivity() {
         }
 
         messageBox?.removeAllViews()
+        val pinned = items.firstOrNull { it.getBoolean("pinnedReal") == true }
+        pinnedLabel?.apply {
+            if (pinned != null) {
+                visibility = View.VISIBLE
+                text = "📌 Pinned: " + (pinned.getString("text") ?: "Message")
+            } else visibility = View.GONE
+        }
         items.forEach {
             val messageId = it.id
             val sender = if (it.getString("senderId") == myUid) "You" else selectedName
@@ -597,6 +615,18 @@ class MainActivity : AppCompatActivity() {
                 reactionSummary.textSize = 13f
                 card.addView(reactionSummary)
             }
+
+            val created = it.getTimestamp("createdAt")?.toDate()?.time ?: 0L
+            val sentByMe = it.getString("senderId") == myUid
+            val status = if (!sentByMe) "" else when {
+                it.getTimestamp("seenAt") != null -> "  ✓✓ SEEN"
+                it.getTimestamp("deliveredAt") != null -> "  ✓✓ DELIVERED"
+                else -> "  ✓ SENT"
+            }
+            card.addView(text(if (created > 0L) android.text.format.DateFormat.format("hh:mm a", java.util.Date(created)).toString() + status else status).apply {
+                textSize = 9f
+                setTextColor(if (status.contains("SEEN")) 0xFF55A8FF.toInt() else 0xFF8EA69A.toInt())
+            })
 
             val reactionsRow = LinearLayout(this)
             reactionsRow.orientation = LinearLayout.HORIZONTAL
