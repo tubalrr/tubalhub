@@ -1397,3 +1397,90 @@ class MainActivity : AppCompatActivity() {
         val id = me.uid + "_" + target
         db.collection("typing").document(id).set(
             mapOf(
+                "senderId" to me.uid,
+                "receiverId" to target,
+                "participants" to listOf(me.uid, target),
+                "typing" to typing,
+                "updatedAt" to com.google.firebase.firestore.FieldValue.serverTimestamp()
+            ),
+            com.google.firebase.firestore.SetOptions.merge()
+        )
+    }
+
+    private fun subscribeTyping() {
+        stopTyping?.remove()
+        val me = auth.currentUser ?: return
+        val target = selectedUid ?: return
+        stopTyping = db.collection("typing").document(target + "_" + me.uid)
+            .addSnapshotListener { snap, _ ->
+                val label = findTypingLabel()
+                val data = snap?.data
+                val fresh = data?.get("typing") as? Boolean == true
+                if (fresh) {
+                    label.visibility = View.VISIBLE
+                    label.text = selectedName + " is typing...  •••"
+                    label.startAnimation(AlphaAnimation(0.45f, 1f).apply { duration = 650; repeatCount = AlphaAnimation.INFINITE; repeatMode = AlphaAnimation.REVERSE })
+                } else {
+                    label.clearAnimation()
+                    label.visibility = View.GONE
+                }
+            }
+    }
+
+    private fun findTypingLabel(): TextView = typingLabel ?: TextView(this).also { typingLabel = it }
+
+    private fun pinMessage(messageId: String) {
+        db.collection("messages").document(messageId).update(
+            mapOf("pinnedReal" to true, "pinnedAt" to com.google.firebase.firestore.FieldValue.serverTimestamp(), "pinnedBy" to auth.currentUser?.uid)
+        ).addOnSuccessListener { pinnedMessageId = messageId }.addOnFailureListener { toast(it.localizedMessage ?: "Pin failed.") }
+    }
+
+    private fun rounded(color: Int, radius: Float): GradientDrawable =
+        GradientDrawable().apply {
+            setColor(color)
+            cornerRadius = radius
+        }
+
+    private fun title(s: String) {
+        val v = text(s)
+        v.textSize = 28f
+        v.gravity = Gravity.CENTER
+        root.addView(v)
+    }
+
+    private fun text(s: String): TextView = TextView(this).apply {
+        text = s
+        textSize = 15f
+        setTextColor(0xFFEAF7F0.toInt())
+        setPadding(10, 12, 10, 12)
+    }
+
+    private fun input(hint: String, password: Boolean): EditText = EditText(this).apply {
+        this.hint = hint
+        setTextColor(0xFFFFFFFF.toInt())
+        setHintTextColor(0xFF8EA69A.toInt())
+        background = rounded(0xFF10241F.toInt(), 14f)
+        setPadding(14, 0, 14, 0)
+        if (password) {
+            inputType = android.text.InputType.TYPE_CLASS_TEXT or
+                android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
+        }
+    }
+
+    private fun button(label: String): Button = Button(this).apply {
+        text = label
+        isAllCaps = false
+        minHeight = 0
+        minWidth = 0
+        stateListAnimator = null
+    }
+
+    private fun toast(s: String) = Toast.makeText(this, s, Toast.LENGTH_SHORT).show()
+
+    override fun onDestroy() {
+        stopMessages?.remove()
+        incomingCallListener?.remove()
+        stopTyping?.remove()
+        super.onDestroy()
+    }
+}
