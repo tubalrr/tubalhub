@@ -1583,10 +1583,51 @@ exports.cleanupOldImagesReal = onSchedule("every 24 hours", async () => {
     }
   }
 
+  // Global 5 GB safety cap across all Global Chat media.
+  let deletedByGlobalBytes = 0;
+  try {
+    const [freshFiles] = await bucket.getFiles({prefix});
+    const freshEntries = [];
+    for (const file of freshFiles) {
+      try {
+        const [metadata] = await file.getMetadata();
+        freshEntries.push({
+          file,
+          name: file.name,
+          time: Date.parse(metadata.timeCreated || "") || 0,
+          size: Number(metadata.size || 0)
+        });
+      } catch (_) {}
+    }
+    let totalBytes = freshEntries.reduce((sum, item) => sum + item.size, 0);
+    if (totalBytes > settings.globalMaxBytes) {
+      freshEntries.sort((a,b) => a.time - b.time);
+      for (const item of freshEntries) {
+        if (totalBytes <= settings.globalMaxBytes) break;
+        try {
+          await item.file.delete();
+          totalBytes -= item.size;
+          deletedByGlobalBytes++;
+          expiredDocsUpdated += await markChatMediaExpiredReal(
+            item.name.split("/").pop() || "",
+            item.name
+          );
+        } catch (error) {
+          logger.warn("Could not delete Global Chat media for 5 GB safety cap.", {
+            name: item.name,
+            error: error?.message || String(error)
+          });
+        }
+      }
+    }
+  } catch (error) {
+    logger.warn("Global Chat 5 GB safety scan failed.", {error: error?.message || String(error)});
+  }
+
   await recordCleanupStatsReal({
-    deleted: deletedByAge + deletedByCount,
+    deleted: deletedByAge + deletedByCount + deletedByGlobalBytes,
     deletedByAge,
-    deletedByCount
+    deletedByCount: deletedByCount + deletedByGlobalBytes
   });
 
   logger.info("TUBAL HUB Global Chat media cleanup complete.", {
