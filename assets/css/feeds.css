@@ -1810,3 +1810,371 @@ body.feeds-page:after{
     background:#FFFFFF!important;
   }
 }
+
+
+/* =========================================================
+   FACEBOOK-STYLE LIGHT FEEDS
+   UI SURFACES = WHITE / LIGHT GRAY ONLY
+   FUNCTIONALITY UNTOUCHED
+   ========================================================= */
+html,
+body.feeds-page{
+  background:#F0F2F5!important;
+  color:#1C1E21!important;
+}
+.feeds-header{
+  background:#FFFFFF!important;
+  color:#1C1E21!important;
+  border-bottom:1px solid #DADDE1!important;
+  box-shadow:0 1px 3px rgba(0,0,0,.08)!important;
+}
+.feeds-header .brand,
+.feeds-header .brand span{
+  color:#1C1E21!important;
+}
+.feeds-header .brand small{
+  color:#65676B!important;
+}
+.feeds-header nav a{
+  color:#65676B!important;
+}
+.feeds-header nav a:hover{
+  background:#F2F3F5!important;
+  color:#1C1E21!important;
+  border-color:#E4E6E8!important;
+}
+.feeds-header nav a.active{
+  background:#E7F3FF!important;
+  color:#1877F2!important;
+  box-shadow:none!important;
+}
+.feeds-shell,
+.feeds-layout,
+.feeds-center,
+.feeds-rail{
+  background:transparent!important;
+}
+.feeds-panel,
+.post-card,
+.feed-toolbar,
+.feeds-stories-wrap,
+.create-post,
+.sponsored-card,
+.trending-card,
+.active-games-card,
+.suggested-card,
+.recently-viewed-card{
+  background:#FFFFFF!important;
+  color:#1C1E21!important;
+  border-color:#DADDE1!important;
+  box-shadow:0 1px 2px rgba(0,0,0,.06)!important;
+}
+.feeds-panel:hover,
+.post-card:hover,
+.feed-toolbar:hover,
+.feeds-stories-wrap:hover{
+  background:#FFFFFF!important;
+  border-color:#D2D5D9!important;
+  box-shadow:0 2px 6px rgba(0,0,0,.075)!important;
+}
+.section-kicker,
+.feeds-strip-title span,
+.feeds-side-title{
+  color:#65676B!important;
+}
+.feed-side-meta{
+  color:#65676B!important;
+}
+.feed-menu-item{
+  background:#FFFFFF!important;
+  color:#65676B!important;
+}
+.feed-menu-item:hover{
+  background:#F2F3F5!important;
+  color:#1C1E21!important;
+  border-color:#E4E6E8!important;
+}
+.feed-menu-item.active{
+  background:#E7F3FF!important;
+  color:#1877F2!important;
+  box-shadow:none!important;
+}
+.feed-menu-icon{
+  background:#F0F2F5!important;
+  color:#65676B!important;
+  border-color:#E4E6E8!important;
+}
+.feed-menu-item.active .feed-menu-icon{
+  background:#FFFFFF!important;
+  color:#1877F2!important;
+  border-color:#D6E9FA!important;
+}
+.create-top,
+.post-head,
+.post-body,
+.post-footer,
+.post-stats,
+.post-actions,
+.product-info,
+.game-info,
+.feed-article-content,
+.comments-modal,
+.share-modal,
+.glass-modal{
+  background:#FFFFFF!important;
+  color:#1C1E21!important;
+}
+.create-trigger,
+.feed-search,
+.feed-sort{
+  background:#F0F2F5!important;
+  color:#1C1E21!important;
+  border-color:#F0F2F5!important;
+  box-shadow:none!important;
+}
+.create-trigger::placeholder,
+.feed-search::placeholder{
+  color:#65676B!important;
+}
+.create-trigger:hover,
+.feed-search:focus,
+.feed-sort:focus{
+  background:#F0F2F5!important;
+  border-color:#DADDE1!important;
+  box-shadow:0 0 0 2px rgba(24,119,242,.08)!important;
+}
+.create-action,
+.feed-filter,
+.post-action{
+  background:#FFFFFF!important;
+  color:#65676B!important;
+  border-color:#E4E6E8!important;
+}
+.create-action:hover,
+.feed-filter:hover,
+.post-action:hover{
+  background:#F2F3F5!important;
+  color:#1C1E21!important;
+  border-color:#DADDE1!important;
+}
+.feed-filter.active{
+  background:#E7F3FF!important;
+  color:#1877F2!important;
+  border-color:#CFE7FB!important;
+}
+.post-action.reacted{
+  background:#E7F3FF!important;
+  color:#1877F2!important;
+  box-shadow:none!important;
+}
+.post-meta b,
+.feed-article-content h3,
+.product-info h3,
+.game-info h3{
+  color:#1C1E21!important;
+}
+.post-caption,
+.post-body,
+.feed-article-content p{
+  color:#33363A!important;
+}
+.post-meta span,
+.comment-time{
+  color:#65676B!important;
+}
+.post-status{
+  display:none!important;
+}
+.story-card{
+  background:#FFFFFF!important;
+  color:#1C1E21!important;
+  border-color:#DADDE1!important;
+  box-shadow:0 1px 3px rgba(0,0,0,.08)!important;
+}
+.story-card:hover{
+  background:#FFFFFF!important;
+  border-color:#C8CCD1!important;
+  box-shadow:0 2px 6px rgba(0,0,0,.1)!important;
+}
+.story-card.active-story{
+  box-shadow:0 0 0 2px #1877F2,0 2px 6px rgba(0,0,0,.08)!important;
+}
+.story-overlay{
+  background:linear-gradient(180deg,transparent 55%,rgba(0,0,0,.12))!important;
+}
+.feed-avatar,
+.comment-avatar,
+.contact-avatar,
+.reaction-avatar{
+  background:#E4E6E9!important;
+  color:#65676B!important;
+  border-color:#DADDE1!important;
+}
+.product-card,
+.game-card,
+.feed-article-content{
+  background:#FFFFFF!important;
+  border-color:#E4E6E9!important;
+}
+.product-media,
+.game-cover{
+  background:#F0F2F5!important;
+}
+.product-price{
+  color:#1C1E21!important;
+  font-weight:600!important;
+}
+.stock-pill{
+  background:#E7F3FF!important;
+  color:#1877F2!important;
+  border-color:#D6E9FA!important;
+}
+.buy-btn,
+.play-btn{
+  background:#F0F2F5!important;
+  color:#1C1E21!important;
+  border-color:#E4E6E9!important;
+}
+.buy-btn:hover,
+.play-btn:hover{
+  background:#E4E6E9!important;
+  border-color:#DADDE1!important;
+}
+.reaction-summary,
+.comment-bubble,
+.share-tile,
+.mini-tool,
+.tool-btn,
+.reaction-choice{
+  background:#F0F2F5!important;
+  color:#65676B!important;
+  border-color:#E4E6E8!important;
+  box-shadow:none!important;
+}
+.reaction-summary:hover,
+.share-tile:hover{
+  background:#E4E6E9!important;
+  border-color:#DADDE1!important;
+}
+.reaction-picker,
+.share-modal,
+.glass-modal{
+  background:#FFFFFF!important;
+  color:#1C1E21!important;
+  border-color:#DADDE1!important;
+  box-shadow:0 8px 28px rgba(0,0,0,.14)!important;
+}
+.reaction-choice:hover{
+  background:#E4E6E9!important;
+}
+.feed-empty{
+  background:#FFFFFF!important;
+  color:#65676B!important;
+  border-color:#DADDE1!important;
+}
+.feed-empty strong{
+  color:#65676B!important;
+}
+.feed-notice{
+  background:#FFFFFF!important;
+  color:#1C1E21!important;
+  border-color:#DADDE1!important;
+  box-shadow:0 6px 18px rgba(0,0,0,.12)!important;
+}
+.gradient-btn,
+.send-comment-btn{
+  background:#1877F2!important;
+  color:#FFFFFF!important;
+  border-color:#1877F2!important;
+  box-shadow:none!important;
+}
+.action-live,
+.live-dot,
+.contact-dot.online,
+.post-status.online{
+  background:#31A24C!important;
+  box-shadow:none!important;
+}
+.trending-item,
+.active-game-row,
+.suggested-row,
+.recent-item{
+  background:#FFFFFF!important;
+  color:#1C1E21!important;
+}
+.trending-item:hover,
+.active-game-row:hover,
+.suggested-row:hover,
+.recent-item:hover{
+  background:#F2F3F5!important;
+}
+.trend-rank{
+  background:#F0F2F5!important;
+  border-color:#E4E6E8!important;
+  color:#65676B!important;
+}
+.suggested-plus{
+  background:#E7F3FF!important;
+  border-color:#D6E9FA!important;
+  color:#1877F2!important;
+}
+.sponsored-art,
+.recent-thumb{
+  background:#F0F2F5!important;
+}
+.feed-quick-backdrop,
+.atelier-scan-backdrop{
+  background:rgba(240,242,245,.9)!important;
+}
+.feed-quick-modal,
+.atelier-scan-modal{
+  background:#FFFFFF!important;
+  color:#1C1E21!important;
+  border-color:#DADDE1!important;
+  box-shadow:0 8px 28px rgba(0,0,0,.14)!important;
+}
+.feed-quick-media,
+.atelier-reader{
+  background:#F0F2F5!important;
+  border-color:#DADDE1!important;
+}
+.feed-quick-close,
+.atelier-close{
+  background:#FFFFFF!important;
+  color:#65676B!important;
+  border-color:#DADDE1!important;
+}
+.feed-quick-copy h2,
+.atelier-scan-head h2{
+  color:#1C1E21!important;
+}
+.feed-quick-meta,
+.feed-quick-stock,
+.atelier-scan-head small,
+.atelier-scan-body #atelierScanStatus{
+  color:#65676B!important;
+}
+.feed-quick-price{
+  color:#1C1E21!important;
+}
+.feed-quick-save{
+  background:#FFFFFF!important;
+  color:#65676B!important;
+  border-color:#DADDE1!important;
+}
+.feed-quick-save.saved{
+  background:#E7F3FF!important;
+  color:#1877F2!important;
+  border-color:#CFE7FB!important;
+}
+.quick-view-trigger{
+  background:rgba(255,255,255,.94)!important;
+  color:#1C1E21!important;
+  border-color:#DADDE1!important;
+}
+@media(max-width:640px){
+  .feeds-header,
+  .feed-toolbar{
+    background:#FFFFFF!important;
+  }
+}
