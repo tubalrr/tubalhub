@@ -2178,3 +2178,183 @@ body.feeds-page{
     background:#FFFFFF!important;
   }
 }
+
+
+/* =========================================================
+   TEXT CONTRAST FIX — WHITE FEEDS
+   Make every visible label readable on light surfaces.
+   ========================================================= */
+body.feeds-page,
+body.feeds-page *{
+  text-shadow:none!important;
+}
+.feeds-header,
+.feeds-header .brand,
+.feeds-header .brand span,
+.feeds-header nav a,
+.feeds-header nav a.active{
+  color:#1C1E21!important;
+}
+.feeds-header .brand small,
+.section-kicker,
+.feeds-strip-title span,
+.feeds-strip-title small,
+.feeds-side-title,
+.feed-side-meta{
+  color:#65676B!important;
+}
+.feed-menu-item,
+.feed-menu-item span,
+.feed-menu-item .feed-menu-icon{
+  color:#34373A!important;
+}
+.feed-menu-item.active,
+.feed-menu-item.active span,
+.feed-menu-item.active .feed-menu-icon{
+  color:#1877F2!important;
+}
+.create-post,
+.create-post *,
+.feed-toolbar,
+.feed-toolbar *,
+.post-card,
+.post-card *,
+.feeds-panel,
+.feeds-panel *{
+  color:#1C1E21;
+}
+.create-trigger{
+  color:#65676B!important;
+}
+.create-trigger::placeholder,
+.feed-search::placeholder{
+  color:#65676B!important;
+  opacity:1!important;
+}
+.feed-search,
+.feed-sort{
+  color:#1C1E21!important;
+}
+.create-action,
+.feed-filter,
+.post-action{
+  color:#65676B!important;
+}
+.create-action:hover,
+.feed-filter:hover,
+.post-action:hover{
+  color:#1C1E21!important;
+}
+.feed-filter.active,
+.post-action.reacted{
+  color:#1877F2!important;
+}
+.post-meta b,
+.product-info h3,
+.game-info h3,
+.feed-article-content h3,
+.trend-copy b,
+.active-game-copy b,
+.suggested-copy b,
+.recent-item b{
+  color:#1C1E21!important;
+  font-weight:600!important;
+}
+.post-meta span,
+.comment-time,
+.post-stats,
+.post-stats *,
+.stock-pill,
+.feed-article-content p,
+.game-info p,
+.active-game-copy span,
+.suggested-copy small,
+.recent-item small,
+.trend-copy small{
+  color:#65676B!important;
+}
+.post-caption,
+.post-body,
+.comment-text{
+  color:#33363A!important;
+}
+.story-name,
+.story-card strong,
+.story-card{
+  color:#1C1E21!important;
+}
+.story-card .story-name{
+  color:#FFFFFF!important;
+}
+.product-price{
+  color:#1C1E21!important;
+}
+.buy-btn,
+.play-btn,
+.quick-view-trigger{
+  color:#1C1E21!important;
+}
+.reaction-summary,
+.reaction-more,
+.comment-bubble,
+.comment-actions button,
+.share-tile,
+.mini-tool,
+.tool-btn,
+.native-share-btn{
+  color:#65676B!important;
+}
+.reaction-summary:hover,
+.reaction-more:hover,
+.share-tile:hover,
+.comment-actions button:hover{
+  color:#1C1E21!important;
+}
+.share-head,
+.share-head *,
+.feed-post-modal,
+.feed-post-modal *,
+.comments-modal,
+.comments-modal *,
+.confirm-modal,
+.confirm-modal *{
+  color:#1C1E21!important;
+}
+.share-head small,
+.confirm-modal small,
+.emoji-head,
+.emoji-head span{
+  color:#65676B!important;
+}
+.share-now-row input,
+.share-link-copy input,
+.feed-post-modal textarea,
+.comment-input-shell input,
+.emoji-head input{
+  color:#1C1E21!important;
+  background:#F8F9FA!important;
+}
+.share-now-row input::placeholder,
+.feed-post-modal textarea::placeholder,
+.comment-input-shell input::placeholder,
+.emoji-head input::placeholder{
+  color:#65676B!important;
+  opacity:1!important;
+}
+.feed-empty,
+.feed-empty *{
+  color:#65676B!important;
+}
+.feed-empty strong{
+  color:#34373A!important;
+}
+.feed-notice{
+  color:#1C1E21!important;
+}
+.gradient-btn,
+.send-comment-btn{
+  color:#FFFFFF!important;
+}
+.suggested-plus{
+  color:#1877F2!important;
+}
