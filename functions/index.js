@@ -1117,6 +1117,128 @@ exports.getAuthorizedDownloadReal = onCall(async request => {
   throw new HttpsError("failed-precondition", "No protected download is configured.");
 });
 
+function privateMessageRef(messageId) {
+  return db.collection("messages").doc(String(messageId || ""));
+}
+
+function privateParticipant(data, uid) {
+  return Array.isArray(data?.participants) && data.participants.includes(uid);
+}
+
+exports.updatePrivateMessageReal = onCall(async request => {
+  requireRealUser(request);
+  const messageId = String(request.data?.messageId || "");
+  const action = String(request.data?.action || "");
+  const ref = privateMessageRef(messageId);
+  const snap = await ref.get();
+  if (!snap.exists) throw new HttpsError("not-found", "Message not found.");
+  const data = snap.data() || {};
+  const uid = request.auth.uid;
+
+  if (!privateParticipant(data, uid)) throw new HttpsError("permission-denied", "You are not a participant.");
+  if (!["edit","delete","react","pin","delivered","seen"].includes(action)) {
+    throw new HttpsError("invalid-argument", "Invalid message action.");
+  }
+
+  const now = FieldValue.serverTimestamp();
+
+  if (action === "delivered" || action === "seen") {
+    if (String(data.receiverId || "") !== uid) {
+      throw new HttpsError("permission-denied", "Only the recipient can update delivery state.");
+    }
+    const patch = action === "delivered"
+      ? { deliveredAt: now }
+      : { deliveredAt: data.deliveredAt || now, seenAt: now };
+    await ref.update(patch);
+    return { success: true, action };
+  }
+
+  if (action === "delete") {
+    if (String(data.senderId || "") !== uid) {
+      throw new HttpsError("permission-denied", "Only the sender can unsend this message.");
+    }
+    const createdMs = data.createdAt?.toMillis?.() || 0;
+    if (createdMs && Date.now() - createdMs > 10 * 60 * 1000) {
+      throw new HttpsError("failed-precondition", "Messages can only be unsent within 10 minutes.");
+    }
+    await ref.update({
+      deletedReal: true,
+      deletedAt: now,
+      text: "",
+      textReal: "",
+      mediaUrl: "",
+      fileNameReal: "",
+      type: "deleted"
+    });
+    return { success: true, action };
+  }
+
+  if (action === "edit") {
+    if (String(data.senderId || "") !== uid) {
+      throw new HttpsError("permission-denied", "Only the sender can edit this message.");
+    }
+    const createdMs = data.createdAt?.toMillis?.() || 0;
+    if (createdMs && Date.now() - createdMs > 10 * 60 * 1000) {
+      throw new HttpsError("failed-precondition", "Messages can only be edited within 10 minutes.");
+    }
+    const text = String(request.data?.text || "").trim();
+    if (!text || text.length > 500) throw new HttpsError("invalid-argument", "Invalid edited message.");
+    const moderation = moderateServerReal(text);
+    if (!moderation.allowed) throw new HttpsError("invalid-argument", "Offensive language is not allowed.");
+    const history = Array.isArray(data.editHistoryReal) ? data.editHistoryReal.slice(-9) : [];
+    history.push({ text: String(data.text || "").slice(0,500), editedAt: new Date() });
+    await ref.update({
+      text: moderation.cleanText,
+      textReal: moderation.cleanText,
+      editedReal: true,
+      editHistoryReal: history,
+      editedAt: now,
+      moderatedBy: "server"
+    });
+    return { success: true, action };
+  }
+
+  if (action === "react") {
+    const emoji = String(request.data?.emoji || "");
+    const allowed = ["😂","❤️","🔥","😮","😢"];
+    if (!allowed.includes(emoji)) throw new HttpsError("invalid-argument", "Unsupported reaction.");
+    const reactions = { ...(data.reactionsReal || {}) };
+    if (reactions[uid] === emoji) delete reactions[uid];
+    else reactions[uid] = emoji;
+    await ref.update({ reactionsReal: reactions });
+    return { success: true, action, emoji };
+  }
+
+  if (action === "pin") {
+    if (String(data.senderId || "") !== uid && !adminUser(request)) {
+      throw new HttpsError("permission-denied", "Only the sender or admin can pin this message.");
+    }
+    const pinned = data.pinnedReal === true;
+    await ref.update({
+      pinnedReal: !pinned,
+      pinnedAt: !pinned ? now : null,
+      pinnedBy: !pinned ? uid : null
+    });
+    return { success: true, action, pinned: !pinned };
+  }
+});
+
+exports.setPrivateTypingReal = onCall(async request => {
+  requireRealUser(request);
+  const receiverId = String(request.data?.receiverId || "");
+  const typing = request.data?.typing === true;
+  if (!receiverId || receiverId === request.auth.uid) throw new HttpsError("invalid-argument", "Invalid recipient.");
+  const ref = db.collection("typing").doc(request.auth.uid + "_" + receiverId);
+  await ref.set({
+    senderId: request.auth.uid,
+    receiverId,
+    participants: [request.auth.uid, receiverId],
+    typing,
+    updatedAt: FieldValue.serverTimestamp()
+  }, { merge: true });
+  return { success: true };
+});
+
 exports.sendPrivateMessageReal = onCall(async request => {
   requireRealUser(request);
 
