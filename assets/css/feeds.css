@@ -1115,3 +1115,84 @@ body.feeds-page:before{
   .feeds-header{background:rgba(18,20,22,.97)!important}
   .feeds-panel,.post-card,.feed-toolbar,.feeds-stories-wrap{border-radius:12px!important}
 }
+
+
+/* DENSER FEED FLOW — reduce dead space without changing behavior */
+.feeds-shell{
+  padding-top:12px!important;
+}
+.feeds-layout{
+  gap:14px!important;
+}
+.feeds-rail{
+  gap:8px!important;
+}
+.feeds-panel{
+  margin-bottom:0!important;
+}
+.feeds-center{
+  min-height:0!important;
+}
+.feeds-stories-wrap{
+  padding-bottom:6px!important;
+}
+.feeds-stories{
+  padding-bottom:5px!important;
+}
+.create-post{
+  margin-bottom:9px!important;
+}
+.create-top{
+  padding:11px 13px!important;
+}
+.create-actions{
+  padding:6px!important;
+}
+.feed-toolbar{
+  margin-bottom:10px!important;
+  padding:8px 10px!important;
+}
+.post-card{
+  margin-bottom:12px!important;
+}
+.post-head{
+  min-height:50px!important;
+  padding:10px 13px!important;
+}
+.post-caption{
+  padding:0 13px 9px!important;
+}
+.post-stats{
+  padding:7px 13px!important;
+}
+.post-actions{
+  padding:5px 7px!important;
+}
+.post-action{
+  min-height:33px!important;
+}
+.reaction-zone{
+  padding:2px 13px 7px!important;
+}
+.right-rail .feeds-panel{
+  padding-bottom:2px;
+}
+.right-rail .feeds-side-title{
+  padding:11px 12px 7px!important;
+}
+.trending-item,.active-game-row,.suggested-row,.recent-item{
+  padding:7px 10px!important;
+  min-height:42px!important;
+}
+.feed-side-meta{
+  padding:10px 12px!important;
+}
+@media(max-width:1220px){
+  .feeds-layout{gap:12px!important}
+}
+@media(max-width:640px){
+  .feeds-shell{padding-top:8px!important}
+  .post-card{margin-bottom:9px!important}
+  .create-post{margin-bottom:7px!important}
+  .feed-toolbar{margin-bottom:8px!important}
+}
