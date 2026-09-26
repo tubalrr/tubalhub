@@ -439,7 +439,9 @@ async function deleteComment(){
   document.getElementById("deleteModal").hidden=true;state.deleteCommentId=null;renderComments(postId);showNotice("Comment deleted.",true);
 }
 async function addComment(){
-  const input=document.getElementById("commentInput"),text=input?.value.trim();if(!state.currentCommentId||!text)return;
+  const input=document.getElementById("commentInput"),text=input?.value.trim();
+  if(!state.currentCommentId){showNotice("Open a post's comments first.");return}
+  if(!text){input?.focus();return}
   if(!state.auth){showNotice("Sign in to comment.");return}
   const id="local-"+Date.now()+"-"+Math.random().toString(36).slice(2,8);
   const item={id,postId:state.currentCommentId,uid:state.auth.uid,authorName:displayName(state.auth),authorPhotoURL:photoOf(state.auth),
@@ -651,7 +653,8 @@ function setupUI(){
   if(!navigator.share){const b=document.getElementById("nativeShare");if(b)b.hidden=true}
   document.getElementById("closeComments")?.addEventListener("click",closeComments);
   document.getElementById("commentInput")?.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();addComment()}});
-  document.getElementById("sendComment")?.addEventListener("click",e=>{e.preventDefault();addComment()});
+  document.getElementById("commentComposer")?.addEventListener("submit",e=>{e.preventDefault();addComment()});
+  document.getElementById("sendComment")?.addEventListener("click",e=>{e.preventDefault();document.getElementById("commentComposer")?.requestSubmit?.()||addComment()});
   document.getElementById("emojiButton")?.addEventListener("click",()=>toggleEmoji(true));
   document.getElementById("emojiSearch")?.addEventListener("input",()=>{state.emojiOffset=0;renderEmojiGrid()});
   document.getElementById("emojiMore")?.addEventListener("click",()=>{state.emojiOffset+=240;renderEmojiGrid()});
