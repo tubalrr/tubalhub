@@ -29,6 +29,10 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.messaging.FirebaseMessaging
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.google.android.play.core.appupdate.AppUpdateManager
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.install.model.AppUpdateType
+import com.google.android.play.core.install.model.UpdateAvailability
 
 class MainActivity : AppCompatActivity() {
     private val auth by lazy { FirebaseAuth.getInstance() }
@@ -49,6 +53,8 @@ class MainActivity : AppCompatActivity() {
     private var pinnedMessageId: String? = null
     private var typingLabel: TextView? = null
     private var pinnedLabel: TextView? = null
+    private lateinit var appUpdateManager: AppUpdateManager
+    private val updateRequestCode = 1216
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,9 +63,44 @@ class MainActivity : AppCompatActivity() {
         root.setBackgroundColor(0xFF03100D.toInt())
         window.statusBarColor = 0xFF03100D.toInt()
         window.navigationBarColor = 0xFF020807.toInt()
+        appUpdateManager = AppUpdateManagerFactory.create(this)
+        checkForPlayStoreUpdate()
         if (auth.currentUser == null) showLogin() else showMessenger()
         if (android.os.Build.VERSION.SDK_INT >= 33 && ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 1001)
+        }
+    }
+
+    private fun checkForPlayStoreUpdate() {
+        appUpdateManager.appUpdateInfo
+            .addOnSuccessListener { info ->
+                val available = info.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
+                val allowed = info.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
+                if (available && allowed) {
+                    appUpdateManager.startUpdateFlowForResult(
+                        info,
+                        AppUpdateType.IMMEDIATE,
+                        this,
+                        updateRequestCode
+                    )
+                }
+            }
+            .addOnFailureListener { Log.d("TUBAL_HUB_UPDATE", "Play update check unavailable", it) }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (::appUpdateManager.isInitialized) {
+            appUpdateManager.appUpdateInfo.addOnSuccessListener { info ->
+                if (info.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
+                    appUpdateManager.startUpdateFlowForResult(
+                        info,
+                        AppUpdateType.IMMEDIATE,
+                        this,
+                        updateRequestCode
+                    )
+                }
+            }
         }
     }
 
