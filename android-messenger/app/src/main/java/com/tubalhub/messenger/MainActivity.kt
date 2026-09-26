@@ -85,9 +85,11 @@ class MainActivity : AppCompatActivity() {
     private fun checkForSelfUpdate() {
         Thread {
             try {
-                val connection = URL(updateManifestUrl).openConnection() as HttpURLConnection
+                val connection = URL(updateManifestUrl + "?v=" + System.currentTimeMillis()).openConnection() as HttpURLConnection
                 connection.connectTimeout = 8000
                 connection.readTimeout = 8000
+                connection.setRequestProperty("Cache-Control", "no-cache, no-store")
+                connection.setRequestProperty("Pragma", "no-cache")
                 connection.requestMethod = "GET"
                 val body = connection.inputStream.bufferedReader().use { it.readText() }
                 connection.disconnect()
@@ -99,7 +101,8 @@ class MainActivity : AppCompatActivity() {
                 }
                 val latestVersionCode = json.optInt("versionCode", BuildConfig.VERSION_CODE)
                 val latestVersionName = json.optString("versionName", BuildConfig.VERSION_NAME)
-                val apkUrl = json.optString("apkUrl", "")
+                val manifestApkUrl = json.optString("apkUrl", "")
+                val apkUrl = "https://github.com/tubalrr/tubalhub/releases/download/v" + latestVersionName + "/TUBAL-HUB-Messenger-release.apk"
                 val notes = if (json.opt("notes") is org.json.JSONArray) {
                     val array = json.optJSONArray("notes")
                     buildString {
