@@ -99,7 +99,7 @@ async function loadPeople(){
 function buildFeed(){
   const raw=[...state.hubPosts.map(hubItem),...state.products,...games.map(gameItem)];
   const seen=new Set();state.items=raw.filter(x=>{const k=contentKey(x);if(seen.has(k))return false;seen.add(k);return true});
-  renderStories();renderFeed(true);renderSponsored();renderTrending();renderActiveGames();renderSuggested();
+  renderStories();renderFeatured();renderFeed(true);renderSponsored();renderTrending();renderActiveGames();renderSuggested();renderRecentlyViewed();
 }
 function visible(){
   let arr=state.items.filter(x=>!state.savedMode||state.saved.has(x.id));
@@ -146,10 +146,69 @@ function reactionSummaryMarkup(postId,compact=false){
 function renderReactionZone(x){
   return "<div class='reaction-zone'><div class='reaction-summary-row'>"+reactionSummaryMarkup(x.id)+"</div></div>";
 }
+
+function viewedIds(){
+  const v=readLocal("tubalhub-feed-viewed",[]);
+  return Array.isArray(v)?v:[];
+}
+function rememberViewed(id){
+  if(!id)return;
+  const ids=[id,...viewedIds().filter(x=>x!==id)].slice(0,12);
+  writeLocal("tubalhub-feed-viewed",ids);
+  renderRecentlyViewed();
+}
+function isSaved(id){return state.saved.has(id)}
+function toggleSaved(id){
+  if(!id)return;
+  if(state.saved.has(id))state.saved.delete(id);
+  else state.saved.add(id);
+  writeLocal("tubalhub-feed-saved",[...state.saved]);
+  const card=document.querySelector(".post-card[data-id='"+CSS.escape(id)+"']");
+  const b=card?.querySelector("[data-action='save']");
+  if(b){b.classList.toggle("saved",state.saved.has(id));b.textContent=state.saved.has(id)?"Saved":"Save"}
+  renderRecentlyViewed();
+  showNotice(state.saved.has(id)?"Saved to your collection.":"Removed from saved.",true);
+}
+function quickProduct(id){
+  const item=state.items.find(x=>x.id===id);
+  if(!item)return;
+  rememberViewed(id);
+  const modal=document.getElementById("feedQuickBackdrop");if(!modal)return;
+  document.getElementById("feedQuickTitle").textContent=item.title||"Product";
+  document.getElementById("feedQuickPrice").textContent=item.price!==""?"₱"+item.price:"";
+  document.getElementById("feedQuickStock").textContent=item.stock!==""?String(item.stock)+" in stock":"Stock not published";
+  document.getElementById("feedQuickDescription").textContent=item.description||"";
+  document.getElementById("feedQuickMeta").textContent=(item.author||"TUBAL HUB")+" · "+timeLabel(item.createdAt);
+  document.getElementById("feedQuickMedia").innerHTML=item.image?"<img src='"+esc(item.image)+"' alt='' loading='eager'>":"<div class='feed-quick-placeholder'>TUBAL HUB</div>";
+  const open=document.getElementById("feedQuickOpen");open.onclick=()=>{rememberViewed(id);location.href=item.productUrl||item.url||"shop.html"};
+  const save=document.getElementById("feedQuickSave");save.textContent=isSaved(id)?"Saved":"Save";save.classList.toggle("saved",isSaved(id));save.onclick=()=>toggleSaved(id);
+  modal.hidden=false;document.body.classList.add("quick-open");
+}
+function closeQuickProduct(){
+  const modal=document.getElementById("feedQuickBackdrop");if(modal)modal.hidden=true;
+  document.body.classList.remove("quick-open");
+}
+function renderFeatured(){
+  const box=document.getElementById("featuredCollection");if(!box)return;
+  const items=[...state.products,...state.items.filter(x=>x.type==="product"&&!state.products.some(p=>p.id===x.id))]
+    .filter(x=>x.image||x.title).slice(0,8);
+  if(!items.length){box.innerHTML="<div class='feed-featured-empty'>No products published yet.</div>";return}
+  box.innerHTML=items.map(x=>"<button type='button' class='featured-item' data-featured-id='"+esc(x.id)+"'><span class='featured-media'>"+(x.image?"<img src='"+esc(x.image)+"' alt='' loading='lazy'>":"<span>TUBAL</span>")+"</span><span class='featured-copy'><b>"+esc(x.title||"Product")+"</b><small>"+(x.price!==""?"₱"+esc(x.price):"")+"</small></span></button>").join("");
+  box.querySelectorAll("[data-featured-id]").forEach(b=>b.addEventListener("click",()=>quickProduct(b.dataset.featuredId)));
+}
+function renderRecentlyViewed(){
+  const box=document.getElementById("recentlyViewed");if(!box)return;
+  const map=new Map(state.items.map(x=>[x.id,x]));
+  const items=viewedIds().map(id=>map.get(id)).filter(Boolean).slice(0,5);
+  if(!items.length){box.innerHTML="<div class='feed-side-meta'>Nothing viewed yet.</div>";return}
+  box.innerHTML=items.map(x=>"<button type='button' class='recent-item' data-recent-id='"+esc(x.id)+"'><span class='recent-thumb'>"+(x.image?"<img src='"+esc(x.image)+"' alt=''>":"")+"</span><span><b>"+esc(x.title||"Product")+"</b><small>"+(x.price!==""?"₱"+esc(x.price):"View again")+"</small></span></button>").join("");
+  box.querySelectorAll("[data-recent-id]").forEach(b=>b.addEventListener("click",()=>quickProduct(b.dataset.recentId)));
+}
+
 function postMarkup(x){
   const caption=x.text||x.description||"",reacted=!!currentReaction(x.id),shares=shareTotal(x);
   let body="";
-  if(x.type==="product")body="<div class='product-card'><div class='product-media'>"+(x.image?"<img src='"+esc(x.image)+"' alt='' loading='lazy'>":"◈")+"</div><div class='product-info'><div class='product-info-top'><div><h3>"+esc(x.title)+"</h3><div class='product-price'>"+(x.price!==""?"₱"+esc(x.price):"")+"</div></div>"+(x.stock!==""?"<span class='stock-pill'>"+esc(x.stock)+" in stock</span>":"")+"</div><button class='buy-btn' data-buy='"+esc(x.id)+"' type='button'>Open in Shop</button></div></div>";
+  if(x.type==="product")body="<div class='product-card'><div class='product-media'>"+(x.image?"<img src='"+esc(x.image)+"' alt='' loading='lazy'>":"◈")+"<button class='quick-view-trigger' type='button' data-quick-view='"+esc(x.id)+"'>Quick view</button></div><div class='product-info'><div class='product-info-top'><div><h3>"+esc(x.title)+"</h3><div class='product-price'>"+(x.price!==""?"₱"+esc(x.price):"")+"</div></div>"+(x.stock!==""?"<span class='stock-pill'>"+esc(x.stock)+" in stock</span>":"")+"</div><button class='buy-btn' data-buy='"+esc(x.id)+"' type='button'>Open in Shop</button></div></div>";
   else if(x.type==="game")body="<div class='game-card'><div class='game-cover'>"+(x.image?"<img src='"+esc(x.image)+"' alt='' loading='lazy'>":"<b>"+esc(x.title.slice(0,2))+"</b>")+"</div><div class='game-info'><h3>"+esc(x.title)+"</h3><p>"+esc(x.description)+"</p><a class='play-btn' href='"+esc(x.url)+"' target='_blank' rel='noopener'>Open Game →</a></div></div>";
   else if(x.type==="video"&&x.mediaUrl)body="<video class='post-media feed-video' controls preload='metadata' src='"+esc(x.mediaUrl)+"'></video>";
   else if(x.type==="audio"&&x.mediaUrl)body="<audio class='post-audio' controls preload='metadata' src='"+esc(x.mediaUrl)+"'></audio>";
@@ -299,7 +358,9 @@ function bindPost(card){
   card.querySelector("[data-action='share']")?.addEventListener("click",()=>openShareModal(card.dataset.id));
   card.querySelector("[data-open-reactors]")?.addEventListener("click",()=>openReactors(card.dataset.id));
   card.querySelectorAll("[data-open-reactors]").forEach(b=>b.addEventListener("click",()=>openReactors(card.dataset.id)));
-  card.querySelector("[data-buy]")?.addEventListener("click",()=>location.href="shop.html");
+  card.querySelector("[data-buy]")?.addEventListener("click",()=>{rememberViewed(card.dataset.id);const item=state.items.find(x=>x.id===card.dataset.id);location.href=item?.productUrl||item?.url||"shop.html"});
+  card.querySelector("[data-action='save']")?.addEventListener("click",()=>toggleSaved(card.dataset.id));
+  card.querySelector("[data-quick-view]")?.addEventListener("click",()=>quickProduct(card.dataset.id));
   if(totalPostReactions(card.dataset.id,state.items.find(x=>x.id===card.dataset.id))>=10)card.classList.add("high-reaction");
 }
 function bindPosts(){document.querySelectorAll(".post-card").forEach(bindPost)}
@@ -605,6 +666,10 @@ function setupUI(){
   document.getElementById("commentModal")?.addEventListener("click",e=>{if(e.target.id==="commentModal")closeComments()});
   document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeReactionPicker();closeShareModal();if(!document.getElementById("commentModal").hidden)closeComments()}});
   document.getElementById("savedMenu")?.addEventListener("click",()=>{state.savedMode=true;state.filter="all";document.querySelectorAll(".feed-filter").forEach(x=>x.classList.remove("active"));renderFeed(true)});
+  document.getElementById("feedQuickClose")?.addEventListener("click",closeQuickProduct);
+  document.getElementById("feedQuickBackdrop")?.addEventListener("click",e=>{if(e.target.id==="feedQuickBackdrop")closeQuickProduct()});
+  document.addEventListener("keydown",e=>{if(e.key==="Escape")closeQuickProduct()});
+  document.getElementById("featuredViewAll")?.addEventListener("click",()=>{state.filter="products";state.savedMode=false;document.querySelectorAll(".feed-filter").forEach(x=>x.classList.toggle("active",x.dataset.filter==="products"));renderFeed(true);document.getElementById("feedList")?.scrollIntoView({behavior:"smooth",block:"start"})});
   const sentinel=document.getElementById("feedSentinel");if(sentinel&&"IntersectionObserver" in window){const observer=new IntersectionObserver(en=>{if(!en[0].isIntersecting||state.loading)return;if(state.page<Math.ceil(visible().length/state.pageSize))renderFeed(false)},{rootMargin:"700px 0px"});observer.observe(sentinel)}
   setupTyping();
 }
