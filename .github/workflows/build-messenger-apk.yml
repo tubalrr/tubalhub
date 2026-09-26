@@ -84,7 +84,7 @@ jobs:
       - name: Upload workflow artifact
         uses: actions/upload-artifact@v4
         with:
-          name: TUBAL-HUB-Messenger-v1.2.21
+          name: TUBAL-HUB-Messenger-v1.2.22
           path: |
             android-messenger/release/TUBAL-HUB-Messenger-release.apk
             android-messenger/release/TUBAL-HUB-Messenger-release.apk.sha256
@@ -93,10 +93,10 @@ jobs:
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.2.21
-          name: TUBAL HUB Messenger v1.2.21
+          tag_name: v1.2.22
+          name: TUBAL HUB Messenger v1.2.22
           body: |
-            TUBAL HUB Messenger v1.2.21
+            TUBAL HUB Messenger v1.2.22
 
             Redesigned Android login screen for phones.
             Improved Google Account sign-in presentation.
