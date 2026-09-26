@@ -67,6 +67,12 @@ class MainActivity : AppCompatActivity() {
     private var updateDialog: AlertDialog? = null
     private var phoneVerificationId: String? = null
     private var phoneResendingToken: PhoneAuthProvider.ForceResendingToken? = null
+    private var selectedGroupId: String? = null
+    private var selectedGroupName = "Group"
+    private var stopGroupMessages: com.google.firebase.firestore.ListenerRegistration? = null
+    private var groupListView: LinearLayout? = null
+    private var groupAdminButton: Button? = null
+    private var chatTitleView: TextView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -859,6 +865,7 @@ class MainActivity : AppCompatActivity() {
                 com.google.firebase.firestore.SetOptions.merge()
             )
             stopMessages?.remove()
+            stopGroupMessages?.remove()
             auth.signOut()
             showLogin()
         }
@@ -870,6 +877,7 @@ class MainActivity : AppCompatActivity() {
             mapOf(
                 "uid" to me.uid,
                 "displayName" to memberName,
+                "username" to usernameForMember(memberName, me.email),
                 "email" to (me.email ?: ""),
                 "photoURL" to memberPhoto
             ),
@@ -888,6 +896,54 @@ class MainActivity : AppCompatActivity() {
             ),
             com.google.firebase.firestore.SetOptions.merge()
         )
+
+
+        val groupsTitle = text("Groups").apply {
+            textSize = 19f
+            typeface = Typeface.DEFAULT_BOLD
+            setTextColor(0xFFF0FFF8.toInt())
+            setPadding(4, 18, 4, 10)
+        }
+        page.addView(groupsTitle)
+
+        val groupActions = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+        }
+        val createGroup = button("+ Create Group").apply {
+            textSize = 12f
+            background = rounded(0xFF19D98B.toInt(), 16f)
+            setTextColor(0xFF03100D.toInt())
+            typeface = Typeface.DEFAULT_BOLD
+        }
+        val joinGroup = button("Join by Invite").apply {
+            textSize = 12f
+            background = GradientDrawable().apply {
+                setColor(0x00172A25)
+                cornerRadius = 16f
+                setStroke(1, 0x557DFFB4)
+            }
+            setTextColor(0xFFBFEFCE.toInt())
+        }
+        groupActions.addView(createGroup, LinearLayout.LayoutParams(0, 48, 1f).apply { rightMargin = 6 })
+        groupActions.addView(joinGroup, LinearLayout.LayoutParams(0, 48, 1f).apply { leftMargin = 6 })
+        page.addView(groupActions)
+
+        val groupList = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+        }
+        groupListView = groupList
+        val groupScroll = ScrollView(this).apply {
+            isVerticalScrollBarEnabled = false
+            background = rounded(0xFF061611.toInt(), 20f)
+            setPadding(8, 8, 8, 8)
+        }
+        groupScroll.addView(groupList)
+        page.addView(groupScroll, LinearLayout.LayoutParams(-1, 230).apply { topMargin = 10 })
+
+        createGroup.setOnClickListener { showCreateGroupDialog() }
+        joinGroup.setOnClickListener { showJoinGroupDialog() }
+        loadGroups(groupList, me.uid)
 
         val usersTitle = text("Members").apply {
             textSize = 19f
@@ -930,7 +986,8 @@ class MainActivity : AppCompatActivity() {
         val chatHeader = LinearLayout(this).apply {
             gravity = Gravity.CENTER_VERTICAL
         }
-        val chatTitle = text("Private Chat").apply {
+        val chatTitle = text("Select a chat").apply {
+            also { chatTitleView = it }
             textSize = 19f
             typeface = Typeface.DEFAULT_BOLD
             setTextColor(0xFFF0FFF8.toInt())
@@ -944,6 +1001,15 @@ class MainActivity : AppCompatActivity() {
         }
         videoCallButton!!.setOnClickListener { startVideoCall() }
         chatHeader.addView(videoCallButton, LinearLayout.LayoutParams(-2, 48))
+        groupAdminButton = button("GROUP").apply {
+            background = rounded(0xFF173B2D.toInt(), 16f)
+            setTextColor(0xFF9DFFE0.toInt())
+            visibility = View.GONE
+        }
+        groupAdminButton!!.setOnClickListener {
+            selectedGroupId?.let { showGroupAdminDialog(it) }
+        }
+        chatHeader.addView(groupAdminButton, LinearLayout.LayoutParams(-2, 48).apply { leftMargin = 6 })
         page.addView(chatHeader)
 
         val pinnedView = text("").apply {
@@ -1024,8 +1090,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun openChat(uid: String, name: String) {
+        selectedGroupId = null
+        selectedGroupName = "Group"
+        stopGroupMessages?.remove()
         selectedUid = uid
         selectedName = name
+        chatTitleView?.text = "Private Chat • " + name
+        groupAdminButton?.visibility = View.GONE
+        videoCallButton?.visibility = View.VISIBLE
         videoCallButton?.isEnabled = true
         messageBox?.removeAllViews()
         messageBox?.addView(text("Chat with " + name))
@@ -1338,7 +1410,473 @@ class MainActivity : AppCompatActivity() {
             .show()
     }
 
+    private fun usernameForMember(displayName: String, email: String?): String {
+        val base = displayName.ifBlank { email?.substringBefore("@").orEmpty() }
+            .lowercase()
+            .replace(Regex("[^a-z0-9_]+"), "_")
+            .trim('_')
+        return if (base.isBlank()) "member" else base.take(24)
+    }
+
+    private fun groupAvatar(name: String, seed: Int): TextView {
+        val colors = intArrayOf(
+            0xFF7DFFB4.toInt(), 0xFF4DD7FF.toInt(), 0xFFA783FF.toInt(),
+            0xFFFFB86B.toInt(), 0xFFFF78B7.toInt()
+        )
+        val a = colors[Math.floorMod(seed, colors.size)]
+        val b = colors[Math.floorMod(seed / 7 + 2, colors.size)]
+        return TextView(this).apply {
+            text = name.trim().take(2).uppercase()
+            textSize = 13f
+            gravity = Gravity.CENTER
+            typeface = Typeface.create("sans-serif", Typeface.BOLD)
+            setTextColor(0xFF04130D.toInt())
+            background = GradientDrawable(
+                GradientDrawable.Orientation.TL_BR,
+                intArrayOf(a, b)
+            ).apply { cornerRadius = 18f }
+        }
+    }
+
+    private fun loadGroups(container: LinearLayout, uid: String) {
+        db.collection("groups").whereArrayContains("memberIds", uid).get()
+            .addOnSuccessListener { snap ->
+                container.removeAllViews()
+                val docs = snap.documents.sortedByDescending {
+                    it.getTimestamp("updatedAt")?.toDate()?.time ?: 0L
+                }
+                if (docs.isEmpty()) {
+                    container.addView(text("No groups yet. Create one or join with an invite link.").apply {
+                        textSize = 12f
+                        setTextColor(0xFF6F8B80.toInt())
+                    })
+                    return@addOnSuccessListener
+                }
+                docs.forEach { doc ->
+                    val name = doc.getString("name")?.trim().orEmpty().ifBlank { "Untitled Group" }
+                    val description = doc.getString("description")?.trim().orEmpty()
+                    val count = doc.getLong("memberCount")?.toInt()
+                        ?: (doc.get("memberIds") as? List<*>)?.size ?: 0
+                    val seed = doc.getLong("avatarSeed")?.toInt() ?: name.hashCode()
+                    val row = LinearLayout(this).apply {
+                        orientation = LinearLayout.HORIZONTAL
+                        gravity = Gravity.CENTER_VERTICAL
+                        setPadding(10, 8, 10, 8)
+                        background = rounded(0xFF10241F.toInt(), 18f)
+                    }
+                    row.addView(groupAvatar(name, seed), LinearLayout.LayoutParams(52, 52).apply { rightMargin = 12 })
+                    val info = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+                    info.addView(text(name).apply {
+                        textSize = 14.5f; typeface = Typeface.DEFAULT_BOLD
+                        setTextColor(0xFFF0FFF8.toInt()); setPadding(0, 0, 0, 2)
+                    })
+                    val subtitle = if (description.isBlank()) count.toString() + " members"
+                    else count.toString() + " members • " + description
+                    info.addView(text(subtitle).apply {
+                        textSize = 10.5f; setTextColor(0xFF78948A.toInt())
+                        setPadding(0, 0, 0, 0); maxLines = 2
+                        ellipsize = android.text.TextUtils.TruncateAt.END
+                    })
+                    row.addView(info, LinearLayout.LayoutParams(0, -2, 1f))
+                    row.setOnClickListener { openGroupChat(doc.id, name) }
+                    container.addView(row, LinearLayout.LayoutParams(-1, 68).apply { bottomMargin = 8 })
+                }
+            }
+            .addOnFailureListener {
+                container.removeAllViews()
+                container.addView(text("Could not load groups. Please try again."))
+            }
+    }
+
+    private fun showCreateGroupDialog() {
+        val me = auth.currentUser ?: return showLogin()
+        val layout = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(8, 4, 8, 0) }
+        val nameInput = input("Group name", false).apply { setSingleLine(true) }
+        val descInput = input("Description (optional)", false).apply { setSingleLine(false); minLines = 2 }
+        layout.addView(nameInput, LinearLayout.LayoutParams(-1, 56).apply { bottomMargin = 10 })
+        layout.addView(descInput, LinearLayout.LayoutParams(-1, 78).apply { bottomMargin = 10 })
+        val selectedIds = mutableListOf<String>()
+        val selectButton = button("Select members • 0/49").apply {
+            background = rounded(0xFF173B2D.toInt(), 14f); setTextColor(0xFF9DFFE0.toInt()); textSize = 13f
+        }
+        layout.addView(selectButton, LinearLayout.LayoutParams(-1, 50))
+        val dialog = AlertDialog.Builder(this)
+            .setTitle("Create Group")
+            .setMessage("Add up to 49 other members. You are added as owner and admin.")
+            .setView(layout).setNegativeButton("Cancel", null).setPositiveButton("Create", null).create()
+
+        selectButton.setOnClickListener {
+            db.collection("users").get().addOnSuccessListener { snap ->
+                val members = snap.documents.filter { it.id != me.uid }
+                    .sortedBy { it.getString("displayName")?.lowercase().orEmpty() }
+                if (members.isEmpty()) { toast("No other members are available yet."); return@addOnSuccessListener }
+                val labels = members.map { doc ->
+                    val display = doc.getString("displayName")?.trim().orEmpty().ifBlank {
+                        doc.getString("username")?.trim().orEmpty().ifBlank { "Member" }
+                    }
+                    "@" + doc.getString("username")?.trim().orEmpty().ifBlank {
+                        usernameForMember(display, doc.getString("email"))
+                    }
+                }.toTypedArray()
+                val checked = BooleanArray(labels.size) { i -> selectedIds.contains(members[i].id) }
+                AlertDialog.Builder(this).setTitle("Choose group members (max 49)")
+                    .setMultiChoiceItems(labels, checked) { _, which, isChecked ->
+                        val id = members[which].id
+                        if (isChecked) {
+                            if (!selectedIds.contains(id)) {
+                                if (selectedIds.size >= 49) { toast("A group can have at most 50 members."); return@setMultiChoiceItems }
+                                selectedIds.add(id)
+                            }
+                        } else selectedIds.remove(id)
+                    }
+                    .setNegativeButton("Cancel", null)
+                    .setPositiveButton("Done") { _, _ -> selectButton.text = "Select members • " + selectedIds.size + "/49" }
+                    .show()
+            }.addOnFailureListener { toast("Could not load members.") }
+        }
+
+        dialog.setOnShowListener {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+                val groupName = nameInput.text.toString().trim()
+                if (groupName.isBlank()) { nameInput.error = "Enter a group name"; return@setOnClickListener }
+                if (groupName.length > 80) { nameInput.error = "Group name is limited to 80 characters"; return@setOnClickListener }
+                val description = descInput.text.toString().trim().take(240)
+                val memberIds = (listOf(me.uid) + selectedIds).distinct()
+                if (memberIds.size > 50) { toast("A group can have at most 50 members."); return@setOnClickListener }
+                val groupRef = db.collection("groups").document()
+                val inviteCode = java.util.UUID.randomUUID().toString().replace("-", "").take(16)
+                val seed = (System.currentTimeMillis() and 0x7FFFFFFF).toInt()
+                val groupData = hashMapOf<String, Any>(
+                    "groupId" to groupRef.id, "name" to groupName, "description" to description,
+                    "ownerId" to me.uid, "adminIds" to listOf(me.uid), "memberIds" to memberIds,
+                    "memberCount" to memberIds.size, "inviteCode" to inviteCode, "avatarSeed" to seed,
+                    "createdAt" to com.google.firebase.firestore.FieldValue.serverTimestamp(),
+                    "updatedAt" to com.google.firebase.firestore.FieldValue.serverTimestamp()
+                )
+                val inviteRef = db.collection("groupInvites").document(inviteCode)
+                val batch = db.batch()
+                batch.set(groupRef, groupData)
+                batch.set(inviteRef, mapOf(
+                    "groupId" to groupRef.id, "groupName" to groupName,
+                    "createdBy" to me.uid,
+                    "createdAt" to com.google.firebase.firestore.FieldValue.serverTimestamp()
+                ))
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = false
+                batch.commit().addOnSuccessListener {
+                    dialog.dismiss()
+                    groupListView?.let { loadGroups(it, me.uid) }
+                    openGroupChat(groupRef.id, groupName)
+                    toast("Group created.")
+                }.addOnFailureListener { e ->
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = true
+                    toast(e.localizedMessage ?: "Could not create group.")
+                }
+            }
+        }
+        dialog.show()
+    }
+
+    private fun buildGroupInviteLink(inviteCode: String): String =
+        "https://tubalrr.github.io/tubalhub/messenger-apk-design.html?groupInvite=" + inviteCode
+
+    private fun showJoinGroupDialog() {
+        val me = auth.currentUser ?: return showLogin()
+        val edit = input("Paste invite link or invite code", false).apply { setSingleLine(true) }
+        AlertDialog.Builder(this).setTitle("Join Group")
+            .setMessage("Paste a TUBAL HUB group invite link or its invite code.")
+            .setView(edit).setNegativeButton("Cancel", null)
+            .setPositiveButton("Join") { _, _ ->
+                val raw = edit.text.toString().trim()
+                if (raw.isBlank()) { toast("Paste an invite link or code first."); return@setPositiveButton }
+                val code = try {
+                    Uri.parse(raw).getQueryParameter("groupInvite") ?: raw.substringAfterLast("/").trim()
+                } catch (_: Exception) { raw }
+                if (code.isBlank() || code.length > 64) { toast("Invalid invite link."); return@setPositiveButton }
+                db.collection("groupInvites").document(code).get().addOnSuccessListener { invite ->
+                    if (!invite.exists()) { toast("Invite not found or expired."); return@addOnSuccessListener }
+                    val groupId = invite.getString("groupId").orEmpty()
+                    if (groupId.isBlank()) { toast("This invite is invalid."); return@addOnSuccessListener }
+                    val groupRef = db.collection("groups").document(groupId)
+                    groupRef.get().addOnSuccessListener { group ->
+                        if (!group.exists()) { toast("Group no longer exists."); return@addOnSuccessListener }
+                        val memberIds = (group.get("memberIds") as? List<*>)?.filterIsInstance<String>().orEmpty()
+                        val groupName = group.getString("name") ?: "Group"
+                        if (memberIds.contains(me.uid)) { openGroupChat(group.id, groupName); return@addOnSuccessListener }
+                        if (memberIds.size >= 50) { toast("This group is full (50 members)."); return@addOnSuccessListener }
+                        val newIds = (memberIds + me.uid).distinct()
+                        groupRef.update(mapOf(
+                            "memberIds" to newIds,
+                            "memberCount" to newIds.size,
+                            "updatedAt" to com.google.firebase.firestore.FieldValue.serverTimestamp()
+                        )).addOnSuccessListener {
+                            groupListView?.let { loadGroups(it, me.uid) }
+                            openGroupChat(group.id, groupName)
+                            toast("Joined " + groupName + ".")
+                        }.addOnFailureListener { e -> toast(e.localizedMessage ?: "Could not join group.") }
+                    }.addOnFailureListener { toast("Could not open the group.") }
+                }.addOnFailureListener { toast("Could not validate the invite.") }
+            }.show()
+    }
+
+    private fun showGroupAdminDialog(groupId: String) {
+        val me = auth.currentUser ?: return
+        val groupRef = db.collection("groups").document(groupId)
+        groupRef.get().addOnSuccessListener { group ->
+            if (!group.exists()) return@addOnSuccessListener
+            val memberIds = (group.get("memberIds") as? List<*>)?.filterIsInstance<String>().orEmpty()
+            val adminIds = (group.get("adminIds") as? List<*>)?.filterIsInstance<String>().orEmpty()
+            val ownerId = group.getString("ownerId").orEmpty()
+            val isAdmin = adminIds.contains(me.uid)
+            val name = group.getString("name") ?: "Group"
+            val description = group.getString("description").orEmpty()
+            val inviteCode = group.getString("inviteCode").orEmpty()
+            val inviteLink = buildGroupInviteLink(inviteCode)
+            val actions = mutableListOf("Group info", "Copy invite link", "Share invite link")
+            if (isAdmin) {
+                actions += "Rename group"; actions += "Edit description"; actions += "Add members"
+                actions += "Remove member"; actions += "Manage admins"
+            }
+            AlertDialog.Builder(this).setTitle(name + " • " + memberIds.size + "/50")
+                .setItems(actions.toTypedArray()) { _, which ->
+                    when (actions[which]) {
+                        "Group info" -> AlertDialog.Builder(this).setTitle(name)
+                            .setMessage(if (description.isBlank()) "No description set.
+
+Invite:
+" + inviteLink else description + "
+
+Invite:
+" + inviteLink)
+                            .setPositiveButton("OK", null).show()
+                        "Copy invite link" -> {
+                            val clipboard = getSystemService(CLIPBOARD_SERVICE) as android.content.ClipboardManager
+                            clipboard.setPrimaryClip(android.content.ClipData.newPlainText("TUBAL HUB group invite", inviteLink))
+                            toast("Invite link copied.")
+                        }
+                        "Share invite link" -> shareText("Join my TUBAL HUB group "" + name + "": " + inviteLink)
+                        "Rename group" -> promptGroupTextEdit(groupId, "Rename group", name, 80, "name")
+                        "Edit description" -> promptGroupTextEdit(groupId, "Edit description", description, 240, "description")
+                        "Add members" -> showAddGroupMembersDialog(groupId, memberIds)
+                        "Remove member" -> showRemoveGroupMemberDialog(groupId, memberIds, ownerId)
+                        "Manage admins" -> showManageGroupAdminsDialog(groupId, memberIds, adminIds, ownerId)
+                    }
+                }.show()
+        }.addOnFailureListener { toast("Could not load group settings.") }
+    }
+
+    private fun promptGroupTextEdit(groupId: String, title: String, current: String, max: Int, field: String) {
+        val edit = input(title, false).apply { setSingleLine(field == "name"); setText(current); setSelection(text.length) }
+        AlertDialog.Builder(this).setTitle(title).setView(edit).setNegativeButton("Cancel", null)
+            .setPositiveButton("Save") { _, _ ->
+                val value = edit.text.toString().trim()
+                if (value.isBlank() && field == "name") { toast("Group name is required."); return@setPositiveButton }
+                if (value.length > max) { toast("Maximum " + max + " characters."); return@setPositiveButton }
+                db.collection("groups").document(groupId).update(mapOf(
+                    field to value, "updatedAt" to com.google.firebase.firestore.FieldValue.serverTimestamp()
+                )).addOnSuccessListener {
+                    auth.currentUser?.uid?.let { uid -> groupListView?.let { loadGroups(it, uid) } }
+                    if (field == "name") { selectedGroupName = value; chatTitleView?.text = "Group • " + value }
+                    toast("Group updated.")
+                }.addOnFailureListener { e -> toast(e.localizedMessage ?: "Group update failed.") }
+            }.show()
+    }
+
+    private fun showAddGroupMembersDialog(groupId: String, currentIds: List<String>) {
+        val me = auth.currentUser ?: return
+        if (currentIds.size >= 50) { toast("This group is already full."); return }
+        db.collection("users").get().addOnSuccessListener { snap ->
+            val candidates = snap.documents.filter { it.id !in currentIds }
+                .sortedBy { it.getString("displayName")?.lowercase().orEmpty() }
+            val available = minOf(50 - currentIds.size, candidates.size)
+            if (available <= 0) { toast("No other members are available."); return@addOnSuccessListener }
+            val labels = candidates.map { doc ->
+                val display = doc.getString("displayName")?.trim().orEmpty().ifBlank { "Member" }
+                val username = doc.getString("username")?.trim().orEmpty().ifBlank { usernameForMember(display, doc.getString("email")) }
+                "@" + username
+            }.toTypedArray()
+            val chosen = mutableListOf<String>()
+            AlertDialog.Builder(this).setTitle("Add members • " + available + " slots available")
+                .setMultiChoiceItems(labels, null) { _, which, checked ->
+                    val id = candidates[which].id
+                    if (checked && chosen.size < available) { if (!chosen.contains(id)) chosen.add(id) }
+                    else if (!checked) chosen.remove(id)
+                }
+                .setNegativeButton("Cancel", null)
+                .setPositiveButton("Add") { _, _ ->
+                    if (chosen.isEmpty()) return@setPositiveButton
+                    val newIds = (currentIds + chosen).distinct().take(50)
+                    db.collection("groups").document(groupId).update(mapOf(
+                        "memberIds" to newIds, "memberCount" to newIds.size,
+                        "updatedAt" to com.google.firebase.firestore.FieldValue.serverTimestamp()
+                    )).addOnSuccessListener {
+                        loadGroups(groupListView ?: return@addOnSuccessListener, me.uid)
+                        toast(chosen.size.toString() + " member(s) added.")
+                    }.addOnFailureListener { e -> toast(e.localizedMessage ?: "Could not add members.") }
+                }.show()
+        }.addOnFailureListener { toast("Could not load member list.") }
+    }
+
+    private fun showRemoveGroupMemberDialog(groupId: String, currentIds: List<String>, ownerId: String) {
+        val me = auth.currentUser ?: return
+        val removable = currentIds.filter { it != ownerId && it != me.uid }
+        if (removable.isEmpty()) { toast("No removable members."); return }
+        db.collection("users").get().addOnSuccessListener { snap ->
+            val labels = removable.map { id ->
+                val doc = snap.documents.firstOrNull { it.id == id }
+                val display = doc?.getString("displayName")?.trim().orEmpty().ifBlank { "Member" }
+                val username = doc?.getString("username")?.trim().orEmpty().ifBlank { usernameForMember(display, doc?.getString("email")) }
+                "@" + username
+            }.toTypedArray()
+            AlertDialog.Builder(this).setTitle("Remove member").setItems(labels) { _, which ->
+                confirmRemoveGroupMember(groupId, currentIds, removable[which], me.uid)
+            }.show()
+        }.addOnFailureListener { toast("Could not load members.") }
+    }
+
+    private fun confirmRemoveGroupMember(groupId: String, currentIds: List<String>, removeId: String, actorId: String) {
+        val newIds = currentIds.filter { it != removeId }
+        val groupRef = db.collection("groups").document(groupId)
+        groupRef.get().addOnSuccessListener { group ->
+            val adminIds = (group.get("adminIds") as? List<*>)?.filterIsInstance<String>().orEmpty()
+            val newAdmins = adminIds.filter { it != removeId }
+            groupRef.update(mapOf(
+                "memberIds" to newIds, "memberCount" to newIds.size,
+                "adminIds" to if (newAdmins.isEmpty()) listOf(group.getString("ownerId").orEmpty()) else newAdmins,
+                "updatedAt" to com.google.firebase.firestore.FieldValue.serverTimestamp()
+            )).addOnSuccessListener {
+                loadGroups(groupListView ?: return@addOnSuccessListener, actorId)
+                toast("Member removed.")
+            }.addOnFailureListener { e -> toast(e.localizedMessage ?: "Could not remove member.") }
+        }
+    }
+
+    private fun showManageGroupAdminsDialog(groupId: String, memberIds: List<String>, adminIds: List<String>, ownerId: String) {
+        db.collection("users").get().addOnSuccessListener { snap ->
+            val candidates = memberIds.filter { it != ownerId }
+            val labels = candidates.map { id ->
+                val doc = snap.documents.firstOrNull { it.id == id }
+                val display = doc?.getString("displayName")?.trim().orEmpty().ifBlank { "Member" }
+                val username = doc?.getString("username")?.trim().orEmpty().ifBlank { usernameForMember(display, doc?.getString("email")) }
+                "@" + username
+            }.toTypedArray()
+            val checked = BooleanArray(labels.size) { i -> adminIds.contains(candidates[i]) }
+            AlertDialog.Builder(this).setTitle("Manage admins")
+                .setMultiChoiceItems(labels, checked) { _, which, isChecked -> checked[which] = isChecked }
+                .setNegativeButton("Cancel", null)
+                .setPositiveButton("Save") { _, _ ->
+                    val newAdmins = mutableListOf(ownerId)
+                    candidates.forEachIndexed { index, id -> if (checked[index]) newAdmins.add(id) }
+                    db.collection("groups").document(groupId).update(mapOf(
+                        "adminIds" to newAdmins.distinct(),
+                        "updatedAt" to com.google.firebase.firestore.FieldValue.serverTimestamp()
+                    )).addOnSuccessListener { toast("Admins updated.") }
+                        .addOnFailureListener { e -> toast(e.localizedMessage ?: "Could not update admins.") }
+                }.show()
+        }.addOnFailureListener { toast("Could not load admin list.") }
+    }
+
+    private fun shareText(value: String) {
+        startActivity(Intent.createChooser(Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"; putExtra(Intent.EXTRA_TEXT, value)
+        }, "Share invite link"))
+    }
+
+    private fun openGroupChat(groupId: String, name: String) {
+        selectedUid = null
+        selectedName = "Group"
+        selectedGroupId = groupId
+        selectedGroupName = name
+        stopMessages?.remove()
+        stopTyping?.remove()
+        stopGroupMessages?.remove()
+        videoCallButton?.isEnabled = false
+        videoCallButton?.visibility = View.GONE
+        groupAdminButton?.visibility = View.VISIBLE
+        chatTitleView?.text = "Group • " + name
+        messageBox?.removeAllViews()
+        messageBox?.addView(text("Loading group messages…").apply { setTextColor(0xFF78948A.toInt()) })
+        subscribeGroupMessages()
+    }
+
+    private fun subscribeGroupMessages() {
+        stopGroupMessages?.remove()
+        val groupId = selectedGroupId ?: return
+        stopGroupMessages = db.collection("groupMessages").whereEqualTo("groupId", groupId).limit(200)
+            .addSnapshotListener { snap, err ->
+                if (err != null || snap == null) {
+                    messageBox?.removeAllViews(); messageBox?.addView(text("Could not load group messages."))
+                    return@addSnapshotListener
+                }
+                renderGroupMessages(snap.documents.sortedBy { it.getTimestamp("createdAt")?.toDate()?.time ?: 0L })
+            }
+    }
+
+    private fun renderGroupMessages(items: List<com.google.firebase.firestore.DocumentSnapshot>) {
+        val mine = auth.currentUser?.uid ?: return
+        messageBox?.removeAllViews()
+        if (items.isEmpty()) { messageBox?.addView(text("No messages yet. Start the conversation.")); return }
+        items.forEach { doc ->
+            val senderId = doc.getString("senderId").orEmpty()
+            val senderName = doc.getString("senderName").orEmpty().ifBlank { "Member" }
+            val body = doc.getString("text").orEmpty()
+            val bubble = LinearLayout(this).apply {
+                orientation = LinearLayout.VERTICAL; setPadding(12, 10, 12, 10)
+                background = rounded(if (senderId == mine) 0xFF123A2B.toInt() else 0xFF10221D.toInt(), 18f)
+            }
+            bubble.addView(text(if (senderId == mine) "You" else senderName).apply {
+                textSize = 10f; typeface = Typeface.DEFAULT_BOLD
+                setTextColor(if (senderId == mine) 0xFF7DFFB4.toInt() else 0xFF9CB7AC.toInt())
+                setPadding(0, 0, 0, 5)
+            })
+            bubble.addView(TextView(this).apply {
+                setTextColor(0xFFEAF7F0.toInt()); textSize = 15f
+                text = highlightedMentions(body)
+            })
+            val created = doc.getTimestamp("createdAt")?.toDate()?.time ?: 0L
+            bubble.addView(text(
+                if (created > 0L) android.text.format.DateFormat.format("hh:mm a", java.util.Date(created)).toString() else ""
+            ).apply { textSize = 9f; setTextColor(0xFF719085.toInt()); setPadding(0, 7, 0, 0) })
+            messageBox?.addView(bubble, LinearLayout.LayoutParams(-2, -2).apply {
+                gravity = if (senderId == mine) Gravity.END else Gravity.START; bottomMargin = 8
+            })
+        }
+    }
+
+    private fun highlightedMentions(body: String): android.text.SpannableString {
+        val styled = android.text.SpannableString(body)
+        Regex("@[A-Za-z0-9_]{1,30}").findAll(body).forEach { match ->
+            styled.setSpan(android.text.style.ForegroundColorSpan(0xFF7DFFB4.toInt()),
+                match.range.first, match.range.last + 1, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            styled.setSpan(android.text.style.StyleSpan(Typeface.BOLD),
+                match.range.first, match.range.last + 1, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        }
+        return styled
+    }
+
+    private fun sendGroupMessage() {
+        val me = auth.currentUser ?: return
+        val groupId = selectedGroupId ?: return
+        val body = messageInput?.text?.toString()?.trim().orEmpty()
+        if (body.isEmpty()) return
+        if (body.length > 500) return toast("Message is limited to 500 characters.")
+        val name = me.displayName ?: me.email?.substringBefore("@") ?: "Member"
+        val username = usernameForMember(name, me.email)
+        val mentions = Regex("@[A-Za-z0-9_]{1,30}").findAll(body)
+            .map { it.value.removePrefix("@") }.distinct().take(20).toList()
+        db.collection("groupMessages").add(mapOf(
+            "groupId" to groupId, "senderId" to me.uid, "senderName" to name,
+            "senderUsername" to username, "text" to body, "mentions" to mentions,
+            "type" to "text", "createdAt" to com.google.firebase.firestore.FieldValue.serverTimestamp()
+        )).addOnSuccessListener {
+            messageInput?.setText(""); messageInput?.hint = "Type a message…"
+        }.addOnFailureListener { e -> toast(e.localizedMessage ?: "Group message failed.") }
+    }
+
     private fun sendMessage() {
+        if (selectedGroupId != null) {
+            sendGroupMessage()
+            return
+        }
         val me = auth.currentUser ?: return
         val target = selectedUid ?: return toast("Select a member first.")
         val body = messageInput?.text?.toString()?.trim().orEmpty()
@@ -1479,6 +2017,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         stopMessages?.remove()
+        stopGroupMessages?.remove()
         incomingCallListener?.remove()
         stopTyping?.remove()
         super.onDestroy()
