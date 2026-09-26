@@ -7,19 +7,18 @@
 <link rel="stylesheet" href="../assets/css/platform-pages.css">
 <link rel="stylesheet" href="../assets/css/global-theme.css?v=20260922">
 <link rel="stylesheet" href="../assets/css/premium-logos.css?v=20260924-logo1">
-<link rel="stylesheet" href="../assets/css/feeds.css?v=20260926-atelier3">
+<link rel="stylesheet" href="../assets/css/feeds.css?v=20260926-future3">
 </head>
 <body class="feeds-page theme-midnight">
 <header class="feeds-header">
   <a class="brand" href="../index.html">
     <img src="../tubal-hub-logo.png" width="48" height="48" alt="TUBAL HUB">
-    <span>FEEDS / TUBAL HUB<small>QUIET COMMUNITY HUB</small></span>
+    <span>TUBAL HUB<small>FEEDS • SHOP • CONNECT</small></span>
   </a>
-  <nav aria-label="Primary navigation">
+  <nav>
     <a href="../index.html">Home</a><a class="active" href="feeds.html">Feeds</a><a href="shop.html">Shop</a>
     <a href="ctrlzone.html#games">Games</a><a href="news.html">News</a><a href="community.html">Community</a><a href="chat.html">Global Chat</a>
   </nav>
-  <div class="atelier-header-actions"><button type="button" class="atelier-btn" id="atelierScan">SCAN</button><button type="button" class="atelier-btn" id="atelierSell">SELL</button></div>
 </header>
 
 <main class="feeds-shell">
@@ -184,49 +183,6 @@
   </section>
 </div>
 
-<!-- ATELIER NOIR SCANNER -->
-<div class="atelier-scan-backdrop" id="atelierScanModal" hidden>
-  <section class="atelier-scan-modal" role="dialog" aria-modal="true" aria-labelledby="atelierScanTitle">
-    <header class="atelier-scan-head"><div><small>LOCAL-FIRST</small><h2 id="atelierScanTitle">Scan item</h2></div><button type="button" class="atelier-close" id="atelierScanClose">CLOSE</button></header>
-    <div class="atelier-scan-body">
-      <div class="atelier-reader"><div id="atelierReader"></div><div class="atelier-guide" aria-hidden="true"></div></div>
-      <p id="atelierScanStatus">Align a QR code or barcode inside the guide.</p>
-      <div class="atelier-manual"><input id="atelierManualCode" type="text" placeholder="Enter QR / barcode value" autocomplete="off"><button id="atelierManualAdd" class="atelier-btn" type="button">ADD</button></div>
-    </div>
-  </section>
-</div>
-<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-<script>
-(function(){
-  const KEY="tubalhub_feeds",modal=document.getElementById("atelierScanModal"),openBtn=document.getElementById("atelierScan"),
-    closeBtn=document.getElementById("atelierScanClose"),reader=document.getElementById("atelierReader"),
-    status=document.getElementById("atelierScanStatus"),manual=document.getElementById("atelierManualCode"),addBtn=document.getElementById("atelierManualAdd");
-  let qr=null;
-  function load(){try{const v=JSON.parse(localStorage.getItem(KEY)||"[]");return Array.isArray(v)?v:[]}catch(e){return[]}}
-  function save(v){try{localStorage.setItem(KEY,JSON.stringify(v.slice(0,100)))}catch(e){}}
-  function add(code){
-    const value=String(code||"").trim();if(!value)return;
-    const item={id:"scan-"+Date.now(),type:"product",title:"Scanned item · "+value,description:"Added from TUBAL HUB scanner.",image:"",price:"",stock:"In stock",author:"SCANNED ITEM",uid:"",createdAt:Date.now(),scanCode:value,source:"local-scanner",url:"shop.html?scan="+encodeURIComponent(value)};
-    save([item,...load()]);window.dispatchEvent(new CustomEvent("tubalhub-local-feed",{detail:item}));
-    status.textContent="Added to feed.";setTimeout(close,500);
-  }
-  function stop(){if(qr){try{qr.stop().then(()=>qr.clear()).catch(()=>{});qr=null}catch(e){qr=null}}}
-  async function start(){
-    if(!window.Html5Qrcode){status.textContent="Scanner unavailable. Enter the code below.";return}
-    reader.innerHTML="";qr=new Html5Qrcode("atelierReader");
-    try{
-      await qr.start({facingMode:"environment"},{fps:10,qrbox:{width:220,height:220}},decoded=>add(decoded),()=>{});
-      status.textContent="Align a QR code or barcode inside the guide.";
-    }catch(e){status.textContent="Camera unavailable. Check permission or enter the code below."}
-  }
-  function open(){modal.hidden=false;status.textContent="Requesting camera…";start()}
-  function close(){stop();modal.hidden=true}
-  openBtn?.addEventListener("click",open);closeBtn?.addEventListener("click",close);modal?.addEventListener("click",e=>{if(e.target===modal)close()});
-  addBtn?.addEventListener("click",()=>add(manual.value));manual?.addEventListener("keydown",e=>{if(e.key==="Enter")add(manual.value)});
-  document.addEventListener("keydown",e=>{if(e.key==="Escape")close()});
-  document.getElementById("atelierSell")?.addEventListener("click",()=>location.href="shop.html");
-})();
-</script>
 <div class="feed-notice" id="feedNotice" role="status" aria-live="polite"></div>
 
 <script type="module" src="../assets/js/feeds.js?v=20260924-f7"></script>
