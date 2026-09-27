@@ -4782,3 +4782,55 @@ section,.section{margin-bottom:16px!important}
 @media(max-width:768px){
   #refreshLiveDataBtn{padding:6px 8px;font-size:9px}
 }
+
+/* SPONSORED + FEATURED GAMES — DESKTOP VISIBILITY FIX v1.2.20 */
+#mainContent.bento-grid > #sponsoredContainerReal{
+  grid-column:span 4 / span 4;
+  width:100%;
+  min-width:0;
+  align-self:stretch;
+  min-height:220px;
+  border:1px solid rgba(255,255,255,.08)!important;
+  border-radius:20px!important;
+  background:linear-gradient(145deg,rgba(21,21,23,.94),rgba(12,12,14,.98))!important;
+  box-shadow:0 16px 42px rgba(0,0,0,.34),0 0 20px rgba(255,204,0,.08)!important;
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  overflow:hidden;
+  transition:transform .3s ease,border-color .3s ease,box-shadow .3s ease;
+}
+#mainContent.bento-grid > #sponsoredContainerReal:hover{
+  transform:translateY(-3px);
+  border-color:rgba(255,59,48,.55)!important;
+  box-shadow:0 20px 46px rgba(0,0,0,.42),0 0 24px rgba(255,59,48,.14)!important;
+}
+#mainContent.bento-grid > #featuredGameReal{
+  grid-column:span 8 / span 8;
+  width:100%;
+  min-width:0;
+  margin:0;
+  align-self:stretch;
+}
+#mainContent.bento-grid > #featuredGameReal #ctrlzoneCard{
+  width:100%;
+  min-width:0;
+}
+#sponsoredContentReal{
+  min-width:0;
+}
+#sponsoredContainerReal > div:first-child{
+  color:#fff;
+}
+#sponsoredContentReal > .tubal-sponsor-card-real,
+#sponsoredContentReal > .tubal-sponsor-panel-real{
+  min-height:180px;
+}
+@media(max-width:900px){
+  #mainContent.bento-grid > #sponsoredContainerReal,
+  #mainContent.bento-grid > #featuredGameReal{
+    grid-column:1 / -1;
+  }
+  #mainContent.bento-grid > #sponsoredContainerReal{
+    min-height:190px;
+  }
+}
