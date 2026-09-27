@@ -126,147 +126,122 @@ function getRealFeeds(){
   }catch(_){return []}
 }
 
-async function getRealGamesWithLogo(){
-  try{
-    const res=await fetch("data/games.json?v=1.2.10&t="+Date.now(),{cache:"no-store"});
-    if(!res.ok)throw new Error("games "+res.status);
-    const parsed=await res.json();
-    const rows=Array.isArray(parsed)?parsed:(Array.isArray(parsed?.games)?parsed.games:[]);
-    return rows.filter(game=>game&&game.idReal&&game.titleReal&&game.logoReal).map(game=>({
-      kind:"games",
-      id:String(game.idReal||game.id),
-      title:String(game.titleReal||game.title).trim(),
-      meta:[game.genre||"",game.devReal||game.dev||"CTRLZONE"].filter(Boolean).join(" · "),
-      image:String(game.logoReal||game.logo||"").trim(),
-      url:String(game.linkReal||("pages/ctrlzone.html?game="+encodeURIComponent(game.idReal||game.id)))
-    })).filter(game=>game.title&&game.image);
-  }catch(_){
-    return [];
+function readArray(keys){
+  for(const key of keys){
+    try{
+      const raw=localStorage.getItem(key);
+      if(raw===null) continue;
+      const parsed=raw?JSON.parse(raw):[];
+      if(Array.isArray(parsed)) return parsed;
+    }catch(_){}
   }
+  return [];
 }
 
-async function loadLiveData(){
-  const now=Date.now();
-  if(cache&&now-cacheAt<60000)return cache;
+function localSearchRows(){
+  const out={people:[],posts:[],products:[],games:[],events:[]};
 
-  const out={
-    people:[],
-    posts:[],
-    products:[],
-    games:[],
-    events:[]
-  };
-
-  // Local browser data is always considered real site data.
-  getRealJournals().forEach((entry,index)=>{
-    const title=String(entry?.titleReal||entry?.title||"").trim();
+  const journals=readArray(["tubalhub_journals_real","tubalhub_journal"]);
+  journals.forEach((entry,index)=>{
+    const title=String(entry?.titleReal||entry?.title||entry?.name||"").trim();
     const content=String(entry?.contentReal||entry?.text||entry?.content||entry?.body||"").trim();
-    if(!title&&!content)return;
-    out.posts.push({
-      kind:"posts",
-      id:"journal-"+String(entry?.idReal||entry?.id||index),
-      title:title||content.slice(0,80),
-      author:"Payapang Isip",
-      meta:"Journal",
-      createdAt:new Date(entry?.createdAtReal||entry?.createdAt||0).getTime()||0,
+    if(title||content) out.posts.push({
+      kind:"posts",id:"journal-"+String(entry?.idReal||entry?.id||index),
+      title:title||content.slice(0,80),author:"Payapang Isip",meta:"Journal",
+      createdAt:Number(entry?.createdAtReal||entry?.createdAt||0)||0,
       url:"pages/payapang-isip.html"
     });
   });
 
-  getRealFeeds().forEach((entry,index)=>{
-    const title=String(entry?.titleReal||"").trim();
-    const text=String(entry?.textReal||entry?.text||entry?.contentReal||"").trim();
-    if(!title&&!text)return;
-    out.posts.push({
-      kind:"posts",
-      id:"feed-"+String(entry?.idReal||entry?.id||index),
+  readArray(["tubalhub_feeds","tubalhub_feed","tubalhub_posts"]).forEach((entry,index)=>{
+    const title=String(entry?.titleReal||entry?.title||"").trim();
+    const text=String(entry?.textReal||entry?.text||entry?.contentReal||entry?.content||"").trim();
+    if(title||text) out.posts.push({
+      kind:"posts",id:"feed-"+String(entry?.idReal||entry?.id||index),
       title:title||text.slice(0,80),
       author:String(entry?.userReal||entry?.author||"Member").trim()||"Member",
       meta:"Community Feed",
       image:String(entry?.imageReal||entry?.image||"").trim(),
-      createdAt:new Date(entry?.createdAtReal||entry?.createdAt||0).getTime()||0,
+      createdAt:Number(entry?.createdAtReal||entry?.createdAt||0)||0,
       url:"pages/feeds.html"
     });
   });
 
-  try{
-    const cfg=await import("./firebase-config.js");
-    const fs=await import("https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js");
-    const db=fs.getFirestore(cfg.app);
-    const get=async(name,n)=>{
-      try{return (await fs.getDocs(fs.query(fs.collection(db,name),fs.limit(n)))).docs}
-      catch(_){return []}
-    };
-    const [users,hub,products,presence]=await Promise.all([
-      get("users",100),
-      get("hubPosts",200),
-      get("products",100),
-      get("presence",100)
-    ]);
-
-    const pmap=new Map(presence.map(d=>{
-      const x=d.data();
-      return [String(x.uid||d.id),x];
-    }));
-
-    out.people=users.map(d=>{
-      const x=d.data(),p=pmap.get(String(x.uid||d.id));
-      return {
-        kind:"people",
-        id:d.id,
-        title:x.displayName||x.name||"Member",
-        meta:x.username?"@"+x.username:"Member",
-        photo:x.photoURL||"",
-        online:!!p?.online,
-        url:"pages/profiles.html"
-      };
+  readArray(["tubalhub_music_library","tubalhub_music","tubalhub_ai_music"]).forEach((entry,index)=>{
+    const title=String(entry?.title||entry?.name||entry?.prompt||"").trim();
+    if(title) out.posts.push({
+      kind:"music",id:"music-"+String(entry?.id||index),title,
+      meta:"AI Music · "+String(entry?.genre||"Music"),
+      createdAt:Number(entry?.createdAt||0)||0,
+      url:"pages/ai-music.html"
     });
+  });
 
-    hub.forEach(d=>{
-      const x=d.data(),type=norm(x.contentType),dest=Array.isArray(x.destinations)?x.destinations.map(norm):[];
-      const title=String(x.title||x.text||"").trim();
-      if(!title)return;
-      const base={
-        id:d.id,
-        title,
-        author:x.authorName||"Member",
-        image:x.imageUrl||x.image||"",
-        createdAt:x.createdAt?.toMillis?.()||x.createdAt?.seconds*1000||0
-      };
-      if(type==="post"&&(dest.length===0||dest.includes("feeds"))){
-        out.posts.push({...base,kind:"posts",meta:"by "+base.author,url:"pages/feeds.html"});
-      }
-      if(type==="event"&&(dest.length===0||dest.includes("events"))){
-        out.events.push({...base,kind:"events",meta:"Events",url:"pages/events.html"});
-      }
-      if(type==="news"){
-        out.posts.push({...base,kind:"posts",meta:"News · "+base.author,url:"pages/news.html"});
-      }
+  readArray(["tubalhub_search_games","tubalhub_games","ctrlzone_games"]).forEach((entry,index)=>{
+    const title=String(entry?.titleReal||entry?.title||entry?.name||"").trim();
+    const id=String(entry?.idReal||entry?.id||index);
+    if(title) out.games.push({
+      kind:"games",id,title,
+      meta:String(entry?.genre||entry?.category||"Game"),
+      image:String(entry?.logoReal||entry?.logo||entry?.image||"").trim(),
+      url:"pages/ctrlzone.html?game="+encodeURIComponent(id)
     });
+  });
 
-    out.products=products.map(d=>{
-      const x=d.data();
-      return {
-        id:d.id,
-        title:String(x.name||x.title||"").trim(),
-        price:x.price??"",
-        shop:x.shopName||x.category||"Shop",
-        image:x.imageUrl||x.image||"",
-        kind:"products",
-        url:"pages/shop.html"
-      };
-    }).filter(x=>x.title);
-  }catch(_){}
+  readArray(["tubalhub_products","tubalhub_shop","tubalhub_cart_real"]).forEach((entry,index)=>{
+    const title=String(entry?.name||entry?.title||"").trim();
+    if(title) out.products.push({
+      kind:"products",id:String(entry?.id||index),title,
+      price:entry?.price??"",shop:entry?.shopName||entry?.category||"Shop",
+      image:entry?.imageUrl||entry?.image||"",url:"pages/shop.html"
+    });
+  });
 
-  // Real repository catalog; no fake game rows are generated.
-  out.games=await getRealGamesWithLogo();
-
-  cache=out;
-  cacheAt=now;
   return out;
 }
+
+const DEFAULT_GAMES=[
+  ["mobile-legends","Mobile Legends","MOBA"],
+  ["honor-of-kings","Honor of Kings","MOBA"],
+  ["pubg-mobile","PUBG Mobile","Battle Royale"],
+  ["call-of-duty-mobile","Call of Duty Mobile","FPS"],
+  ["valorant","VALORANT","FPS"],
+  ["minecraft","Minecraft","Sandbox"],
+  ["euro-truck-simulator-2","Euro Truck Simulator 2","Simulation"],
+  ["city-skylines","Cities: Skylines","Simulation"],
+  ["transport-fever","Transport Fever","Simulation"],
+  ["workers-resources","Workers & Resources","Simulation"],
+  ["ultimate-bus-simulator","Ultimate Bus Simulator","Simulation"]
+];
+
+function ensureLocalGameIndex(){
+  try{
+    const key="tubalhub_search_games";
+    const current=JSON.parse(localStorage.getItem(key)||"[]");
+    if(Array.isArray(current)&&current.length)return;
+    localStorage.setItem(key,JSON.stringify(DEFAULT_GAMES.map(([id,title,genre])=>({id,title,genre}))));
+  }catch(_){}
+}
+
+function loadLocalSearchData(){
+  ensureLocalGameIndex();
+  const data=localSearchRows();
+  const games=readArray(["tubalhub_search_games"]);
+  games.forEach((g,index)=>{
+    const title=String(g?.titleReal||g?.title||g?.name||"").trim();
+    if(!title)return;
+    const id=String(g?.idReal||g?.id||index);
+    if(!data.games.some(x=>norm(x.title)===norm(title))) data.games.push({
+      kind:"games",id,title,meta:String(g?.genre||g?.category||"Game"),
+      image:String(g?.logoReal||g?.logo||g?.image||""),
+      url:"pages/ctrlzone.html?game="+encodeURIComponent(id)
+    });
+  });
+  return data;
+}
+
 function score(x,q){
-  const terms=norm(q).split(/\s+/).filter(Boolean);
+  const terms=norm(q).split(/\\s+/).filter(Boolean);
   const hay=norm([x.title,x.name,x.handle,x.author,x.shop,x.meta].join(" "));
   let n=0;
   terms.forEach(t=>{if(hay.includes(t))n+=hay.startsWith(t)?4:1});
@@ -276,10 +251,11 @@ function score(x,q){
 function groupResults(data,q){
   const qn=norm(q);
   const groups=[
-    ["People",data.people.filter(x=>norm([x.title,x.meta].join(" ")).includes(qn)).slice(0,6)],
-    ["Posts",data.posts.filter(x=>score(x,qn)>0).sort((a,b)=>score(b,qn)-score(a,qn)).slice(0,6)],
+    ["Journals & Feeds",data.posts.filter(x=>score(x,qn)>0).sort((a,b)=>score(b,qn)-score(a,qn)).slice(0,8)],
+    ["Music",data.posts.filter(x=>x.kind==="music"&&score(x,qn)>0).slice(0,6)],
+    ["Games",data.games.filter(x=>score(x,qn)>0).slice(0,8)],
     ["Products",data.products.filter(x=>score(x,qn)>0).slice(0,6)],
-    ["Games",data.games.filter(x=>score(x,qn)>0).slice(0,6)],
+    ["People",data.people.filter(x=>norm([x.title,x.meta].join(" ")).includes(qn)).slice(0,6)],
     ["Events",data.events.filter(x=>score(x,qn)>0).slice(0,6)]
   ];
   return groups.filter(g=>g[1].length);
@@ -314,13 +290,13 @@ function renderQuickAccess(trend=[]){
     '</div></section>';
   bindChips();
 }
-async function render(q){
+function render(q){
   ensureUi();
   const body=document.getElementById("thSearchBody");if(!body)return;
   const queryText=String(q||"").trim();
   if(!queryText){
     results=[];activeIndex=0;renderQuickAccess();
-    const d=await loadLiveData();
+    const d=loadLocalSearchData();
     const trend=[...d.posts,...d.products,...d.games].sort((a,b)=>b.createdAt-a.createdAt).slice(0,6);
     const section=document.getElementById("thSearchTrending");
     if(section&&trend.length){
@@ -330,7 +306,7 @@ async function render(q){
     return;
   }
   body.innerHTML='<div class="th-search-empty"><div class="th-search-empty-icon">⌕</div><strong>Searching…</strong><span>Finding people, posts, products, games and events.</span></div>';
-  const d=await loadLiveData();
+  const d=loadLocalSearchData();
   const groups=groupResults(d,queryText);
   if(!groups.length){
     results=[];activeIndex=0;
