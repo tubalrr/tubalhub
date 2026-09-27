@@ -67,7 +67,7 @@ self.addEventListener("fetch", event => {
   }
 
   event.respondWith(
-    fetch(request)
+    fetch(request.destination==="document" ? new Request(request,{cache:"no-store"}) : request)
       .then(response=>{
         if(response.ok && (request.destination==="document" || request.destination==="script" || request.destination==="style")){
           const copy=response.clone();
