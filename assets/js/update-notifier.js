@@ -332,10 +332,61 @@
     return validate(normalize(await response.json()));
   }
 
+  async function fetchReleaseConfig() {
+    try {
+      const mod = await import("./firebase-config.js");
+      const { getFirestore, doc, getDoc } = await import("https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js");
+      const db = getFirestore();
+      const snap = await getDoc(doc(db, "systemSettings", "updateRelease"));
+      return snap.exists() ? snap.data() : null;
+    } catch (error) {
+      console.warn("[TUBAL HUB scheduled updater]", error);
+      return null;
+    }
+  }
+
+  function applyReleaseGate(data, release) {
+    const testRaw = localStorage.getItem("tubalhub_updater_test_release");
+    if (testRaw) {
+      try {
+        const test = JSON.parse(testRaw);
+        if (test?.enabled && test.targetVersion && Date.now() >= new Date(test.releaseAt).getTime()) {
+          return normalize({...data, version:String(test.targetVersion).replace(/^v/,""), date:test.createdAt || new Date().toISOString(), message:"Updater Test Mode — simulated release only.", changelog:[{type:"Improved",icon:"🧪",title:"Updater Test",desc:"Simulated PC + mobile release notification. Production version was not changed."}]});
+        }
+      } catch (_) {}
+    }
+    if (!release?.targetVersion) return data;
+    if (release.status === "CANCELLED" || release.status === "DRAFT") return null;
+    if (release.status === "SCHEDULED") {
+      const at = new Date(release.releaseAt || "");
+      if (!Number.isFinite(at.getTime()) || Date.now() < at.getTime()) return null;
+    }
+    if (release.status === "LIVE" || release.status === "SCHEDULED") {
+      const target = String(release.targetVersion).replace(/^v/,"");
+      return normalize({
+        ...data,
+        version: target,
+        date: release.releaseAt || data.date,
+        message: data.version === target ? data.message : "Scheduled release is now live.",
+        changelog: data.changelog.length ? data.changelog : [{type:"New",icon:"🚀",title:"TUBAL HUB Update",desc:"The scheduled release is now available."}]
+      });
+    }
+    return data;
+  }
+
   async function poll() {
     if (!updatesEnabled()) return;
     try {
-      compare(await fetchVersion());
+      const data = await fetchVersion();
+      const release = await fetchReleaseConfig();
+      const gated = applyReleaseGate(data, release);
+      if (!gated) {
+        currentData = null;
+        setBellState(false);
+        localStorage.removeItem(UPDATE_KEY);
+        return;
+      }
+      compare(gated);
     } catch (error) {
       console.warn("[TUBAL HUB update check]", error);
     }
