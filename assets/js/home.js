@@ -459,22 +459,6 @@ function initSponsoredReal(){
     }
   };
   loadRemote();
-
-  // Never leave the UI stuck on LOADING if Firebase/network is unavailable.
-  // Cached sponsor data is rendered first; otherwise the slot resolves to EMPTY.
-  setTimeout(()=>{
-    slots.forEach(slot=>{
-      const container=document.getElementById(slot.container);
-      const status=document.getElementById(slot.status);
-      if(!container||!status)return;
-      if(container.getAttribute("aria-busy")==="true" && /^LOADING$/i.test(status.textContent||"")){
-        const cachedItem=readSponsorCache()[String(slot.slot)];
-        if(cachedItem)renderSlot(slot,cachedItem,"CACHED");
-        else renderEmpty(slot,"Sponsored "+slot.slot);
-        container.setAttribute("aria-busy","false");
-      }
-    });
-  },7000);
 }
 function initHubHeroMessages(){
   const box=$("#bentoHeroMessage"),title=$("#bentoHeroMessageTitle"),textEl=$("#bentoHeroMessageText"),dots=$("#bentoHeroMessageDots");
@@ -802,7 +786,10 @@ function getRealGamePlayCount(id){
   return Number.isFinite(n)&&n>=0?n:0;
 }
 async function getRealGames(){
-  const normalizeGames=data=>{
+  try{
+    const response=await fetch('data/games.json?v=1.2.17&t='+Date.now(),{cache:'no-store'});
+    if(!response.ok)throw new Error('games.json '+response.status);
+    const data=await response.json();
     const rows=Array.isArray(data)?data:(Array.isArray(data?.games)?data.games:[]);
     return rows.filter(g=>g&&g.idReal&&g.titleReal).map(g=>({
       ...g,
@@ -820,32 +807,9 @@ async function getRealGames(){
       description:String(g.description||''),
       officialUrl:String(g.officialUrl||'')
     }));
-  };
-  try{
-    const remote=fetch('data/games.json?v=1.2.17&t='+Date.now(),{cache:'no-store'})
-      .then(async response=>{
-        if(!response.ok)throw new Error('games.json '+response.status);
-        return normalizeGames(await response.json());
-      });
-    const timeout=new Promise(resolve=>setTimeout(()=>resolve([]),4500));
-    const rows=await Promise.race([remote,timeout]);
-    if(rows.length)return rows;
-
-    try{
-      const cached=JSON.parse(localStorage.getItem('tubalhub_ctrlzone_games')||'[]');
-      const fallback=normalizeGames(cached);
-      if(fallback.length){
-        console.warn('[TUBAL HUB real games] using local catalog fallback');
-        return fallback;
-      }
-    }catch(_){}
-    return [];
   }catch(error){
     console.warn('[TUBAL HUB real games]',error);
-    try{
-      const cached=JSON.parse(localStorage.getItem('tubalhub_ctrlzone_games')||'[]');
-      return normalizeGames(cached);
-    }catch(_){return []}
+    return [];
   }
 }
 function playRealGame(id){
