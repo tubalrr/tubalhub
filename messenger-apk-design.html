@@ -117,6 +117,148 @@ body{background:#f0f2f5!important;padding:18px!important}
  #phoneChat,#phoneProfile{display:none!important}
  .phone:first-child{display:block!important}
 }
+</style>
+<style id="android-messenger-polish-v1">
+/* Android Messenger mobile polish */
+@media(max-width:760px){
+  html,body{width:100%;min-width:0;overflow:hidden;background:#fff!important}
+  .phones{display:block!important;width:100%!important;height:100dvh!important;min-height:100dvh!important;padding:0!important;margin:0!important}
+  .phone:first-child{width:100%!important;height:100dvh!important;display:block!important}
+  .screen{width:100%!important;height:100dvh!important;min-height:0!important;background:#fff!important}
+  .app{height:100dvh!important;padding:0!important;background:#fff!important}
+
+  .brand{
+    height:60px!important;
+    padding:8px 14px!important;
+    display:flex!important;
+    align-items:center!important;
+    gap:10px!important;
+    border-bottom:1px solid #edf0f2!important;
+    background:#fff!important;
+  }
+  .logo{
+    width:34px!important;height:34px!important;flex:0 0 34px!important;
+    border-radius:50%!important;background:#1877f2!important;
+    color:#fff!important;font-size:17px!important;
+    display:grid!important;place-items:center!important;
+  }
+  .brand b{
+    display:block!important;
+    font-size:17px!important;
+    line-height:20px!important;
+    letter-spacing:-.35px!important;
+  }
+  .brand b:after{
+    content:"Messenger";
+    display:block;
+    color:#1877f2;
+    font-size:11px;
+    line-height:13px;
+    font-weight:600;
+    letter-spacing:0;
+  }
+  .brand small{display:block!important;margin-left:auto!important;color:#8a929a!important;font-size:10px!important}
+
+  .search{
+    margin:9px 10px 5px!important;
+    width:calc(100% - 20px)!important;
+    height:40px!important;
+    padding:0 14px!important;
+    border-radius:20px!important;
+    background:#f0f2f5!important;
+    color:#65676b!important;
+    font-size:15px!important;
+  }
+  .search:before{content:"⌕";font-size:19px;margin-right:8px;color:#65676b}
+  .search b{display:none!important}
+
+  .stories{
+    height:82px!important;
+    flex:0 0 82px!important;
+    gap:12px!important;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+    padding:6px 10px 8px!important;
+    border-bottom:1px solid #edf0f2!important;
+    scrollbar-width:none!important;
+  }
+  .stories::-webkit-scrollbar{display:none}
+  .story{
+    width:58px!important;flex:0 0 58px!important;
+    font-size:10px!important;color:#65676b!important;
+    overflow:hidden!important;text-overflow:ellipsis!important;
+  }
+  .story-avatar{
+    width:52px!important;height:52px!important;
+    margin:0 auto 3px!important;
+    padding:2px!important;background:#1877f2!important;
+  }
+  .story-avatar>div{
+    background:#e4e6eb!important;
+    color:#3b3f45!important;
+    font-size:13px!important;
+  }
+  .plus{width:18px!important;height:18px!important;font-size:12px!important}
+
+  .list{
+    height:auto!important;
+    flex:1 1 auto!important;
+    min-height:0!important;
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+    padding:2px 6px 8px!important;
+    background:#fff!important;
+  }
+  .chat.live-chat{
+    min-height:68px!important;
+    margin:0!important;
+    padding:8px 8px!important;
+    border-radius:10px!important;
+    background:#fff!important;
+  }
+  .chat.live-chat:active,.chat.live-chat:hover{background:#f0f2f5!important}
+  .chat.live-chat.active{background:#e7f3ff!important}
+  .chat.live-chat .avatar{
+    width:50px!important;height:50px!important;flex-basis:50px!important;
+  }
+  .chat.live-chat .copy{padding-top:1px!important}
+  .chat.live-chat .copy b{
+    font-size:15px!important;
+    line-height:20px!important;
+    font-weight:700!important;
+    color:#17191c!important;
+  }
+  .chat.live-chat .copy p{
+    margin-top:2px!important;
+    font-size:12px!important;
+    line-height:17px!important;
+    color:#65676b!important;
+  }
+  .rightmeta{min-width:48px!important;color:#8a929a!important}
+
+  .nav{
+    display:grid!important;
+    flex:0 0 58px!important;
+    height:58px!important;
+    padding-bottom:env(safe-area-inset-bottom)!important;
+    border-top:1px solid #e4e6eb!important;
+    background:rgba(255,255,255,.98)!important;
+  }
+  .nav button{
+    font-size:10px!important;
+    color:#8a929a!important;
+    padding:4px 0!important;
+  }
+  .nav button b{
+    font-size:18px!important;
+    margin-bottom:1px!important;
+  }
+  .nav button.active{color:#1877f2!important}
+
+  /* Hide the admin/design-only screens on a real Android-sized viewport. */
+  #phoneChat,#phoneProfile{display:none!important}
+  .admin-source-note,.page-title,.apk-specs{display:none!important}
+}
 </style></head>
 <body>
 <div class="page-title">TUBAL HUB MESSENGER <span>• v1.2.22 • ADMIN DESIGN REFERENCE • LIVE FIRESTORE</span></div>
