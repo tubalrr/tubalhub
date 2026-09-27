@@ -223,185 +223,132 @@ class MainActivity : AppCompatActivity() {
             window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
         }
 
+        fun blue(radius: Float = 22f) = GradientDrawable(
+            GradientDrawable.Orientation.TL_BR,
+            intArrayOf(0xFF0084FF.toInt(), 0xFF00B2FF.toInt())
+        ).apply { cornerRadius = radius }
+
         val scroll = ScrollView(this).apply {
             setFillViewport(true)
             isVerticalScrollBarEnabled = false
-            overScrollMode = View.OVER_SCROLL_NEVER
-            setBackgroundColor(0xFFF8FAFC.toInt())
+            setBackgroundColor(Color.WHITE)
         }
 
         val page = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             gravity = Gravity.CENTER_HORIZONTAL
-            setPadding(22, 30, 22, 24)
-            setBackgroundColor(0xFFF8FAFC.toInt())
+            setPadding(24, 42, 24, 28)
+            setBackgroundColor(Color.WHITE)
         }
 
-        fun spacer(height: Int) = Space(this).apply {
-            layoutParams = LinearLayout.LayoutParams(1, height)
-        }
-
-        page.addView(spacer(12))
-
-        val logoRow = LinearLayout(this).apply {
-            gravity = Gravity.CENTER_VERTICAL
-        }
+        page.addView(Space(this), LinearLayout.LayoutParams(1, 18))
 
         val logo = TextView(this).apply {
             text = "T"
-            textSize = 36f
+            textSize = 52f
             gravity = Gravity.CENTER
             typeface = Typeface.create("sans-serif", Typeface.BOLD)
             setTextColor(Color.WHITE)
-            background = GradientDrawable(
-                GradientDrawable.Orientation.TL_BR,
-                intArrayOf(0xFF269BEF.toInt(), 0xFF1676D2.toInt())
-            ).apply { cornerRadius = 24f }
-            elevation = 7f
+            background = blue(28f)
+            elevation = 8f
         }
-        logoRow.addView(logo, LinearLayout.LayoutParams(68, 68).apply { rightMargin = 12 })
-
-        logoRow.addView(TextView(this).apply {
-            text = "tubal"
-            textSize = 52f
-            typeface = Typeface.create("sans-serif", Typeface.NORMAL)
-            setTextColor(0xFF1688DF.toInt())
-            letterSpacing = -0.035f
-        }, LinearLayout.LayoutParams(-2, -2))
-
-        page.addView(logoRow)
+        page.addView(logo, LinearLayout.LayoutParams(94, 94))
 
         page.addView(text("Tubal Chat").apply {
             textSize = 38f
             gravity = Gravity.CENTER
             typeface = Typeface.create("sans-serif", Typeface.BOLD)
-            setTextColor(0xFF17181B.toInt())
-            setPadding(0, 42, 0, 0)
-            letterSpacing = -0.02f
+            setTextColor(0xFF111827.toInt())
+            setPadding(0, 22, 0, 0)
         })
 
-        page.addView(text("Chat freely. Connect instantly.").apply {
-            textSize = 18f
+        page.addView(text("Mag chika ta bai!").apply {
+            textSize = 21f
             gravity = Gravity.CENTER
+            typeface = Typeface.create("sans-serif", Typeface.BOLD)
             setTextColor(0xFF667085.toInt())
             setPadding(0, 8, 0, 0)
         })
 
+        page.addView(text("Chat freely. Connect instantly.").apply {
+            textSize = 15f
+            gravity = Gravity.CENTER
+            setTextColor(0xFF98A2B3.toInt())
+            setPadding(0, 5, 0, 0)
+        })
+
         val art = FrameLayout(this).apply {
-            layoutParams = LinearLayout.LayoutParams(310, 280).apply {
+            layoutParams = LinearLayout.LayoutParams(300, 230).apply {
                 topMargin = 24
-                bottomMargin = 6
+                bottomMargin = 12
             }
         }
-
-        val backBubble = TextView(this).apply {
+        art.addView(TextView(this).apply {
             text = "•••"
             textSize = 22f
             gravity = Gravity.CENTER
-            letterSpacing = 0.18f
-            setTextColor(0xFF5B9DDB.toInt())
+            setTextColor(0xFF4D91D4.toInt())
             background = GradientDrawable().apply {
-                setColor(0xFFDCEEFF.toInt())
-                cornerRadius = 24f
-                setStroke(1, 0xFFB8D8F6.toInt())
+                setColor(0xFFE8F3FF.toInt())
+                cornerRadius = 28f
+                setStroke(1, 0xFFC7E2FA.toInt())
             }
-            elevation = 4f
-        }
-        art.addView(backBubble, FrameLayout.LayoutParams(220, 92).apply {
-            leftMargin = 22
-            topMargin = 76
-        })
-
-        val mainBubble = TextView(this).apply {
-            text = "✓   • • • •"
-            textSize = 19f
+        }, FrameLayout.LayoutParams(210, 88).apply { leftMargin = 12; topMargin = 68 })
+        art.addView(TextView(this).apply {
+            text = "✓  • • • •"
+            textSize = 18f
             gravity = Gravity.CENTER
             typeface = Typeface.DEFAULT_BOLD
             setTextColor(Color.WHITE)
-            background = GradientDrawable(
-                GradientDrawable.Orientation.TL_BR,
-                intArrayOf(0xFF2499EF.toInt(), 0xFF1677D7.toInt())
-            ).apply { cornerRadius = 24f }
+            background = blue(25f)
             elevation = 10f
-        }
-        art.addView(mainBubble, FrameLayout.LayoutParams(190, 118).apply {
-            leftMargin = 110
-            topMargin = 30
-        })
-
-        val heartBubble = TextView(this).apply {
+        }, FrameLayout.LayoutParams(190, 112).apply { leftMargin = 98; topMargin = 28 })
+        art.addView(TextView(this).apply {
             text = "♡"
             textSize = 42f
             gravity = Gravity.CENTER
-            setTextColor(0xFF5D9FE0.toInt())
+            setTextColor(0xFF5B9FE0.toInt())
             background = GradientDrawable(
                 GradientDrawable.Orientation.TL_BR,
-                intArrayOf(0xFFE4F1FF.toInt(), 0xFFC6DDF7.toInt())
-            ).apply {
-                cornerRadius = 20f
-                setStroke(1, 0xFFB3D1EF.toInt())
-            }
-            elevation = 5f
-        }
-        art.addView(heartBubble, FrameLayout.LayoutParams(145, 78).apply {
-            leftMargin = 4
-            topMargin = 188
-        })
-
-        art.addView(TextView(this).apply {
-            text = "⌒"
-            textSize = 48f
-            setTextColor(0xFF9CC8EF.toInt())
-            rotation = -25f
-        }, FrameLayout.LayoutParams(80, 70).apply {
-            leftMargin = 206
-            topMargin = 194
-        })
+                intArrayOf(0xFFE8F3FF.toInt(), 0xFFD1E5FA.toInt())
+            ).apply { cornerRadius = 22f }
+        }, FrameLayout.LayoutParams(130, 76).apply { leftMargin = 0; topMargin = 160 })
 
         page.addView(art)
 
         val login = button("Log In").apply {
-            textSize = 22f
-            background = GradientDrawable(
-                GradientDrawable.Orientation.LEFT_RIGHT,
-                intArrayOf(0xFF1479DF.toInt(), 0xFF20A8D8.toInt())
-            ).apply { cornerRadius = 18f }
-            setTextColor(Color.WHITE)
+            textSize = 20f
             typeface = Typeface.create("sans-serif", Typeface.BOLD)
-            elevation = 8f
+            setTextColor(Color.WHITE)
+            background = blue(18f)
+            elevation = 6f
+            setOnClickListener { showLoginForm() }
         }
-        page.addView(login, LinearLayout.LayoutParams(-1, 64).apply {
-            topMargin = 8
-        })
+        page.addView(login, LinearLayout.LayoutParams(-1, 58).apply { topMargin = 4 })
 
         val signup = button("Create New Account").apply {
-            textSize = 20f
-            background = rounded(Color.WHITE, 18f).apply {
-                setStroke(2, 0xFF1479DF.toInt())
-            }
-            setTextColor(0xFF126FC9.toInt())
+            textSize = 18f
             typeface = Typeface.create("sans-serif", Typeface.BOLD)
+            setTextColor(0xFF087BEF.toInt())
+            background = rounded(Color.WHITE, 18f).apply {
+                setStroke(2, 0xFF0084FF.toInt())
+            }
+            setOnClickListener {
+                try {
+                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://tubalrr.github.io/tubalhub/")))
+                } catch (_: Exception) {
+                    toast("Open the TUBAL HUB website to create your account.")
+                }
+            }
         }
-        page.addView(signup, LinearLayout.LayoutParams(-1, 64).apply {
-            topMargin = 14
-        })
+        page.addView(signup, LinearLayout.LayoutParams(-1, 58).apply { topMargin = 12 })
 
         page.addView(text("By continuing you agree to our  Terms  •  Privacy Policy").apply {
-            textSize = 12f
+            textSize = 11f
             gravity = Gravity.CENTER
-            setTextColor(0xFF667085.toInt())
-            setPadding(0, 34, 0, 0)
+            setTextColor(0xFF98A2B3.toInt())
+            setPadding(0, 26, 0, 0)
         })
-
-        login.setOnClickListener { showLoginForm() }
-
-        signup.setOnClickListener {
-            try {
-                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://tubalrr.github.io/tubalhub/")))
-            } catch (_: Exception) {
-                toast("Open the TUBAL HUB website to create your account.")
-            }
-        }
 
         scroll.addView(page)
         root.addView(scroll, LinearLayout.LayoutParams(-1, -1))
@@ -1018,7 +965,7 @@ private fun showMessenger() {
         header.addView(LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(10, 0, 0, 0)
-            addView(text("tubal chat").apply {
+            addView(text("Tubal Chat").apply {
                 textSize = 21f
                 typeface = Typeface.create("sans-serif", Typeface.BOLD)
                 setTextColor(0xFF050505.toInt())
