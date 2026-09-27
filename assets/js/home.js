@@ -835,7 +835,12 @@ export function createSlider(trackId,prevId,nextId,dotsId,slideSelector=".hero-s
   track.addEventListener("pointerup",end);track.addEventListener("pointercancel",end);
   track.addEventListener("mouseenter",stopAuto);track.addEventListener("mouseleave",startAuto);
   track.addEventListener("touchstart",stopAuto,{passive:true});track.addEventListener("touchend",startAuto,{passive:true});
-  startAuto();
+  if("IntersectionObserver" in window){
+    const observer=new IntersectionObserver(entries=>{
+      entries.forEach(entry=>entry.isIntersecting?startAuto():stopAuto());
+    },{threshold:0.1});
+    observer.observe(track);
+  }else startAuto();
   return {go,stopAuto,startAuto,get index(){return index}};
 }
 
