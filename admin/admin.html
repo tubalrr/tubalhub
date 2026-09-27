@@ -1,199 +1,521 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#07090C"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"><title>TUBAL HUB | Admin v1.2.18</title><link rel="stylesheet" href="admin-dashboard.css?v=1.2.17"><link rel="stylesheet" href="admin-modern-layout.css?v=20260927-safe"><link rel="stylesheet" href="admin-control-surface.css?v=20260927"><link rel="stylesheet" href="admin-motion.css?v=20260927-motion"><script>tailwind={config:{prefix:"tu-",corePlugins:{preflight:false},theme:{extend:{colors:{cream:"#FFFBF5",ink:"#1E1B16",line:"#EAE2D8",muted:"#8A8177"}}}}}</script><script src="https://cdn.tailwindcss.com"></script><style>
-.analytics-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:18px}
-.analytics-card{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:18px}
-.analytics-card span{display:block;font-size:12px;opacity:.65;text-transform:uppercase;letter-spacing:.08em}
-.analytics-card strong{display:block;font-size:30px;margin-top:8px}
-.analytics-card small{display:block;margin-top:6px;opacity:.55}
-.analytics-layout{display:grid;grid-template-columns:1.7fr 1fr;gap:18px}
-.analytics-chart,.analytics-list{min-height:260px}
-.analytics-bars{height:220px;display:flex;align-items:flex-end;gap:5px;padding:18px 4px 4px}
-.analytics-bar-wrap{height:100%;flex:1;display:flex;align-items:flex-end;justify-content:center;min-width:0}
-.analytics-bar{width:100%;max-width:18px;border-radius:6px 6px 2px 2px;background:linear-gradient(180deg,#8df7c5,#39b989);min-height:2px}
-.analytics-bar-label{font-size:8px;opacity:.45;margin-top:5px;white-space:nowrap}
-.analytics-list-row{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.07)}
-.analytics-list-row:last-child{border-bottom:0}
-.analytics-list-row b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.analytics-list-row span{opacity:.7;white-space:nowrap}
-.analytics-hour-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:5px;align-items:end;height:170px}
-.analytics-hour{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
-.analytics-hour i{display:block;width:100%;max-width:22px;border-radius:4px 4px 1px 1px;background:#69d8ad;min-height:2px}
-.analytics-hour small{font-size:8px;opacity:.45;margin-top:4px}
-.analytics-retention{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.analytics-retention-card{padding:14px;border-radius:14px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07)}
-.analytics-retention-card b{font-size:22px;display:block;margin-top:6px}
-.analytics-empty{padding:30px;text-align:center;opacity:.55}
-@media(max-width:900px){.analytics-grid,.analytics-layout{grid-template-columns:1fr 1fr}.analytics-layout{grid-template-columns:1fr}.analytics-retention{grid-template-columns:1fr}}
-@media(max-width:560px){.analytics-grid{grid-template-columns:1fr 1fr}.analytics-hour-grid{grid-template-columns:repeat(6,1fr)}}
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0B0F14">
+<title>TUBAL HUB | Admin v1.2.18</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config={theme:{extend:{boxShadow:{soft:"0 8px 28px rgba(15,23,42,.06)"}}}};</script>
 <style>
-.updater-control-panel .updater-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:14px}
-.updater-card{padding:15px;border:1px solid rgba(255,255,255,.08);border-radius:16px;background:rgba(255,255,255,.03)}
-.updater-card span,.updater-card small{display:block;opacity:.65;font-size:11px}
-.updater-card strong{display:block;font-size:22px;margin:6px 0}
-.updater-card input,.updater-form input,.updater-form select,.updater-test-row input{width:100%;box-sizing:border-box;background:rgba(0,0,0,.18);color:inherit;border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:9px}
-.updater-form{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}
-.updater-form label{font-size:11px;opacity:.75}
-.updater-form input,.updater-form select{display:block;margin-top:6px}
-.updater-actions,.updater-test-row{display:flex;gap:8px;flex-wrap:wrap}
-.updater-actions button,.updater-test-row button{border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:9px 12px;background:rgba(255,255,255,.06);color:inherit;cursor:pointer}
-.updater-actions button:first-child,.updater-test-row button{background:rgba(29,255,145,.1);border-color:rgba(29,255,145,.25)}
-.updater-test{margin-top:16px;padding:15px;border:1px dashed rgba(255,255,255,.16);border-radius:16px;display:grid;grid-template-columns:1fr auto;gap:10px}
-.updater-test p{margin:5px 0 10px;opacity:.65;font-size:12px}
-.updater-test-row{grid-column:1/-1}
-.updater-test-row input{max-width:180px}
-.updater-note{margin-top:12px;font-size:11px;opacity:.6;line-height:1.5}
-#updaterStatus[data-status="LIVE"]{color:#69e0aa}
-#updaterStatus[data-status="SCHEDULED"]{color:#ffd166}
-#updaterStatus[data-status="CANCELLED"]{color:#ff8b8b}
-@media(max-width:900px){.updater-control-panel .updater-grid{grid-template-columns:1fr 1fr}}
-@media(max-width:560px){.updater-control-panel .updater-grid,.updater-form{grid-template-columns:1fr}.updater-test{grid-template-columns:1fr}.updater-test-row input{max-width:none}}
-</style></style><style></style></head><body class="tu-!bg-[#FFFBF5] tu-!text-[#1E1B16]"><button id="sidebarToggle" type="button" aria-label="Toggle sidebar" aria-expanded="true"><span></span><span></span><span></span></button>
-<div class="admin-shell tu-!min-h-screen tu-!bg-[#FFFBF5]" id="app" hidden>
-<aside class="sidebar tu-!bg-[#FFFBF5] tu-!border-r tu-!border-[#EAE2D8] tu-!shadow-none"><a class="brand tu-!text-[#1E1B16]" href="../index.html"><span class="brand-mark tu-!grid tu-!h-10 tu-!w-10 tu-!place-items-center tu-!rounded-[14px] tu-!border-0 tu-!bg-[#1E1B16] tu-!text-sm tu-!font-extrabold">LH</span><span class="brand-copy"><b class="tu-!text-[#1E1B16]">TUBAL HUB</b><small class="tu-!text-[#8A8177]">Personal OS</small></span></a><div class="side-label tu-!text-[#A0978D]">ADMIN</div><div id="brandSwitcher" class="tu-mb-4 tu-rounded-2xl tu-border tu-border-[#F2EDE8] tu-bg-white tu-p-2 tu-shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
-  <div class="tu-px-2 tu-pb-2 tu-text-[9px] tu-font-extrabold tu-uppercase tu-tracking-[.14em] tu-text-[#9A9187]">Three Brands · One Hub</div>
-  <div class="tu-grid tu-grid-cols-2 tu-gap-1">
-    <button type="button" data-brand-switch="all" class="brand-switch-btn brand-switch-active tu-col-span-2 tu-flex tu-items-center tu-gap-2 tu-rounded-xl tu-bg-[#1E1B16] tu-px-2.5 tu-py-2 tu-text-left tu-text-[10px] tu-font-bold tu-text-white" aria-pressed="true"><span>🌐</span><span>Master Hub</span></button>
-    <button type="button" data-brand-switch="brand1" class="brand-switch-btn tu-flex tu-items-center tu-gap-2 tu-rounded-xl tu-border tu-border-transparent tu-bg-transparent tu-px-2.5 tu-py-2 tu-text-left tu-text-[10px] tu-font-semibold tu-text-[#6E655C]" aria-pressed="false"><span>🔴</span><span>Brand 1</span></button>
-    <button type="button" data-brand-switch="brand2" class="brand-switch-btn tu-flex tu-items-center tu-gap-2 tu-rounded-xl tu-border tu-border-transparent tu-bg-transparent tu-px-2.5 tu-py-2 tu-text-left tu-text-[10px] tu-font-semibold tu-text-[#6E655C]" aria-pressed="false"><span>🟢</span><span>Brand 2</span></button>
-    <button type="button" data-brand-switch="brand3" class="brand-switch-btn tu-col-span-2 tu-flex tu-items-center tu-gap-2 tu-rounded-xl tu-border tu-border-transparent tu-bg-transparent tu-px-2.5 tu-py-2 tu-text-left tu-text-[10px] tu-font-semibold tu-text-[#6E655C]" aria-pressed="false"><span>🔵</span><span>Brand 3</span></button>
-  </div>
-</div><nav>
-<a class="active" href="#dashboard">⌂ <span>Dashboard</span></a><a href="#analytics">◌ <span>Analytics</span></a><a href="#betaTestControl">🧪 <span>Beta Control</span></a><a href="#updaterControl">⏱ <span>Updater Control</span></a><a href="#systemSettings">⚙ <span>Maintenance</span></a><a href="#firestore">◇ <span>Firestore</span></a><a href="#chat">◉ <span>Community Moderation</span></a>
-</nav><div class="storage-card tu-!border tu-!border-[#EAE2D8] tu-!bg-white tu-!shadow-sm"><div class="storage-label">Storage</div><div id="storageBadgeReal" class="storage-value">0 deleted</div><div class="storage-progress"><span></span></div><div class="storage-note">Server cleanup: expired media + excess files</div></div></aside>
-<main class="dashboard tu-!bg-[#FFFBF5] tu-!text-[#1E1B16]"><header class="topbar tu-!border-b tu-!border-[#EAE2D8]">
-  <div class="topbar-left">
-  <div id="activeBrandPill" class="tu-inline-flex tu-items-center tu-gap-2 tu-rounded-full tu-border tu-border-[#F2EDE8] tu-bg-white tu-px-3 tu-py-1.5 tu-text-xs tu-font-bold tu-text-[#5D554D]"><span id="activeBrandDot" class="tu-h-2 tu-w-2 tu-rounded-full tu-bg-[#1E1B16]"></span><span id="activeBrandLabel">Master Hub</span></div>
-    <span class="topbar-brand tu-!text-[#1E1B16] tu-!font-extrabold">TUBAL HUB Admin</span><span class="topbar-divider tu-!text-[#C5BDB3]">·</span><span class="topbar-version tu-!text-[#8A8177]">v1.2.18</span>
-  </div>
-  <div class="top-actions">
-    <span class="presence-pill"><i class="status-dot"></i><b id="onlineNowReal">—</b> Online now</span>
-    <span class="realtime-pill tu-!border tu-!border-[#E5DDD3] tu-!bg-white tu-!text-[#685F56]"><i class="status-dot"></i> Realtime</span>
-    <span id="adminEmail"></span>
-    <button id="adminNotificationsButtonGhost" type="button" class="admin-icon-btn" aria-label="Admin notifications" hidden>🔔</button>
-    <button id="logout">Sign Out</button>
-  </div>
-</header>
-<section class="dashboard-head tu-!mb-6" id="dashboard"><div><div class="eyebrow tu-!text-[#9A9187]">PERSONAL OS · ADMIN</div><h1 class="tu-!text-[#1E1B16] tu-!font-extrabold tu-!tracking-[-.04em]">Admin Dashboard</h1><p class="tu-!mt-2 tu-!text-xs tu-!text-[#8A8177]">Manage TUBAL HUB from one calm control center.</p></div><div class="secure-badge tu-!rounded-full tu-!border tu-!border-[#E7DED3] tu-!bg-white tu-!text-[#6C6258]">FIREBASE AUTH</div></section>
-<section class="stats tu-!mb-6 tu-!grid tu-!grid-cols-1 tu-!gap-4 sm:tu-!grid-cols-2 xl:tu-!grid-cols-4">
-  <div class="stat tu-!min-h-[128px] tu-!rounded-2xl tu-!border tu-!border-[#E9E0D6] tu-!bg-white tu-!p-5 tu-!shadow-[0_8px_30px_rgba(65,52,39,0.05)]"><div class="metric-icon tu-!grid tu-!h-10 tu-!w-10 tu-!place-items-center tu-!rounded-xl tu-!bg-[#F3ECE3] tu-!text-[#5B5045]">◔</div><span class="metric-label tu-!text-[#948A80]">DAU</span><strong class="metric-value tu-!text-[#211C17] tu-!font-extrabold" id="analyticsDau">—</strong><small class="metric-note tu-!text-[#948B82]">Unique active users today</small></div>
-  <div class="stat tu-!min-h-[128px] tu-!rounded-2xl tu-!border tu-!border-[#E9E0D6] tu-!bg-white tu-!p-5 tu-!shadow-[0_8px_30px_rgba(65,52,39,0.05)]"><div class="metric-icon tu-!grid tu-!h-10 tu-!w-10 tu-!place-items-center tu-!rounded-xl tu-!bg-[#F3ECE3] tu-!text-[#5B5045]">◫</div><span class="metric-label tu-!text-[#948A80]">WAU</span><strong class="metric-value tu-!text-[#211C17] tu-!font-extrabold" id="analyticsWau">—</strong><small class="metric-note tu-!text-[#948B82]">Unique active users • last 7 days</small></div>
-  <div class="stat tu-!min-h-[128px] tu-!rounded-2xl tu-!border tu-!border-[#E9E0D6] tu-!bg-white tu-!p-5 tu-!shadow-[0_8px_30px_rgba(65,52,39,0.05)]"><div class="metric-icon tu-!grid tu-!h-10 tu-!w-10 tu-!place-items-center tu-!rounded-xl tu-!bg-[#F3ECE3] tu-!text-[#5B5045]">◉</div><span class="metric-label tu-!text-[#948A80]">Messages / 30d</span><strong class="metric-value tu-!text-[#211C17] tu-!font-extrabold" id="analyticsMessages">—</strong><small class="metric-note tu-!text-[#948B82]">Global + private messages</small></div>
-  <div class="stat tu-!min-h-[128px] tu-!rounded-2xl tu-!border tu-!border-[#E9E0D6] tu-!bg-white tu-!p-5 tu-!shadow-[0_8px_30px_rgba(65,52,39,0.05)]"><div class="metric-icon tu-!grid tu-!h-10 tu-!w-10 tu-!place-items-center tu-!rounded-xl tu-!bg-[#F3ECE3] tu-!text-[#5B5045]">♙</div><span class="metric-label tu-!text-[#948A80]">New Users / 30d</span><strong class="metric-value tu-!text-[#211C17] tu-!font-extrabold" id="analyticsNewUsers">—</strong><small class="metric-note tu-!text-[#948B82]">Based on user creation date</small></div>
-</section>
-<section id="brandOverview" class="tu-mb-6">
-  <div class="tu-mb-3 tu-flex tu-flex-col tu-gap-1 sm:tu-flex-row sm:tu-items-end sm:tu-justify-between">
-    <div><div class="tu-text-[10px] tu-font-extrabold tu-uppercase tu-tracking-[.14em] tu-text-[#9A9187]">BRAND OVERVIEW</div><h2 class="tu-mt-1 tu-text-xl tu-font-extrabold tu-tracking-tight tu-text-[#1E1B16]">Three Brands · One Hub</h2><p class="tu-mt-1 tu-text-xs tu-text-[#8A8177]">Switch brands to focus the admin workspace.</p></div>
-    <span id="brandScopeText" class="tu-w-fit tu-rounded-full tu-border tu-border-[#F2EDE8] tu-bg-white tu-px-3 tu-py-1.5 tu-text-[10px] tu-font-bold tu-text-[#6E655C]">Master Hub · All Brands</span>
-  </div>
-  <div class="tu-grid tu-grid-cols-1 tu-gap-3 sm:tu-grid-cols-2 xl:tu-grid-cols-4">
-    <div class="tu-rounded-2xl tu-border tu-border-[#F2EDE8] tu-bg-white tu-p-4 tu-shadow-[0_4px_24px_rgba(0,0,0,0.04)]"><span class="tu-text-[9px] tu-font-extrabold tu-uppercase tu-tracking-[.1em] tu-text-[#9A9187]">Revenue</span><strong id="brandTotalRevenue" class="tu-mt-2 tu-block tu-text-2xl tu-font-extrabold tu-text-[#1E1B16]">—</strong><small id="brandRevenueNote" class="tu-mt-1 tu-block tu-text-[9px] tu-text-[#948B82]">Loaded order records</small></div>
-    <div class="tu-rounded-2xl tu-border tu-border-[#F2EDE8] tu-bg-white tu-p-4 tu-shadow-[0_4px_24px_rgba(0,0,0,0.04)]"><span class="tu-text-[9px] tu-font-extrabold tu-uppercase tu-tracking-[.1em] tu-text-[#9A9187]">Orders</span><strong id="brandTotalOrders" class="tu-mt-2 tu-block tu-text-2xl tu-font-extrabold tu-text-[#1E1B16]">0</strong><small class="tu-mt-1 tu-block tu-text-[9px] tu-text-[#948B82]">Loaded Firestore records</small></div>
-    <div class="tu-rounded-2xl tu-border tu-border-[#F2EDE8] tu-bg-white tu-p-4 tu-shadow-[0_4px_24px_rgba(0,0,0,0.04)]"><span class="tu-text-[9px] tu-font-extrabold tu-uppercase tu-tracking-[.1em] tu-text-[#9A9187]">Inventory</span><strong id="brandTotalInventory" class="tu-mt-2 tu-block tu-text-2xl tu-font-extrabold tu-text-[#1E1B16]">0</strong><small class="tu-mt-1 tu-block tu-text-[9px] tu-text-[#948B82]">Catalog records · no stock field</small></div>
-    <div class="tu-rounded-2xl tu-border tu-border-[#F2EDE8] tu-bg-white tu-p-4 tu-shadow-[0_4px_24px_rgba(0,0,0,0.04)]"><span class="tu-text-[9px] tu-font-extrabold tu-uppercase tu-tracking-[.1em] tu-text-[#9A9187]">Current Scope</span><strong id="brandCurrentScope" class="tu-mt-2 tu-block tu-text-lg tu-font-extrabold tu-text-[#1E1B16]">Master Hub</strong><small class="tu-mt-1 tu-block tu-text-[9px] tu-text-[#948B82]">Accent + filters</small></div>
-  </div>
-  <div class="tu-mt-3 tu-grid tu-grid-cols-1 tu-gap-3 md:tu-grid-cols-3">
-    <div class="brand-summary-card tu-rounded-2xl tu-border tu-border-[#F2EDE8] tu-bg-white tu-p-4 tu-shadow-[0_4px_24px_rgba(0,0,0,0.04)]"><div class="tu-flex tu-items-center tu-justify-between"><div class="tu-flex tu-items-center tu-gap-2"><span class="tu-h-2.5 tu-w-2.5 tu-rounded-full tu-bg-red-500"></span><b>Brand 1</b></div><span class="tu-rounded-full tu-bg-red-50 tu-px-2.5 tu-py-1 tu-text-[9px] tu-font-bold tu-text-red-700">RED</span></div><div class="tu-mt-3 tu-grid tu-grid-cols-2 tu-gap-3"><div><strong data-brand-orders="brand1" class="tu-block tu-text-xl">0</strong><small class="tu-text-[9px] tu-text-[#948B82]">orders</small></div><div><strong data-brand-products="brand1" class="tu-block tu-text-xl">0</strong><small class="tu-text-[9px] tu-text-[#948B82]">products</small></div></div></div>
-    <div class="brand-summary-card tu-rounded-2xl tu-border tu-border-[#F2EDE8] tu-bg-white tu-p-4 tu-shadow-[0_4px_24px_rgba(0,0,0,0.04)]"><div class="tu-flex tu-items-center tu-justify-between"><div class="tu-flex tu-items-center tu-gap-2"><span class="tu-h-2.5 tu-w-2.5 tu-rounded-full tu-bg-emerald-500"></span><b>Brand 2</b></div><span class="tu-rounded-full tu-bg-emerald-50 tu-px-2.5 tu-py-1 tu-text-[9px] tu-font-bold tu-text-emerald-700">GREEN</span></div><div class="tu-mt-3 tu-grid tu-grid-cols-2 tu-gap-3"><div><strong data-brand-orders="brand2" class="tu-block tu-text-xl">0</strong><small class="tu-text-[9px] tu-text-[#948B82]">orders</small></div><div><strong data-brand-products="brand2" class="tu-block tu-text-xl">0</strong><small class="tu-text-[9px] tu-text-[#948B82]">products</small></div></div></div>
-    <div class="brand-summary-card tu-rounded-2xl tu-border tu-border-[#F2EDE8] tu-bg-white tu-p-4 tu-shadow-[0_4px_24px_rgba(0,0,0,0.04)]"><div class="tu-flex tu-items-center tu-justify-between"><div class="tu-flex tu-items-center tu-gap-2"><span class="tu-h-2.5 tu-w-2.5 tu-rounded-full tu-bg-blue-500"></span><b>Brand 3</b></div><span class="tu-rounded-full tu-bg-blue-50 tu-px-2.5 tu-py-1 tu-text-[9px] tu-font-bold tu-text-blue-700">BLUE</span></div><div class="tu-mt-3 tu-grid tu-grid-cols-2 tu-gap-3"><div><strong data-brand-orders="brand3" class="tu-block tu-text-xl">0</strong><small class="tu-text-[9px] tu-text-[#948B82]">orders</small></div><div><strong data-brand-products="brand3" class="tu-block tu-text-xl">0</strong><small class="tu-text-[9px] tu-text-[#948B82]">products</small></div></div></div>
-  </div>
-</section>
-<div class="legacy-metrics" aria-hidden="true"><span id="totalUsersCard">0</span><span id="totalUsersReal">0</span><span id="totalMsgsReal">0</span><span id="blockedReal">0</span></div><div id="adminContentGrid" class="admin-content-grid tu-grid tu-grid-cols-1 md:tu-grid-cols-2 lg:tu-grid-cols-3 tu-gap-6">
-<section class="dashboard-grid tu-grid tu-grid-cols-1 tu-gap-5 lg:tu-grid-cols-2"><section class="panel tu-!rounded-2xl tu-!border tu-!border-[#E9E0D6] tu-!bg-white tu-!text-[#2E2923] tu-!shadow-[0_8px_30px_rgba(65,52,39,0.045)]" recent-panel"><div class="panel-head"><div><h2>Recent users</h2><p>Same function • di sira • v1.2.17</p></div><span>USERS</span></div><div id="recentUsers" class="recent-users"></div></section>
-<section class="panel tu-!rounded-2xl tu-!border tu-!border-[#E9E0D6] tu-!bg-white tu-!text-[#2E2923] tu-!shadow-[0_8px_30px_rgba(65,52,39,0.045)] sponsor-dashboard" id="sponsoredControl"><div class="panel-head"><div><h2>Sponsored Manager</h2><p>Sa ilalim ng Live Stats • Empty real • Dynamic Firestore</p></div><span>FIRESTORE</span></div><div class="sponsorBoxReal"><div class="sponsor-icon">◫</div><b>No sponsor yet</b><p>Empty lang real • ready for future sponsor<br>Walang hardcoded "Your Sponsor Here"</p><small>Firestore: sponsors • isActive == true</small></div><div class="form-grid sponsor-form"><select id="saSlot"><option value="1">Sponsored 1</option><option value="2">Sponsored 2</option></select><input id="saTitle" placeholder="Sponsor title"><input id="saText" placeholder="Sponsor description"><input id="saImage" placeholder="Image URL (optional)"><input id="saUrl" placeholder="Sponsor / product URL (optional)"><input id="saBadge" placeholder="Badge e.g. SPONSORED" value="SPONSORED"><button type="button" id="addSponsoredAd">Publish Sponsored →</button></div><small class="form-note">Published ads appear automatically below Live Stats on the homepage. One active sponsor per slot • Sponsored 1 and Sponsored 2</small><div id="sponsoredAdList"></div></section></section>
-<div class="admin-section-label tw tu-!mb-3 tu-!mt-7 tu-!text-[#8F867C]"><span class="section-icon">📊</span><span>Analytics</span></div><section class="panel tu-!rounded-2xl tu-!border tu-!border-[#E9E0D6] tu-!bg-white tu-!text-[#2E2923] tu-!shadow-[0_8px_30px_rgba(65,52,39,0.045)]" id="analytics">
-<div class="panel-head"><div><small>REAL FIRESTORE ANALYTICS</small><h2>Analytics</h2><p id="analyticsUpdated">Loading real activity data…</p></div><span>SERVER</span></div>
+html{scroll-behavior:smooth}
+body{margin:0;min-width:320px;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+*{box-sizing:border-box}button,input,textarea,select{font:inherit}
+.sidebar-scroll::-webkit-scrollbar,.list-scroll::-webkit-scrollbar,.table-scroll::-webkit-scrollbar{width:6px;height:6px}
+.sidebar-scroll::-webkit-scrollbar-thumb{background:#334155;border-radius:999px}
+.list-scroll::-webkit-scrollbar-thumb,.table-scroll::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:999px}
+.admin-card{min-width:0;background:#fff;border:1px solid #e5e7eb;border-radius:20px;box-shadow:0 1px 2px rgba(15,23,42,.025),0 8px 28px rgba(15,23,42,.045)}
+.admin-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid #eef0f2}
+.admin-card-head h2{margin:0;color:#0f172a;font-size:17px;font-weight:800;letter-spacing:-.02em}
+.admin-card-head p{margin:5px 0 0;color:#64748b;font-size:12px;line-height:1.55}
+.admin-card-head small{display:block;color:#94a3b8;font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+.admin-badge{display:inline-flex;align-items:center;white-space:nowrap;border:1px solid #e2e8f0;border-radius:999px;padding:5px 9px;background:#f8fafc;color:#475569;font-size:9px;font-weight:800;letter-spacing:.08em}
+.admin-input,.admin-select,.admin-textarea{width:100%;border:1px solid #dbe2e8;border-radius:12px;background:#fff;color:#0f172a;padding:10px 12px;outline:0;font-size:12px}
+.admin-input::placeholder,.admin-textarea::placeholder{color:#94a3b8}
+.admin-input:focus,.admin-select:focus,.admin-textarea:focus{border-color:#94a3af;box-shadow:0 0 0 4px rgba(100,116,139,.09)}
+.admin-textarea{min-height:100px;resize:vertical}
+.admin-primary{display:inline-flex;align-items:center;justify-content:center;border:1px solid #0f172a;border-radius:12px;background:#0f172a;color:#fff;padding:10px 14px;font-size:12px;font-weight:800}
+.admin-primary:hover{background:#1e293b}
+.admin-secondary{display:inline-flex;align-items:center;justify-content:center;border:1px solid #dbe2e8;border-radius:12px;background:#fff;color:#334155;padding:10px 14px;font-size:12px;font-weight:700}
+.admin-secondary:hover{background:#f8fafc}
+.item{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding:13px 0;border-bottom:1px solid #eef2f5}
+.item:last-child{border-bottom:0}
+.item b{color:#0f172a;font-size:11px}.item p{margin:4px 0;color:#64748b;font-size:10px;line-height:1.5}.item small{display:block;color:#94a3b8;font-size:9px;line-height:1.5}
+.admin-item-actions{display:flex;align-items:center;gap:7px;flex:0 0 auto}
+.admin-item-actions button{border:1px solid #dbe2e8;border-radius:10px;background:#fff;color:#334155;padding:8px 10px;font-size:10px;font-weight:700}
+.admin-item-actions button:hover{background:#f8fafc}
+.empty,.analytics-empty{padding:20px 4px;color:#94a3b8;font-size:11px;text-align:center}
+.brand-data-badge{font-size:8px!important}.legacy-metrics{display:none}
+.system-setting-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:15px 0;border-bottom:1px solid #eef2f5}
+.system-setting-row b{display:block;color:#0f172a;font-size:12px}.system-setting-row small{display:block;margin-top:4px;color:#64748b;font-size:10px;line-height:1.5}
+.system-setting-status{margin-top:12px;padding:10px 12px;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;color:#64748b;font-size:10px}
+.switchReal{position:relative;display:inline-flex;flex:0 0 auto}.switchReal input{position:absolute;opacity:0}
+.switchReal span{display:block;width:44px;height:24px;border-radius:999px;background:#cbd5e1;transition:.2s}
+.switchReal span:after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(15,23,42,.18);transition:.2s}
+.switchReal input:checked+span{background:#0f172a}.switchReal input:checked+span:after{transform:translateX(20px)}
+.beta-test-grid{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px}
+.beta-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:8px;padding:10px 12px;border:1px solid #e5e7eb;border-radius:12px;background:#f8fafc;font-size:11px}
+.beta-row button{border:0;background:transparent;color:#b91c1c;font-size:10px;font-weight:800}
+.beta-meta{margin-top:10px;color:#64748b;font-size:10px}
+.ban-modal[hidden]{display:none!important}.ban-modal{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:20px;background:rgba(15,23,42,.45)}
+.ban-modal-card{width:min(520px,100%);padding:22px;border-radius:20px;border:1px solid #e2e8f0;background:#fff;box-shadow:0 28px 80px rgba(15,23,42,.22)}
+.ban-modal-head{display:flex;justify-content:space-between;gap:16px}.ban-modal-head h3{margin:3px 0 0;font-size:18px;font-weight:800}.ban-modal-head small{font-size:9px;color:#94a3b8;letter-spacing:.12em;font-weight:800}.ban-modal-head p{margin:5px 0 0;color:#64748b;font-size:11px}
+.ban-options{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:18px 0}.ban-options button{border:1px solid #e2e8f0;border-radius:10px;background:#fff;padding:9px 7px;color:#475569;font-size:10px;font-weight:700}.ban-options button.selected{background:#0f172a;color:#fff;border-color:#0f172a}
+.ban-modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}
+.admin-search-wrap{position:relative;flex:1;max-width:420px}
+#adminSearchResults{position:absolute;left:0;right:0;top:calc(100% + 8px);z-index:80;background:#fff;border:1px solid #e5e7eb;border-radius:14px;box-shadow:0 18px 50px rgba(15,23,42,.12);overflow:hidden}
+.admin-search-result{display:block;padding:10px 12px;border-bottom:1px solid #eef2f5;text-decoration:none}.admin-search-result:hover{background:#f8fafc}
+.admin-search-result span{display:block;color:#6b7280;font-size:9px;font-weight:800}.admin-search-result b{display:block;color:#0f172a;font-size:11px}.admin-search-result small{display:block;margin-top:2px;color:#94a3b8;font-size:9px}.admin-search-empty{padding:14px;color:#64748b;font-size:10px}
+@media(max-width:1023px){.admin-sidebar-mobile{transform:translateX(-100%);transition:transform .2s ease}.admin-sidebar-mobile.open{transform:translateX(0)}}
+@media(min-width:1024px){.admin-sidebar-mobile{transform:none!important}}
+@media(max-width:900px){.wide-card{grid-column:span 1!important}}
+@media(max-width:700px){.stats-grid{grid-template-columns:1fr!important}.form-two,.form-three{grid-template-columns:1fr!important}.beta-test-grid{grid-template-columns:1fr}.ban-options{grid-template-columns:repeat(2,minmax(0,1fr))}.top-search{display:none}}
+</style>
+</head>
 
-<div class="analytics-layout">
-<section class="panel tu-!rounded-2xl tu-!border tu-!border-[#E9E0D6] tu-!bg-white tu-!text-[#2E2923] tu-!shadow-[0_8px_30px_rgba(65,52,39,0.045)] analytics-chart"><div class="panel-head"><div><h2>Messages per Day</h2><p>Actual Firestore message timestamps</p></div><span>30 DAYS</span></div><div id="messagesChart" class="analytics-bars"></div></section>
-<section class="panel tu-!rounded-2xl tu-!border tu-!border-[#E9E0D6] tu-!bg-white tu-!text-[#2E2923] tu-!shadow-[0_8px_30px_rgba(65,52,39,0.045)] analytics-list"><div class="panel-head"><div><h2>Most Active Users</h2><p>Message activity in the last 30 days</p></div><span>TOP 10</span></div><div id="activeUsersList"></div></section>
-</div>
-<div class="analytics-layout">
-<section class="panel tu-!rounded-2xl tu-!border tu-!border-[#E9E0D6] tu-!bg-white tu-!text-[#2E2923] tu-!shadow-[0_8px_30px_rgba(65,52,39,0.045)] analytics-chart"><div class="panel-head"><div><h2>Peak Hours</h2><p>Message activity by local server hour</p></div><span>24H</span></div><div id="peakHours" class="analytics-hour-grid"></div></section>
-<section class="panel tu-!rounded-2xl tu-!border tu-!border-[#E9E0D6] tu-!bg-white tu-!text-[#2E2923] tu-!shadow-[0_8px_30px_rgba(65,52,39,0.045)]"><div class="panel-head"><div><h2>User Growth</h2><p>New registered users per day</p></div><span>30 DAYS</span></div><div id="newUsersChart" class="analytics-bars"></div></section>
-</div>
-<section class="panel tu-!rounded-2xl tu-!border tu-!border-[#E9E0D6] tu-!bg-white tu-!text-[#2E2923] tu-!shadow-[0_8px_30px_rgba(65,52,39,0.045)]"><div class="panel-head"><div><h2>Retention</h2><p>Real message-based cohort retention</p></div><span>D1 / D7 / D30</span></div><div id="retentionGrid" class="analytics-retention"></div></section>
-</section><div class="admin-section-label tw tu-!mb-3 tu-!mt-7 tu-!text-[#8F867C]"><span class="section-icon">🧪</span><span>Beta Control</span></div><section class="panel beta-test-panel tu-!rounded-2xl tu-!border tu-!border-[#E9E0D6] tu-!bg-white tu-!text-[#2E2923] tu-!shadow-[0_8px_30px_rgba(65,52,39,0.045)] tu-!p-6 tu-!rounded-2xl tu-!border tu-!border-slate-200 tu-!bg-white tu-!shadow-sm" id="betaTestControl">
-<div class="panel-head tu-!border-b tu-!border-[#F0EBE5]"><div><small>BETA ACCESS</small><h2>v1.2.18 Beta Access</h2><p>Admin + maximum 3 testers • Test Mode is browser-local only</p></div><span>BETA CONTROL</span></div>
-<div class="beta-test-grid">
-<input id="betaEmailInput" type="email" autocomplete="off" placeholder="tester@email.com">
-<button type="button" id="betaAdd">Add Beta</button>
-</div>
-<div id="betaList" class="beta-list"></div>
-<div class="beta-meta" id="betaStatus">Loading beta access…</div>
-<div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
-<button type="button" id="betaSave">Save Beta Emails</button>
-<button type="button" id="betaGoLive" class="tubal-go-live-v1218">✅ Go Live v1.2.18</button>
-</div>
-<div class="beta-meta">Go Live commits version.json v1.2.18 through the secure server release function. GitHub credentials never run in the browser.</div>
-</section><section class="panel updater-control-panel tu-!rounded-2xl tu-!border tu-!border-slate-200 tu-!bg-white tu-!p-6 tu-!text-slate-900 tu-!shadow-sm tu-block tu-w-full" id="updaterControl">
-  <div class="tu-flex tu-flex-col tu-gap-4 md:tu-flex-row md:tu-items-start md:tu-justify-between">
-    <div class="tu-flex tu-items-start tu-gap-3">
-      <div class="tu-grid tu-h-10 tu-w-10 tu-shrink-0 tu-place-items-center tu-rounded-xl tu-bg-slate-100 tu-text-lg tu-text-slate-600">⏱</div>
-      <div>
-        <div class="tu-text-[10px] tu-font-extrabold tu-uppercase tu-tracking-[.16em] tu-text-slate-400">UPDATER</div>
-        <h2 class="tu-mt-1 tu-text-xl tu-font-bold tu-tracking-tight tu-text-slate-900">Scheduled Updater Control</h2>
-        <p class="tu-mt-1 tu-text-sm tu-text-slate-500">PC + mobile • release appears only at the scheduled time</p>
-      </div>
-    </div>
-    <span class="tu-inline-flex tu-w-fit tu-items-center tu-rounded-full tu-border tu-border-slate-200 tu-bg-slate-50 tu-px-3 tu-py-1.5 tu-text-xs tu-font-bold tu-text-slate-700">v1.2.17</span>
+<body class="bg-slate-100 text-slate-900 antialiased">
+
+<div id="mobileSidebarBackdrop" class="fixed inset-0 z-40 hidden bg-slate-950/50 lg:hidden"></div>
+
+<!-- ================= FIXED SIDEBAR ================= -->
+<aside id="sidebar" class="admin-sidebar-mobile fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-slate-800 bg-slate-950 text-white">
+  <div class="border-b border-slate-800 px-5 py-5">
+    <a href="../index.html" class="flex items-center gap-3">
+      <span class="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-white text-xs font-black text-slate-950">LH</span>
+      <span class="min-w-0">
+        <span class="block truncate text-base font-extrabold">TUBAL HUB</span>
+        <span class="block truncate text-xs text-slate-400">Three Brands. One Hub.</span>
+      </span>
+    </a>
   </div>
 
-  <div class="tu-mt-6 tu-grid tu-grid-cols-1 tu-gap-4 md:tu-grid-cols-2">
-    <div class="tu-rounded-2xl tu-border tu-border-slate-200 tu-bg-slate-50 tu-p-5">
-      <div class="tu-text-[10px] tu-font-bold tu-uppercase tu-tracking-[.1em] tu-text-slate-400">Current Version</div>
-      <div class="tu-mt-2 tu-text-2xl tu-font-extrabold tu-tracking-tight tu-text-slate-900" id="updaterCurrentVersion">v1.2.17</div>
-      <div class="tu-mt-1 tu-text-xs tu-text-slate-500">Source: version.json</div>
+  <div class="sidebar-scroll flex-1 overflow-y-auto px-3 py-4">
+    <div id="brandSwitcher" class="mb-6 rounded-2xl border border-slate-800 bg-slate-900 p-2">
+      <div class="mb-2 px-2 text-[9px] font-extrabold uppercase tracking-[.16em] text-slate-500">Brand Switcher</div>
+      <button type="button" data-brand-switch="all" class="brand-switch-btn brand-switch-active mb-1 flex w-full items-center gap-3 rounded-xl bg-white px-3 py-2.5 text-left text-xs font-bold text-slate-950" aria-pressed="true"><span>🌐</span><span>Master Hub</span></button>
+      <button type="button" data-brand-switch="brand1" class="brand-switch-btn mb-1 flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-xs font-semibold text-slate-300 hover:bg-slate-800" aria-pressed="false"><span>🔴</span><span>Brand 1</span></button>
+      <button type="button" data-brand-switch="brand2" class="brand-switch-btn mb-1 flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-xs font-semibold text-slate-300 hover:bg-slate-800" aria-pressed="false"><span>🟢</span><span>Brand 2</span></button>
+      <button type="button" data-brand-switch="brand3" class="brand-switch-btn flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-xs font-semibold text-slate-300 hover:bg-slate-800" aria-pressed="false"><span>🔵</span><span>Brand 3</span></button>
     </div>
-    <div class="tu-rounded-2xl tu-border tu-border-slate-200 tu-bg-white tu-p-5 tu-shadow-sm">
-      <div class="tu-text-[10px] tu-font-bold tu-uppercase tu-tracking-[.1em] tu-text-slate-400">Target Version</div>
-      <input id="updaterTargetVersion" placeholder="1.2.18" inputmode="decimal" class="tu-mt-2 tu-w-full tu-rounded-xl tu-border tu-border-slate-300 tu-bg-white tu-px-3.5 tu-py-2.5 tu-text-sm tu-font-semibold tu-text-slate-900 tu-outline-none focus:tu-border-slate-500 focus:tu-ring-4 focus:tu-ring-slate-100">
-      <div class="tu-mt-1.5 tu-text-xs tu-text-slate-500">Future build uploaded to GitHub Release</div>
-      <div class="tu-mt-4 tu-grid tu-grid-cols-1 tu-gap-3 sm:tu-grid-cols-2">
-        <label class="tu-block"><span class="tu-block tu-text-xs tu-font-medium tu-text-slate-500">Release date &amp; time</span><input id="updaterReleaseAt" type="datetime-local" class="tu-mt-1.5 tu-w-full tu-rounded-xl tu-border tu-border-slate-300 tu-bg-white tu-px-3 tu-py-2 tu-text-sm tu-text-slate-900"></label>
-        <label class="tu-block"><span class="tu-block tu-text-xs tu-font-medium tu-text-slate-500">Timezone</span><select id="updaterTimezone" class="tu-mt-1.5 tu-w-full tu-rounded-xl tu-border tu-border-slate-300 tu-bg-white tu-px-3 tu-py-2 tu-text-sm tu-text-slate-900"><option value="Asia/Manila">Asia/Manila (PH)</option><option value="UTC">UTC</option><option value="Asia/Tokyo">Asia/Tokyo</option><option value="America/Los_Angeles">America/Los_Angeles</option><option value="America/New_York">America/New_York</option><option value="Europe/London">Europe/London</option></select></label>
+
+    <div class="mb-2 px-2 text-[9px] font-extrabold uppercase tracking-[.16em] text-slate-500">Workspace</div>
+    <nav class="space-y-1">
+      <a href="#dashboard" class="nav-link flex items-center gap-3 rounded-xl bg-slate-800 px-3 py-2.5 text-xs font-bold text-white"><span class="w-5 text-center">⌂</span><span>Dashboard</span></a>
+      <a href="#analytics" class="nav-link flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-semibold text-slate-300 hover:bg-slate-800 hover:text-white"><span class="w-5 text-center">◌</span><span>Analytics</span></a>
+      <a href="#shopProducts" class="nav-link flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-semibold text-slate-300 hover:bg-slate-800 hover:text-white"><span class="w-5 text-center">◈</span><span>Products</span></a>
+      <a href="#shopOrders" class="nav-link flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-semibold text-slate-300 hover:bg-slate-800 hover:text-white"><span class="w-5 text-center">▣</span><span>Orders</span></a>
+      <a href="#content" class="nav-link flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-semibold text-slate-300 hover:bg-slate-800 hover:text-white"><span class="w-5 text-center">✦</span><span>Content</span></a>
+      <a href="#members" class="nav-link flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-semibold text-slate-300 hover:bg-slate-800 hover:text-white"><span class="w-5 text-center">♙</span><span>Members</span></a>
+      <a href="#systemSettings" class="nav-link flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-semibold text-slate-300 hover:bg-slate-800 hover:text-white"><span class="w-5 text-center">⚙</span><span>Settings</span></a>
+    </nav>
+  </div>
+
+  <div class="border-t border-slate-800 p-4">
+    <div class="rounded-2xl border border-slate-800 bg-slate-900 p-3">
+      <div class="flex items-center gap-3">
+        <span class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-slate-800 text-[10px] font-bold">AD</span>
+        <div class="min-w-0 flex-1">
+          <div class="truncate text-xs font-semibold">Administrator</div>
+          <div id="sidebarAdminEmail" class="truncate text-[10px] text-slate-500">Secure session</div>
+        </div>
+        <span class="h-2.5 w-2.5 rounded-full bg-emerald-400"></span>
       </div>
     </div>
   </div>
+</aside>
 
-  <div class="tu-mt-4 tu-rounded-2xl tu-border tu-border-slate-200 tu-bg-slate-50 tu-p-4">
-    <div class="tu-flex tu-flex-col tu-gap-3 sm:tu-flex-row sm:tu-items-center sm:tu-justify-between">
-      <div class="tu-flex tu-flex-wrap tu-items-center tu-gap-2"><span class="tu-text-[10px] tu-font-bold tu-uppercase tu-tracking-[.1em] tu-text-slate-400">Status</span><strong id="updaterStatus" data-status="DRAFT" class="tu-inline-flex tu-items-center tu-rounded-full tu-bg-amber-100 tu-px-3 tu-py-1 tu-text-xs tu-font-bold tu-text-amber-800">DRAFT</strong><span id="updaterScheduleText" class="tu-text-xs tu-text-slate-500">No scheduled release</span></div>
-      <button type="button" id="updaterCheckNow" class="tu-rounded-xl tu-border tu-border-slate-200 tu-bg-white tu-px-3 tu-py-2 tu-text-xs tu-font-semibold tu-text-slate-700 hover:tu-bg-slate-50">Check Now</button>
+
+<!-- ================= MAIN CONTENT ================= -->
+<main class="min-h-screen lg:ml-64">
+
+  <header class="sticky top-0 z-30 border-b border-slate-200 bg-slate-100/95 backdrop-blur">
+    <div class="flex min-h-[72px] items-center gap-3 px-4 py-3 sm:px-6 lg:px-8">
+
+      <button id="sidebarToggle" type="button" class="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-slate-200 bg-white text-slate-700 shadow-sm lg:hidden" aria-label="Open menu">☰</button>
+
+      <div class="min-w-0 shrink-0">
+        <div class="truncate text-sm font-extrabold text-slate-950">TUBAL HUB Admin</div>
+        <div class="flex items-center gap-2 text-[10px] text-slate-500"><span>v1.2.18</span><span>•</span><span id="headerBrandLabel">Master Hub</span></div>
+      </div>
+
+      <div class="top-search admin-search-wrap mx-auto hidden md:block">
+        <input id="adminSearchInput" class="admin-input" placeholder="Search users, products, news, orders..." autocomplete="off">
+        <div id="adminSearchResults" hidden></div>
+      </div>
+
+      <div class="ml-auto flex items-center gap-2">
+        <span class="hidden items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-[10px] font-bold text-slate-600 shadow-sm sm:inline-flex"><span class="h-2 w-2 rounded-full bg-emerald-500"></span><b id="onlineNowReal">—</b> Online</span>
+        <span class="hidden items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-[10px] font-bold text-slate-600 shadow-sm lg:inline-flex"><span class="h-2 w-2 rounded-full bg-emerald-500"></span>Realtime</span>
+        <span id="adminEmail" class="hidden text-xs text-slate-500 xl:block"></span>
+        <button id="logout" type="button" class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-700 shadow-sm hover:bg-slate-50">Sign Out</button>
+      </div>
+
     </div>
-    <div class="tu-mt-2 tu-text-xs tu-text-slate-400">Last Check: <span id="updaterLastCheck">—</span></div>
-  </div>
+  </header>
 
-  <div class="tu-mt-4 tu-rounded-2xl tu-border tu-border-blue-200 tu-bg-[#EFF6FF] tu-p-5">
-    <div class="tu-flex tu-items-start tu-gap-3">
-      <div class="tu-grid tu-h-10 tu-w-10 tu-shrink-0 tu-place-items-center tu-rounded-xl tu-bg-white tu-text-base tu-shadow-sm">🧪</div>
-      <div class="tu-min-w-0 tu-flex-1">
-        <h3 class="tu-text-sm tu-font-bold tu-text-blue-950">Updater Test Mode</h3>
-        <p class="tu-mt-1 tu-text-xs tu-leading-5 tu-text-blue-800">Admin-only test mode. This does not change the production version. It tests the update notice in the PC/mobile browser.</p>
-        <div class="tu-mt-3 tu-flex tu-flex-col tu-gap-2 sm:tu-flex-row sm:tu-items-center">
-          <label class="tu-flex tu-items-center tu-gap-2 tu-rounded-xl tu-bg-white tu-px-3 tu-py-2 tu-text-xs tu-font-semibold tu-text-blue-900"><input id="updaterTestMode" type="checkbox" class="!accent-blue-600"> Enable</label>
-          <input id="updaterTestVersion" placeholder="9.9.99" inputmode="decimal" class="tu-w-full tu-rounded-xl tu-border tu-border-blue-200 tu-bg-white tu-px-3 tu-py-2 tu-text-sm tu-text-slate-900 sm:tu-w-40">
-          <button type="button" id="updaterRunTest" class="tu-rounded-xl tu-bg-blue-600 tu-px-3.5 tu-py-2 tu-text-xs tu-font-bold tu-text-white hover:tu-bg-blue-700">Run Update Test</button>
-          <button type="button" id="updaterClearTest" class="tu-rounded-xl tu-border tu-border-blue-200 tu-bg-white tu-px-3.5 tu-py-2 tu-text-xs tu-font-semibold tu-text-blue-900 hover:tu-bg-blue-50">Clear Test</button>
+
+  <!-- REQUESTED MAIN WRAPPER: ml-64 + p-8 -->
+  <div class="p-4 sm:p-6 lg:p-8">
+
+    <!-- PAGE HEADER -->
+    <section id="dashboard" class="mb-8">
+      <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <div class="min-w-0">
+          <div class="mb-2 text-[10px] font-extrabold uppercase tracking-[.18em] text-slate-400">Control Center</div>
+          <h1 class="text-3xl font-extrabold tracking-tight text-slate-950 sm:text-4xl">Admin Dashboard</h1>
+          <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-500">A stable dashboard shell with fixed columns, independent cards and predictable responsive behavior.</p>
+        </div>
+        <div class="inline-flex w-fit items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-700 shadow-sm"><span id="activeBrandDot" class="h-2.5 w-2.5 rounded-full bg-slate-900"></span><span id="activeBrandLabel">Master Hub</span></div>
+      </div>
+    </section>
+
+
+    <!-- STATS -->
+    <section class="stats-grid mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+
+      <article class="admin-card p-5">
+        <div class="mb-5 flex items-center justify-between"><span class="grid h-10 w-10 place-items-center rounded-xl bg-slate-100 text-slate-600">◔</span><span class="text-[10px] font-extrabold uppercase tracking-wide text-slate-400">DAU</span></div>
+        <div id="analyticsDau" class="text-3xl font-extrabold tracking-tight">—</div>
+        <div class="mt-1 text-xs text-slate-500">Daily active users</div>
+      </article>
+
+      <article class="admin-card p-5">
+        <div class="mb-5 flex items-center justify-between"><span class="grid h-10 w-10 place-items-center rounded-xl bg-slate-100 text-slate-600">◫</span><span class="text-[10px] font-extrabold uppercase tracking-wide text-slate-400">WAU</span></div>
+        <div id="analyticsWau" class="text-3xl font-extrabold tracking-tight">—</div>
+        <div class="mt-1 text-xs text-slate-500">7-day active users</div>
+      </article>
+
+      <article class="admin-card p-5">
+        <div class="mb-5 flex items-center justify-between"><span class="grid h-10 w-10 place-items-center rounded-xl bg-slate-100 text-slate-600">◉</span><span class="text-[10px] font-extrabold uppercase tracking-wide text-slate-400">30 DAYS</span></div>
+        <div id="analyticsMessages" class="text-3xl font-extrabold tracking-tight">—</div>
+        <div class="mt-1 text-xs text-slate-500">Messages</div>
+      </article>
+
+      <article class="admin-card p-5">
+        <div class="mb-5 flex items-center justify-between"><span class="grid h-10 w-10 place-items-center rounded-xl bg-slate-100 text-slate-600">♙</span><span class="text-[10px] font-extrabold uppercase tracking-wide text-slate-400">30 DAYS</span></div>
+        <div id="analyticsNewUsers" class="text-3xl font-extrabold tracking-tight">—</div>
+        <div class="mt-1 text-xs text-slate-500">New users</div>
+      </article>
+
+    </section>
+
+
+    <!-- BRAND OVERVIEW -->
+    <section id="brandOverview" class="mb-8">
+
+      <div class="mb-4 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h2 class="text-lg font-extrabold text-slate-950">Three Brands · One Hub</h2>
+          <p class="mt-1 text-xs text-slate-500">Switch the workspace scope without changing the layout.</p>
+        </div>
+        <span id="brandScopeText" class="inline-flex w-fit rounded-full border border-slate-200 bg-white px-3 py-2 text-[10px] font-bold text-slate-600 shadow-sm">Master Hub · All Brands</span>
+      </div>
+
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <article class="admin-card p-5"><div class="text-[9px] font-extrabold uppercase tracking-[.14em] text-slate-400">Revenue</div><div id="brandTotalRevenue" class="mt-2 text-2xl font-extrabold">—</div><div id="brandRevenueNote" class="mt-1 text-[10px] text-slate-500">Loaded order records</div></article>
+        <article class="admin-card p-5"><div class="text-[9px] font-extrabold uppercase tracking-[.14em] text-slate-400">Orders</div><div id="brandTotalOrders" class="mt-2 text-2xl font-extrabold">0</div><div class="mt-1 text-[10px] text-slate-500">Loaded Firestore records</div></article>
+        <article class="admin-card p-5"><div class="text-[9px] font-extrabold uppercase tracking-[.14em] text-slate-400">Inventory</div><div id="brandTotalInventory" class="mt-2 text-2xl font-extrabold">0</div><div class="mt-1 text-[10px] text-slate-500">Catalog records</div></article>
+        <article class="admin-card p-5"><div class="text-[9px] font-extrabold uppercase tracking-[.14em] text-slate-400">Current Scope</div><div id="brandCurrentScope" class="mt-2 text-lg font-extrabold">Master Hub</div><div class="mt-1 text-[10px] text-slate-500">Brand + filters</div></article>
+      </div>
+
+      <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
+        <article class="admin-card p-5"><div class="flex items-center justify-between"><div class="flex items-center gap-2"><span class="h-2.5 w-2.5 rounded-full bg-red-500"></span><b class="text-sm">Brand 1</b></div><span class="rounded-full bg-red-50 px-2 py-1 text-[9px] font-extrabold text-red-700">RED</span></div><div class="mt-5 grid grid-cols-2 gap-4"><div><strong data-brand-orders="brand1" class="text-xl">0</strong><div class="text-[10px] text-slate-500">orders</div></div><div><strong data-brand-products="brand1" class="text-xl">0</strong><div class="text-[10px] text-slate-500">products</div></div></div></article>
+        <article class="admin-card p-5"><div class="flex items-center justify-between"><div class="flex items-center gap-2"><span class="h-2.5 w-2.5 rounded-full bg-emerald-500"></span><b class="text-sm">Brand 2</b></div><span class="rounded-full bg-emerald-50 px-2 py-1 text-[9px] font-extrabold text-emerald-700">GREEN</span></div><div class="mt-5 grid grid-cols-2 gap-4"><div><strong data-brand-orders="brand2" class="text-xl">0</strong><div class="text-[10px] text-slate-500">orders</div></div><div><strong data-brand-products="brand2" class="text-xl">0</strong><div class="text-[10px] text-slate-500">products</div></div></div></article>
+        <article class="admin-card p-5"><div class="flex items-center justify-between"><div class="flex items-center gap-2"><span class="h-2.5 w-2.5 rounded-full bg-blue-500"></span><b class="text-sm">Brand 3</b></div><span class="rounded-full bg-blue-50 px-2 py-1 text-[9px] font-extrabold text-blue-700">BLUE</span></div><div class="mt-5 grid grid-cols-2 gap-4"><div><strong data-brand-orders="brand3" class="text-xl">0</strong><div class="text-[10px] text-slate-500">orders</div></div><div><strong data-brand-products="brand3" class="text-xl">0</strong><div class="text-[10px] text-slate-500">products</div></div></div></article>
+      </div>
+
+    </section>
+
+
+    <div class="legacy-metrics" aria-hidden="true">
+      <span id="totalUsersCard">0</span><span id="totalUsersReal">0</span><span id="totalMsgsReal">0</span><span id="blockedReal">0</span>
+    </div>
+
+
+    <!-- ================= CLEAN RESPONSIVE GRID ================= -->
+    <section class="admin-main-grid grid grid-cols-1 gap-6 xl:grid-cols-3 dashboard-grid">
+
+      <!-- Recent Users -->
+      <section class="admin-card p-6">
+        <div class="admin-card-head"><div><h2>Recent Users</h2><p>Latest registered profiles.</p></div><span class="admin-badge">USERS</span></div>
+        <div id="recentUsers"></div>
+      </section>
+
+
+      <!-- Sponsored Manager -->
+      <section id="sponsoredControl" class="admin-card p-6 xl:col-span-2">
+        <div class="admin-card-head"><div><h2>Sponsored Manager</h2><p>Real Firestore sponsor placements.</p></div><span class="admin-badge">FIRESTORE</span></div>
+
+        <div class="mb-5 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+          <div class="text-sm font-bold">No sponsor yet</div>
+          <div class="mt-1 text-xs text-slate-500">Published placements will appear here.</div>
+        </div>
+
+        <div class="form-three grid grid-cols-1 gap-3 md:grid-cols-3">
+          <select id="saSlot" class="admin-select"><option value="1">Sponsored 1</option><option value="2">Sponsored 2</option></select>
+          <input id="saTitle" class="admin-input md:col-span-2" placeholder="Sponsor title">
+          <input id="saText" class="admin-input md:col-span-3" placeholder="Sponsor description">
+          <input id="saImage" class="admin-input" placeholder="Image URL (optional)">
+          <input id="saUrl" class="admin-input" placeholder="Sponsor URL (optional)">
+          <input id="saBadge" class="admin-input" placeholder="Badge" value="SPONSORED">
+          <button id="addSponsoredAd" type="button" class="admin-primary md:col-span-3">Publish Sponsored →</button>
+        </div>
+
+        <div id="sponsoredAdList" class="mt-4"></div>
+      </section>
+
+
+      <!-- Analytics -->
+      <section id="analytics" class="admin-card p-6 xl:col-span-3">
+        <div class="admin-card-head"><div><small>Real Firestore Analytics</small><h2 class="mt-1">Analytics</h2><p id="analyticsUpdated">Loading real activity data…</p></div><span class="admin-badge">SERVER</span></div>
+
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+          <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4"><div class="text-[9px] font-extrabold uppercase tracking-[.12em] text-slate-400">Messages / Day</div><div id="messagesChart" class="mt-4 flex h-32 items-end gap-1.5 overflow-hidden"></div></div>
+          <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4"><div class="text-[9px] font-extrabold uppercase tracking-[.12em] text-slate-400">Most Active Users</div><div id="activeUsersList" class="mt-3 max-h-32 overflow-auto list-scroll"></div></div>
+          <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4"><div class="text-[9px] font-extrabold uppercase tracking-[.12em] text-slate-400">User Growth</div><div id="newUsersChart" class="mt-4 flex h-32 items-end gap-1.5 overflow-hidden"></div></div>
+        </div>
+
+        <div class="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
+          <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4"><div class="mb-3 text-[9px] font-extrabold uppercase tracking-[.12em] text-slate-400">Peak Hours</div><div id="peakHours" class="grid h-28 grid-cols-12 items-end gap-1 overflow-hidden"></div></div>
+          <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4"><div class="mb-3 text-[9px] font-extrabold uppercase tracking-[.12em] text-slate-400">Retention</div><div id="retentionGrid" class="grid grid-cols-3 gap-2"></div></div>
+        </div>
+      </section>
+
+
+      <!-- Beta -->
+      <section id="betaTestControl" class="admin-card p-6 xl:col-span-2">
+        <div class="admin-card-head"><div><small>Beta Access</small><h2 class="mt-1">v1.2.18 Beta Control</h2><p>Maximum 3 tester emails.</p></div><span class="admin-badge">BETA</span></div>
+
+        <div class="beta-test-grid">
+          <input id="betaEmailInput" type="email" autocomplete="off" class="admin-input" placeholder="tester@email.com">
+          <button id="betaAdd" type="button" class="admin-primary">Add Beta</button>
+        </div>
+
+        <div id="betaList" class="mt-4"></div>
+        <div id="betaStatus" class="beta-meta">Loading beta access…</div>
+
+        <div class="mt-4 flex flex-wrap gap-2">
+          <button id="betaSave" type="button" class="admin-secondary">Save Beta Emails</button>
+          <button id="betaGoLive" type="button" class="admin-primary tubal-go-live-v1218">✅ Go Live v1.2.18</button>
+        </div>
+      </section>
+
+
+      <!-- Updater -->
+      <section id="updaterControl" class="admin-card p-6">
+        <div class="admin-card-head"><div><small>Updater</small><h2 class="mt-1">Release Control</h2><p>Schedule, test and publish releases.</p></div><span class="admin-badge">v1.2.18</span></div>
+
+        <div class="space-y-4">
+          <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4"><div class="text-[9px] font-extrabold uppercase tracking-[.12em] text-slate-400">Current Version</div><div id="updaterCurrentVersion" class="mt-1 text-2xl font-extrabold">v1.2.18</div></div>
+
+          <div><label class="mb-1.5 block text-[10px] font-bold text-slate-500">Target Version</label><input id="updaterTargetVersion" class="admin-input" placeholder="1.2.19" inputmode="decimal"></div>
+
+          <label class="block"><span class="mb-1.5 block text-[10px] font-bold text-slate-500">Release date &amp; time</span><input id="updaterReleaseAt" type="datetime-local" class="admin-input"></label>
+
+          <label class="block"><span class="mb-1.5 block text-[10px] font-bold text-slate-500">Timezone</span><select id="updaterTimezone" class="admin-select"><option value="Asia/Manila">Asia/Manila (PH)</option><option value="UTC">UTC</option><option value="Asia/Tokyo">Asia/Tokyo</option><option value="America/Los_Angeles">America/Los_Angeles</option><option value="America/New_York">America/New_York</option><option value="Europe/London">Europe/London</option></select></label>
+
+          <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+            <div class="flex items-center justify-between gap-3">
+              <div><div class="text-[9px] font-extrabold uppercase tracking-[.12em] text-slate-400">Status</div><div id="updaterStatus" data-status="DRAFT" class="mt-1 inline-flex rounded-full bg-amber-100 px-2.5 py-1 text-[10px] font-extrabold text-amber-800">DRAFT</div></div>
+              <button id="updaterCheckNow" type="button" class="admin-secondary">Check</button>
+            </div>
+            <div id="updaterScheduleText" class="mt-2 text-[10px] leading-5 text-slate-500">No scheduled release</div>
+            <div class="mt-1 text-[9px] text-slate-400">Last check: <span id="updaterLastCheck">—</span></div>
+          </div>
+
+          <div class="rounded-2xl border border-blue-200 bg-blue-50 p-4">
+            <div class="text-xs font-extrabold text-blue-950">Updater Test Mode</div>
+            <div class="mt-1 text-[10px] leading-5 text-blue-800">Browser-local test only.</div>
+            <label class="mt-3 flex items-center gap-2 text-xs font-semibold text-blue-900"><input id="updaterTestMode" type="checkbox"> Enable</label>
+            <input id="updaterTestVersion" class="admin-input mt-3" placeholder="9.9.99">
+            <div class="mt-2 flex flex-wrap gap-2"><button id="updaterRunTest" type="button" class="rounded-xl bg-blue-600 px-3 py-2 text-[10px] font-bold text-white">Run Test</button><button id="updaterClearTest" type="button" class="admin-secondary">Clear</button></div>
+          </div>
+
+          <div class="flex flex-wrap gap-2 border-t border-slate-100 pt-4">
+            <button id="updaterSave" type="button" class="admin-primary">Save Schedule</button>
+            <button id="updaterPublishNow" type="button" class="admin-primary">Publish Now</button>
+            <button id="updaterCancel" type="button" class="admin-secondary">Cancel</button>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- System -->
+      <section id="systemSettings" class="admin-card p-6">
+        <div id="firestore" class="scroll-mt-24"></div>
+        <div class="admin-card-head"><div><small>System</small><h2 class="mt-1">System Settings</h2><p>Platform availability control.</p></div><span class="admin-badge">FIRESTORE</span></div>
+
+        <div class="system-setting-row">
+          <div class="min-w-0"><b>Maintenance mode</b><small>Visitors see the maintenance screen while admin access remains available.</small></div>
+          <label class="switchReal"><input id="maintenanceMode" type="checkbox"><span></span></label>
+        </div>
+
+        <div id="maintenanceStatus" class="system-setting-status">Loading setting…</div>
+      </section>
+
+
+      <!-- Products -->
+      <section id="shopProducts" class="admin-card p-6 xl:col-span-2">
+        <div class="admin-card-head"><div><small>Shop Control</small><h2 class="mt-1">Products</h2><p>Physical, digital, templates, software, games and more.</p></div><span class="admin-badge">FIRESTORE</span></div>
+
+        <div class="form-three grid grid-cols-1 gap-3 md:grid-cols-3">
+          <input id="spName" class="admin-input" placeholder="Product name">
+          <select id="spProductType" class="admin-select"><option value="physical">Physical</option><option value="digital-product">Digital Product</option><option value="website-template">Website Template</option><option value="app-software">App / Software</option><option value="game-mod">Game / Mod</option></select>
+          <select id="spBrand" class="admin-select"><option value="unassigned">Brand: Unassigned</option><option value="brand1">🔴 Brand 1</option><option value="brand2">🟢 Brand 2</option><option value="brand3">🔵 Brand 3</option></select>
+          <select id="spCategory" class="admin-select"><option value="merchandise">Merchandise</option><option value="clothing">Clothing</option><option value="accessories">Accessories</option><option value="digital-products">Digital Products</option><option value="apps-software">Apps &amp; Software</option><option value="gaming">Gaming</option><option value="mods-addons">Mods &amp; Add-ons</option><option value="media">Media</option><option value="wellness">Wellness</option><option value="other">Other</option></select>
+          <input id="spVersion" class="admin-input" placeholder="Version e.g. 1.2.18">
+          <input id="spReleaseDate" class="admin-input" type="date">
+          <input id="spLicense" class="admin-input" placeholder="License">
+          <input id="spUpgradePrice" class="admin-input" placeholder="Upgrade price">
+          <input id="spLatestVersion" class="admin-input" placeholder="Latest version">
+          <input id="spPrice" class="admin-input" placeholder="Price e.g. Free or ₱999">
+          <input id="spIcon" class="admin-input" placeholder="Icon / emoji">
+          <input id="spBadge" class="admin-input" placeholder="Badge e.g. NEW">
+          <input id="spImage" class="admin-input md:col-span-2" placeholder="Image URL (optional)">
+          <input id="spUrl" class="admin-input" placeholder="Product URL (optional)">
+          <input id="spDownloadUrl" class="admin-input md:col-span-3" placeholder="Protected download path or source (server only)">
+          <textarea id="spDescription" class="admin-textarea md:col-span-3" placeholder="Product description..."></textarea>
+          <textarea id="spIncludes" class="admin-textarea md:col-span-3" placeholder="What's included..."></textarea>
+          <textarea id="spChangelog" class="admin-textarea md:col-span-3" placeholder="Changelog..."></textarea>
+          <button id="addShopProduct" type="button" class="admin-primary md:col-span-3">Publish Product →</button>
+        </div>
+
+        <div data-brand-filter-scope="products" class="mt-5 flex flex-wrap items-center gap-2">
+          <span class="mr-1 text-[9px] font-extrabold uppercase tracking-[.12em] text-slate-400">Filter</span>
+          <button type="button" data-brand-filter="all" class="brand-filter-btn rounded-full border border-slate-200 bg-slate-950 px-3 py-1.5 text-[9px] font-bold text-white">All Brands</button>
+          <button type="button" data-brand-filter="brand1" class="brand-filter-btn rounded-full border border-slate-200 bg-white px-3 py-1.5 text-[9px] font-bold text-slate-600">🔴 Brand 1</button>
+          <button type="button" data-brand-filter="brand2" class="brand-filter-btn rounded-full border border-slate-200 bg-white px-3 py-1.5 text-[9px] font-bold text-slate-600">🟢 Brand 2</button>
+          <button type="button" data-brand-filter="brand3" class="brand-filter-btn rounded-full border border-slate-200 bg-white px-3 py-1.5 text-[9px] font-bold text-slate-600">🔵 Brand 3</button>
+        </div>
+
+        <div id="shopProductList" class="mt-3"></div>
+      </section>
+
+
+      <!-- Orders -->
+      <section id="shopOrders" class="admin-card p-6">
+        <div class="admin-card-head"><div><small>Shop Control</small><h2 class="mt-1">Orders</h2><p>Payment verification and ownership unlock.</p></div><span class="admin-badge">SECURE</span></div>
+
+        <div class="mb-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+          <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div><div class="text-xs font-bold">Legacy download protection</div><div class="mt-1 text-[10px] leading-5 text-slate-500">Move legacy download URLs into protected server storage.</div></div>
+            <button id="migrateShopDownloads" type="button" class="admin-secondary">Protect URLs</button>
+          </div>
+        </div>
+
+        <div data-brand-filter-scope="orders" class="mb-3 flex flex-wrap items-center gap-2">
+          <span class="mr-1 text-[9px] font-extrabold uppercase tracking-[.12em] text-slate-400">Filter</span>
+          <button type="button" data-brand-filter="all" class="brand-filter-btn rounded-full border border-slate-200 bg-slate-950 px-3 py-1.5 text-[9px] font-bold text-white">All Brands</button>
+          <button type="button" data-brand-filter="brand1" class="brand-filter-btn rounded-full border border-slate-200 bg-white px-3 py-1.5 text-[9px] font-bold text-slate-600">🔴 Brand 1</button>
+          <button type="button" data-brand-filter="brand2" class="brand-filter-btn rounded-full border border-slate-200 bg-white px-3 py-1.5 text-[9px] font-bold text-slate-600">🟢 Brand 2</button>
+          <button type="button" data-brand-filter="brand3" class="brand-filter-btn rounded-full border border-slate-200 bg-white px-3 py-1.5 text-[9px] font-bold text-slate-600">🔵 Brand 3</button>
+        </div>
+
+        <div id="shopOrderList" class="list-scroll max-h-[560px] overflow-auto"></div>
+      </section>
+
+
+      <!-- News -->
+      <section id="content" class="admin-card p-6">
+        <div class="admin-card-head"><div><small>Content Control</small><h2 class="mt-1">News Manager</h2><p>Publish real news records.</p></div><span class="admin-badge">FIRESTORE</span></div>
+        <div class="form-two grid grid-cols-1 gap-3 md:grid-cols-2">
+          <input id="nt" class="admin-input" placeholder="News title">
+          <input id="nd" class="admin-input" placeholder="Date">
+          <select id="nc" class="admin-select"><option value="platform">Platform</option><option value="community">Community</option><option value="creator">Creator</option></select>
+          <input id="na" class="admin-input" placeholder="Article link (optional)">
+          <input id="ni" class="admin-input md:col-span-2" placeholder="Image URL (optional)">
+          <textarea id="nx" class="admin-textarea md:col-span-2" placeholder="Write your news content..."></textarea>
+          <button id="addNews" type="button" class="admin-primary md:col-span-2">Publish News →</button>
+        </div>
+        <div id="newsList" class="mt-4"></div>
+      </section>
+
+
+      <!-- Events -->
+      <section id="eventsManager" class="admin-card p-6">
+        <div class="admin-card-head"><div><small>Community Control</small><h2 class="mt-1">Events Manager</h2><p>Schedule community events.</p></div><span class="admin-badge">FIRESTORE</span></div>
+        <div class="form-two grid grid-cols-1 gap-3 md:grid-cols-2">
+          <input id="et" class="admin-input" placeholder="Event title">
+          <input id="ed" class="admin-input" type="date">
+          <input id="etime" class="admin-input" type="time">
+          <input id="el" class="admin-input" placeholder="Location / platform">
+          <textarea id="ex" class="admin-textarea md:col-span-2" placeholder="Event details..."></textarea>
+          <button id="addEvent" type="button" class="admin-primary md:col-span-2">Publish Event →</button>
+        </div>
+        <div id="eventListAdmin" class="mt-4"></div>
+      </section>
+
+
+      <!-- Announcements -->
+      <section id="announcements" class="admin-card p-6">
+        <div class="admin-card-head"><div><small>Platform Control</small><h2 class="mt-1">Announcements</h2><p>Publish platform notices.</p></div><span class="admin-badge">FIRESTORE</span></div>
+        <div class="grid grid-cols-1 gap-3">
+          <input id="at" class="admin-input" placeholder="Announcement title">
+          <textarea id="ax" class="admin-textarea" placeholder="Write your announcement..."></textarea>
+          <button id="addAnn" type="button" class="admin-primary">Publish Announcement →</button>
+        </div>
+        <div id="annList" class="mt-4"></div>
+      </section>
+
+
+      <!-- Members -->
+      <section id="members" class="admin-card p-6 xl:col-span-2">
+        <div class="admin-card-head"><div><small>Member Control</small><h2 class="mt-1">Registered Members</h2><p>Open the member list when moderation is needed.</p></div><button id="openMembers" type="button" class="admin-secondary">View Registered Members →</button></div>
+
+        <div id="membersContent" hidden>
+          <div class="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <label class="flex items-center gap-2 text-[10px] font-bold text-slate-500">Ban duration
+              <select id="banDuration" class="admin-select !w-auto">
+                <option value="permanent">Permanent</option><option value="1h">1 hour</option><option value="6h">6 hours</option><option value="12h">12 hours</option><option value="1d">1 day</option><option value="3d">3 days</option><option value="7d">7 days</option><option value="30d">30 days</option>
+              </select>
+            </label>
+            <span class="text-[10px] text-slate-400">Ban expires automatically when timed.</span>
+          </div>
+
+          <div id="memberList" class="grid grid-cols-1 gap-2 md:grid-cols-2 list-scroll max-h-[560px] overflow-auto"></div>
+        </div>
+      </section>
+
+
+      <!-- Chat -->
+      <section id="chat" class="admin-card p-6">
+        <div class="admin-card-head"><div><small>Community Moderation</small><h2 class="mt-1">Global Chat</h2><p>Moderate chat logs.</p></div><button id="openChatLogs" type="button" class="admin-secondary">View Global Chat Logs →</button></div>
+        <div id="chatContent" hidden><div id="chatList" class="list-scroll max-h-[520px] overflow-auto"></div></div>
+      </section>
+
+    </section>
+
+
+    <!-- Ban Modal -->
+    <div id="banModal" class="ban-modal" hidden>
+      <div class="ban-modal-card">
+        <div class="ban-modal-head">
+          <div><small>MEMBER MODERATION</small><h3>Ban Member</h3><p id="banTargetName">Member</p></div>
+          <button id="closeBanModal" type="button" class="grid h-9 w-9 place-items-center rounded-xl border border-slate-200 bg-white text-slate-500">×</button>
+        </div>
+
+        <div class="ban-options">
+          <button type="button" data-duration="1h">1 Hour</button><button type="button" data-duration="6h">6 Hours</button><button type="button" data-duration="12h">12 Hours</button><button type="button" data-duration="1d">1 Day</button>
+          <button type="button" data-duration="3d">3 Days</button><button type="button" data-duration="7d">7 Days</button><button type="button" data-duration="30d">30 Days</button><button type="button" data-duration="permanent">Permanent</button>
+        </div>
+
+        <input id="banReasonInput" class="admin-input" placeholder="Ban reason (optional)">
+
+        <div class="ban-modal-actions">
+          <button id="cancelBan" type="button" class="admin-secondary">Cancel</button>
+          <button id="confirmBan" type="button" class="admin-primary">Confirm Ban</button>
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="tu-mt-4 tu-border-t tu-border-slate-100 tu-pt-5">
-    <div class="tu-grid tu-grid-cols-1 tu-gap-3 sm:tu-grid-cols-3">
-      <button type="button" id="updaterSave" class="tu-rounded-full tu-border tu-border-amber-200 tu-bg-amber-50 tu-px-4 tu-py-2.5 tu-text-xs tu-font-bold tu-text-amber-800">SCHEDULED</button>
-      <button type="button" id="updaterPublishNow" class="tu-rounded-full tu-border tu-border-emerald-200 tu-bg-emerald-50 tu-px-4 tu-py-2.5 tu-text-xs tu-font-bold tu-text-emerald-800">LIVE</button>
-      <button type="button" id="updaterCancel" class="tu-rounded-full tu-border tu-border-rose-200 tu-bg-rose-50 tu-px-4 tu-py-2.5 tu-text-xs tu-font-bold tu-text-rose-700">CANCELLED</button>
-    </div>
-    <div class="tu-mt-2 tu-grid tu-grid-cols-1 tu-gap-2 sm:tu-grid-cols-3 tu-text-[11px] tu-leading-5 tu-text-slate-500"><div>Hidden before the scheduled release time.</div><div>Updater available on PC + mobile.</div><div>Release is hidden from users.</div></div>
+
+    <div id="toast" class="fixed bottom-5 right-5 z-[120] hidden rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-xs font-semibold text-white shadow-2xl"></div>
+
+    <footer class="mt-10 border-t border-slate-200 pt-6 text-center text-xs text-slate-400">
+      © 2026 TUBAL HUB · Admin Control Center · v1.2.18
+    </footer>
+
   </div>
-</section><div class="admin-section-label tw tu-!mb-3 tu-!mt-7 tu-!text-[#8F867C]"><span class="section-icon">⚙️</span><span>System</span></div><section class="panel tu-!rounded-2xl tu-!border tu-!border-[#E9E0D6] tu-!bg-white tu-!text-[#2E2923] tu-!shadow-[0_8px_30px_rgba(65,52,39,0.045)] tu-!rounded-2xl tu-!border tu-!border-slate-200 tu-!bg-white tu-!shadow-sm" id="systemSettings"><div id="firestore" class="tu-!scroll-mt-8"></div><div class="panel-head"><div><small>SYSTEM SETTINGS</small><h2>System Settings</h2><p>Control public site availability</p></div><span>FIRESTORE</span></div><div class="system-setting-row"><div><b>Maintenance mode</b><small>Temporarily show a maintenance screen to visitors. Admin access stays available.</small></div><label class="switchReal"><input id="maintenanceMode" type="checkbox"><span></span></label></div><div id="maintenanceStatus" class="system-setting-status">Loading setting…</div></section><div class="admin-section-label tw tu-!mb-3 tu-!mt-7 tu-!text-[#8F867C]"><span class="section-icon">🧰</span><span>Operations</span></div><section class="panel tu-!rounded-2xl tu-!border tu-!border-[#E9E0D6] tu-!bg-white tu-!text-[#2E2923] tu-!shadow-[0_8px_30px_rgba(65,52,39,0.045)]" id="shopProducts"><div class="panel-head"><div><small>SHOP CONTROL</small><h2>Products</h2><p>Physical + Digital + Versioned products</p></div><span>FIRESTORE</span></div><div class="form-grid"><input id="spName" placeholder="Product name"><select id="spProductType"><option value="physical">Physical</option><option value="digital-product">Digital Product</option><option value="website-template">Website Template</option><option value="app-software">App / Software</option><option value="game-mod">Game / Mod</option></select><select id="spBrand"><option value="unassigned">Brand: Unassigned</option><option value="brand1">🔴 Brand 1</option><option value="brand2">🟢 Brand 2</option><option value="brand3">🔵 Brand 3</option></select><select id="spCategory"><option value="merchandise">Merchandise</option><option value="clothing">Clothing</option><option value="accessories">Accessories</option><option value="digital-products">Digital Products</option><option value="apps-software">Apps & Software</option><option value="gaming">Gaming</option><option value="mods-addons">Mods & Add-ons</option><option value="media">Media</option><option value="wellness">Wellness</option><option value="other">Other</option></select><input id="spVersion" placeholder="Version e.g. 1.2.17"><input id="spReleaseDate" type="date" title="Release date"><input id="spLicense" placeholder="License e.g. Personal / Commercial"><input id="spUpgradePrice" placeholder="Upgrade price e.g. ₱299 or Free"><input id="spLatestVersion" placeholder="Latest version e.g. 1.2.17"><input id="spPrice" placeholder="Price e.g. Free or ₱999"><input id="spIcon" placeholder="Icon / emoji e.g. 🧩"><input id="spBadge" placeholder="Badge e.g. NEW"><input id="spImage" placeholder="Image URL (optional)"><input id="spUrl" placeholder="Product URL (optional)"><input id="spDownloadUrl" placeholder="Protected download path or source (server only)"><textarea id="spDescription" placeholder="Product description..."></textarea><textarea id="spIncludes" placeholder="What's included..."></textarea><textarea id="spChangelog" placeholder="Changelog..."></textarea><button id="addShopProduct">Publish Product →</button></div><div data-brand-filter-scope="products" class="tu-mb-3 tu-flex tu-flex-wrap tu-items-center tu-gap-2"><span class="tu-mr-1 tu-text-[9px] tu-font-extrabold tu-uppercase tu-tracking-[.1em] tu-text-[#9A9187]">Filter</span><button type="button" data-brand-filter="all" class="brand-filter-btn tu-rounded-full tu-border tu-border-[#F2EDE8] tu-bg-[#1E1B16] tu-px-3 tu-py-1.5 tu-text-[9px] tu-font-bold tu-text-white">All Brands</button><button type="button" data-brand-filter="brand1" class="brand-filter-btn tu-rounded-full tu-border tu-border-[#F2EDE8] tu-bg-white tu-px-3 tu-py-1.5 tu-text-[9px] tu-font-bold tu-text-[#6E655C]">🔴 Brand 1</button><button type="button" data-brand-filter="brand2" class="brand-filter-btn tu-rounded-full tu-border tu-border-[#F2EDE8] tu-bg-white tu-px-3 tu-py-1.5 tu-text-[9px] tu-font-bold tu-text-[#6E655C]">🟢 Brand 2</button><button type="button" data-brand-filter="brand3" class="brand-filter-btn tu-rounded-full tu-border tu-border-[#F2EDE8] tu-bg-white tu-px-3 tu-py-1.5 tu-text-[9px] tu-font-bold tu-text-[#6E655C]">🔵 Brand 3</button></div><div id="shopProductList"></div></section>
-<section class="panel tu-!rounded-2xl tu-!border tu-!border-[#E9E0D6] tu-!bg-white tu-!text-[#2E2923] tu-!shadow-[0_8px_30px_rgba(65,52,39,0.045)]" id="shopOrders"><div class="panel-head"><div><small>SHOP CONTROL</small><h2>Orders & Payment Verification</h2><p>Pending manual payments • server unlock after approval</p></div><span>SECURE SERVER</span></div><div style="display:flex;gap:10px;flex-wrap:wrap;margin:0 0 14px"><button type="button" id="migrateShopDownloads">Protect Existing Download URLs →</button><small style="opacity:.7;align-self:center">Moves legacy product download URLs into private server-only storage.</small></div><div data-brand-filter-scope="orders" class="tu-mb-3 tu-flex tu-flex-wrap tu-items-center tu-gap-2"><span class="tu-mr-1 tu-text-[9px] tu-font-extrabold tu-uppercase tu-tracking-[.1em] tu-text-[#9A9187]">Filter</span><button type="button" data-brand-filter="all" class="brand-filter-btn tu-rounded-full tu-border tu-border-[#F2EDE8] tu-bg-[#1E1B16] tu-px-3 tu-py-1.5 tu-text-[9px] tu-font-bold tu-text-white">All Brands</button><button type="button" data-brand-filter="brand1" class="brand-filter-btn tu-rounded-full tu-border tu-border-[#F2EDE8] tu-bg-white tu-px-3 tu-py-1.5 tu-text-[9px] tu-font-bold tu-text-[#6E655C]">🔴 Brand 1</button><button type="button" data-brand-filter="brand2" class="brand-filter-btn tu-rounded-full tu-border tu-border-[#F2EDE8] tu-bg-white tu-px-3 tu-py-1.5 tu-text-[9px] tu-font-bold tu-text-[#6E655C]">🟢 Brand 2</button><button type="button" data-brand-filter="brand3" class="brand-filter-btn tu-rounded-full tu-border tu-border-[#F2EDE8] tu-bg-white tu-px-3 tu-py-1.5 tu-text-[9px] tu-font-bold tu-text-[#6E655C]">🔵 Brand 3</button></div><div id="shopOrderList"></div></section>
-<section class="panel tu-!rounded-2xl tu-!border tu-!border-[#E9E0D6] tu-!bg-white tu-!text-[#2E2923] tu-!shadow-[0_8px_30px_rgba(65,52,39,0.045)]" id="content"><div class="panel-head"><div><small>CONTENT CONTROL</small><h2>News Manager</h2></div><span>FIRESTORE</span></div><div class="form-grid"><input id="nt" placeholder="News title"><input id="nd" placeholder="Date"><select id="nc"><option value="platform">Platform</option><option value="community">Community</option><option value="creator">Creator</option></select><input id="na" placeholder="Article link (optional)"><input id="ni" placeholder="Image URL (optional)"><textarea id="nx" placeholder="Write your news content..."></textarea><button id="addNews">Publish News →</button></div><div id="newsList"></div></section>
-<section class="panel tu-!rounded-2xl tu-!border tu-!border-[#E9E0D6] tu-!bg-white tu-!text-[#2E2923] tu-!shadow-[0_8px_30px_rgba(65,52,39,0.045)]" id="eventsManager"><div class="panel-head"><div><small>COMMUNITY CONTROL</small><h2>Events Manager</h2></div><span>FIRESTORE</span></div><div class="form-grid"><input id="et" placeholder="Event title"><input id="ed" type="date" title="Event date"><input id="etime" type="time" title="Event time"><input id="el" placeholder="Location / platform"><textarea id="ex" placeholder="Write your event details..."></textarea><button id="addEvent">Publish Event →</button></div><div id="eventListAdmin"></div></section><section class="panel tu-!rounded-2xl tu-!border tu-!border-[#E9E0D6] tu-!bg-white tu-!text-[#2E2923] tu-!shadow-[0_8px_30px_rgba(65,52,39,0.045)]" id="announcements"><div class="panel-head"><div><small>PLATFORM CONTROL</small><h2>Announcements</h2></div><span>FIRESTORE</span></div><div class="form-grid"><input id="at" placeholder="Announcement title"><textarea id="ax" placeholder="Write your announcement..."></textarea><button id="addAnn">Publish Announcement →</button></div><div id="annList"></div></section>
-<section class="panel tu-!rounded-2xl tu-!border tu-!border-[#E9E0D6] tu-!bg-white tu-!text-[#2E2923] tu-!shadow-[0_8px_30px_rgba(65,52,39,0.045)]" id="members"><div class="panel-head"><div><small>MEMBER CONTROL</small><h2>Registered Members</h2></div><button type="button" id="openMembers" class="members-open-btn">View Registered Members →</button></div><div id="membersContent" class="members-content" hidden><div class="moderation-toolbar"><label>Ban duration <select id="banDuration"><option value="permanent">Permanent</option><option value="1h">1 hour</option><option value="6h">6 hours</option><option value="12h">12 hours</option><option value="1d">1 day</option><option value="3d">3 days</option><option value="7d">7 days</option><option value="30d">30 days</option></select></label><small>Ban expires automatically when the selected time ends.</small></div><div id="memberList" class="table-list"></div></div></section>
-<div class="admin-section-label tw tu-!mb-3 tu-!mt-7 tu-!text-[#8F867C]"><span class="section-icon">🛡️</span><span>Community Moderation</span></div><section class="panel tu-!rounded-2xl tu-!border tu-!border-[#E9E0D6] tu-!bg-white tu-!text-[#2E2923] tu-!shadow-[0_8px_30px_rgba(65,52,39,0.045)]" id="chat"><div class="panel-head"><div><small>COMMUNITY MODERATION</small><h2>Global Chat</h2></div><button type="button" id="openChatLogs" class="members-open-btn">View Global Chat Logs →</button></div><div id="chatContent" class="members-content" hidden><div id="chatList"></div></div></section>
-</div><div id="banModal" class="ban-modal" hidden><div class="ban-modal-card"><div class="ban-modal-head"><div><small>MEMBER MODERATION</small><h3>Ban Member</h3><p id="banTargetName">Member</p></div><button type="button" id="closeBanModal">×</button></div><div class="ban-options"><button type="button" data-duration="1h">1 Hour</button><button type="button" data-duration="6h">6 Hours</button><button type="button" data-duration="12h">12 Hours</button><button type="button" data-duration="1d">1 Day</button><button type="button" data-duration="3d">3 Days</button><button type="button" data-duration="7d">7 Days</button><button type="button" data-duration="30d">30 Days</button><button type="button" data-duration="permanent">Permanent</button></div><input id="banReasonInput" placeholder="Ban reason (optional)"><div class="ban-modal-actions"><button type="button" id="cancelBan">Cancel</button><button type="button" id="confirmBan">Confirm Ban</button></div></div></div>
-<div id="toast" class="toast"></div><footer>© 2026 TUBAL HUB • Admin Control Center • v1.2.18</footer></main></div><div id="loading" class="loading">Checking administrator access…</div><script type="module">
+</main>
+
+
+<div id="loading" class="fixed inset-0 z-[200] grid place-items-center bg-slate-950 text-xs text-slate-400">Checking administrator access…</div>
+
+
+<script type="module">
 import {auth} from "../assets/js/firebase-config.js";
 import {onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 import {getFirestore,collection,getDocs,addDoc,deleteDoc,doc,query,where,orderBy,limit,startAfter,serverTimestamp,updateDoc,Timestamp,writeBatch,onSnapshot,setDoc} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
@@ -479,30 +801,57 @@ if(sidebarToggle&&sidebar){
 }
 $("logout").onclick=()=>signOut(auth);
 onAuthStateChanged(auth,async user=>{if(!user||user.email?.toLowerCase()!==ADMIN_EMAIL){location.replace("login.html");return}$("adminEmail").textContent=user.email;$("loading").remove();$("app").hidden=false;await load();listenToPresence();listenToCleanupStats();await loadMaintenanceSetting();await loadSponsoredAds();await loadAnalyticsReal()});
-</script><script type="module" src="beta-test-control.js?v=1.2.18"></script><script type="module" src="updater-control.js?v=1.0.0"></script><script type="module" src="brand-admin-ui.js?v=1.0.0"></script><script src="admin-command-ui.js?v=20260927"></script><script>
-(function(){
-  const ids=["analyticsDau","analyticsWau","analyticsMessages","analyticsNewUsers"];
-  const start=()=>{
-    ids.forEach(id=>{
-      const el=document.getElementById(id);
-      if(el && (el.textContent.trim()==="—" || el.textContent.trim()==="")){
-        el.classList.add("skeleton-shimmer","tubal-loading-pulse");
-        el.style.color="transparent";
-        el.style.minHeight="30px";
-      }
+</script>
+
+<script type="module" src="beta-test-control.js?v=1.2.18"></script>
+<script type="module" src="updater-control.js?v=1.0.0"></script>
+<script type="module" src="brand-admin-ui.js?v=1.0.0"></script>
+<script src="admin-command-ui.js?v=20260927"></script>
+
+<script>
+  const mobileSidebar=document.getElementById("sidebar");
+  const mobileBackdrop=document.getElementById("mobileSidebarBackdrop");
+  const mobileToggle=document.getElementById("sidebarToggle");
+
+  function closeMobileSidebar(){
+    if(window.innerWidth>=1024) return;
+    mobileSidebar?.classList.remove("open");
+    mobileBackdrop?.classList.add("hidden");
+    document.body.classList.remove("overflow-hidden");
+  }
+
+  mobileToggle?.addEventListener("click",()=>{
+    if(window.innerWidth<1024){
+      mobileSidebar?.classList.add("open");
+      mobileBackdrop?.classList.remove("hidden");
+      document.body.classList.add("overflow-hidden");
+    }
+  });
+
+  mobileBackdrop?.addEventListener("click",closeMobileSidebar);
+
+  document.querySelectorAll(".nav-link").forEach(link=>{
+    link.addEventListener("click",()=>{
+      if(window.innerWidth<1024) closeMobileSidebar();
     });
+  });
+
+  const emailSource=document.getElementById("adminEmail");
+  const sidebarEmail=document.getElementById("sidebarAdminEmail");
+
+  const syncAdminChrome=()=>{
+    if(emailSource&&sidebarEmail) sidebarEmail.textContent=emailSource.textContent||"Secure session";
   };
-  const done=()=>{
-    ids.forEach(id=>{
-      const el=document.getElementById(id);
-      if(el && el.textContent.trim() && el.textContent.trim()!=="—"){
-        el.classList.remove("skeleton-shimmer","tubal-loading-pulse");
-        el.style.color="";
-        el.style.minHeight="";
-      }
-    });
-  };
-  start();
-  new MutationObserver(done).observe(document.body,{subtree:true,childList:true,characterData:true});
-})();
-</script></body></html>
+
+  const chromeObserver=new MutationObserver(syncAdminChrome);
+  if(emailSource) chromeObserver.observe(emailSource,{childList:true,subtree:true,characterData:true});
+  syncAdminChrome();
+
+  const searchInput=document.getElementById("adminSearchInput");
+  searchInput?.addEventListener("input",event=>{
+    if(typeof runAdminSearch==="function") runAdminSearch(event.target.value);
+  });
+</script>
+
+</body>
+</html>
