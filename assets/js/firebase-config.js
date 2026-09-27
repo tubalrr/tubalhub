@@ -2,7 +2,8 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
 import {
   initializeAuth,
   indexedDBLocalPersistence,
-  browserLocalPersistence
+  browserLocalPersistence,
+  browserPopupRedirectResolver
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -22,7 +23,8 @@ const auth = initializeAuth(app, {
   persistence: [
     indexedDBLocalPersistence,
     browserLocalPersistence
-  ]
+  ],
+  popupRedirectResolver: browserPopupRedirectResolver
 });
 
 export { app, auth };
