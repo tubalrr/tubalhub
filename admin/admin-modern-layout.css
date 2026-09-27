@@ -503,3 +503,39 @@ footer{color:#A1988E!important}
   border-radius:999px!important;
   padding:8px 14px!important;
 }
+
+/* Dynamic Three Brands accent layer */
+:root{
+  --brand-accent:#1E1B16;
+  --brand-soft:#F5F0E8;
+  --brand-border:#E8DED2;
+}
+.admin-shell.brand-theme-live .admin-section-label{color:var(--brand-accent)!important}
+.admin-shell.brand-theme-live .section-icon{
+  color:var(--brand-accent)!important;
+  background:var(--brand-soft)!important;
+  border-color:var(--brand-border)!important;
+}
+.admin-shell.brand-theme-live .panel-head>span{
+  color:var(--brand-accent)!important;
+  background:var(--brand-soft)!important;
+  border-color:var(--brand-border)!important;
+}
+.admin-shell.brand-theme-live .stat:hover{
+  border-color:var(--brand-border)!important;
+}
+.admin-shell.brand-theme-live .metric-icon{
+  background:var(--brand-soft)!important;
+  color:var(--brand-accent)!important;
+}
+.admin-shell.brand-theme-live .brand-kpi-card strong{
+  color:var(--brand-accent)!important;
+}
+.admin-shell.brand-theme-live .brand-switch-active,
+.admin-shell.brand-theme-live .brand-filter-active{
+  background:var(--brand-accent)!important;
+  color:#fff!important;
+  border-color:var(--brand-accent)!important;
+}
+.brand-switch-btn,.brand-filter-btn{transition:all .18s ease}
+.brand-data-badge{white-space:nowrap}
