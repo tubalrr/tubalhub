@@ -44,12 +44,13 @@ import {saveItem,isSaved,removeSaved} from "../assets/js/retention.js";
 import {subscribeHubPosts} from "../assets/js/hub-content.js";
 const list=document.getElementById("hubEventList"),esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
 if(list)subscribeHubPosts(items=>{window.__tubalHubEventItems=items;const x=items.filter(i=>i.contentType==="event"&&Array.isArray(i.destinations)&&i.destinations.includes("events"));list.innerHTML=x.length?x.map(i=>'<article class="event-card" data-event-id="'+esc(i.id)+'"><span class="event-date">TUBAL HUB</span><h3>'+esc(i.title)+'</h3><p>'+esc(i.text)+'</p><div class="event-meta">'+esc(i.authorName||"TUBAL HUB")+'</div><button class="event-save" type="button" data-save-event="'+esc(i.id)+'">'+(isSaved("hub-"+i.id)?"Saved":"Save")+'</button></article>').join(""):'<div class="event-empty">No event posts published yet.</div>'});
-list?.querySelectorAll("[data-save-event]").forEach(b=>b.addEventListener("click",()=>{
+list?.addEventListener("click",e=>{
+  const b=e.target.closest("[data-save-event]");if(!b)return;
   const id=b.dataset.saveEvent;
   if(isSaved("hub-"+id)){removeSaved("hub-"+id);b.textContent="Save";return}
   const item=(window.__tubalHubEventItems||[]).find(x=>x.id===id);
   if(item){saveItem({id:"hub-"+id,type:"event",title:item.title||"Event",description:item.text||"",author:item.authorName||"TUBAL HUB",createdAt:item.createdAt||Date.now(),url:location.href.split("#")[0]+"?id=hub-"+encodeURIComponent(id)});b.textContent="Saved"}
-}));
+});
 </script>
 </main>
 <footer><div><b>TUBAL HUB</b><span>Three Brands. One Hub.</span></div><nav><a href="../index.html">Home</a><a href="community.html">Community</a><a href="privacy.html">Privacy</a><a href="cookies.html">Cookies</a><a href="terms.html">Terms</a><a href="license.html">License</a></nav><small>© 2026 TUBAL HUB. All rights reserved.</small></footer>
@@ -63,7 +64,14 @@ try{
  const snap=await getDocs(query(collection(getFirestore(app),"events"),orderBy("createdAt","desc"),limit(50)));
  if(!snap.empty) list.innerHTML=snap.docs.map(d=>{const x=d.data();return '<article class="event-card" data-event-id="'+esc(d.id)+'"><span class="event-date">'+esc(x.date||"UPCOMING EVENT")+'</span><h3>'+esc(x.title||"TUBAL HUB Event")+'</h3><p>'+esc(x.description||x.text||"Community event from TUBAL HUB.")+'</p><div class="event-meta">'+esc(x.location||"TUBAL HUB Community")+'</div><button class="event-save" type="button" data-save-fire-event="'+esc(d.id)+'">'+(isSaved("event-"+d.id)?"Saved":"Save")+'</button></article>';}).join("");
 }catch(e){console.warn("Events unavailable.",e);}
-list?.querySelectorAll("[data-save-fire-event]").forEach(b=>b.addEventListener("click",()=>{const id=b.dataset.saveFireEvent;if(isSaved("event-"+id)){removeSaved("event-"+id);b.textContent="Save";}else{const card=b.closest(".event-card");saveItem({id:"event-"+id,type:"event",title:card?.querySelector("h3")?.textContent||"Event",description:card?.querySelector("p")?.textContent||"",author:card?.querySelector(".event-meta")?.textContent||"TUBAL HUB",createdAt:Date.now(),url:location.href.split("#")[0]+"?id=event-"+encodeURIComponent(id)});b.textContent="Saved";}}));
+list?.addEventListener("click",e=>{
+  const b=e.target.closest("[data-save-fire-event]");if(!b)return;
+  const id=b.dataset.saveFireEvent;
+  if(isSaved("event-"+id)){removeSaved("event-"+id);b.textContent="Save";return}
+  const card=b.closest(".event-card");
+  saveItem({id:"event-"+id,type:"event",title:card?.querySelector("h3")?.textContent||"Event",description:card?.querySelector("p")?.textContent||"",author:card?.querySelector(".event-meta")?.textContent||"TUBAL HUB",createdAt:Date.now(),url:location.href.split("#")[0]+"?id=event-"+encodeURIComponent(id)});
+  b.textContent="Saved";
+});
 </script>
 <script src="../assets/js/theme.js?v=20260921" defer></script>
 <script type="module" src="../assets/js/presence.js?v=20260923"></script>
