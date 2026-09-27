@@ -1,4 +1,4 @@
-/* TUBAL HUB — FINAL CARD ALIGNMENT LAYER v1.2.32
+/* TUBAL HUB — FINAL CARD ALIGNMENT LAYER v1.2.33
    Styling/layout only. Existing HTML IDs, links, scripts, animations,
    data hooks, and Obsidian Gamer surfaces remain untouched.
 */
@@ -29,12 +29,13 @@ body.hub-home .th-value-grid{
   }
 }
 
-/* Exact requested card geometry. */
+/* Exact requested card geometry.
+   IMPORTANT: explicit grid rows beat the legacy flex rules that previously
+   caused the bottom numbers/actions to drift. */
 body.hub-home #thBrandPillars .th-pillar,
 body.hub-home .th-value-grid > article{
-  display:flex !important;
-  flex-direction:column !important;
-  justify-content:space-between !important;
+  display:grid !important;
+  grid-template-rows:auto 1fr auto !important;
   align-items:stretch !important;
   align-self:stretch !important;
   height:100% !important;
@@ -48,23 +49,31 @@ body.hub-home .th-value-grid > article{
   overflow:hidden !important;
 }
 
-/* Explicit flexible middle content. */
+/* Explicit row placement: header -> flexible description -> footer/action. */
+body.hub-home #thBrandPillars .th-pillar > .th-pillar-head,
+body.hub-home .th-value-grid > article > .th-value-head{
+  grid-row:1 !important;
+  min-width:0 !important;
+}
 body.hub-home #thBrandPillars .th-pillar > .flex-grow,
+body.hub-home #thBrandPillars .th-pillar > .th-pillar-content,
 body.hub-home .th-value-grid > article > .flex-grow,
 body.hub-home .th-value-grid > article > .th-value-content{
-  flex:1 1 auto !important;
+  grid-row:2 !important;
   min-width:0 !important;
   min-height:0 !important;
   width:100% !important;
 }
 
+
 /* Explicit bottom anchor. */
 body.hub-home #thBrandPillars .th-pillar > .th-pillar-action,
 body.hub-home .th-value-grid > article > .th-value-footer{
+  grid-row:3 !important;
   margin-top:auto !important;
   padding-top:1rem !important;
-  flex:0 0 auto !important;
   min-width:0 !important;
+  align-self:end !important;
   box-sizing:border-box !important;
 }
 
