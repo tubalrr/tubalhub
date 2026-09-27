@@ -399,3 +399,48 @@ footer{color:#A1988E!important}
   .stats,.dashboard-grid{grid-template-columns:1fr!important}
   #updaterControl,#betaTestControl,#systemSettings,#chat{grid-column:1!important}
 }
+
+/* Narrow desktop / DevTools-friendly sidebar: keep labels visible */
+@media (min-width:701px) and (max-width:800px){
+  .sidebar{
+    width:220px!important;
+    padding:20px 12px!important;
+  }
+  .brand b,
+  .brand-copy small,
+  .side-label,
+  .sidebar nav a span{
+    display:block!important;
+    visibility:visible!important;
+  }
+  .sidebar nav a{
+    justify-content:flex-start!important;
+    text-align:left!important;
+    white-space:nowrap!important;
+  }
+  .sidebar nav a:first-letter{
+    margin-right:4px!important;
+  }
+  .dashboard{
+    width:calc(100% - 220px)!important;
+    margin-left:220px!important;
+    padding:0 18px 32px!important;
+  }
+  .topbar{
+    min-height:68px!important;
+  }
+  .top-actions{
+    gap:6px!important;
+  }
+  .presence-pill,
+  .realtime-pill{
+    padding:6px 9px!important;
+    font-size:11px!important;
+  }
+  .dashboard-head h1{
+    font-size:24px!important;
+  }
+  .stats{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+}
