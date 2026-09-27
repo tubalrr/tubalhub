@@ -3,6 +3,7 @@ import {onAuthStateChanged} from "https://www.gstatic.com/firebasejs/12.19.0/fir
 import {getFirestore,collection,getDocs,getDoc,doc,addDoc,setDoc,updateDoc,deleteDoc,query,orderBy,limit,serverTimestamp} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 import {getStorage,ref as storageRef,uploadBytes,getDownloadURL} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-storage.js";
 import {publishHubPost,subscribeHubPosts} from "./hub-content.js";
+import {saveItem,removeSaved,isSaved as retentionSaved,sharedUrl} from "./retention.js";
 
 const db=getFirestore(app);
 let storage=null;
@@ -100,10 +101,18 @@ function buildFeed(){
   const raw=[...state.hubPosts.map(hubItem),...state.products,...games.map(gameItem)];
   const seen=new Set();state.items=raw.filter(x=>{const k=contentKey(x);if(seen.has(k))return false;seen.add(k);return true});
   renderStories();renderFeatured();renderFeed(true);renderSponsored();renderTrending();renderActiveGames();renderSuggested();renderRecentlyViewed();
+  openSharedTarget();
 }
 function visible(){
   let arr=state.items.filter(x=>!state.savedMode||state.saved.has(x.id));
-  if(state.filter!=="all")arr=arr.filter(x=>x.type==={products:"product",games:"game",videos:"video"}[state.filter]);
+  if(state.filter==="games")arr=arr.filter(x=>x.type==="game");
+  else if(state.filter==="free")arr=arr.filter(x=>x.type==="game" && (String(x.price??"").toLowerCase()==="" || String(x.price??"").toLowerCase()==="free" || Number(x.price)===0));
+  else if(state.filter==="today"){
+    const start=new Date();start.setHours(0,0,0,0);
+    arr=arr.filter(x=>millis(x.createdAt)>=start.getTime());
+  }
+  else if(state.filter==="products")arr=arr.filter(x=>x.type==="product");
+  else if(state.filter==="videos")arr=arr.filter(x=>x.type==="video");
   const q=state.query.trim().toLowerCase();
   if(q)arr=arr.filter(x=>(x.title+" "+x.description+" "+x.author).toLowerCase().includes(q));
   if(state.sort==="popular"){
@@ -160,8 +169,12 @@ function rememberViewed(id){
 function isSaved(id){return state.saved.has(id)}
 function toggleSaved(id){
   if(!id)return;
-  if(state.saved.has(id))state.saved.delete(id);
-  else state.saved.add(id);
+  const item=state.items.find(x=>x.id===id);
+  if(state.saved.has(id)){
+    state.saved.delete(id);removeSaved(id);
+  }else{
+    state.saved.add(id);if(item)saveItem(item);
+  }
   writeLocal("tubalhub-feed-saved",[...state.saved]);
   const card=document.querySelector(".post-card[data-id='"+CSS.escape(id)+"']");
   const b=card?.querySelector("[data-action='save']");
@@ -214,7 +227,19 @@ function postMarkup(x){
   else if(x.type==="audio"&&x.mediaUrl)body="<audio class='post-audio' controls preload='metadata' src='"+esc(x.mediaUrl)+"'></audio>";
   else if(x.image)body="<img class='post-media' src='"+esc(x.image)+"' alt='' loading='lazy'>";
   else if(x.title)body="<div class='feed-article-content'><h3>"+esc(x.title)+"</h3><p>"+esc(x.description||x.text||"")+"</p></div>";
-  return "<article class='post-card' data-id='"+esc(x.id)+"'><div class='post-head'>"+avatarMarkup({uid:x.uid,displayName:x.author,photoURL:x.photo})+"<div class='post-meta'><b>"+esc(x.author||"Member")+"</b><span>"+esc(timeLabel(x.createdAt))+" · Everyone</span></div>"+(x.sponsored?"<span class='post-sponsor'>Sponsored</span>":"")+"<span class='post-status "+(onlineOf(x.uid)?"online":"")+"' aria-label='"+(onlineOf(x.uid)?"Online":"Offline")+"'></span></div><div class='post-body'>"+(caption?"<p class='post-caption'>"+esc(caption)+"</p>":"")+body+"</div>"+renderReactionZone(x)+"<div class='post-footer'><div class='post-stats'><span class='like-stat' data-react-total>"+(totalPostReactions(x.id,x)||"No reactions yet")+(totalPostReactions(x.id,x)?" reactions":"")+"</span><span>"+(x.comments?esc(x.comments)+" comments":"")+(shares?" · <span class='share-count-pop' data-share-count>"+shares+" shares</span>":"")+"</span></div><div class='post-actions'><button class='post-action react-icon "+(reacted?"reacted":"")+"' data-action='react' type='button'><span class='reaction-main-icon'>"+reactionIcon(x.id)+"</span><span data-reaction-label>"+reactionLabel(x.id)+"</span></button><button class='post-action' data-action='comment' type='button'>Comment</button><button class='post-action' data-action='share' type='button'>Share</button></div></div></article>";
+  return "<article class='post-card' data-id='"+esc(x.id)+"'><div class='post-head'>"+avatarMarkup({uid:x.uid,displayName:x.author,photoURL:x.photo})+"<div class='post-meta'><b>"+esc(x.author||"Member")+"</b><span>"+esc(timeLabel(x.createdAt))+" · Everyone</span></div>"+(x.sponsored?"<span class='post-sponsor'>Sponsored</span>":"")+"<span class='post-status "+(onlineOf(x.uid)?"online":"")+"' aria-label='"+(onlineOf(x.uid)?"Online":"Offline")+"'></span></div><div class='post-body'>"+(caption?"<p class='post-caption'>"+esc(caption)+"</p>":"")+body+"</div>"+renderReactionZone(x)+"<div class='post-footer'><div class='post-stats'><span class='like-stat' data-react-total>"+(totalPostReactions(x.id,x)||"No reactions yet")+(totalPostReactions(x.id,x)?" reactions":"")+"</span><span>"+(x.comments?esc(x.comments)+" comments":"")+(shares?" · <span class='share-count-pop' data-share-count>"+shares+" shares</span>":"")+"</span></div><div class='post-actions'><button class='post-action save-action +"isSaved(x.id)?"saved":"""+' data-action='save' type='button'>+"isSaved(x.id)?"Saved":"Save""+</button><button class='post-action react-icon "+(reacted?"reacted":"")+"' data-action='react' type='button'><span class='reaction-main-icon'>"+reactionIcon(x.id)+"</span><span data-reaction-label>"+reactionLabel(x.id)+"</span></button><button class='post-action' data-action='comment' type='button'>Comment</button><button class='post-action' data-action='share' type='button'>Share</button></div></div></article>";
+}
+function openSharedTarget(){
+  const id=new URLSearchParams(location.search).get("id");
+  if(!id)return;
+  setTimeout(()=>{
+    const card=document.querySelector(".post-card[data-id='"+CSS.escape(id)+"']");
+    if(card){
+      card.scrollIntoView({behavior:"smooth",block:"center"});
+      card.classList.add("shared-target");
+      setTimeout(()=>card.classList.remove("shared-target"),2200);
+    }
+  },450);
 }
 function renderStories(){
   const box=document.getElementById("stories");if(!box)return;
@@ -472,7 +497,7 @@ async function openReactors(postId){
 }
 
 let sharePostId=null;
-function makeShareUrl(id){return location.origin+location.pathname+"#feed-"+encodeURIComponent(id)}
+function makeShareUrl(id){return sharedUrl(id)}
 function sharePayload(){
   const item=state.items.find(x=>x.id===sharePostId)||{title:"TUBAL HUB",description:""};
   const url=makeShareUrl(sharePostId),note=document.getElementById("shareNote")?.value.trim();
