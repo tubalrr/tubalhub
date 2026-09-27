@@ -1305,8 +1305,8 @@ function updateLiveStatusReal(){
 }
 
 async function initFooter(){
-  const fallbackVersion="1.2.34";
-  const fallbackBuild="2026-09-27_2010";
+  const fallbackVersion="1.2.35";
+  const fallbackBuild="2026-09-27_2025";
   const setVersion=(version,build)=>{
     const cleanVersion=String(version||fallbackVersion).trim()||fallbackVersion;
     const cleanBuild=String(build||fallbackBuild).trim()||fallbackBuild;
@@ -1321,7 +1321,7 @@ async function initFooter(){
   updateLiveStatusReal();
 
   try{
-    const r=await fetch("version.json?v=1.2.34&t="+Date.now(),{cache:"no-store"});
+    const r=await fetch("version.json?v=1.2.35&t="+Date.now(),{cache:"no-store"});
     if(!r.ok)throw new Error("version "+r.status);
     const data=await r.json();
     setVersion(data?.version,data?.build);
@@ -1490,39 +1490,114 @@ function initScrollReveal(){
    FEATURED WEBSITE SLIDER — real website data
    ========================================================= */
 const featuredWebsiteState={index:0,autoTimer:null,startX:0,deltaX:0,dragging:false,initialized:false};
-function featuredWebsiteSlides(){return $("#featuredTrack > .featured-slide")?Array.from(document.querySelectorAll("#featuredTrack > .featured-slide")):[]}
-function updateFeaturedDots(){
-  const dots=$("#featuredDots"),slides=featuredWebsiteSlides();if(!dots)return;
-  dots.innerHTML=slides.map((_,i)=>"<button type=\"button\" class=\"featured-dot "+(i===featuredWebsiteState.index?"active":"")+"\" data-featured-dot=\""+i+"\" aria-label=\"Go to featured slide "+(i+1)+"\"></button>").join("");
-  dots.querySelectorAll("[data-featured-dot]").forEach(b=>b.addEventListener("click",()=>goFeaturedWebsite(Number(b.dataset.featuredDot),true)));
+function featuredWebsiteSlides(){
+  const track=$("#featuredTrack");
+  return track?[...track.querySelectorAll(":scope > .featured-slide")]:[];
 }
-function renderFeaturedWebsiteSlide(){
-  const track=$("#featuredTrack"),slides=featuredWebsiteSlides();if(!track||!slides.length)return;
+function syncFeaturedWebsiteGeometry(){
+  const track=$("#featuredTrack"),slides=featuredWebsiteSlides();
+  if(!track||!slides.length)return slides;
+  track.style.setProperty("--featured-slide-count",String(slides.length));
+  track.style.width=(slides.length*100)+"%";
+  return slides;
+}
+function updateFeaturedDots(){
+  const dots=$("#featuredDots"),slides=featuredWebsiteSlides();
+  if(!dots)return;
+  dots.innerHTML=slides.map((_,i)=>"<button type=\"button\" class=\"featured-dot "+(i===featuredWebsiteState.index?"active":"")+"\" data-featured-dot=\""+i+"\" aria-label=\"Go to featured slide "+(i+1)+"\"></button>").join("");
+  dots.querySelectorAll("[data-featured-dot]").forEach(button=>{
+    button.addEventListener("click",()=>goFeaturedWebsite(Number(button.dataset.featuredDot),true));
+  });
+}
+function renderFeaturedWebsiteSlide(animate=true){
+  const track=$("#featuredTrack"),slides=syncFeaturedWebsiteGeometry();
+  if(!track||!slides.length)return;
   featuredWebsiteState.index=(featuredWebsiteState.index+slides.length)%slides.length;
-  track.style.transform="translate3d("+(-featuredWebsiteState.index*20)+"%,0,0)";
+  if(animate)track.style.setProperty("transition","transform 500ms ease-in-out");
+  else track.style.setProperty("transition","none");
+  track.style.transform="translate3d("+(-(featuredWebsiteState.index*(100/slides.length)))+"%,0,0)";
   updateFeaturedDots();
 }
 function goFeaturedWebsite(index,manual=false){
-  const slides=featuredWebsiteSlides();if(!slides.length)return;
-  featuredWebsiteState.index=(index+slides.length)%slides.length;renderFeaturedWebsiteSlide();if(manual)restartFeaturedWebsiteAuto();
+  const slides=featuredWebsiteSlides();
+  if(!slides.length)return;
+  featuredWebsiteState.index=(index+slides.length)%slides.length;
+  renderFeaturedWebsiteSlide(true);
+  if(manual)restartFeaturedWebsiteAuto();
 }
 function nextFeaturedWebsite(){goFeaturedWebsite(featuredWebsiteState.index+1)}
 function prevFeaturedWebsite(){goFeaturedWebsite(featuredWebsiteState.index-1)}
-function stopFeaturedWebsiteAuto(){clearInterval(featuredWebsiteState.autoTimer);featuredWebsiteState.autoTimer=null}
-function restartFeaturedWebsiteAuto(){stopFeaturedWebsiteAuto();featuredWebsiteState.autoTimer=setInterval(nextFeaturedWebsite,4000)}
+function stopFeaturedWebsiteAuto(){
+  clearInterval(featuredWebsiteState.autoTimer);
+  featuredWebsiteState.autoTimer=null;
+}
+function restartFeaturedWebsiteAuto(){
+  stopFeaturedWebsiteAuto();
+  const wrapper=$("#featuredTrackWrapper");
+  if(document.hidden||!wrapper)return;
+  featuredWebsiteState.autoTimer=setInterval(()=>{
+    if(!document.hidden)nextFeaturedWebsite();
+  },4000);
+}
 function initFeaturedWebsiteSlider(){
-  const wrapper=$("#featuredTrackWrapper"),track=$("#featuredTrack"),slides=featuredWebsiteSlides();if(!wrapper||!track||!slides.length||featuredWebsiteState.initialized)return;
+  const wrapper=$("#featuredTrackWrapper"),track=$("#featuredTrack");
+  const slides=syncFeaturedWebsiteGeometry();
+  if(!wrapper||!track||!slides.length||featuredWebsiteState.initialized)return;
   featuredWebsiteState.initialized=true;
-  $("#featuredNext")?.addEventListener("click",nextFeaturedWebsite);$("#featuredPrev")?.addEventListener("click",prevFeaturedWebsite);
-  $("#featuredTrackNext")?.addEventListener("click",nextFeaturedWebsite);$("#featuredTrackPrev")?.addEventListener("click",prevFeaturedWebsite);
-  wrapper.addEventListener("mouseenter",stopFeaturedWebsiteAuto);wrapper.addEventListener("mouseleave",restartFeaturedWebsiteAuto);
-  wrapper.addEventListener("focusin",stopFeaturedWebsiteAuto);wrapper.addEventListener("focusout",e=>{if(!wrapper.contains(e.relatedTarget))restartFeaturedWebsiteAuto()});
-  wrapper.addEventListener("pointerdown",e=>{featuredWebsiteState.dragging=true;featuredWebsiteState.startX=e.clientX;featuredWebsiteState.deltaX=0;track.classList.add("is-dragging");wrapper.setPointerCapture?.(e.pointerId);stopFeaturedWebsiteAuto()});
-  wrapper.addEventListener("pointermove",e=>{if(featuredWebsiteState.dragging)featuredWebsiteState.deltaX=e.clientX-featuredWebsiteState.startX});
-  const end=e=>{if(!featuredWebsiteState.dragging)return;const delta=featuredWebsiteState.deltaX;featuredWebsiteState.dragging=false;featuredWebsiteState.deltaX=0;track.classList.remove("is-dragging");if(Math.abs(delta)>=50)goFeaturedWebsite(featuredWebsiteState.index+(delta<0?1:-1),true);else renderFeaturedWebsiteSlide();restartFeaturedWebsiteAuto();if(e?.pointerId!=null)wrapper.releasePointerCapture?.(e.pointerId)};
-  wrapper.addEventListener("pointerup",end);wrapper.addEventListener("pointercancel",end);
-  document.addEventListener("keydown",e=>{if(e.key!=="ArrowLeft"&&e.key!=="ArrowRight")return;if(e.target?.closest?.("#featuredWebsite")){e.key==="ArrowRight"?nextFeaturedWebsite():prevFeaturedWebsite();restartFeaturedWebsiteAuto()}});
-  renderFeaturedWebsiteSlide();restartFeaturedWebsiteAuto();
+
+  $("#featuredNext")?.addEventListener("click",nextFeaturedWebsite);
+  $("#featuredPrev")?.addEventListener("click",prevFeaturedWebsite);
+  $("#featuredTrackNext")?.addEventListener("click",nextFeaturedWebsite);
+  $("#featuredTrackPrev")?.addEventListener("click",prevFeaturedWebsite);
+
+  wrapper.addEventListener("mouseenter",stopFeaturedWebsiteAuto);
+  wrapper.addEventListener("mouseleave",restartFeaturedWebsiteAuto);
+  wrapper.addEventListener("focusin",stopFeaturedWebsiteAuto);
+  wrapper.addEventListener("focusout",e=>{
+    if(!wrapper.contains(e.relatedTarget))restartFeaturedWebsiteAuto();
+  });
+
+  wrapper.addEventListener("pointerdown",e=>{
+    featuredWebsiteState.dragging=true;
+    featuredWebsiteState.startX=e.clientX;
+    featuredWebsiteState.deltaX=0;
+    track.classList.add("is-dragging");
+    wrapper.setPointerCapture?.(e.pointerId);
+    stopFeaturedWebsiteAuto();
+  });
+  wrapper.addEventListener("pointermove",e=>{
+    if(featuredWebsiteState.dragging)featuredWebsiteState.deltaX=e.clientX-featuredWebsiteState.startX;
+  });
+  const end=e=>{
+    if(!featuredWebsiteState.dragging)return;
+    const delta=featuredWebsiteState.deltaX;
+    featuredWebsiteState.dragging=false;
+    featuredWebsiteState.deltaX=0;
+    track.classList.remove("is-dragging");
+    if(Math.abs(delta)>=50)goFeaturedWebsite(featuredWebsiteState.index+(delta<0?1:-1),true);
+    else renderFeaturedWebsiteSlide(true);
+    restartFeaturedWebsiteAuto();
+    if(e?.pointerId!=null)wrapper.releasePointerCapture?.(e.pointerId);
+  };
+  wrapper.addEventListener("pointerup",end);
+  wrapper.addEventListener("pointercancel",end);
+
+  document.addEventListener("keydown",e=>{
+    if(e.key!=="ArrowLeft"&&e.key!=="ArrowRight")return;
+    if(e.target?.closest?.("#featuredWebsite")){
+      e.key==="ArrowRight"?nextFeaturedWebsite():prevFeaturedWebsite();
+      restartFeaturedWebsiteAuto();
+    }
+  });
+  document.addEventListener("visibilitychange",()=>{
+    if(document.hidden)stopFeaturedWebsiteAuto();
+    else restartFeaturedWebsiteAuto();
+  });
+
+  renderFeaturedWebsiteSlide(false);
+  requestAnimationFrame(()=>renderFeaturedWebsiteSlide(false));
+  setTimeout(()=>renderFeaturedWebsiteSlide(false),0);
+  restartFeaturedWebsiteAuto();
 }
 function renderFeaturedJournalPreview(entries){
   const box=$("#featuredJournalPreview"),count=$("#featuredJournalCount");if(!box)return;
