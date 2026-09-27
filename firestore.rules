@@ -297,6 +297,24 @@ service cloud.firestore {
     }
 
     // =========================================================
+    // FEED REACTIONS — ONE REACTION PER USER / POST
+    // =========================================================
+
+    match /feedReactions/{reactionId} {
+      allow read: if true;
+
+      allow create, update: if realUser()
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.postId is string
+        && request.resource.data.reaction in ['like','love','haha','wow','sad','angry']
+        && reactionId == request.resource.data.postId + '_' + request.auth.uid;
+
+      allow delete: if realUser()
+        && resource.data.uid == request.auth.uid
+        && reactionId == resource.data.postId + '_' + request.auth.uid;
+    }
+
+    // =========================================================
     // UNIFIED HUB CONTENT FEED
     // =========================================================
     // One publish can surface in the appropriate TUBAL HUB areas:
