@@ -1,6 +1,6 @@
 import {getFirestore,collection,onSnapshot} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 import {app} from "./firebase-config.js";
-import {saveItem,isSaved,removeSaved} from "./retention.js";
+import {saveItem,isSaved,removeSaved,sharedUrl} from "./retention.js";
 const db=getFirestore(app);
 const LOGO_BASE="https://commons.wikimedia.org/wiki/Special:Redirect/file/";
 async function loadCtrlzoneGames(){
@@ -173,7 +173,7 @@ function playGame(g,button){
 }
 function debounce(fn,delay){let t;return(...args)=>{clearTimeout(t);t=setTimeout(()=>fn(...args),delay)}}
 async function shareGame(g,button){
-  const url=g.officialUrl;
+  const url=sharedUrl("game-"+g.id);
   if(navigator.share){try{await navigator.share({title:g.name,text:"Check out "+g.name+" in CTRLZONE.",url});notify("Share sheet opened")}catch(_){}}
   else{try{await navigator.clipboard.writeText(url);notify("Official link copied")}catch(_){notify("Official link: "+url)}}
   burstAt(button,6);
@@ -215,7 +215,14 @@ document.getElementById("playNowBtn")?.addEventListener("click",()=>{
   const g=games.find(x=>x.id===state.featuredId)||games[0];const b=document.getElementById("playNowBtn");playGame(g,b);
 });
 
+function openSharedGame(){
+  const id=new URLSearchParams(location.search).get("id");
+  if(!id)return;
+  const gameId=id.replace(/^game-/,"");
+  const card=document.querySelector('[data-game-id="'+CSS.escape(gameId)+'"]');
+  if(card){card.scrollIntoView({behavior:"smooth",block:"center"});card.classList.add("shared-target");setTimeout(()=>card.classList.remove("shared-target"),2200);}
+}
 readFavs();const sg=document.getElementById("statGameCount");if(sg)sg.textContent=String(games.length);const sn=document.getElementById("statGenreCount");if(sn)sn.textContent=String(new Set(games.map(g=>g.genre)).size);const so=document.getElementById("statOfficialCount");if(so)so.textContent=String(games.filter(g=>g.officialUrl).length);renderFilters();renderFeatured();initRealPresence();startFeaturedAuto();
 els.grid.innerHTML=Array.from({length:8},(_,i)=>'<div class="game-card" style="--stagger:'+(i*.06)+'s"><div class="game-cover"><span class="logo-skeleton" style="inset:0"></span></div><div class="game-body"><div class="game-body-top"><span class="game-mini-logo"><span class="logo-skeleton"></span></span><div class="game-meta"><div style="height:18px;width:68%;border-radius:7px;background:rgba(255,255,255,.06)"></div><div style="height:9px;width:35%;margin-top:8px;border-radius:5px;background:rgba(255,255,255,.04)"></div></div></div><div style="height:10px;width:92%;margin-top:15px;border-radius:5px;background:rgba(255,255,255,.04)"></div><div style="height:10px;width:68%;margin-top:7px;border-radius:5px;background:rgba(255,255,255,.04)"></div></div></div>').join("");
-setTimeout(renderGames,650);
+setTimeout(()=>{renderGames();openSharedGame()},650);
 
