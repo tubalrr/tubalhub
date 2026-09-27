@@ -2078,24 +2078,122 @@ class MainActivity : AppCompatActivity() {
     private fun openGlobalChat() {
         selectedGlobalChat = true
         selectedGroupId = null
-        selectedGroupName = "Group"
         selectedUid = null
         stopMessages?.remove()
         stopGroupMessages?.remove()
         stopTyping?.remove()
         stopGlobalMessages?.remove()
-        videoCallButton?.visibility = View.GONE
-        videoCallButton?.isEnabled = false
-        groupAdminButton?.visibility = View.GONE
-        chatTitleView?.text = "GLOBAL • TUBAL HUB"
-        messageInput?.hint = "Message everyone…"
-        messageBox?.removeAllViews()
-        messageBox?.addView(text("Connecting to Global Chat…").apply {
-            setTextColor(0xFF78948A.toInt())
-        })
+
+        root.removeAllViews()
+        root.setPadding(0, 0, 0, 0)
+        root.setBackgroundColor(Color.WHITE)
+        window.statusBarColor = Color.WHITE
+        window.navigationBarColor = Color.WHITE
+
+        val page = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setBackgroundColor(Color.WHITE)
+        }
+
+        val head = LinearLayout(this).apply {
+            gravity = Gravity.CENTER_VERTICAL
+            setPadding(10, 10, 10, 10)
+        }
+        head.addView(button("‹").apply {
+            textSize = 30f
+            background = rounded(Color.TRANSPARENT, 0f)
+            setTextColor(0xFF1877F2.toInt())
+            setOnClickListener { showMessenger() }
+        }, LinearLayout.LayoutParams(42, 48))
+        head.addView(TextView(this).apply {
+            text = "G"
+            textSize = 13f
+            gravity = Gravity.CENTER
+            typeface = Typeface.DEFAULT_BOLD
+            setTextColor(Color.WHITE)
+            background = rounded(0xFF1877F2.toInt(), 50f)
+        }, LinearLayout.LayoutParams(44, 44))
+        head.addView(LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(10, 0, 4, 0)
+            addView(text("TUBAL HUB Global").apply {
+                textSize = 15f
+                typeface = Typeface.DEFAULT_BOLD
+                setTextColor(0xFF050505.toInt())
+                setPadding(0, 0, 0, 2)
+            })
+            addView(text("● Everyone • real-time").apply {
+                textSize = 10f
+                setTextColor(0xFF31A24C.toInt())
+                setPadding(0, 0, 0, 0)
+            })
+        }, LinearLayout.LayoutParams(0, -2, 1f))
+        head.addView(button("ⓘ").apply {
+            textSize = 18f
+            background = rounded(0xFFE7F3FF.toInt(), 50f)
+            setTextColor(0xFF1877F2.toInt())
+            setOnClickListener {
+                AlertDialog.Builder(this@MainActivity)
+                    .setTitle("TUBAL HUB Global")
+                    .setMessage("One shared real-time Firestore room for authenticated members.")
+                    .setPositiveButton("Done", null)
+                    .show()
+            }
+        }, LinearLayout.LayoutParams(44, 44))
+        page.addView(head, LinearLayout.LayoutParams(-1, 64))
+
+        page.addView(text("Live Firestore • global messages").apply {
+            textSize = 10f
+            gravity = Gravity.CENTER
+            setTextColor(0xFF65676B.toInt())
+            setPadding(0, 5, 0, 5)
+        }, LinearLayout.LayoutParams(-1, 28))
+
+        val messageScroll = ScrollView(this).apply {
+            isFillViewport = true
+            isVerticalScrollBarEnabled = false
+            setBackgroundColor(Color.WHITE)
+        }
+        messageBox = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(18, 18, 18, 12)
+        }
+        messageScroll.addView(messageBox)
+        page.addView(messageScroll, LinearLayout.LayoutParams(-1, 0, 1f))
+
+        val composer = LinearLayout(this).apply {
+            gravity = Gravity.CENTER_VERTICAL
+            setPadding(8, 8, 10, 8)
+            setBackgroundColor(Color.WHITE)
+        }
+        composer.addView(button("☺").apply {
+            textSize = 18f
+            background = rounded(Color.TRANSPARENT, 0f)
+            setTextColor(0xFF65676B.toInt())
+        }, LinearLayout.LayoutParams(38, 44))
+        messageInput = input("Message everyone…", false).apply {
+            background = rounded(0xFFF0F2F5.toInt(), 24f)
+            setTextColor(0xFF050505.toInt())
+            setHintTextColor(0xFF65676B.toInt())
+            setPadding(15, 0, 15, 0)
+        }
+        composer.addView(messageInput, LinearLayout.LayoutParams(0, 44, 1f))
+        val send = button("➤").apply {
+            textSize = 18f
+            background = rounded(0xFF0084FF.toInt(), 50f)
+            setTextColor(Color.WHITE)
+        }
+        composer.addView(send, LinearLayout.LayoutParams(44, 44).apply { leftMargin = 6 })
+        page.addView(composer, LinearLayout.LayoutParams(-1, 62))
+
+        chatTitleView = text("TUBAL HUB Global")
+        send.setOnClickListener { sendMessage() }
+        root.addView(page, LinearLayout.LayoutParams(-1, -1))
+        setContentView(root)
         subscribeGlobalMessages()
     }
 
+    
     private fun subscribeGlobalMessages() {
         stopGlobalMessages?.remove()
         if (!selectedGlobalChat) return
