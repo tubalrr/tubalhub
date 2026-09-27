@@ -1,6 +1,6 @@
-name: Build and Publish TUBAL HUB Messenger APK
+name: Build and Publish Tubal Chat APK
 # Release is triggered manually or whenever the Messenger Android project changes.
-# Tubal Chat design update v1.2.23
+# Tubal Chat design update v1.2.24
 # Force rebuild after Android welcome-screen correction.
 # The release is built from the messenger-apk branch source, then published as a signed APK.
 
@@ -119,34 +119,34 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          APK="app/build/outputs/apk/release/TUBAL-HUB-Messenger-release.apk"
+          APK="app/build/outputs/apk/release/Tubal-Chat-release.apk"
           test -s "$APK" || { echo "::error::Release APK was not created."; exit 1; }
           mkdir -p release
-          cp "$APK" release/TUBAL-HUB-Messenger-release.apk
-          sha256sum release/TUBAL-HUB-Messenger-release.apk > release/TUBAL-HUB-Messenger-release.apk.sha256
+          cp "$APK" release/Tubal-Chat-release.apk
+          sha256sum release/Tubal-Chat-release.apk > release/Tubal-Chat-release.apk.sha256
 
       - name: Upload workflow artifact
         uses: actions/upload-artifact@v4
         with:
-          name: TUBAL-HUB-Messenger-v1.2.23
+          name: TUBAL-HUB-Messenger-v1.2.24
           path: |
-            android-messenger/release/TUBAL-HUB-Messenger-release.apk
-            android-messenger/release/TUBAL-HUB-Messenger-release.apk.sha256
+            android-messenger/release/Tubal-Chat-release.apk
+            android-messenger/release/Tubal-Chat-release.apk.sha256
           if-no-files-found: error
 
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.2.23
-          name: TUBAL HUB Messenger v1.2.23
+          tag_name: v1.2.24
+          name: Tubal Chat v1.2.24
           body: |
-            TUBAL HUB Messenger v1.2.23
+            Tubal Chat v1.2.24
 
             Redesigned Android login screen for phones.
             Improved Google Account sign-in presentation.
             Improved self-update handling and release verification.
           files: |
-            android-messenger/release/TUBAL-HUB-Messenger-release.apk
-            android-messenger/release/TUBAL-HUB-Messenger-release.apk.sha256
+            android-messenger/release/Tubal-Chat-release.apk
+            android-messenger/release/Tubal-Chat-release.apk.sha256
           overwrite_files: true
           make_latest: true
