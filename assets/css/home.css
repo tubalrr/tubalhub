@@ -4651,3 +4651,55 @@ body.global-chat-page #sidebarToggle{
   z-index:1002!important;
   pointer-events:auto!important;
 }
+
+/* =========================================================
+   MOBILE PERFORMANCE + COMPACT OVERRIDES
+   CSS-only rendering optimization; existing hooks untouched.
+   ========================================================= */
+.home-shell{max-width:1120px;padding:16px 0 80px}
+.home-glass,.real-data-card{border-radius:18px;box-shadow:0 1px 2px rgba(0,0,0,.06);backdrop-filter:none;-webkit-backdrop-filter:none;will-change:auto}
+.slider-track{gap:12px;scroll-snap-type:x proximity;scroll-behavior:auto;will-change:auto}
+.slider-track>*{scroll-snap-align:start;content-visibility:auto;contain-intrinsic-size:0 140px}
+.real-data-card{transform:none;transition:none}
+.real-data-card:hover{transform:none;box-shadow:0 1px 2px rgba(0,0,0,.06)}
+.featured-games-section{margin-top:16px}
+.featured-games-head{margin-bottom:10px;gap:12px}
+.featured-games-title h2{font-size:18px}
+@media(max-width:768px){
+  html{scroll-behavior:auto!important}
+  body.hub-home{background:#020604!important}
+  body.hub-home::before,body.hub-home::after{display:none!important;animation:none!important;transform:none!important;will-change:auto!important}
+  body.hub-home *,.hub-home *::before,.hub-home *::after{animation:none!important;transition:none!important;will-change:auto!important}
+  .home-shell{width:100%;max-width:1120px;margin:0 auto;padding:12px 12px 80px}
+  .home-glass,.real-data-card,.games-control{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;box-shadow:0 1px 2px rgba(0,0,0,.06)!important;border-radius:18px!important}
+  .home-glass{padding:12px!important}
+  .home-hero{height:160px!important;border-radius:18px!important}
+  .hero-track{will-change:auto!important;transform:none!important;transition:none!important;overflow-x:auto!important;overflow-y:hidden!important;scroll-snap-type:x mandatory!important;scroll-behavior:auto!important;touch-action:pan-x!important}
+  .hero-track>.hero-slide{flex:0 0 100%!important;min-width:100%!important;padding:12px!important;scroll-snap-align:start!important}
+  .hero-slide h1{font-size:22px!important;letter-spacing:-.7px!important}
+  .hero-slide p{font-size:11px!important;line-height:1.4!important}
+  .hero-cta{min-height:34px;margin-top:10px;padding:0 12px;box-shadow:none!important}
+  .slider-track{gap:10px!important;scroll-snap-type:x proximity!important;scroll-behavior:auto!important;overscroll-behavior-x:contain!important}
+  .slider-track>.data-track-card,.slider-track>.game-feature-card,.slider-track>.feed-update-card,.slider-track>.music-real-card{min-height:88px!important;height:auto!important;padding:12px!important;content-visibility:auto!important;contain-intrinsic-size:0 140px!important;scroll-snap-align:start!important;box-shadow:0 1px 2px rgba(0,0,0,.06)!important;transform:none!important}
+  .real-data-card{min-height:88px!important;padding:12px!important;content-visibility:auto!important;contain-intrinsic-size:0 140px!important}
+  .journal-real-card{min-height:88px!important;padding:12px!important}
+  .journal-real-icon{width:20px!important;height:20px!important;border-radius:7px!important;font-size:12px!important}
+  .featured-games-section{margin-top:16px!important}
+  .featured-games-title h2{font-size:18px!important}
+  .featured-games-head{gap:10px!important;margin-bottom:10px!important}
+  .featured-games-note{font-size:8px!important}
+  .games-control{width:34px!important;height:34px!important}
+  .auto-slider-dots{margin-top:8px!important}
+  img{max-width:100%;height:auto;content-visibility:auto}
+  .home-shell img,.slider-track img,.real-data-card img{content-visibility:auto;contain-intrinsic-size:0 140px}
+  .hub-home section,.hub-home .section,.hub-home [class*="section"]{margin-bottom:16px}
+  .hub-home .card,.hub-home [class*="card"]{padding:12px!important;gap:10px}
+  .hub-home h1{font-size:22px!important}.hub-home h2{font-size:18px!important}.hub-home h3{font-size:15px!important}
+  .hub-home p,.hub-home li,.hub-home span{line-height:1.4}
+  .hub-home .live-stats,.hub-home .stats-grid,.hub-home [class*="stats-grid"]{grid-template-columns:repeat(2,minmax(0,1fr))!important;font-size:12px!important;gap:10px!important}
+  .hub-home [class*="featured"]{max-height:160px}
+}
+@media(max-width:460px){
+  .home-shell{padding-left:10px;padding-right:10px}
+  .home-hero{height:160px!important}
+}
