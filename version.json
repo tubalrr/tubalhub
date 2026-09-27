@@ -1,11 +1,11 @@
 {
-  "product": "TUBAL HUB Messenger",
+  "product": "Tubal Chat",
   "manifestType": "android-apk",
-  "versionCode": 1223,
-  "versionName": "1.2.23",
-  "apkUrl": "https://github.com/tubalrr/tubalhub/releases/download/v1.2.23/TUBAL-HUB-Messenger-release.apk",
+  "versionCode": 1224,
+  "versionName": "1.2.24",
+  "apkUrl": "https://github.com/tubalrr/tubalhub/releases/download/v1.2.24/Tubal-Chat-release.apk",
   "notes": [
-    "TUBAL HUB Messenger 1.2.23 includes a redesigned Messenger-style mobile interface.",
+    "Tubal Chat 1.2.24 includes a redesigned Messenger-style mobile interface.",
     "Added the Tubal Chat profile/details panel with Audio, Video, Search, Customize chat, Media, and Privacy sections.",
     "Email, Google, Guest, and Phone SMS sign-in remain available."
   ]
