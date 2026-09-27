@@ -102,6 +102,19 @@ function openDb() {
   });
 }
 
+function syncSearchMusic(track){
+  try{
+    const key="tubalhub_music_library";
+    const rows=JSON.parse(localStorage.getItem(key)||"[]");
+    const next=Array.isArray(rows)?rows.filter(x=>String(x?.id)!==String(track?.id)):[];
+    next.unshift({
+      id:track.id,title:track.title,genre:track.genre||"Music",
+      mood:track.mood,duration:track.duration,createdAt:track.createdAt||Date.now()
+    });
+    localStorage.setItem(key,JSON.stringify(next.slice(0,100)));
+  }catch(_){}
+}
+
 async function dbPut(track) {
   const db = await openDb();
   await new Promise((resolve, reject) => {
@@ -378,6 +391,7 @@ async function generateMusic() {
     };
 
     await dbPut(track);
+    syncSearchMusic(track);
     await refreshLibrary();
     await selectTrack(id, false);
     setGenerationState("Real audio saved to IndexedDB.", "");
@@ -612,6 +626,7 @@ async function shareCurrent() {
     });
     track.sharedUrl = mediaUrl;
     await dbPut(track);
+    syncSearchMusic(track);
     await refreshLibrary();
     el.playerNotice.textContent = "Shared to Feeds with the real uploaded audio player.";
     toast("Real track shared to Feeds.");
