@@ -777,420 +777,448 @@ class MainActivity : AppCompatActivity() {
 
     private fun showMessenger() {
         root.removeAllViews()
-        root.setPadding(16, 42, 16, 12)
-        val me = auth.currentUser ?: return showLogin()
+        root.setPadding(0, 0, 0, 0)
+        root.setBackgroundColor(0xFFF0F2F5.toInt())
+        window.statusBarColor = 0xFFFFFFFF.toInt()
+        window.navigationBarColor = 0xFFFFFFFF.toInt()
 
-        val scroll = ScrollView(this)
+        val me = auth.currentUser ?: return showLogin()
+        registerFcmToken(me.uid)
+        listenForIncomingCalls(me.uid)
+
         val page = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
-            setPadding(4, 8, 4, 18)
+            setBackgroundColor(0xFFFFFFFF.toInt())
         }
 
         val header = LinearLayout(this).apply {
             gravity = Gravity.CENTER_VERTICAL
+            setPadding(18, 12, 18, 10)
+            setBackgroundColor(0xFFFFFFFF.toInt())
         }
         val logo = TextView(this).apply {
-            text = "TH"
-            textSize = 20f
+            text = "T"
+            textSize = 18f
             gravity = Gravity.CENTER
-            setTextColor(0xFF9DFFE0.toInt())
             typeface = Typeface.DEFAULT_BOLD
-            background = rounded(0xFF0D4034.toInt(), 50f)
+            setTextColor(Color.WHITE)
+            background = rounded(0xFF1877F2.toInt(), 50f)
         }
-        header.addView(logo, LinearLayout.LayoutParams(58, 58))
-        val brand = LinearLayout(this).apply {
+        header.addView(logo, LinearLayout.LayoutParams(42, 42))
+        header.addView(LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
-            setPadding(14, 0, 8, 0)
-        }
-        brand.addView(TextView(this).apply {
-            text = "TUBAL HUB"
-            textSize = 20f
-            setTextColor(0xFFF0FFF8.toInt())
-            typeface = Typeface.DEFAULT_BOLD
-        })
-        brand.addView(TextView(this).apply {
-            text = "Messenger"
-            textSize = 17f
-            setTextColor(0xFF36E6A3.toInt())
-            typeface = Typeface.DEFAULT_BOLD
-        })
-        header.addView(brand, LinearLayout.LayoutParams(0, -2, 1f))
-        val logout = button("LOG OUT").apply {
-            background = rounded(0xFF172A25.toInt(), 16f)
-            setTextColor(0xFFEAF7F0.toInt())
-        }
-        header.addView(logout, LinearLayout.LayoutParams(-2, 50))
-        page.addView(header)
-
-        val identityCard = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            setPadding(18, 16, 18, 16)
-            background = rounded(0xFF0A1D18.toInt(), 24f)
-        }
-        val identity = me.displayName ?: me.email ?: "Member"
-        identityCard.addView(text(identity).apply {
-            textSize = 20f
-            typeface = Typeface.DEFAULT_BOLD
-            setTextColor(0xFFF0FFF8.toInt())
-            setPadding(0, 0, 0, 2)
-        })
-        identityCard.addView(text("● Online").apply {
-            textSize = 14f
-            setTextColor(0xFF36E6A3.toInt())
-            setPadding(0, 0, 0, 0)
-        })
-        page.addView(identityCard, LinearLayout.LayoutParams(-1, -2).apply { topMargin = 16 })
-
-        val tabs = LinearLayout(this).apply {
-            background = rounded(0xFF0A1D18.toInt(), 22f)
-            setPadding(6, 6, 6, 6)
-        }
-        listOf("GLOBAL", "LIVE NOW", "CHATS", "MORE").forEachIndexed { index, label ->
-            val b = button(label).apply {
-                textSize = 11.5f
-                setTextColor(if (index == 0) 0xFF03100D.toInt() else 0xFFB8C9C2.toInt())
-                background = rounded(if (index == 0) 0xFF19D98B.toInt() else 0x00172A25, 16f)
-            }
-            when (label) {
-                "GLOBAL" -> b.setOnClickListener { openGlobalChat() }
-                "LIVE NOW" -> b.setOnClickListener { showLiveNowDialog() }
-                "CHATS" -> b.setOnClickListener { toast("Select a member below for a private chat.") }
-            }
-            tabs.addView(b, LinearLayout.LayoutParams(0, 48, 1f))
-        }
-        page.addView(tabs, LinearLayout.LayoutParams(-1, -2).apply { topMargin = 14 })
-
-        val meUid = me.uid
-        registerFcmToken(meUid)
-        listenForIncomingCalls(meUid)
-        logout.setOnClickListener {
-            db.collection("presence").document(me.uid).set(
-                mapOf(
-                    "online" to false,
-                    "updatedAt" to com.google.firebase.firestore.FieldValue.serverTimestamp()
-                ),
-                com.google.firebase.firestore.SetOptions.merge()
-            )
-            stopMessages?.remove()
-            stopGroupMessages?.remove()
-            auth.signOut()
-            showLogin()
-        }
-
-        val memberName = me.displayName ?: me.email?.substringBefore("@") ?: "Member"
-        val memberPhoto = me.photoUrl?.toString() ?: ""
-
-        db.collection("users").document(me.uid).set(
-            mapOf(
-                "uid" to me.uid,
-                "displayName" to memberName,
-                "username" to usernameForMember(memberName, me.email),
-                "email" to (me.email ?: ""),
-                "photoURL" to memberPhoto
-            ),
-            com.google.firebase.firestore.SetOptions.merge()
-        )
-
-        // Public-safe Messenger directory/presence. This avoids exposing private
-        // user documents and lets the web Messenger resolve members directly.
-        db.collection("presence").document(me.uid).set(
-            mapOf(
-                "uid" to me.uid,
-                "displayName" to memberName,
-                "photoURL" to memberPhoto,
-                "online" to true,
-                "updatedAt" to com.google.firebase.firestore.FieldValue.serverTimestamp()
-            ),
-            com.google.firebase.firestore.SetOptions.merge()
-        )
-
-
-
-        val globalTitle = text("TUBAL HUB GLOBAL").apply {
-            textSize = 19f
-            typeface = Typeface.DEFAULT_BOLD
-            setTextColor(0xFFF0FFF8.toInt())
-            setPadding(4, 18, 4, 10)
-        }
-        page.addView(globalTitle)
-
-        val globalCard = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            setPadding(16, 16, 16, 16)
-            background = GradientDrawable(
-                GradientDrawable.Orientation.TL_BR,
-                intArrayOf(0xFF0E2D22.toInt(), 0xFF081713.toInt())
-            ).apply {
-                cornerRadius = 24f
-                setStroke(1, 0x337DFFB4)
-            }
-        }
-
-        val globalHeader = LinearLayout(this).apply {
-            orientation = LinearLayout.HORIZONTAL
-            gravity = Gravity.CENTER_VERTICAL
-        }
-        val liveDot = TextView(this).apply {
-            text = "●"
-            textSize = 17f
-            gravity = Gravity.CENTER
-            setTextColor(0xFF39FF88.toInt())
-            val pulse = AlphaAnimation(0.35f, 1f).apply {
-                duration = 850L
-                repeatMode = AlphaAnimation.REVERSE
-                repeatCount = AlphaAnimation.INFINITE
-            }
-            startAnimation(pulse)
-        }
-        globalHeader.addView(liveDot, LinearLayout.LayoutParams(28, 34))
-        globalHeader.addView(LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            addView(text("Global Chat").apply {
-                textSize = 16f
+            setPadding(12, 0, 0, 0)
+            addView(text("TUBAL HUB").apply {
+                textSize = 18f
                 typeface = Typeface.DEFAULT_BOLD
-                setTextColor(0xFFF0FFF8.toInt())
+                setTextColor(0xFF050505.toInt())
+                setPadding(0, 0, 0, 1)
             })
-            addView(text("Everyone in TUBAL HUB • real-time Firestore room").apply {
+            addView(text("Messenger").apply {
                 textSize = 11f
-                setTextColor(0xFF78948A.toInt())
+                setTextColor(0xFF1877F2.toInt())
+                setPadding(0, 0, 0, 0)
             })
         }, LinearLayout.LayoutParams(0, -2, 1f))
-        val openGlobal = button("OPEN").apply {
-            textSize = 11f
-            background = rounded(0xFF19D98B.toInt(), 15f)
-            setTextColor(0xFF03100D.toInt())
-            typeface = Typeface.DEFAULT_BOLD
-        }
-        openGlobal.setOnClickListener { openGlobalChat() }
-        globalHeader.addView(openGlobal, LinearLayout.LayoutParams(-2, 44))
-        globalCard.addView(globalHeader)
-        globalCard.addView(text("One shared room for all authenticated members. @mentions are highlighted.").apply {
-            textSize = 11.5f
-            setTextColor(0xFF91AAA0.toInt())
-            setPadding(28, 10, 0, 0)
-        })
-        page.addView(globalCard, LinearLayout.LayoutParams(-1, -2))
-        
-        val groupsTitle = text("Groups").apply {
-            textSize = 19f
-            typeface = Typeface.DEFAULT_BOLD
-            setTextColor(0xFFF0FFF8.toInt())
-            setPadding(4, 18, 4, 10)
-        }
-        page.addView(groupsTitle)
-
-        val groupActions = LinearLayout(this).apply {
-            orientation = LinearLayout.HORIZONTAL
-            gravity = Gravity.CENTER_VERTICAL
-        }
-        val createGroup = button("+ Create Group").apply {
-            textSize = 12f
-            background = rounded(0xFF19D98B.toInt(), 16f)
-            setTextColor(0xFF03100D.toInt())
-            typeface = Typeface.DEFAULT_BOLD
-        }
-        val joinGroup = button("Join by Invite").apply {
-            textSize = 12f
-            background = GradientDrawable().apply {
-                setColor(0x00172A25)
-                cornerRadius = 16f
-                setStroke(1, 0x557DFFB4)
+        val meButton = button("●").apply {
+            textSize = 14f
+            background = rounded(0xFFE7F3FF.toInt(), 50f)
+            setTextColor(0xFF1877F2.toInt())
+            setOnClickListener {
+                AlertDialog.Builder(this@MainActivity)
+                    .setTitle(me.displayName ?: me.email ?: "My profile")
+                    .setMessage((me.email ?: "Signed in") + "\n\nTUBAL HUB Messenger")
+                    .setPositiveButton("Done", null)
+                    .setNegativeButton("Sign Out") { _, _ ->
+                        db.collection("presence").document(me.uid).set(
+                            mapOf("online" to false, "updatedAt" to com.google.firebase.firestore.FieldValue.serverTimestamp()),
+                            com.google.firebase.firestore.SetOptions.merge()
+                        )
+                        stopMessages?.remove()
+                        stopTyping?.remove()
+                        auth.signOut()
+                        showLogin()
+                    }.show()
             }
-            setTextColor(0xFFBFEFCE.toInt())
         }
-        groupActions.addView(createGroup, LinearLayout.LayoutParams(0, 48, 1f).apply { rightMargin = 6 })
-        groupActions.addView(joinGroup, LinearLayout.LayoutParams(0, 48, 1f).apply { leftMargin = 6 })
-        page.addView(groupActions)
+        header.addView(meButton, LinearLayout.LayoutParams(42, 42))
+        page.addView(header, LinearLayout.LayoutParams(-1, -2))
 
-        val groupList = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
+        val search = EditText(this).apply {
+            hint = "Search Messenger"
+            textSize = 14f
+            setSingleLine(true)
+            setTextColor(0xFF050505.toInt())
+            setHintTextColor(0xFF65676B.toInt())
+            background = rounded(0xFFF0F2F5.toInt(), 50f)
+            setPadding(18, 0, 18, 0)
         }
-        groupListView = groupList
-        val groupScroll = ScrollView(this).apply {
+        page.addView(search, LinearLayout.LayoutParams(-1, 46).apply {
+            leftMargin = 14; rightMargin = 14; bottomMargin = 8
+        })
+
+        val storiesScroll = HorizontalScrollView(this).apply {
+            isHorizontalScrollBarEnabled = false
+            setPadding(10, 2, 10, 8)
+        }
+        val stories = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
+        storiesScroll.addView(stories)
+        page.addView(storiesScroll, LinearLayout.LayoutParams(-1, 88))
+
+        val contentScroll = ScrollView(this).apply {
             isVerticalScrollBarEnabled = false
-            background = rounded(0xFF061611.toInt(), 20f)
-            setPadding(8, 8, 8, 8)
+            overScrollMode = View.OVER_SCROLL_NEVER
         }
-        groupScroll.addView(groupList)
-        page.addView(groupScroll, LinearLayout.LayoutParams(-1, 230).apply { topMargin = 10 })
-
-        createGroup.setOnClickListener { showCreateGroupDialog() }
-        joinGroup.setOnClickListener { showJoinGroupDialog() }
-        loadGroups(groupList, me.uid)
-
-        val usersTitle = text("Live Now • 0").apply {
-            textSize = 19f
-            typeface = Typeface.DEFAULT_BOLD
-            setTextColor(0xFFF0FFF8.toInt())
-            setPadding(4, 18, 4, 10)
-        }
-        page.addView(usersTitle)
-
-        val users = LinearLayout(this).apply {
+        val content = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
+            setPadding(8, 2, 8, 16)
         }
-        val usersScroll = ScrollView(this)
-        usersScroll.addView(users)
-        page.addView(usersScroll, LinearLayout.LayoutParams(-1, 230))
+        contentScroll.addView(content)
+        page.addView(contentScroll, LinearLayout.LayoutParams(-1, 0, 1f))
 
-        // Use the public-safe presence directory instead of private users/.
-        // Firestore rules intentionally allow members to read presence but not
-        // other users' private profile documents.
-        db.collection("presence")
-            .addSnapshotListener { snap, error ->
-                if (error != null || snap == null) {
-                    usersTitle.text = "Live Now"
-                    users.removeAllViews()
-                    users.addView(text("Could not load live members."))
-                    return@addSnapshotListener
+        val global = LinearLayout(this).apply {
+            gravity = Gravity.CENTER_VERTICAL
+            setPadding(12, 10, 12, 10)
+            background = rounded(0xFFE7F3FF.toInt(), 12f)
+            setOnClickListener { openGlobalChat() }
+        }
+        global.addView(text("💬").apply {
+            textSize = 20f
+            setTextColor(0xFF1877F2.toInt())
+            setPadding(0, 0, 10, 0)
+        }, LinearLayout.LayoutParams(38, 48))
+        global.addView(LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            addView(text("TUBAL HUB Global").apply {
+                textSize = 14f
+                typeface = Typeface.DEFAULT_BOLD
+                setTextColor(0xFF050505.toInt())
+                setPadding(0, 0, 0, 2)
+            })
+            addView(text("Everyone in TUBAL HUB • real-time").apply {
+                textSize = 10f
+                setTextColor(0xFF65676B.toInt())
+                setPadding(0, 0, 0, 0)
+            })
+        }, LinearLayout.LayoutParams(0, -2, 1f))
+        global.addView(text("›").apply {
+            textSize = 24f
+            setTextColor(0xFF65676B.toInt())
+            setPadding(8, 0, 0, 0)
+        })
+        content.addView(global, LinearLayout.LayoutParams(-1, 68).apply { bottomMargin = 8 })
+
+        content.addView(text("Chats").apply {
+            textSize = 18f
+            typeface = Typeface.DEFAULT_BOLD
+            setTextColor(0xFF050505.toInt())
+            setPadding(6, 8, 6, 8)
+        })
+
+        val chatList = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+        content.addView(chatList, LinearLayout.LayoutParams(-1, -2))
+
+        stories.addView(LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            gravity = Gravity.CENTER_HORIZONTAL
+            addView(TextView(this@MainActivity).apply {
+                text = "YOU"
+                textSize = 10f
+                gravity = Gravity.CENTER
+                typeface = Typeface.DEFAULT_BOLD
+                setTextColor(0xFF1877F2.toInt())
+                background = rounded(0xFFE7F3FF.toInt(), 50f)
+            }, LinearLayout.LayoutParams(56, 56))
+            addView(text("Your Story").apply {
+                textSize = 9f
+                setTextColor(0xFF65676B.toInt())
+                gravity = Gravity.CENTER
+                setPadding(0, 4, 0, 0)
+            })
+        }, LinearLayout.LayoutParams(66, 82).apply { rightMargin = 8 })
+
+        val presenceListener = db.collection("presence").addSnapshotListener { snap, error ->
+            if (error != null || snap == null) {
+                chatList.removeAllViews()
+                chatList.addView(text("Could not load Messenger contacts.").apply {
+                    textSize = 12f
+                    setTextColor(0xFF65676B.toInt())
+                })
+                return@addSnapshotListener
+            }
+            val members = snap.documents
+                .filter { it.id != me.uid }
+                .sortedWith(compareByDescending<com.google.firebase.firestore.DocumentSnapshot> { it.getBoolean("online") == true }
+                    .thenBy { it.getString("displayName")?.lowercase().orEmpty() })
+
+            while (stories.childCount > 1) stories.removeViewAt(1)
+            members.take(5).forEach { doc ->
+                val name = doc.getString("displayName")?.trim().orEmpty().ifBlank { "Member" }
+                val initials = name.split(Regex("\\s+")).take(2).mapNotNull { it.firstOrNull()?.toString() }.joinToString("").uppercase()
+                val story = LinearLayout(this).apply {
+                    orientation = LinearLayout.VERTICAL
+                    gravity = Gravity.CENTER_HORIZONTAL
+                    setOnClickListener { openChat(doc.id, name) }
                 }
-                val onlineDocs = snap.documents.filter { it.getBoolean("online") == true }
-                    .sortedBy { it.getString("displayName")?.lowercase().orEmpty() }
-                usersTitle.text = "Live Now • " + onlineDocs.size
-                users.removeAllViews()
-                onlineDocs.forEach { doc ->
+                story.addView(TextView(this@MainActivity).apply {
+                    text = initials.ifBlank { "M" }
+                    textSize = 12f
+                    gravity = Gravity.CENTER
+                    typeface = Typeface.DEFAULT_BOLD
+                    setTextColor(Color.WHITE)
+                    background = rounded(0xFF1877F2.toInt(), 50f)
+                }, LinearLayout.LayoutParams(56, 56))
+                story.addView(text(name.split(" ").firstOrNull() ?: "Member").apply {
+                    textSize = 9f
+                    setTextColor(0xFF65676B.toInt())
+                    gravity = Gravity.CENTER
+                    setPadding(0, 4, 0, 0)
+                })
+                stories.addView(story, LinearLayout.LayoutParams(66, 82).apply { rightMargin = 8 })
+            }
+
+            chatList.removeAllViews()
+            if (members.isEmpty()) {
+                chatList.addView(text("No other TUBAL HUB members yet.").apply {
+                    textSize = 12f
+                    setTextColor(0xFF65676B.toInt())
+                    setPadding(10, 20, 10, 20)
+                })
+            } else {
+                members.forEach { doc ->
                     val name = doc.getString("displayName")?.trim().orEmpty().ifBlank { "Member" }
-                    val username = doc.getString("username")?.trim().orEmpty().ifBlank {
-                        usernameForMember(name, doc.getString("email"))
-                    }
+                    val online = doc.getBoolean("online") == true
                     val row = LinearLayout(this).apply {
                         orientation = LinearLayout.HORIZONTAL
                         gravity = Gravity.CENTER_VERTICAL
-                        setPadding(14, 8, 14, 8)
-                        background = rounded(0xFF10241F.toInt(), 18f)
+                        setPadding(10, 8, 10, 8)
+                        background = rounded(0xFFFFFFFF.toInt(), 12f)
+                        setOnClickListener { openChat(doc.id, name) }
                     }
-                    val dot = TextView(this).apply {
-                        text = "●"
-                        textSize = 15f
+                    val avatar = FrameLayout(this)
+                    avatar.addView(TextView(this@MainActivity).apply {
+                        text = name.split(Regex("\\s+")).take(2).mapNotNull { it.firstOrNull()?.toString() }.joinToString("").uppercase().ifBlank { "M" }
+                        textSize = 14f
                         gravity = Gravity.CENTER
-                        setTextColor(0xFF39FF88.toInt())
-                        val pulse = AlphaAnimation(0.35f, 1f).apply {
-                            duration = 900L
-                            repeatMode = AlphaAnimation.REVERSE
-                            repeatCount = AlphaAnimation.INFINITE
-                        }
-                        startAnimation(pulse)
-                    }
-                    row.addView(dot, LinearLayout.LayoutParams(28, 46))
-                    val info = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
-                    info.addView(text(name).apply {
-                        textSize = 13.5f
                         typeface = Typeface.DEFAULT_BOLD
-                        setTextColor(0xFFEAF7F0.toInt())
-                    })
-                    info.addView(text("@$username • online now").apply {
-                        textSize = 10.5f
-                        setTextColor(0xFF6FCC9C.toInt())
-                    })
-                    row.addView(info, LinearLayout.LayoutParams(0, -2, 1f))
-                    if (doc.id != me.uid) row.setOnClickListener { openChat(doc.id, name) }
-                    users.addView(row, LinearLayout.LayoutParams(-1, 62).apply { bottomMargin = 8 })
-                }
-                if (onlineDocs.isEmpty()) {
-                    users.addView(text("No members are online right now.").apply {
+                        setTextColor(Color.WHITE)
+                        background = rounded(0xFF5B5BD6.toInt(), 50f)
+                    }, FrameLayout.LayoutParams(52, 52))
+                    if (online) avatar.addView(TextView(this@MainActivity).apply {
+                        text = "●"
                         textSize = 12f
-                        setTextColor(0xFF6F8B80.toInt())
+                        gravity = Gravity.CENTER
+                        setTextColor(0xFF31A24C.toInt())
+                        background = rounded(Color.WHITE, 50f)
+                    }, FrameLayout.LayoutParams(18, 18).apply {
+                        gravity = Gravity.BOTTOM or Gravity.END
                     })
+                    row.addView(avatar, LinearLayout.LayoutParams(58, 58))
+                    row.addView(LinearLayout(this@MainActivity).apply {
+                        orientation = LinearLayout.VERTICAL
+                        setPadding(10, 0, 8, 0)
+                        addView(text(name).apply {
+                            textSize = 14f
+                            typeface = Typeface.DEFAULT_BOLD
+                            setTextColor(0xFF050505.toInt())
+                            setPadding(0, 0, 0, 3)
+                        })
+                        addView(text(if (online) "Active now" else "Start a new conversation").apply {
+                            textSize = 11f
+                            setTextColor(0xFF65676B.toInt())
+                            setPadding(0, 0, 0, 0)
+                        })
+                    }, LinearLayout.LayoutParams(0, -2, 1f))
+                    row.addView(text("›").apply {
+                        textSize = 22f
+                        setTextColor(0xFFBCC0C4.toInt())
+                    })
+                    chatList.addView(row, LinearLayout.LayoutParams(-1, 72))
                 }
             }
+        }
 
-        val chatHeader = LinearLayout(this).apply {
-            gravity = Gravity.CENTER_VERTICAL
-        }
-        val chatTitle = text("Select a chat").apply {
-            also { chatTitleView = it }
-            textSize = 19f
-            typeface = Typeface.DEFAULT_BOLD
-            setTextColor(0xFFF0FFF8.toInt())
-            setPadding(4, 8, 4, 8)
-        }
-        chatHeader.addView(chatTitle, LinearLayout.LayoutParams(0, -2, 1f))
-        videoCallButton = button("VIDEO CALL").apply {
-            background = rounded(0xFF172A25.toInt(), 16f)
-            setTextColor(0xFFEAF7F0.toInt())
-            isEnabled = false
-        }
-        videoCallButton!!.setOnClickListener { startVideoCall() }
-        chatHeader.addView(videoCallButton, LinearLayout.LayoutParams(-2, 48))
-        groupAdminButton = button("GROUP").apply {
-            background = rounded(0xFF173B2D.toInt(), 16f)
-            setTextColor(0xFF9DFFE0.toInt())
-            visibility = View.GONE
-        }
-        groupAdminButton!!.setOnClickListener {
-            selectedGroupId?.let { showGroupAdminDialog(it) }
-        }
-        chatHeader.addView(groupAdminButton, LinearLayout.LayoutParams(-2, 48).apply { leftMargin = 6 })
-        page.addView(chatHeader)
-
-        val pinnedView = text("").apply {
-            textSize = 11f
-            setTextColor(0xFF9DFFE0.toInt())
-            visibility = View.GONE
-            setPadding(12, 6, 12, 6)
-        }
-        pinnedLabel = pinnedView
-        page.addView(pinnedView, LinearLayout.LayoutParams(-1, -2))
-
-        messageBox = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            setPadding(4, 4, 4, 4)
-        }
-        val typingView = text("").apply {
-            textSize = 11f
-            setTextColor(0xFF55A8FF.toInt())
-            visibility = View.GONE
-        }
-        typingLabel = typingView
-        page.addView(typingView, LinearLayout.LayoutParams(-1, 30))
-
-        val replyBar = text("").apply {
-            textSize = 11f
-            setTextColor(0xFF9DFFE0.toInt())
-            visibility = View.GONE
-            setOnClickListener { clearReply() }
-        }
-        page.addView(replyBar, LinearLayout.LayoutParams(-1, 36))
-
-        val chatScroll = ScrollView(this).apply {
-            background = rounded(0xFF061611.toInt(), 20f)
-            setPadding(8, 8, 8, 8)
-        }
-        chatScroll.addView(messageBox)
-        page.addView(chatScroll, LinearLayout.LayoutParams(-1, 420).apply { bottomMargin = 10 })
-
-        val composer = LinearLayout(this).apply {
-            gravity = Gravity.CENTER_VERTICAL
-            setPadding(8, 4, 8, 4)
-            background = rounded(0xFF10241F.toInt(), 24f)
-        }
-        messageInput = input("Type a message…", false).apply {
-            background = null
-            setPadding(10, 0, 8, 0)
-        }
-        composer.addView(messageInput, LinearLayout.LayoutParams(0, 56, 1f))
-        val send = button("➤").apply {
-            textSize = 22f
-            background = rounded(0xFF19D98B.toInt(), 50f)
-            setTextColor(0xFF03100D.toInt())
-            typeface = Typeface.DEFAULT_BOLD
-        }
-        composer.addView(send, LinearLayout.LayoutParams(56, 56))
-        page.addView(composer)
-
-        messageInput?.setOnFocusChangeListener { _, hasFocus -> if (!hasFocus) setTyping(false) }
-        messageInput?.addTextChangedListener(object : android.text.TextWatcher {
+        search.addTextChangedListener(object : android.text.TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { if (s?.isNotEmpty() == true) setTyping(true) }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
             override fun afterTextChanged(s: android.text.Editable?) = Unit
         })
-        send.setOnClickListener { sendMessage() }
 
-        scroll.addView(page)
-        root.addView(scroll, LinearLayout.LayoutParams(-1, -1))
+        val bottom = LinearLayout(this).apply {
+            gravity = Gravity.CENTER
+            setPadding(0, 8, 0, 8)
+            setBackgroundColor(Color.WHITE)
+            addView(text("Chats").apply {
+                textSize = 11f
+                gravity = Gravity.CENTER
+                setTextColor(0xFF1877F2.toInt())
+            }, LinearLayout.LayoutParams(0, 42, 1f))
+            addView(text("People").apply {
+                textSize = 11f
+                gravity = Gravity.CENTER
+                setTextColor(0xFF65676B.toInt())
+            }, LinearLayout.LayoutParams(0, 42, 1f))
+            addView(text("Live").apply {
+                textSize = 11f
+                gravity = Gravity.CENTER
+                setTextColor(0xFF65676B.toInt())
+            }, LinearLayout.LayoutParams(0, 42, 1f))
+        }
+        page.addView(bottom, LinearLayout.LayoutParams(-1, 58))
+        root.addView(page, LinearLayout.LayoutParams(-1, -1))
         setContentView(root)
     }
 
+    private fun openChat(uid: String, name: String) {
+        selectedGroupId = null
+        selectedGroupName = "Group"
+        selectedGlobalChat = false
+        stopGroupMessages?.remove()
+        stopGlobalMessages?.remove()
+        selectedUid = uid
+        selectedName = name
+
+        root.removeAllViews()
+        root.setPadding(0, 0, 0, 0)
+        root.setBackgroundColor(Color.WHITE)
+        window.statusBarColor = Color.WHITE
+        window.navigationBarColor = Color.WHITE
+
+        val page = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setBackgroundColor(Color.WHITE)
+        }
+
+        val head = LinearLayout(this).apply {
+            gravity = Gravity.CENTER_VERTICAL
+            setPadding(10, 10, 10, 10)
+        }
+        val back = button("‹").apply {
+            textSize = 30f
+            background = ColorDrawable(Color.TRANSPARENT)
+            setTextColor(0xFF1877F2.toInt())
+            setOnClickListener {
+                stopMessages?.remove()
+                stopTyping?.remove()
+                showMessenger()
+            }
+        }
+        head.addView(back, LinearLayout.LayoutParams(42, 48))
+        head.addView(TextView(this).apply {
+            text = name.split(Regex("\\s+")).take(2).mapNotNull { it.firstOrNull()?.toString() }.joinToString("").uppercase().ifBlank { "M" }
+            textSize = 12f
+            gravity = Gravity.CENTER
+            typeface = Typeface.DEFAULT_BOLD
+            setTextColor(Color.WHITE)
+            background = rounded(0xFF1877F2.toInt(), 50f)
+        }, LinearLayout.LayoutParams(44, 44))
+        head.addView(LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(10, 0, 4, 0)
+            addView(text(name).apply {
+                textSize = 15f
+                typeface = Typeface.DEFAULT_BOLD
+                setTextColor(0xFF050505.toInt())
+                setPadding(0, 0, 0, 2)
+            })
+            addView(text("● Active now").apply {
+                textSize = 10f
+                setTextColor(0xFF31A24C.toInt())
+                setPadding(0, 0, 0, 0)
+            })
+        }, LinearLayout.LayoutParams(0, -2, 1f))
+        videoCallButton = button("☎").apply {
+            textSize = 18f
+            background = rounded(0xFFE7F3FF.toInt(), 50f)
+            setTextColor(0xFF1877F2.toInt())
+            setOnClickListener { startVideoCall() }
+        }
+        head.addView(videoCallButton, LinearLayout.LayoutParams(44, 44).apply { rightMargin = 6 })
+        head.addView(button("ⓘ").apply {
+            textSize = 18f
+            background = rounded(0xFFE7F3FF.toInt(), 50f)
+            setTextColor(0xFF1877F2.toInt())
+            setOnClickListener {
+                AlertDialog.Builder(this@MainActivity)
+                    .setTitle(name)
+                    .setMessage("TUBAL HUB Messenger\n\nPrivate Firestore conversation.")
+                    .setPositiveButton("Done", null)
+                    .show()
+            }
+        }, LinearLayout.LayoutParams(44, 44))
+        page.addView(head, LinearLayout.LayoutParams(-1, 64))
+
+        page.addView(text("Live Firestore • private messages").apply {
+            textSize = 10f
+            gravity = Gravity.CENTER
+            setTextColor(0xFF65676B.toInt())
+            setPadding(0, 5, 0, 5)
+        }, LinearLayout.LayoutParams(-1, 28))
+
+        val messageScroll = ScrollView(this).apply {
+            isFillViewport = true
+            isVerticalScrollBarEnabled = false
+            setBackgroundColor(Color.WHITE)
+        }
+        messageBox = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(18, 18, 18, 12)
+        }
+        messageScroll.addView(messageBox)
+        page.addView(messageScroll, LinearLayout.LayoutParams(-1, 0, 1f))
+
+        typingLabel = text("").apply {
+            textSize = 10f
+            setTextColor(0xFF1877F2.toInt())
+            visibility = View.GONE
+            setPadding(18, 3, 18, 3)
+        }
+        page.addView(typingLabel, LinearLayout.LayoutParams(-1, 26))
+
+        val composer = LinearLayout(this).apply {
+            gravity = Gravity.CENTER_VERTICAL
+            setPadding(8, 8, 10, 8)
+            setBackgroundColor(Color.WHITE)
+        }
+        composer.addView(button("↩").apply {
+            textSize = 17f
+            background = ColorDrawable(Color.TRANSPARENT)
+            setTextColor(0xFF65676B.toInt())
+            setOnClickListener { clearReply() }
+        }, LinearLayout.LayoutParams(38, 44))
+        messageInput = input("Message…", false).apply {
+            background = rounded(0xFFF0F2F5.toInt(), 24f)
+            setTextColor(0xFF050505.toInt())
+            setHintTextColor(0xFF65676B.toInt())
+            setPadding(15, 0, 15, 0)
+        }
+        composer.addView(messageInput, LinearLayout.LayoutParams(0, 44, 1f))
+        val send = button("➤").apply {
+            textSize = 18f
+            background = rounded(0xFF0084FF.toInt(), 50f)
+            setTextColor(Color.WHITE)
+        }
+        composer.addView(send, LinearLayout.LayoutParams(44, 44).apply { leftMargin = 6 })
+        page.addView(composer, LinearLayout.LayoutParams(-1, 62))
+
+        chatTitleView = text(name)
+        send.setOnClickListener { sendMessage() }
+        messageInput?.setOnFocusChangeListener { _, hasFocus -> if (!hasFocus) setTyping(false) }
+        messageInput?.addTextChangedListener(object : android.text.TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if (s?.isNotEmpty() == true) setTyping(true)
+            }
+            override fun afterTextChanged(s: android.text.Editable?) = Unit
+        })
+
+        root.addView(page, LinearLayout.LayoutParams(-1, -1))
+        setContentView(root)
+        subscribeMessages()
+        subscribeTyping()
+    }
+
+    
     private fun registerFcmToken(uid: String) {
         FirebaseMessaging.getInstance().token.addOnSuccessListener { token ->
             db.collection("users").document(uid).set(
