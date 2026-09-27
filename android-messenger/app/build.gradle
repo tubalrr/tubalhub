@@ -17,8 +17,8 @@ android {
             buildConfig true
         }
 
-        versionCode 1223
-        versionName '1.2.23'
+        versionCode 1224
+        versionName '1.2.24'
     }
 
     lint {
@@ -80,6 +80,6 @@ dependencies {
 
 android.applicationVariants.all { variant ->
     variant.outputs.all { output ->
-        output.outputFileName = "TUBAL-HUB-Messenger-${variant.name}.apk"
+        output.outputFileName = "Tubal-Chat-${variant.name}.apk"
     }
 }
