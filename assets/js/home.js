@@ -285,7 +285,7 @@ const HUB_HERO_MESSAGES=[
   ["Three Brands. One Hub.","TUBAL HUB brings Payapang Isip, AI Music and CTRLZONE together in one central home."],
   ["Payapang Isip","A calm space for journals and personal thoughts, with your saved entries kept in your real site data."],
   ["AI Music","Explore the TUBAL HUB AI Music area, listen to available tracks and manage real audio content."],
-  ["CTRLZONE","Your gaming area for the real CTRLZONE catalog, game pages and gaming-related features."],
+  ["Gaming Zone","Your gaming area for the real Gaming Zone catalog, game pages and gaming-related features."],
   ["Feeds & Community","See community posts, share real content and stay connected with what is happening inside TUBAL HUB."],
   ["Shop & Profiles","Explore the Hub shop and creator/profile features while keeping the experience connected in one place."],
   ["One Connected Hub","Use the sidebar to move between Home, Feeds, Chat, Brands, Community, Shop and other TUBAL HUB features."]
@@ -739,7 +739,7 @@ async function getRealGames(){
       logoRealHD:String(g.logoRealHD||''),
       bannerReal:String(g.bannerReal||''),
       devReal:String(g.devReal||g.dev||''),
-      linkReal:String(g.linkReal||('ctrlzone.html?game='+(g.id||''))),
+      linkReal:String(g.linkReal||('gaming-zone.html?game='+(g.id||''))),
       genre:String(g.genre||g.category||'Game'),
       category:String(g.category||g.genre||'Game'),
       description:String(g.description||''),
@@ -757,7 +757,7 @@ function playRealGame(id){
   const count=getRealGamePlayCount(game.id)+1;
   localStorage.setItem(key,String(count));
   emitRealDataUpdate();
-  location.href="pages/ctrlzone.html?game="+encodeURIComponent(game.id);
+  location.href="pages/gaming-zone.html?game="+encodeURIComponent(game.id);
 }
 function emitRealDataUpdate(){
   window.dispatchEvent(new Event("tubalhub-real-data-update"));
@@ -1098,7 +1098,7 @@ function featuredGameMarkup(game){
 function renderFeaturedGames(){
   const track=$("#gamesTrack");if(!track)return;
   if(!featuredGames.length){
-    track.innerHTML='<div class="real-empty-card glass"><span class="real-empty-emoji" aria-hidden="true">NO LOGO</span><p>Wala pa games, upload real</p><a class="real-quick-link" href="pages/ctrlzone.html">Open CTRLZONE →</a></div>';
+    track.innerHTML='<div class="real-empty-card glass"><span class="real-empty-emoji" aria-hidden="true">NO LOGO</span><p>Wala pa games, upload real</p><a class="real-quick-link" href="pages/gaming-zone.html">Open CTRLZONE →</a></div>';
     gamesSlider?.stopAuto?.();
     return;
   }
@@ -1486,7 +1486,7 @@ function renderFeaturedGamesPreview(){
   const box=$("#featuredGamesPreview");if(!box)return;
   const rows=featuredGames.slice(0,4);
   if(!rows.length){box.innerHTML='<div class="featured-empty">Wala pa games, upload real.</div>';return}
-  box.innerHTML=rows.map(g=>'<a class="featured-game-float-card" href="pages/ctrlzone.html?game='+encodeURIComponent(g.id)+'" data-real-game-play="'+esc(g.id)+'"><span class="featured-game-float-emoji">'+esc(getRealGameInitials(g))+'</span><strong>'+esc(g.title)+'</strong><small>'+getRealGamePlayCount(g.id)+' local plays</small><b>Play Now →</b></a>').join("");
+  box.innerHTML=rows.map(g=>'<a class="featured-game-float-card" href="pages/gaming-zone.html?game='+encodeURIComponent(g.id)+'" data-real-game-play="'+esc(g.id)+'"><span class="featured-game-float-emoji">'+esc(getRealGameInitials(g))+'</span><strong>'+esc(g.title)+'</strong><small>'+getRealGamePlayCount(g.id)+' local plays</small><b>Play Now →</b></a>').join("");
   if(!window.matchMedia?.("(hover:none),(pointer:coarse)").matches){
     box.querySelectorAll(".featured-game-float-card").forEach(card=>{
       card.addEventListener("pointermove",e=>{
@@ -1719,7 +1719,7 @@ function realGameLogoMarkup(game){
 }
 function getRealGameHref(game){
   const link=String(game.linkReal||'').trim();
-  return link?link:'pages/ctrlzone.html?game='+encodeURIComponent(String(game.id||''));
+  return link?link:'pages/gaming-zone.html?game='+encodeURIComponent(String(game.id||''));
 }
 let realFeaturedGames=[];
 let realFeaturedIndex=0;
@@ -1767,7 +1767,7 @@ async function renderRealData(){
   renderFeaturedWebsiteData(journals,music,posts,games);
   loadRealPageTitle("pages/payapang-isip.html","#featuredPeaceTitle");
   loadRealPageTitle("pages/ai-music.html","#featuredMusicTitle");
-  loadRealPageTitle("pages/ctrlzone.html","#featuredGamesTitle");
+  loadRealPageTitle("pages/gaming-zone.html","#featuredGamesTitle");
   loadRealPageTitle("pages/feeds.html","#featuredFeedsTitle");
   const setText=(sel,value)=>{const el=$(sel);if(el)el.textContent=String(value)};
   setText("#bentoOnlineUsers",online===null?"—":online);
