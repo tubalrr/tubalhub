@@ -15,14 +15,17 @@ const $ = (id) => document.getElementById(id);
 const message = (id, text) => { const el = $(id); if (el) el.textContent = text; };
 
 function authReturnUrl() {
+  const fallback = new URL("../index.html", window.location.href).href;
   const raw = new URLSearchParams(window.location.search).get("returnTo");
-  if (!raw) return authReturnUrl();
+
+  if (!raw) return fallback;
+
   try {
     const target = new URL(raw, window.location.href);
-    if (target.origin !== window.location.origin) return authReturnUrl();
+    if (target.origin !== window.location.origin) return fallback;
     return target.href;
   } catch {
-    return authReturnUrl();
+    return fallback;
   }
 }
 
