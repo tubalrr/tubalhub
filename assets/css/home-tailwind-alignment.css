@@ -1,136 +1,173 @@
-/* TUBAL HUB — Exact Tailwind-style alignment compatibility layer
-   Implements the requested utility classes without loading a full Tailwind runtime. */
+/* TUBAL HUB — FINAL CARD ALIGNMENT LAYER v1.2.32
+   Styling/layout only. Existing HTML IDs, links, scripts, animations,
+   data hooks, and Obsidian Gamer surfaces remain untouched.
+*/
 
-body.hub-home .th-pillar-grid,
+body.hub-home #thBrandPillars .th-pillar-grid,
 body.hub-home .th-value-grid{
   display:grid !important;
   grid-template-columns:1fr !important;
+  grid-auto-rows:minmax(0,auto) !important;
   gap:1.5rem !important;
   align-items:stretch !important;
+  width:100% !important;
+  margin:0 !important;
 }
 
 @media (min-width:768px){
-  body.hub-home .th-pillar-grid,
+  body.hub-home #thBrandPillars .th-pillar-grid,
   body.hub-home .th-value-grid{
     grid-template-columns:repeat(3,minmax(0,1fr)) !important;
   }
+
+  body.hub-home #thBrandPillars .th-pillar-grid{
+    grid-auto-rows:minmax(280px,max-content) !important;
+  }
+
+  body.hub-home .th-value-grid{
+    grid-auto-rows:minmax(190px,max-content) !important;
+  }
 }
 
-/* Exact requested Card utility combination. */
-body.hub-home .th-pillar[class~="flex"][class~="flex-col"][class~="justify-between"][class~="h-full"][class~="p-6"][class~="bg-[#151517]"][class~="border"][class~="border-white/[0.08]"][class~="rounded-xl"],
-body.hub-home .th-value-grid article[class~="flex"][class~="flex-col"][class~="justify-between"][class~="h-full"][class~="p-6"][class~="bg-[#151517]"][class~="border"][class~="border-white/[0.08]"][class~="rounded-xl"]{
+/* Exact requested card geometry. */
+body.hub-home #thBrandPillars .th-pillar,
+body.hub-home .th-value-grid > article{
   display:flex !important;
   flex-direction:column !important;
   justify-content:space-between !important;
+  align-items:stretch !important;
+  align-self:stretch !important;
   height:100% !important;
-  min-height:0 !important;
   min-width:0 !important;
   box-sizing:border-box !important;
   padding:1.5rem !important;
+  margin:0 !important;
   background:#151517 !important;
   border:1px solid rgba(255,255,255,.08) !important;
   border-radius:.75rem !important;
   overflow:hidden !important;
 }
 
-/* Exact requested Content Area utility. */
-body.hub-home [class~="flex-grow"]{
-  flex-grow:1 !important;
-  min-height:0 !important;
+/* Explicit flexible middle content. */
+body.hub-home #thBrandPillars .th-pillar > .flex-grow,
+body.hub-home .th-value-grid > article > .flex-grow,
+body.hub-home .th-value-grid > article > .th-value-content{
+  flex:1 1 auto !important;
   min-width:0 !important;
+  min-height:0 !important;
   width:100% !important;
 }
 
-/* Exact requested Footer / action utility. */
-body.hub-home [class~="mt-auto"][class~="pt-4"]{
+/* Explicit bottom anchor. */
+body.hub-home #thBrandPillars .th-pillar > .th-pillar-action,
+body.hub-home .th-value-grid > article > .th-value-footer{
   margin-top:auto !important;
   padding-top:1rem !important;
   flex:0 0 auto !important;
+  min-width:0 !important;
+  box-sizing:border-box !important;
 }
 
-/* Three Brands: deterministic internal spacing. */
-body.hub-home #thBrandPillars .th-pillar{
-  gap:0 !important;
+/* Three Brands content geometry. */
+body.hub-home #thBrandPillars .th-pillar-number{
+  position:absolute !important;
+  top:1.25rem !important;
+  right:1.5rem !important;
+  margin:0 !important;
+  line-height:1 !important;
 }
-body.hub-home #thBrandPillars .th-pillar .th-pillar-icon{
+
+body.hub-home #thBrandPillars .th-pillar-icon{
   flex:0 0 auto !important;
   margin:0 0 1.25rem !important;
 }
-body.hub-home #thBrandPillars .th-pillar .th-pillar-kicker{
+
+body.hub-home #thBrandPillars .th-pillar-kicker{
+  display:block !important;
   margin:0 0 .5rem !important;
-  min-height:auto !important;
   line-height:1.35 !important;
 }
-body.hub-home #thBrandPillars .th-pillar .th-pillar-description{
+
+body.hub-home #thBrandPillars .th-pillar h3{
+  margin:0 0 .75rem !important;
+  line-height:1.2 !important;
+}
+
+body.hub-home #thBrandPillars .th-pillar-description{
   margin:0 !important;
   line-height:1.6 !important;
   overflow-wrap:normal !important;
   word-break:normal !important;
 }
-body.hub-home #thBrandPillars .th-pillar .th-pillar-action{
+
+body.hub-home #thBrandPillars .th-pillar-action{
   display:flex !important;
   align-items:center !important;
   gap:.35rem !important;
   width:max-content !important;
   max-width:100% !important;
-  margin:0 !important;
   line-height:1.25 !important;
   text-decoration:none !important;
 }
 
-/* WHY TUBAL HUB: identical internal geometry. */
-body.hub-home .th-value-grid{
-  width:100% !important;
-}
-body.hub-home .th-value-grid article{
-  gap:0 !important;
-}
-body.hub-home .th-value-grid article > .th-value-content{
-  flex-grow:1 !important;
-  min-width:0 !important;
-}
-body.hub-home .th-value-grid article > .th-value-footer{
-  margin-top:auto !important;
-  padding-top:1rem !important;
-  flex:0 0 auto !important;
-}
-body.hub-home .th-value-grid article > .th-value-content h3{
+/* Why TUBAL HUB: identical internal geometry and bottom baselines. */
+body.hub-home .th-value-grid > article > .th-value-content h3{
   margin:0 0 .75rem !important;
   font-size:1.125rem !important;
   line-height:1.2 !important;
   letter-spacing:-.02em !important;
 }
-body.hub-home .th-value-grid article > .th-value-content p{
+
+body.hub-home .th-value-grid > article > .th-value-content p{
   margin:0 !important;
   font-size:.75rem !important;
   line-height:1.6 !important;
   overflow-wrap:normal !important;
   word-break:normal !important;
 }
-body.hub-home .th-value-grid article > .th-value-footer > span{
+
+body.hub-home .th-value-grid > article > .th-value-footer{
+  display:flex !important;
+  align-items:center !important;
+  min-height:1rem !important;
+}
+
+body.hub-home .th-value-grid > article > .th-value-footer > span{
   display:block !important;
   margin:0 !important;
   line-height:1 !important;
 }
 
-@media (min-width:768px){
-  body.hub-home #thBrandPillars .th-pillar,
-  body.hub-home .th-value-grid article{
-    min-height:280px !important;
-  }
+/* Obsidian Gamer interaction language remains intact. */
+body.hub-home #thBrandPillars .th-pillar:hover,
+body.hub-home .th-value-grid > article:hover{
+  border-color:rgba(255,59,48,.32) !important;
+  box-shadow:0 16px 36px rgba(0,0,0,.42),0 0 22px rgba(255,59,48,.08) !important;
+}
+
+body.hub-home .th-value-grid > article:nth-child(2):hover{
+  border-color:rgba(255,204,0,.34) !important;
+  box-shadow:0 16px 36px rgba(0,0,0,.42),0 0 22px rgba(255,204,0,.08) !important;
 }
 
 @media (max-width:767px){
   body.hub-home #thBrandPillars .th-pillar,
-  body.hub-home .th-value-grid article{
+  body.hub-home .th-value-grid > article{
     height:auto !important;
-    min-height:0 !important;
+  }
+
+  body.hub-home #thBrandPillars .th-pillar{
+    min-height:280px !important;
+  }
+
+  body.hub-home .th-value-grid > article{
+    min-height:190px !important;
   }
 }
 
 @media(prefers-reduced-motion:reduce){
   body.hub-home #thBrandPillars .th-pillar,
-  body.hub-home .th-value-grid article{
+  body.hub-home .th-value-grid > article{
     transition:none !important;
   }
 }
