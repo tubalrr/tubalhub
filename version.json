@@ -1,11 +1,14 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.2.28",
-  "build": "2026-09-27_1815",
-  "releasedAtReal": "2026-09-27T10:15:00Z",
+  "version": "1.2.30",
+  "build": "2026-09-27_1845",
+  "releasedAtReal": "2026-09-27T10:45:00Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.2.30 FIX — Rebuilt The Three Brands and WHY TUBAL HUB grids with the exact requested Tailwind utility structure: grid-cols-1 md:grid-cols-3 gap-6 items-stretch.",
+    "v1.2.30 FIX — Every brand/value card now uses flex flex-col justify-between h-full p-6 bg-[#151517] border border-white/[0.08] rounded-xl, with flex-grow content and mt-auto pt-4 footers.",
+    "v1.2.30 UI — Added a lightweight Tailwind-style compatibility layer so the exact utility classes work on the existing static site without loading the full Tailwind runtime.",
     "v1.2.28 FIX — WHY TUBAL HUB value cards now use equal-height flex columns with uniform padding, stable heading/description spacing, and consistent wrapping.",
     "v1.2.28 FIX — Value-card gaps and borders are now symmetric on desktop, with a clean single-column responsive layout below 840px.",
     "v1.2.27 FIX — Desktop/tablet Three Brands layout now remains three columns above 700px so equal-height cards stay horizontally aligned in compact desktop views.",
@@ -148,6 +151,18 @@
   ],
   "breakingReal": false,
   "changelog": [
+    {
+      "type": "FIX",
+      "icon": "▦",
+      "title": "Exact Flex/Grid Card Structure",
+      "desc": "The Three Brands and WHY TUBAL HUB grids now use the exact requested utility classes for equal-height cards and aligned bottom baselines."
+    },
+    {
+      "type": "UI",
+      "icon": "◻",
+      "title": "Tailwind-Style Compatibility",
+      "desc": "Added only the requested utility behavior to the existing CSS stack, preserving the current dashboard architecture."
+    },
     {
       "type": "FIX",
       "icon": "▦",
@@ -376,5 +391,5 @@
     }
   ],
   "date": "2026-09-27",
-  "changes": "v1.2.28 — WHY TUBAL HUB value-card alignment and spacing fix."
+  "changes": "v1.2.30 — Exact Tailwind-style card alignment structure."
 }
