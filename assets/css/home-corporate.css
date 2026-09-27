@@ -73,3 +73,234 @@
   .th-node-one{left:-5%}.th-node-two{right:-8%}
 }
 @media(prefers-reduced-motion:reduce){.th-hub-orbit{animation:none}.th-pillar{transition:none}}
+
+
+/* =========================================================
+   TUBAL HUB — OBSIDIAN GAMER SURFACE SYSTEM v1.2.20
+   Pure dark card/container treatment with restrained accent glow.
+   ========================================================= */
+:root{
+  --obsidian-surface:#151517;
+  --obsidian-surface-soft:rgba(21,21,23,.82);
+  --obsidian-surface-deep:#0f0f12;
+  --obsidian-border:rgba(255,255,255,.08);
+  --obsidian-text:#ffffff;
+  --obsidian-muted:#9ca3af;
+  --obsidian-red:#ff3b30;
+  --obsidian-yellow:#ffcc00;
+}
+
+body.hub-home .bento-card,
+body.hub-home .home-glass,
+body.hub-home .brand-card,
+body.hub-home .brand-tagline,
+body.hub-home .live-card,
+body.hub-home .social-card,
+body.hub-home .social-grid a,
+body.hub-home .video-art,
+body.hub-home .feature-links a,
+body.hub-home .journal-card,
+body.hub-home .ai-card,
+body.hub-home .feed-card,
+body.hub-home .real-data-card,
+body.hub-home .game-feature-card,
+body.hub-home .feed-update-card,
+body.hub-home .music-real-card,
+body.hub-home .th-corp-section,
+body.hub-home .th-pillar,
+body.hub-home .sponsored-container-real,
+body.hub-home .sponsored-real-card{
+  background:var(--obsidian-surface-soft)!important;
+  border:1px solid var(--obsidian-border)!important;
+  color:var(--obsidian-text);
+  backdrop-filter:blur(10px) saturate(105%);
+  -webkit-backdrop-filter:blur(10px) saturate(105%);
+  box-shadow:0 14px 40px rgba(0,0,0,.34),inset 0 1px rgba(255,255,255,.025)!important;
+  transition-duration:.3s;
+  transition-timing-function:ease;
+}
+
+body.hub-home .brand-card:hover,
+body.hub-home .live-card:hover,
+body.hub-home .social-card:hover,
+body.hub-home .social-grid a:hover,
+body.hub-home .feature-links a:hover,
+body.hub-home .journal-card:hover,
+body.hub-home .ai-card:hover,
+body.hub-home .feed-card:hover,
+body.hub-home .real-data-card:hover,
+body.hub-home .game-feature-card:hover,
+body.hub-home .feed-update-card:hover,
+body.hub-home .music-real-card:hover,
+body.hub-home .th-corp-section:hover,
+body.hub-home .th-pillar:hover,
+body.hub-home .sponsored-real-card:hover{
+  border-color:rgba(255,59,48,.30)!important;
+  box-shadow:0 16px 42px rgba(0,0,0,.40),0 0 20px rgba(255,59,48,.15)!important;
+}
+
+body.hub-home .th-pillar-gold:hover,
+body.hub-home .brand-strip .brand-card:nth-child(2):hover,
+body.hub-home .feature-links a:nth-child(2):hover{
+  border-color:rgba(255,204,0,.34)!important;
+  box-shadow:0 16px 42px rgba(0,0,0,.40),0 0 20px rgba(255,204,0,.14)!important;
+}
+
+/* Corporate hero + dark nodes */
+body.hub-home .th-corp-hero{
+  background:
+    radial-gradient(circle at 78% 25%,rgba(255,59,48,.08),transparent 30%),
+    linear-gradient(145deg,#151517,#101012 70%,#0d0d0f)!important;
+  border-color:var(--obsidian-border)!important;
+  color:var(--obsidian-text)!important;
+  box-shadow:0 20px 60px rgba(0,0,0,.42),inset 0 1px rgba(255,255,255,.025)!important;
+}
+body.hub-home .th-corp-hero h1,
+body.hub-home .th-corp-hero h2,
+body.hub-home .th-section-head h2,
+body.hub-home .th-pillar h3,
+body.hub-home .th-hub-core,
+body.hub-home .th-node{
+  color:#fff!important;
+}
+body.hub-home .th-corp-hero h1{
+  text-shadow:0 0 28px rgba(255,255,255,.04);
+}
+body.hub-home .th-corp-hero p,
+body.hub-home .th-section-head p,
+body.hub-home .th-pillar p{
+  color:var(--obsidian-muted)!important;
+}
+body.hub-home .th-corp-secondary{
+  background:#18181b!important;
+  color:#fff!important;
+  border-color:var(--obsidian-border)!important;
+}
+body.hub-home .th-corp-secondary:hover{
+  border-color:rgba(255,204,0,.34)!important;
+  color:#fff!important;
+  box-shadow:0 0 20px rgba(255,204,0,.12)!important;
+}
+body.hub-home .th-hub-core{
+  background:#0f0f12!important;
+  border:1px solid rgba(255,255,255,.08);
+  box-shadow:0 20px 55px rgba(0,0,0,.48),0 0 24px rgba(255,59,48,.08);
+}
+body.hub-home .th-node{
+  background:rgba(21,21,23,.92)!important;
+  border-color:rgba(255,255,255,.08)!important;
+  box-shadow:0 12px 30px rgba(0,0,0,.36)!important;
+}
+body.hub-home .th-pillar{
+  background:rgba(21,21,23,.86)!important;
+}
+body.hub-home .th-pillar-icon,
+body.hub-home .th-pillar-gold .th-pillar-icon,
+body.hub-home .th-pillar-charcoal .th-pillar-icon{
+  background:#0f0f12!important;
+  border:1px solid rgba(255,255,255,.07);
+}
+body.hub-home .th-pillar-icon{color:#ff4b43!important}
+body.hub-home .th-pillar-gold .th-pillar-icon{color:#ffcc00!important}
+body.hub-home .th-pillar-charcoal .th-pillar-icon{color:#fff!important}
+body.hub-home .th-pillar-kicker,
+body.hub-home .th-pillar-number{
+  color:#9ca3af!important;
+}
+body.hub-home .th-pillar a{
+  color:#ff5a52!important;
+}
+body.hub-home .th-pillar-gold a{
+  color:#ffcc00!important;
+}
+body.hub-home .th-pillar-charcoal a{
+  color:#fff!important;
+}
+body.hub-home .th-value-section{
+  background:#151517!important;
+  border-color:var(--obsidian-border)!important;
+}
+body.hub-home .th-value-grid h3{
+  color:#fff!important;
+}
+body.hub-home .th-value-grid p{
+  color:var(--obsidian-muted)!important;
+}
+
+/* Keep media tiles dark around imagery so no bright white container leaks through. */
+body.hub-home .sponsored-real-card .sponsored-media-real,
+body.hub-home .sponsored-brand-real{
+  background:#0f0f12!important;
+  border-color:rgba(255,255,255,.08)!important;
+}
+body.hub-home .game-category,
+body.hub-home .like-btn,
+body.hub-home .ai-cover,
+body.hub-home .feed-update-art{
+  background:rgba(15,15,18,.78)!important;
+  border-color:rgba(255,255,255,.08)!important;
+}
+body.hub-home .game-feature-desc,
+body.hub-home .journal-card p,
+body.hub-home .journal-real-text,
+body.hub-home .music-real-sub,
+body.hub-home .feed-card p,
+body.hub-home .feed-update-text,
+body.hub-home .video-card p,
+body.hub-home .feature-links small,
+body.hub-home .featured-games-note{
+  color:var(--obsidian-muted)!important;
+}
+body.hub-home .game-feature-top h3,
+body.hub-home .journal-real-title,
+body.hub-home .music-real-title,
+body.hub-home .feed-author strong,
+body.hub-home .feed-update-author strong,
+body.hub-home .ai-card h3,
+body.hub-home .video-card h3,
+body.hub-home .brand-card h2,
+body.hub-home .social-card h2{
+  color:#fff!important;
+}
+
+/* Remove the Light-theme card surfaces while keeping the existing theme controls intact. */
+body.theme-light.hub-home .bento-card,
+body.theme-light.hub-home .home-glass,
+body.theme-light.hub-home .brand-card,
+body.theme-light.hub-home .brand-tagline,
+body.theme-light.hub-home .live-card,
+body.theme-light.hub-home .social-card,
+body.theme-light.hub-home .social-grid a,
+body.theme-light.hub-home .video-art,
+body.theme-light.hub-home .feature-links a,
+body.theme-light.hub-home .journal-card,
+body.theme-light.hub-home .ai-card,
+body.theme-light.hub-home .feed-card,
+body.theme-light.hub-home .real-data-card,
+body.theme-light.hub-home .game-feature-card,
+body.theme-light.hub-home .feed-update-card,
+body.theme-light.hub-home .music-real-card,
+body.theme-light.hub-home .th-corp-section,
+body.theme-light.hub-home .th-pillar,
+body.theme-light.hub-home .sponsored-container-real,
+body.theme-light.hub-home .sponsored-real-card{
+  background:var(--obsidian-surface-soft)!important;
+  border-color:var(--obsidian-border)!important;
+  color:#fff!important;
+  box-shadow:0 14px 40px rgba(0,0,0,.34),inset 0 1px rgba(255,255,255,.025)!important;
+}
+body.theme-light.hub-home .th-section-head h2,
+body.theme-light.hub-home .th-pillar h3,
+body.theme-light.hub-home .game-feature-top h3,
+body.theme-light.hub-home .journal-real-title,
+body.theme-light.hub-home .music-real-title{
+  color:#fff!important;
+}
+body.theme-light.hub-home .th-section-head p,
+body.theme-light.hub-home .th-pillar p,
+body.theme-light.hub-home .game-feature-desc,
+body.theme-light.hub-home .journal-real-text,
+body.theme-light.hub-home .music-real-sub,
+body.theme-light.hub-home .feed-update-text{
+  color:var(--obsidian-muted)!important;
+}
