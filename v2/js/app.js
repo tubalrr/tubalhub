@@ -276,3 +276,129 @@ function bind(){oldBind();document.querySelectorAll('[data-focus]').forEach(b=>b
 function v3Import(){let input=document.createElement('input');input.type='file';input.accept='application/json';input.onchange=()=>{const f=input.files?.[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{try{const x=JSON.parse(rd.result);const base={...x};delete base.version;delete base.exportedAt;delete base.v3;S=Object.assign(structuredClone(seed),base);S.profile.setup=true;save();if(x.v3){if(x.v3.focusSessions)v3SaveArray(V3.focusKey,x.v3.focusSessions);if(x.v3.weeklyReviews)v3SaveArray(V3.reviewsKey,x.v3.weeklyReviews);if(x.v3.changelog)v3SaveArray(V3.changelogKey,x.v3.changelog);if(x.v3.recentSearches)v3SaveArray(V3.searchKey,x.v3.recentSearches);localStorage.setItem('tubalhub_changelog_public',x.v3.changelogPublic?'1':'0');if(x.v3.vaultEncrypted)localStorage.setItem(V3.vaultKey,JSON.stringify(x.v3.vaultEncrypted))}alert('Import successful. Ayos!');render()}catch(err){alert('Invalid TUBAL HUB v3 backup.')}};rd.readAsText(f)};input.click()}
 const v3Action=action;
 function action(a){if(a==='import')v3Import();else v3Action(a)}
+
+/* ========================= TUBAL HUB v4 · ANALYTICS ========================= */
+const V4={cacheKey:'tubalhub_analytics_cache',insightsKey:'tubalhub_insights',launch:'2026-09-27'};
+const v4Now=()=>new Date();
+const getLastNDays=(n,end=new Date())=>{let a=[];for(let i=n-1;i>=0;i--){let d=new Date(end);d.setHours(0,0,0,0);d.setDate(d.getDate()-i);a.push(iso(d))}return a};
+const average=a=>a.length?a.reduce((x,y)=>x+Number(y||0),0)/a.length:0;
+const percentage=(a,b)=>b?Math.max(0,Math.min(100,(a/b)*100)):0;
+const trend=(a,b)=>b?((a-b)/Math.abs(b))*100:0;
+function v4Data(){
+ const tasks=S.tasks||[],fs=focusSessions(),journals=S.journals||[],habits=S.habits||[],tx=(S.finance?.transactions)||[],days90=getLastNDays(90),today=TODAY;
+ return {tasks,fs,journals,habits,tx,days90};
+}
+function v4SyncKeys(){
+ const d=v4Data();
+ localStorage.setItem('tubalhub_tasks',JSON.stringify(d.tasks));
+ localStorage.setItem('tubalhub_focus_sessions',JSON.stringify(d.fs));
+ localStorage.setItem('tubalhub_journals',JSON.stringify(d.journals));
+ localStorage.setItem('tubalhub_finance',JSON.stringify(d.tx));
+ localStorage.setItem('tubalhub_habits',JSON.stringify(d.habits));
+ localStorage.setItem('tubalhub_mood',JSON.stringify(d.journals.map(j=>({date:j.date,mood:j.mood}))));
+}
+function v4MoneyExpenses(range){
+ const d=v4Data(),start=range[0],end=range[range.length-1];
+ const fromTx=d.tx.filter(x=>x.type==='payable'&&x.date>=start&&x.date<=end).reduce((a,x)=>a+Number(x.amount||0),0);
+ return fromTx||0;
+}
+function v4TaskDoneDate(t){return t.completedAt?iso(t.completedAt):t.doneDate||t.date||null}
+function v4TaskDone(t){return !!t.done}
+function v4HabitStats(){
+ const d=v4Data(),out=[];
+ for(const h of d.habits){const checks=h.checks||{},vals=getLastNDays(30).map(x=>checks[x]?1:0),rate=percentage(vals.reduce((a,x)=>a+x,0),vals.length);let cur=0,dt=new Date(TODAY+'T00:00:00');while(checks[iso(dt)]){cur++;dt.setDate(dt.getDate()-1)}let longest=0,run=0;for(const x of Object.keys(checks).sort()){if(checks[x]){run++;longest=Math.max(longest,run)}else run=0}out.push({h,rate,current:cur,longest})}
+ return out;
+}
+function v4LifeScore(){
+ const d=v4Data(),last30=getLastNDays(30),tasks=last30.map(day=>{const all=d.tasks.filter(t=>t.date===day),done=all.filter(v4TaskDone).length;return [done,all.length]}),taskRate=percentage(tasks.reduce((a,x)=>a+x[0],0),tasks.reduce((a,x)=>a+x[1],0));
+ const budget=S.budgets||[],budgetRate=budget.length?average(budget.map(b=>percentage(Math.max(0,Number(b.limit||0)-Number(b.spent||0)),Number(b.limit||0)))):0;
+ const hs=v4HabitStats(),habitRate=hs.length?average(hs.map(x=>x.rate)):0;
+ const jset=new Set(d.journals.map(j=>j.date));let js=0,dd=new Date(TODAY+'T00:00:00');while(jset.has(iso(dd))){js++;dd.setDate(dd.getDate()-1)}const journalScore=percentage(js,7);
+ const score=Math.round(taskRate*.30+budgetRate*.25+habitRate*.30+journalScore*.15);
+ return {score,taskRate,budgetRate,habitRate,journalScore};
+}
+function v4Insights(){
+ const d=v4Data(),hs=v4HabitStats(),score=v4LifeScore(),food=(S.budgets||[]).find(b=>String(b.title).toLowerCase()==='food'),overdue=d.tasks.filter(t=>!t.done&&t.date<TODAY).length,weekStart=getLastNDays(7)[0],pom=d.fs.filter(x=>x.date>=weekStart).length,jset=new Set(d.journals.map(j=>j.date));let jstreak=0,dt=new Date(TODAY+'T00:00:00');while(jset.has(iso(dt))){jstreak++;dt.setDate(dt.getDate()-1)}
+ const arr=[];
+ if(food&&Number(food.spent)>0&&Number(food.limit)>0&&Number(food.spent)/Number(food.limit)>.4)arr.push({icon:'🍱',title:'Food budget check',text:'Malaki ang Food allocation mo. Meal prep Sunday para mas kontrolado ang gastos.',action:'budget'});
+ if(overdue>5)arr.push({icon:'🎯',title:'Too many overdue',text:overdue+' tasks ang overdue. Try 3 MIT (Most Important Tasks) lang bukas.',action:'focusTop'});
+ if(jstreak===0&&d.journals.length)arr.push({icon:'🌙',title:'Journal reset',text:'Nabreak ang journal streak mo. 2 minutes lang tonight para makabalik.',action:'closing'});
+ if(pom<5)arr.push({icon:'🧠',title:'Deep work boost',text:'Kaunti pa ang focus sessions mo this week. Schedule 1 pomodoro after Fajr bukas.',action:'focusTop'});
+ if(!arr.length)arr.push({icon:'✨',title:'Steady progress',text:'Balanced ang current signals mo. Keep the routine and review again next week.',action:'weekly'});
+ arr.push({icon:'📊',title:'Life Score',text:'Life Score mo: '+score.score+'/100 — tasks '+Math.round(score.taskRate)+'%, habits '+Math.round(score.habitRate)+'%.',action:'analytics'});
+ localStorage.setItem(V4.insightsKey,JSON.stringify(arr));return arr;
+}
+function v4Sparkline(){
+ const ds=getLastNDays(7),vals=ds.map(day=>S.tasks.filter(t=>t.date===day&&t.done).length),mx=Math.max(1,...vals),pts=vals.map((v,i)=>((i/(vals.length-1))*100)+' '+(100-(v/mx)*85)).join(',');
+ return '<svg class="v4-spark" viewBox="0 0 100 100" preserveAspectRatio="none"><polyline points="'+pts+'" fill="none" stroke="currentColor" stroke-width="3" vector-effect="non-scaling-stroke"/></svg>';
+}
+function v4Heatmap(){
+ const ds=getLastNDays(90),d=v4Data();return '<div class="v4-heatmap">'+ds.map(day=>{const n=d.tasks.filter(t=>t.date===day&&t.done).length+d.journals.filter(j=>j.date===day).length+d.fs.filter(x=>x.date===day).length;return '<i class="v4-h'+Math.min(4,n)+'" title="'+day+' · '+n+' activity"></i>'}).join('')+'</div>';
+}
+function v4Stat(title,val,sub){return '<div class="card v4-stat"><span class="muted">'+title+'</span><strong>'+val+'</strong><small>'+sub+'</small></div>'}
+function v4Empty(){return '<div class="v4-empty"><b>Wala pa data</b><span>Mag-add ka muna tasks para may ma-analyze tayo!</span></div>'}
+function analyticsOverview(){
+ const d=v4Data(),score=v4LifeScore(),hs=v4HabitStats(),longest=Math.max(0,...hs.map(x=>x.longest)),done=d.tasks.filter(t=>t.done).length,avgFocus=average(getLastNDays(30).map(day=>d.fs.filter(x=>x.date===day).reduce((a,x)=>a+Number(x.duration||0),0))),saved=Math.max(0,Number(S.finance?.income||0)-v4MoneyExpenses(getLastNDays(new Date().getDate()))),ins=v4Insights()[0];
+ return '<div class="hero"><div><div class="eyebrow">ANALYTICS · V4</div><h2>Mas malinaw ang takbo ng buhay mo.</h2><p>Real data lang mula sa TUBAL HUB localStorage. Walang external analytics.</p></div><button class="btn" data-action="analyticsExport">Export Analytics Report</button></div>'+
+ '<div class="v4-stats">'+v4Stat('Total Tasks Done',done,'All time')+v4Stat('Avg Daily Focus',Math.round(avgFocus)+'m','Last 30 days')+v4Stat('Money Saved This Month',money(saved,S.profile.currency),'Income − gastos')+v4Stat('Current Streak',longest+'d','Longest habit streak')+'</div>'+
+ '<div class="card v4-card"><div class="head"><div><div class="eyebrow">90 DAYS</div><h3>Activity Heatmap</h3></div><span class="muted">Tasks + journal + focus</span></div>'+v4Heatmap()+'</div>'+
+ '<div class="grid v4-two"><div class="card"><div class="head"><h3>Life Score</h3><span class="pill '+(score.score>=70?'green':'orange')+'">'+score.score+'/100</span></div><div class="score-wrap"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="48" class="score-track"/><circle cx="60" cy="60" r="48" class="score-value" style="stroke-dasharray:'+score.score*3.016+' 301.6"/></svg><b>'+score.score+'</b></div><p class="muted">Tasks '+Math.round(score.taskRate)+'% · Budget '+Math.round(score.budgetRate)+'% · Habits '+Math.round(score.habitRate)+'% · Journal '+Math.round(score.journalScore)+'%</p><div class="insight-box">Life Score mo: '+score.score+'/100 — '+(score.score>=70?'okay ka pa!':'kailangan ng reset.')+'</div></div><div class="card"><div class="head"><h3>Insight of the day</h3><button class="btn alt" data-action="refreshInsights">Refresh</button></div><div class="v4-insight"><span>'+ins.icon+'</span><div><b>'+esc(ins.title)+'</b><p>'+esc(ins.text)+'</p><button class="btn alt" data-insight="'+ins.action+'">Apply</button></div></div>'+v4Sparkline()+'<small class="muted">Tasks completed · last 7 days</small></div></div>';
+}
+function analyticsFinance(){
+ const d=v4Data(),months=[];for(let i=5;i>=0;i--){const x=new Date();x.setDate(1);x.setMonth(x.getMonth()-i);const start=iso(x),e=new Date(x);e.setMonth(e.getMonth()+1);e.setDate(0);const end=iso(e);months.push({label:x.toLocaleDateString('fil-PH',{month:'short'}),value:v4MoneyExpenses(getLastNDays(1,new Date(end+'T00:00:00')).filter(z=>z>=start&&z<=end))})}
+ const total=months.reduce((a,x)=>a+x.value,0),budget=S.budgets||[],btotal=budget.reduce((a,x)=>a+Number(x.spent||0),0),max=Math.max(1,...months.map(x=>x.value)),over=(d.tx||[]).filter(x=>x.status==='overdue'||(x.type==='payable'&&x.date<TODAY)).reduce((a,x)=>a+Number(x.amount||0),0),overN=(d.tx||[]).filter(x=>x.status==='overdue'||(x.type==='payable'&&x.date<TODAY)).length;
+ const pie=budget.map(x=>{const p=total?Number(x.spent||0)/Math.max(1,btotal)*100:0;return {name:x.title,p}}),income=Number(S.finance?.income||0),expense=v4MoneyExpenses(getLastNDays(new Date().getDate())),net=income-expense;
+ const lineVals=[income,expense,net],mx=Math.max(1,...lineVals.map(Math.abs)),line=(v,i)=>i+' '+(50-(v/mx)*40),points=lineVals.map(line).join(' ');
+ return '<div class="v4-toolbar"><span class="pill blue">Last 6 months</span><button class="btn alt" data-action="analyticsExport">Export Report</button></div><div class="grid v4-two"><div class="card"><div class="head"><h3>Monthly Spend</h3><span class="muted">Pure CSS bars</span></div><div class="v4-bars">'+months.map(x=>'<div class="v4-bar-col"><div class="v4-bar" style="height:'+Math.max(4,x.value/max*160)+'px"></div><small>'+x.label+'</small><b>'+money(x.value,S.profile.currency)+'</b></div>').join('')+'</div><div class="card"><div class="head"><h3>Envelope Breakdown</h3></div><div class="v4-pie" style="background:conic-gradient('+pie.map((x,i)=>'var(--v4-c'+i+') 0 '+x.p+'%').join(',')+')"></div><div class="v4-legend">'+pie.map((x,i)=>'<span><i style="background:var(--v4-c'+i+')"></i>'+esc(x.name)+' '+Math.round(x.p)+'%</span>').join('')+'</div></div></div>'+
+ '<div class="card"><div class="head"><h3>Cashflow</h3><span class="muted">Income · Expense · Net</span></div><svg class="v4-linechart" viewBox="0 0 300 120"><polyline points="0 100 '+points+'" fill="none" stroke="currentColor" stroke-width="3"/></svg><div class="v4-cash"><span>Income '+money(income,S.profile.currency)+'</span><span>Expense '+money(expense,S.profile.currency)+'</span><span>Net '+money(net,S.profile.currency)+'</span></div></div>'+
+ '<div class="grid v4-three"><div class="card"><h3>💸 Biggest envelope</h3><p>'+ (budget.length?esc(budget.slice().sort((a,b)=>b.spent-a.spent)[0].title)+' · '+money(Math.max(...budget.map(x=>Number(x.spent||0))),S.profile.currency):'No budget data')+'</p></div><div class="card"><h3>💰 Ipon rate</h3><p>'+ (income?Math.round(percentage(Math.max(0,net),income)):'—')+'% · target 30%</p></div><div class="card"><h3>⚠️ Overdue payables</h3><p>'+overN+' · '+money(over,S.profile.currency)+'</p></div></div>'+
+ '<div class="card"><div class="head"><h3>Forecast vs Actual</h3><span class="pill orange">Budget forecast</span></div>'+budget.map(x=>'<div class="row"><span>'+esc(x.title)+'</span><span>Actual '+money(x.spent,S.profile.currency)+' · Limit '+money(x.limit,S.profile.currency)+'</span></div>').join('')+'</div>';
+}
+function analyticsProductivity(){
+ const d=v4Data(),ds=getLastNDays(14),vals=ds.map(day=>d.tasks.filter(t=>t.date===day&&t.done).length),mx=Math.max(1,...vals),fs=d.fs,week=getLastNDays(7),cats={};fs.filter(x=>x.date>=week[0]).forEach(x=>{const t=d.tasks.find(t=>t.id==x.taskId)||d.tasks.find(t=>t.title===x.task);const cat=t?.category||'General';cats[cat]=(cats[cat]||0)+1});const fav=Object.entries(cats).sort((a,b)=>b[1]-a[1])[0]?.[0]||'—';
+ const proj=(S.projects||[]).map(p=>({title:p.title,total:Number(p.tasksTotal||0),done:d.tasks.filter(t=>t.project===p.title&&t.done).length})).sort((a,b)=>b.done-a.done).slice(0,5);
+ const hour={};d.tasks.filter(t=>t.done).forEach(t=>{const h=t.completedAt?new Date(t.completedAt).getHours():null;if(h!==null&&!isNaN(h))hour[h]=(hour[h]||0)+1});const topH=Object.entries(hour).sort((a,b)=>b[1]-a[1]).slice(0,5);
+ return '<div class="card"><div class="head"><h3>Tasks completed · last 14 days</h3><span class="muted">Real completion dates</span></div><div class="v4-bars v4-14">'+ds.map((x,i)=>'<div class="v4-bar-col"><div class="v4-bar" style="height:'+Math.max(3,vals[i]/mx*150)+'px"></div><small>'+x.slice(5)+'</small><b>'+vals[i]+'</b></div>').join('')+'</div></div><div class="grid v4-two"><div class="card"><h3>Focus analytics</h3><div class="v4-kv"><b>'+fs.length+'</b><span>Total pomodoros</span><b>'+Math.round(average(week.map(day=>fs.filter(x=>x.date===day).length)))+'</b><span>Avg / day</span><b>'+esc(fav)+'</b><span>Favorite focus category</span></div></div><div class="card"><h3>Project velocity</h3>'+ (proj.length?proj.map(x=>'<div class="row"><span>'+esc(x.title)+'</span><b>'+x.done+' done / '+x.total+'</b></div>').join(''):v4Empty())+'</div></div><div class="grid v4-two"><div class="card"><h3>Top productive hours</h3>'+ (topH.length?topH.map(x=>'<div class="row"><span>'+String(x[0]).padStart(2,'0')+':00</span><b>'+x[1]+' completed</b></div>').join(''):v4Empty())+'</div><div class="card"><h3>Kanban flow</h3><p class="muted">Current data model does not store stage timestamps. Showing available status counts instead.</p><div class="v4-kv"><b>'+d.tasks.filter(t=>!t.done).length+'</b><span>Todo/open</span><b>'+d.tasks.filter(t=>t.done).length+'</b><span>Done</span></div></div></div><div class="insight-box">Pinaka-productive ka base sa recorded completion time. Kapag walang timestamp, hindi ako manghuhula ng oras.</div>';
+}
+function analyticsHabits(){
+ const d=v4Data(),hs=v4HabitStats(),ds=getLastNDays(30),map={'😊':5,'🔥':5,'😐':3,'😓':2},moods=ds.map(x=>{const j=d.journals.find(y=>y.date===x);return j?map[j.mood]||3:null}),pts=moods.map((v,i)=>v==null?null:(i*10)+' '+(100-v*18)).filter(Boolean).join(' ');
+ const corr=ds.filter(x=>d.fs.filter(f=>f.date===x).length>=2).length, happy=ds.filter((x,i)=>i<ds.length-1&&d.fs.filter(f=>f.date===x).length>=2&&map[d.journals.find(j=>j.date===ds[i+1])?.mood]>=5).length;
+ return '<div class="grid v4-two"><div class="card"><h3>Habit completion</h3>'+ (hs.length?hs.map(x=>'<div class="v4-progress-row"><div><span>'+esc(x.h.title)+'</span><b>'+Math.round(x.rate)+'%</b></div><div class="progress"><i style="width:'+x.rate+'%"></i></div></div>').join(''):v4Empty())+'</div><div class="card"><h3>Streak leaderboard</h3>'+ (hs.length?hs.slice().sort((a,b)=>b.current-a.current).map(x=>'<div class="row"><span>'+esc(x.h.icon||'•')+' '+esc(x.h.title)+'</span><b>'+x.current+' days</b></div>').join(''):v4Empty())+'</div></div><div class="card"><div class="head"><h3>Mood · last 30 days</h3><span class="muted">😊/🔥=5 · 😐=3 · 😓=2</span></div><svg class="v4-linechart" viewBox="0 0 300 120"><polyline points="'+pts+'" fill="none" stroke="currentColor" stroke-width="3"/></svg></div><div class="grid v4-two"><div class="card"><h3>Focus × mood</h3><p>Recorded days with 2+ pomodoros: '+corr+'. Happy next-day mood: '+(corr?Math.round(happy/corr*100):0)+'%.</p></div><div class="card"><h3>Weekly review sentiment</h3><p>'+ (v4LoadArray(V3.reviewsKey).length?'Based on saved weekly reviews and journal mood averages.':'Wala pang saved weekly review.')+'</p></div></div>';
+}
+function analyticsPage(){
+ const tab=window.v4Tab||'overview';
+ const body=tab==='finance'?analyticsFinance():tab==='productivity'?analyticsProductivity():tab==='habits'?analyticsHabits():analyticsOverview();
+ return shell('Analytics',section('INSIGHTS','Analytics & Insights','<div class="v4-tabs">'+[['overview','Overview'],['finance','Finance'],['productivity','Productivity'],['habits','Habits & Mood']].map(x=>'<button class="'+(tab===x[0]?'active':'')+'" data-v4tab="'+x[0]+'">'+x[1]+'</button>').join('')+'</div><div class="v4-range"><label>Date range <select id="v4Range"><option>Last 7 days</option><option>Last 30 days</option><option>Last 90 days</option><option>All time</option><option>Custom</option></select></label><span class="muted">Client-side only · localStorage</span></div>'+body));
+}
+function v4DashboardWidget(){
+ const s=v4LifeScore(),ins=v4Insights()[0];return '<div class="grid v4-dash"><div class="card"><div class="head"><h3>Life Score</h3><span class="pill green">'+s.score+'/100</span></div><div class="mini-score"><svg viewBox="0 0 80 80"><circle cx="40" cy="40" r="31" class="score-track"/><circle cx="40" cy="40" r="31" class="score-value" style="stroke-dasharray:'+s.score*1.948+' 195"/></svg><b>'+s.score+'</b></div><button class="btn alt" data-route="analytics">Open Analytics</button></div><div class="card"><div class="head"><h3>Insight of the day</h3><span>✦</span></div><p><b>'+esc(ins.title)+'</b><br>'+esc(ins.text)+'</p><button class="btn alt" data-insight="'+ins.action+'">Apply</button></div><div class="card"><div class="head"><h3>7-day activity</h3><span class="muted">Tasks done</span></div>'+v4Sparkline()+'</div></div>';
+}
+function v4Export(){
+ const d=v4Data(),r=getLastNDays(30),score=v4LifeScore(),payload={version:4,exportedAt:new Date().toISOString(),range:r,lifeScore:score,tasks:d.tasks,focusSessions:d.fs,journals:d.journals,habits:d.habits,finance:d.tx,insights:v4Insights()};
+ const csv=(arr,cols)=>[cols.join(','),...arr.map(x=>cols.map(k=>JSON.stringify(x[k]??'')).join(','))].join('\n');
+ downloadBlob('tubalhub-analytics-report.json',JSON.stringify(payload,null,2),'application/json');
+ downloadBlob('tasks.csv',csv(d.tasks,['id','title','date','done','priority','category','project']),'text/csv');
+ downloadBlob('finance.csv',csv(d.tx,['id','type','amount','currency','date','status']),'text/csv');
+ downloadBlob('habits.csv',csv(d.habits,['id','title','icon']),'text/csv');
+ const cv=document.createElement('canvas');cv.width=1080;cv.height=1350;const x=cv.getContext('2d');x.fillStyle='#FCF9F5';x.fillRect(0,0,1080,1350);x.fillStyle='#1E1B16';x.font='800 56px Inter,sans-serif';x.fillText('TUBAL HUB',70,100);x.font='800 44px Inter,sans-serif';x.fillText('Analytics Report',70,170);x.font='500 28px Inter,sans-serif';x.fillText('Life Score '+score.score+'/100',70,240);x.fillText('Tasks done '+d.tasks.filter(t=>t.done).length,70,300);x.fillText('Pomodoros '+d.fs.length,70,360);x.fillText('Journals '+d.journals.length,70,420);x.fillText('Habits '+d.habits.length,70,480);x.font='500 24px Inter,sans-serif';x.fillText('Local-only report · TUBAL HUB v4',70,1260);cv.toBlob(b=>b&&downloadBlob('tubalhub-analytics.png',b,'image/png'),'image/png');
+}
+function v4Action(a){
+ if(a==='analyticsExport')v4Export();
+ else if(a==='refreshInsights'){v4Insights();render()}
+ else if(a==='analytics'){go('analytics')}
+ else if(a==='budget')go('budget');
+ else if(a==='closing')closingModal();
+ else if(a==='focusTop'){let t=S.tasks.find(t=>!t.done&&t.date===TODAY)||S.tasks.find(t=>!t.done);if(t)startFocus(t.id)}
+ else oldAction(a);
+}
+const v4OldAction=action;
+function action(a){if(a==='analyticsExport'||a==='refreshInsights'||a==='analytics'||a==='budget'||a==='closing'||a==='focusTop')v4Action(a);else v4OldAction(a)}
+const v4OldSidebar=sidebar;
+function sidebar(){let base=v4OldSidebar();return base.replace('<div class="nav-section">V3</div>','<div class="nav-section">V4</div><button class="'+(route==='analytics'?'active':'')+'" data-route="analytics">◒ &nbsp; Analytics <span class="new-badge">New</span></button><div class="nav-section">V3</div>')}
+const v4OldHome=home;
+function home(){return v4OldHome().replace('</div></main>','</div>'+v4DashboardWidget()+'</main>')}
+const v4OldRender=render;
+function render(){v4SyncKeys();if(!S.profile.setup){onboarding();return}let body={home,lifehub,calendar,budget,work,lab,vault:vaultPage,weekly:weeklyPage,changelog:changelogPage,analytics:analyticsPage}[route]||home;document.getElementById('app').innerHTML=body();bind();document.querySelectorAll('[data-v4tab]').forEach(b=>b.onclick=()=>{window.v4Tab=b.dataset.v4tab;render()});document.querySelectorAll('[data-insight]').forEach(b=>b.onclick=()=>action(b.dataset.insight));}
+function migrateV4(){v4SyncKeys();if(!localStorage.getItem(V4.cacheKey))localStorage.setItem(V4.cacheKey,JSON.stringify({version:4,createdAt:new Date().toISOString()}));v4Insights();}
+migrateV4();render();
+/* ========================= END V4 ========================= */
