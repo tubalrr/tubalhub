@@ -791,14 +791,14 @@ window.TUBAL_EMAILJS_CONFIG = Object.freeze({
 <script src="js/global-chat.js?v=1.2.17" defer></script>
 <script src="assets/js/home-agency.js?v=1.2.17"></script>
 <script type="module" src="assets/js/auth-ui.js?v=20260927-authui2"></script>
-<script type="module" src="assets/js/home.js?v=1.2.34-liveversion1"></script>
+<script type="module" src="assets/js/home.js?v=1.2.34-liveversion2"></script>
 
 <script src="js/chatbot.js?v=1.2.27"></script>
 <script id="tubalPwaRegister">
 (function(){
   if(!("serviceWorker" in navigator)) return;
   window.addEventListener("load", function(){
-    navigator.serviceWorker.register("./service-worker.js?v=1.2.34-sponsorfix1", {scope:"./"}).then(function(reg){ return reg.update(); }).catch(function(err){
+    navigator.serviceWorker.register("./service-worker.js?v=1.2.34-liveversion2", {scope:"./"}).then(function(reg){ return reg.update(); }).catch(function(err){
       console.warn("TUBAL HUB PWA registration failed:", err);
     });
   });
