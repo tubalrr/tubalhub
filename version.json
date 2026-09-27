@@ -1,13 +1,13 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.2.19",
-  "build": "2026-09-27_1400",
-  "releasedAtReal": "2026-09-27T06:00:00.000Z",
+  "version": "1.2.20",
+  "build": "2026-09-27_0613",
+  "releasedAtReal": "2026-09-27T06:13:46Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
-    "v1.2.19 release — refreshed responsive Admin Control Surface with preserved Firebase/admin functionality.",
-    "v1.2.19 release — updater controls remain connected to real Firestore release scheduling and public update detection.",
+    "v1.2.20 release — TUBAL HUB homepage cards and containers refined with a pure dark Obsidian Gamer surface system.",
+    "v1.2.20 release — subtle low-opacity borders, restrained red/yellow hover glows, dark media tiles, and crisp white/muted text contrast.",
     {
       "typeReal": "PERF",
       "scopeReal": "Compact + Mobile Performance",
@@ -126,9 +126,33 @@
   "breakingReal": false,
   "changelog": [
     {
-      "version": "1.2.19",
+      "version": "1.2.20",
       "date": "2026-09-27",
-      "changes": "v1.2.19 release — refreshed responsive Admin Control Surface with preserved Firebase/admin functionality."
+      "changes": "v1.2.20 release — TUBAL HUB homepage cards and containers refined with a pure dark Obsidian Gamer surface system."
+    },
+    {
+      "type": "UI",
+      "icon": "◼",
+      "title": "Obsidian Gamer Surfaces",
+      "desc": "Homepage cards and containers now use a deep #151517-class surface with subtle blur and low-opacity borders instead of bright or white card backgrounds."
+    },
+    {
+      "type": "UI",
+      "icon": "◈",
+      "title": "Refined Hover Glow",
+      "desc": "Card hover states now use restrained red or yellow accent glows with smooth transitions instead of harsh bright borders."
+    },
+    {
+      "type": "FIX",
+      "icon": "◉",
+      "title": "Text Contrast",
+      "desc": "Primary card titles use crisp white while descriptions and supporting metadata use muted gray for clearer dark-mode readability."
+    },
+    {
+      "type": "FIX",
+      "icon": "⬛",
+      "title": "Bright Surface Cleanup",
+      "desc": "Corporate sections, pillar cards, sponsored media containers, and light-theme card overrides are kept on the dark Obsidian surface."
     },
     {
       "type": "UI",
@@ -216,5 +240,5 @@
     }
   ],
   "date": "2026-09-27",
-  "changes": "v1.2.19 release — refreshed Admin Control Surface and updater compatibility."
+  "changes": "v1.2.20 release — TUBAL HUB homepage cards and containers refined with a pure dark Obsidian Gamer surface system."
 }
