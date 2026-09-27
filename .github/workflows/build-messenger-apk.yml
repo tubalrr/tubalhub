@@ -1,6 +1,7 @@
 name: Build and Publish TUBAL HUB Messenger APK
 # Release is triggered manually or whenever the Messenger Android project changes.
 # Tubal Chat design update v1.2.23
+# Force rebuild after Android welcome-screen correction.
 # The release is built from the messenger-apk branch source, then published as a signed APK.
 
 on:
