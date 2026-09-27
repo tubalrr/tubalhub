@@ -1305,8 +1305,8 @@ function updateLiveStatusReal(){
 }
 
 async function initFooter(){
-  const fallbackVersion="1.2.17";
-  const fallbackBuild="2026-09-25_1216";
+  const fallbackVersion="1.2.34";
+  const fallbackBuild="2026-09-27_2010";
   const setVersion=(version,build)=>{
     const cleanVersion=String(version||fallbackVersion).trim()||fallbackVersion;
     const cleanBuild=String(build||fallbackBuild).trim()||fallbackBuild;
@@ -1321,7 +1321,7 @@ async function initFooter(){
   updateLiveStatusReal();
 
   try{
-    const r=await fetch("version.json?v=1.2.17&t="+Date.now(),{cache:"no-store"});
+    const r=await fetch("version.json?v=1.2.34&t="+Date.now(),{cache:"no-store"});
     if(!r.ok)throw new Error("version "+r.status);
     const data=await r.json();
     setVersion(data?.version,data?.build);
