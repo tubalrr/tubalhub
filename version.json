@@ -1,13 +1,13 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.2.18",
-  "build": "2026-05-13_1218",
-  "releasedAtReal": "2026-09-27T04:54:10.411Z",
+  "version": "1.2.19",
+  "build": "2026-09-27_1400",
+  "releasedAtReal": "2026-09-27T06:00:00.000Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
-    "v1.2.18 release — compact Feeds, Event and Games layout.",
-    "v1.2.18 release — compact Feeds, Event and Games layout.",
+    "v1.2.19 release — refreshed responsive Admin Control Surface with preserved Firebase/admin functionality.",
+    "v1.2.19 release — updater controls remain connected to real Firestore release scheduling and public update detection.",
     {
       "typeReal": "PERF",
       "scopeReal": "Compact + Mobile Performance",
@@ -126,14 +126,21 @@
   "breakingReal": false,
   "changelog": [
     {
-      "version": "1.2.18",
-      "date": "2026-05-13",
-      "changes": "v1.2.18 release — compact Feeds, Event and Games release."
+      "version": "1.2.19",
+      "date": "2026-09-27",
+      "changes": "v1.2.19 release — refreshed responsive Admin Control Surface with preserved Firebase/admin functionality."
     },
     {
-      "version": "1.2.18",
-      "date": "2026-05-13",
-      "changes": "v1.2.18 release — compact Feeds, Event and Games release."
+      "type": "UI",
+      "icon": "⚙️",
+      "title": "Admin Control Surface",
+      "desc": "Refreshed the Admin layout with a responsive dark sidebar, compact card grid, mobile layout, and preserved functional Firebase/admin controls."
+    },
+    {
+      "type": "FIX",
+      "icon": "🔄",
+      "title": "Updater Compatibility",
+      "desc": "Kept the real updater controls and required element IDs connected after the Admin layout refresh, including scheduled releases, Publish Now, Cancel, Check Now, and Test Mode."
     },
     {
       "type": "FEAT",
@@ -208,6 +215,6 @@
       "desc": "version.json is the single version/build source: v1.2.16 • build 2026-09-25_1216."
     }
   ],
-  "date": "2026-05-13",
-  "changes": "v1.2.18 release — compact Feeds, Event and Games release."
+  "date": "2026-09-27",
+  "changes": "v1.2.19 release — refreshed Admin Control Surface and updater compatibility."
 }
