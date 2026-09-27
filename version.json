@@ -1,11 +1,14 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.2.32",
-  "build": "2026-09-27_1925",
-  "releasedAtReal": "2026-09-27T11:25:00Z",
+  "version": "1.2.33",
+  "build": "2026-09-27_1945",
+  "releasedAtReal": "2026-09-27T11:45:00Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.2.33 FIX — Target cards now use an explicit CSS Grid row template `grid-template-rows:auto 1fr auto` so header, flexible content, and footer/action occupy deterministic rows.",
+    "v1.2.33 FIX — The previous target-card `display:flex !important` alignment override was removed because it could override inline grid declarations and cause uneven footer baselines.",
+    "v1.2.33 AUDIT — Preserved existing section IDs, navigation links, animation classes, data hooks, and Obsidian Gamer colors/surfaces while changing only the target layout structure and alignment rules.",
     "v1.2.32 FIX — Consolidated the target card alignment CSS into one final alignment layer, removing duplicate v1.2.26/v1.2.28 override blocks that could create inconsistent computed styles.",
     "v1.2.32 FIX — The Three Brands and WHY TUBAL HUB grids now use deterministic stretch rows, explicit flex-column cards, flexible content areas, and auto-pinned action/footer regions.",
     "v1.2.32 AUDIT — Existing target links, IDs, animation classes, data hooks, and Obsidian Gamer surface styling were preserved; only target layout/styling CSS and structure were touched.",
@@ -157,6 +160,18 @@
   ],
   "breakingReal": false,
   "changelog": [
+    {
+      "type": "FIX",
+      "icon": "▦",
+      "title": "Explicit Card Grid Rows",
+      "desc": "The Three Brands and WHY TUBAL HUB cards now use auto / 1fr / auto rows for deterministic vertical alignment."
+    },
+    {
+      "type": "AUDIT",
+      "icon": "✓",
+      "title": "Alignment Cascade Cleanup",
+      "desc": "Removed the conflicting flex override that could beat inline grid styles; verified target card and footer selectors after the change."
+    },
     {
       "type": "FIX",
       "icon": "▦",
@@ -421,5 +436,5 @@
     }
   ],
   "date": "2026-09-27",
-  "changes": "v1.2.32 — Consolidated dashboard alignment layer and final card baseline audit."
+  "changes": "v1.2.33 — Explicit grid-row card alignment fix."
 }
