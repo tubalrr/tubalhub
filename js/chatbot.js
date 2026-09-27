@@ -315,7 +315,26 @@
       if(!question) return;
       addUserMessageReal(question);
       input.value="";
-      window.setTimeout(()=>addBotMessageReal(replyBotReal(question)),350);
+      addBotMessageReal("Nag-iisip ako… ⚡");
+      const messages=$("chatMessagesReal");
+      const pending=messages?.lastElementChild;
+      try{
+        const response=await fetch("/api/chat",{
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({
+            message:question,
+            page:document.title||"TUBAL HUB"
+          })
+        });
+        const data=await response.json().catch(()=>({}));
+        if(!response.ok || !data.reply) throw new Error(data.error||"AI unavailable");
+        if(pending) pending.remove();
+        addBotMessageReal(escapeHtml(data.reply).replace(/\n/g,"<br>"));
+      }catch(_){
+        if(pending) pending.remove();
+        window.setTimeout(()=>addBotMessageReal(replyBotReal(question)),150);
+      }
     };
 
     send.addEventListener("click",sendQuestion);
