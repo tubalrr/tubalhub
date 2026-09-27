@@ -41,8 +41,8 @@ body{background:#f0f2f5;color:#050505}.shell{height:100dvh;display:flex;max-widt
 </main>
 </div>
 <script type="module">
-import {app,auth} from "./assets/js/firebase-config.js?v=20260927-authfix2";
-import {GoogleAuthProvider,signInWithPopup,onAuthStateChanged,browserPopupRedirectResolver} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+import {app,auth} from "./assets/js/firebase-config.js?v=20260927-authfix3";
+import {GoogleAuthProvider,signInWithPopup,onAuthStateChanged} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 import {getFirestore,collection,query,where,limit,orderBy,onSnapshot,addDoc,serverTimestamp} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
 const db=getFirestore(app);let me=null,members=[],selected=null,unsubPresence=null,unsubMessages=null;
@@ -89,7 +89,7 @@ async function send(){
  try{await addDoc(collection(db,"messages"),{uid:me.uid,senderId:me.uid,receiverId:selected.id,participants:[me.uid,selected.id],displayName:me.displayName||me.email?.split("@")[0]||"Member",senderPhotoURL:me.photoURL||"",text:body,textReal:body,fileNameReal:"",type:"text",createdAt:serverTimestamp(),deliveredAt:null,seenAt:null,reactionsReal:{},pinnedReal:false});$("input").value="";}catch(e){alert(e.message||"Send failed")}}
 $("search").oninput=renderMembers;$("send").onclick=send;$("input").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();send()}});$("backBtn").onclick=()=>{selected=null;if(unsubMessages)unsubMessages();$("conversation").style.display="none";$("empty").style.display="grid";$("app").classList.remove("chat-open")};
 $("themeBtn").onclick=()=>document.body.classList.toggle("dark");
-$("loginBtn").onclick=async()=>{try{await signInWithPopup(auth,new GoogleAuthProvider(),browserPopupRedirectResolver)}catch(e){$("loginErr").textContent=e.message||"Sign-in failed"}};
+$("loginBtn").onclick=async()=>{try{await signInWithPopup(auth,new GoogleAuthProvider())}catch(e){$("loginErr").textContent=e.message||"Sign-in failed"}};
 onAuthStateChanged(auth,user=>{me=user;if(user){$("login").hidden=true;$("app").hidden=false;subscribePresence()}else{$("login").hidden=false;$("app").hidden=true}});
 </script>
 </body></html>
