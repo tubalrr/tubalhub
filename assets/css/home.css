@@ -4764,3 +4764,21 @@ section,.section{margin-bottom:16px!important}
     font-size:12px!important;
   }
 }
+
+
+/* v1.2.17 — compact refresh control */
+#refreshLiveDataBtn{
+  appearance:none;
+  border:1px solid rgba(29,255,145,.18);
+  background:rgba(29,255,145,.06);
+  color:#1dff91;
+  border-radius:999px;
+  padding:7px 10px;
+  font:700 10px/1 Inter,sans-serif;
+  cursor:pointer;
+  white-space:nowrap;
+}
+#refreshLiveDataBtn:disabled{opacity:.55;cursor:wait}
+@media(max-width:768px){
+  #refreshLiveDataBtn{padding:6px 8px;font-size:9px}
+}
