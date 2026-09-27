@@ -1,0 +1,64 @@
+/* TUBAL HUB Admin — high-performance motion layer */
+:root{
+  --motion-fast:180ms;
+  --motion-brand:300ms;
+  --motion-ease:cubic-bezier(.22,1,.36,1);
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
+.brand-switch-btn{
+  transition:transform var(--motion-fast) var(--motion-ease),
+             background-color var(--motion-fast) ease,
+             color var(--motion-fast) ease,
+             box-shadow var(--motion-fast) ease,
+             border-color var(--motion-fast) ease;
+}
+.brand-switch-btn:hover{transform:translateY(-1px)}
+.brand-switch-btn:active{transform:scale(.97)}
+.brand-switch-active{box-shadow:0 7px 18px color-mix(in srgb,var(--brand-accent,#1e1b16) 18%,transparent)}
+.brand-scope-transition{
+  transition:opacity var(--motion-brand) ease,transform var(--motion-brand) var(--motion-ease);
+}
+.brand-scope-exit{opacity:.45!important;transform:translateY(6px)!important}
+.brand-scope-enter{animation:tubalBrandEnter var(--motion-brand) var(--motion-ease) both}
+@keyframes tubalBrandEnter{
+  from{opacity:0;transform:translateY(7px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.stat,.analytics-card,.brand-summary-card,.panel,.updater-card,.sponsor-dashboard,.storage-card{
+  transition:transform var(--motion-fast) var(--motion-ease),
+             box-shadow var(--motion-fast) ease,
+             border-color var(--motion-fast) ease;
+}
+.stat:hover,.analytics-card:hover,.brand-summary-card:hover,.updater-card:hover{
+  transform:translateY(-3px);
+  box-shadow:0 14px 34px rgba(65,52,39,.09);
+}
+.panel:hover,.sponsor-dashboard:hover{box-shadow:0 12px 32px rgba(65,52,39,.07)}
+.recent-users .item,.dashboard-grid .item,.analytics-list-row{
+  transition:background-color var(--motion-fast) ease,
+             transform var(--motion-fast) var(--motion-ease),
+             box-shadow var(--motion-fast) ease;
+}
+.recent-users .item:hover,.dashboard-grid .item:hover,.analytics-list-row:hover{
+  transform:translateX(2px);
+  background:rgba(91,80,69,.035);
+}
+button,a,input,select,.action-btn{
+  transition:transform var(--motion-fast) var(--motion-ease),
+             background-color var(--motion-fast) ease,
+             color var(--motion-fast) ease,
+             border-color var(--motion-fast) ease,
+             box-shadow var(--motion-fast) ease;
+}
+button:not(:disabled):active,.action-btn:active{transform:scale(.98)}
+.skeleton-shimmer{
+  background:linear-gradient(90deg,#eee9e2 25%,#faf8f4 50%,#eee9e2 75%);
+  background-size:700px 100%;
+  animation:tubalShimmer 1.35s linear infinite;
+  border-radius:10px;
+}
+@keyframes tubalShimmer{from{background-position:-700px 0}to{background-position:700px 0}}
+.tubal-loading-pulse{animation:tubalPulse 1.5s ease-in-out infinite}
+@keyframes tubalPulse{0%,100%{opacity:.55}50%{opacity:1}}
