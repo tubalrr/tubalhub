@@ -470,4 +470,30 @@ if(sidebarToggle&&sidebar){
 }
 $("logout").onclick=()=>signOut(auth);
 onAuthStateChanged(auth,async user=>{if(!user||user.email?.toLowerCase()!==ADMIN_EMAIL){location.replace("login.html");return}$("adminEmail").textContent=user.email;$("loading").remove();$("app").hidden=false;await load();listenToPresence();listenToCleanupStats();await loadMaintenanceSetting();await loadSponsoredAds();await loadAnalyticsReal()});
-</script><script type="module" src="beta-test-control.js?v=1.2.18"></script><script type="module" src="updater-control.js?v=1.0.0"></script><script type="module" src="brand-admin-ui.js?v=1.0.0"></script></body></html>
+</script><script type="module" src="beta-test-control.js?v=1.2.18"></script><script type="module" src="updater-control.js?v=1.0.0"></script><script type="module" src="brand-admin-ui.js?v=1.0.0"></script><script>
+(function(){
+  const ids=["analyticsDau","analyticsWau","analyticsMessages","analyticsNewUsers"];
+  const start=()=>{
+    ids.forEach(id=>{
+      const el=document.getElementById(id);
+      if(el && (el.textContent.trim()==="—" || el.textContent.trim()==="")){
+        el.classList.add("skeleton-shimmer","tubal-loading-pulse");
+        el.style.color="transparent";
+        el.style.minHeight="30px";
+      }
+    });
+  };
+  const done=()=>{
+    ids.forEach(id=>{
+      const el=document.getElementById(id);
+      if(el && el.textContent.trim() && el.textContent.trim()!=="—"){
+        el.classList.remove("skeleton-shimmer","tubal-loading-pulse");
+        el.style.color="";
+        el.style.minHeight="";
+      }
+    });
+  };
+  start();
+  new MutationObserver(done).observe(document.body,{subtree:true,childList:true,characterData:true});
+})();
+</script></body></html>
