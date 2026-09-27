@@ -1,11 +1,17 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.2.16",
-  "build": "2026-09-25_1216",
-  "releasedAtReal": "2026-09-25T04:16:00Z",
+  "version": "1.2.17",
+  "build": "2026-05-13_1217",
+  "releasedAtReal": "2026-05-13T04:17:00Z",
   "releasedByReal": "tubalrr",
   "updatesReal": [
+    {
+      "typeReal": "PERF",
+      "scopeReal": "Compact + Mobile Performance",
+      "detailReal": "Compact container, smaller cards, mobile rendering optimization, Firebase one-time reads instead of realtime listeners, and lighter mobile scrolling.",
+      "iconReal": "⚡"
+    },
     {
       "typeReal": "FEAT",
       "scopeReal": "Global Chat Storage Cleanup",
@@ -189,5 +195,7 @@
       "title": "Single Source of Truth",
       "desc": "version.json is the single version/build source: v1.2.16 • build 2026-09-25_1216."
     }
-  ]
+  ],
+  "date": "2026-05-13",
+  "changes": "Compact container + mobile lag fix + Firebase once() instead of realtime"
 }
