@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#FFFBF5"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"><title>TUBAL HUB | Admin v1.2.17</title><link rel="stylesheet" href="admin-dashboard.css?v=1.2.17"><link rel="stylesheet" href="admin-modern-layout.css?v=20260927-safe"><link rel="stylesheet" href="admin-motion.css?v=20260927-motion"><script>tailwind={config:{prefix:"tu-",corePlugins:{preflight:false},theme:{extend:{colors:{cream:"#FFFBF5",ink:"#1E1B16",line:"#EAE2D8",muted:"#8A8177"}}}}}</script><script src="https://cdn.tailwindcss.com"></script><style>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#07090C"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"><title>TUBAL HUB | Admin v1.2.18</title><link rel="stylesheet" href="admin-dashboard.css?v=1.2.17"><link rel="stylesheet" href="admin-modern-layout.css?v=20260927-safe"><link rel="stylesheet" href="admin-control-surface.css?v=20260927"><link rel="stylesheet" href="admin-motion.css?v=20260927-motion"><script>tailwind={config:{prefix:"tu-",corePlugins:{preflight:false},theme:{extend:{colors:{cream:"#FFFBF5",ink:"#1E1B16",line:"#EAE2D8",muted:"#8A8177"}}}}}</script><script src="https://cdn.tailwindcss.com"></script><style>
 .analytics-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:18px}
 .analytics-card{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:18px}
 .analytics-card span{display:block;font-size:12px;opacity:.65;text-transform:uppercase;letter-spacing:.08em}
@@ -62,12 +62,13 @@
 <main class="dashboard tu-!bg-[#FFFBF5] tu-!text-[#1E1B16]"><header class="topbar tu-!border-b tu-!border-[#EAE2D8]">
   <div class="topbar-left">
   <div id="activeBrandPill" class="tu-inline-flex tu-items-center tu-gap-2 tu-rounded-full tu-border tu-border-[#F2EDE8] tu-bg-white tu-px-3 tu-py-1.5 tu-text-xs tu-font-bold tu-text-[#5D554D]"><span id="activeBrandDot" class="tu-h-2 tu-w-2 tu-rounded-full tu-bg-[#1E1B16]"></span><span id="activeBrandLabel">Master Hub</span></div>
-    <span class="topbar-brand tu-!text-[#1E1B16] tu-!font-extrabold">TUBAL HUB Admin</span><span class="topbar-divider tu-!text-[#C5BDB3]">·</span><span class="topbar-version tu-!text-[#8A8177]">v1.2.17</span>
+    <span class="topbar-brand tu-!text-[#1E1B16] tu-!font-extrabold">TUBAL HUB Admin</span><span class="topbar-divider tu-!text-[#C5BDB3]">·</span><span class="topbar-version tu-!text-[#8A8177]">v1.2.18</span>
   </div>
   <div class="top-actions">
     <span class="presence-pill"><i class="status-dot"></i><b id="onlineNowReal">—</b> Online now</span>
     <span class="realtime-pill tu-!border tu-!border-[#E5DDD3] tu-!bg-white tu-!text-[#685F56]"><i class="status-dot"></i> Realtime</span>
     <span id="adminEmail"></span>
+    <button id="adminNotificationsButtonGhost" type="button" class="admin-icon-btn" aria-label="Admin notifications" hidden>🔔</button>
     <button id="logout">Sign Out</button>
   </div>
 </header>
@@ -192,7 +193,7 @@
 <section class="panel tu-!rounded-2xl tu-!border tu-!border-[#E9E0D6] tu-!bg-white tu-!text-[#2E2923] tu-!shadow-[0_8px_30px_rgba(65,52,39,0.045)]" id="members"><div class="panel-head"><div><small>MEMBER CONTROL</small><h2>Registered Members</h2></div><button type="button" id="openMembers" class="members-open-btn">View Registered Members →</button></div><div id="membersContent" class="members-content" hidden><div class="moderation-toolbar"><label>Ban duration <select id="banDuration"><option value="permanent">Permanent</option><option value="1h">1 hour</option><option value="6h">6 hours</option><option value="12h">12 hours</option><option value="1d">1 day</option><option value="3d">3 days</option><option value="7d">7 days</option><option value="30d">30 days</option></select></label><small>Ban expires automatically when the selected time ends.</small></div><div id="memberList" class="table-list"></div></div></section>
 <div class="admin-section-label tw tu-!mb-3 tu-!mt-7 tu-!text-[#8F867C]"><span class="section-icon">🛡️</span><span>Community Moderation</span></div><section class="panel tu-!rounded-2xl tu-!border tu-!border-[#E9E0D6] tu-!bg-white tu-!text-[#2E2923] tu-!shadow-[0_8px_30px_rgba(65,52,39,0.045)]" id="chat"><div class="panel-head"><div><small>COMMUNITY MODERATION</small><h2>Global Chat</h2></div><button type="button" id="openChatLogs" class="members-open-btn">View Global Chat Logs →</button></div><div id="chatContent" class="members-content" hidden><div id="chatList"></div></div></section>
 <div id="banModal" class="ban-modal" hidden><div class="ban-modal-card"><div class="ban-modal-head"><div><small>MEMBER MODERATION</small><h3>Ban Member</h3><p id="banTargetName">Member</p></div><button type="button" id="closeBanModal">×</button></div><div class="ban-options"><button type="button" data-duration="1h">1 Hour</button><button type="button" data-duration="6h">6 Hours</button><button type="button" data-duration="12h">12 Hours</button><button type="button" data-duration="1d">1 Day</button><button type="button" data-duration="3d">3 Days</button><button type="button" data-duration="7d">7 Days</button><button type="button" data-duration="30d">30 Days</button><button type="button" data-duration="permanent">Permanent</button></div><input id="banReasonInput" placeholder="Ban reason (optional)"><div class="ban-modal-actions"><button type="button" id="cancelBan">Cancel</button><button type="button" id="confirmBan">Confirm Ban</button></div></div></div>
-<div id="toast" class="toast"></div><footer>© 2026 TUBAL HUB • Admin Control Center • v1.2.17</footer></main></div><div id="loading" class="loading">Checking administrator access…</div><script type="module">
+<div id="toast" class="toast"></div><footer>© 2026 TUBAL HUB • Admin Control Center • v1.2.18</footer></main></div><div id="loading" class="loading">Checking administrator access…</div><script type="module">
 import {auth} from "../assets/js/firebase-config.js";
 import {onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 import {getFirestore,collection,getDocs,addDoc,deleteDoc,doc,query,where,orderBy,limit,startAfter,serverTimestamp,updateDoc,Timestamp,writeBatch,onSnapshot,setDoc} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
@@ -200,6 +201,14 @@ import {getFunctions,httpsCallable} from "https://www.gstatic.com/firebasejs/12.
 const ADMIN_EMAIL="tubalrr@gmail.com",db=getFirestore(),shopFunctions=getFunctions(),analyticsFunctions=getFunctions(),getAdminAnalyticsReal=httpsCallable(analyticsFunctions,"getAdminAnalyticsReal"),verifyShopOrderReal=httpsCallable(shopFunctions,"verifyShopOrderReal"),migrateShopDownloadSecretsReal=httpsCallable(shopFunctions,"migrateShopDownloadSecretsReal"),$=id=>document.getElementById(id);
 let news=[],anns=[],members=[],chats=[],shopProducts=[],shopOrders=[],sponsoredAds=[];
 window.TUBAL_ADMIN_BRAND_STATE={getProducts:()=>shopProducts.slice(),getOrders:()=>shopOrders.slice()};
+window.TUBAL_ADMIN_CONTROL_STATE={
+  getProducts:()=>shopProducts.slice(),
+  getOrders:()=>shopOrders.slice(),
+  getMembers:()=>members.slice(),
+  getNews:()=>news.slice(),
+  getAnnouncements:()=>anns.slice(),
+  getChats:()=>chats.slice()
+};
 let presenceUnsubscribe=null,cleanupStatsUnsubscribe=null,presenceUsers=[];
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
 function toast(m){$("toast").textContent=m;$("toast").classList.add("show");setTimeout(()=>$("toast").classList.remove("show"),3200)}
@@ -338,7 +347,7 @@ function render(){
   ).join("")||'<div class="empty">No chat messages found.</div>';
 }
 
-function renderAnalyticsReal(data){
+function renderAnalyticsReal(data){window.TUBAL_ADMIN_ANALYTICS_STATE=data||{};
   const num=v=>Number(v||0).toLocaleString("en-PH");
   $("analyticsDau").textContent=num(data?.dau);
   $("analyticsWau").textContent=num(data?.wau);
@@ -470,7 +479,7 @@ if(sidebarToggle&&sidebar){
 }
 $("logout").onclick=()=>signOut(auth);
 onAuthStateChanged(auth,async user=>{if(!user||user.email?.toLowerCase()!==ADMIN_EMAIL){location.replace("login.html");return}$("adminEmail").textContent=user.email;$("loading").remove();$("app").hidden=false;await load();listenToPresence();listenToCleanupStats();await loadMaintenanceSetting();await loadSponsoredAds();await loadAnalyticsReal()});
-</script><script type="module" src="beta-test-control.js?v=1.2.18"></script><script type="module" src="updater-control.js?v=1.0.0"></script><script type="module" src="brand-admin-ui.js?v=1.0.0"></script><script>
+</script><script type="module" src="beta-test-control.js?v=1.2.18"></script><script type="module" src="updater-control.js?v=1.0.0"></script><script type="module" src="brand-admin-ui.js?v=1.0.0"></script><script src="admin-command-ui.js?v=20260927"></script><script>
 (function(){
   const ids=["analyticsDau","analyticsWau","analyticsMessages","analyticsNewUsers"];
   const start=()=>{
