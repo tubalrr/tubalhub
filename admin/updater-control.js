@@ -61,6 +61,47 @@ function computeStatus(c){
   if(c.releaseAt && Date.now()>=new Date(c.releaseAt).getTime())return "LIVE";
   return "SCHEDULED";
 }
+
+async function fetchGitHubJson(url){
+  const response=await fetch(url,{cache:"no-store",headers:{Accept:"application/vnd.github+json"}});
+  if(!response.ok)throw new Error("GitHub API "+response.status);
+  return response.json();
+}
+function summarizeChangedFiles(files){
+  const groups={};
+  const add=(title,desc,icon,type="Improved")=>{
+    if(!groups[title])groups[title]={type,icon,title,desc};
+  };
+  for(const file of (files||[])){
+    const p=String(file.filename||"").toLowerCase();
+    if(/messenger|chat|global-chat/.test(p)) add("Messenger & Chat","Updated Messenger/Chat files and related behavior.","💬","Improved");
+    else if(/feed|comment|reaction/.test(p)) add("Feeds & Community","Updated feed, comments, reactions, or community behavior.","📰","Improved");
+    else if(/admin|updater/.test(p)) add("Admin & Updates","Updated admin controls and release/update handling.","⚙️","Improved");
+    else if(/firebase|firestore|rules|function|storage/.test(p)) add("Backend & Security","Updated Firebase/backend rules, functions, or storage behavior.","🛡️","Improved");
+    else if(/assets\/css|\.css$/.test(p)) add("Interface & Design","Updated interface styling and responsive layout.","🎨","Improved");
+    else if(/assets\/js|\.js$/.test(p)) add("Website Functions","Updated website scripts and interactive features.","⚡","Improved");
+    else if(/index\.html|pages\//.test(p)) add("Pages & Navigation","Updated website pages or navigation.","📄","Improved");
+    else add("General Updates","Updated website files and functionality.","✨","Improved");
+  }
+  return Object.values(groups).slice(0,8);
+}
+async function generateAutoChangelog(){
+  try{
+    const head=await fetchGitHubJson("https://api.github.com/repos/tubalrr/tubalhub/commits/main");
+    const currentManifest=await fetchGitHubJson("https://raw.githubusercontent.com/tubalrr/tubalhub/main/version.json?t="+Date.now());
+    const until=encodeURIComponent(currentManifest.releasedAtReal||new Date().toISOString());
+    const history=await fetchGitHubJson("https://api.github.com/repos/tubalrr/tubalhub/commits?path=version.json&until="+until+"&per_page=1");
+    const base=history?.[0]?.sha;
+    if(!base || !head?.sha || base===head.sha) return {autoChangelog:[],targetCommit:head?.sha||""};
+    const comparison=await fetchGitHubJson("https://api.github.com/repos/tubalrr/tubalhub/compare/"+base+"..."+head.sha);
+    const files=(comparison.files||[]).filter(f=>f.status!=="removed");
+    return {autoChangelog:summarizeChangedFiles(files),targetCommit:head.sha};
+  }catch(error){
+    console.warn("[Updater auto changelog]",error);
+    return {autoChangelog:[],targetCommit:""};
+  }
+}
+
 async function fetchCurrentVersion(){
   try{
     const r=await fetch(VERSION_URL+"?t="+Date.now(),{cache:"no-store"});
@@ -96,8 +137,11 @@ async function saveConfig(statusOverride){
   const releaseAt=releaseInput?localInputToIso(releaseInput,tz):null;
   if(!target)return toast("Enter target version first.");
   if(releaseAt && Number.isNaN(new Date(releaseAt).getTime()))return toast("Invalid release date/time.");
+  const auto=await generateAutoChangelog();
   const payload={
     targetVersion:target,
+    autoChangelog:auto.autoChangelog,
+    targetCommit:auto.targetCommit,
     releaseAt,
     timeZone:tz,
     status:statusOverride||"SCHEDULED",
