@@ -1,11 +1,14 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.2.26",
-  "build": "2026-09-27_1830",
-  "releasedAtReal": "2026-09-27T10:30:00Z",
+  "version": "1.2.27",
+  "build": "2026-09-27_1900",
+  "releasedAtReal": "2026-09-27T11:00:00Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.2.27 FIX — Desktop/tablet Three Brands layout now remains three columns above 700px so equal-height cards stay horizontally aligned in compact desktop views.",
+    "v1.2.27 FIX — Fixed a chatbot JavaScript syntax error caused by using await inside a non-async send handler.",
+    "v1.2.27 FIX — Dashboard document requests now bypass stale browser HTTP cache, and the service-worker registration is versioned to refresh the current shell.",
     "v1.2.26 FIX — The Three Brands cards now use equal-height grid/flex behavior with uniform padding and flex-grown descriptions so all bottom actions align.",
     "v1.2.26 FIX — The Payapang Isip, Shop, and Gaming Zone bento cards now stretch cleanly in the right-hand column with balanced two-row sizing and responsive mobile reset.",
     "v1.2.25 FIX — Homepage authentication controls now sync independently from the main dashboard module, so Login/Sign Up hide after a successful Firebase session.",
@@ -143,6 +146,24 @@
   ],
   "breakingReal": false,
   "changelog": [
+    {
+      "type": "FIX",
+      "icon": "▦",
+      "title": "Three Brands Responsive Grid",
+      "desc": "The Three Brands section now keeps three balanced columns until the compact breakpoint, with equal heights and aligned bottom actions."
+    },
+    {
+      "type": "FIX",
+      "icon": "⚙",
+      "title": "Chatbot Script Error",
+      "desc": "Fixed the async send handler so a JavaScript syntax error no longer stops that module from loading."
+    },
+    {
+      "type": "FIX",
+      "icon": "↻",
+      "title": "Fresh Dashboard Shell",
+      "desc": "Updated the PWA cache/version path and document fetch behavior to reduce stale homepage builds."
+    },
     {
       "type": "FIX",
       "icon": "▦",
@@ -341,5 +362,5 @@
     }
   ],
   "date": "2026-09-27",
-  "changes": "v1.2.26 — Dashboard card alignment and responsive grid consistency."
+  "changes": "v1.2.27 — Responsive alignment, chatbot syntax, and fresh dashboard shell fixes."
 }
