@@ -180,3 +180,112 @@ body.hub-home .th-value-grid > article:nth-child(2):hover{
     transition:none !important;
   }
 }
+
+
+/* =========================================================
+   OUTER ECOSYSTEM BALANCE — TUBAL HUB / THREE BRANDS
+   Layout only. No scripts, IDs, links, themes, or data hooks changed.
+   ========================================================= */
+
+/* The hero and Three Brands are sibling items in the 12-column Bento grid.
+   Give them equal desktop space instead of allowing legacy col-span rules
+   to make one section dominate. */
+body.hub-home #mainContent.bento-grid{
+  width:100% !important;
+  max-width:1280px !important;
+  margin-left:auto !important;
+  margin-right:auto !important;
+  box-sizing:border-box !important;
+}
+
+@media (min-width:1024px){
+  body.hub-home #mainContent.bento-grid{
+    grid-template-columns:repeat(12,minmax(0,1fr)) !important;
+    gap:1.5rem !important;
+    align-items:stretch !important;
+  }
+
+  body.hub-home #mainContent #bentoHero,
+  body.hub-home #mainContent #thBrandPillars{
+    grid-column:span 6 !important;
+    grid-row:auto !important;
+    width:100% !important;
+    max-width:none !important;
+    min-width:0 !important;
+    margin:0 !important;
+    box-sizing:border-box !important;
+    align-self:stretch !important;
+  }
+
+  body.hub-home #mainContent #bentoHero{
+    height:100% !important;
+  }
+
+  body.hub-home #mainContent #thBrandPillars{
+    height:100% !important;
+    min-height:0 !important;
+    display:flex !important;
+    flex-direction:column !important;
+  }
+
+  body.hub-home #mainContent #thBrandPillars .th-pillar-grid{
+    flex:1 1 auto !important;
+    min-height:0 !important;
+  }
+}
+
+/* Equal-height Three Brands cards with a strict header / flexible body /
+   bottom-action structure. All three actions therefore share one baseline. */
+body.hub-home #thBrandPillars .th-pillar-grid{
+  align-items:stretch !important;
+  grid-auto-rows:1fr !important;
+}
+
+body.hub-home #thBrandPillars .th-pillar{
+  display:flex !important;
+  flex-direction:column !important;
+  justify-content:space-between !important;
+  align-items:stretch !important;
+  height:100% !important;
+  min-height:0 !important;
+  min-width:0 !important;
+  box-sizing:border-box !important;
+}
+
+body.hub-home #thBrandPillars .th-pillar > .th-pillar-head{
+  flex:0 0 auto !important;
+  min-width:0 !important;
+}
+
+body.hub-home #thBrandPillars .th-pillar > .th-pillar-content{
+  flex:1 1 auto !important;
+  min-height:0 !important;
+  min-width:0 !important;
+  width:100% !important;
+}
+
+body.hub-home #thBrandPillars .th-pillar > .th-pillar-action{
+  flex:0 0 auto !important;
+  margin-top:auto !important;
+  align-self:flex-start !important;
+  min-height:1.5rem !important;
+}
+
+/* Remove the old inline grid-row behavior so the explicit flex structure
+   above is the single source of truth for vertical alignment. */
+body.hub-home #thBrandPillars .th-pillar{
+  grid-template-rows:none !important;
+}
+
+@media (max-width:1023px){
+  body.hub-home #mainContent #bentoHero,
+  body.hub-home #mainContent #thBrandPillars{
+    width:100% !important;
+    max-width:none !important;
+    min-width:0 !important;
+  }
+
+  body.hub-home #thBrandPillars .th-pillar{
+    min-height:280px !important;
+  }
+}
