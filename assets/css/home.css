@@ -4786,3 +4786,39 @@ section,.section{margin-bottom:16px!important}
 @media(max-width:768px){
   #refreshLiveDataBtn{padding:6px 8px;font-size:9px}
 }
+
+/* TUBAL HUB — FEATURED CAROUSEL STABILITY v1.2.35 */
+#featuredWebsite .featured-track{
+  width:calc(var(--featured-slide-count,5) * 100%) !important;
+  display:flex !important;
+  transition:transform 500ms ease-in-out !important;
+  will-change:transform;
+  transform:translate3d(0,0,0);
+}
+#featuredWebsite .featured-track > .featured-slide{
+  flex:0 0 calc(100% / var(--featured-slide-count,5)) !important;
+  width:calc(100% / var(--featured-slide-count,5)) !important;
+  min-width:calc(100% / var(--featured-slide-count,5)) !important;
+  box-sizing:border-box;
+}
+#featuredWebsite .featured-track.is-dragging{
+  transition:none !important;
+  cursor:grabbing;
+}
+#featuredWebsite .featured-preview-card,
+#featuredWebsite .featured-feature-card,
+#featuredWebsite .featured-game-float-card,
+#featuredWebsite .featured-feed-card{
+  min-width:0;
+  box-sizing:border-box;
+}
+@media(max-width:768px){
+  #featuredWebsite .featured-track{
+    transition:transform 500ms ease-in-out !important;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  #featuredWebsite .featured-track{
+    transition:none !important;
+  }
+}
