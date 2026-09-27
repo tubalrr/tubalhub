@@ -1228,22 +1228,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun openChat(uid: String, name: String) {
-        selectedGroupId = null
-        selectedGroupName = "Group"
-        stopGroupMessages?.remove()
-        selectedUid = uid
-        selectedName = name
-        chatTitleView?.text = "Private Chat • " + name
-        groupAdminButton?.visibility = View.GONE
-        videoCallButton?.visibility = View.VISIBLE
-        videoCallButton?.isEnabled = true
-        messageBox?.removeAllViews()
-        messageBox?.addView(text("Chat with " + name))
-        subscribeMessages()
-        subscribeTyping()
-    }
-
+    
     private fun startVideoCall() {
         val me = auth.currentUser ?: return
         val target = selectedUid ?: return toast("Select a member first.")
