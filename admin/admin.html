@@ -46,10 +46,19 @@
 #updaterStatus[data-status="CANCELLED"]{color:#ff8b8b}
 @media(max-width:900px){.updater-control-panel .updater-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:560px){.updater-control-panel .updater-grid,.updater-form{grid-template-columns:1fr}.updater-test{grid-template-columns:1fr}.updater-test-row input{max-width:none}}
-</style></style></head><body><button id="sidebarToggle" type="button" aria-label="Toggle sidebar" aria-expanded="true"><span></span><span></span><span></span></button>
+</style></style><style>
+.beta-test-panel .beta-test-grid{display:grid;grid-template-columns:1fr auto;gap:10px;margin-top:12px}
+.beta-test-panel input{width:100%;box-sizing:border-box;background:rgba(0,0,0,.18);color:inherit;border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px}
+.beta-test-panel button{border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 13px;background:rgba(29,255,145,.1);color:inherit;cursor:pointer}
+.beta-test-panel .beta-list{display:grid;gap:8px;margin-top:12px}
+.beta-test-panel .beta-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px;border:1px solid rgba(255,255,255,.07);border-radius:10px}
+.beta-test-panel .beta-row button{padding:6px 9px;background:rgba(255,95,95,.08)}
+.beta-test-panel .beta-meta{font-size:11px;opacity:.65;margin-top:8px}
+@media(max-width:560px){.beta-test-panel .beta-test-grid{grid-template-columns:1fr}.beta-test-panel .beta-row{align-items:flex-start;flex-direction:column}}
+</style></head><body><button id="sidebarToggle" type="button" aria-label="Toggle sidebar" aria-expanded="true"><span></span><span></span><span></span></button>
 <div class="admin-shell" id="app" hidden>
 <aside class="sidebar"><a class="brand" href="../index.html"><span class="brand-mark"><img src="../tubal-hub-logo.png?v=aurora-1.2.17" alt="TUBAL HUB logo"></span><span class="brand-copy"><b>TUBAL HUB</b><small>Admin v1.2.17</small></span></a><div class="side-label">ADMIN</div><nav>
-<a class="active" href="#dashboard">⌁ <span>Dashboard</span></a><a href="#members">♙ <span>Users</span><strong id="totalUsersReal">0</strong></a><a href="#chat">◉ <span>Live Chat Logs</span></a><a href="#members">⬢ <span>Moderation</span></a><a href="#sponsoredControl">⬔ <span>Sponsored Manager</span></a><a href="#shopOrders">▣ <span>Shop Orders</span></a><a href="#analytics">◌ <span>Analytics</span></a><a href="#updaterControl">⏱ <span>Updater Control</span></a><a href="#systemSettings">⚙ <span>System Settings</span></a>
+<a class="active" href="#dashboard">⌁ <span>Dashboard</span></a><a href="#members">♙ <span>Users</span><strong id="totalUsersReal">0</strong></a><a href="#chat">◉ <span>Live Chat Logs</span></a><a href="#members">⬢ <span>Moderation</span></a><a href="#sponsoredControl">⬔ <span>Sponsored Manager</span></a><a href="#shopOrders">▣ <span>Shop Orders</span></a><a href="#analytics">◌ <span>Analytics</span></a><a href="#betaTestControl">🧪 <span>Beta Testers</span></a><a href="#updaterControl">⏱ <span>Updater Control</span></a><a href="#systemSettings">⚙ <span>System Settings</span></a>
 </nav><div class="storage-card"><div class="storage-label">Storage</div><div id="storageBadgeReal" class="storage-value">0 deleted</div><div class="storage-progress"><span></span></div><div class="storage-note">Server cleanup: expired media + excess files</div></div></aside>
 <main class="dashboard"><header class="topbar"><div class="topbar-spacer" aria-hidden="true"></div><div class="top-actions"><span id="adminEmail"></span><span class="badgeLiveReal"><i></i> Live • v1.2.17 • Empty real</span><button id="logout">Sign Out</button></div></header>
 <section class="dashboard-head" id="dashboard"><div><div class="eyebrow">TUBAL HUB / ADMIN</div><h1>Dashboard</h1></div><div class="secure-badge">FIREBASE AUTH</div></section>
@@ -73,6 +82,19 @@
 <section class="panel"><div class="panel-head"><div><h2>User Growth</h2><p>New registered users per day</p></div><span>30 DAYS</span></div><div id="newUsersChart" class="analytics-bars"></div></section>
 </div>
 <section class="panel"><div class="panel-head"><div><h2>Retention</h2><p>Real message-based cohort retention</p></div><span>D1 / D7 / D30</span></div><div id="retentionGrid" class="analytics-retention"></div></section>
+</section><section class="panel beta-test-panel" id="betaTestControl">
+<div class="panel-head"><div><small>BETA ACCESS</small><h2>v1.2.18 Beta Testers</h2><p>Admin + maximum 3 testers • Test Mode is browser-local only</p></div><span>BETA</span></div>
+<div class="beta-test-grid">
+<input id="betaEmailInput" type="email" autocomplete="off" placeholder="tester@email.com">
+<button type="button" id="betaAdd">Add Beta</button>
+</div>
+<div id="betaList" class="beta-list"></div>
+<div class="beta-meta" id="betaStatus">Loading beta access…</div>
+<div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
+<button type="button" id="betaSave">Save Beta Emails</button>
+<button type="button" id="betaGoLive">Go Live v1.2.18</button>
+</div>
+<div class="beta-meta">Go Live updates the release gate only. The production version.json remains v1.2.17 until the actual production release is committed.</div>
 </section><section class="panel updater-control-panel" id="updaterControl">
 <div class="panel-head"><div><small>RELEASE CONTROL</small><h2>Scheduled Updater Control</h2><p>PC + mobile • release appears only at the scheduled time</p></div><span>UPDATER</span></div>
 <div class="updater-grid">
@@ -381,4 +403,4 @@ if(sidebarToggle&&sidebar){
 }
 $("logout").onclick=()=>signOut(auth);
 onAuthStateChanged(auth,async user=>{if(!user||user.email?.toLowerCase()!==ADMIN_EMAIL){location.replace("login.html");return}$("adminEmail").textContent=user.email;$("loading").remove();$("app").hidden=false;await load();listenToPresence();listenToCleanupStats();await loadMaintenanceSetting();await loadSponsoredAds();await loadAnalyticsReal()});
-</script><script type="module" src="updater-control.js?v=1.0.0"></script></body></html>
+</script><script type="module" src="beta-test-control.js?v=1.0.0"></script><script type="module" src="updater-control.js?v=1.0.0"></script></body></html>
