@@ -811,7 +811,9 @@ export function createSlider(trackId,prevId,nextId,dotsId,slideSelector=".hero-s
     render();
   };
   const startAuto=()=>{
-    clearInterval(autoTimer);autoTimer=setInterval(()=>go(index+1),horizontal?4000:5000);
+    clearInterval(autoTimer);
+    if(isMobileHome())return;
+    autoTimer=setInterval(()=>go(index+1),horizontal?4000:5000);
   };
   const stopAuto=()=>{
     clearInterval(autoTimer);autoTimer=null;
@@ -1342,14 +1344,15 @@ function initAllSliders(){
       touchStartX=0;
     },{passive:true});
 
-    const timer=setInterval(()=>{
-      if(document.hidden)return;
-      if(isMobileHome() && track.classList.contains("is-touching"))return;
-      if(track.matches(":hover"))return;
-      const step=cardStep()||300;
-      track.scrollBy({left:step,behavior:"smooth"});
-    },5000);
-    sliderTimers.set(id,timer);
+    if(!isMobileHome()){
+      const timer=setInterval(()=>{
+        if(document.hidden)return;
+        if(track.matches(":hover"))return;
+        const step=cardStep()||300;
+        track.scrollBy({left:step,behavior:"smooth"});
+      },5000);
+      sliderTimers.set(id,timer);
+    }
     if("MutationObserver" in window){
       const observer=new MutationObserver(()=>requestAnimationFrame(renderAllSliderDots));
       observer.observe(track,{childList:true});
