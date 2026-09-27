@@ -363,12 +363,13 @@
     }
     if (release.status === "LIVE" || release.status === "SCHEDULED") {
       const target = String(release.targetVersion).replace(/^v/,"");
+      const autoChangelog = Array.isArray(release.autoChangelog) ? release.autoChangelog : [];
       return normalize({
         ...data,
         version: target,
         date: release.releaseAt || data.date,
-        message: data.version === target ? data.message : "Scheduled release is now live.",
-        changelog: data.changelog.length ? data.changelog : [{type:"New",icon:"🚀",title:"TUBAL HUB Update",desc:"The scheduled release is now available."}]
+        message: release.autoMessage || (data.version === target ? data.message : "Automatic summary of the latest TUBAL HUB changes."),
+        changelog: autoChangelog.length ? autoChangelog : (data.changelog.length ? data.changelog : [{type:"New",icon:"🚀",title:"TUBAL HUB Update",desc:"The scheduled release is now live."}])
       });
     }
     return data;
