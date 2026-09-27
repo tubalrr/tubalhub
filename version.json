@@ -1,11 +1,15 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.2.35",
-  "build": "2026-09-27_2025",
-  "releasedAtReal": "2026-09-27T12:25:00Z",
+  "version": "1.2.36",
+  "build": "2026-09-27_2040",
+  "releasedAtReal": "2026-09-27T12:40:00Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.2.36 FIX — Live Stats and Sponsored 1 now share a balanced 6/6 desktop grid row instead of leaving a large empty column area beside the sponsor.",
+    "v1.2.36 FIX — Sponsored 2 remains full-width, while the desktop layout collapses cleanly to one column on mobile.",
+    "v1.2.36 AUDIT — Existing sponsor rendering, Featured carousel, Obsidian surfaces, navigation, and prior card-alignment rules were preserved."
+  ,
     "v1.2.35 FIX — Featured sa Website carousel now uses deterministic slide geometry, 500ms easing, safe initialization, drag controls, dot controls, and continuous 4-second autoplay.",
     "v1.2.35 FIX — Featured previews remain populated from the existing real journal, music, feeds, and Gaming Zone data pipeline without changing those data sources.",
     "v1.2.35 FIX — Sponsored 1/2 rendering retains real Firestore data, Shopee branding, image handling, cached fallback, and full-card interaction; malformed sponsor markup was repaired.",
