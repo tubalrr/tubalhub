@@ -1,11 +1,14 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.2.20",
-  "build": "2026-09-27_0613",
-  "releasedAtReal": "2026-09-27T06:13:46Z",
+  "version": "1.2.21",
+  "build": "2026-09-27_1700",
+  "releasedAtReal": "2026-09-27T09:00:00Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.2.21 release — Homepage refreshed with a cyber dashboard visual layer inspired by the supplied dark TUBAL HUB reference.",
+    "v1.2.21 UI — Sponsored, Gaming Zone, Payapang Isip, Shop and Feeds are arranged as the primary live dashboard surface.",
+    "v1.2.21 UI — Added cool cyan/blue data-stream atmosphere, red neon accents, metallic sponsor treatment, game-card motion and live ticker styling.",
     "v1.2.20 release — TUBAL HUB homepage cards and containers refined with a pure dark Obsidian Gamer surface system.",
     "v1.2.20 update — CTRLZONE is now presented as Gaming Zone under its own TUBAL HUB Gaming navigation branch.",
     "v1.2.20 release — premium sponsored panel with real-link interaction, Shopee branding treatment, amber pulse, red hover edge, and Click to Explore affordance.",
@@ -127,6 +130,11 @@
   ],
   "breakingReal": false,
   "changelog": [
+    {
+      "version": "1.2.21",
+      "date": "2026-09-27",
+      "changes": "Cyber dashboard homepage refresh with live sponsor, Gaming Zone, Payapang Isip, Shop and Feeds surfaces."
+    },
     {
       "version": "1.2.20",
       "date": "2026-09-27",
