@@ -16,7 +16,7 @@
   const EVENT_KEY = "tubalhub_update_event";
   const NATIVE_EVENT_KEY = "tubalhub_last_native_update";
   const UPDATES_ENABLED_KEY = "tubalhub_notif_website_updates";
-  const POLL_MS = 10000;
+  const POLL_MS = 1800000;
   const TOAST_MS = 6000;
 
   let loadedUi = false;
