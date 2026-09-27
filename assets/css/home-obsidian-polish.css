@@ -398,3 +398,36 @@ body.hub-home #sponsoredContainerReal .tubal-sponsor-card-real:hover,
 body.hub-home #sponsoredContainerReal2 .tubal-sponsor-card-real:hover{
   border-color:rgba(255,204,0,.82) !important;
 }
+
+
+/* TUBAL HUB — TOP GRID BALANCE v1.2.36 */
+/* Pair the primary sponsor with Live Stats on the same desktop grid row. */
+@media(min-width:769px){
+  body.hub-home #mainContent > .bento-quick-stats{
+    grid-column:span 6 !important;
+  }
+  body.hub-home #mainContent > #sponsoredContainerReal{
+    grid-column:span 6 !important;
+  }
+}
+
+/* Keep the secondary sponsor full-width so it never leaves a stray one-column gap. */
+body.hub-home #mainContent > #sponsoredContainerReal2{
+  grid-column:1 / -1 !important;
+}
+
+@media(max-width:768px){
+  body.hub-home #mainContent > .bento-quick-stats,
+  body.hub-home #mainContent > #sponsoredContainerReal,
+  body.hub-home #mainContent > #sponsoredContainerReal2{
+    grid-column:1 / -1 !important;
+  }
+}
+
+/* Shared compact Obsidian surface sizing for the top pair. */
+body.hub-home #mainContent > .bento-quick-stats,
+body.hub-home #mainContent > #sponsoredContainerReal,
+body.hub-home #mainContent > #sponsoredContainerReal2{
+  min-width:0 !important;
+  box-sizing:border-box !important;
+}
