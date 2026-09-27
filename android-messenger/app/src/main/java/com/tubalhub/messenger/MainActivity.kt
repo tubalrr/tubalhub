@@ -2007,7 +2007,7 @@ private fun showMessenger() {
                 setPadding(0, 0, 0, 5)
             })
             bubble.addView(TextView(this).apply {
-                setTextColor(if (uid == meUid) 0xFFFFFFFF.toInt() else 0xFF050505.toInt()); textSize = 15f
+                setTextColor(if (senderId == mine) 0xFFFFFFFF.toInt() else 0xFF050505.toInt()); textSize = 15f
                 text = highlightedMentions(body)
             })
             val created = doc.getTimestamp("createdAt")?.toDate()?.time ?: 0L
