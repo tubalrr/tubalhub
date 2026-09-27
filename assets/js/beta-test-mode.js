@@ -1,8 +1,9 @@
 import {auth} from "./firebase-config.js";
-import {getFirestore,doc,getDoc,onSnapshot} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+import {getFirestore,doc,onSnapshot} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+import {onAuthStateChanged} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
 const db=getFirestore();
-const CONFIG=doc(db,"tubаlhub_config","beta".replace("а","a"));
+const CONFIG=doc(db,"tubalhub_config","beta");
 const TEST_KEY="tubalhub_test";
 const TEST_VERSION="v1.2.18";
 let isAllowed=false;
