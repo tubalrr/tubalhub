@@ -778,7 +778,7 @@ class MainActivity : AppCompatActivity() {
     private fun showMessenger() {
         root.removeAllViews()
         root.setPadding(0, 0, 0, 0)
-        root.setBackgroundColor(0xFFF0F2F5.toInt())
+        root.setBackgroundColor(Color.WHITE)
         window.statusBarColor = 0xFFFFFFFF.toInt()
         window.navigationBarColor = 0xFFFFFFFF.toInt()
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR or View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
@@ -794,7 +794,7 @@ class MainActivity : AppCompatActivity() {
 
         val header = LinearLayout(this).apply {
             gravity = Gravity.CENTER_VERTICAL
-            setPadding(18, 12, 18, 10)
+            setPadding(12, 8, 12, 6)
             setBackgroundColor(0xFFFFFFFF.toInt())
         }
         val logo = TextView(this).apply {
@@ -805,18 +805,20 @@ class MainActivity : AppCompatActivity() {
             setTextColor(Color.WHITE)
             background = rounded(0xFF1877F2.toInt(), 50f)
         }
-        header.addView(logo, LinearLayout.LayoutParams(42, 42))
+        logo.elevation = 2f
+        header.addView(logo, LinearLayout.LayoutParams(40, 40))
         header.addView(LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
-            setPadding(12, 0, 0, 0)
+            setPadding(10, 0, 0, 0)
             addView(text("TUBAL HUB").apply {
-                textSize = 18f
+                textSize = 17f
                 typeface = Typeface.DEFAULT_BOLD
                 setTextColor(0xFF050505.toInt())
                 setPadding(0, 0, 0, 1)
             })
             addView(text("Messenger").apply {
-                textSize = 11f
+                textSize = 10.5f
+                typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
                 setTextColor(0xFF1877F2.toInt())
                 setPadding(0, 0, 0, 0)
             })
@@ -843,7 +845,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
         header.addView(meButton, LinearLayout.LayoutParams(42, 42))
-        page.addView(header, LinearLayout.LayoutParams(-1, -2))
+        page.addView(header, LinearLayout.LayoutParams(-1, 58))
 
         val search = EditText(this).apply {
             hint = "Search Messenger"
@@ -854,8 +856,8 @@ class MainActivity : AppCompatActivity() {
             background = rounded(0xFFF0F2F5.toInt(), 50f)
             setPadding(18, 0, 18, 0)
         }
-        page.addView(search, LinearLayout.LayoutParams(-1, 46).apply {
-            leftMargin = 14; rightMargin = 14; bottomMargin = 8
+        page.addView(search, LinearLayout.LayoutParams(-1, 40).apply {
+            leftMargin = 10; rightMargin = 10; bottomMargin = 6
         })
 
         val storiesScroll = HorizontalScrollView(this).apply {
@@ -864,7 +866,7 @@ class MainActivity : AppCompatActivity() {
         }
         val stories = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
         storiesScroll.addView(stories)
-        page.addView(storiesScroll, LinearLayout.LayoutParams(-1, 88))
+        page.addView(storiesScroll, LinearLayout.LayoutParams(-1, 84))
 
         val contentScroll = ScrollView(this).apply {
             isVerticalScrollBarEnabled = false
@@ -876,11 +878,12 @@ class MainActivity : AppCompatActivity() {
         }
         contentScroll.addView(content)
         page.addView(contentScroll, LinearLayout.LayoutParams(-1, 0, 1f))
+        contentScroll.setBackgroundColor(Color.WHITE)
 
         val global = LinearLayout(this).apply {
             gravity = Gravity.CENTER_VERTICAL
-            setPadding(12, 10, 12, 10)
-            background = rounded(0xFFE7F3FF.toInt(), 12f)
+            setPadding(12, 9, 12, 9)
+            background = rounded(0xFFE7F3FF.toInt(), 14f)
             setOnClickListener { openGlobalChat() }
         }
         global.addView(text("💬").apply {
@@ -907,7 +910,7 @@ class MainActivity : AppCompatActivity() {
             setTextColor(0xFF65676B.toInt())
             setPadding(8, 0, 0, 0)
         })
-        content.addView(global, LinearLayout.LayoutParams(-1, 68).apply { bottomMargin = 8 })
+        content.addView(global, LinearLayout.LayoutParams(-1, 62).apply { bottomMargin = 8 })
 
         content.addView(text("Chats").apply {
             textSize = 18f
@@ -992,8 +995,8 @@ class MainActivity : AppCompatActivity() {
                     val row = LinearLayout(this).apply {
                         orientation = LinearLayout.HORIZONTAL
                         gravity = Gravity.CENTER_VERTICAL
-                        setPadding(10, 8, 10, 8)
-                        background = rounded(0xFFFFFFFF.toInt(), 12f)
+                        setPadding(8, 7, 8, 7)
+                        background = rounded(0xFFFFFFFF.toInt(), 10f)
                         setOnClickListener { openChat(doc.id, name) }
                     }
                     val avatar = FrameLayout(this)
@@ -1034,7 +1037,7 @@ class MainActivity : AppCompatActivity() {
                         textSize = 22f
                         setTextColor(0xFFBCC0C4.toInt())
                     })
-                    chatList.addView(row, LinearLayout.LayoutParams(-1, 72))
+                    chatList.addView(row, LinearLayout.LayoutParams(-1, 68))
                 }
             }
         }
@@ -1065,7 +1068,7 @@ class MainActivity : AppCompatActivity() {
                 setTextColor(0xFF65676B.toInt())
             }, LinearLayout.LayoutParams(0, 42, 1f))
         }
-        page.addView(bottom, LinearLayout.LayoutParams(-1, 58))
+        page.addView(bottom, LinearLayout.LayoutParams(-1, 56))
         root.addView(page, LinearLayout.LayoutParams(-1, -1))
         setContentView(root)
     }
