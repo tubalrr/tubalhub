@@ -22,3 +22,23 @@ h1{font-size:22px}h2{font-size:18px}h3{font-size:15px}p,.muted,.row{font-size:13
 @media(max-width:1000px){body{padding:0 12px}.main{padding:0 8px 40px}.grid,.home-top{grid-template-columns:repeat(2,1fr)}.kpis{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:700px){body{padding:0 12px 80px;max-width:none}.main{padding:0 0 80px}.top{height:62px}.top h1{font-size:20px}.hero{padding:14px}.hero h2{font-size:20px}.kpis,.grid,.cards,.home-top{grid-template-columns:repeat(2,1fr);gap:10px}.card{padding:11px}.kpi{min-height:88px}.kpi strong{font-size:20px}.featured,.featured-card,.feature-card,.slider,.carousel,.slide,.promo-card,.ad-card{max-height:160px}.bottom{padding:7px}.quote{font-size:13px}}
 @media(max-width:460px){.kpis,.grid,.cards,.home-top{grid-template-columns:1fr}.hero-actions{gap:6px}.btn{padding:8px 10px}}
+
+/* MOBILE PERFORMANCE — visual-only, no JS/HTML changes */
+@media(max-width:700px){
+  html{scroll-behavior:auto;-webkit-text-size-adjust:100%}
+  body{-webkit-tap-highlight-color:transparent;overscroll-behavior-x:none}
+  .hero,.card{box-shadow:none}
+  .nav button.active{box-shadow:none}
+  .toast{box-shadow:none}
+  .modal-box{box-shadow:none}
+  .featured,.featured-card,.feature-card,.slider,.carousel,.slide,.promo-card,.ad-card{box-shadow:none;transform:none;filter:none}
+  img{content-visibility:auto}
+  button,input,select,textarea{-webkit-appearance:none}
+  .bottom{box-shadow:0 -2px 10px rgba(30,27,22,.05)}
+}
+@media(max-width:460px){
+  .hero,.card{box-shadow:none}
+  .chart{height:140px}
+  .linechart{height:130px}
+  .heat{gap:2px}
+}
