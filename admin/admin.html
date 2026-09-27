@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>TUBAL HUB | Admin v1.2.17</title><script src="https://cdn.tailwindcss.com"></script><script>tailwind.config={theme:{extend:{fontFamily:{sans:['Inter','ui-sans-serif','system-ui','-apple-system','BlinkMacSystemFont','Segoe UI','sans-serif']}}}};</script><link rel="stylesheet" href="admin-dashboard.css?v=1.2.17"><link rel="stylesheet" href="admin-redesign-v1.2.17.css?v=20260925-signoutfix"><style>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>TUBAL HUB | Admin v1.2.17</title><link rel="stylesheet" href="admin-dashboard.css?v=1.2.17"><link rel="stylesheet" href="admin-redesign-v1.2.17.css?v=20260925-signoutfix"><link rel="stylesheet" href="admin-modern-layout.css?v=20260927-safe"><style>
 .analytics-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:18px}
 .analytics-card{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:18px}
 .analytics-card span{display:block;font-size:12px;opacity:.65;text-transform:uppercase;letter-spacing:.08em}
@@ -55,83 +55,12 @@
 .beta-test-panel .beta-row button{padding:6px 9px;background:rgba(255,95,95,.08)}
 .beta-test-panel .beta-meta{font-size:11px;opacity:.65;margin-top:8px}
 @media(max-width:560px){.beta-test-panel .beta-test-grid{grid-template-columns:1fr}.beta-test-panel .beta-row{align-items:flex-start;flex-direction:column}}
-</style>
-<style id="admin-modern-layout">
-:root{--admin-bg:#F8F9FA;--admin-card:#fff;--admin-text:#17212B;--admin-muted:#667085;--admin-border:#E4E7EC;--admin-blue:#2563EB}
-html{scroll-behavior:smooth}
-body{margin:0!important;background:#F8F9FA!important;color:var(--admin-text)!important;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif!important}
-.admin-shell{background:#F8F9FA!important;min-height:100vh}
-.sidebar{background:#fff!important;border-right:1px solid #E4E7EC!important;box-shadow:8px 0 28px rgba(16,24,40,.05)!important}
-.brand,.sidebar nav a{color:#344054!important}
-.brand b{color:#101828!important}
-.sidebar nav a:hover{background:#F2F4F7!important;border-color:#EAECF0!important;color:#101828!important}
-.sidebar nav a.active{background:#EFF6FF!important;border-color:#BFDBFE!important;color:#1D4ED8!important;box-shadow:none!important}
-.side-label{color:#98A2B3!important}
-.storage-card{background:#F8FAFC!important;border:1px solid #EAECF0!important;color:#475467!important}
-.dashboard{width:calc(100% - 258px)!important;margin-left:258px!important;background:#F8F9FA!important;padding:0 28px 42px!important}
-.topbar{position:sticky!important;top:0!important;z-index:40;height:72px!important;background:rgba(248,249,250,.95)!important;border-bottom:1px solid #EAECF0!important;backdrop-filter:blur(14px)}
-.topbar-spacer{display:none!important}
-.topbar-left{display:flex;align-items:center;gap:10px}
-.topbar-brand{font-size:18px;font-weight:800;letter-spacing:-.02em;color:#101828}
-.topbar-divider{color:#98A2B3}
-.topbar-version{font-size:13px;color:#667085;font-weight:600}
-.top-actions{gap:10px!important;flex-wrap:wrap}
-.top-actions>span{color:#475467!important;font-size:12px!important}
-#logout{background:#fff!important;color:#344054!important;border:1px solid #D0D5DD!important;border-radius:10px!important}
-#logout:hover{background:#F9FAFB!important;border-color:#98A2B3!important;box-shadow:none!important}
-.presence-pill,.realtime-pill{display:inline-flex;align-items:center;gap:7px;padding:7px 10px;border:1px solid #E4E7EC;border-radius:999px;background:#fff;color:#344054!important;font-weight:700}
-.status-dot{width:7px;height:7px;border-radius:50%;background:#22C55E;box-shadow:0 0 0 3px rgba(34,197,94,.12)}
-.dashboard-head{display:flex!important;align-items:center;justify-content:space-between;margin:24px 0 18px!important;padding:0!important;border:0!important;background:transparent!important}
-.dashboard-head h1{font-size:28px!important;letter-spacing:-.03em!important;color:#101828!important}
-.secure-badge{border:1px solid #D0D5DD!important;background:#fff!important;color:#475467!important;border-radius:999px!important;padding:7px 11px!important}
-.stats{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:16px!important;margin-bottom:20px!important}
-.stat{min-height:126px!important;background:#fff!important;border:1px solid #E4E7EC!important;border-radius:16px!important;box-shadow:0 1px 3px rgba(16,24,40,.05)!important;padding:18px!important;transform:none!important}
-.stat:hover{transform:translateY(-2px)!important;border-color:#D0D5DD!important}
-.stat .metric-icon{width:38px;height:38px;display:grid;place-items:center;border-radius:11px;background:#F2F4F7;color:#475467;font-size:18px;margin-bottom:13px}
-.stat .metric-label{display:block!important;color:#667085!important;font-size:11px!important;font-weight:700!important;letter-spacing:.06em;text-transform:uppercase}
-.stat .metric-value{display:block!important;color:#101828!important;font-size:30px!important;line-height:1.1!important;margin-top:4px!important}
-.stat .metric-note{display:block!important;color:#98A2B3!important;font-size:11px!important;margin-top:6px!important}
-.stat>span:not(.metric-label),.stat>b{display:none!important}
-.modern-section{background:#fff!important;border:1px solid #E4E7EC!important;border-radius:18px!important;box-shadow:0 1px 3px rgba(16,24,40,.05)!important;color:#17212B!important}
-.modern-section .panel-head{border-bottom:1px solid #EAECF0!important;margin-bottom:16px!important}
-.modern-section .panel-head h2{color:#101828!important;font-size:18px!important}
-.modern-section .panel-head small,.modern-section .panel-head p{color:#667085!important}
-.modern-section .panel-head>span{background:#F8FAFC!important;border-color:#EAECF0!important;color:#475467!important}
-.modern-section input,.modern-section textarea,.modern-section select{background:#fff!important;color:#101828!important;border-color:#D0D5DD!important}
-.modern-section input::placeholder,.modern-section textarea::placeholder{color:#98A2B3!important}
-.modern-section button{color:#344054}
-.admin-main-grid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:18px;align-items:start}
-.admin-main-grid>.full-span{grid-column:1/-1}
-.admin-secondary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;align-items:start}
-.admin-section-label{display:flex;align-items:center;gap:9px;margin:26px 0 12px;color:#344054;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
-.section-icon{width:30px;height:30px;border:1px solid #E4E7EC;border-radius:9px;background:#fff;display:grid;place-items:center;font-size:14px;box-shadow:0 1px 2px rgba(16,24,40,.03)}
-#analytics{padding:18px!important}
-#analytics .analytics-layout{grid-template-columns:minmax(0,1.45fr) minmax(0,1fr)!important;gap:16px!important}
-#analytics .analytics-layout>.panel{background:#fff!important;border:1px solid #EAECF0!important;box-shadow:none!important;border-radius:14px!important}
-.beta-highlight{border:2px solid #3B82F6!important;box-shadow:0 0 0 4px rgba(59,130,246,.07),0 8px 24px rgba(59,130,246,.10)!important}
-.beta-highlight .panel-head>span{color:#1D4ED8!important;background:#EFF6FF!important;border-color:#BFDBFE!important}
-#updaterControl .updater-card,#updaterControl .updater-test{background:#F8FAFC!important;border-color:#E4E7EC!important}
-#updaterControl .updater-card input,#updaterControl .updater-form input,#updaterControl .updater-form select,#updaterControl .updater-test-row input{background:#fff!important;color:#101828!important;border-color:#D0D5DD!important}
-#systemSettings{padding:18px!important}
-.system-tools-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
-.system-tool{background:#F8FAFC;border:1px solid #EAECF0;border-radius:14px;padding:15px}
-.system-tool h3{margin:0 0 5px;color:#101828;font-size:14px}
-.system-tool p{margin:0;color:#667085;font-size:11px;line-height:1.55}
-.system-tool .system-action{display:inline-flex;align-items:center;justify-content:center;margin-top:12px;padding:8px 10px;border-radius:9px;border:1px solid #D0D5DD;background:#fff;color:#344054;font-size:11px;text-decoration:none;font-weight:700}
-.system-tool .system-action:hover{background:#F9FAFB}
-.system-status{display:flex;align-items:center;gap:8px;margin-top:12px;color:#475467;font-size:11px;font-weight:700}
-.legacy-metrics{display:none!important}
-footer{color:#98A2B3!important;border-color:#EAECF0!important}
-@media(max-width:1100px){.dashboard{width:100%!important;margin-left:0!important;padding-left:18px!important;padding-right:18px!important}.stats{grid-template-columns:repeat(2,minmax(0,1fr))!important}.admin-main-grid,.admin-secondary-grid{grid-template-columns:1fr}.admin-main-grid>.full-span{grid-column:auto}.system-tools-grid{grid-template-columns:1fr 1fr}}
-@media(max-width:700px){.dashboard{padding:0 14px 28px!important}.topbar{height:auto!important;padding:12px 0}.topbar-left{min-width:0}.topbar-brand{font-size:16px}.topbar-version{font-size:11px}.top-actions{gap:7px!important}.presence-pill,.realtime-pill{padding:6px 8px;font-size:10px}.dashboard-head{margin-top:18px!important}.analytics-grid{grid-template-columns:1fr 1fr!important}.system-tools-grid{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr!important}}
-@media(max-width:480px){.stats{grid-template-columns:1fr!important}.topbar{align-items:flex-start}.topbar-brand{font-size:15px}.topbar-version{font-size:10px}.top-actions>span#adminEmail{display:none}}
 </style></head><body><button id="sidebarToggle" type="button" aria-label="Toggle sidebar" aria-expanded="true"><span></span><span></span><span></span></button>
 <div class="admin-shell" id="app" hidden>
 <aside class="sidebar"><a class="brand" href="../index.html"><span class="brand-mark"><img src="../tubal-hub-logo.png?v=aurora-1.2.17" alt="TUBAL HUB logo"></span><span class="brand-copy"><b>TUBAL HUB</b><small>Admin v1.2.17</small></span></a><div class="side-label">ADMIN</div><nav>
-<a class="active" href="#dashboard">⌁ <span>Dashboard</span></a><a href="#members">♙ <span>Users</span><strong id="totalUsersReal">0</strong></a><a href="#chat">◉ <span>Live Chat Logs</span></a><a href="#members">⬢ <span>Moderation</span></a><a href="#sponsoredControl">⬔ <span>Sponsored Manager</span></a><a href="#shopOrders">▣ <span>Shop Orders</span></a><a href="#analytics">◌ <span>Analytics</span></a><a href="#betaTestControl">🧪 <span>Beta Control</span></a><a href="#updaterControl">⏱ <span>Updater Control</span></a><a href="#systemSettings">⚙ <span>System</span></a>
+<a class="active" href="#dashboard">⌁ <span>Dashboard</span></a><a href="#members">♙ <span>Users</span><strong id="totalUsersReal">0</strong></a><a href="#chat">◉ <span>Live Chat Logs</span></a><a href="#members">⬢ <span>Moderation</span></a><a href="#sponsoredControl">⬔ <span>Sponsored Manager</span></a><a href="#shopOrders">▣ <span>Shop Orders</span></a><a href="#analytics">◌ <span>Analytics</span></a><a href="#betaTestControl">🧪 <span>Beta Testers</span></a><a href="#updaterControl">⏱ <span>Updater Control</span></a><a href="#systemSettings">⚙ <span>System Settings</span></a>
 </nav><div class="storage-card"><div class="storage-label">Storage</div><div id="storageBadgeReal" class="storage-value">0 deleted</div><div class="storage-progress"><span></span></div><div class="storage-note">Server cleanup: expired media + excess files</div></div></aside>
-<main class="dashboard">
-<header class="topbar">
+<main class="dashboard"><header class="topbar">
   <div class="topbar-left">
     <span class="topbar-brand">TUBAL HUB</span><span class="topbar-divider">|</span><span class="topbar-version">Admin v1.2.17</span>
   </div>
@@ -142,7 +71,7 @@ footer{color:#98A2B3!important;border-color:#EAECF0!important}
     <button id="logout">Sign Out</button>
   </div>
 </header>
-<section class="dashboard-head" id="dashboard"><div><div class="eyebrow">TUBAL HUB / ADMIN</div><h1>Admin Dashboard</h1></div><div class="secure-badge">FIREBASE AUTH</div></section>
+<section class="dashboard-head" id="dashboard"><div><div class="eyebrow">TUBAL HUB / ADMIN</div><h1>Dashboard</h1></div><div class="secure-badge">FIREBASE AUTH</div></section>
 <section class="stats">
   <div class="stat"><div class="metric-icon">◔</div><span class="metric-label">DAU</span><strong class="metric-value" id="analyticsDau">—</strong><small class="metric-note">Unique active users today</small></div>
   <div class="stat"><div class="metric-icon">◫</div><span class="metric-label">WAU</span><strong class="metric-value" id="analyticsWau">—</strong><small class="metric-note">Unique active users • last 7 days</small></div>
@@ -150,9 +79,9 @@ footer{color:#98A2B3!important;border-color:#EAECF0!important}
   <div class="stat"><div class="metric-icon">♙</div><span class="metric-label">New Users / 30d</span><strong class="metric-value" id="analyticsNewUsers">—</strong><small class="metric-note">Based on user creation date</small></div>
 </section>
 <div class="legacy-metrics" aria-hidden="true"><span id="totalUsersCard">0</span><span id="totalMsgsReal">0</span><span id="blockedReal">0</span></div>
-
-<div class="admin-section-label"><span class="section-icon">📊</span><span>Analytics</span></div>
-<div class="admin-main-grid"><div class="full-span"><section class="panel modern-section" id="analytics">
+<section class="dashboard-grid"><section class="panel recent-panel"><div class="panel-head"><div><h2>Recent users</h2><p>Same function • di sira • v1.2.17</p></div><span>USERS</span></div><div id="recentUsers" class="recent-users"></div></section>
+<section class="panel sponsor-dashboard" id="sponsoredControl"><div class="panel-head"><div><h2>Sponsored Manager</h2><p>Sa ilalim ng Live Stats • Empty real • Dynamic Firestore</p></div><span>FIRESTORE</span></div><div class="sponsorBoxReal"><div class="sponsor-icon">◫</div><b>No sponsor yet</b><p>Empty lang real • ready for future sponsor<br>Walang hardcoded "Your Sponsor Here"</p><small>Firestore: sponsors • isActive == true</small></div><div class="form-grid sponsor-form"><select id="saSlot"><option value="1">Sponsored 1</option><option value="2">Sponsored 2</option></select><input id="saTitle" placeholder="Sponsor title"><input id="saText" placeholder="Sponsor description"><input id="saImage" placeholder="Image URL (optional)"><input id="saUrl" placeholder="Sponsor / product URL (optional)"><input id="saBadge" placeholder="Badge e.g. SPONSORED" value="SPONSORED"><button type="button" id="addSponsoredAd">Publish Sponsored →</button></div><small class="form-note">Published ads appear automatically below Live Stats on the homepage. One active sponsor per slot • Sponsored 1 and Sponsored 2</small><div id="sponsoredAdList"></div></section></section>
+<div class="admin-section-label tw"><span class="section-icon">📊</span><span>Analytics</span></div><section class="panel" id="analytics">
 <div class="panel-head"><div><small>REAL FIRESTORE ANALYTICS</small><h2>Analytics</h2><p id="analyticsUpdated">Loading real activity data…</p></div><span>SERVER</span></div>
 
 <div class="analytics-layout">
@@ -164,11 +93,8 @@ footer{color:#98A2B3!important;border-color:#EAECF0!important}
 <section class="panel"><div class="panel-head"><div><h2>User Growth</h2><p>New registered users per day</p></div><span>30 DAYS</span></div><div id="newUsersChart" class="analytics-bars"></div></section>
 </div>
 <section class="panel"><div class="panel-head"><div><h2>Retention</h2><p>Real message-based cohort retention</p></div><span>D1 / D7 / D30</span></div><div id="retentionGrid" class="analytics-retention"></div></section>
-</section></div></div>
-
-<div class="admin-section-label"><span class="section-icon">🧪</span><span>Beta Control / Release</span></div>
-<div class="admin-main-grid"><div><section class="panel modern-section beta-test-panel beta-highlight" id="betaTestControl">
-<div class="panel-head"><div><small>BETA ACCESS</small><h2>v1.2.18 Beta Testers</h2><p>Admin + maximum 3 testers • Test Mode is browser-local only</p></div><span>BETA</span></div>
+</section><div class="admin-section-label tw"><span class="section-icon">🧪</span><span>Beta Control</span></div><section class="panel beta-test-panel" id="betaTestControl">
+<div class="panel-head"><div><small>BETA ACCESS</small><h2>v1.2.18 Beta Access</h2><p>Admin + maximum 3 testers • Test Mode is browser-local only</p></div><span>BETA CONTROL</span></div>
 <div class="beta-test-grid">
 <input id="betaEmailInput" type="email" autocomplete="off" placeholder="tester@email.com">
 <button type="button" id="betaAdd">Add Beta</button>
@@ -180,7 +106,7 @@ footer{color:#98A2B3!important;border-color:#EAECF0!important}
 <button type="button" id="betaGoLive" class="tubal-go-live-v1218">✅ Go Live v1.2.18</button>
 </div>
 <div class="beta-meta">Go Live commits version.json v1.2.18 through the secure server release function. GitHub credentials never run in the browser.</div>
-</section></div><div><section class="panel modern-section updater-control-panel" id="updaterControl">
+</section><section class="panel updater-control-panel" id="updaterControl">
 <div class="panel-head"><div><small>RELEASE CONTROL</small><h2>Scheduled Updater Control</h2><p>PC + mobile • release appears only at the scheduled time</p></div><span>UPDATER</span></div>
 <div class="updater-grid">
 <div class="updater-card"><span>Current Version</span><strong id="updaterCurrentVersion">v1.2.17</strong><small>Source: version.json</small></div>
@@ -204,60 +130,14 @@ footer{color:#98A2B3!important;border-color:#EAECF0!important}
 <div class="updater-test-row"><input id="updaterTestVersion" placeholder="9.9.99" inputmode="decimal"><button type="button" id="updaterRunTest">Run Update Test</button><button type="button" id="updaterClearTest">Clear Test</button></div>
 </div>
 <div class="updater-note">Release logic: <b>SCHEDULED</b> = hidden before release time, <b>LIVE</b> = updater available on PC + mobile, <b>CANCELLED</b> = hidden. The GitHub code can already be uploaded before the scheduled release.</div>
-</section></div></div>
-
-<div class="admin-section-label"><span class="section-icon">⚙️</span><span>System</span></div>
-<section class="panel modern-section" id="systemSettings">
-  <div class="panel-head"><div><small>SYSTEM CONTROL</small><h2>⚙️ System</h2><p>Maintenance, Firebase Auth, Firestore and secure server controls</p></div><span>SYSTEM</span></div>
-  <div class="system-tools-grid">
-    <div class="system-tool">
-      <h3>🔐 Firebase Auth</h3>
-      <p>Protected administrator session using the existing Firebase Authentication check.</p>
-      <div class="system-status"><i class="status-dot"></i><span>Authenticated admin session</span></div>
-    </div>
-    <div class="system-tool">
-      <h3>☁️ Firestore Controls</h3>
-      <p>Jump directly to the live Firestore-backed admin controls already on this page.</p>
-      <div class="flex flex-wrap gap-2 mt-3">
-        <a class="system-action" href="#analytics">Analytics</a>
-        <a class="system-action" href="#members">Members</a>
-        <a class="system-action" href="#chat">Global Chat</a>
-      </div>
-    </div>
-    <div class="system-tool">
-      <h3>🛡️ Secure Server</h3>
-      <p>Protect existing shop download URLs by moving legacy public links into private server-only storage.</p>
-      <button type="button" id="migrateShopDownloads" class="system-action">Run Secure Migration →</button>
-    </div>
-  </div>
-  <div class="mt-4 rounded-xl border border-slate-200 bg-white p-4">
-    <div class="system-setting-row">
-      <div><b>Maintenance mode</b><small>Temporarily show a maintenance screen to visitors. Admin access stays available.</small></div>
-      <label class="switchReal"><input id="maintenanceMode" type="checkbox"><span></span></label>
-    </div>
-    <div id="maintenanceStatus" class="system-setting-status mt-3">Loading setting…</div>
-  </div>
-</section>
-
-<div class="admin-section-label"><span class="section-icon">🛡️</span><span>Community Moderation</span></div>
-<div class="admin-main-grid"><div class="full-span"><section class="panel modern-section" id="chat"><div class="panel-head"><div><small>COMMUNITY MODERATION</small><h2>Global Chat</h2></div><button type="button" id="openChatLogs" class="members-open-btn">View Global Chat Logs →</button></div><div id="chatContent" class="members-content" hidden><div id="chatList"></div></div></section></div></div>
-
-<div class="admin-section-label"><span class="section-icon">🧰</span><span>Operations</span></div>
-<div class="admin-secondary-grid">
-<section class="panel modern-section sponsor-dashboard" id="sponsoredControl"><div class="panel-head"><div><h2>Sponsored Manager</h2><p>Sa ilalim ng Live Stats • Empty real • Dynamic Firestore</p></div><span>FIRESTORE</span></div><div class="sponsorBoxReal"><div class="sponsor-icon">◫</div><b>No sponsor yet</b><p>Empty lang real • ready for future sponsor<br>Walang hardcoded "Your Sponsor Here"</p><small>Firestore: sponsors • isActive == true</small></div><div class="form-grid sponsor-form"><select id="saSlot"><option value="1">Sponsored 1</option><option value="2">Sponsored 2</option></select><input id="saTitle" placeholder="Sponsor title"><input id="saText" placeholder="Sponsor description"><input id="saImage" placeholder="Image URL (optional)"><input id="saUrl" placeholder="Sponsor / product URL (optional)"><input id="saBadge" placeholder="Badge e.g. SPONSORED" value="SPONSORED"><button type="button" id="addSponsoredAd">Publish Sponsored →</button></div><small class="form-note">Published ads appear automatically below Live Stats on the homepage. One active sponsor per slot • Sponsored 1 and Sponsored 2</small><div id="sponsoredAdList"></div></section>
-<section class="panel modern-section" id="members"><div class="panel-head"><div><small>MEMBER CONTROL</small><h2>Registered Members</h2></div><button type="button" id="openMembers" class="members-open-btn">View Registered Members →</button></div><div id="membersContent" class="members-content" hidden><div class="moderation-toolbar"><label>Ban duration <select id="banDuration"><option value="permanent">Permanent</option><option value="1h">1 hour</option><option value="6h">6 hours</option><option value="12h">12 hours</option><option value="1d">1 day</option><option value="3d">3 days</option><option value="7d">7 days</option><option value="30d">30 days</option></select></label><small>Ban expires automatically when the selected time ends.</small></div><div id="memberList" class="table-list"></div></div></section>
-<section class="panel modern-section" id="shopProducts"><div class="panel-head"><div><small>SHOP CONTROL</small><h2>Products</h2><p>Physical + Digital + Versioned products</p></div><span>FIRESTORE</span></div><div class="form-grid"><input id="spName" placeholder="Product name"><select id="spProductType"><option value="physical">Physical</option><option value="digital-product">Digital Product</option><option value="website-template">Website Template</option><option value="app-software">App / Software</option><option value="game-mod">Game / Mod</option></select><select id="spCategory"><option value="merchandise">Merchandise</option><option value="clothing">Clothing</option><option value="accessories">Accessories</option><option value="digital-products">Digital Products</option><option value="apps-software">Apps & Software</option><option value="gaming">Gaming</option><option value="mods-addons">Mods & Add-ons</option><option value="media">Media</option><option value="wellness">Wellness</option><option value="other">Other</option></select><input id="spVersion" placeholder="Version e.g. 1.2.17"><input id="spReleaseDate" type="date" title="Release date"><input id="spLicense" placeholder="License e.g. Personal / Commercial"><input id="spUpgradePrice" placeholder="Upgrade price e.g. ₱299 or Free"><input id="spLatestVersion" placeholder="Latest version e.g. 1.2.17"><input id="spPrice" placeholder="Price e.g. Free or ₱999"><input id="spIcon" placeholder="Icon / emoji e.g. 🧩"><input id="spBadge" placeholder="Badge e.g. NEW"><input id="spImage" placeholder="Image URL (optional)"><input id="spUrl" placeholder="Product URL (optional)"><input id="spDownloadUrl" placeholder="Protected download path or source (server only)"><textarea id="spDescription" placeholder="Product description..."></textarea><textarea id="spIncludes" placeholder="What's included..."></textarea><textarea id="spChangelog" placeholder="Changelog..."></textarea><button id="addShopProduct">Publish Product →</button></div><div id="shopProductList"></div></section>
-<section class="panel modern-section" id="shopOrders"><div class="panel-head"><div><small>SHOP CONTROL</small><h2>Orders & Payment Verification</h2><p>Pending manual payments • server unlock after approval</p></div><span>SECURE SERVER</span></div><div id="shopOrderList"></div></section>
-<section class="panel modern-section" id="content"><div class="panel-head"><div><small>CONTENT CONTROL</small><h2>News Manager</h2></div><span>FIRESTORE</span></div><div class="form-grid"><input id="nt" placeholder="News title"><input id="nd" placeholder="Date"><select id="nc"><option value="platform">Platform</option><option value="community">Community</option><option value="creator">Creator</option></select><input id="na" placeholder="Article link (optional)"><input id="ni" placeholder="Image URL (optional)"><textarea id="nx" placeholder="Write your news content..."></textarea><button id="addNews">Publish News →</button></div><div id="newsList"></div></section>
-<section class="panel modern-section" id="eventsManager"><div class="panel-head"><div><small>COMMUNITY CONTROL</small><h2>Events Manager</h2></div><span>FIRESTORE</span></div><div class="form-grid"><input id="et" placeholder="Event title"><input id="ed" type="date" title="Event date"><input id="etime" type="time" title="Event time"><input id="el" placeholder="Location / platform"><textarea id="ex" placeholder="Write your event details..."></textarea><button id="addEvent">Publish Event →</button></div><div id="eventListAdmin"></div></section>
-<section class="panel modern-section" id="announcements"><div class="panel-head"><div><small>PLATFORM CONTROL</small><h2>Announcements</h2></div><span>FIRESTORE</span></div><div class="form-grid"><input id="at" placeholder="Announcement title"><textarea id="ax" placeholder="Write your announcement..."></textarea><button id="addAnn">Publish Announcement →</button></div><div id="annList"></div></section>
-</div>
-
+</section><div class="admin-section-label tw"><span class="section-icon">⚙️</span><span>System</span></div><section class="panel" id="systemSettings"><div class="panel-head"><div><small>SYSTEM SETTINGS</small><h2>System Settings</h2><p>Control public site availability</p></div><span>FIRESTORE</span></div><div class="system-setting-row"><div><b>Maintenance mode</b><small>Temporarily show a maintenance screen to visitors. Admin access stays available.</small></div><label class="switchReal"><input id="maintenanceMode" type="checkbox"><span></span></label></div><div id="maintenanceStatus" class="system-setting-status">Loading setting…</div></section><div class="admin-section-label tw"><span class="section-icon">🧰</span><span>Operations</span></div><section class="panel" id="shopProducts"><div class="panel-head"><div><small>SHOP CONTROL</small><h2>Products</h2><p>Physical + Digital + Versioned products</p></div><span>FIRESTORE</span></div><div class="form-grid"><input id="spName" placeholder="Product name"><select id="spProductType"><option value="physical">Physical</option><option value="digital-product">Digital Product</option><option value="website-template">Website Template</option><option value="app-software">App / Software</option><option value="game-mod">Game / Mod</option></select><select id="spCategory"><option value="merchandise">Merchandise</option><option value="clothing">Clothing</option><option value="accessories">Accessories</option><option value="digital-products">Digital Products</option><option value="apps-software">Apps & Software</option><option value="gaming">Gaming</option><option value="mods-addons">Mods & Add-ons</option><option value="media">Media</option><option value="wellness">Wellness</option><option value="other">Other</option></select><input id="spVersion" placeholder="Version e.g. 1.2.17"><input id="spReleaseDate" type="date" title="Release date"><input id="spLicense" placeholder="License e.g. Personal / Commercial"><input id="spUpgradePrice" placeholder="Upgrade price e.g. ₱299 or Free"><input id="spLatestVersion" placeholder="Latest version e.g. 1.2.17"><input id="spPrice" placeholder="Price e.g. Free or ₱999"><input id="spIcon" placeholder="Icon / emoji e.g. 🧩"><input id="spBadge" placeholder="Badge e.g. NEW"><input id="spImage" placeholder="Image URL (optional)"><input id="spUrl" placeholder="Product URL (optional)"><input id="spDownloadUrl" placeholder="Protected download path or source (server only)"><textarea id="spDescription" placeholder="Product description..."></textarea><textarea id="spIncludes" placeholder="What's included..."></textarea><textarea id="spChangelog" placeholder="Changelog..."></textarea><button id="addShopProduct">Publish Product →</button></div><div id="shopProductList"></div></section>
+<section class="panel" id="shopOrders"><div class="panel-head"><div><small>SHOP CONTROL</small><h2>Orders & Payment Verification</h2><p>Pending manual payments • server unlock after approval</p></div><span>SECURE SERVER</span></div><div style="display:flex;gap:10px;flex-wrap:wrap;margin:0 0 14px"><button type="button" id="migrateShopDownloads">Protect Existing Download URLs →</button><small style="opacity:.7;align-self:center">Moves legacy product download URLs into private server-only storage.</small></div><div id="shopOrderList"></div></section>
+<section class="panel" id="content"><div class="panel-head"><div><small>CONTENT CONTROL</small><h2>News Manager</h2></div><span>FIRESTORE</span></div><div class="form-grid"><input id="nt" placeholder="News title"><input id="nd" placeholder="Date"><select id="nc"><option value="platform">Platform</option><option value="community">Community</option><option value="creator">Creator</option></select><input id="na" placeholder="Article link (optional)"><input id="ni" placeholder="Image URL (optional)"><textarea id="nx" placeholder="Write your news content..."></textarea><button id="addNews">Publish News →</button></div><div id="newsList"></div></section>
+<section class="panel" id="eventsManager"><div class="panel-head"><div><small>COMMUNITY CONTROL</small><h2>Events Manager</h2></div><span>FIRESTORE</span></div><div class="form-grid"><input id="et" placeholder="Event title"><input id="ed" type="date" title="Event date"><input id="etime" type="time" title="Event time"><input id="el" placeholder="Location / platform"><textarea id="ex" placeholder="Write your event details..."></textarea><button id="addEvent">Publish Event →</button></div><div id="eventListAdmin"></div></section><section class="panel" id="announcements"><div class="panel-head"><div><small>PLATFORM CONTROL</small><h2>Announcements</h2></div><span>FIRESTORE</span></div><div class="form-grid"><input id="at" placeholder="Announcement title"><textarea id="ax" placeholder="Write your announcement..."></textarea><button id="addAnn">Publish Announcement →</button></div><div id="annList"></div></section>
+<section class="panel" id="members"><div class="panel-head"><div><small>MEMBER CONTROL</small><h2>Registered Members</h2></div><button type="button" id="openMembers" class="members-open-btn">View Registered Members →</button></div><div id="membersContent" class="members-content" hidden><div class="moderation-toolbar"><label>Ban duration <select id="banDuration"><option value="permanent">Permanent</option><option value="1h">1 hour</option><option value="6h">6 hours</option><option value="12h">12 hours</option><option value="1d">1 day</option><option value="3d">3 days</option><option value="7d">7 days</option><option value="30d">30 days</option></select></label><small>Ban expires automatically when the selected time ends.</small></div><div id="memberList" class="table-list"></div></div></section>
+<div class="admin-section-label tw"><span class="section-icon">🛡️</span><span>Community Moderation</span></div><section class="panel" id="chat"><div class="panel-head"><div><small>COMMUNITY MODERATION</small><h2>Global Chat</h2></div><button type="button" id="openChatLogs" class="members-open-btn">View Global Chat Logs →</button></div><div id="chatContent" class="members-content" hidden><div id="chatList"></div></div></section>
 <div id="banModal" class="ban-modal" hidden><div class="ban-modal-card"><div class="ban-modal-head"><div><small>MEMBER MODERATION</small><h3>Ban Member</h3><p id="banTargetName">Member</p></div><button type="button" id="closeBanModal">×</button></div><div class="ban-options"><button type="button" data-duration="1h">1 Hour</button><button type="button" data-duration="6h">6 Hours</button><button type="button" data-duration="12h">12 Hours</button><button type="button" data-duration="1d">1 Day</button><button type="button" data-duration="3d">3 Days</button><button type="button" data-duration="7d">7 Days</button><button type="button" data-duration="30d">30 Days</button><button type="button" data-duration="permanent">Permanent</button></div><input id="banReasonInput" placeholder="Ban reason (optional)"><div class="ban-modal-actions"><button type="button" id="cancelBan">Cancel</button><button type="button" id="confirmBan">Confirm Ban</button></div></div></div>
-
-<div id="toast" class="toast"></div>
-<footer>© 2026 TUBAL HUB • Admin Control Center • v1.2.17</footer>
-</main><script type="module">
+<div id="toast" class="toast"></div><footer>© 2026 TUBAL HUB • Admin Control Center • v1.2.17</footer></main></div><div id="loading" class="loading">Checking administrator access…</div><script type="module">
 import {auth} from "../assets/js/firebase-config.js";
 import {onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 import {getFirestore,collection,getDocs,addDoc,deleteDoc,doc,query,where,orderBy,limit,startAfter,serverTimestamp,updateDoc,Timestamp,writeBatch,onSnapshot,setDoc} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
