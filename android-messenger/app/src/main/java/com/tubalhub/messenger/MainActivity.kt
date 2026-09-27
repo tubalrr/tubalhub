@@ -74,6 +74,7 @@ class MainActivity : AppCompatActivity() {
     private var groupAdminButton: Button? = null
     private var chatTitleView: TextView? = null
     private var selectedGlobalChat = false
+    private var messengerDarkMode = false
     private var stopGlobalMessages: com.google.firebase.firestore.ListenerRegistration? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -1146,13 +1147,7 @@ private fun showMessenger() {
             textSize = 18f
             background = rounded(0xFFE7F3FF.toInt(), 50f)
             setTextColor(0xFF1877F2.toInt())
-            setOnClickListener {
-                AlertDialog.Builder(this@MainActivity)
-                    .setTitle(name)
-                    .setMessage("TUBAL HUB Messenger\n\nPrivate Firestore conversation.")
-                    .setPositiveButton("Done", null)
-                    .show()
-            }
+            setOnClickListener { showChatInfo(name) }
         }, LinearLayout.LayoutParams(44, 44))
         page.addView(head, LinearLayout.LayoutParams(-1, 64))
 
@@ -2268,6 +2263,95 @@ private fun openGlobalChat() {
         subscribeGlobalMessages()
     }
 
+    private fun showChatInfo(name: String) {
+        val me = auth.currentUser
+        val panel = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(8, 4, 8, 4)
+        }
+        panel.addView(TextView(this).apply {
+            text = name.split(Regex("\\s+")).take(2)
+                .mapNotNull { it.firstOrNull()?.toString() }.joinToString("")
+                .uppercase().ifBlank { "M" }
+            textSize = 24f
+            gravity = Gravity.CENTER
+            typeface = Typeface.DEFAULT_BOLD
+            setTextColor(Color.WHITE)
+            background = GradientDrawable(
+                GradientDrawable.Orientation.TL_BR,
+                intArrayOf(0xFF0084FF.toInt(), 0xFF00C6FF.toInt())
+            ).apply { cornerRadius = 100f }
+        }, LinearLayout.LayoutParams(72, 72).apply { gravity = Gravity.CENTER_HORIZONTAL; bottomMargin = 8 })
+        panel.addView(TextView(this).apply {
+            text = name
+            textSize = 19f
+            gravity = Gravity.CENTER
+            typeface = Typeface.DEFAULT_BOLD
+            setTextColor(0xFF050505.toInt())
+        }, LinearLayout.LayoutParams(-1, -2))
+        panel.addView(TextView(this).apply {
+            text = "Active Messenger profile • Real Firestore"
+            textSize = 11f
+            gravity = Gravity.CENTER
+            setTextColor(0xFF65676B.toInt())
+            setPadding(0, 2, 0, 10)
+        }, LinearLayout.LayoutParams(-1, -2))
+        val actions = LinearLayout(this).apply { gravity = Gravity.CENTER; setPadding(0, 4, 0, 12) }
+        listOf("Audio" to "☎", "Video" to "▣", "Search" to "⌕").forEach { (label, icon) ->
+            actions.addView(LinearLayout(this@MainActivity).apply {
+                orientation = LinearLayout.VERTICAL
+                gravity = Gravity.CENTER
+                addView(Button(this@MainActivity).apply {
+                    text = icon
+                    textSize = 18f
+                    isAllCaps = false
+                    setTextColor(0xFF1877F2.toInt())
+                    background = rounded(0xFFE7F3FF.toInt(), 50f)
+                    setOnClickListener {
+                        when (label) {
+                            "Video" -> startVideoCall()
+                            "Audio" -> toast("Audio call is not configured yet.")
+                            "Search" -> toast("Search is available from the Messenger list.")
+                        }
+                    }
+                }, LinearLayout.LayoutParams(44, 44))
+                addView(TextView(this@MainActivity).apply {
+                    text = label
+                    textSize = 10f
+                    gravity = Gravity.CENTER
+                    setTextColor(0xFF050505.toInt())
+                    setPadding(0, 3, 0, 0)
+                })
+            }, LinearLayout.LayoutParams(82, 68))
+        }
+        panel.addView(actions)
+        fun infoCard(title: String, body: String): TextView = TextView(this).apply {
+            text = "$title\\n$body"
+            textSize = 12f
+            setTextColor(0xFF050505.toInt())
+            setPadding(14, 12, 14, 12)
+            background = rounded(0xFFF0F2F5.toInt(), 14f)
+        }
+        panel.addView(infoCard("Customize chat", "Change theme to Tubal neon • Bisaya mode on"), LinearLayout.LayoutParams(-1, -2).apply { bottomMargin = 8 })
+        panel.addView(infoCard("Media, files and links", "No media yet • Real conversation media will appear here"), LinearLayout.LayoutParams(-1, -2).apply { bottomMargin = 8 })
+        panel.addView(infoCard("Privacy & support", "Tubal secure • Firestore access is controlled by your account"), LinearLayout.LayoutParams(-1, -2))
+        AlertDialog.Builder(this)
+            .setTitle("Chat details")
+            .setView(panel)
+            .setPositiveButton("Done", null)
+            .setNegativeButton("Sign out") { _, _ ->
+                me?.uid?.let { uid ->
+                    db.collection("presence").document(uid).set(
+                        mapOf("online" to false, "updatedAt" to com.google.firebase.firestore.FieldValue.serverTimestamp()),
+                        com.google.firebase.firestore.SetOptions.merge()
+                    )
+                }
+                auth.signOut()
+                showLogin()
+            }
+            .show()
+    }
+
     private fun subscribeGlobalMessages() {
         stopGlobalMessages?.remove()
         if (!selectedGlobalChat) return
@@ -2315,7 +2399,7 @@ private fun openGlobalChat() {
             })
             card.addView(TextView(this).apply {
                 textSize = 15f
-                setTextColor(0xFFEAF7F0.toInt())
+                setTextColor(if (uid == meUid) Color.WHITE else 0xFF050505.toInt())
                 text = highlightedMentions(body)
             })
             val created = doc.getTimestamp("createdAt")?.toDate()?.time ?: 0L
