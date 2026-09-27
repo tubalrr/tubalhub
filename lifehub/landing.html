@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="tl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#FCF9F5">
+<meta name="description" content="LifeHub — Personal OS. A premium Taglish personal organizer built for everyday life.">
+<title>LifeHub — Personal OS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#FCF9F5;--card:#fff;--ink:#11100e;--muted:#756e65;--line:#EEE6DB;--soft:#f4eee6;--black:#11100e;--shadow:0 24px 70px rgba(32,25,17,.09);--r:26px}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased}a{text-decoration:none;color:inherit}button{font:inherit}
+.wrap{width:min(1160px,calc(100% - 40px));margin:auto}
+.nav{height:82px;display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:11px;font-weight:800;letter-spacing:-.04em;font-size:20px}
+.logo{width:38px;height:38px;border-radius:13px;background:var(--black);color:#fff;display:grid;place-items:center;font-size:15px}
+.navlinks{display:flex;gap:26px;color:var(--muted);font-size:13px;font-weight:600}.navlinks a:hover{color:var(--ink)}
+.navcta{display:flex;gap:9px;align-items:center}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;padding:13px 18px;font-size:13px;font-weight:700;border:1px solid var(--line);transition:.2s ease;cursor:pointer}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 25px rgba(25,20,15,.08)}
+.btn.dark{background:var(--black);color:#fff;border-color:var(--black)}.btn.light{background:#fff}
+.hero{padding:82px 0 74px;text-align:center}
+.eyebrow{display:inline-flex;padding:8px 12px;border:1px solid var(--line);background:rgba(255,255,255,.65);border-radius:999px;color:var(--muted);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.hero h1{font-size:clamp(48px,8vw,88px);line-height:.98;letter-spacing:-.075em;margin:22px auto 18px;max-width:900px}
+.hero h1 span{color:#777067}
+.hero p{max-width:610px;margin:0 auto;color:var(--muted);font-size:17px;line-height:1.75}
+.hero-actions{display:flex;justify-content:center;gap:10px;margin-top:28px;flex-wrap:wrap}
+.micro{font-size:11px;color:#9a9187;margin-top:14px}
+section{padding:78px 0}.section-head{display:flex;justify-content:space-between;gap:30px;align-items:end;margin-bottom:28px}
+.kicker{font-size:11px;text-transform:uppercase;letter-spacing:.1em;font-weight:800;color:#9b9185}.section-head h2{font-size:clamp(30px,5vw,48px);letter-spacing:-.055em;margin:8px 0 0}.section-head p{max-width:420px;color:var(--muted);line-height:1.7;font-size:14px;margin:0}
+.features{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.feature{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:24px;min-height:190px;transition:.22s ease}
+.feature:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+.icon{width:43px;height:43px;border-radius:14px;background:var(--soft);display:grid;place-items:center;font-size:19px;margin-bottom:26px}
+.feature h3{font-size:16px;margin:0 0 8px;letter-spacing:-.02em}.feature p{font-size:12px;line-height:1.65;color:var(--muted);margin:0}
+.preview{background:#171614;border-radius:32px;padding:12px;box-shadow:0 30px 90px rgba(26,20,14,.2)}
+.laptop{border-radius:24px;background:#24221f;padding:12px 12px 18px}.screen{background:#f7f3ed;border-radius:16px;overflow:hidden;border:1px solid #393632}
+.screenbar{height:36px;background:#fff;border-bottom:1px solid #ebe4da;display:flex;align-items:center;padding:0 13px;gap:6px}.dot{width:7px;height:7px;border-radius:50%;background:#d8d1c7}
+.dash{display:grid;grid-template-columns:145px 1fr;min-height:350px}.dashside{background:#fbf9f5;border-right:1px solid #ebe4da;padding:18px 12px}.dashlogo{font-weight:800;font-size:13px;margin-bottom:25px}.navitem{font-size:9px;color:#8a8177;padding:8px 9px;border-radius:8px;margin:2px 0}.navitem.active{background:#111;color:#fff}.dashmain{padding:22px}.dashmain h3{font-size:22px;letter-spacing:-.04em;margin:0 0 5px}.dashsub{font-size:9px;color:#8c8379;margin-bottom:17px}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.stat{background:#fff;border:1px solid #ebe4da;border-radius:12px;padding:12px}.stat small{font-size:7px;color:#958b80}.stat b{display:block;font-size:17px;margin-top:6px}.dashgrid{display:grid;grid-template-columns:1.25fr .75fr;gap:9px;margin-top:9px}.dashcard{background:#fff;border:1px solid #ebe4da;border-radius:13px;padding:14px}.dashcard h4{font-size:10px;margin:0 0 12px}.line{height:7px;background:#eee7de;border-radius:99px;margin:9px 0}.line span{display:block;height:100%;width:67%;background:#111;border-radius:inherit}.minirow{display:flex;justify-content:space-between;font-size:8px;padding:7px 0;border-bottom:1px solid #f0eae2}.base{height:8px;background:#151412;border-radius:99px;width:28%;margin:13px auto 0}
+.pricing{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:820px;margin:auto}.price{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:30px}.price.featured{background:var(--black);color:#fff;border-color:var(--black);box-shadow:var(--shadow)}.price-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.09em;opacity:.6}.amount{font-size:43px;letter-spacing:-.06em;font-weight:800;margin:13px 0 6px}.price p{color:var(--muted);font-size:13px;line-height:1.65}.featured p{color:#aaa49c}.price ul{padding:0;margin:22px 0;list-style:none}.price li{font-size:12px;margin:11px 0}.price li:before{content:"✓";margin-right:9px;font-weight:800}.price .btn{width:100%}
+.quote{text-align:center;padding:80px 20px}.quote blockquote{font-size:clamp(28px,5vw,50px);line-height:1.08;letter-spacing:-.055em;max-width:800px;margin:0 auto 18px}.quote p{color:var(--muted);font-size:13px}
+footer{border-top:1px solid var(--line);padding:28px 0 38px}.footerin{display:flex;justify-content:space-between;gap:20px;align-items:center}.footleft{font-size:12px;color:var(--muted)}.footlinks{display:flex;gap:17px;font-size:11px;font-weight:700;color:var(--muted)}.stars{background:#fff;border:1px solid var(--line);border-radius:999px;padding:9px 12px}
+@media(max-width:850px){.navlinks{display:none}.features{grid-template-columns:repeat(2,1fr)}.dash{grid-template-columns:105px 1fr}.stats{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:620px){.wrap{width:min(100% - 28px,1160px)}.nav{height:70px}.navcta .btn.light{display:none}.hero{padding:62px 0}.hero h1{font-size:52px}.hero p{font-size:15px}.section-head{display:block}.section-head p{margin-top:12px}.features,.pricing{grid-template-columns:1fr}.feature{min-height:auto}.preview{padding:7px;border-radius:22px}.laptop{padding:7px 7px 12px}.dash{grid-template-columns:82px 1fr;min-height:300px}.dashside{padding:13px 7px}.dashmain{padding:13px}.dashmain h3{font-size:16px}.stats{gap:5px}.stat{padding:8px}.stat b{font-size:13px}.dashgrid{grid-template-columns:1fr}.footerin{align-items:flex-start;flex-direction:column}.footlinks{flex-wrap:wrap}}
+</style>
+</head>
+<body>
+<header class="wrap nav">
+  <a class="brand" href="#"><span class="logo">LH</span>LifeHub</a>
+  <nav class="navlinks"><a href="#features">Features</a><a href="#preview">Preview</a><a href="#pricing">Pricing</a></nav>
+  <div class="navcta"><a class="btn light" href="#preview">View Demo</a><a class="btn dark" href="#pricing">Get LifeHub</a></div>
+</header>
+
+<main>
+<section class="hero wrap">
+  <div class="eyebrow">Personal OS · Taglish · Offline-first</div>
+  <h1>LifeHub — <span>Personal OS</span></h1>
+  <p>Ayos lang, kaya pa. <strong>One day at a time.</strong><br>Isang simple at premium na space para ayusin ang tasks, pera, pamilya, goals, habits, at everyday life.</p>
+  <div class="hero-actions"><a class="btn dark" href="#preview">View Demo ↗</a><a class="btn light" href="index.html">Download Free</a></div>
+  <div class="micro">Vanilla HTML · CSS · JS · LocalStorage · No tracking</div>
+</section>
+
+<section id="features" class="wrap">
+  <div class="section-head"><div><div class="kicker">Everything in one place</div><h2>Less kalat. More clarity.</h2></div><p>Built for real everyday life — practical enough for daily use, simple enough to keep coming back to.</p></div>
+  <div class="features">
+    <article class="feature"><div class="icon">✓</div><h3>Tasks</h3><p>One-off at recurring tasks, priorities, categories, projects, at simple progress.</p></article>
+    <article class="feature"><div class="icon">▦</div><h3>Calendar</h3><p>Monthly planning, birthdays, renewals, tasks, at important dates sa isang view.</p></article>
+    <article class="feature"><div class="icon">₱</div><h3>Finance</h3><p>Budget envelopes, payable/receivable, installments, at PHP/USD tracking.</p></article>
+    <article class="feature"><div class="icon">♡</div><h3>Family</h3><p>Birthdays, countdowns, at simple reminders para sa mga taong mahalaga.</p></article>
+    <article class="feature"><div class="icon">↗</div><h3>Goals</h3><p>Subtasks at auto-progress para makita kung nasaan ka at ano ang next step.</p></article>
+    <article class="feature"><div class="icon">🔥</div><h3>Habits</h3><p>Streaks, weekly check-ins, at GitHub-style history para tuloy-tuloy.</p></article>
+    <article class="feature"><div class="icon">▣</div><h3>Vault</h3><p>A dedicated private space for sensitive information, designed as a secure placeholder.</p></article>
+    <article class="feature"><div class="icon">⌁</div><h3>Offline-first</h3><p>LocalStorage-powered. Your organizer stays useful even without an internet connection.</p></article>
+  </div>
+</section>
+
+<section id="preview" class="wrap">
+  <div class="section-head"><div><div class="kicker">A calm workspace</div><h2>Open it. See everything.</h2></div><p>Clean dashboard, soft cards, Taglish labels, and just enough structure to keep your day moving.</p></div>
+  <div class="preview">
+    <div class="laptop"><div class="screen">
+      <div class="screenbar"><i class="dot"></i><i class="dot"></i><i class="dot"></i></div>
+      <div class="dash">
+        <aside class="dashside"><div class="dashlogo">LifeHub</div><div class="navitem active">Dashboard</div><div class="navitem">Calendar</div><div class="navitem">Tasks</div><div class="navitem">Finance</div><div class="navitem">Family</div><div class="navitem">Goals</div><div class="navitem">Habits</div></aside>
+        <div class="dashmain"><h3>Good morning, RR.</h3><div class="dashsub">Ayos lang, kaya pa. One day at a time.</div>
+          <div class="stats"><div class="stat"><small>Overdue</small><b>2</b></div><div class="stat"><small>Today</small><b>5</b></div><div class="stat"><small>This week</small><b>12</b></div><div class="stat"><small>Renewals</small><b>3</b></div></div>
+          <div class="dashgrid"><div class="dashcard"><h4>Today</h4><div class="minirow"><span>Submit portfolio</span><b>High</b></div><div class="minirow"><span>Bayaran bills</span><b>Mid</b></div><div class="minirow"><span>Tawagan si Mama</span><b>Low</b></div></div><div class="dashcard"><h4>Budget</h4><div class="minirow"><span>Food & Grab</span><b>₱1,240</b></div><div class="line"><span></span></div><div class="minirow"><span>Remaining</span><b>₱2,760</b></div></div></div>
+        </div>
+      </div>
+    </div></div>
+    <div class="base"></div>
+  </div>
+</section>
+
+<section id="pricing" class="wrap">
+  <div class="section-head"><div><div class="kicker">Simple pricing</div><h2>Start free. Upgrade when ready.</h2></div><p>Use the core organizer free from GitHub. The Premium Pack adds ready-made templates for deeper planning.</p></div>
+  <div class="pricing">
+    <article class="price"><div class="price-label">GitHub</div><div class="amount">Free</div><p>Core LifeHub Personal OS for your own setup and customization.</p><ul><li>Full personal organizer</li><li>Vanilla HTML / CSS / JS</li><li>LocalStorage data</li><li>Offline-first foundation</li><li>MIT license</li></ul><a class="btn dark" href="index.html">View Free Demo</a></article>
+    <article class="price featured"><div class="price-label">Premium Pack</div><div class="amount">₱299</div><p>Extra templates and planning resources for a more complete personal system.</p><ul><li>Everything in Free</li><li>Extra ready-to-use templates</li><li>Planning & tracking templates</li><li>Premium starter resources</li><li>Lifetime digital access</li></ul><a class="btn light" href="#premium">Get Premium Pack →</a></article>
+  </div>
+</section>
+
+<section class="quote wrap"><blockquote>“Hindi kailangang perfect ang araw. Kailangan lang may next step.”</blockquote><p>LifeHub is your quiet place to figure out what matters next.</p></section>
+</main>
+
+<footer><div class="wrap footerin"><div class="footleft">Made by <strong>tubalrr</strong> · LifeHub Personal OS</div><div class="footlinks"><a class="stars" id="stars" href="https://github.com/tubalrr/tubalhub" target="_blank" rel="noopener">★ GitHub</a><a href="https://github.com/tubalrr/tubalhub/blob/main/LICENSE.md" target="_blank" rel="noopener">MIT License</a></div></div></footer>
+<script>
+(async()=>{const el=document.getElementById('stars');try{const r=await fetch('https://api.github.com/repos/tubalrr/tubalhub');if(r.ok){const d=await r.json();el.textContent='★ '+(d.stargazers_count||0)+' GitHub Stars'}}catch(e){}})();
+document.querySelectorAll('a[href="#premium"]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();alert('Premium Pack checkout link can be connected here.')}}));
+</script>
+</body>
+</html>
