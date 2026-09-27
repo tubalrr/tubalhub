@@ -3,7 +3,7 @@ import {onAuthStateChanged} from "https://www.gstatic.com/firebasejs/12.19.0/fir
 import {getFirestore,collection,getDocs,getDoc,doc,addDoc,setDoc,updateDoc,deleteDoc,query,orderBy,limit,serverTimestamp} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 import {getStorage,ref as storageRef,uploadBytes,getDownloadURL} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-storage.js";
 import {publishHubPost,subscribeHubPosts} from "./hub-content.js";
-import {saveItem,removeSaved,isSaved as retentionSaved,sharedUrl} from "./retention.js";
+import {saveItem,removeSaved,getSavedItems,sharedUrl} from "./retention.js";
 
 const db=getFirestore(app);
 let storage=null;
@@ -17,7 +17,7 @@ const state={
   auth:null,items:[],products:[],hubPosts:[],users:[],presence:new Map(),userMap:new Map(),
   reactions:readLocal("tubalhub-feed-reactions",{}),comments:readLocal("tubalhub-feed-comments",{}),
   commentReactions:readLocal("tubalhub-feed-comment-reactions",{}),shareCounts:readLocal("tubalhub-feed-shares",{}),
-  saved:new Set(readLocal("tubalhub-feed-saved",[])),filter:"all",query:"",sort:"latest",
+  saved:new Set([...readLocal("tubalhub-feed-saved",[]),...getSavedItems().map(x=>x.id)]),filter:"all",query:"",sort:"latest",
   page:0,pageSize:5,loading:false,savedMode:false,currentCommentId:null,commentLimit:6,
   replyingTo:null,editingCommentId:null,deleteCommentId:null,emojiOffset:0,emojiQuery:"",
   postFile:null,commentPhotoData:""
