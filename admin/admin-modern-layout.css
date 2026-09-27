@@ -462,13 +462,13 @@ body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-ser
 .sidebar nav a{background:transparent!important;border:1px solid transparent!important;border-radius:16px!important;color:#6E655C!important;box-shadow:none!important}
 .sidebar nav a:hover,.sidebar nav a.active{background:#FFFFFF!important;border-color:var(--warm-border)!important;color:var(--warm-ink)!important}
 .sidebar nav a.active{box-shadow:0 4px 16px rgba(65,52,39,.035)!important}
-.storage-card{background:#FFFFFF!important;border:1px solid var(--warm-border)!important;border-radius:18px!important;box-shadow:0 4px 24px rgba(0,0,0,.04)!important}
+.storage-card{background:#FFFFFF!important;border:1px solid var(--warm-border)!important;border-radius:18px!important;box-shadow:0 4px 24px rgba(0,0,0,0.04)!important}
 .storage-label,.storage-note{color:#9A9187!important}.storage-value{color:#40382F!important}
 .topbar{background:rgba(255,252,245,.94)!important;border-bottom:1px solid var(--warm-border)!important;backdrop-filter:blur(10px)!important}
 .topbar-brand{color:var(--warm-ink)!important}.topbar-version,.top-actions>span{color:var(--warm-muted)!important}
 .presence-pill,.realtime-pill{background:#FFFFFF!important;border:1px solid var(--warm-border)!important;border-radius:999px!important;color:#62594F!important}
 .status-dot{background:#7EC8A0!important;box-shadow:0 0 0 3px rgba(126,200,160,.12)!important}
-.stat,.panel,.analytics-card{background:#FFFFFF!important;border:1px solid var(--warm-border)!important;border-radius:18px!important;box-shadow:0 4px 24px rgba(0,0,0,.04)!important}
+.stat,.panel,.analytics-card{background:#FFFFFF!important;border:1px solid var(--warm-border)!important;border-radius:18px!important;box-shadow:0 4px 24px rgba(0,0,0,0.04)!important}
 .stat{border-radius:20px!important}.panel-head{border-bottom:1px solid var(--warm-border)!important}
 .panel-head h2,.dashboard-head h1{color:var(--warm-ink)!important}.panel-head small,.panel-head p,.metric-label,.metric-note{color:var(--warm-muted)!important}
 .metric-value{color:var(--warm-ink)!important}.metric-icon,.section-icon{background:#F6F0E8!important;color:#62594F!important;border-color:var(--warm-border)!important}
@@ -477,13 +477,13 @@ body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-ser
 }
 #logout:hover,.form-grid button:hover,.members-open-btn:hover,.admin-item-actions button:hover,.member-action:hover,.beta-test-panel button:hover{background:#2A241E!important;border-color:#2A241E!important}
 #updaterStatus[data-status="DRAFT"]{background:#FEF3C7!important;color:#92400E!important;border-radius:999px!important;padding:4px 12px!important}
-#updaterControl{background:#FFFFFF!important;border:1px solid var(--warm-border)!important;border-radius:20px!important;box-shadow:0 4px 24px rgba(0,0,0,.04)!important}
+#updaterControl{background:#FFFFFF!important;border:1px solid var(--warm-border)!important;border-radius:20px!important;box-shadow:0 4px 24px rgba(0,0,0,0.04)!important}
 #updaterControl input,#updaterControl select{background:#FFFFFF!important;border:1px solid var(--warm-border)!important;color:var(--warm-ink)!important;border-radius:12px!important}
 #updaterControl > div:nth-of-type(4){background:#EFF6FF!important;border:1px solid #DBEAFE!important;border-radius:12px!important}
 #updaterCheckNow,#updaterRunTest,#updaterClearTest{border-radius:999px!important}
 #updaterTestMode + span{border-radius:999px!important}
 #systemSettings,#chat,#betaTestControl,#analytics,#shopProducts,#shopOrders,#content,#eventsManager,#announcements,#members{
-  background:#FFFFFF!important;border-color:var(--warm-border)!important;box-shadow:0 4px 24px rgba(0,0,0,.04)!important
+  background:#FFFFFF!important;border-color:var(--warm-border)!important;box-shadow:0 4px 24px rgba(0,0,0,0.04)!important
 }
 .form-grid input,.form-grid textarea,.form-grid select,#betaTestControl input{
   background:#FFFFFF!important;border:1px solid var(--warm-border)!important;border-radius:12px!important;color:var(--warm-ink)!important
@@ -495,3 +495,11 @@ body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-ser
 .analytics-bar{background:#8D7A63!important}
 footer{color:#A1988E!important}
 @media(max-width:700px){.sidebar,.dashboard{background:var(--warm-bg)!important}.stats{gap:12px!important}.stat,.panel{border-radius:18px!important}}
+
+#updaterSave,#updaterPublishNow,#updaterCancel{
+  background:#1E1B16!important;
+  color:#FFFFFF!important;
+  border:1px solid #1E1B16!important;
+  border-radius:999px!important;
+  padding:8px 14px!important;
+}
