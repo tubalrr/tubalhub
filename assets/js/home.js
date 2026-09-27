@@ -15,7 +15,7 @@ import { app, auth } from "./firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 import { subscribeHubPosts } from "./hub-content.js";
 import {
-  getFirestore, collection, query, orderBy, limit, getDocs, onSnapshot
+  getFirestore, collection, query, orderBy, limit, getDocs
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
 const db = getFirestore(app);
@@ -348,7 +348,7 @@ function initSponsoredReal(){
   };
   try{
     const q=query(collection(db,"sponsors"),limit(20));
-    onSnapshot(q,snap=>{
+    getDocs(q).then(snap=>{
       const active=snap.docs.map(d=>({id:d.id,...d.data()}))
         .filter(x=>x&&(x.isActive===true||String(x.isActive||"").toLowerCase()==="true")&&!(x.isExpired===true||String(x.isExpired||"").toLowerCase()==="true"))
         .sort((a,b)=>{
@@ -359,7 +359,7 @@ function initSponsoredReal(){
         const item=active.find(x=>{const assigned=Number(x.sponsorSlot||0);return assigned===slot.slot||(slot.slot===1&&!assigned);});
         renderSlot(slot,item);
       });
-    },err=>{
+    }).catch(err=>{
       console.warn("[TUBAL HUB Sponsors]",err);
       slots.forEach(slot=>renderEmpty(slot,"Sponsored "+slot.slot));
     });
@@ -1562,19 +1562,20 @@ function renderLiveOnlineCount(){
     live.textContent="LIVE • Firebase presence • Updated "+stamp;
   }
 }
-function startLivePresence(){
-  if(livePresenceUnsubscribe)return;
-  const presenceQuery=query(collection(db,"presence"),limit(500));
-  livePresenceUnsubscribe=onSnapshot(presenceQuery,snap=>{
+async function refreshLivePresence(){
+  try{
+    const snap=await getDocs(query(collection(db,"presence"),limit(500)));
     livePresenceDocs=snap.docs.map(docSnap=>({id:docSnap.id,data:docSnap.data()||{}}));
     renderLiveOnlineCount();
-  },error=>{
+  }catch(error){
     console.warn("[TUBAL HUB live presence]",error);
     livePresenceDocs=[];
     const live=$("#bentoSystemNote");
     if(live)live.textContent="LIVE • Presence unavailable";
-  });
-  renderLiveOnlineCount();
+  }
+}
+function startLivePresence(){
+  refreshLivePresence();
 }
 function bentoJournalItems(){
   return getRealJournalViews().slice(0,3);
@@ -1750,21 +1751,15 @@ async function loadBentoVersion(){
 }
 function initBento(){
   const refresh=()=>renderRealData().catch(e=>console.warn("[TUBAL HUB real data]",e));
+  window.tubalhubRefreshHome=refresh;
   refresh();
   loadBentoVersion();
   startLivePresence();
-  clearInterval(liveStatsTimer);
-  liveStatsTimer=setInterval(()=>{
-    renderLiveOnlineCount();
-    refresh();
-  },5000);
   window.addEventListener("tubalhub-real-data-update",refresh);
   window.addEventListener("storage",event=>{
     const key=event.key||"";
     if(key===REAL_JOURNAL_KEY||key===LEGACY_JOURNAL_KEY||key===REAL_FEED_KEY||key===PLAYS_KEY||key===GAMES_KEY||(key.startsWith("play_")&&key.endsWith("_real")))refresh();
   });
-  window.addEventListener("focus",refresh,{passive:true});
-  document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")refresh()});
 }
 
 
