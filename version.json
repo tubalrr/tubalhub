@@ -1,11 +1,12 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.2.17",
-  "build": "2026-05-13_1217",
-  "releasedAtReal": "2026-05-13T04:17:00Z",
-  "releasedByReal": "tubalrr",
+  "version": "1.2.18",
+  "build": "2026-05-13_1218",
+  "releasedAtReal": "2026-09-27T03:44:52.156Z",
+  "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.2.18 beta release — compact Feeds, Event and Games layout.",
     {
       "typeReal": "PERF",
       "scopeReal": "Compact + Mobile Performance",
@@ -124,6 +125,11 @@
   "breakingReal": false,
   "changelog": [
     {
+      "version": "1.2.18",
+      "date": "2026-05-13",
+      "changes": "Beta v1.2.18 — compact Feeds, Event and Games test release."
+    },
+    {
       "type": "FEAT",
       "icon": "🧹",
       "title": "Global Chat Storage Cleanup",
@@ -197,5 +203,5 @@
     }
   ],
   "date": "2026-05-13",
-  "changes": "Compact container + mobile lag fix + Firebase once() instead of realtime"
+  "changes": "Beta v1.2.18 — compact Feeds, Event and Games test release."
 }
