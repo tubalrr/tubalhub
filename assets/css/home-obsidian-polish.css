@@ -521,3 +521,114 @@ body.hub-home .bento-row-real .bento-real-feed-list{
     transition:none !important;
   }
 }
+
+/* =========================================================
+   TUBAL HUB — VALUE GRID ALIGNMENT SYSTEM v1.2.28
+   Equal-height WHY TUBAL HUB sub-cards with clean spacing,
+   consistent padding, and stable text baselines.
+   ========================================================= */
+
+body.hub-home .th-value-section{
+  overflow:hidden !important;
+}
+
+body.hub-home .th-value-section .th-section-head{
+  margin-bottom:24px !important;
+}
+
+body.hub-home .th-value-grid{
+  display:grid !important;
+  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  gap:16px !important;
+  align-items:stretch !important;
+  width:100% !important;
+}
+
+body.hub-home .th-value-grid article{
+  min-width:0 !important;
+  min-height:190px !important;
+  height:100% !important;
+  box-sizing:border-box !important;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:flex-start !important;
+  justify-content:flex-start !important;
+  padding:20px !important;
+  margin:0 !important;
+  border:1px solid rgba(255,255,255,.10) !important;
+  border-right:1px solid rgba(255,255,255,.10) !important;
+  border-radius:18px !important;
+  background:rgba(15,15,18,.72) !important;
+  overflow:hidden !important;
+}
+
+body.hub-home .th-value-grid article+article{
+  padding-left:20px !important;
+}
+
+body.hub-home .th-value-grid article:last-child{
+  border-right:1px solid rgba(255,255,255,.10) !important;
+}
+
+body.hub-home .th-value-grid article>span{
+  display:block !important;
+  flex:0 0 auto !important;
+  margin:0 0 10px !important;
+  line-height:1 !important;
+  min-height:12px !important;
+}
+
+body.hub-home .th-value-grid article h3{
+  display:block !important;
+  flex:0 0 auto !important;
+  margin:0 0 10px !important;
+  font-size:18px !important;
+  line-height:1.2 !important;
+  letter-spacing:-.02em !important;
+  max-width:100% !important;
+}
+
+body.hub-home .th-value-grid article p{
+  flex:1 1 auto !important;
+  min-width:0 !important;
+  width:100% !important;
+  margin:0 !important;
+  font-size:12px !important;
+  line-height:1.6 !important;
+  overflow-wrap:anywhere !important;
+  word-break:normal !important;
+}
+
+body.hub-home .th-value-grid article:hover{
+  transform:translateY(-2px) !important;
+  border-color:rgba(255,59,48,.30) !important;
+  box-shadow:0 14px 32px rgba(0,0,0,.28),0 0 18px rgba(255,59,48,.08) !important;
+}
+
+body.hub-home .th-value-grid article:nth-child(2):hover{
+  border-color:rgba(255,204,0,.34) !important;
+  box-shadow:0 14px 32px rgba(0,0,0,.28),0 0 18px rgba(255,204,0,.08) !important;
+}
+
+@media(max-width:840px){
+  body.hub-home .th-value-grid{
+    grid-template-columns:1fr !important;
+    gap:12px !important;
+  }
+
+  body.hub-home .th-value-grid article{
+    min-height:0 !important;
+    height:auto !important;
+    padding:18px !important;
+  }
+
+  body.hub-home .th-value-grid article+article{
+    padding-left:18px !important;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  body.hub-home .th-value-grid article{
+    transition:none !important;
+  }
+}
