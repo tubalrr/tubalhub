@@ -17,17 +17,116 @@
   background:rgba(29,255,145,.13);border-color:rgba(29,255,145,.3);
 }
 .tubal-beta-test-bar button:disabled{opacity:.55;cursor:default}
-body.test-v1218 .feed-card,
-body.test-v1218 .event-card,
-body.test-v1218 .game-card,
-body.test-v1218 [data-feed-card],
-body.test-v1218 [data-event-card],
-body.test-v1218 [data-game-card]{
-  padding:12px!important;gap:12px!important;border-radius:18px!important;
-  border-color:#EEE6DB!important;content-visibility:auto;
+
+/* v1.2.18 BETA COMPACT MODE — scoped strictly to an authorized test session */
+body.test-v1218 #feeds,
+body.test-v1218 #events,
+body.test-v1218 #games{
+  padding:12px!important;
+  gap:12px!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
+}
+body.test-v1218 #feeds{
+  max-width:680px!important;
+}
+body.test-v1218 .feed-card{
+  padding:12px!important;
+  gap:12px!important;
+  border:1px solid #EEE6DB!important;
+  border-radius:18px!important;
+  background:#FCF9F5!important;
+  content-visibility:auto;
+  contain-intrinsic-size:200px;
+}
+body.test-v1218 .feed-card img{
+  width:100%;
+  aspect-ratio:1/1;
+  object-fit:cover;
+  border-radius:12px;
+  loading:lazy;
+}
+body.test-v1218 .feed-card .feed-title,
+body.test-v1218 .feed-card .title{
+  font-size:14px!important;
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+  overflow:hidden;
+}
+
+/* Event compact list */
+body.test-v1218 #events{
+  padding:12px!important;
+}
+body.test-v1218 #events .event-list,
+body.test-v1218 #events .events-list{
+  display:flex;
+  flex-direction:column;
+  gap:8px!important;
+  padding:12px!important;
+  margin:0!important;
+}
+body.test-v1218 .event-row{
+  min-height:56px!important;
+  height:56px!important;
+  box-sizing:border-box;
+  padding:8px 12px!important;
+  border:1px solid #EEE6DB!important;
+  border-radius:14px!important;
+  display:flex!important;
+  align-items:center!important;
+  gap:10px!important;
+  margin:0!important;
+  overflow:hidden;
+}
+body.test-v1218 .event-row .event-img{
+  width:40px!important;height:40px!important;
+  flex:0 0 40px;
+  border-radius:10px!important;
+  object-fit:cover;
+}
+body.test-v1218 .event-row .event-info{
+  flex:1 1 auto;
+  min-width:0;
+  overflow:hidden;
+}
+
+/* Games compact grid */
+body.test-v1218 #games{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  align-items:start;
+}
+body.test-v1218 #games .game-card{
+  padding:0!important;
+  border:1px solid #EEE6DB!important;
+  border-radius:18px!important;
+  overflow:hidden!important;
+  background:#FCF9F5!important;
+  content-visibility:auto;
+  contain-intrinsic-size:180px;
+}
+body.test-v1218 .game-card .game-img{
+  width:100%;
+  aspect-ratio:16/9;
+  object-fit:cover;
+}
+body.test-v1218 .game-card .game-title{
+  padding:8px 10px!important;
+  font-size:13px!important;
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:1;
+  overflow:hidden;
 }
 body.test-v1218 img{
   content-visibility:auto;
+}
+@media(min-width:768px){
+  body.test-v1218 #games{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  }
 }
 @media(max-width:600px){
   .tubal-beta-test-bar{width:calc(100vw - 20px);justify-content:center}
