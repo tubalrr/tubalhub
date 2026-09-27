@@ -2505,3 +2505,14 @@ body.feeds-page *{
     grid-template-columns:68px minmax(0,1fr);
   }
 }
+
+/* v1.2.18 retention + share polish */
+.post-actions{grid-template-columns:repeat(4,1fr)}
+.save-action.saved{color:#06110b!important;background:linear-gradient(135deg,#ffd86b,#ff9f43)!important}
+.shared-target{animation:fdSharedTarget 2.2s ease both}
+@keyframes fdSharedTarget{0%{box-shadow:0 0 0 rgba(29,255,145,0)}25%{box-shadow:0 0 42px rgba(29,255,145,.42)}100%{box-shadow:var(--fd-shadow)}}
+.event-save{margin-top:12px;align-self:flex-start;height:32px;padding:0 12px;border:1px solid rgba(29,255,145,.18);border-radius:999px;background:rgba(29,255,145,.06);color:#bdebd1;font:800 8px/1 Inter,sans-serif;cursor:pointer}
+.event-save:hover{background:rgba(29,255,145,.12)}
+.game-save-btn{position:absolute;right:12px;top:12px;z-index:5;height:30px;padding:0 10px;border:1px solid rgba(29,255,145,.18);border-radius:999px;background:rgba(2,6,4,.78);color:#dff7e9;font:800 8px/1 Inter,sans-serif;cursor:pointer}
+.game-save-btn.saved{background:linear-gradient(135deg,#ffd86b,#ff9f43);color:#251506;border-color:transparent}
+@media(max-width:560px){.post-actions{grid-template-columns:repeat(2,1fr)}}
