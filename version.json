@@ -1,11 +1,13 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.2.27",
-  "build": "2026-09-27_1900",
-  "releasedAtReal": "2026-09-27T11:00:00Z",
+  "version": "1.2.28",
+  "build": "2026-09-27_1815",
+  "releasedAtReal": "2026-09-27T10:15:00Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.2.28 FIX — WHY TUBAL HUB value cards now use equal-height flex columns with uniform padding, stable heading/description spacing, and consistent wrapping.",
+    "v1.2.28 FIX — Value-card gaps and borders are now symmetric on desktop, with a clean single-column responsive layout below 840px.",
     "v1.2.27 FIX — Desktop/tablet Three Brands layout now remains three columns above 700px so equal-height cards stay horizontally aligned in compact desktop views.",
     "v1.2.27 FIX — Fixed a chatbot JavaScript syntax error caused by using await inside a non-async send handler.",
     "v1.2.27 FIX — Dashboard document requests now bypass stale browser HTTP cache, and the service-worker registration is versioned to refresh the current shell.",
@@ -146,6 +148,18 @@
   ],
   "breakingReal": false,
   "changelog": [
+    {
+      "type": "FIX",
+      "icon": "▦",
+      "title": "Why TUBAL HUB Alignment",
+      "desc": "Equal-height 01/02/03 sub-cards with consistent p-5 spacing and flex-grown descriptions."
+    },
+    {
+      "type": "FIX",
+      "icon": "↔",
+      "title": "Grid Symmetry",
+      "desc": "Balanced 16px card gaps, uniform borders, stable text wrapping, and responsive stacking below 840px."
+    },
     {
       "type": "FIX",
       "icon": "▦",
@@ -362,5 +376,5 @@
     }
   ],
   "date": "2026-09-27",
-  "changes": "v1.2.27 — Responsive alignment, chatbot syntax, and fresh dashboard shell fixes."
+  "changes": "v1.2.28 — WHY TUBAL HUB value-card alignment and spacing fix."
 }
