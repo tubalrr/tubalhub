@@ -128,7 +128,7 @@ footer{color:#98A2B3!important;border-color:#EAECF0!important}
 </style></head><body><button id="sidebarToggle" type="button" aria-label="Toggle sidebar" aria-expanded="true"><span></span><span></span><span></span></button>
 <div class="admin-shell" id="app" hidden>
 <aside class="sidebar"><a class="brand" href="../index.html"><span class="brand-mark"><img src="../tubal-hub-logo.png?v=aurora-1.2.17" alt="TUBAL HUB logo"></span><span class="brand-copy"><b>TUBAL HUB</b><small>Admin v1.2.17</small></span></a><div class="side-label">ADMIN</div><nav>
-<a class="active" href="#dashboard">⌁ <span>Dashboard</span></a><a href="#members">♙ <span>Users</span><strong id="totalUsersReal">0</strong></a><a href="#chat">◉ <span>Live Chat Logs</span></a><a href="#members">⬢ <span>Moderation</span></a><a href="#sponsoredControl">⬔ <span>Sponsored Manager</span></a><a href="#shopOrders">▣ <span>Shop Orders</span></a><a href="#analytics">◌ <span>Analytics</span></a><a href="#betaTestControl">🧪 <span>Beta Testers</span></a><a href="#updaterControl">⏱ <span>Updater Control</span></a><a href="#systemSettings">⚙ <span>System Settings</span></a>
+<a class="active" href="#dashboard">⌁ <span>Dashboard</span></a><a href="#members">♙ <span>Users</span><strong id="totalUsersReal">0</strong></a><a href="#chat">◉ <span>Live Chat Logs</span></a><a href="#members">⬢ <span>Moderation</span></a><a href="#sponsoredControl">⬔ <span>Sponsored Manager</span></a><a href="#shopOrders">▣ <span>Shop Orders</span></a><a href="#analytics">◌ <span>Analytics</span></a><a href="#betaTestControl">🧪 <span>Beta Control</span></a><a href="#updaterControl">⏱ <span>Updater Control</span></a><a href="#systemSettings">⚙ <span>System</span></a>
 </nav><div class="storage-card"><div class="storage-label">Storage</div><div id="storageBadgeReal" class="storage-value">0 deleted</div><div class="storage-progress"><span></span></div><div class="storage-note">Server cleanup: expired media + excess files</div></div></aside>
 <main class="dashboard">
 <header class="topbar">
@@ -149,19 +149,12 @@ footer{color:#98A2B3!important;border-color:#EAECF0!important}
   <div class="stat"><div class="metric-icon">◉</div><span class="metric-label">Messages / 30d</span><strong class="metric-value" id="analyticsMessages">—</strong><small class="metric-note">Global + private messages</small></div>
   <div class="stat"><div class="metric-icon">♙</div><span class="metric-label">New Users / 30d</span><strong class="metric-value" id="analyticsNewUsers">—</strong><small class="metric-note">Based on user creation date</small></div>
 </section>
-<div class="legacy-metrics" aria-hidden="true">
-  <span id="totalUsersCard">0</span><span id="totalMsgsReal">0</span><span id="blockedReal">0</span><span id="storageBadgeReal">0 deleted</span><span id="totalUsersReal">0</span>
-</div>
+<div class="legacy-metrics" aria-hidden="true"><span id="totalUsersCard">0</span><span id="totalMsgsReal">0</span><span id="blockedReal">0</span></div>
 
 <div class="admin-section-label"><span class="section-icon">📊</span><span>Analytics</span></div>
 <div class="admin-main-grid"><div class="full-span"><section class="panel modern-section" id="analytics">
 <div class="panel-head"><div><small>REAL FIRESTORE ANALYTICS</small><h2>Analytics</h2><p id="analyticsUpdated">Loading real activity data…</p></div><span>SERVER</span></div>
-<div class="analytics-grid">
-<div class="analytics-card"><span>DAU</span><strong id="analyticsDau">—</strong><small>Unique active users today</small></div>
-<div class="analytics-card"><span>WAU</span><strong id="analyticsWau">—</strong><small>Unique active users • last 7 days</small></div>
-<div class="analytics-card"><span>Messages / 30d</span><strong id="analyticsMessages">—</strong><small>Global + private messages</small></div>
-<div class="analytics-card"><span>New Users / 30d</span><strong id="analyticsNewUsers">—</strong><small>Based on user creation date</small></div>
-</div>
+
 <div class="analytics-layout">
 <section class="panel analytics-chart"><div class="panel-head"><div><h2>Messages per Day</h2><p>Actual Firestore message timestamps</p></div><span>30 DAYS</span></div><div id="messagesChart" class="analytics-bars"></div></section>
 <section class="panel analytics-list"><div class="panel-head"><div><h2>Most Active Users</h2><p>Message activity in the last 30 days</p></div><span>TOP 10</span></div><div id="activeUsersList"></div></section>
@@ -238,7 +231,10 @@ footer{color:#98A2B3!important;border-color:#EAECF0!important}
     </div>
   </div>
   <div class="mt-4 rounded-xl border border-slate-200 bg-white p-4">
-    <div class="system-setting-row"><div><b>Maintenance mode</b><small>Temporarily show a maintenance screen to visitors. Admin access stays available.</small></div>
+    <div class="system-setting-row">
+      <div><b>Maintenance mode</b><small>Temporarily show a maintenance screen to visitors. Admin access stays available.</small></div>
+      <label class="switchReal"><input id="maintenanceMode" type="checkbox"><span></span></label>
+    </div>
     <div id="maintenanceStatus" class="system-setting-status mt-3">Loading setting…</div>
   </div>
 </section>
