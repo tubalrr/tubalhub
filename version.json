@@ -1,11 +1,16 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.2.34",
-  "build": "2026-09-27_2010",
-  "releasedAtReal": "2026-09-27T12:10:00Z",
+  "version": "1.2.35",
+  "build": "2026-09-27_2025",
+  "releasedAtReal": "2026-09-27T12:25:00Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.2.35 FIX — Featured sa Website carousel now uses deterministic slide geometry, 500ms easing, safe initialization, drag controls, dot controls, and continuous 4-second autoplay.",
+    "v1.2.35 FIX — Featured previews remain populated from the existing real journal, music, feeds, and Gaming Zone data pipeline without changing those data sources.",
+    "v1.2.35 FIX — Sponsored 1/2 rendering retains real Firestore data, Shopee branding, image handling, cached fallback, and full-card interaction; malformed sponsor markup was repaired.",
+    "v1.2.35 AUDIT — Obsidian Gamer surfaces, existing navigation, Firebase data hooks, and previous card alignment rules were preserved."
+  ,
     "v1.2.34 FIX — Sponsored 1/2 now render from real Firestore sponsor data with a cached last-known real sponsor fallback, so the panel no longer stays stuck on CHECKING... when the remote read is slow or temporarily unavailable.",
     "v1.2.34 FIX — Restored the real Shopee sponsored presentation, image handling, Obsidian Gamer surface styling, and full-card click interaction without changing existing navigation/data hooks.",
     "v1.2.34 FIX — Rotated the service-worker cache and refreshed homepage asset query versions so the sponsor fix is loaded instead of a stale cached home.js/home CSS build.",
@@ -441,5 +446,5 @@
     }
   ],
   "date": "2026-09-27",
-  "changes": "v1.2.34 — Sponsored panel restore + cache hardening."
+  "changes": "v1.2.35 — Featured carousel stability + sponsored UI repair."
 }
