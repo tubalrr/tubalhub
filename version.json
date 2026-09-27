@@ -1,11 +1,13 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.2.24",
-  "build": "2026-09-27_1730",
-  "releasedAtReal": "2026-09-27T09:30:00Z",
+  "version": "1.2.25",
+  "build": "2026-09-27_1800",
+  "releasedAtReal": "2026-09-27T10:00:00Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.2.25 FIX — Homepage authentication controls now sync independently from the main dashboard module, so Login/Sign Up hide after a successful Firebase session.",
+    "v1.2.25 FIX — Refreshed the service-worker shell cache to ensure the new authentication UI assets are loaded.",
     "v1.2.24 FIX — Homepage data rendering is now isolated per source so music, games, presence, journals, and feeds can render even when one data source is unavailable or slow.",
     "v1.2.24 FIX — Added a short timeout to non-critical homepage data reads to prevent one stalled source from blocking the entire dashboard.",
     "v1.2.23 UI — Applied the Obsidian Gamer palette: #0A0A0B background, #151517 surfaces, thin rgba(255,255,255,.08) borders, Gamer Red #FF3B30 and Electric Gold #FFCC00.",
@@ -139,6 +141,12 @@
   ],
   "breakingReal": false,
   "changelog": [
+    {
+      "type": "FIX",
+      "icon": "🔐",
+      "title": "Homepage Auth UI",
+      "desc": "Login and Sign Up now hide reliably after Firebase authentication while the logged-in user controls appear."
+    },
     {
       "type": "FIX",
       "icon": "⚡",
@@ -319,5 +327,5 @@
     }
   ],
   "date": "2026-09-27",
-  "changes": "v1.2.20 release — TUBAL HUB homepage cards and containers refined with a pure dark Obsidian Gamer surface system."
+  "changes": "v1.2.25 — Authentication UI sync and cache refresh."
 }
