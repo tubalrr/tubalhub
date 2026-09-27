@@ -295,7 +295,7 @@ function initSponsorMotionReal(){
   const style=document.createElement("style");
   style.id="tubalSponsorMotionReal";
   style.textContent=[
-    ".tubal-sponsor-card-real{position:relative;display:block;overflow:hidden;transform:translateZ(0);border:1px solid rgba(255,204,0,.22)!important;border-radius:14px!important;background:linear-gradient(145deg,rgba(21,21,23,.96),rgba(11,11,13,.98))!important;box-shadow:0 12px 28px rgba(0,0,0,.35),0 0 18px rgba(255,204,0,.08);transition:transform .32s ease,border-color .32s ease,box-shadow .32s ease}.tubal-sponsor-card-real:hover{transform:translateY(-4px);border-color:rgba(255,59,48,.82)!important;box-shadow:0 18px 42px rgba(0,0,0,.44),0 0 30px rgba(255,59,48,.18)}",
+    ".tubal-sponsor-card-real{position:relative;display:block;overflow:hidden;transform:translateZ(0);border:1px solid rgba(255,204,0,.22)!important;border-radius:14px!important;background:linear-gradient(145deg,rgba(21,21,23,.96),rgba(11,11,13,.98))!important;box-shadow:0 12px 28px rgba(0,0,0,.35),0 0 18px rgba(255,204,0,.08);transition:transform .32s ease,border-color .32s ease,box-shadow .32s ease}.tubal-sponsor-card-real:hover{transform:translateY(-2px);border-color:rgba(255,204,0,.82)!important;box-shadow:0 18px 42px rgba(0,0,0,.44),0 0 30px rgba(255,204,0,.18)}",
     ".tubal-sponsor-card-real:focus-visible{outline:2px solid #ffcc00;outline-offset:3px}",
     ".tubal-sponsor-visual-real{position:relative;isolation:isolate;overflow:hidden}",
     ".tubal-sponsor-visual-real:after{content:\"\";position:absolute;inset:-30% -60%;background:linear-gradient(105deg,transparent 35%,rgba(255,255,255,.26) 50%,transparent 65%);transform:translateX(-58%);animation:tubalSponsorShine 4.2s ease-in-out infinite;pointer-events:none}",
@@ -1750,7 +1750,10 @@ function startFeaturedGamesRealRotation(){
   },4500);
 }
 function bentoRenderGames(){
-  renderFeaturedGamesRealLogo(featuredGames);
+  const preferredIds=["valorant","roblox","warzone","genshin"];
+  const preferred=preferredIds.map(id=>featuredGames.find(game=>String(game?.id||"").toLowerCase()===id)).filter(Boolean);
+  const featured=preferred.length===4?preferred:featuredGames.slice(0,4);
+  renderFeaturedGamesRealLogo(featured);
   startFeaturedGamesRealRotation();
 }
 async function renderRealData(){
