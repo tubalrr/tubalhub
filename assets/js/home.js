@@ -1756,22 +1756,48 @@ function bentoRenderGames(){
   renderFeaturedGamesRealLogo(featured);
   startFeaturedGamesRealRotation();
 }
+function withHomeTimeout(promise,timeoutMs,fallbackValue){
+  return Promise.race([
+    Promise.resolve(promise),
+    new Promise(resolve=>setTimeout(()=>resolve(fallbackValue),timeoutMs))
+  ]);
+}
 async function renderRealData(){
   migrateRealJournalStorage();
   clearRealAudioUrls();
-  const [music,games,online]=await Promise.all([getRealMusic(),getRealGames(),bentoOnlineCount()]);
+
+  // Each live data source is isolated so one unavailable source cannot block
+  // the rest of the homepage from rendering.
+  const [musicResult,gamesResult,onlineResult]=await Promise.allSettled([
+    withHomeTimeout(getRealMusic(),4500,[]),
+    withHomeTimeout(getRealGames(),4500,[]),
+    withHomeTimeout(bentoOnlineCount(),4500,null)
+  ]);
+
+  const music=musicResult.status==="fulfilled"&&Array.isArray(musicResult.value)?musicResult.value:[];
+  const games=gamesResult.status==="fulfilled"&&Array.isArray(gamesResult.value)?gamesResult.value:[];
+  const online=onlineResult.status==="fulfilled"?onlineResult.value:null;
   const journals=getRealJournalViews();
   const posts=liveHubPosts.length?liveHubPosts:getRealFeeds();
+
+  if(musicResult.status==="rejected")console.warn("[TUBAL HUB music data]",musicResult.reason);
+  if(gamesResult.status==="rejected")console.warn("[TUBAL HUB games data]",gamesResult.reason);
+  if(onlineResult.status==="rejected")console.warn("[TUBAL HUB presence data]",onlineResult.reason);
+
   featuredGames=games;
+
+  // Render each homepage surface even when another source is empty/unavailable.
   bentoRenderJournal();
   bentoRenderShop();
   bentoRenderGames();
   bentoRenderFeeds(posts);
   renderFeaturedWebsiteData(journals,music,posts,games);
+
   loadRealPageTitle("pages/payapang-isip.html","#featuredPeaceTitle");
   loadRealPageTitle("pages/ai-music.html","#featuredMusicTitle");
   loadRealPageTitle("pages/gaming-zone.html","#featuredGamesTitle");
   loadRealPageTitle("pages/feeds.html","#featuredFeedsTitle");
+
   const setText=(sel,value)=>{const el=$(sel);if(el)el.textContent=String(value)};
   setText("#bentoOnlineUsers",online===null?"—":online);
   setText("#bentoJournalCount",journals.length);
