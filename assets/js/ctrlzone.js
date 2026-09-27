@@ -1,5 +1,6 @@
 import {getFirestore,collection,onSnapshot} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 import {app} from "./firebase-config.js";
+import {saveItem,isSaved,removeSaved} from "./retention.js";
 const db=getFirestore(app);
 const LOGO_BASE="https://commons.wikimedia.org/wiki/Special:Redirect/file/";
 async function loadCtrlzoneGames(){
@@ -91,7 +92,7 @@ function logoMarkup(g,center=false){
 function cardMarkup(g,i){
   return '<article class="game-card spotlight-card" data-game-id="'+esc(g.id)+'" style="--stagger:'+(i*.06)+'s">'+
     '<div class="game-cover"><img class="cover-image" src="'+esc(g.cover)+'" alt="'+esc(g.name)+' game cover" loading="lazy"><span class="official-badge">Official ✓</span><span class="genre-badge">'+esc(g.genre)+'</span>'+logoMarkup(g,true)+'</div>'+
-    '<button class="favorite-btn '+(state.favorites.has(g.id)?"active":"")+'" data-favorite="'+esc(g.id)+'" type="button" aria-label="'+(state.favorites.has(g.id)?"Remove":"Add")+' '+esc(g.name)+' favorite">'+(state.favorites.has(g.id)?"♥":"♡")+'</button>'+
+    '<button class="favorite-btn '+(state.favorites.has(g.id)?"active":"")+'" data-favorite="'+esc(g.id)+'" type="button" aria-label="'+(state.favorites.has(g.id)?"Remove":"Add")+' '+esc(g.name)+' favorite">'+(state.favorites.has(g.id)?"♥":"♡")+'</button><button class="game-save-btn '+(isSaved("game-"+g.id)?"saved":"")+'" data-save-game="'+esc(g.id)+'" type="button">'+(isSaved("game-"+g.id)?"Saved":"Save")+'</button>'+
     '<div class="game-body"><div class="game-body-top">'+logoMarkup(g,false)+'<div class="game-meta"><h3 class="game-title">'+esc(g.name)+'</h3><div class="game-dev">'+esc(g.dev)+'</div></div></div>'+
     '<p class="game-desc">'+esc(g.description)+'</p><div class="game-stats"><span class="game-stat">✓ <strong>Official listing</strong></span><span class="game-stat">'+esc(g.genre)+'</span></div>'+
     '<div class="game-actions"><button class="game-action play-official" data-play="'+esc(g.id)+'" type="button">Play Official</button><button class="game-action visit-site" data-visit="'+esc(g.id)+'" type="button">Visit Website</button><button class="game-action share-game" data-share="'+esc(g.id)+'" type="button" aria-label="Share '+esc(g.name)+'">•••</button></div></div></article>';
@@ -199,6 +200,13 @@ document.addEventListener("click",e=>{
   const fav=e.target.closest?.("[data-favorite]");if(fav){const id=fav.dataset.favorite;if(state.favorites.has(id))state.favorites.delete(id);else state.favorites.add(id);saveFavs();const active=state.favorites.has(id);fav.classList.toggle("active",active);fav.textContent=active?"♥":"♡";burstAt(fav,6);notify(active?"Added to favorites":"Removed from favorites");return}
   const play=e.target.closest?.("[data-play]");if(play){const g=games.find(x=>x.id===play.dataset.play);if(g)playGame(g,play);return}
   const visit=e.target.closest?.("[data-visit]");if(visit){const g=games.find(x=>x.id===visit.dataset.visit);if(g){notify("Opening "+g.name+" website…");window.open(g.officialUrl,"_blank","noopener,noreferrer")}return}
+  const save=e.target.closest?.("[data-save-game]");if(save){
+    const g=games.find(x=>x.id===save.dataset.saveGame);if(g){
+      const id="game-"+g.id;
+      if(isSaved(id)){removeSaved(id);save.textContent="Save";save.classList.remove("saved");notify("Removed from Saved");}
+      else{saveItem({id,type:"game",title:g.name,description:g.description,image:g.cover,url:g.officialUrl,createdAt:Date.now(),author:g.dev||"CTRLZONE"});save.textContent="Saved";save.classList.add("saved");notify("Saved to your collection");}
+    }return
+  }
   const share=e.target.closest?.("[data-share]");if(share){const g=games.find(x=>x.id===share.dataset.share);if(g)shareGame(g,share);return}
   const fplay=e.target.closest?.("[data-featured-play]");if(fplay){const g=games.find(x=>x.id===fplay.dataset.featuredPlay);if(g)playGame(g,fplay);return}
   const stream=e.target.closest?.("[data-featured-stream]");if(stream){const g=games.find(x=>x.id===stream.dataset.featuredStream);if(g){notify("Stream hub ready for "+g.name);document.getElementById("games")?.scrollIntoView({behavior:"smooth",block:"start"})}}
