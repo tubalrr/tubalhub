@@ -67,22 +67,41 @@ jobs:
         run: |
           set -euo pipefail
           KEYSTORE="$PWD/app/messenger-release.jks"
+          TEST_KEYSTORE="$RUNNER_TEMP/messenger-key-validation.p12"
 
-          if ! keytool -list             -keystore "$KEYSTORE"             -storepass "$MESSENGER_STORE_PASSWORD" >/dev/null 2>&1; then
+          if ! keytool -list \
+            -keystore "$KEYSTORE" \
+            -storepass "$MESSENGER_STORE_PASSWORD" >/dev/null 2>&1; then
             echo "::error::MESSENGER_KEYSTORE_PASSWORD cannot open the permanent Messenger signing keystore."
             exit 1
           fi
 
-          if ! keytool -list             -keystore "$KEYSTORE"             -storepass "$MESSENGER_STORE_PASSWORD"             -alias "$MESSENGER_KEY_ALIAS" >/dev/null 2>&1; then
+          if ! keytool -list \
+            -keystore "$KEYSTORE" \
+            -storepass "$MESSENGER_STORE_PASSWORD" \
+            -alias "$MESSENGER_KEY_ALIAS" >/dev/null 2>&1; then
             echo "::error::MESSENGER_KEY_ALIAS was not found in the permanent Messenger signing keystore."
             exit 1
           fi
 
-          if ! keytool -keypasswd             -alias "$MESSENGER_KEY_ALIAS"             -keystore "$KEYSTORE"             -storepass "$MESSENGER_STORE_PASSWORD"             -keypass "$MESSENGER_KEY_PASSWORD"             -new "$MESSENGER_KEY_PASSWORD" >/dev/null 2>&1; then
-            echo "::notice::Key-password validation command is not supported by this keystore/provider; continuing with the configured separate key password."
+          rm -f "$TEST_KEYSTORE"
+          if ! keytool -importkeystore \
+            -srckeystore "$KEYSTORE" \
+            -srcstoretype JKS \
+            -srcstorepass "$MESSENGER_STORE_PASSWORD" \
+            -srcalias "$MESSENGER_KEY_ALIAS" \
+            -srckeypass "$MESSENGER_KEY_PASSWORD" \
+            -destkeystore "$TEST_KEYSTORE" \
+            -deststoretype PKCS12 \
+            -deststorepass "validation-only" \
+            -destkeypass "validation-only" \
+            -noprompt >/dev/null 2>&1; then
+            echo "::error::MESSENGER_KEY_PASSWORD cannot unlock the configured Messenger signing key."
+            exit 1
           fi
+          rm -f "$TEST_KEYSTORE"
 
-          echo "Permanent Messenger signing keystore validated."
+          echo "Permanent Messenger signing keystore and key credentials validated."
 
       - name: Build signed release APK
         shell: bash
