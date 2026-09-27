@@ -251,7 +251,7 @@ function score(x,q){
 function groupResults(data,q){
   const qn=norm(q);
   const groups=[
-    ["Journals & Feeds",data.posts.filter(x=>score(x,qn)>0).sort((a,b)=>score(b,qn)-score(a,qn)).slice(0,8)],
+    ["Journals & Feeds",data.posts.filter(x=>x.kind!=="music"&&score(x,qn)>0).sort((a,b)=>score(b,qn)-score(a,qn)).slice(0,8)],
     ["Music",data.posts.filter(x=>x.kind==="music"&&score(x,qn)>0).slice(0,6)],
     ["Games",data.games.filter(x=>score(x,qn)>0).slice(0,8)],
     ["Products",data.products.filter(x=>score(x,qn)>0).slice(0,6)],
