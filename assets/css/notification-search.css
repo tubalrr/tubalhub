@@ -75,3 +75,17 @@ html[data-theme="light"] .th-overlay{background:rgba(18,30,22,.24)!important}htm
 .hub-home .search-box>span{font-size:16px!important}
 .th-search-input-row{height:52px!important;min-height:52px!important}
 .th-search-input{height:52px!important;font-size:13px!important}
+
+@media(max-width:480px){
+  .hub-home .search-box{
+    display:flex!important;
+    width:min(220px,calc(100vw - 150px))!important;
+    min-width:150px!important;
+    max-width:220px!important;
+    flex:0 1 220px!important;
+  }
+  .hub-home .search-box input{
+    display:block!important;
+    font-size:13px!important;
+  }
+}
