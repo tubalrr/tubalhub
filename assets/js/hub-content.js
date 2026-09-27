@@ -1,5 +1,5 @@
 import {app,auth} from "./firebase-config.js";
-import {getFirestore,collection,addDoc,query,limit,onSnapshot,serverTimestamp} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+import {getFirestore,collection,addDoc,query,limit,getDocs,serverTimestamp} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
 const db=getFirestore(app);
 export const HUB_CONTENT_TYPES=["post","product","game","news","video","announcement","event","story"];
@@ -29,9 +29,9 @@ export async function publishHubPost(data){
   return addDoc(collection(db,"hubPosts"),payload);
 }
 
-export function subscribeHubPosts(callback){
-  const q=query(collection(db,"hubPosts"),limit(200));
-  return onSnapshot(q,snap=>{
+export async function subscribeHubPosts(callback){
+  try{
+    const snap=await getDocs(query(collection(db,"hubPosts"),limit(200)));
     const items=snap.docs.map(d=>({id:d.id,...d.data()}));
     items.sort((a,b)=>{
       const at=a.createdAt?.toMillis?.()||a.createdAt?.seconds*1000||0;
@@ -39,5 +39,8 @@ export function subscribeHubPosts(callback){
       return bt-at;
     });
     callback(items);
-  },err=>console.warn("[TUBAL HUB] hubPosts subscription unavailable",err));
+  }catch(err){
+    console.warn("[TUBAL HUB] hubPosts fetch unavailable",err);
+  }
+  return ()=>{};
 }
