@@ -6,8 +6,8 @@
   "releasedAtReal": "2026-09-27T04:54:10.411Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
-    "v1.2.18 beta release — compact Feeds, Event and Games layout.",
-    "v1.2.18 beta release — compact Feeds, Event and Games layout.",
+    "v1.2.18 release — compact Feeds, Event and Games layout.",
+    "v1.2.18 release — compact Feeds, Event and Games layout.",
     {
       "typeReal": "PERF",
       "scopeReal": "Compact + Mobile Performance",
@@ -128,12 +128,12 @@
     {
       "version": "1.2.18",
       "date": "2026-05-13",
-      "changes": "Beta v1.2.18 — compact Feeds, Event and Games test release."
+      "changes": "v1.2.18 release — compact Feeds, Event and Games release."
     },
     {
       "version": "1.2.18",
       "date": "2026-05-13",
-      "changes": "Beta v1.2.18 — compact Feeds, Event and Games test release."
+      "changes": "v1.2.18 release — compact Feeds, Event and Games release."
     },
     {
       "type": "FEAT",
@@ -209,5 +209,5 @@
     }
   ],
   "date": "2026-05-13",
-  "changes": "Beta v1.2.18 — compact Feeds, Event and Games test release."
+  "changes": "v1.2.18 release — compact Feeds, Event and Games release."
 }
