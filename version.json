@@ -1,11 +1,16 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.2.33",
-  "build": "2026-09-27_1945",
-  "releasedAtReal": "2026-09-27T11:45:00Z",
+  "version": "1.2.34",
+  "build": "2026-09-27_2010",
+  "releasedAtReal": "2026-09-27T12:10:00Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.2.34 FIX — Sponsored 1/2 now render from real Firestore sponsor data with a cached last-known real sponsor fallback, so the panel no longer stays stuck on CHECKING... when the remote read is slow or temporarily unavailable.",
+    "v1.2.34 FIX — Restored the real Shopee sponsored presentation, image handling, Obsidian Gamer surface styling, and full-card click interaction without changing existing navigation/data hooks.",
+    "v1.2.34 FIX — Rotated the service-worker cache and refreshed homepage asset query versions so the sponsor fix is loaded instead of a stale cached home.js/home CSS build.",
+    "v1.2.34 AUDIT — Preserved the existing Three Brands / WHY TUBAL HUB grid alignment rules (`auto 1fr auto`), links, animation classes, and page scripts while changing only sponsor rendering/cache/styling."
+  ,
     "v1.2.33 FIX — Target cards now use an explicit CSS Grid row template `grid-template-rows:auto 1fr auto` so header, flexible content, and footer/action occupy deterministic rows.",
     "v1.2.33 FIX — The previous target-card `display:flex !important` alignment override was removed because it could override inline grid declarations and cause uneven footer baselines.",
     "v1.2.33 AUDIT — Preserved existing section IDs, navigation links, animation classes, data hooks, and Obsidian Gamer colors/surfaces while changing only the target layout structure and alignment rules.",
@@ -436,5 +441,5 @@
     }
   ],
   "date": "2026-09-27",
-  "changes": "v1.2.33 — Explicit grid-row card alignment fix."
+  "changes": "v1.2.34 — Sponsored panel restore + cache hardening."
 }
