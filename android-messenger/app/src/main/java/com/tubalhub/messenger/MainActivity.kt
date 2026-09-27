@@ -1095,7 +1095,7 @@ class MainActivity : AppCompatActivity() {
         }
         val back = button("‹").apply {
             textSize = 30f
-            background = ColorDrawable(Color.TRANSPARENT)
+            background = rounded(Color.TRANSPARENT, 0f)
             setTextColor(0xFF1877F2.toInt())
             setOnClickListener {
                 stopMessages?.remove()
@@ -1182,7 +1182,7 @@ class MainActivity : AppCompatActivity() {
         }
         composer.addView(button("↩").apply {
             textSize = 17f
-            background = ColorDrawable(Color.TRANSPARENT)
+            background = rounded(Color.TRANSPARENT, 0f)
             setTextColor(0xFF65676B.toInt())
             setOnClickListener { clearReply() }
         }, LinearLayout.LayoutParams(38, 44))
