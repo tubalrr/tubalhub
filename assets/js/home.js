@@ -321,7 +321,7 @@ function initSponsorClickGuardReal(){
     const link=event.target?.closest?.(".tubal-sponsor-card-real");
     if(!link)return;
     const url=String(link.getAttribute("href")||"").trim();
-    if(!/^https?:\\/\\//i.test(url))return;
+    if(!/^https?:\/\//i.test(url))return;
     event.preventDefault();
     event.stopImmediatePropagation();
     window.location.assign(url);
