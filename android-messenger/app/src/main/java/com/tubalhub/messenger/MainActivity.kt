@@ -216,6 +216,201 @@ class MainActivity : AppCompatActivity() {
     private fun showLogin() {
         root.removeAllViews()
         root.setPadding(0, 0, 0, 0)
+        root.setBackgroundColor(Color.WHITE)
+        window.statusBarColor = Color.WHITE
+        window.navigationBarColor = Color.WHITE
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+        }
+
+        val scroll = ScrollView(this).apply {
+            setFillViewport(true)
+            isVerticalScrollBarEnabled = false
+            overScrollMode = View.OVER_SCROLL_NEVER
+            setBackgroundColor(0xFFF8FAFC.toInt())
+        }
+
+        val page = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            gravity = Gravity.CENTER_HORIZONTAL
+            setPadding(22, 30, 22, 24)
+            setBackgroundColor(0xFFF8FAFC.toInt())
+        }
+
+        fun spacer(height: Int) = Space(this).apply {
+            layoutParams = LinearLayout.LayoutParams(1, height)
+        }
+
+        page.addView(spacer(12))
+
+        val logoRow = LinearLayout(this).apply {
+            gravity = Gravity.CENTER_VERTICAL
+        }
+
+        val logo = TextView(this).apply {
+            text = "P"
+            textSize = 36f
+            gravity = Gravity.CENTER
+            typeface = Typeface.create("sans-serif", Typeface.BOLD)
+            setTextColor(Color.WHITE)
+            background = GradientDrawable(
+                GradientDrawable.Orientation.TL_BR,
+                intArrayOf(0xFF269BEF.toInt(), 0xFF1676D2.toInt())
+            ).apply { cornerRadius = 24f }
+            elevation = 7f
+        }
+        logoRow.addView(logo, LinearLayout.LayoutParams(68, 68).apply { rightMargin = 12 })
+
+        logoRow.addView(TextView(this).apply {
+            text = "tubal"
+            textSize = 52f
+            typeface = Typeface.create("sans-serif", Typeface.NORMAL)
+            setTextColor(0xFF1688DF.toInt())
+            letterSpacing = -0.035f
+        }, LinearLayout.LayoutParams(-2, -2))
+
+        page.addView(logoRow)
+
+        page.addView(text("Tubal Chat").apply {
+            textSize = 38f
+            gravity = Gravity.CENTER
+            typeface = Typeface.create("sans-serif", Typeface.BOLD)
+            setTextColor(0xFF17181B.toInt())
+            setPadding(0, 42, 0, 0)
+            letterSpacing = -0.02f
+        })
+
+        page.addView(text("Chat freely. Connect instantly.").apply {
+            textSize = 18f
+            gravity = Gravity.CENTER
+            setTextColor(0xFF667085.toInt())
+            setPadding(0, 8, 0, 0)
+        })
+
+        val art = FrameLayout(this).apply {
+            layoutParams = LinearLayout.LayoutParams(310, 280).apply {
+                topMargin = 24
+                bottomMargin = 6
+            }
+        }
+
+        val backBubble = TextView(this).apply {
+            text = "•••"
+            textSize = 22f
+            gravity = Gravity.CENTER
+            letterSpacing = 0.18f
+            setTextColor(0xFF5B9DDB.toInt())
+            background = GradientDrawable().apply {
+                setColor(0xFFDCEEFF.toInt())
+                cornerRadius = 24f
+                setStroke(1, 0xFFB8D8F6.toInt())
+            }
+            elevation = 4f
+        }
+        art.addView(backBubble, FrameLayout.LayoutParams(220, 92).apply {
+            leftMargin = 22
+            topMargin = 76
+        })
+
+        val mainBubble = TextView(this).apply {
+            text = "✓   • • • •"
+            textSize = 19f
+            gravity = Gravity.CENTER
+            typeface = Typeface.DEFAULT_BOLD
+            setTextColor(Color.WHITE)
+            background = GradientDrawable(
+                GradientDrawable.Orientation.TL_BR,
+                intArrayOf(0xFF2499EF.toInt(), 0xFF1677D7.toInt())
+            ).apply { cornerRadius = 24f }
+            elevation = 10f
+        }
+        art.addView(mainBubble, FrameLayout.LayoutParams(190, 118).apply {
+            leftMargin = 110
+            topMargin = 30
+        })
+
+        val heartBubble = TextView(this).apply {
+            text = "♡"
+            textSize = 42f
+            gravity = Gravity.CENTER
+            setTextColor(0xFF5D9FE0.toInt())
+            background = GradientDrawable(
+                GradientDrawable.Orientation.TL_BR,
+                intArrayOf(0xFFE4F1FF.toInt(), 0xFFC6DDF7.toInt())
+            ).apply {
+                cornerRadius = 20f
+                setStroke(1, 0xFFB3D1EF.toInt())
+            }
+            elevation = 5f
+        }
+        art.addView(heartBubble, FrameLayout.LayoutParams(145, 78).apply {
+            leftMargin = 4
+            topMargin = 188
+        })
+
+        art.addView(TextView(this).apply {
+            text = "⌒"
+            textSize = 48f
+            setTextColor(0xFF9CC8EF.toInt())
+            rotation = -25f
+        }, FrameLayout.LayoutParams(80, 70).apply {
+            leftMargin = 206
+            topMargin = 194
+        })
+
+        page.addView(art)
+
+        val login = button("Log In").apply {
+            textSize = 22f
+            background = GradientDrawable(
+                GradientDrawable.Orientation.LEFT_RIGHT,
+                intArrayOf(0xFF1479DF.toInt(), 0xFF20A8D8.toInt())
+            ).apply { cornerRadius = 18f }
+            setTextColor(Color.WHITE)
+            typeface = Typeface.create("sans-serif", Typeface.BOLD)
+            elevation = 8f
+        }
+        page.addView(login, LinearLayout.LayoutParams(-1, 64).apply {
+            topMargin = 8
+        })
+
+        val signup = button("Create New Account").apply {
+            textSize = 20f
+            background = rounded(Color.WHITE, 18f).apply {
+                setStroke(2, 0xFF1479DF.toInt())
+            }
+            setTextColor(0xFF126FC9.toInt())
+            typeface = Typeface.create("sans-serif", Typeface.BOLD)
+        }
+        page.addView(signup, LinearLayout.LayoutParams(-1, 64).apply {
+            topMargin = 14
+        })
+
+        page.addView(text("By continuing you agree to our  Terms  •  Privacy Policy").apply {
+            textSize = 12f
+            gravity = Gravity.CENTER
+            setTextColor(0xFF667085.toInt())
+            setPadding(0, 34, 0, 0)
+        })
+
+        login.setOnClickListener { showLoginForm() }
+
+        signup.setOnClickListener {
+            try {
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://tubalrr.github.io/tubalhub/")))
+            } catch (_: Exception) {
+                toast("Open the TUBAL HUB website to create your account.")
+            }
+        }
+
+        scroll.addView(page)
+        root.addView(scroll, LinearLayout.LayoutParams(-1, -1))
+        setContentView(root)
+    }
+
+    private fun showLoginForm() {
+        root.removeAllViews()
+        root.setPadding(0, 0, 0, 0)
         root.setBackground(
             GradientDrawable(
                 GradientDrawable.Orientation.TL_BR,
