@@ -1,11 +1,13 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.2.25",
-  "build": "2026-09-27_1800",
-  "releasedAtReal": "2026-09-27T10:00:00Z",
+  "version": "1.2.26",
+  "build": "2026-09-27_1830",
+  "releasedAtReal": "2026-09-27T10:30:00Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.2.26 FIX — The Three Brands cards now use equal-height grid/flex behavior with uniform padding and flex-grown descriptions so all bottom actions align.",
+    "v1.2.26 FIX — The Payapang Isip, Shop, and Gaming Zone bento cards now stretch cleanly in the right-hand column with balanced two-row sizing and responsive mobile reset.",
     "v1.2.25 FIX — Homepage authentication controls now sync independently from the main dashboard module, so Login/Sign Up hide after a successful Firebase session.",
     "v1.2.25 FIX — Refreshed the service-worker shell cache to ensure the new authentication UI assets are loaded.",
     "v1.2.24 FIX — Homepage data rendering is now isolated per source so music, games, presence, journals, and feeds can render even when one data source is unavailable or slow.",
@@ -141,6 +143,18 @@
   ],
   "breakingReal": false,
   "changelog": [
+    {
+      "type": "FIX",
+      "icon": "▦",
+      "title": "Three Brands Alignment",
+      "desc": "Equal-height cards, consistent p-6 spacing, flex-grown descriptions, and perfectly aligned bottom actions."
+    },
+    {
+      "type": "FIX",
+      "icon": "↕",
+      "title": "Right Column Balance",
+      "desc": "The stacked Shop and Feeds cards now share balanced row sizing while the Journal card stretches across both rows."
+    },
     {
       "type": "FIX",
       "icon": "🔐",
@@ -327,5 +341,5 @@
     }
   ],
   "date": "2026-09-27",
-  "changes": "v1.2.25 — Authentication UI sync and cache refresh."
+  "changes": "v1.2.26 — Dashboard card alignment and responsive grid consistency."
 }
