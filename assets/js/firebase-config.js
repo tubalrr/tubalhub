@@ -1,13 +1,8 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
-import {
-  initializeAuth,
-  indexedDBLocalPersistence,
-  browserLocalPersistence,
-  browserPopupRedirectResolver
-} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBBfE3xfu4BRz7Jwd4GoscJ_jW_x-GXjUk",
+  apiKey: "AIzaSyBBF3xfu4BRz7Jwd4GoscJ_jW_x-GXjUk",
   authDomain: "tubalhub.firebaseapp.com",
   projectId: "tubalhub",
   storageBucket: "tubalhub.firebasestorage.app",
@@ -16,15 +11,6 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-
-// Keep Firebase Auth lightweight during startup.
-// The popup/redirect resolver is loaded only when Google sign-in is actually used.
-const auth = initializeAuth(app, {
-  persistence: [
-    indexedDBLocalPersistence,
-    browserLocalPersistence
-  ],
-  popupRedirectResolver: browserPopupRedirectResolver
-});
+const auth = getAuth(app);
 
 export { app, auth };
