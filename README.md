@@ -1,6 +1,6 @@
 # TUBAL HUB
 
-**Three Brands. One Hub.**
+**One platform. Everything connected.**
 
 TUBAL HUB is a modern web platform combining gaming, creative tools, community features, news, digital products, and creator-focused experiences.
 
@@ -10,8 +10,8 @@ https://tubalrr.github.io/tubalhub/
 
 ## 🧭 Platform Overview
 
-### 🌌 TUBAL HUB
-The main hub for:
+### 🌐 TUBAL HUB
+The unified platform for:
 - Community
 - Feeds
 - Games
@@ -22,17 +22,9 @@ The main hub for:
 - Events
 - Settings
 - Digital content
+- Creator and gaming features
 
-### ⚡ CTRLZONE
-Gaming and creator command center featuring:
-- Games Library
-- Gaming discovery
-- Highlights
-- Creative content
-- Motivation
-
-### 🌿 Payapang Isip
-A nature-inspired space for peaceful, creative, and AI-assisted experiences.
+TUBAL HUB is one connected platform. Its features and sections are part of the same ecosystem, not separate brands.
 
 ---
 
