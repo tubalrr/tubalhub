@@ -1,0 +1,136 @@
+/* TUBAL HUB — Exact Tailwind-style alignment compatibility layer
+   Implements the requested utility classes without loading a full Tailwind runtime. */
+
+body.hub-home .th-pillar-grid,
+body.hub-home .th-value-grid{
+  display:grid !important;
+  grid-template-columns:1fr !important;
+  gap:1.5rem !important;
+  align-items:stretch !important;
+}
+
+@media (min-width:768px){
+  body.hub-home .th-pillar-grid,
+  body.hub-home .th-value-grid{
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  }
+}
+
+/* Exact requested Card utility combination. */
+body.hub-home .th-pillar[class~="flex"][class~="flex-col"][class~="justify-between"][class~="h-full"][class~="p-6"][class~="bg-[#151517]"][class~="border"][class~="border-white/[0.08]"][class~="rounded-xl"],
+body.hub-home .th-value-grid article[class~="flex"][class~="flex-col"][class~="justify-between"][class~="h-full"][class~="p-6"][class~="bg-[#151517]"][class~="border"][class~="border-white/[0.08]"][class~="rounded-xl"]{
+  display:flex !important;
+  flex-direction:column !important;
+  justify-content:space-between !important;
+  height:100% !important;
+  min-height:0 !important;
+  min-width:0 !important;
+  box-sizing:border-box !important;
+  padding:1.5rem !important;
+  background:#151517 !important;
+  border:1px solid rgba(255,255,255,.08) !important;
+  border-radius:.75rem !important;
+  overflow:hidden !important;
+}
+
+/* Exact requested Content Area utility. */
+body.hub-home [class~="flex-grow"]{
+  flex-grow:1 !important;
+  min-height:0 !important;
+  min-width:0 !important;
+  width:100% !important;
+}
+
+/* Exact requested Footer / action utility. */
+body.hub-home [class~="mt-auto"][class~="pt-4"]{
+  margin-top:auto !important;
+  padding-top:1rem !important;
+  flex:0 0 auto !important;
+}
+
+/* Three Brands: deterministic internal spacing. */
+body.hub-home #thBrandPillars .th-pillar{
+  gap:0 !important;
+}
+body.hub-home #thBrandPillars .th-pillar .th-pillar-icon{
+  flex:0 0 auto !important;
+  margin:0 0 1.25rem !important;
+}
+body.hub-home #thBrandPillars .th-pillar .th-pillar-kicker{
+  margin:0 0 .5rem !important;
+  min-height:auto !important;
+  line-height:1.35 !important;
+}
+body.hub-home #thBrandPillars .th-pillar .th-pillar-description{
+  margin:0 !important;
+  line-height:1.6 !important;
+  overflow-wrap:normal !important;
+  word-break:normal !important;
+}
+body.hub-home #thBrandPillars .th-pillar .th-pillar-action{
+  display:flex !important;
+  align-items:center !important;
+  gap:.35rem !important;
+  width:max-content !important;
+  max-width:100% !important;
+  margin:0 !important;
+  line-height:1.25 !important;
+  text-decoration:none !important;
+}
+
+/* WHY TUBAL HUB: identical internal geometry. */
+body.hub-home .th-value-grid{
+  width:100% !important;
+}
+body.hub-home .th-value-grid article{
+  gap:0 !important;
+}
+body.hub-home .th-value-grid article > .th-value-content{
+  flex-grow:1 !important;
+  min-width:0 !important;
+}
+body.hub-home .th-value-grid article > .th-value-footer{
+  margin-top:auto !important;
+  padding-top:1rem !important;
+  flex:0 0 auto !important;
+}
+body.hub-home .th-value-grid article > .th-value-content h3{
+  margin:0 0 .75rem !important;
+  font-size:1.125rem !important;
+  line-height:1.2 !important;
+  letter-spacing:-.02em !important;
+}
+body.hub-home .th-value-grid article > .th-value-content p{
+  margin:0 !important;
+  font-size:.75rem !important;
+  line-height:1.6 !important;
+  overflow-wrap:normal !important;
+  word-break:normal !important;
+}
+body.hub-home .th-value-grid article > .th-value-footer > span{
+  display:block !important;
+  margin:0 !important;
+  line-height:1 !important;
+}
+
+@media (min-width:768px){
+  body.hub-home #thBrandPillars .th-pillar,
+  body.hub-home .th-value-grid article{
+    min-height:280px !important;
+  }
+}
+
+@media (max-width:767px){
+  body.hub-home #thBrandPillars .th-pillar,
+  body.hub-home .th-value-grid article{
+    height:auto !important;
+    min-height:0 !important;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  body.hub-home #thBrandPillars .th-pillar,
+  body.hub-home .th-value-grid article{
+    transition:none !important;
+  }
+}
