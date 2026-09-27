@@ -96,7 +96,7 @@ footer{border-top:1px solid var(--line);padding:28px 0 38px}.footerin{display:fl
 <section id="pricing" class="wrap">
   <div class="section-head"><div><div class="kicker">Simple pricing</div><h2>Start free. Upgrade when ready.</h2></div><p>Use the core organizer free from GitHub. The Premium Pack adds ready-made templates for deeper planning.</p></div>
   <div class="pricing">
-    <article class="price"><div class="price-label">GitHub</div><div class="amount">Free</div><p>Core LifeHub Personal OS for your own setup and customization.</p><ul><li>Full personal organizer</li><li>Vanilla HTML / CSS / JS</li><li>LocalStorage data</li><li>Offline-first foundation</li><li>MIT license</li></ul><a class="btn dark" href="index.html">View Free Demo</a></article>
+    <article class="price"><div class="price-label">GitHub</div><div class="amount">Free</div><p>Core LifeHub Personal OS for your own setup and customization.</p><ul><li>Full personal organizer</li><li>Vanilla HTML / CSS / JS</li><li>LocalStorage data</li><li>Offline-first foundation</li><li>Repository license</li></ul><a class="btn dark" href="index.html">View Free Demo</a></article>
     <article class="price featured"><div class="price-label">Premium Pack</div><div class="amount">₱299</div><p>Extra templates and planning resources for a more complete personal system.</p><ul><li>Everything in Free</li><li>Extra ready-to-use templates</li><li>Planning & tracking templates</li><li>Premium starter resources</li><li>Lifetime digital access</li></ul><a class="btn light" href="#premium">Get Premium Pack →</a></article>
   </div>
 </section>
@@ -104,10 +104,10 @@ footer{border-top:1px solid var(--line);padding:28px 0 38px}.footerin{display:fl
 <section class="quote wrap"><blockquote>“Hindi kailangang perfect ang araw. Kailangan lang may next step.”</blockquote><p>LifeHub is your quiet place to figure out what matters next.</p></section>
 </main>
 
-<footer><div class="wrap footerin"><div class="footleft">Made by <strong>tubalrr</strong> · LifeHub Personal OS</div><div class="footlinks"><a class="stars" id="stars" href="https://github.com/tubalrr/tubalhub" target="_blank" rel="noopener">★ GitHub</a><a href="https://github.com/tubalrr/tubalhub/blob/main/LICENSE.md" target="_blank" rel="noopener">MIT License</a></div></div></footer>
+<footer><div class="wrap footerin"><div class="footleft">Made by <strong>tubalrr</strong> · LifeHub Personal OS</div><div class="footlinks"><a class="stars" id="stars" href="https://github.com/tubalrr/tubalhub" target="_blank" rel="noopener">★ GitHub</a><a href="https://github.com/tubalrr/tubalhub/blob/main/LICENSE.md" target="_blank" rel="noopener">Repository License</a></div></div></footer>
 <script>
 (async()=>{const el=document.getElementById('stars');try{const r=await fetch('https://api.github.com/repos/tubalrr/tubalhub');if(r.ok){const d=await r.json();el.textContent='★ '+(d.stargazers_count||0)+' GitHub Stars'}}catch(e){}})();
-document.querySelectorAll('a[href="#premium"]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();alert('Premium Pack checkout link can be connected here.')}}));
+document.querySelectorAll('a[href="#premium"]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();alert('Premium Pack checkout link can be connected here.')}));
 </script>
 </body>
 </html>
