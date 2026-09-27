@@ -1,11 +1,13 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.2.23",
-  "build": "2026-09-27_1718",
-  "releasedAtReal": "2026-09-27T09:18:00Z",
+  "version": "1.2.24",
+  "build": "2026-09-27_1730",
+  "releasedAtReal": "2026-09-27T09:30:00Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.2.24 FIX — Homepage data rendering is now isolated per source so music, games, presence, journals, and feeds can render even when one data source is unavailable or slow.",
+    "v1.2.24 FIX — Added a short timeout to non-critical homepage data reads to prevent one stalled source from blocking the entire dashboard.",
     "v1.2.23 UI — Applied the Obsidian Gamer palette: #0A0A0B background, #151517 surfaces, thin rgba(255,255,255,.08) borders, Gamer Red #FF3B30 and Electric Gold #FFCC00.",
     "v1.2.23 UI — Sponsored card remains fully clickable with a gold lift/glow hover treatment and existing real Shopee branding + Verified badge.",
     "v1.2.23 UI — Added subtle cyan/blue drifting data-stream particles and a smoothly scrolling TUBAL HUB Feeds ticker without changing the existing page grid.",
@@ -137,6 +139,12 @@
   ],
   "breakingReal": false,
   "changelog": [
+    {
+      "type": "FIX",
+      "icon": "⚡",
+      "title": "Homepage Data Pipeline",
+      "desc": "One unavailable data source no longer blocks the rest of the homepage from rendering."
+    },
     {
       "type": "UI",
       "icon": "◼",
