@@ -1,0 +1,285 @@
+/* TUBAL HUB — Obsidian Gamer Polish v1.2.23
+   Visual-only layer. Does not redefine the existing page grid or layout. */
+
+:root{
+  --th-obsidian:#0A0A0B;
+  --th-charcoal:#151517;
+  --th-border:rgba(255,255,255,.08);
+  --th-red:#FF3B30;
+  --th-gold:#FFCC00;
+  --th-cyan:#30D7FF;
+  --th-blue:#4D8DFF;
+  --th-muted:#9CA3AF;
+}
+
+body.hub-home{
+  background:#0A0A0B !important;
+  color:#F7F7F8 !important;
+}
+
+body.hub-home::before{
+  opacity:.48 !important;
+  background-image:
+    linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px),
+    radial-gradient(circle at 8% 18%,rgba(48,215,255,.78) 0 1px,transparent 1.8px),
+    radial-gradient(circle at 22% 68%,rgba(77,141,255,.72) 0 1px,transparent 1.8px),
+    radial-gradient(circle at 46% 28%,rgba(48,215,255,.64) 0 1px,transparent 1.8px),
+    radial-gradient(circle at 74% 16%,rgba(77,141,255,.68) 0 1px,transparent 1.8px),
+    radial-gradient(circle at 88% 72%,rgba(48,215,255,.60) 0 1px,transparent 1.8px),
+    radial-gradient(circle at 60% 84%,rgba(77,141,255,.58) 0 1px,transparent 1.8px) !important;
+  background-size:24px 24px,24px 24px,310px 260px,430px 330px,360px 280px,500px 380px,440px 340px,380px 300px !important;
+  animation:thDataParticles 28s linear infinite !important;
+}
+
+body.hub-home::after{
+  background:
+    radial-gradient(700px 520px at 12% 6%,rgba(255,59,48,.085),transparent 70%),
+    radial-gradient(840px 620px at 88% 14%,rgba(48,215,255,.075),transparent 72%),
+    radial-gradient(700px 520px at 82% 84%,rgba(77,141,255,.065),transparent 70%),
+    radial-gradient(480px 360px at 18% 78%,rgba(255,204,0,.045),transparent 72%) !important;
+  opacity:.9 !important;
+}
+
+@keyframes thDataParticles{
+  0%{background-position:0 0,0 0,0 0,0 0,0 0,0 0}
+  50%{background-position:0 0,0 0,95px -70px,-120px 100px,80px 72px,150px -85px,-100px 70px}
+  100%{background-position:0 0,0 0,190px -140px,-240px 200px,160px 144px,300px -170px,-200px 140px}
+}
+
+/* Core surfaces */
+body.hub-home .bento-card,
+body.hub-home .home-glass,
+body.hub-home .real-data-card,
+body.hub-home .game-feature-card,
+body.hub-home .feed-update-card,
+body.hub-home .music-real-card,
+body.hub-home .bento-real-card,
+body.hub-home .bento-quick-stats,
+body.hub-home .featured-website,
+body.hub-home #sponsoredContainerReal,
+body.hub-home #sponsoredContainerReal2,
+body.hub-home #featuredGameReal,
+body.hub-home .th-corp-section,
+body.hub-home .th-pillar,
+body.hub-home .glass-footer,
+body.hub-home .bento-footer{
+  background:#151517 !important;
+  border-color:rgba(255,255,255,.08) !important;
+  color:#F7F7F8 !important;
+  box-shadow:0 14px 40px rgba(0,0,0,.34),inset 0 1px rgba(255,255,255,.025) !important;
+}
+
+/* Dark hero without the legacy bright corporate surface. */
+body.hub-home .th-corp-hero{
+  background:
+    radial-gradient(circle at 78% 24%,rgba(255,59,48,.10),transparent 32%),
+    radial-gradient(circle at 18% 82%,rgba(48,215,255,.05),transparent 30%),
+    linear-gradient(145deg,#151517,#101012 70%,#0A0A0B) !important;
+  border-color:rgba(255,255,255,.08) !important;
+}
+body.hub-home .th-corp-hero h1,
+body.hub-home .th-corp-hero h2,
+body.hub-home .th-section-head h2,
+body.hub-home .th-pillar h3,
+body.hub-home .bento-section-head h2,
+body.hub-home .bento-real-brand h2,
+body.hub-home .game-feature-top h3,
+body.hub-home .feed-update-author strong{
+  color:#fff !important;
+}
+body.hub-home .th-corp-hero p,
+body.hub-home .th-section-head p,
+body.hub-home .th-pillar p,
+body.hub-home .game-feature-desc,
+body.hub-home .feed-update-text,
+body.hub-home .bento-real-brand small{
+  color:#9CA3AF !important;
+}
+body.hub-home .th-corp-primary{
+  background:#FF3B30 !important;
+  border-color:#FF3B30 !important;
+  color:#fff !important;
+  box-shadow:0 0 24px rgba(255,59,48,.16) !important;
+}
+body.hub-home .th-corp-secondary{
+  background:#151517 !important;
+  border-color:rgba(255,204,0,.28) !important;
+  color:#fff !important;
+}
+
+/* Interactive cards: consistent 300ms gamer feedback. */
+body.hub-home .th-pillar,
+body.hub-home .game-card-real-logo,
+body.hub-home .collection-card,
+body.hub-home .featured-feature-card,
+body.hub-home .bento-feed-featured,
+body.hub-home .bento-feed-compact,
+body.hub-home .tubal-sponsor-card-real,
+body.hub-home .game-feature-card{
+  transition:transform .3s ease-in-out,border-color .3s ease-in-out,box-shadow .3s ease-in-out,filter .3s ease-in-out !important;
+}
+body.hub-home .th-pillar:hover,
+body.hub-home a.game-card-real-logo:hover,
+body.hub-home a.collection-card:hover,
+body.hub-home a.featured-feature-card:hover,
+body.hub-home .bento-feed-featured:hover,
+body.hub-home .bento-feed-compact:hover,
+body.hub-home .game-feature-card:hover{
+  transform:translateY(-2px) !important;
+  border-color:rgba(255,59,48,.45) !important;
+  box-shadow:0 16px 36px rgba(0,0,0,.42),0 0 24px rgba(255,59,48,.10) !important;
+}
+body.hub-home .th-pillar:nth-child(2):hover,
+body.hub-home a.collection-card:nth-child(2):hover{
+  border-color:rgba(255,204,0,.52) !important;
+  box-shadow:0 16px 36px rgba(0,0,0,.42),0 0 24px rgba(255,204,0,.10) !important;
+}
+
+/* Sponsored card: amber/gold hover, crisp contrast, no white media shell. */
+body.hub-home #sponsoredContainerReal,
+body.hub-home #sponsoredContainerReal2{
+  background:#151517 !important;
+}
+body.hub-home .tubal-sponsor-card-real{
+  border:1px solid rgba(255,204,0,.30) !important;
+  background:linear-gradient(145deg,#1A1A1D,#101013) !important;
+  cursor:pointer !important;
+}
+body.hub-home .tubal-sponsor-card-real:hover{
+  transform:translateY(-2px) !important;
+  border-color:rgba(255,204,0,.82) !important;
+  box-shadow:0 18px 40px rgba(0,0,0,.48),0 0 28px rgba(255,204,0,.14) !important;
+}
+body.hub-home .tubal-sponsor-click-real{
+  border-color:rgba(255,204,0,.62) !important;
+  color:#fff !important;
+}
+body.hub-home .tubal-sponsor-copy-real b{color:#fff !important}
+body.hub-home .tubal-sponsor-copy-real p{color:#CBD5E1 !important}
+body.hub-home .tubal-sponsor-verified-real span{
+  background:#30B8FF !important;
+  box-shadow:0 0 10px rgba(48,184,255,.22);
+}
+
+/* Featured game logos stay image-first and sharp. */
+body.hub-home .game-card-real-logo{
+  background:#151517 !important;
+  border:1px solid rgba(255,255,255,.08) !important;
+}
+body.hub-home .game-card-real-logo:hover{
+  border-color:rgba(255,59,48,.58) !important;
+}
+body.hub-home .game-card-real-logo img,
+body.hub-home .game-card-real-logo .game-card-real-logo-img,
+body.hub-home .game-real-logo-box img{
+  image-rendering:auto !important;
+  object-fit:contain !important;
+  filter:none !important;
+}
+body.hub-home .game-real-logo-box{
+  background:#0F0F12 !important;
+  border-color:rgba(255,255,255,.08) !important;
+}
+
+/* Red/gold interactive accents. */
+body.hub-home button:hover,
+body.hub-home .featured-viewall:hover,
+body.hub-home .bento-real-viewall:hover{
+  border-color:rgba(255,204,0,.38) !important;
+}
+body.hub-home .bento-kicker,
+body.hub-home .bento-real-kicker,
+body.hub-home .th-corp-eyebrow{
+  color:#63DFFF !important;
+}
+body.hub-home .bento-live-dot,
+body.hub-home .footer-status-dot{
+  box-shadow:0 0 16px rgba(255,59,48,.34) !important;
+}
+
+/* Live Feeds ticker. */
+.bento-feed-ticker-real{
+  position:relative;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-top:12px;
+  padding:8px 12px;
+  border:1px solid rgba(255,59,48,.24);
+  border-radius:12px;
+  background:#0E0E11;
+  color:#DCE6EE;
+  box-shadow:inset 0 1px rgba(255,255,255,.025);
+}
+.bento-feed-ticker-real::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(105deg,transparent 35%,rgba(255,255,255,.11) 50%,transparent 65%);
+  transform:translateX(-115%);
+  animation:thTickerShine 5.5s ease-in-out infinite;
+  pointer-events:none;
+}
+.bento-feed-ticker-real .ticker-live-dot{
+  flex:0 0 auto;
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:#FF3B30;
+  box-shadow:0 0 12px rgba(255,59,48,.48);
+  animation:thTickerPulse 1.5s ease-in-out infinite;
+}
+.bento-feed-ticker-real .ticker-window{
+  min-width:0;
+  overflow:hidden;
+  position:relative;
+}
+.bento-feed-ticker-real .ticker-track{
+  display:inline-flex;
+  gap:42px;
+  min-width:max-content;
+  white-space:nowrap;
+  animation:thTickerScroll 24s linear infinite;
+}
+.bento-feed-ticker-real .ticker-track span{
+  font-size:10px;
+  font-weight:700;
+  color:#DCE6EE;
+}
+@keyframes thTickerScroll{
+  from{transform:translateX(0)}
+  to{transform:translateX(-50%)}
+}
+@keyframes thTickerShine{
+  0%,55%{transform:translateX(-115%)}
+  100%{transform:translateX(115%)}
+}
+@keyframes thTickerPulse{
+  0%,100%{transform:scale(.9);opacity:.72}
+  50%{transform:scale(1.25);opacity:1}
+}
+
+@media(max-width:768px){
+  body.hub-home::before{
+    display:block !important;
+    animation:thDataParticles 38s linear infinite !important;
+    opacity:.28 !important;
+  }
+  body.hub-home::after{
+    display:block !important;
+    animation:homeAurora 28s ease-in-out infinite alternate !important;
+  }
+  .bento-feed-ticker-real .ticker-track{animation-duration:30s}
+}
+
+@media(prefers-reduced-motion:reduce){
+  body.hub-home::before,
+  body.hub-home::after,
+  .bento-feed-ticker-real::before,
+  .bento-feed-ticker-real .ticker-track,
+  .bento-feed-ticker-real .ticker-live-dot{
+    animation:none !important;
+  }
+}
