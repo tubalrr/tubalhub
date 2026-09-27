@@ -54,3 +54,24 @@ html[data-theme="light"] .th-overlay{background:rgba(18,30,22,.24)!important}htm
 @keyframes thOnlinePulse{0%,100%{transform:scale(1)}50%{transform:scale(1.12);box-shadow:0 0 14px rgba(255,26,26,.88)}}
 @media(max-width:700px){.hub-home .search-box{flex:1!important;width:auto!important;max-width:none!important;min-width:0!important}.hub-home .search-box:focus-within,.hub-home .search-box.is-open{width:auto!important;max-width:none!important}.hub-home .search-box .search-shortcut{display:none}.th-notification-panel{padding:0;width:100vw}.th-notification-shell{border-radius:0!important}.th-notification-header{padding-top:max(18px,env(safe-area-inset-top))}.th-search-overlay{padding-top:44px}.th-search-modal{width:calc(100vw - 20px);max-height:calc(100vh - 72px);border-radius:18px!important}}
 @media(prefers-reduced-motion:reduce){.hub-home .notification-btn.has-new,.hub-home .notification-btn.has-new svg,.hub-home .notification-badge,.th-notification-row,.th-notif-status.online{animation:none!important}.th-overlay,.th-notification-panel,.th-search-modal{transition:none!important}}
+
+/* GLOBAL SEARCH HUB — compact top search */
+.hub-home .search-box{
+  height:36px!important;
+  min-height:36px!important;
+  max-height:36px!important;
+  border-radius:12px!important;
+  overflow:hidden!important;
+}
+.hub-home .search-box input,
+.hub-home .search-box #searchInputReal{
+  height:36px!important;
+  min-height:36px!important;
+  max-height:36px!important;
+  font-size:13px!important;
+  font-weight:500!important;
+  border-radius:12px!important;
+}
+.hub-home .search-box>span{font-size:16px!important}
+.th-search-input-row{height:52px!important;min-height:52px!important}
+.th-search-input{height:52px!important;font-size:13px!important}
