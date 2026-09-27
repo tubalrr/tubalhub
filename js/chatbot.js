@@ -310,7 +310,7 @@
       if(!open) welcomeUserReal();
     });
 
-    const sendQuestion=()=>{
+    const sendQuestion=async()=>{
       const question=input.value.trim();
       if(!question) return;
       addUserMessageReal(question);
