@@ -248,7 +248,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         val logo = TextView(this).apply {
-            text = "P"
+            text = "T"
             textSize = 36f
             gravity = Gravity.CENTER
             typeface = Typeface.create("sans-serif", Typeface.BOLD)
