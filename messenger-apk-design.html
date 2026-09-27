@@ -20,7 +20,161 @@ body{background:#f0f2f5;color:#050505}.shell{height:100dvh;display:flex;max-widt
 @media(max-width:800px){.sidebar{width:100%}.main{display:none}.shell.chat-open .sidebar{display:none}.shell.chat-open .main{display:flex}.back{display:block!important}.sidebar{max-width:none}.top{padding-top:12px}.back{border:0;background:none;color:#0084ff;font-size:20px;display:none}}
 @media(min-width:801px){.back{display:none}}
 </style>
-</head>
+<style id="android-messenger-redesign-v2">
+@media(max-width:760px){
+  :root{--m-blue:#1877f2;--m-bg:#fff;--m-soft:#f0f2f5;--m-text:#111827;--m-muted:#65676b;--m-line:#e4e6eb}
+  html,body{margin:0!important;padding:0!important;width:100%!important;height:100%!important;overflow:hidden!important;background:var(--m-bg)!important}
+  .phones{display:block!important;width:100%!important;height:100dvh!important;min-height:100dvh!important;margin:0!important;padding:0!important}
+  .phone:first-child{display:block!important;width:100%!important;height:100dvh!important}
+  .screen{width:100%!important;height:100dvh!important;min-height:0!important;border-radius:0!important;background:#fff!important}
+  .app{
+    width:100%!important;height:100%!important;min-height:0!important;
+    display:flex!important;flex-direction:column!important;
+    padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)!important;
+    background:#fff!important;
+  }
+
+  /* Clean top app bar */
+  .brand{
+    height:56px!important;min-height:56px!important;flex:0 0 56px!important;
+    padding:0 16px!important;border:0!important;
+    display:flex!important;align-items:center!important;gap:10px!important;
+    background:#fff!important;
+  }
+  .logo{
+    width:34px!important;height:34px!important;flex:0 0 34px!important;
+    border-radius:11px!important;background:var(--m-blue)!important;color:#fff!important;
+    box-shadow:none!important;font-size:16px!important;
+  }
+  .brand b{
+    font-size:21px!important;line-height:23px!important;letter-spacing:-.6px!important;
+    font-weight:800!important;color:#111!important;
+  }
+  .brand b:after{
+    content:"Messenger";display:block;
+    color:var(--m-blue);font-size:10px;line-height:12px;
+    font-weight:700;letter-spacing:.1px;
+  }
+  .brand small{
+    display:flex!important;align-items:center!important;justify-content:center!important;
+    margin-left:auto!important;width:34px!important;height:34px!important;
+    border-radius:50%!important;background:var(--m-soft)!important;
+    color:var(--m-muted)!important;font-size:0!important;
+  }
+  .brand small:after{content:"⋯";font-size:21px;line-height:1;transform:translateY(-2px)}
+
+  /* Search */
+  .search{
+    order:2!important;flex:0 0 42px!important;
+    margin:0 12px 9px!important;width:calc(100% - 24px)!important;
+    height:42px!important;padding:0 14px!important;
+    display:flex!important;align-items:center!important;
+    border-radius:22px!important;background:var(--m-soft)!important;
+    color:#8a8d91!important;font-size:15px!important;
+  }
+  .search:before{content:"⌕";font-size:20px!important;margin-right:8px;color:#65676b}
+  .search b{display:none!important}
+
+  /* Stories */
+  .stories{
+    order:3!important;flex:0 0 88px!important;height:88px!important;
+    padding:4px 12px 10px!important;margin:0!important;
+    display:flex!important;gap:12px!important;
+    overflow-x:auto!important;overflow-y:hidden!important;
+    border:0!important;border-bottom:1px solid var(--m-line)!important;
+    scrollbar-width:none!important;
+  }
+  .stories::-webkit-scrollbar{display:none}
+  .story{
+    width:58px!important;flex:0 0 58px!important;
+    padding:0!important;margin:0!important;
+    color:var(--m-muted)!important;font-size:10px!important;
+    line-height:14px!important;text-align:center!important;
+    overflow:hidden!important;text-overflow:ellipsis!important;
+    white-space:nowrap!important;
+  }
+  .story-avatar{
+    width:52px!important;height:52px!important;
+    margin:0 auto 4px!important;padding:2px!important;
+    background:linear-gradient(135deg,#1877f2,#42b8ff)!important;
+  }
+  .story-avatar>div{
+    width:100%!important;height:100%!important;
+    background:#e4e6eb!important;color:#374151!important;
+    font-size:13px!important;border-radius:50%!important;
+    overflow:hidden!important;
+  }
+  .story-avatar img{width:100%!important;height:100%!important;object-fit:cover!important}
+  .plus{
+    width:18px!important;height:18px!important;right:-1px!important;bottom:-1px!important;
+    font-size:12px!important;background:var(--m-blue)!important;
+    border:2px solid #fff!important;
+  }
+
+  /* Chat list */
+  .list{
+    order:4!important;flex:1 1 auto!important;min-height:0!important;
+    height:auto!important;overflow-x:hidden!important;overflow-y:auto!important;
+    padding:0 7px 8px!important;background:#fff!important;
+  }
+  .list:before{
+    content:"Messages";display:block;
+    padding:13px 8px 5px;
+    color:#111827;font-size:18px;font-weight:800;letter-spacing:-.3px;
+  }
+  .chat.live-chat{
+    width:100%!important;min-height:70px!important;height:70px!important;
+    margin:0!important;padding:9px 8px!important;
+    display:flex!important;align-items:center!important;
+    border:0!important;border-radius:12px!important;
+    background:#fff!important;
+  }
+  .chat.live-chat:hover,.chat.live-chat:active{background:#f5f6f7!important}
+  .chat.live-chat.active{background:#e7f3ff!important}
+  .chat.live-chat .avatar{
+    width:52px!important;height:52px!important;flex:0 0 52px!important;
+    border-radius:50%!important;
+  }
+  .chat.live-chat .copy{min-width:0!important;padding:0 8px!important}
+  .chat.live-chat .copy b{
+    display:block!important;margin:0!important;
+    color:#111827!important;font-size:15px!important;line-height:20px!important;
+    font-weight:750!important;white-space:nowrap!important;
+    overflow:hidden!important;text-overflow:ellipsis!important;
+  }
+  .chat.live-chat .copy p{
+    margin:2px 0 0!important;color:var(--m-muted)!important;
+    font-size:12px!important;line-height:17px!important;
+    white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+  }
+  .rightmeta{
+    min-width:42px!important;padding:0!important;
+    color:#8a929a!important;font-size:9px!important;text-align:right!important;
+  }
+
+  /* Bottom navigation */
+  .nav{
+    order:5!important;display:grid!important;
+    flex:0 0 60px!important;height:60px!important;
+    padding:3px 4px env(safe-area-inset-bottom)!important;
+    border:0!important;border-top:1px solid var(--m-line)!important;
+    background:rgba(255,255,255,.98)!important;
+  }
+  .nav button{
+    border:0!important;background:transparent!important;
+    color:#7b8086!important;font-size:10px!important;font-weight:500!important;
+    padding:4px 0!important;
+  }
+  .nav button b{
+    display:block!important;font-size:19px!important;line-height:22px!important;
+    margin:0 0 2px!important;font-weight:600!important;
+  }
+  .nav button.active{color:var(--m-blue)!important;font-weight:700!important}
+
+  /* Hide desktop/reference panels */
+  #phoneChat,#phoneProfile,.page-title,.admin-source-note,.apk-specs{display:none!important}
+}
+</style></head>
 <body>
 <div id="login" class="login" hidden><div class="loginbox"><div class="logo" style="margin:auto">T</div><h2>Tubal Chat</h2><p>Sign in to load your real TUBAL HUB conversations.</p><button id="loginBtn">Continue with Google</button><p id="loginErr"></p></div></div>
 <div id="app" class="shell" hidden>
