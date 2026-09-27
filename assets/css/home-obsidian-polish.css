@@ -363,3 +363,38 @@ body.hub-home .animate-pulse-gold{
     will-change:auto !important;
   }
 }
+
+
+/* TUBAL HUB — SPONSORED SURFACE RESTORE v1.2.34 */
+body.hub-home #sponsoredContainerReal,
+body.hub-home #sponsoredContainerReal2{
+  width:100% !important;
+  max-width:1280px !important;
+  box-sizing:border-box !important;
+  min-height:0 !important;
+  padding:14px !important;
+  margin:16px 0 0 !important;
+  background:#151517 !important;
+  border:1px solid rgba(255,255,255,.08) !important;
+  border-radius:20px !important;
+  box-shadow:0 16px 34px rgba(0,0,0,.28) !important;
+}
+body.hub-home #sponsoredContainerReal > div:first-child,
+body.hub-home #sponsoredContainerReal2 > div:first-child{
+  margin-bottom:12px !important;
+}
+body.hub-home #sponsoredContentReal,
+body.hub-home #sponsoredContentReal2{
+  display:block !important;
+  width:100% !important;
+  min-width:0 !important;
+}
+body.hub-home #sponsoredContainerReal .tubal-sponsor-card-real,
+body.hub-home #sponsoredContainerReal2 .tubal-sponsor-card-real{
+  width:100% !important;
+  box-sizing:border-box !important;
+}
+body.hub-home #sponsoredContainerReal .tubal-sponsor-card-real:hover,
+body.hub-home #sponsoredContainerReal2 .tubal-sponsor-card-real:hover{
+  border-color:rgba(255,204,0,.82) !important;
+}
