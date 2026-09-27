@@ -1,0 +1,230 @@
+/* TUBAL HUB — Mobile Browser Compatibility Layer
+   Loaded last so mobile fixes override legacy desktop/mobile rules.
+*/
+html,body{width:100%;max-width:100%;overflow-x:hidden}
+body.hub-home{
+  -webkit-text-size-adjust:100%;
+  text-size-adjust:100%;
+  overscroll-behavior-x:none;
+}
+body.hub-home img,body.hub-home video,body.hub-home canvas{max-width:100%}
+body.hub-home button,
+body.hub-home a,
+body.hub-home input,
+body.hub-home select,
+body.hub-home textarea{
+  -webkit-tap-highlight-color:transparent;
+}
+body.hub-home button,
+body.hub-home a{touch-action:manipulation}
+
+@media(max-width:768px){
+  .hub-home .hub-main{width:100%;min-width:0}
+  .hub-home .home-shell{width:calc(100% - 20px);max-width:none;margin:0 auto;padding-bottom:80px}
+  .hub-home .hub-topbar{
+    width:100%;min-height:58px;padding:9px 10px;
+    display:flex!important;align-items:center!important;gap:8px!important;
+    position:relative;z-index:1100;
+  }
+  .hub-home .hub-topbar .theme-switcher{
+    display:none!important;
+  }
+  .hub-home .hub-topbar .search-box{
+    flex:1 1 auto!important;
+    width:auto!important;
+    min-width:0!important;
+    max-width:none!important;
+    height:36px!important;
+  }
+  .hub-home .hub-topbar .search-box input{
+    min-width:0!important;width:100%!important;
+    font-size:13px!important;
+    -webkit-appearance:none!important;
+  }
+  .hub-home .hub-topbar .top-actions{
+    display:flex!important;align-items:center!important;gap:6px!important;
+    min-width:0!important;flex:0 0 auto!important;
+  }
+  .hub-home .hub-topbar .top-actions .auth-actions{
+    display:none!important;
+  }
+  .hub-home .hub-topbar .icon-btn,
+  .hub-home .hub-topbar #videoBtnReal{
+    width:36px!important;height:36px!important;min-width:36px!important;
+    flex:0 0 36px!important;
+  }
+
+  .hub-home .home-hero{
+    width:100%;max-width:100%;overflow:hidden;
+  }
+  .hub-home .hero-track,
+  .hub-home .data-slider,
+  .hub-home .featured-track-wrapper{
+    touch-action:pan-x pan-y;
+    -webkit-overflow-scrolling:touch;
+  }
+  .hub-home .hero-slide{
+    min-width:100%!important;max-width:100%!important;
+    overflow:hidden;
+  }
+  .hub-home .hero-slide h1{
+    max-width:calc(100vw - 70px);
+    overflow-wrap:anywhere;
+  }
+  .hub-home .hero-cta,
+  .hub-home .featured-primary-btn,
+  .hub-home .like-btn,
+  .hub-home .slider-control,
+  .hub-home .hero-arrow,
+  .hub-home .featured-circle-control,
+  .hub-home .featured-track-control{
+    min-height:42px;
+  }
+
+  .hub-home .glass-section,
+  .hub-home .home-glass,
+  .hub-home .featured-website,
+  .hub-home .sponsored-container-real,
+  .hub-home .featured-game-sponsored-grid-real{
+    max-width:100%!important;
+    min-width:0!important;
+  }
+
+  .hub-home .data-slider{
+    width:100%!important;
+    max-width:100%!important;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+    scrollbar-width:none;
+    padding-left:2px;padding-right:2px;
+  }
+  .hub-home .data-track-card{max-width:88vw}
+  .hub-home .journal-card{width:min(260px,82vw)!important}
+  .hub-home .ai-card{width:min(205px,72vw)!important}
+  .hub-home .feed-card{width:min(290px,84vw)!important}
+
+  .hub-home .th-search-overlay{
+    position:fixed!important;inset:0!important;
+    width:100vw!important;height:100dvh!important;
+    padding:max(10px,env(safe-area-inset-top)) 10px max(10px,env(safe-area-inset-bottom))!important;
+    align-items:flex-start!important;
+    overflow:hidden!important;
+  }
+  .hub-home .th-search-modal{
+    width:100%!important;max-width:none!important;
+    max-height:calc(100dvh - 20px)!important;
+    margin:0!important;border-radius:18px!important;
+    display:flex!important;flex-direction:column!important;
+    overflow:hidden!important;
+  }
+  .hub-home .th-search-input-row{
+    flex:0 0 52px!important;width:100%!important;
+    min-height:52px!important;
+  }
+  .hub-home .th-search-input{
+    min-width:0!important;width:100%!important;
+    font-size:16px!important;
+  }
+  .hub-home .th-search-body{
+    flex:1 1 auto!important;
+    min-height:0!important;
+    max-height:none!important;
+    overflow-y:auto!important;
+    -webkit-overflow-scrolling:touch!important;
+    overscroll-behavior:contain;
+  }
+  .hub-home .th-search-result,
+  .hub-home .th-search-chip{
+    touch-action:manipulation!important;
+  }
+  .hub-home .th-search-result{
+    min-height:58px!important;
+  }
+  .hub-home .th-search-footer{
+    flex:0 0 auto!important;
+    padding-bottom:max(8px,env(safe-area-inset-bottom))!important;
+  }
+
+  .hub-home .system-update-container-real{
+    width:min(94vw,460px)!important;
+    max-width:94vw!important;
+    left:50%!important;
+    right:auto!important;
+    transform:translateX(-50%)!important;
+    bottom:max(12px,env(safe-area-inset-bottom))!important;
+  }
+  .hub-home #tubalChatbotReal{
+    right:max(10px,env(safe-area-inset-right))!important;
+    bottom:max(10px,env(safe-area-inset-bottom))!important;
+  }
+  .hub-home #chatWindowReal{
+    width:min(92vw,380px)!important;
+    max-width:92vw!important;
+    height:min(70dvh,480px)!important;
+  }
+  .hub-home #chatInputReal{
+    min-width:0!important;
+    font-size:16px!important;
+  }
+
+  .hub-home input,
+  .hub-home textarea,
+  .hub-home select{
+    font-size:16px;
+  }
+
+  .hub-home .footer-subscribe-fields-real input{
+    min-width:0!important;width:100%!important;
+  }
+}
+
+@media(max-width:480px){
+  .hub-home .hub-topbar{padding-left:8px!important;padding-right:8px!important}
+  .hub-home .hub-topbar .search-box{
+    min-width:0!important;
+    flex:1 1 auto!important;
+  }
+  .hub-home .hub-topbar .search-shortcut{display:none!important}
+  .hub-home .home-shell{width:calc(100% - 14px)}
+  .hub-home .home-hero{border-radius:20px!important}
+  .hub-home .hero-slide{padding-left:16px!important;padding-right:16px!important}
+  .hub-home .hero-slide h1{font-size:38px!important;letter-spacing:-1.8px!important}
+  .hub-home .hero-slide p{font-size:11px!important}
+  .hub-home .slider-bar{gap:8px!important}
+  .hub-home .slider-bar h2{font-size:19px!important}
+  .hub-home .featured-website-head,
+  .hub-home .featured-website-actions{
+    gap:8px!important;
+  }
+  .hub-home .sponsored-real-card{
+    flex-direction:column!important;
+  }
+  .hub-home .sponsored-real-card img,
+  .hub-home .sponsored-brand-real{
+    width:100%!important;height:120px!important;
+    flex:0 0 auto!important;
+  }
+}
+
+/* Keep the open mobile drawer above all page content and clickable. */
+@media(max-width:768px){
+  html.tubal-sidebar-open,
+  html.tubal-sidebar-open body{
+    overflow:hidden!important;
+  }
+  .hub-home .sidebar-backdrop{
+    z-index:1190!important;
+    touch-action:none;
+  }
+  .hub-home .hub-sidebar{
+    z-index:1200!important;
+    max-width:calc(100vw - 42px)!important;
+    overflow-x:hidden!important;
+    overflow-y:auto!important;
+    -webkit-overflow-scrolling:touch!important;
+  }
+  .hub-home .sidebar-menu-trigger{
+    z-index:1300!important;
+    touch-action:manipulation!important;
+  }
+}
