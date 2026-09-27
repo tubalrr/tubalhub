@@ -1,6 +1,6 @@
 import {app,auth} from "./firebase-config.js";
 import {onAuthStateChanged} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
-import {getFirestore,collection,getDocs,getDoc,doc,addDoc,setDoc,updateDoc,deleteDoc,query,orderBy,limit,onSnapshot,serverTimestamp} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+import {getFirestore,collection,getDocs,getDoc,doc,addDoc,setDoc,updateDoc,deleteDoc,query,orderBy,limit,serverTimestamp} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 import {getStorage,ref as storageRef,uploadBytes,getDownloadURL} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-storage.js";
 import {publishHubPost,subscribeHubPosts} from "./hub-content.js";
 
@@ -600,34 +600,33 @@ function insertEmoji(emoji){
   input.value=input.value.slice(0,a)+emoji+input.value.slice(b);input.focus();input.selectionStart=input.selectionEnd=a+emoji.length;toggleEmoji(false);
 }
 
-function loadRemoteComments(){
+async function loadRemoteComments(){
   try{
-    const q=query(collection(db,"feedComments"),orderBy("createdAt","asc"),limit(500));
-    stopRemoteComments=onSnapshot(q,snap=>{
-      snap.forEach(s=>{const x=s.data(),post=x.postId;if(!post)return;if(!Array.isArray(state.comments[post]))state.comments[post]=[];const found=state.comments[post].find(c=>c.id===s.id||c.remoteId===s.id);const normalized={id:s.id,remoteId:s.id,postId:post,uid:x.uid||"",authorName:x.authorName||"Member",authorPhotoURL:x.authorPhotoURL||"",text:x.text||"",parentId:x.parentId||null,photoData:x.photoData||"",edited:x.edited===true,createdAt:x.createdAt||0};if(found)Object.assign(found,normalized);else state.comments[post].push(normalized)});
-      if(state.currentCommentId)renderComments(state.currentCommentId);
-    },e=>console.warn("[Feeds] feedComments unavailable",e));
+    const snap=await getDocs(query(collection(db,"feedComments"),orderBy("createdAt","asc"),limit(500)));
+    snap.forEach(s=>{const x=s.data(),post=x.postId;if(!post)return;if(!Array.isArray(state.comments[post]))state.comments[post]=[];const found=state.comments[post].find(c=>c.id===s.id||c.remoteId===s.id);const normalized={id:s.id,remoteId:s.id,postId:post,uid:x.uid||"",authorName:x.authorName||"Member",authorPhotoURL:x.authorPhotoURL||"",text:x.text||"",parentId:x.parentId||null,photoData:x.photoData||"",edited:x.edited===true,createdAt:x.createdAt||0};if(found)Object.assign(found,normalized);else state.comments[post].push(normalized)});
+    if(state.currentCommentId)renderComments(state.currentCommentId);
   }catch(e){console.warn(e)}
 }
-function loadRemoteReactions(){
+async function loadRemoteReactions(){
   try{
-    const q=query(collection(db,"feedReactions"),limit(1000));
-    stopRemoteReactions=onSnapshot(q,snap=>{
-      const remoteTouched=new Set();
-      snap.forEach(s=>{const x=s.data();if(x.postId)remoteTouched.add(x.postId)});
-      remoteTouched.forEach(postId=>{state.reactions[postId]={};for(const k of REACTION_KEYS)state.reactions[postId][k]=[]});
-      snap.forEach(s=>{const x=s.data();if(!x.postId||!x.uid||!REACTIONS[x.reaction])return;const d=reactionData(x.postId);if(!d[x.reaction].includes(x.uid))d[x.reaction].push(x.uid)});
-      writeLocal("tubalhub-feed-reactions",state.reactions);renderFeed(true);
-    },e=>console.warn("[Feeds] feedReactions unavailable",e));
+    const snap=await getDocs(query(collection(db,"feedReactions"),limit(1000)));
+    const remoteTouched=new Set();
+    snap.forEach(s=>{const x=s.data();if(x.postId)remoteTouched.add(x.postId)});
+    remoteTouched.forEach(postId=>{state.reactions[postId]={};for(const k of REACTION_KEYS)state.reactions[postId][k]=[]});
+    snap.forEach(s=>{const x=s.data();if(!x.postId||!x.uid||!REACTIONS[x.reaction])return;const d=reactionData(x.postId);if(!d[x.reaction].includes(x.uid))d[x.reaction].push(x.uid)});
+    writeLocal("tubalhub-feed-reactions",state.reactions);renderFeed(true);
   }catch(e){console.warn(e)}
 }
 function setupHubContent(){
   try{stopHub=subscribeHubPosts(items=>{state.hubPosts=items;buildFeed()})}catch(e){console.warn("[Feeds] hub content unavailable",e)}
 }
-function setupPresence(){
+async function setupPresence(){
   try{
-    onSnapshot(query(collection(db,"presence"),limit(200)),snap=>{state.presence.clear();snap.forEach(s=>{const x=s.data();if(x.uid)state.presence.set(x.uid,{uid:x.uid,...x})});renderContacts();updateAvatarStatus();renderActiveGames();renderSuggested()},e=>console.warn("[Feeds] presence unavailable",e))
-  }catch(e){console.warn(e)}
+    const snap=await getDocs(query(collection(db,"presence"),limit(200)));
+    state.presence.clear();
+    snap.forEach(s=>{const x=s.data();if(x.uid)state.presence.set(x.uid,{uid:x.uid,...x})});
+    renderContacts();updateAvatarStatus();renderActiveGames();renderSuggested();
+  }catch(e){console.warn("[Feeds] presence unavailable",e)}
 }
 function setupUI(){
   if(uiReady)return;uiReady=true;
