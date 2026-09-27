@@ -29,7 +29,19 @@ function authReturnUrl() {
   }
 }
 
-function friendlyAuthError(code) {
+function friendlyAuthError(code, errorMessage="") {
+  const normalizedCode=String(code||"").toLowerCase();
+  const normalizedMessage=String(errorMessage||"").toLowerCase();
+
+  if (
+    normalizedCode.includes("api-key-not-valid") ||
+    normalizedMessage.includes("api key not valid") ||
+    normalizedMessage.includes("api_key_invalid") ||
+    normalizedMessage.includes("api_key_invalid")
+  ) {
+    return "Firebase Web API key is invalid. Update the Web app API key in Firebase Project Settings, then reload TUBAL HUB.";
+  }
+
   switch (code) {
     case "auth/invalid-email": return "Please enter a valid email address.";
     case "auth/invalid-credential": return "Incorrect email or password.";
@@ -89,7 +101,7 @@ if (signupForm) {
       // Use replace() so the mobile browser does not remain on the signup page.
       window.location.replace(authReturnUrl());
     } catch (error) {
-      message("signupMessage", friendlyAuthError(error.code));
+      message("signupMessage", friendlyAuthError(error.code, error.message));
     }
   });
 }
@@ -107,7 +119,7 @@ if (loginForm) {
       await signInWithEmailAndPassword(auth, email, password);
       window.location.replace(authReturnUrl());
     } catch (error) {
-      message("loginMessage", friendlyAuthError(error.code));
+      message("loginMessage", friendlyAuthError(error.code, error.message));
     }
   });
 }
@@ -148,7 +160,7 @@ if (googleButtons.length) {
         } else if (error.code === "auth/popup-closed-by-user") {
           message(target, "Google sign-in was cancelled.");
         } else {
-          message(target, friendlyAuthError(error.code));
+          message(target, friendlyAuthError(error.code, error.message));
         }
       } finally {
         button.dataset.googleBusy = "false";
@@ -168,7 +180,7 @@ guestButtons.forEach((button) => {
       await signInAnonymously(auth);
       window.location.replace(authReturnUrl());
     } catch (error) {
-      message(button.dataset.messageTarget || "loginMessage", friendlyAuthError(error.code));
+      message(button.dataset.messageTarget || "loginMessage", friendlyAuthError(error.code, error.message));
     }
   });
 });
@@ -203,7 +215,7 @@ if (phoneSendButton) {
       $("phoneCodeBox").hidden = false;
       message("phoneMessage", "Verification code sent by SMS.");
     } catch (error) {
-      message("phoneMessage", friendlyAuthError(error.code));
+      message("phoneMessage", friendlyAuthError(error.code, error.message));
       if (recaptchaVerifier) {
         try { recaptchaVerifier.clear(); } catch {}
         recaptchaVerifier = null;
