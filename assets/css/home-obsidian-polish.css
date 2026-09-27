@@ -398,3 +398,50 @@ body.hub-home #sponsoredContainerReal .tubal-sponsor-card-real:hover,
 body.hub-home #sponsoredContainerReal2 .tubal-sponsor-card-real:hover{
   border-color:rgba(255,204,0,.82) !important;
 }
+
+
+/* TUBAL HUB — ECOSYSTEM + FEEDS BALANCE v1.2.36 */
+/* Desktop: ecosystem occupies the primary area, real Feeds sits directly beside it. */
+@media(min-width:769px){
+  body.hub-home #mainContent > #thBrandPillars{
+    grid-column:span 8 !important;
+    width:100% !important;
+    min-width:0 !important;
+  }
+  body.hub-home #mainContent > .th-ecosystem-feed{
+    grid-column:span 4 !important;
+    grid-row:auto !important;
+    width:100% !important;
+    min-width:0 !important;
+    margin:0 !important;
+    min-height:100% !important;
+    box-sizing:border-box !important;
+  }
+}
+
+/* The Feeds card used to be row-positioned inside the journal/shop bento; it is now a standalone sibling. */
+body.hub-home #mainContent > .th-ecosystem-feed .bento-feed-real-toolbar{
+  margin-top:16px;
+}
+body.hub-home #mainContent > .th-ecosystem-feed #bentoFeedsList{
+  min-height:160px;
+}
+
+/* Keep the remaining journal/shop pair balanced after Feeds moves up beside the ecosystem. */
+@media(min-width:769px){
+  body.hub-home #mainContent > .bento-row-real .bento-journal-real,
+  body.hub-home #mainContent > .bento-row-real .bento-shop-real{
+    grid-row:auto !important;
+  }
+  body.hub-home #mainContent > .bento-row-real .bento-shop-real{
+    min-height:420px !important;
+  }
+}
+
+@media(max-width:768px){
+  body.hub-home #mainContent > #thBrandPillars,
+  body.hub-home #mainContent > .th-ecosystem-feed{
+    grid-column:1 / -1 !important;
+    grid-row:auto !important;
+  }
+}
