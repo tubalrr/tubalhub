@@ -1,0 +1,428 @@
+/* TUBAL HUB — Cyber Dashboard Surface v1.2.21
+   Visual layer only. Existing IDs, Firestore rendering and navigation remain intact. */
+
+:root{
+  --cy-bg:#05070b;
+  --cy-panel:#0c1118;
+  --cy-panel2:#111820;
+  --cy-line:rgba(123,180,220,.18);
+  --cy-line-soft:rgba(255,255,255,.07);
+  --cy-red:#ff3b30;
+  --cy-red2:#ff1744;
+  --cy-gold:#ffd43b;
+  --cy-cyan:#23d8ff;
+  --cy-blue:#3b82f6;
+  --cy-text:#f7fbff;
+  --cy-muted:#8fa1b3;
+}
+
+body.hub-home{
+  background:
+    radial-gradient(900px 500px at 78% 5%,rgba(32,120,255,.08),transparent 68%),
+    radial-gradient(760px 440px at 25% 82%,rgba(255,59,48,.06),transparent 70%),
+    #05070b !important;
+  color:var(--cy-text);
+}
+
+body.hub-home::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-2;
+  pointer-events:none;
+  opacity:.78;
+  background-image:
+    radial-gradient(circle at 10% 18%,rgba(35,216,255,.75) 0 1px,transparent 1.6px),
+    radial-gradient(circle at 24% 74%,rgba(59,130,246,.70) 0 1px,transparent 1.7px),
+    radial-gradient(circle at 61% 12%,rgba(35,216,255,.65) 0 1px,transparent 1.7px),
+    radial-gradient(circle at 82% 72%,rgba(59,130,246,.62) 0 1px,transparent 1.7px),
+    radial-gradient(circle at 46% 48%,rgba(35,216,255,.35) 0 1px,transparent 1.7px);
+  background-size:310px 260px,410px 320px,360px 280px,460px 360px,280px 240px;
+  animation:cyParticleDrift 26s linear infinite;
+}
+
+body.hub-home::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  pointer-events:none;
+  opacity:.44;
+  background:
+    linear-gradient(120deg,transparent 0 20%,rgba(0,207,255,.06) 20.2% 20.5%,transparent 20.7% 100%),
+    linear-gradient(300deg,transparent 0 68%,rgba(59,130,246,.05) 68.2% 68.5%,transparent 68.7% 100%);
+  animation:cyDataSweep 18s ease-in-out infinite alternate;
+}
+
+@keyframes cyParticleDrift{
+  from{background-position:0 0,0 0,0 0,0 0,0 0}
+  to{background-position:130px -90px,-140px 120px,110px 80px,-180px -110px,90px -70px}
+}
+@keyframes cyDataSweep{from{transform:translate3d(-1%,0,0)}to{transform:translate3d(1.5%,0,0)}}
+
+.hub-home .hub-sidebar{
+  background:linear-gradient(180deg,rgba(3,7,11,.98),rgba(4,8,12,.96)) !important;
+  border-right:1px solid rgba(90,180,255,.14) !important;
+  box-shadow:18px 0 60px rgba(0,0,0,.42);
+}
+.hub-home .side-brand-copy small{color:#71849a !important}
+.hub-home .side-nav a{
+  color:#b5c6d7 !important;
+  border-radius:12px !important;
+  transition:all .25s ease;
+}
+.hub-home .side-nav a:hover{
+  color:#fff !important;
+  background:rgba(255,255,255,.04) !important;
+  box-shadow:inset 2px 0 0 rgba(35,216,255,.75);
+}
+.hub-home .side-nav a.active,
+.hub-home .tubal-branch-link:hover{
+  background:linear-gradient(90deg,rgba(255,59,48,.16),rgba(255,59,48,.035)) !important;
+  box-shadow:inset 2px 0 0 var(--cy-red),0 0 20px rgba(255,59,48,.07);
+}
+.hub-home .tubal-branch-link:before{
+  background:linear-gradient(180deg,var(--cy-red),var(--cy-gold)) !important;
+}
+
+.hub-home .hub-topbar{
+  background:linear-gradient(180deg,rgba(4,8,13,.88),rgba(4,8,13,.52)) !important;
+  border-bottom:1px solid rgba(90,180,255,.08) !important;
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+}
+.hub-home .search-box{
+  border:1px solid rgba(127,185,220,.38) !important;
+  background:rgba(7,12,18,.78) !important;
+  box-shadow:0 0 0 1px rgba(0,0,0,.25),0 0 26px rgba(35,216,255,.06) !important;
+}
+.hub-home .search-box:focus-within{
+  border-color:rgba(35,216,255,.72) !important;
+  box-shadow:0 0 0 3px rgba(35,216,255,.07),0 0 26px rgba(35,216,255,.12) !important;
+}
+.hub-home .top-actions .icon-btn,
+.hub-home .top-actions > button{
+  border-color:rgba(127,185,220,.17) !important;
+  background:rgba(7,12,18,.68) !important;
+}
+
+.hub-home #mainContent{
+  max-width:1380px !important;
+  padding:18px 20px 40px !important;
+}
+
+.hub-home #mainContent.bento-grid{
+  display:grid !important;
+  grid-template-columns:repeat(12,minmax(0,1fr)) !important;
+  gap:16px !important;
+  align-items:start;
+}
+
+/* Put the live dashboard first without removing the legacy sections below. */
+.hub-home #sponsoredContainerReal{grid-column:1 / span 6;order:10;margin:0 !important}
+.hub-home #featuredGameReal{grid-column:7 / span 6;order:11;width:100% !important;margin:0 !important}
+.hub-home .bento-row-real{grid-column:1 / -1;order:20;margin:0 !important}
+.hub-home #bentoHero{grid-column:1 / -1;order:70}
+.hub-home #thBrandPillars{order:71}
+.hub-home .th-value-section{order:72}
+.hub-home .bento-quick-stats{order:73}
+.hub-home #featuredWebsite{order:80}
+.hub-home #sponsoredContainerReal2{grid-column:1 / -1;order:85}
+.hub-home #mainFooter{order:90}
+
+.hub-home #sponsoredContainerReal,
+.hub-home #featuredGameReal,
+.hub-home .bento-real-card{
+  border:1px solid var(--cy-line) !important;
+  background:
+    linear-gradient(145deg,rgba(17,24,32,.94),rgba(7,11,16,.98)) !important;
+  border-radius:22px !important;
+  box-shadow:
+    0 18px 46px rgba(0,0,0,.42),
+    inset 0 1px rgba(255,255,255,.035) !important;
+  overflow:hidden;
+  position:relative;
+}
+
+.hub-home #sponsoredContainerReal{
+  min-height:420px !important;
+  padding:14px !important;
+}
+.hub-home #sponsoredContainerReal::before,
+.hub-home #featuredGameReal::before,
+.hub-home .bento-real-card::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:
+    linear-gradient(125deg,transparent 0 42%,rgba(35,216,255,.05) 42.2% 42.45%,transparent 42.8% 100%),
+    radial-gradient(circle at 84% 15%,rgba(255,204,0,.08),transparent 32%);
+}
+
+.hub-home #sponsoredContainerReal > div:first-child{
+  position:relative;
+  z-index:2;
+  padding:2px 4px 10px;
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+.hub-home #sponsoredContainerReal > div:first-child span:first-child,
+.hub-home #sponsoredContainerReal2 > div:first-child span:first-child{
+  color:#91a4b7 !important;
+  opacity:1 !important;
+  font-weight:900;
+}
+.hub-home #sponsoredStatusReal{
+  color:#65e6ff !important;
+  background:rgba(35,216,255,.08) !important;
+  border:1px solid rgba(35,216,255,.18);
+}
+
+.hub-home .tubal-sponsor-card-real{
+  border-radius:18px !important;
+  border-color:rgba(255,204,0,.32) !important;
+  background:
+    linear-gradient(160deg,rgba(26,28,31,.98),rgba(8,10,13,.98)),
+    repeating-linear-gradient(110deg,rgba(255,255,255,.03) 0 2px,rgba(0,0,0,.02) 2px 6px) !important;
+  box-shadow:
+    0 18px 42px rgba(0,0,0,.46),
+    inset 0 1px rgba(255,255,255,.09),
+    0 0 20px rgba(255,204,0,.05) !important;
+}
+.hub-home .tubal-sponsor-card-real:hover{
+  border-color:rgba(255,204,0,.92) !important;
+  transform:translateY(-3px) !important;
+  box-shadow:
+    0 24px 48px rgba(0,0,0,.52),
+    0 0 26px rgba(255,204,0,.14),
+    inset 0 1px rgba(255,255,255,.12) !important;
+}
+.hub-home .tubal-sponsor-visual-real{
+  min-height:220px !important;
+  border-bottom:1px solid rgba(255,255,255,.07);
+}
+.hub-home .tubal-sponsor-copy-real{
+  padding:16px 18px 18px !important;
+}
+.hub-home .tubal-sponsor-copy-real b{
+  font-size:20px !important;
+  letter-spacing:-.2px;
+}
+.hub-home .tubal-sponsor-copy-real p{
+  font-size:12px !important;
+  color:#d0d8e0 !important;
+}
+.hub-home .tubal-sponsor-click-real{
+  top:14px !important;
+  right:14px !important;
+  padding:8px 11px !important;
+  border-color:rgba(255,204,0,.56) !important;
+  box-shadow:0 0 18px rgba(255,204,0,.12);
+}
+.hub-home .tubal-sponsor-shopee-logo-real{
+  width:76px !important;
+  height:76px !important;
+}
+
+.hub-home #featuredGameReal{
+  min-height:420px;
+  padding:16px !important;
+}
+.hub-home .ctrlzone-featured-header{
+  position:relative;
+  z-index:2;
+  padding-bottom:10px;
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+.hub-home .ctrlzone-featured-kicker{
+  color:#ff6570 !important;
+  letter-spacing:2px;
+}
+.hub-home .ctrlzone-featured-header h3{
+  color:#fff !important;
+}
+.hub-home .ctrlzone-live-catalog{
+  color:#74efff !important;
+}
+.hub-home .featured-games-track-real{
+  position:relative;
+  z-index:2;
+}
+.hub-home .featured-games-track-real > *{
+  animation:cyGameBreathe 3.8s ease-in-out infinite;
+  transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease;
+}
+.hub-home .featured-games-track-real > *:hover{
+  animation-play-state:paused;
+  transform:translateY(-5px);
+  border-color:rgba(255,59,48,.86) !important;
+  box-shadow:0 18px 30px rgba(0,0,0,.38),0 0 24px rgba(255,59,48,.13);
+}
+@keyframes cyGameBreathe{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-2px)}
+}
+.hub-home .current-catalog-count{
+  position:relative;
+  z-index:2;
+  margin-top:10px;
+  color:#86a0b5 !important;
+}
+
+.hub-home .bento-row-real{
+  display:grid !important;
+  grid-template-columns:repeat(12,minmax(0,1fr)) !important;
+  gap:16px !important;
+}
+.hub-home .bento-journal-real{grid-column:1 / span 6;grid-row:1 / span 2;min-height:420px}
+.hub-home .bento-shop-real{grid-column:7 / span 6;grid-row:1;min-height:200px}
+.hub-home .bento-feed-real{grid-column:7 / span 6;grid-row:2;min-height:200px}
+
+.hub-home .bento-real-header,
+.hub-home .bento-feed-real-toolbar{
+  position:relative;
+  z-index:2;
+}
+.hub-home .bento-real-kicker{
+  color:#83dfff !important;
+  letter-spacing:1.8px !important;
+}
+.hub-home .bento-real-brand h2{
+  color:#fff !important;
+}
+.hub-home .bento-real-brand small,
+.hub-home .bento-real-list-head{
+  color:#7e91a5 !important;
+}
+.hub-home .bento-journal-real{
+  border-color:rgba(255,204,0,.42) !important;
+  box-shadow:0 18px 46px rgba(0,0,0,.42),0 0 26px rgba(255,204,0,.06) !important;
+}
+.hub-home .bento-journal-real .bento-real-icon--green{
+  filter:drop-shadow(0 0 10px rgba(255,204,0,.28));
+}
+.hub-home .bento-shop-real,
+.hub-home .bento-feed-real{
+  border-color:rgba(35,216,255,.21) !important;
+}
+.hub-home .bento-shop-real:hover,
+.hub-home .bento-feed-real:hover{
+  border-color:rgba(255,204,0,.45) !important;
+  box-shadow:0 18px 42px rgba(0,0,0,.46),0 0 25px rgba(255,204,0,.07) !important;
+}
+
+.hub-home .bento-feed-real{
+  position:relative;
+}
+.hub-home .bento-feed-real .bento-real-feed-list{
+  position:relative;
+  z-index:2;
+}
+
+.tubal-live-ticker{
+  position:relative;
+  z-index:3;
+  display:flex;
+  align-items:center;
+  gap:9px;
+  margin:10px 0 12px;
+  padding:9px 12px;
+  border:1px solid rgba(255,59,48,.22);
+  border-radius:999px;
+  background:linear-gradient(90deg,rgba(255,59,48,.08),rgba(7,11,16,.92));
+  overflow:hidden;
+  white-space:nowrap;
+  box-shadow:inset 0 1px rgba(255,255,255,.035),0 0 18px rgba(255,59,48,.05);
+}
+.tubal-live-ticker::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(110deg,transparent 38%,rgba(255,255,255,.12) 50%,transparent 62%);
+  transform:translateX(-120%);
+  animation:cyTickerShine 5.8s ease-in-out infinite;
+  pointer-events:none;
+}
+.tubal-live-ticker .ticker-live{
+  flex:0 0 auto;
+  padding:4px 9px;
+  border-radius:999px;
+  background:#ff3b30;
+  color:#fff;
+  font-size:9px;
+  font-weight:900;
+  letter-spacing:1px;
+  box-shadow:0 0 14px rgba(255,59,48,.28);
+}
+.tubal-live-ticker .ticker-copy{
+  min-width:0;
+  overflow:hidden;
+  color:#dbe6ef;
+  font-size:10px;
+  text-overflow:ellipsis;
+}
+@keyframes cyTickerShine{
+  0%,55%{transform:translateX(-120%)}
+  100%{transform:translateX(120%)}
+}
+
+.hub-home .th-corp-hero,
+.hub-home .th-corp-section,
+.hub-home .bento-quick-stats,
+.hub-home .featured-website,
+.hub-home #sponsoredContainerReal2,
+.hub-home .bento-footer{
+  background:rgba(9,13,18,.86) !important;
+  border-color:rgba(102,154,190,.16) !important;
+}
+
+.hub-home .th-corp-eyebrow,
+.hub-home .bento-kicker{
+  color:#6adfff !important;
+}
+.hub-home .th-corp-hero h2,
+.hub-home .th-corp-hero p,
+.hub-home .th-section-head h2,
+.hub-home .th-section-head p{
+  color:#f5f9fc !important;
+}
+.hub-home .th-corp-primary{
+  background:linear-gradient(135deg,#ff3b30,#ff1744) !important;
+  box-shadow:0 0 24px rgba(255,59,48,.16);
+}
+.hub-home .th-corp-secondary{
+  border-color:rgba(255,204,0,.32) !important;
+  color:#ffe79a !important;
+}
+
+@media(max-width:980px){
+  .hub-home #mainContent.bento-grid{grid-template-columns:1fr !important}
+  .hub-home #sponsoredContainerReal,
+  .hub-home #featuredGameReal,
+  .hub-home .bento-row-real,
+  .hub-home #bentoHero,
+  .hub-home #thBrandPillars,
+  .hub-home .th-value-section,
+  .hub-home .bento-quick-stats,
+  .hub-home #featuredWebsite,
+  .hub-home #sponsoredContainerReal2,
+  .hub-home #mainFooter{grid-column:1 !important}
+  .hub-home .bento-row-real{grid-template-columns:1fr !important}
+  .hub-home .bento-journal-real,
+  .hub-home .bento-shop-real,
+  .hub-home .bento-feed-real{grid-column:1 !important;grid-row:auto !important}
+}
+@media(max-width:680px){
+  .hub-home #mainContent{padding:10px 10px 26px !important}
+  .hub-home #sponsoredContainerReal,
+  .hub-home #featuredGameReal{min-height:unset !important}
+  .hub-home .tubal-sponsor-visual-real{min-height:175px !important}
+  .hub-home .bento-journal-real{min-height:320px}
+  .tubal-live-ticker{border-radius:14px}
+}
+@media(prefers-reduced-motion:reduce){
+  body.hub-home::before,
+  body.hub-home::after,
+  .hub-home .featured-games-track-real > *,
+  .tubal-live-ticker::before{animation:none !important}
+}
