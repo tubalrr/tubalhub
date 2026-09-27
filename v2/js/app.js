@@ -297,11 +297,8 @@ function v4SyncKeys(){
  localStorage.setItem('tubalhub_habits',JSON.stringify(d.habits));
  localStorage.setItem('tubalhub_mood',JSON.stringify(d.journals.map(j=>({date:j.date,mood:j.mood}))));
 }
-function v4MoneyExpenses(range){
- const d=v4Data(),start=range[0],end=range[range.length-1];
- const fromTx=d.tx.filter(x=>x.type==='payable'&&x.date>=start&&x.date<=end).reduce((a,x)=>a+Number(x.amount||0),0);
- return fromTx||0;
-}
+function v4MoneyExpenses(range){const a=Array.isArray(range)?range:[];return v4ExpensesBetween(a[0],a[a.length-1])}
+function v4ExpensesBetween(start,end){const d=v4Data();return d.tx.filter(x=>x.type==='payable'&&x.date>=start&&x.date<=end).reduce((a,x)=>a+Number(x.amount||0),0)}
 function v4TaskDoneDate(t){return t.completedAt?iso(t.completedAt):t.doneDate||t.date||null}
 function v4TaskDone(t){return !!t.done}
 function v4HabitStats(){
@@ -345,7 +342,7 @@ function analyticsOverview(){
  '<div class="grid v4-two"><div class="card"><div class="head"><h3>Life Score</h3><span class="pill '+(score.score>=70?'green':'orange')+'">'+score.score+'/100</span></div><div class="score-wrap"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="48" class="score-track"/><circle cx="60" cy="60" r="48" class="score-value" style="stroke-dasharray:'+score.score*3.016+' 301.6"/></svg><b>'+score.score+'</b></div><p class="muted">Tasks '+Math.round(score.taskRate)+'% · Budget '+Math.round(score.budgetRate)+'% · Habits '+Math.round(score.habitRate)+'% · Journal '+Math.round(score.journalScore)+'%</p><div class="insight-box">Life Score mo: '+score.score+'/100 — '+(score.score>=70?'okay ka pa!':'kailangan ng reset.')+'</div></div><div class="card"><div class="head"><h3>Insight of the day</h3><button class="btn alt" data-action="refreshInsights">Refresh</button></div><div class="v4-insight"><span>'+ins.icon+'</span><div><b>'+esc(ins.title)+'</b><p>'+esc(ins.text)+'</p><button class="btn alt" data-insight="'+ins.action+'">Apply</button></div></div>'+v4Sparkline()+'<small class="muted">Tasks completed · last 7 days</small></div></div>';
 }
 function analyticsFinance(){
- const d=v4Data(),months=[];for(let i=5;i>=0;i--){const x=new Date();x.setDate(1);x.setMonth(x.getMonth()-i);const start=iso(x),e=new Date(x);e.setMonth(e.getMonth()+1);e.setDate(0);const end=iso(e);months.push({label:x.toLocaleDateString('fil-PH',{month:'short'}),value:v4MoneyExpenses(getLastNDays(1,new Date(end+'T00:00:00')).filter(z=>z>=start&&z<=end))})}
+ const d=v4Data(),months=[];for(let i=5;i>=0;i--){const x=new Date();x.setDate(1);x.setMonth(x.getMonth()-i);const start=iso(x),e=new Date(x);e.setMonth(e.getMonth()+1);e.setDate(0);const end=iso(e);months.push({label:x.toLocaleDateString('fil-PH',{month:'short'}),value:v4ExpensesBetween(start,end)})}
  const total=months.reduce((a,x)=>a+x.value,0),budget=S.budgets||[],btotal=budget.reduce((a,x)=>a+Number(x.spent||0),0),max=Math.max(1,...months.map(x=>x.value)),over=(d.tx||[]).filter(x=>x.status==='overdue'||(x.type==='payable'&&x.date<TODAY)).reduce((a,x)=>a+Number(x.amount||0),0),overN=(d.tx||[]).filter(x=>x.status==='overdue'||(x.type==='payable'&&x.date<TODAY)).length;
  const pie=budget.map(x=>{const p=total?Number(x.spent||0)/Math.max(1,btotal)*100:0;return {name:x.title,p}}),income=Number(S.finance?.income||0),expense=v4MoneyExpenses(getLastNDays(new Date().getDate())),net=income-expense;
  const lineVals=[income,expense,net],mx=Math.max(1,...lineVals.map(Math.abs)),line=(v,i)=>i+' '+(50-(v/mx)*40),points=lineVals.map(line).join(' ');
@@ -399,6 +396,6 @@ const v4OldHome=home;
 function home(){return v4OldHome().replace('</div></main>','</div>'+v4DashboardWidget()+'</main>')}
 const v4OldRender=render;
 function render(){v4SyncKeys();if(!S.profile.setup){onboarding();return}let body={home,lifehub,calendar,budget,work,lab,vault:vaultPage,weekly:weeklyPage,changelog:changelogPage,analytics:analyticsPage}[route]||home;document.getElementById('app').innerHTML=body();bind();document.querySelectorAll('[data-v4tab]').forEach(b=>b.onclick=()=>{window.v4Tab=b.dataset.v4tab;render()});document.querySelectorAll('[data-insight]').forEach(b=>b.onclick=()=>action(b.dataset.insight));}
-function migrateV4(){v4SyncKeys();if(!localStorage.getItem(V4.cacheKey))localStorage.setItem(V4.cacheKey,JSON.stringify({version:4,createdAt:new Date().toISOString()}));v4Insights();}
+function migrateV4(){v4SyncKeys();if(!localStorage.getItem(V4.cacheKey))localStorage.setItem(V4.cacheKey,JSON.stringify({version:4,createdAt:new Date().toISOString()}));let cl=v3LoadArray(V3.changelogKey);if(!cl.some(x=>x.version==='v4.0'&&x.title==='Analytics & Insights')){cl.unshift({id:uid(),version:'v4.0',date:V4.launch,title:'Analytics & Insights',description:'Pure CSS/SVG analytics dashboard, Life Score, insights and local report export.',type:'Feature'});v3SaveArray(V3.changelogKey,cl)}v4Insights();}
 migrateV4();render();
 /* ========================= END V4 ========================= */
