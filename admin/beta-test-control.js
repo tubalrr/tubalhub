@@ -107,26 +107,22 @@ async function prepareGoLive(){
       ...(Array.isArray(manifest.changelog)?manifest.changelog:[])
     ];
 
-    await setDoc(BETA_REF,{
-      admin_email:DEFAULT_ADMIN_EMAIL,
-      beta_emails:betaEmails.slice(0,3),
-      test_version:"",
-      updatedAt:serverTimestamp(),
-      updatedBy:auth.currentUser.uid
-    },{merge:true});
+    // No-cloud release preparation: Firestore cleanup is best-effort only.
+    // A permission issue here must never block the actual version.json download.
+    try{
+      await setDoc(BETA_REF,{
+        admin_email:DEFAULT_ADMIN_EMAIL,
+        beta_emails:betaEmails.slice(0,3),
+        test_version:"",
+        updatedAt:serverTimestamp(),
+        updatedBy:auth.currentUser.uid
+      },{merge:true});
+    }catch(cleanupError){
+      console.warn("[TUBAL HUB] Beta cleanup skipped:",cleanupError);
+    }
 
-    await setDoc(doc(db,"systemSettings","updateRelease"),{
-      targetVersion:"1.2.18",
-      releaseAt:new Date().toISOString(),
-      timeZone:"Asia/Manila",
-      status:"DRAFT",
-      testMode:false,
-      testVersion:"",
-      updatedAt:serverTimestamp(),
-      updatedBy:auth.currentUser.uid,
-      updatedByEmail:auth.currentUser.email||""
-    },{merge:true});
-
+    // Do not write systemSettings/updateRelease here.
+    // No-cloud mode has no server-side release gate; version.json is the source of truth.
     localStorage.removeItem("tubalhub_test");
 
     const blob=new Blob([JSON.stringify(manifest,null,2)+"\n"],{type:"application/json"});
