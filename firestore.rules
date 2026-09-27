@@ -528,6 +528,34 @@ service cloud.firestore {
       allow read, write: if false;
     }
 
+
+    // =========================================================
+    // BETA TEST ACCESS — PUBLIC READ / ADMIN WRITE
+    // =========================================================
+    match /tubalhub_config/{configId} {
+      allow read: if configId == 'beta';
+      allow create: if configId == 'beta'
+        && adminUser()
+        && request.resource.data.admin_email is string
+        && request.resource.data.test_version is string
+        && request.resource.data.beta_emails is list
+        && request.resource.data.beta_emails.size() <= 3;
+      allow update: if configId == 'beta'
+        && adminUser()
+        && request.resource.data.admin_email is string
+        && request.resource.data.test_version is string
+        && request.resource.data.beta_emails is list
+        && request.resource.data.beta_emails.size() <= 3
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'admin_email',
+          'beta_emails',
+          'test_version',
+          'updatedAt',
+          'updatedBy'
+        ]);
+      allow delete: if false;
+    }
+
     // =========================================================
     // DEFAULT DENY
     // =========================================================
