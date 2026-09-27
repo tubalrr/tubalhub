@@ -283,3 +283,72 @@ body.hub-home .footer-status-dot{
     animation:none !important;
   }
 }
+
+
+/* =========================================================
+   TUBAL HUB — ALIVE MOTION SYSTEM
+   Smooth, restrained, high-end motion for key dashboard surfaces.
+   ========================================================= */
+
+@keyframes pulseGlowRed{
+  0%,100%{
+    box-shadow:0 0 15px rgba(255,59,48,.2);
+    border-color:rgba(255,59,48,.4);
+  }
+  50%{
+    box-shadow:0 0 30px rgba(255,59,48,.6);
+    border-color:rgba(255,59,48,.8);
+  }
+}
+
+@keyframes pulseGlowGold{
+  0%,100%{
+    box-shadow:0 0 15px rgba(255,204,0,.2);
+    border-color:rgba(255,204,0,.4);
+  }
+  50%{
+    box-shadow:0 0 30px rgba(255,204,0,.6);
+    border-color:rgba(255,204,0,.8);
+  }
+}
+
+@keyframes floatSlow{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-4px)}
+}
+
+.animate-pulse-red{
+  animation:pulseGlowRed 3s infinite ease-in-out;
+}
+
+.animate-pulse-gold{
+  animation:pulseGlowGold 3s infinite ease-in-out;
+}
+
+.animate-float{
+  animation:floatSlow 4s infinite ease-in-out;
+  will-change:transform;
+}
+
+/* Small stagger keeps the motion organic instead of synchronized. */
+.th-pillar-grid .th-pillar:nth-child(2) .animate-float{animation-delay:-1.3s}
+.th-pillar-grid .th-pillar:nth-child(3) .animate-float{animation-delay:-2.6s}
+
+/* The hero pulse should remain calm behind the primary copy. */
+body.hub-home .animate-pulse-red{
+  will-change:box-shadow,border-color;
+}
+
+/* Keep the gold highlight deliberate and usable on touch devices. */
+body.hub-home .animate-pulse-gold{
+  will-change:box-shadow,border-color;
+}
+
+@media(prefers-reduced-motion:reduce){
+  .animate-pulse-red,
+  .animate-pulse-gold,
+  .animate-float{
+    animation:none !important;
+    will-change:auto !important;
+  }
+}
