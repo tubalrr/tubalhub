@@ -43,6 +43,7 @@ function getState(){
 function setVar(name,value){document.documentElement.style.setProperty(name,value)}
 
 function applyBrand(key){
+  const previous=activeBrand;
   activeBrand=BRANDS[key]?key:"all";
   localStorage.setItem(STORAGE_KEY,activeBrand);
   const b=BRANDS[activeBrand];
@@ -50,7 +51,26 @@ function applyBrand(key){
   setVar("--brand-soft",b.soft);
   setVar("--brand-border",b.border);
   document.documentElement.dataset.brandScope=activeBrand;
+  const scopeTargets=[
+    document.querySelector(".dashboard-head"),
+    document.querySelector(".stats"),
+    document.querySelector("#brandOverview"),
+    document.querySelector(".dashboard-grid")
+  ].filter(Boolean);
+  scopeTargets.forEach(el=>{
+    el.classList.add("brand-scope-transition","brand-scope-exit");
+  });
   document.querySelector(".admin-shell")?.classList.add("brand-theme-live");
+  if(previous!==activeBrand){
+    setTimeout(()=>{
+      scopeTargets.forEach(el=>{
+        el.classList.remove("brand-scope-exit");
+        el.classList.remove("brand-scope-enter");
+        void el.offsetWidth;
+        el.classList.add("brand-scope-enter");
+      });
+    },110);
+  }
 
   document.querySelectorAll("[data-brand-switch]").forEach(btn=>{
     const on=btn.dataset.brandSwitch===activeBrand;
