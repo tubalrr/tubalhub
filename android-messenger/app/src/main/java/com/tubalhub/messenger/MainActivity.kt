@@ -891,33 +891,6 @@ private fun showMessenger() {
         contentScroll.addView(content)
         page.addView(contentScroll, LinearLayout.LayoutParams(-1, 0, 1f))
 
-        val sponsored = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            setPadding(12, 9, 12, 9)
-            background = GradientDrawable().apply {
-                setColor(0xFFF9FAFB.toInt())
-                cornerRadius = 14f
-                setStroke(1, 0xFFE5E7EB.toInt())
-            }
-        }
-        sponsored.addView(text("SPONSORED").apply {
-            textSize = 9f
-            setTextColor(0xFF6B7280.toInt())
-            setPadding(0, 0, 0, 2)
-        })
-        sponsored.addView(text("TUBAL HUB Community").apply {
-            textSize = 12f
-            typeface = Typeface.DEFAULT_BOLD
-            setTextColor(0xFF111827.toInt())
-            setPadding(0, 0, 0, 1)
-        })
-        sponsored.addView(text("Connect, chat and discover what's happening.").apply {
-            textSize = 10f
-            setTextColor(0xFF9CA3AF.toInt())
-            setPadding(0, 0, 0, 0)
-        })
-        content.addView(sponsored, LinearLayout.LayoutParams(-1, 62).apply { bottomMargin = 4 })
-
         val global = LinearLayout(this).apply {
             gravity = Gravity.CENTER_VERTICAL
             setPadding(10, 9, 10, 9)
@@ -942,7 +915,7 @@ private fun showMessenger() {
                 setTextColor(0xFF050505.toInt())
                 setPadding(0, 0, 0, 2)
             })
-            addView(text("Everyone • real-time Firestore").apply {
+            addView(text("Real-time Firestore").apply {
                 textSize = 10f
                 setTextColor(0xFF65676B.toInt())
                 setPadding(0, 0, 0, 0)
@@ -957,25 +930,6 @@ private fun showMessenger() {
 
         val chatList = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
         content.addView(chatList, LinearLayout.LayoutParams(-1, -2))
-
-        stories.addView(LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            gravity = Gravity.CENTER_HORIZONTAL
-            addView(TextView(this@MainActivity).apply {
-                text = "YOU"
-                textSize = 11f
-                gravity = Gravity.CENTER
-                typeface = Typeface.DEFAULT_BOLD
-                setTextColor(Color.WHITE)
-                background = blueGradient(50f)
-            }, LinearLayout.LayoutParams(56, 56))
-            addView(text("Your Story").apply {
-                textSize = 9f
-                gravity = Gravity.CENTER
-                setTextColor(0xFF555555.toInt())
-                setPadding(0, 3, 0, 0)
-            })
-        }, LinearLayout.LayoutParams(68, 70).apply { rightMargin = 8 })
 
         val presenceListener = db.collection("presence").addSnapshotListener { snap, error ->
             if (error != null || snap == null) {
@@ -992,7 +946,7 @@ private fun showMessenger() {
                 .sortedWith(compareByDescending<com.google.firebase.firestore.DocumentSnapshot> { it.getBoolean("online") == true }
                     .thenBy { it.getString("displayName")?.lowercase().orEmpty() })
 
-            while (stories.childCount > 1) stories.removeViewAt(1)
+            while (stories.childCount > 0) stories.removeViewAt(0)
             members.take(8).forEach { doc ->
                 val name = doc.getString("displayName")?.trim().orEmpty().ifBlank { "Member" }
                 val initials = name.split(Regex("\\s+")).take(2)
@@ -2235,7 +2189,7 @@ private fun openGlobalChat() {
                 setTextColor(0xFF050505.toInt())
                 setPadding(0, 0, 0, 1)
             })
-            addView(text("Active now • Tubal").apply {
+            addView(text("Real-time Firestore").apply {
                 textSize = 10f
                 setTextColor(0xFF22C55E.toInt())
                 setPadding(0, 0, 0, 0)
