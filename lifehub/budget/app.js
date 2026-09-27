@@ -1,0 +1,38 @@
+
+const K='lifehub-budget-v1',D=new Date(),$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const iso=d=>new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10);
+const money=(n,c='PHP')=>new Intl.NumberFormat('en-PH',{style:'currency',currency:c}).format(Number(n)||0);
+let S=JSON.parse(localStorage.getItem(K)||'null')||{income:{PHP:35000,USD:250},env:[
+{name:'Food & Grab',spent:6200,limit:9000,c:'#FFB86B'},{name:'Bills & Internet',spent:4100,limit:6000,c:'#8FA8FF'},
+{name:'Family Padala',spent:3500,limit:5000,c:'#7EC8A0'},{name:'Luho/Fun',spent:1800,limit:3500,c:'#E8A0BF'}],
+tx:[{date:iso(D),title:'Grocery run',amt:1250,type:'payable',cat:'Food & Grab',cur:'PHP',tag:'needs'},{date:iso(D),title:'Internet bill',amt:1699,type:'payable',cat:'Bills & Internet',cur:'PHP',tag:'monthly'},{date:iso(D),title:'Freelance payment',amt:5000,type:'receivable',cat:'Luho/Fun',cur:'PHP',tag:'income'}],plans:[]};
+const save=()=>localStorage.setItem(K,JSON.stringify(S));
+const esc=s=>String(s).replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[x]));
+const fmt=d=>new Intl.DateTimeFormat('fil-PH',{month:'short',day:'numeric',year:'numeric'}).format(new Date(d+'T00:00:00'));
+function ui(){
+ const p=S.tx.filter(x=>x.type==='payable').reduce((a,x)=>a+x.amt,0),r=S.tx.filter(x=>x.type==='receivable').reduce((a,x)=>a+x.amt,0);
+ $('#app').innerHTML='<div class="top"><div class="brand"><div class="mark">LH</div><div><div class="eyebrow">LIFEHUB</div><h1>Budget Tracker</h1></div></div><div class="date">'+new Intl.DateTimeFormat('fil-PH',{weekday:'long',month:'long',day:'numeric',year:'numeric'}).format(D)+'</div></div>'+
+ '<section class="hero"><div><div class="eyebrow" style="color:#aaa39b">MONEY CHECK</div><h2>Magkano natira?</h2><p>Bayad na kapag kaya. Ipon pa more.</p></div><button class="btn" id="add">+ Add transaction</button></section>'+
+ '<div class="toggle"><button class="active" data-f="all">All</button><button data-f="payable">Payable · utang mo / عليك</button><button data-f="receivable">Receivable · utang sayo / لك</button></div>'+
+ '<div class="summary"><article class="card"><span>Total payable</span><strong>'+money(p)+'</strong></article><article class="card"><span>Total receivable</span><strong>'+money(r)+'</strong></article><article class="card"><span>Remaining</span><strong style="color:'+(r-p>=0?'#397b59':'#a65342')+'">'+money(r-p)+'</strong></article><article class="card"><span>Monthly income</span><strong>'+money(S.income.PHP)+'</strong></article></div>'+
+ '<div class="grid"><section class="card"><div class="head"><div><div class="eyebrow">MONTHLY LIMITS</div><h3>Budget envelopes</h3></div><span class="muted">Spent / Limit</span></div><div class="envs">'+S.env.map(e=>{let q=Math.min(100,Math.round(e.spent/e.limit*100));return '<div class="env"><div class="envhead"><span>'+esc(e.name)+'</span><b>'+q+'%</b></div><div class="bar"><i style="width:'+q+'%;background:'+e.c+'"></i></div><div class="envfoot"><span>₱'+e.spent.toLocaleString()+' spent</span><span>₱'+e.limit.toLocaleString()+'</span></div></div>'}).join('')+'</div></section>'+
+ '<section class="card"><div class="eyebrow">INCOME</div><h3>Monthly income</h3><div class="income"><input class="field" id="ip" type="number" value="'+S.income.PHP+'"><input class="field" id="iu" type="number" value="'+S.income.USD+'"></div><p class="muted">Ipon pa more · PHP / USD</p></section></div>'+
+ '<section class="card install"><div class="head"><div><div class="eyebrow">الأقساط · INSTALLMENTS</div><h3>Installment Plans</h3></div><span class="muted">Monthly recurrence</span></div><div class="installform"><input class="field" id="pn" placeholder="Plan name"><input class="field" id="pt" type="number" placeholder="Total"><input class="field" id="pa" type="number" placeholder="Per installment"><input class="field" id="pd" type="date"><button class="btn" id="addp">Add</button></div><div id="plans"></div></section>'+
+ '<div class="bottom"><section class="card"><div class="head"><div><div class="eyebrow">MONEY MOVEMENT</div><h3>Transactions</h3></div></div><div id="tx"></div></section><section class="card"><div class="eyebrow">WHERE IT GOES</div><h3>Spending breakdown</h3><div class="chart"></div><div class="legend">'+S.env.map(e=>'<div><i class="dot" style="background:'+e.c+'"></i>'+e.name+'</div>').join('')+'</div></section></div>';
+ bind();
+}
+function bind(){
+ $$('.toggle button').forEach(b=>b.onclick=()=>renderTx(b.dataset.f));
+ $('#add').onclick=openModal;
+ $('#ip').oninput=e=>{S.income.PHP=+e.target.value||0;save()};
+ $('#iu').oninput=e=>{S.income.USD=+e.target.value||0;save()};
+ $('#addp').onclick=addPlan;
+ renderTx('all');renderPlans();
+}
+function renderTx(f){let a=S.tx.filter(x=>f==='all'||x.type===f).slice().sort((x,y)=>y.date.localeCompare(x.date));$('#tx').innerHTML=a.length?a.map(x=>'<div class="tx"><small>'+fmt(x.date)+'</small><div><b>'+esc(x.title)+'</b><br><span class="pill">'+esc(x.cat)+' · '+esc(x.tag)+'</span></div><b class="'+(x.type==='payable'?'minus':'plus')+'">'+(x.type==='payable'?'−':'+')+money(x.amt,x.cur)+'</b></div>').join(''):'<div class="empty">Walang transactions pa.</div>'}
+function last(y,m){return new Date(y,m+1,0).getDate()}
+function addm(d,n){let x=new Date(d),t=new Date(x.getFullYear(),x.getMonth()+n,1);return new Date(t.getFullYear(),t.getMonth(),Math.min(x.getDate(),last(t.getFullYear(),t.getMonth())))}
+function addPlan(){let n=$('#pn').value.trim(),t=+$('#pt').value,a=+$('#pa').value,f=$('#pd').value;if(!n||!t||!a||!f)return;let s=[],paid=0,i=0;while(paid<t&&i<120){let d=addm(new Date(f+'T00:00:00'),i),v=Math.min(a,t-paid);s.push({d:iso(d),v:v});paid+=v;i++}S.plans.push({n:n,t:t,a:a,f:f,s:s});save();renderPlans()}
+function renderPlans(){let p=S.plans.at(-1);$('#plans').innerHTML=p?'<div class="schedule">'+p.s.map((x,i)=>'<div class="inst"><b>#'+(i+1)+' · '+money(x.v)+'</b><small>'+fmt(x.d)+'</small></div>').join('')+'</div>':'<div class="empty">Wala pang installment plan.</div>'}
+function openModal(){let m=document.createElement('div');m.className='modal open';m.innerHTML='<div class="modalbox"><button class="close">×</button><div class="eyebrow">NEW ENTRY</div><h3>Add transaction</h3><div class="form"><label>Title<input class="field" id="mt"></label><div class="formgrid"><label>Amount<input class="field" id="ma" type="number"></label><label>Type<select class="field" id="my"><option value="payable">Payable</option><option value="receivable">Receivable</option></select></label></div><div class="formgrid"><label>Category<select class="field" id="mc"><option>Food & Grab</option><option>Bills & Internet</option><option>Family Padala</option><option>Luho/Fun</option></select></label><label>Currency<select class="field" id="mu"><option>PHP</option><option>USD</option></select></label></div><label>Date<input class="field" id="md" type="date" value="'+iso(D)+'"></label><button class="btn" id="ms">Bayad na · Save</button></div></div>';document.body.appendChild(m);m.querySelector('.close').onclick=()=>m.remove();m.querySelector('#ms').onclick=()=>{let title=$('#mt').value.trim(),amt=+$('#ma').value,type=$('#my').value,cat=$('#mc').value,cur=$('#mu').value,date=$('#md').value;if(!title||!amt||!date)return;S.tx.push({title:title,amt:amt,type:type,cat:cat,cur:cur,date:date,tag:type==='payable'?'expense':'income'});let e=S.env.find(x=>x.name===cat);if(e&&type==='payable'&&cur==='PHP')e.spent+=amt;save();m.remove();ui()}}
+ui();
