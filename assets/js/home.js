@@ -294,7 +294,24 @@ function initSponsorMotionReal(){
   if(document.getElementById("tubalSponsorMotionReal"))return;
   const style=document.createElement("style");
   style.id="tubalSponsorMotionReal";
-  style.textContent=".tubal-sponsor-card-real{position:relative;transform:translateZ(0);transition:transform .35s ease,box-shadow .35s ease}.tubal-sponsor-card-real:hover{transform:translateY(-3px) scale(1.008);box-shadow:0 14px 40px rgba(238,77,45,.18)}.tubal-sponsor-visual-real{position:relative;isolation:isolate;overflow:hidden}.tubal-sponsor-visual-real:after{content:\"\";position:absolute;inset:-20% -60%;background:linear-gradient(105deg,transparent 35%,rgba(255,255,255,.28) 50%,transparent 65%);transform:translateX(-45%);animation:tubalSponsorShine 3.8s ease-in-out infinite;pointer-events:none}.tubal-sponsor-fallback-real{animation:tubalSponsorPulse 2.8s ease-in-out infinite}.tubal-sponsor-badge-real{animation:tubalSponsorFloat 2.2s ease-in-out infinite}@keyframes tubalSponsorShine{0%,55%{transform:translateX(-55%)}100%{transform:translateX(55%)}}@keyframes tubalSponsorPulse{0%,100%{filter:saturate(1);transform:scale(1)}50%{filter:saturate(1.12);transform:scale(1.012)}}@keyframes tubalSponsorFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}@media(prefers-reduced-motion:reduce){.tubal-sponsor-card-real,.tubal-sponsor-visual-real:after,.tubal-sponsor-fallback-real,.tubal-sponsor-badge-real{animation:none!important;transition:none!important}}";
+  style.textContent=[
+    ".tubal-sponsor-card-real{position:relative;display:block;overflow:hidden;transform:translateZ(0);border:1px solid rgba(255,204,0,.22)!important;border-radius:14px!important;background:linear-gradient(145deg,rgba(21,21,23,.96),rgba(11,11,13,.98))!important;box-shadow:0 12px 28px rgba(0,0,0,.35),0 0 18px rgba(255,204,0,.08);transition:transform .32s ease,border-color .32s ease,box-shadow .32s ease}.tubal-sponsor-card-real:hover{transform:translateY(-4px);border-color:rgba(255,59,48,.82)!important;box-shadow:0 18px 42px rgba(0,0,0,.44),0 0 30px rgba(255,59,48,.18)}",
+    ".tubal-sponsor-card-real:focus-visible{outline:2px solid #ffcc00;outline-offset:3px}",
+    ".tubal-sponsor-visual-real{position:relative;isolation:isolate;overflow:hidden}",
+    ".tubal-sponsor-visual-real:after{content:\"\";position:absolute;inset:-30% -60%;background:linear-gradient(105deg,transparent 35%,rgba(255,255,255,.26) 50%,transparent 65%);transform:translateX(-58%);animation:tubalSponsorShine 4.2s ease-in-out infinite;pointer-events:none}",
+    ".tubal-sponsor-panel-real:before{content:\"\";position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 85% 18%,rgba(255,204,0,.12),transparent 34%),radial-gradient(circle at 18% 96%,rgba(255,59,48,.08),transparent 40%)}",
+    ".tubal-sponsor-click-real{position:absolute;top:10px;right:10px;z-index:5;display:inline-flex;align-items:center;gap:5px;padding:7px 10px;border-radius:999px;background:rgba(12,12,14,.88);border:1px solid rgba(255,204,0,.50);color:#fff;font-size:9px;font-weight:900;letter-spacing:.1px;box-shadow:0 0 16px rgba(255,204,0,.14);pointer-events:none}",
+    ".tubal-sponsor-shopee-logo-real{width:62px;height:62px;object-fit:contain;filter:drop-shadow(0 7px 16px rgba(0,0,0,.30))}",
+    ".tubal-sponsor-verified-real{display:inline-flex;align-items:center;gap:5px;font-size:10px;color:#fff;font-weight:800}",
+    ".tubal-sponsor-verified-real span{width:18px;height:18px;display:grid;place-items:center;border-radius:50%;background:#1da1f2;color:#fff;font-size:11px;font-weight:900}",
+    ".tubal-sponsor-copy-real{position:relative;z-index:2;padding:12px 14px 14px}",
+    ".tubal-sponsor-copy-real b{display:block;color:#fff;font-size:16px;font-weight:900}",
+    ".tubal-sponsor-copy-real p{margin:4px 0 0;color:#9ca3af;font-size:10px;line-height:1.45}",
+    ".tubal-sponsor-fallback-real{animation:tubalSponsorPulse 2.8s ease-in-out infinite}",
+    "@keyframes tubalSponsorShine{0%,55%{transform:translateX(-58%)}100%{transform:translateX(58%)}}",
+    "@keyframes tubalSponsorPulse{0%,100%{filter:saturate(1)}50%{filter:saturate(1.12)}}",
+    "@media(prefers-reduced-motion:reduce){.tubal-sponsor-card-real,.tubal-sponsor-visual-real:after,.tubal-sponsor-fallback-real{animation:none!important;transition:none!important}}"
+  ].join("");
   document.head.appendChild(style);
 }
 function initSponsorClickGuardReal(){
@@ -304,7 +321,7 @@ function initSponsorClickGuardReal(){
     const link=event.target?.closest?.(".tubal-sponsor-card-real");
     if(!link)return;
     const url=String(link.getAttribute("href")||"").trim();
-    if(!/^https?:\/\//i.test(url))return;
+    if(!/^https?:\\/\\//i.test(url))return;
     event.preventDefault();
     event.stopImmediatePropagation();
     window.location.assign(url);
@@ -322,9 +339,9 @@ function initSponsoredReal(){
     const content=document.getElementById(slot.content),status=document.getElementById(slot.status);
     if(!content||!status)return;
     status.textContent="EMPTY";
-    status.style.color="rgba(255,255,255,0.2)";
-    status.style.background="rgba(255,255,255,0.05)";
-    content.innerHTML='<div style="background:rgba(0,0,0,0.2);border-radius:12px;border:1px dashed rgba(120,255,170,0.08);display:flex;align-items:center;justify-content:center;flex-direction:column;padding:18px;text-align:center;"><span style="font-size:18px;opacity:.15;">📦</span><small style="font-size:9px;opacity:.25;margin-top:6px;">'+label+' — no active sponsor</small></div>';
+    status.style.color="rgba(255,255,255,.2)";
+    status.style.background="rgba(255,255,255,.05)";
+    content.innerHTML='<div style="background:rgba(15,15,18,.76);border-radius:12px;border:1px dashed rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;flex-direction:column;padding:18px;text-align:center;color:#fff;"><span style="font-size:18px;opacity:.15;">📦</span><small style="font-size:9px;color:#9ca3af;margin-top:6px;">'+label+' — no active sponsor</small></div>';
   };
   const renderSlot=(slot,data)=>{
     const content=document.getElementById(slot.content),status=document.getElementById(slot.status);
@@ -334,17 +351,30 @@ function initSponsoredReal(){
     const desc=escAttr(data.descReal||"");
     const image=String(data.imageUrlReal||"").trim();
     const link=String(data.linkReal||"").trim();
-    const safeLink=/^https?:\/\//i.test(link)?link:"";
-    const imageHtml=/^https?:\/\//i.test(image)
-      ? '<div class="tubal-sponsor-visual-real" style="position:relative;width:100%;height:140px;background:linear-gradient(135deg,#ee4d2d,#ff7337);display:flex;align-items:center;justify-content:center;overflow:hidden;"><div class="tubal-sponsor-fallback-real" style="color:#fff;font-weight:800;font-size:20px;letter-spacing:1px;">SHOPEE</div><img src="'+escAttr(image)+'" alt="" loading="lazy" decoding="async" onerror="this.style.display=\'none\'" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;"></div>'
-      : '<div class="tubal-sponsor-visual-real tubal-sponsor-fallback-real" style="height:140px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#ee4d2d,#ff7337);color:#fff;font-weight:800;font-size:20px;letter-spacing:1px;">SHOPEE</div>';
-    const body=imageHtml+'<div style="padding:10px;"><b style="font-size:12px;">'+title+'</b>'+(desc?'<p style="font-size:10px;opacity:.6;margin:4px 0 0;">'+desc+'</p>':"")+'</div>';
+    const safeLink=/^https?:\\/\\//i.test(link)?link:"";
+    const isShopee=/shopee/i.test(String(data.brandReal||"")+" "+String(data.titleReal||""));
+    const shopeeLogo="https://cdn.simpleicons.org/shopee/ffffff";
+    const imageHtml=isShopee
+      ? '<div class="tubal-sponsor-visual-real" style="width:100%;height:158px;background:linear-gradient(135deg,#ee4d2d 0%,#ff5a36 50%,#d52a20 100%);display:flex;align-items:center;gap:14px;padding:18px 20px;overflow:hidden;">'+
+          '<div style="position:relative;z-index:2;display:flex;align-items:center;gap:12px;min-width:0;">'+
+            '<img class="tubal-sponsor-shopee-logo-real" src="'+shopeeLogo+'" alt="Shopee" loading="eager" decoding="async" onerror="this.style.display=\'none\'">'+
+            '<div style="min-width:0;"><div style="color:#fff;font-size:28px;font-weight:900;letter-spacing:-1px;line-height:1;">Shopee</div><div class="tubal-sponsor-verified-real" style="margin-top:8px;"><span>✓</span> Verified</div></div>'+
+          '</div>'+
+          '<div style="position:absolute;right:-18px;bottom:-34px;width:185px;height:185px;border-radius:50%;background:rgba(255,255,255,.10);"></div>'+
+          (/^https?:\\/\\//i.test(image)?'<img src="'+escAttr(image)+'" alt="" loading="lazy" decoding="async" onerror="this.style.display=\'none\'" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;opacity:.16;mix-blend-mode:screen;">':"")+
+        '</div>'
+      : (/^https?:\\/\\//i.test(image)
+        ? '<div class="tubal-sponsor-visual-real" style="width:100%;height:158px;background:#111114;display:flex;align-items:center;justify-content:center;overflow:hidden;"><img src="'+escAttr(image)+'" alt="" loading="lazy" decoding="async" onerror="this.style.display=\'none\'" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;"><span class="tubal-sponsor-fallback-real" style="position:relative;z-index:2;color:#fff;font-weight:900;font-size:20px;letter-spacing:1px;text-shadow:0 4px 18px rgba(0,0,0,.55);">'+title+'</span></div>'
+        : '<div class="tubal-sponsor-visual-real tubal-sponsor-fallback-real" style="height:158px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#17171a,#0e0e11);color:#fff;font-weight:900;font-size:20px;letter-spacing:1px;">'+title+'</div>');
+    const body=imageHtml+'<div class="tubal-sponsor-copy-real"><b>'+(isShopee?"Shopee Deal":title)+'</b><p>'+ (desc|| (isShopee?"Check this product":"Sponsored promotion")) +'</p></div>';
     status.textContent="LIVE";
-    status.style.background="rgba(29,255,145,0.15)";
+    status.style.background="rgba(29,255,145,.15)";
     status.style.color="#1dff91";
     content.innerHTML=safeLink
-      ? '<a class="tubal-sponsor-card-real" href="'+escAttr(safeLink)+'" target="_self" rel="noopener noreferrer" aria-label="Open sponsored promotion: '+title+'" style="display:block;background:rgba(0,0,0,.3);border-radius:12px;overflow:hidden;text-decoration:none;color:#fff;border:1px solid rgba(255,215,0,.2);cursor:pointer;pointer-events:auto;position:relative;z-index:10001;touch-action:manipulation;">'+body+'</a>'
-      : '<div style="display:block;background:rgba(0,0,0,.3);border-radius:12px;overflow:hidden;color:#fff;border:1px solid rgba(255,215,0,.2);">'+body+'</div>';
+      ? '<a class="tubal-sponsor-card-real tubal-sponsor-panel-real" href="'+escAttr(safeLink)+'" target="_self" rel="noopener noreferrer" aria-label="Open sponsored promotion: '+title+'" style="text-decoration:none;color:#fff;cursor:pointer;pointer-events:auto;position:relative;z-index:10001;touch-action:manipulation;">'+
+          '<span class="tubal-sponsor-click-real" aria-hidden="true">↗ Click to Explore</span>'+body+
+        '</a>'
+      : '<div class="tubal-sponsor-card-real tubal-sponsor-panel-real" style="position:relative;color:#fff;">'+body+'</div>';
   };
   try{
     const q=query(collection(db,"sponsors"),limit(20));
