@@ -356,7 +356,7 @@ window.TUBAL_EMAILJS_CONFIG = Object.freeze({
 
 
   <main class="home-page bento-home-page">
-    <div id="mainContent" class="bento-grid">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full max-w-[1400px] mx-auto mb-8">
       <section id="bentoHero" class="bento-card bento-hero th-corp-hero" aria-labelledby="bentoHeroTitle">
   <div class="th-corp-hero-glow" aria-hidden="true"></div>
   <div class="bento-hero-copy th-corp-hero-copy">
@@ -378,6 +378,46 @@ window.TUBAL_EMAILJS_CONFIG = Object.freeze({
     <div class="th-node th-node-three"><b>03</b><span>Digital</span></div>
   </div>
 </section>
+<section class="th-corp-section th-value-section bento-span-12" aria-labelledby="thValueTitle">
+  <div class="th-section-head">
+    <div><span class="th-corp-eyebrow">WHY TUBAL HUB</span><h2 id="thValueTitle">One standard across every branch.</h2></div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch h-full">
+    <article class="flex flex-col justify-between h-full bg-[#151517] border border-white/[0.08] rounded-xl p-6" style="display:grid;grid-template-rows:auto 1fr auto;height:100%;">
+      <div class="th-value-head">
+        <h3>Uncompromised Quality</h3>
+      </div>
+      <div class="th-value-content flex-grow">
+        <p>Rigorous standards across every product, service, and experience.</p>
+      </div>
+      <div class="th-value-footer mt-auto"><span>01</span></div>
+    </article>
+
+    <article class="flex flex-col justify-between h-full bg-[#151517] border border-white/[0.08] rounded-xl p-6" style="display:grid;grid-template-rows:auto 1fr auto;height:100%;">
+      <div class="th-value-head">
+        <h3>Unified Trust</h3>
+      </div>
+      <div class="th-value-content flex-grow">
+        <p>One reliable name connecting multiple specialized needs under one roof.</p>
+      </div>
+      <div class="th-value-footer mt-auto"><span>02</span></div>
+    </article>
+
+    <article class="flex flex-col justify-between h-full bg-[#151517] border border-white/[0.08] rounded-xl p-6" style="display:grid;grid-template-rows:auto 1fr auto;height:100%;">
+      <div class="th-value-head">
+        <h3>Community-Driven</h3>
+      </div>
+      <div class="th-value-content flex-grow">
+        <p>Built with local care, dedication, and a mindset shaped by global standards.</p>
+      </div>
+      <div class="th-value-footer mt-auto"><span>03</span></div>
+    </article>
+  </div>
+</section>
+    </div>
+    <div id="mainContent" class="bento-grid">
+
 <section id="thBrandPillars" class="th-corp-section bento-span-12" aria-labelledby="thBrandPillarsTitle">
   <div class="th-section-head">
     <div><span class="th-corp-eyebrow">THE THREE BRANDS</span><h2 id="thBrandPillarsTitle">Three brands. One connected hub.</h2><p>Each brand has its own purpose, while TUBAL HUB brings them together in one digital home.</p></div>
@@ -425,45 +465,9 @@ window.TUBAL_EMAILJS_CONFIG = Object.freeze({
   </div>
 </section>
 
-<section class="th-corp-section th-value-section bento-span-12" aria-labelledby="thValueTitle">
-  <div class="th-section-head">
-    <div><span class="th-corp-eyebrow">WHY TUBAL HUB</span><h2 id="thValueTitle">One standard across every branch.</h2></div>
-  </div>
 
-  <div class="th-value-grid grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
-    <article class="flex flex-col justify-between h-full bg-[#151517] border border-white/[0.08] rounded-xl p-6" style="display:grid;grid-template-rows:auto 1fr auto;height:100%;">
-      <div class="th-value-head">
-        <h3>Uncompromised Quality</h3>
-      </div>
-      <div class="th-value-content flex-grow">
-        <p>Rigorous standards across every product, service, and experience.</p>
-      </div>
-      <div class="th-value-footer mt-auto"><span>01</span></div>
-    </article>
 
-    <article class="flex flex-col justify-between h-full bg-[#151517] border border-white/[0.08] rounded-xl p-6" style="display:grid;grid-template-rows:auto 1fr auto;height:100%;">
-      <div class="th-value-head">
-        <h3>Unified Trust</h3>
-      </div>
-      <div class="th-value-content flex-grow">
-        <p>One reliable name connecting multiple specialized needs under one roof.</p>
-      </div>
-      <div class="th-value-footer mt-auto"><span>02</span></div>
-    </article>
-
-    <article class="flex flex-col justify-between h-full bg-[#151517] border border-white/[0.08] rounded-xl p-6" style="display:grid;grid-template-rows:auto 1fr auto;height:100%;">
-      <div class="th-value-head">
-        <h3>Community-Driven</h3>
-      </div>
-      <div class="th-value-content flex-grow">
-        <p>Built with local care, dedication, and a mindset shaped by global standards.</p>
-      </div>
-      <div class="th-value-footer mt-auto"><span>03</span></div>
-    </article>
-  </div>
-</section>
-
-<aside id="sponsoredContainerReal" aria-label="Sponsored 1" style="position:relative;z-index:10000;width:100%;max-width:1280px;box-sizing:border-box;background:rgba(8,20,12,0.4);border:1px dashed rgba(255,255,255,0.08);border-radius:16px;padding:12px;margin-top:16px;min-height:90px;pointer-events:auto;">
+<aside id="sponsoredContainerReal" class="w-full" aria-label="Sponsored 1">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
     <span style="font-size:9px;letter-spacing:2px;opacity:0.3;">SPONSORED</span>
     <span id="sponsoredStatusReal" style="font-size:7px;background:rgba(255,255,255,0.05);padding:2px 6px;border-radius:20px;">LOADING...</span>
@@ -634,7 +638,7 @@ window.TUBAL_EMAILJS_CONFIG = Object.freeze({
 
 
       <!-- TUBAL HUB SPONSORED 2 — real Firestore sponsor slot -->
-<section id="sponsoredContainerReal2" aria-label="Sponsored 2" style="width:100%;max-width:1280px;box-sizing:border-box;background:rgba(8,20,12,0.4);border:1px dashed rgba(255,255,255,0.08);border-radius:16px;padding:12px;margin-top:16px;min-height:90px;">
+<section id="sponsoredContainerReal2" class="w-full" aria-label="Sponsored 2">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
     <span style="font-size:9px;letter-spacing:2px;opacity:0.3;">SPONSORED 2</span>
     <span id="sponsoredStatusReal2" style="font-size:7px;background:rgba(255,255,255,0.05);padding:2px 6px;border-radius:20px;">LOADING...</span>
