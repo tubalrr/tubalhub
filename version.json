@@ -7,6 +7,7 @@
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
     "v1.2.20 release — TUBAL HUB homepage cards and containers refined with a pure dark Obsidian Gamer surface system.",
+    "v1.2.20 update — CTRLZONE is now presented as Gaming Zone under its own TUBAL HUB Gaming navigation branch.",
     "v1.2.20 release — premium sponsored panel with real-link interaction, Shopee branding treatment, amber pulse, red hover edge, and Click to Explore affordance.",
     "v1.2.20 release — subtle low-opacity borders, restrained red/yellow hover glows, dark media tiles, and crisp white/muted text contrast.",
     {
@@ -130,6 +131,12 @@
       "version": "1.2.20",
       "date": "2026-09-27",
       "changes": "v1.2.20 release — TUBAL HUB homepage cards and containers refined with a pure dark Obsidian Gamer surface system."
+    },
+    {
+      "type": "FEAT",
+      "icon": "🎮",
+      "title": "Gaming Zone",
+      "desc": "CTRLZONE has been renamed to Gaming Zone and moved into a dedicated Gaming navigation branch while keeping legacy routing compatibility."
     },
     {
       "type": "FEAT",
