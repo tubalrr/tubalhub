@@ -363,3 +363,159 @@ body.hub-home .animate-pulse-gold{
     will-change:auto !important;
   }
 }
+
+/* =========================================================
+   TUBAL HUB — DASHBOARD ALIGNMENT SYSTEM v1.2.26
+   Equal-height Three Brands + balanced right-hand bento cards.
+   Uses native Grid/Flex behavior; no layout rewrite.
+   ========================================================= */
+
+/* THREE BRANDS — equal card height + aligned bottom actions */
+body.hub-home #thBrandPillars .th-pillar-grid{
+  display:grid !important;
+  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  align-items:stretch !important;
+  gap:16px !important;
+}
+
+body.hub-home #thBrandPillars .th-pillar{
+  width:100% !important;
+  height:100% !important;
+  min-height:280px !important;
+  box-sizing:border-box !important;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:flex-start !important;
+  padding:24px !important;
+  margin:0 !important;
+}
+
+body.hub-home #thBrandPillars .th-pillar-icon{
+  flex:0 0 auto !important;
+  margin-bottom:24px !important;
+}
+
+body.hub-home #thBrandPillars .th-pillar-kicker{
+  display:block !important;
+  min-height:18px !important;
+  margin:0 !important;
+  line-height:1.35 !important;
+}
+
+body.hub-home #thBrandPillars .th-pillar h3{
+  margin:8px 0 10px !important;
+  line-height:1.15 !important;
+}
+
+body.hub-home #thBrandPillars .th-pillar p{
+  flex:1 1 auto !important;
+  width:100% !important;
+  min-height:0 !important;
+  margin:0 !important;
+  line-height:1.6 !important;
+}
+
+body.hub-home #thBrandPillars .th-pillar a{
+  flex:0 0 auto !important;
+  width:auto !important;
+  margin-top:22px !important;
+  align-items:center !important;
+  line-height:1.2 !important;
+}
+
+/* RIGHT-HAND BENTO COLUMN — stretch cards to the same row height */
+body.hub-home .bento-row-real{
+  display:grid !important;
+  grid-template-columns:minmax(0,1.2fr) minmax(300px,.8fr) !important;
+  grid-template-rows:minmax(300px,1fr) minmax(300px,1fr) !important;
+  align-items:stretch !important;
+  gap:24px !important;
+  width:100% !important;
+  box-sizing:border-box !important;
+}
+
+body.hub-home .bento-row-real .bento-journal-real,
+body.hub-home .bento-row-real .bento-shop-real,
+body.hub-home .bento-row-real .bento-feed-real{
+  width:100% !important;
+  height:100% !important;
+  min-width:0 !important;
+  min-height:0 !important;
+  box-sizing:border-box !important;
+  align-self:stretch !important;
+}
+
+body.hub-home .bento-row-real .bento-journal-real{
+  display:flex !important;
+  flex-direction:column !important;
+  grid-column:1 !important;
+  grid-row:1 / span 2 !important;
+}
+
+body.hub-home .bento-row-real .bento-shop-real,
+body.hub-home .bento-row-real .bento-feed-real{
+  display:flex !important;
+  flex-direction:column !important;
+  grid-column:2 !important;
+}
+
+body.hub-home .bento-row-real .bento-shop-real{
+  grid-row:1 !important;
+}
+
+body.hub-home .bento-row-real .bento-feed-real{
+  grid-row:2 !important;
+}
+
+body.hub-home .bento-row-real .bento-real-header{
+  flex:0 0 auto !important;
+}
+
+body.hub-home .bento-row-real .bento-real-list,
+body.hub-home .bento-row-real .shop-collections-real,
+body.hub-home .bento-row-real .bento-real-feed-list{
+  flex:1 1 auto !important;
+  min-height:0 !important;
+}
+
+body.hub-home .bento-row-real .shop-collections-real{
+  align-content:start !important;
+}
+
+body.hub-home .bento-row-real .bento-real-feed-list{
+  overflow:auto !important;
+}
+
+@media(max-width:900px){
+  body.hub-home #thBrandPillars .th-pillar-grid{
+    grid-template-columns:1fr !important;
+  }
+
+  body.hub-home #thBrandPillars .th-pillar{
+    height:auto !important;
+    min-height:250px !important;
+  }
+
+  body.hub-home .bento-row-real{
+    grid-template-columns:1fr !important;
+    grid-template-rows:auto !important;
+  }
+
+  body.hub-home .bento-row-real .bento-journal-real,
+  body.hub-home .bento-row-real .bento-shop-real,
+  body.hub-home .bento-row-real .bento-feed-real{
+    grid-column:1 !important;
+    grid-row:auto !important;
+    height:auto !important;
+    min-height:0 !important;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  body.hub-home #thBrandPillars .th-pillar,
+  body.hub-home .bento-row-real .bento-journal-real,
+  body.hub-home .bento-row-real .bento-shop-real,
+  body.hub-home .bento-row-real .bento-feed-real{
+    transition:none !important;
+  }
+}
