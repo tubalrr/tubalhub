@@ -5,7 +5,8 @@
   "versionName": "1.2.22",
   "apkUrl": "https://github.com/tubalrr/tubalhub/releases/download/v1.2.22/TUBAL-HUB-Messenger-release.apk",
   "notes": [
-    "TUBAL HUB Messenger 1.2.22 includes the redesigned Android login screen.",
+    "TUBAL HUB Messenger 1.2.22 includes a redesigned Messenger-style mobile interface.",
+    "Private chats now use cleaner Messenger-style bubbles, spacing, timestamps, and status.",
     "Email, Google, Guest, and Phone SMS sign-in remain available."
   ]
 }
