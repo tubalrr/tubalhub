@@ -335,6 +335,17 @@ body.hub-home .footer-status-dot{
 .th-pillar-grid .th-pillar:nth-child(3) .animate-float{animation-delay:-2.6s}
 
 /* The hero pulse should remain calm behind the primary copy. */
+body.hub-home .th-corp-hero-glow{
+  position:absolute;
+  inset:12px;
+  z-index:1;
+  pointer-events:none;
+  border:1px solid transparent;
+  border-radius:inherit;
+  animation:pulseGlowRed 3s infinite ease-in-out;
+  will-change:box-shadow,border-color;
+}
+
 body.hub-home .animate-pulse-red{
   will-change:box-shadow,border-color;
 }
