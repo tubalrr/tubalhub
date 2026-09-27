@@ -9,6 +9,13 @@
 <link rel="alternate" type="application/json" href="version.json" data-tubal-version-json>
 <title>TUBAL HUB — Three Brands. One Hub.</title>
 <link rel="icon" type="image/png" href="tubal-hub-logo.png">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0a1f12">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TUBAL HUB">
+<link rel="apple-touch-icon" href="assets/icons/tubal-hub-512.svg">
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script>
 window.TUBAL_EMAILJS_CONFIG = Object.freeze({
@@ -686,6 +693,16 @@ window.TUBAL_EMAILJS_CONFIG = Object.freeze({
 <script type="module" src="assets/js/home.js?v=1.2.17-sponsors12"></script>
 
 <script src="js/chatbot.js?v=1.2.17"></script>
+<script id="tubalPwaRegister">
+(function(){
+  if(!("serviceWorker" in navigator)) return;
+  window.addEventListener("load", function(){
+    navigator.serviceWorker.register("./service-worker.js", {scope:"./"}).catch(function(err){
+      console.warn("TUBAL HUB PWA registration failed:", err);
+    });
+  });
+})();
+</script>
 </body>
 <!-- pages-refresh -->
 </html>
