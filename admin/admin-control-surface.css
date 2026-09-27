@@ -589,3 +589,109 @@ body.sidebar-collapsed #sidebarToggle{left:68px!important}
   .admin-profile-copy{display:none}
   .admin-profile-button{padding:5px 6px}
 }
+
+/* =========================================================
+   FINAL ADMIN GRID SYSTEM — clean cards + dark sidebar
+   Existing Firebase IDs and JS behavior remain unchanged.
+   ========================================================= */
+:root{--grid-bg:#F4F6F8;--grid-card:#FFFFFF;--grid-border:#E5E7EB;--grid-text:#111827;--grid-muted:#6B7280;--grid-sidebar:#090C10}
+html,body{background:var(--grid-bg)!important;color:var(--grid-text)!important}
+body{overflow-x:hidden}
+.admin-shell{display:block!important;min-height:100vh!important;background:var(--grid-bg)!important;color:var(--grid-text)!important}
+.sidebar{position:fixed!important;inset:0 auto 0 0!important;width:256px!important;padding:20px 14px!important;background:var(--grid-sidebar)!important;border-right:1px solid #1E242C!important;box-shadow:14px 0 36px rgba(15,23,42,.12)!important;z-index:110!important}
+.dashboard{display:block!important;width:auto!important;min-width:0!important;max-width:none!important;margin:0!important;margin-left:256px!important;padding:0 32px 48px!important;background:var(--grid-bg)!important;color:var(--grid-text)!important}
+.topbar{position:sticky!important;top:0!important;z-index:90!important;min-height:76px!important;margin:0 -32px!important;padding:0 32px!important;background:rgba(244,246,248,.94)!important;border-bottom:1px solid #E5E7EB!important;backdrop-filter:blur(14px)!important}
+.topbar-brand{color:#111827!important}.topbar-version,.topbar-divider,.top-actions>span{color:#6B7280!important}
+.presence-pill,.realtime-pill,#activeBrandPill{background:#FFFFFF!important;border:1px solid #E5E7EB!important;color:#374151!important;box-shadow:0 1px 2px rgba(15,23,42,.03)!important}
+#adminEmail{color:#4B5563!important}
+.dashboard-head{margin:28px 0 22px!important;padding:0!important;background:transparent!important}
+.dashboard-head h1{color:#111827!important}.dashboard-head p,.eyebrow{color:#6B7280!important}
+.secure-badge{background:#FFFFFF!important;border:1px solid #E5E7EB!important;color:#4B5563!important;box-shadow:0 1px 2px rgba(15,23,42,.03)!important}
+.stats{width:100%!important;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:18px!important;margin:0 0 26px!important}
+.stat{min-height:132px!important;padding:20px!important;border:1px solid var(--grid-border)!important;border-radius:18px!important;background:var(--grid-card)!important;color:var(--grid-text)!important;box-shadow:0 4px 18px rgba(15,23,42,.045)!important}
+.stat .metric-icon{background:#F3F4F6!important;color:#4B5563!important;border-color:#E5E7EB!important}.stat .metric-label{color:#6B7280!important}.stat .metric-value{color:#111827!important}.stat .metric-note{color:#9CA3AF!important}
+#brandOverview{margin-bottom:26px!important}
+#brandOverview .tu-bg-white,#brandOverview .brand-summary-card{background:#FFFFFF!important;border:1px solid var(--grid-border)!important;color:#111827!important;box-shadow:0 4px 18px rgba(15,23,42,.045)!important}
+#brandOverview .tu-text-\[\#1E1B16\],#brandOverview b,#brandOverview strong{color:#111827!important}
+#brandOverview small,#brandOverview .tu-text-\[\#948B82\],#brandOverview .tu-text-\[\#8A8177\]{color:#6B7280!important}
+#brandScopeText{background:#fff!important;border-color:#E5E7EB!important;color:#4B5563!important}
+
+/* 1 / 2 / 3-column workspace */
+#adminContentGrid{width:100%!important;display:grid!important;grid-template-columns:1fr!important;gap:24px!important;align-items:start!important}
+#adminContentGrid>.admin-section-label{grid-column:1/-1!important;margin:2px 0 -10px!important}
+#adminContentGrid>.dashboard-grid{display:contents!important}
+#adminContentGrid>.panel,#adminContentGrid>section[recent-panel]{width:100%!important;min-width:0!important;margin:0!important;padding:20px!important;border:1px solid var(--grid-border)!important;border-radius:18px!important;background:#FFFFFF!important;color:#1F2937!important;box-shadow:0 4px 18px rgba(15,23,42,.045)!important}
+#adminContentGrid>.panel:hover{box-shadow:0 8px 24px rgba(15,23,42,.07)!important}
+#adminContentGrid .panel-head{margin-bottom:16px!important;padding-bottom:13px!important;border-bottom:1px solid #EEF0F2!important}
+#adminContentGrid .panel-head h2{color:#111827!important}#adminContentGrid .panel-head p,#adminContentGrid .panel-head small{color:#6B7280!important}
+#adminContentGrid .panel-head>span{background:#F8FAFC!important;border-color:#E5E7EB!important;color:#4B5563!important}
+
+/* Desktop: three compact columns */
+@media(min-width:1101px){
+  #adminContentGrid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:24px!important}
+  #adminContentGrid>.admin-section-label{grid-column:1/-1!important}
+  #adminContentGrid>#sponsoredControl{grid-column:span 2!important}
+  #adminContentGrid>#analytics{grid-column:1/-1!important}
+  #adminContentGrid>#updaterControl{grid-column:span 2!important}
+  #adminContentGrid>#shopProducts{grid-column:span 2!important}
+  #adminContentGrid>#members{grid-column:span 2!important}
+  #adminContentGrid>#chat{grid-column:1/-1!important}
+  #adminContentGrid>section[recent-panel]{grid-column:span 1!important}
+  #adminContentGrid #analytics .analytics-layout{grid-template-columns:minmax(0,1.4fr) minmax(0,1fr)!important;gap:18px!important}
+}
+@media(min-width:701px) and (max-width:1100px){
+  #adminContentGrid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:20px!important}
+  #adminContentGrid>.admin-section-label{grid-column:1/-1!important}
+  #adminContentGrid>#sponsoredControl,#adminContentGrid>#analytics,#adminContentGrid>#updaterControl,#adminContentGrid>#shopProducts,#adminContentGrid>#members,#adminContentGrid>#chat{grid-column:1/-1!important}
+}
+
+/* Compact form fields */
+#adminContentGrid .form-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important;align-items:center!important}
+#adminContentGrid .form-grid textarea,#adminContentGrid .form-grid button{grid-column:1/-1!important}
+#adminContentGrid #shopProducts .form-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+#adminContentGrid .form-grid input,#adminContentGrid .form-grid select,#adminContentGrid .form-grid textarea{min-height:42px!important;padding:10px 12px!important;border:1px solid #DDE2E7!important;border-radius:11px!important;background:#FFFFFF!important;color:#111827!important;outline:none!important}
+#adminContentGrid .form-grid textarea{min-height:92px!important}
+#adminContentGrid .form-grid input::placeholder,#adminContentGrid .form-grid textarea::placeholder{color:#9CA3AF!important}
+#adminContentGrid .form-grid input:focus,#adminContentGrid .form-grid select:focus,#adminContentGrid .form-grid textarea:focus{border-color:#9CA3AF!important;box-shadow:0 0 0 4px rgba(17,24,39,.06)!important}
+#adminContentGrid .form-grid button,#adminContentGrid .members-open-btn,#adminContentGrid .admin-item-actions button,#adminContentGrid .member-action{min-height:40px!important;border-radius:11px!important;border:1px solid #111827!important;background:#111827!important;color:#FFFFFF!important;font-weight:700!important}
+#adminContentGrid .form-grid button:hover,#adminContentGrid .members-open-btn:hover,#adminContentGrid .admin-item-actions button:hover,#adminContentGrid .member-action:hover{background:#1F2937!important}
+#adminContentGrid .item{padding:12px 0!important;border-bottom:1px solid #EEF0F2!important}
+#adminContentGrid .item:last-child{border-bottom:0!important}
+#adminContentGrid .item b{color:#111827!important}#adminContentGrid .item p,#adminContentGrid .item small{color:#6B7280!important}
+#adminContentGrid .empty,#adminContentGrid .analytics-empty{color:#9CA3AF!important}
+#adminContentGrid .analytics-card{background:#fff!important;border-color:#E5E7EB!important}
+#adminContentGrid .analytics-layout>.panel{background:#fff!important;border:1px solid #E5E7EB!important;box-shadow:none!important}
+#adminContentGrid .analytics-bar{background:linear-gradient(180deg,#7C5CFF,#5B45C6)!important}
+#adminContentGrid .analytics-hour-grid>div,#adminContentGrid .analytics-retention>div{background:#F8FAFC!important;border-color:#E5E7EB!important}
+#adminContentGrid #updaterControl,#adminContentGrid #betaTestControl,#adminContentGrid #systemSettings{background:#FFFFFF!important;border-color:#E5E7EB!important;box-shadow:0 4px 18px rgba(15,23,42,.045)!important}
+#adminContentGrid #updaterControl input,#adminContentGrid #updaterControl select,#adminContentGrid #betaTestControl input{background:#fff!important;color:#111827!important;border-color:#DDE2E7!important}
+#adminContentGrid #updaterControl h2,#adminContentGrid #updaterControl h3,#adminContentGrid #updaterControl .tu-text-slate-900,#adminContentGrid #betaTestControl h2{color:#111827!important}
+#adminContentGrid #updaterControl .tu-text-slate-500,#adminContentGrid #updaterControl .tu-text-slate-400,#adminContentGrid #betaTestControl .beta-meta{color:#6B7280!important}
+
+/* Keep sidebar dark and readable */
+.sidebar nav a{color:#99A3AE!important}.sidebar nav a:hover{background:#11161D!important;border-color:#242C35!important;color:#fff!important}.sidebar nav a.active{background:#171D26!important;border-color:#2C3540!important;color:#fff!important;box-shadow:inset 3px 0 0 #7C5CFF!important}
+#brandSwitcher{background:#0D1218!important;border-color:#202832!important;box-shadow:none!important}
+#brandSwitcher .brand-switch-btn{color:#9AA5B1!important}#brandSwitcher .brand-switch-btn:hover{background:#161C24!important;color:#fff!important}#brandSwitcher .brand-switch-btn.brand-switch-active{background:#7C5CFF!important;color:#fff!important;border-color:#7C5CFF!important}
+.storage-card{background:#0D1218!important;border-color:#202832!important;box-shadow:none!important}.storage-label,.storage-note{color:#687483!important}.storage-value{color:#E7EBEF!important}
+
+/* Light header controls */
+.admin-command-wrap{min-width:300px!important}
+.admin-command-button{background:#FFFFFF!important;border-color:#E5E7EB!important;color:#6B7280!important;box-shadow:0 1px 2px rgba(15,23,42,.03)!important}
+.admin-command-button .shortcut{background:#F8FAFC!important;border-color:#E5E7EB!important;color:#6B7280!important}
+.admin-command-results,.admin-command-palette,.command-box,.admin-profile-menu,.admin-notif-menu{background:#FFFFFF!important;border-color:#E5E7EB!important;color:#111827!important;box-shadow:0 20px 50px rgba(15,23,42,.14)!important}
+.admin-command-result{border-bottom-color:#EEF0F2!important;color:#111827!important}.admin-command-result:hover,.admin-command-result.selected{background:#F8FAFC!important}.admin-command-result span{color:#6B5FEA!important}.admin-command-result small,.admin-command-empty{color:#6B7280!important}
+.command-overlay{background:rgba(15,23,42,.35)!important}.command-box-head{border-bottom-color:#EEF0F2!important}.command-box-head input{color:#111827!important}
+.admin-icon-btn,.admin-profile-button{background:#FFFFFF!important;border-color:#E5E7EB!important;color:#4B5563!important}.admin-icon-btn:hover,.admin-profile-button:hover{border-color:#CBD5E1!important;color:#111827!important}
+.admin-profile-menu .profile-line,.admin-profile-menu .profile-action,.notif-item:hover{background:#F8FAFC!important}.profile-line b,.profile-action{color:#111827!important}.profile-line small,.notif-head,.notif-item small{color:#6B7280!important}.profile-action{border-color:#E5E7EB!important;background:#F8FAFC!important}.notif-item{color:#1F2937!important}
+
+@media(max-width:700px){
+  .sidebar{width:280px!important}.dashboard{margin-left:0!important;padding:0 16px 32px!important}
+  .topbar{margin:0 -16px!important;padding:12px 16px!important;min-height:0!important}
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important}
+  #adminContentGrid{grid-template-columns:1fr!important;gap:16px!important}
+  #adminContentGrid>.panel,#adminContentGrid>section[recent-panel]{grid-column:1!important}
+  #adminContentGrid .form-grid,#adminContentGrid #shopProducts .form-grid{grid-template-columns:1fr!important}
+  #adminContentGrid .form-grid textarea,#adminContentGrid .form-grid button{grid-column:1!important}
+  .admin-command-wrap{min-width:100%!important;max-width:none!important}
+}
+@media(max-width:460px){.stats{grid-template-columns:1fr!important}}
