@@ -6,7 +6,7 @@ const $=id=>document.getElementById(id);
 const CONFIG_PATH=["systemSettings","updateRelease"];
 const VERSION_URL="../version.json";
 const TEST_KEY="tubalhub_updater_test_release";
-const CURRENT_FALLBACK="1.2.17";
+const CURRENT_FALLBACK="1.2.18";
 
 let currentVersion=CURRENT_FALLBACK;
 let config={};
