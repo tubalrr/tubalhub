@@ -1,11 +1,14 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.2.30",
-  "build": "2026-09-27_1845",
-  "releasedAtReal": "2026-09-27T10:45:00Z",
+  "version": "1.2.31",
+  "build": "2026-09-27_1915",
+  "releasedAtReal": "2026-09-27T11:15:00Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.2.31 FIX — The Three Brands HTML now uses the exact requested grid/card/content/action utility structure for equal-height alignment.",
+    "v1.2.31 FIX — WHY TUBAL HUB sub-cards now use the same exact flex card structure with flex-grow content and mt-auto footer placement.",
+    "v1.2.31 AUDIT — Existing navigation links, section IDs, data hooks, animation classes, Obsidian surface styling, and functional page structure were preserved.",
     "v1.2.30 FIX — Rebuilt The Three Brands and WHY TUBAL HUB grids with the exact requested Tailwind utility structure: grid-cols-1 md:grid-cols-3 gap-6 items-stretch.",
     "v1.2.30 FIX — Every brand/value card now uses flex flex-col justify-between h-full p-6 bg-[#151517] border border-white/[0.08] rounded-xl, with flex-grow content and mt-auto pt-4 footers.",
     "v1.2.30 UI — Added a lightweight Tailwind-style compatibility layer so the exact utility classes work on the existing static site without loading the full Tailwind runtime.",
@@ -151,6 +154,18 @@
   ],
   "breakingReal": false,
   "changelog": [
+    {
+      "type": "FIX",
+      "icon": "▦",
+      "title": "Exact Card Alignment Structure",
+      "desc": "Replaced the two target section structures with the requested Grid + Flex utility classes while preserving existing hooks."
+    },
+    {
+      "type": "AUDIT",
+      "icon": "✓",
+      "title": "UI/UX Alignment Audit",
+      "desc": "Verified equal-height grid/stretch rules, flex-grow content areas, mt-auto footers, consistent p-6 spacing, and intact Obsidian Gamer surfaces."
+    },
     {
       "type": "FIX",
       "icon": "▦",
@@ -391,5 +406,5 @@
     }
   ],
   "date": "2026-09-27",
-  "changes": "v1.2.30 — Exact Tailwind-style card alignment structure."
+  "changes": "v1.2.31 — Exact Tailwind-style card alignment and UI audit."
 }
