@@ -2550,19 +2550,23 @@ body.theme-light .real-quick-form select{
 }
 
 
-/* AUTH HEADER — logged-in name and logged-out actions remain visible */
+/* AUTH HEADER — keep the correct state visible. The [hidden] attribute must win. */
 .hub-home .top-actions .auth-actions,
 .hub-home .top-actions .auth-user-actions{
   align-items:center;
   gap:6px;
   flex:0 0 auto;
 }
-.hub-home .top-actions .auth-actions{
+.hub-home .top-actions .auth-actions:not([hidden]){
   display:flex;
 }
-.hub-home .top-actions .auth-user-actions{
+.hub-home .top-actions .auth-user-actions:not([hidden]){
   display:flex;
   max-width:min(34vw,280px);
+}
+.hub-home .top-actions .auth-actions[hidden],
+.hub-home .top-actions .auth-user-actions[hidden]{
+  display:none !important;
 }
 .hub-home .top-actions .auth-user-name{
   display:block;
