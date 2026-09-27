@@ -427,7 +427,8 @@ body.hub-home #thBrandPillars .th-pillar a{
 body.hub-home .bento-row-real{
   display:grid !important;
   grid-template-columns:minmax(0,1.2fr) minmax(300px,.8fr) !important;
-  grid-template-rows:minmax(300px,1fr) minmax(300px,1fr) !important;
+  grid-template-rows:minmax(0,1fr) minmax(0,1fr) !important;
+  min-height:684px !important;
   align-items:stretch !important;
   gap:24px !important;
   width:100% !important;
@@ -499,6 +500,7 @@ body.hub-home .bento-row-real .bento-real-feed-list{
   body.hub-home .bento-row-real{
     grid-template-columns:1fr !important;
     grid-template-rows:auto !important;
+    min-height:0 !important;
   }
 
   body.hub-home .bento-row-real .bento-journal-real,
