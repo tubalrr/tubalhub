@@ -1,4 +1,4 @@
-// TUBAL HUB — Hamburger navigation drawer + Calendar feature
+// TUBAL HUB — Hamburger navigation drawer + LifeHub features
 (function(){
   const root = document.querySelector('.hub-home');
   const sidebar = document.getElementById('tubalSidebar');
@@ -8,17 +8,36 @@
 
   if(!root || !sidebar || !trigger) return;
 
-  // Add LifeHub Calendar as a real TUBAL HUB navigation feature.
   const nav = sidebar.querySelector('.side-nav');
   const systemGroup = nav?.querySelector('.side-group:last-child');
-  if(systemGroup && !systemGroup.querySelector('[data-label="Calendar"]')){
-    const link = document.createElement('a');
-    link.href = 'pages/calendar.html';
-    link.dataset.label = 'Calendar';
-    link.title = 'LifeHub Calendar';
-    link.setAttribute('aria-label','LifeHub Calendar');
-    link.innerHTML = '<b class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4M16 3v4M4 10h16M8 14h2M13 14h3M8 17h2M13 17h3"/></svg></b><span>Calendar</span>';
-    systemGroup.insertBefore(link, systemGroup.firstElementChild);
+
+  // LifeHub tools are real TUBAL HUB navigation features.
+  const features = [
+    {
+      label:'Calendar',
+      href:'pages/calendar.html',
+      title:'LifeHub Calendar',
+      icon:'<rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4M16 3v4M4 10h16M8 14h2M13 14h3M8 17h2M13 17h3"/>'
+    },
+    {
+      label:'Knowledge Vault',
+      href:'pages/notes.html',
+      title:'LifeHub Notes / Knowledge Vault',
+      icon:'<path d="M6 4h12v16H6z"/><path d="M9 8h6M9 12h6M9 16h4"/>'
+    }
+  ];
+
+  if(systemGroup){
+    features.slice().reverse().forEach(feature=>{
+      if(systemGroup.querySelector('[data-label="'+feature.label+'"]')) return;
+      const link=document.createElement('a');
+      link.href=feature.href;
+      link.dataset.label=feature.label;
+      link.title=feature.title;
+      link.setAttribute('aria-label',feature.title);
+      link.innerHTML='<b class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true">'+feature.icon+'</svg></b><span>'+feature.label+'</span>';
+      systemGroup.insertBefore(link, systemGroup.firstElementChild);
+    });
   }
 
   const setOpen = (open)=>{
