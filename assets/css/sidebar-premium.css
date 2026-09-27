@@ -1245,3 +1245,63 @@ html[data-theme="light"] .hub-home .sidebar-menu-trigger{
   background:transparent!important;
   line-height:1!important;
 }
+
+/* MOBILE FINAL — always show navigation names beside icons */
+@media(max-width:768px){
+  .hub-home .hub-sidebar .side-nav a{
+    display:flex!important;
+    align-items:center!important;
+    gap:11px!important;
+    width:100%!important;
+    min-height:48px!important;
+    height:48px!important;
+    padding:2px 7px!important;
+    overflow:visible!important;
+  }
+  .hub-home .hub-sidebar .side-nav a b.side-icon{
+    display:grid!important;
+    width:40px!important;
+    height:40px!important;
+    min-width:40px!important;
+    flex:0 0 40px!important;
+    place-items:center!important;
+    font-size:0!important;
+  }
+  .hub-home .hub-sidebar .side-nav a b.side-icon svg{
+    display:block!important;
+    width:21px!important;
+    height:21px!important;
+    visibility:visible!important;
+    opacity:1!important;
+  }
+  .hub-home .hub-sidebar .side-nav a span{
+    display:block!important;
+    width:auto!important;
+    max-width:220px!important;
+    min-width:0!important;
+    flex:1 1 auto!important;
+    overflow:hidden!important;
+    opacity:1!important;
+    visibility:visible!important;
+    transform:none!important;
+    white-space:nowrap!important;
+    text-overflow:ellipsis!important;
+    color:inherit!important;
+    font:600 14px/1.2 Inter,sans-serif!important;
+  }
+  .hub-home .hub-sidebar .side-group-label{
+    display:block!important;
+    max-width:none!important;
+    opacity:1!important;
+    visibility:visible!important;
+    transform:none!important;
+    color:#65756b!important;
+  }
+  .hub-home .hub-sidebar .side-brand-copy{
+    display:block!important;
+    max-width:none!important;
+    opacity:1!important;
+    visibility:visible!important;
+    transform:none!important;
+  }
+}
