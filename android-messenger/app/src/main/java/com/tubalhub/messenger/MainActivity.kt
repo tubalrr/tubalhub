@@ -781,6 +781,7 @@ class MainActivity : AppCompatActivity() {
         root.setBackgroundColor(0xFFF0F2F5.toInt())
         window.statusBarColor = 0xFFFFFFFF.toInt()
         window.navigationBarColor = 0xFFFFFFFF.toInt()
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR or View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
 
         val me = auth.currentUser ?: return showLogin()
         registerFcmToken(me.uid)
@@ -1345,79 +1346,128 @@ class MainActivity : AppCompatActivity() {
         }
 
         messageBox?.removeAllViews()
+
         val pinned = items.firstOrNull { it.getBoolean("pinnedReal") == true }
         pinnedLabel?.apply {
             if (pinned != null) {
                 visibility = View.VISIBLE
-                text = "📌 Pinned: " + (pinned.getString("text") ?: "Message")
-            } else visibility = View.GONE
+                text = "📌 " + (pinned.getString("text") ?: "Pinned message")
+                setTextColor(0xFF1877F2.toInt())
+                background = rounded(0xFFE7F3FF.toInt(), 12f)
+            } else {
+                visibility = View.GONE
+            }
         }
-        items.forEach {
-            val messageId = it.id
-            val sender = if (it.getString("senderId") == myUid) "You" else selectedName
-            val card = LinearLayout(this)
-            card.orientation = LinearLayout.VERTICAL
-            card.setPadding(8, 4, 8, 8)
-            val messageText = it.getString("text") ?: ""
-            val isMine = it.getString("senderId") == myUid
-            card.setOnLongClickListener {
-                showMessageActions(messageId, messageText, isMine)
-                true
+
+        if (items.isEmpty()) {
+            messageBox?.addView(text("No messages yet. Say hello 👋").apply {
+                gravity = Gravity.CENTER
+                textSize = 13f
+                setTextColor(0xFF65676B.toInt())
+                setPadding(16, 28, 16, 28)
+            })
+            return
+        }
+
+        items.forEach { item ->
+            val messageId = item.id
+            val isMine = item.getString("senderId") == myUid
+            val messageText = item.getString("text").orEmpty()
+            val deleted = item.getBoolean("deletedReal") == true || item.getString("type") == "deleted"
+            val displayText = if (deleted) "This message was unsent." else messageText
+
+            val row = LinearLayout(this).apply {
+                orientation = LinearLayout.VERTICAL
+                gravity = if (isMine) Gravity.END else Gravity.START
+                setPadding(6, 3, 6, 3)
+                setOnLongClickListener {
+                    showMessageActions(messageId, messageText, isMine)
+                    true
+                }
             }
 
-            val replyPreview = it.get("replyTo") as? Map<*, *>
-            if (replyPreview != null) {
-                val preview = text("↩ " + (replyPreview["name"] ?: "Member") + ": " + (replyPreview["preview"] ?: ""))
-                preview.textSize = 11f
-                preview.setTextColor(0xFF8EB7E8.toInt())
-                card.addView(preview)
-            }
-            val msg = text(sender + ": " + messageText + if (it.getBoolean("editedReal") == true) "  (edited)" else "")
-            msg.setTypeface(null, Typeface.NORMAL)
-            card.addView(msg)
-
-            val reactionsReal = it.get("reactionsReal") as? Map<*, *> ?: emptyMap<String, Any>()
-            if (reactionsReal.isNotEmpty()) {
-                val liveCounts = reactionsReal.values.groupingBy { value -> value.toString() }.eachCount()
-                val reactionSummary = text(liveCounts.entries.joinToString("  ") { entry -> entry.key + " " + entry.value })
-                reactionSummary.textSize = 13f
-                card.addView(reactionSummary)
+            val replyPreview = item.get("replyTo") as? Map<*, *>
+            if (replyPreview != null && !deleted) {
+                row.addView(text("↩ " + (replyPreview["name"] ?: "Member") + ": " + (replyPreview["preview"] ?: "")).apply {
+                    textSize = 10f
+                    setTextColor(0xFF65676B.toInt())
+                    setPadding(10, 5, 10, 3)
+                    gravity = if (isMine) Gravity.END else Gravity.START
+                })
             }
 
-            val summary = counts[messageId]
-                ?.filterValues { count -> count > 0 }
-                ?.entries
-                ?.joinToString("  ") { entry -> entry.key + " " + entry.value }
-                ?: ""
-            if (summary.isNotEmpty()) {
-                val reactionSummary = text(summary)
-                reactionSummary.textSize = 13f
-                card.addView(reactionSummary)
+            val bubble = TextView(this).apply {
+                text = displayText + if (item.getBoolean("editedReal") == true && !deleted) "  Edited" else ""
+                textSize = 14f
+                setTextColor(if (isMine && !deleted) Color.WHITE else 0xFF050505.toInt())
+                setPadding(14, 10, 14, 10)
+                setLineSpacing(0f, 1.05f)
+                background = rounded(
+                    when {
+                        deleted -> 0xFFF0F2F5.toInt()
+                        isMine -> 0xFF0084FF.toInt()
+                        else -> 0xFFF0F2F5.toInt()
+                    },
+                    18f
+                )
             }
-
-            val created = it.getTimestamp("createdAt")?.toDate()?.time ?: 0L
-            val sentByMe = it.getString("senderId") == myUid
-            val status = if (!sentByMe) "" else when {
-                it.getTimestamp("seenAt") != null -> "  ✓✓ SEEN"
-                it.getTimestamp("deliveredAt") != null -> "  ✓✓ DELIVERED"
-                else -> "  ✓ SENT"
-            }
-            card.addView(text(if (created > 0L) android.text.format.DateFormat.format("hh:mm a", java.util.Date(created)).toString() + status else status).apply {
-                textSize = 9f
-                setTextColor(if (status.contains("SEEN")) 0xFF55A8FF.toInt() else 0xFF8EA69A.toInt())
+            row.addView(bubble, LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply {
+                width = minOf(340, (resources.displayMetrics.widthPixels * 0.78f).toInt())
             })
 
-            val reactionsRow = LinearLayout(this)
-            reactionsRow.orientation = LinearLayout.HORIZONTAL
-            listOf("😂", "❤️", "🔥", "😮", "😢").forEach { emoji ->
-                val b = Button(this)
-                b.text = if (mine[messageId] == emoji) "✓$emoji" else emoji
-                b.setPadding(6, 0, 6, 0)
-                b.setOnClickListener { reactToMessage(messageId, emoji) }
-                reactionsRow.addView(b, LinearLayout.LayoutParams(0, -2, 1f))
+            val reactionSummary = mutableListOf<String>()
+            val realMap = item.get("reactionsReal") as? Map<*, *> ?: emptyMap<String, Any>()
+            if (realMap.isNotEmpty()) {
+                reactionSummary.addAll(
+                    realMap.values
+                        .map { it.toString() }
+                        .groupingBy { it }
+                        .eachCount()
+                        .map { entry -> entry.key + " " + entry.value }
+                )
             }
-            card.addView(reactionsRow)
-            messageBox?.addView(card)
+            counts[messageId]?.forEach { (emoji, count) ->
+                if (count > 0 && reactionSummary.none { it.startsWith(emoji) }) reactionSummary.add(emoji + " " + count)
+            }
+            if (reactionSummary.isNotEmpty()) {
+                row.addView(TextView(this).apply {
+                    text = reactionSummary.joinToString("  ")
+                    textSize = 10f
+                    setTextColor(0xFF65676B.toInt())
+                    background = rounded(Color.WHITE, 20f)
+                    setPadding(8, 3, 8, 3)
+                    elevation = 1f
+                }, LinearLayout.LayoutParams(-2, 28).apply {
+                    gravity = if (isMine) Gravity.END else Gravity.START
+                    topMargin = -2
+                })
+            }
+
+            val created = item.getTimestamp("createdAt")?.toDate()?.time ?: 0L
+            val status = if (!isMine) "" else when {
+                item.getTimestamp("seenAt") != null -> "Seen"
+                item.getTimestamp("deliveredAt") != null -> "Delivered"
+                else -> "Sent"
+            }
+            row.addView(text(
+                if (created > 0L) android.text.format.DateFormat.format("h:mm a", java.util.Date(created)).toString() +
+                    if (status.isBlank()) "" else " • $status"
+                else status
+            ).apply {
+                textSize = 9f
+                setTextColor(0xFF8A8D91.toInt())
+                setPadding(5, 2, 5, 2)
+                gravity = if (isMine) Gravity.END else Gravity.START
+            })
+
+            messageBox?.addView(row, LinearLayout.LayoutParams(-1, -2))
+        }
+
+        messageBox?.post {
+            (messageBox?.parent as? ScrollView)?.fullScroll(View.FOCUS_DOWN)
         }
     }
 
