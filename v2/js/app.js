@@ -27,7 +27,7 @@ const seed={
  library:[{id:1,type:'Books',title:'Atomic Habits',author:'James Clear',status:'Reading',rating:5,read:142,total:320}],
  clients:[],captures:[],journals:[],settings:{closingEnabled:true,prayerGuard:true}
 };
-let S=load();migrateV3();let route=location.hash.slice(1)||'home';
+let S=load();let route=location.hash.slice(1)||'home';
 function load(){try{return Object.assign(structuredClone(seed),JSON.parse(localStorage.getItem(KEY)||'{}'))}catch{return structuredClone(seed)}}
 function save(){localStorage.setItem(KEY,JSON.stringify(S))}
 function go(r){route=r;location.hash=r;render()}
@@ -151,7 +151,7 @@ function render(){
 document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();quickModal()}if(e.key==='Escape')closeModal()});
 function maybeClosing(){if(!S.profile.setup||!S.settings.closingEnabled)return;let h=new Date().getHours();if(h>=21&&!S.journals.some(j=>j.date===TODAY))setTimeout(closingModal,500)}
 setInterval(()=>maybeClosing(),3600000);
-render();setTimeout(maybeClosing,700);
+setTimeout(maybeClosing,700);
 
 /* ========================= TUBAL HUB v3 EXTENSION ========================= */
 const V3={focusKey:'tubalhub_focus_sessions',vaultKey:'tubalhub_vault_v2',reviewsKey:'tubalhub_weekly_reviews',changelogKey:'tubalhub_changelog',searchKey:'tubalhub_recent_searches',themeKey:'tubalhub_dark_mode'};
@@ -235,3 +235,9 @@ function render(){if(!S.profile.setup){onboarding();return}let body={home,lifehu
 function exportData(){let payload={version:3,exportedAt:new Date().toISOString(),...S,v3:{focusSessions:focusSessions(),weeklyReviews:v3LoadArray(V3.reviewsKey),changelog:changelogData(),vault:'encrypted-separate-backup'}};downloadBlob('tubalhub-v3-backup-'+TODAY+'.json',JSON.stringify(payload,null,2))}
 function quickModal(){commandPalette()}
 document.body.classList.toggle('dark',localStorage.getItem(V3.themeKey)==='1');
+
+/* v3 runtime bootstrap */
+migrateV3();
+document.body.classList.toggle('dark',localStorage.getItem(V3.themeKey)==='1');
+render();
+setTimeout(maybeClosing,700);
