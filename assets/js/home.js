@@ -282,7 +282,7 @@ const homeCardLimit=()=>isMobileHome()?4:6;
 
 let hubMessageTimer=null;
 const HUB_HERO_MESSAGES=[
-  ["Three Brands. One Hub.","TUBAL HUB brings Payapang Isip, AI Music and CTRLZONE together in one central home."],
+  ["One Hub. Everything Connected.","TUBAL HUB brings its services, community, shop and Gaming Zone together in one central home."],
   ["Payapang Isip","A calm space for journals and personal thoughts, with your saved entries kept in your real site data."],
   ["AI Music","Explore the TUBAL HUB AI Music area, listen to available tracks and manage real audio content."],
   ["Gaming Zone","Your gaming area for the real Gaming Zone catalog, game pages and gaming-related features."],
@@ -1098,7 +1098,7 @@ function featuredGameMarkup(game){
 function renderFeaturedGames(){
   const track=$("#gamesTrack");if(!track)return;
   if(!featuredGames.length){
-    track.innerHTML='<div class="real-empty-card glass"><span class="real-empty-emoji" aria-hidden="true">NO LOGO</span><p>Wala pa games, upload real</p><a class="real-quick-link" href="pages/gaming-zone.html">Open CTRLZONE →</a></div>';
+    track.innerHTML='<div class="real-empty-card glass"><span class="real-empty-emoji" aria-hidden="true">NO LOGO</span><p>Wala pa games, upload real</p><a class="real-quick-link" href="pages/gaming-zone.html">Open Gaming Zone →</a></div>';
     gamesSlider?.stopAuto?.();
     return;
   }
@@ -1637,7 +1637,7 @@ function bentoRenderShop(){
   const collections=[
     {id:"th",icon:"◈",title:"TUBAL HUB",sub:"Official hub collection"},
     {id:"payapang",icon:"🌿",title:"PAYAPANG ISIP",sub:"Calm collection"},
-    {id:"ctrlzone",icon:"◈",title:"CTRLZONE",sub:"Gaming collection"}
+    {id:"ctrlzone",icon:"◈",title:"Gaming Zone",sub:"Gaming collection"}
   ];
   box.innerHTML=collections.map(item=>
     '<a class="collection-card" href="pages/shop.html#'+item.id+'"><span class="collection-card-icon">'+item.icon+'</span><span class="collection-card-title">'+item.title+'</span><span class="collection-card-sub">'+item.sub+'</span><span class="collection-card-arrow">→</span></a>'
