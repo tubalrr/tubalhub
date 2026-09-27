@@ -1,11 +1,14 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.2.31",
-  "build": "2026-09-27_1915",
-  "releasedAtReal": "2026-09-27T11:15:00Z",
+  "version": "1.2.32",
+  "build": "2026-09-27_1925",
+  "releasedAtReal": "2026-09-27T11:25:00Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.2.32 FIX — Consolidated the target card alignment CSS into one final alignment layer, removing duplicate v1.2.26/v1.2.28 override blocks that could create inconsistent computed styles.",
+    "v1.2.32 FIX — The Three Brands and WHY TUBAL HUB grids now use deterministic stretch rows, explicit flex-column cards, flexible content areas, and auto-pinned action/footer regions.",
+    "v1.2.32 AUDIT — Existing target links, IDs, animation classes, data hooks, and Obsidian Gamer surface styling were preserved; only target layout/styling CSS and structure were touched.",
     "v1.2.31 FIX — The Three Brands HTML now uses the exact requested grid/card/content/action utility structure for equal-height alignment.",
     "v1.2.31 FIX — WHY TUBAL HUB sub-cards now use the same exact flex card structure with flex-grow content and mt-auto footer placement.",
     "v1.2.31 AUDIT — Existing navigation links, section IDs, data hooks, animation classes, Obsidian surface styling, and functional page structure were preserved.",
@@ -154,6 +157,18 @@
   ],
   "breakingReal": false,
   "changelog": [
+    {
+      "type": "FIX",
+      "icon": "▦",
+      "title": "Alignment CSS Consolidated",
+      "desc": "Removed overlapping alignment overrides and replaced them with one authoritative flex/grid layer for the two target sections."
+    },
+    {
+      "type": "AUDIT",
+      "icon": "✓",
+      "title": "Card Baseline Audit",
+      "desc": "Verified 3-column stretch grids, equal-height card behavior, flex-grow content, mt-auto bottom anchors, and consistent #151517 / white-8% surfaces."
+    },
     {
       "type": "FIX",
       "icon": "▦",
@@ -406,5 +421,5 @@
     }
   ],
   "date": "2026-09-27",
-  "changes": "v1.2.31 — Exact Tailwind-style card alignment and UI audit."
+  "changes": "v1.2.32 — Consolidated dashboard alignment layer and final card baseline audit."
 }
