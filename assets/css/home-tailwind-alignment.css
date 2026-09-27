@@ -180,3 +180,199 @@ body.hub-home .th-value-grid > article:nth-child(2):hover{
     transition:none !important;
   }
 }
+
+
+/* DASHBOARD CONTAINER STABILITY — CSS/JS FIX
+   Layout-only hardening. HTML structure and existing data hooks remain untouched.
+*/
+:root{
+  --obsidian-bg:#0A0A0B;
+  --obsidian-card:#151517;
+  --obsidian-border:rgba(255,255,255,.08);
+  --obsidian-red:#ff3b30;
+  --obsidian-gold:#ffcc00;
+}
+
+body.hub-home{
+  background:#0A0A0B!important;
+  color:#fff!important;
+}
+
+body.hub-home .home-page{
+  width:100%!important;
+  max-width:1400px!important;
+  margin:0 auto!important;
+  box-sizing:border-box!important;
+  min-width:0!important;
+}
+
+body.hub-home .home-page > div[class~="grid"][class~="grid-cols-1"][class~="lg:grid-cols-2"]{
+  width:100%!important;
+  max-width:1400px!important;
+  margin:0 auto 1.5rem!important;
+  box-sizing:border-box!important;
+  display:grid!important;
+  grid-template-columns:repeat(auto-fit,minmax(320px,1fr))!important;
+  gap:1.5rem!important;
+  align-items:stretch!important;
+  min-width:0!important;
+}
+
+/* Legacy Bento placement must not hijack the new parent grid. */
+body.hub-home #bentoHero,
+body.hub-home .th-value-section{
+  grid-column:auto!important;
+  grid-row:auto!important;
+  min-width:0!important;
+  width:100%!important;
+  max-width:none!important;
+  box-sizing:border-box!important;
+}
+
+body.hub-home #mainContent.bento-grid{
+  width:100%!important;
+  max-width:1400px!important;
+  margin:0 auto!important;
+  box-sizing:border-box!important;
+  min-width:0!important;
+}
+
+body.hub-home #thBrandPillars .th-pillar-grid,
+body.hub-home .th-value-section > div[class~="grid"]{
+  width:100%!important;
+  max-width:1400px!important;
+  margin:0 auto!important;
+  box-sizing:border-box!important;
+  display:grid!important;
+  grid-template-columns:repeat(auto-fit,minmax(320px,1fr))!important;
+  gap:1.5rem!important;
+  align-items:stretch!important;
+  min-width:0!important;
+}
+
+body.hub-home #thBrandPillars .th-pillar,
+body.hub-home .th-value-section article{
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:space-between!important;
+  height:100%!important;
+  min-width:0!important;
+  box-sizing:border-box!important;
+  background:#151517!important;
+  border:1px solid var(--obsidian-border)!important;
+  border-radius:.75rem!important;
+}
+
+body.hub-home #thBrandPillars .th-pillar > *,
+body.hub-home .th-value-section article > *{
+  min-width:0!important;
+}
+
+body.hub-home .th-value-section .th-value-content,
+body.hub-home #thBrandPillars .th-pillar-content{
+  flex:1 1 auto!important;
+  width:100%!important;
+  min-height:0!important;
+}
+
+body.hub-home .th-value-section .th-value-footer,
+body.hub-home #thBrandPillars .th-pillar-action{
+  margin-top:auto!important;
+}
+
+body.hub-home #sponsoredContainerReal,
+body.hub-home #sponsoredContainerReal2{
+  width:100%!important;
+  max-width:1400px!important;
+  margin:0 auto 1.5rem!important;
+  box-sizing:border-box!important;
+  min-width:0!important;
+  overflow:hidden!important;
+}
+
+body.hub-home #sponsoredContentReal,
+body.hub-home #sponsoredContentReal2,
+body.hub-home #featuredGamesTrackReal,
+body.hub-home #gamesTrack{
+  width:100%!important;
+  min-width:0!important;
+  box-sizing:border-box!important;
+}
+
+body.hub-home #sponsoredContentReal,
+body.hub-home #sponsoredContentReal2{
+  display:grid!important;
+  grid-template-columns:repeat(auto-fit,minmax(320px,1fr))!important;
+  gap:1.5rem!important;
+  align-items:stretch!important;
+}
+
+body.hub-home .tubal-sponsor-card-real,
+body.hub-home .sponsored-real-card,
+body.hub-home .game-card-real-logo,
+body.hub-home .game-feature-card{
+  min-width:0!important;
+  box-sizing:border-box!important;
+  transition:transform .5s ease,opacity .5s ease,border-color .3s ease,box-shadow .3s ease!important;
+}
+
+body.hub-home .tubal-sponsor-card-real{
+  width:100%!important;
+  max-width:none!important;
+  overflow:hidden!important;
+}
+
+body.hub-home #featuredGamesTrackReal{
+  display:grid!important;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr))!important;
+  gap:1.5rem!important;
+  align-items:stretch!important;
+}
+
+body.hub-home .game-card-real-logo{
+  width:100%!important;
+  height:100%!important;
+}
+
+body.hub-home .tubal-sponsor-card-real,
+body.hub-home .game-card-real-logo,
+body.hub-home .game-feature-card{
+  animation:dashboardCardIn .5s ease both;
+}
+
+@keyframes dashboardCardIn{
+  from{opacity:0;transform:translateY(8px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+body.hub-home .tubal-sponsor-card-real:hover,
+body.hub-home .game-card-real-logo:hover,
+body.hub-home .game-feature-card:hover{
+  transform:translateY(-3px);
+}
+
+@media(max-width:767px){
+  body.hub-home .home-page,
+  body.hub-home #mainContent.bento-grid,
+  body.hub-home .home-page > div[class~="grid"][class~="grid-cols-1"][class~="lg:grid-cols-2"]{
+    width:100%!important;
+    max-width:100%!important;
+  }
+
+  body.hub-home .home-page > div[class~="grid"][class~="grid-cols-1"][class~="lg:grid-cols-2"],
+  body.hub-home #thBrandPillars .th-pillar-grid,
+  body.hub-home .th-value-section > div[class~="grid"],
+  body.hub-home #sponsoredContentReal,
+  body.hub-home #sponsoredContentReal2{
+    grid-template-columns:1fr!important;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  body.hub-home .tubal-sponsor-card-real,
+  body.hub-home .game-card-real-logo,
+  body.hub-home .game-feature-card{
+    animation:none!important;
+    transition:none!important;
+  }
+}
