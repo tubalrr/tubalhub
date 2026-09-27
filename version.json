@@ -1,11 +1,15 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.2.22",
-  "build": "2026-09-27_1710",
-  "releasedAtReal": "2026-09-27T09:10:00Z",
+  "version": "1.2.23",
+  "build": "2026-09-27_1718",
+  "releasedAtReal": "2026-09-27T09:18:00Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.2.23 UI — Applied the Obsidian Gamer palette: #0A0A0B background, #151517 surfaces, thin rgba(255,255,255,.08) borders, Gamer Red #FF3B30 and Electric Gold #FFCC00.",
+    "v1.2.23 UI — Sponsored card remains fully clickable with a gold lift/glow hover treatment and existing real Shopee branding + Verified badge.",
+    "v1.2.23 UI — Added subtle cyan/blue drifting data-stream particles and a smoothly scrolling TUBAL HUB Feeds ticker without changing the existing page grid.",
+    "v1.2.23 FIX — Featured Gaming Zone cards now prioritize the real Valorant, Roblox, Call of Duty: Warzone, and Genshin Impact records when those records are available.",
     "v1.2.22 FIX — Restored the stable TUBAL HUB Main Page layout after the cyber dashboard visual layer caused layout conflicts.",
     "v1.2.22 FIX — Removed the experimental homepage grid stylesheet that overrode the existing Bento layout.",
     "v1.2.22 FIX — Existing Sponsored, Gaming Zone, Payapang Isip, Shop, Feeds, sidebar and Firebase data rendering remain on the stable homepage structure.",
@@ -133,6 +137,36 @@
   ],
   "breakingReal": false,
   "changelog": [
+    {
+      "type": "UI",
+      "icon": "◼",
+      "title": "Obsidian Gamer Surface",
+      "desc": "Refined the existing homepage with a pure dark obsidian background, deep charcoal cards, clean borders, and red/gold accents."
+    },
+    {
+      "type": "UI",
+      "icon": "✦",
+      "title": "Interactive Sponsored Card",
+      "desc": "Kept the real sponsored link fully clickable and added a subtle gold lift, border glow, and clickable visual feedback."
+    },
+    {
+      "type": "UI",
+      "icon": "◌",
+      "title": "Live Data-Stream Atmosphere",
+      "desc": "Added subtle cyan/blue drifting particles and a restrained animated data-stream effect behind the existing dashboard."
+    },
+    {
+      "type": "UI",
+      "icon": "↔",
+      "title": "Feeds Live Ticker",
+      "desc": "Added a smoothly scrolling live update bar inside TUBAL HUB Feeds."
+    },
+    {
+      "type": "FIX",
+      "icon": "🎮",
+      "title": "Featured Game Logos",
+      "desc": "Featured Gaming Zone now prioritizes the real Valorant, Roblox, Call of Duty: Warzone, and Genshin Impact catalog records and their official logo fields."
+    },
     {
       "type": "FIX",
       "icon": "🛠️",
