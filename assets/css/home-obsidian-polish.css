@@ -398,3 +398,112 @@ body.hub-home #sponsoredContainerReal .tubal-sponsor-card-real:hover,
 body.hub-home #sponsoredContainerReal2 .tubal-sponsor-card-real:hover{
   border-color:rgba(255,204,0,.82) !important;
 }
+
+
+/* TUBAL HUB — BALANCED ECOSYSTEM / THREE BRANDS GRID v1.2.36 */
+/* Desktop top row: TUBAL HUB hero and Three Brands share an equal two-column footprint. */
+@media(min-width:1101px){
+  body.hub-home #mainContent > #bentoHero{
+    grid-column:span 6 !important;
+    grid-row:1 !important;
+    width:100% !important;
+    min-width:0 !important;
+    height:520px !important;
+    min-height:520px !important;
+    box-sizing:border-box !important;
+    margin:0 !important;
+  }
+  body.hub-home #mainContent > #thBrandPillars{
+    grid-column:span 6 !important;
+    grid-row:1 !important;
+    width:100% !important;
+    min-width:0 !important;
+    height:520px !important;
+    min-height:520px !important;
+    box-sizing:border-box !important;
+    margin:0 !important;
+  }
+  body.hub-home #mainContent > #bentoHero .th-corp-hero-visual{
+    width:310px !important;
+    height:310px !important;
+    right:1% !important;
+  }
+  body.hub-home #mainContent > #bentoHero .bento-hero-copy{
+    width:58% !important;
+    max-width:390px !important;
+  }
+}
+
+/* Intermediate desktop/tablet: retain a true two-column split inside the existing 6-column breakpoint. */
+@media(min-width:769px) and (max-width:1100px){
+  body.hub-home #mainContent > #bentoHero{
+    grid-column:span 3 !important;
+    grid-row:1 !important;
+    width:100% !important;
+    min-width:0 !important;
+    height:520px !important;
+    min-height:520px !important;
+    margin:0 !important;
+    box-sizing:border-box !important;
+  }
+  body.hub-home #mainContent > #thBrandPillars{
+    grid-column:span 3 !important;
+    grid-row:1 !important;
+    width:100% !important;
+    min-width:0 !important;
+    height:520px !important;
+    min-height:520px !important;
+    margin:0 !important;
+    box-sizing:border-box !important;
+  }
+}
+
+/* The right column gets a readable 2-up + full-width brand layout instead of three cramped cards. */
+@media(min-width:769px){
+  body.hub-home #mainContent > #thBrandPillars .th-pillar-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    grid-auto-rows:minmax(170px,1fr) !important;
+    align-items:stretch !important;
+    gap:16px !important;
+  }
+  body.hub-home #mainContent > #thBrandPillars .th-pillar-grid .th-pillar:nth-child(3){
+    grid-column:1 / -1 !important;
+  }
+  body.hub-home #mainContent > #thBrandPillars .th-pillar{
+    display:grid !important;
+    grid-template-rows:auto 1fr auto !important;
+    height:100% !important;
+    min-height:170px !important;
+    box-sizing:border-box !important;
+  }
+  body.hub-home #mainContent > #thBrandPillars .th-pillar-content{
+    min-height:0 !important;
+  }
+  body.hub-home #mainContent > #thBrandPillars .th-pillar-action{
+    margin-top:auto !important;
+    align-self:end !important;
+  }
+}
+
+@media(max-width:768px){
+  body.hub-home #mainContent > #bentoHero,
+  body.hub-home #mainContent > #thBrandPillars{
+    grid-column:1 / -1 !important;
+    grid-row:auto !important;
+    width:100% !important;
+    height:auto !important;
+    min-height:0 !important;
+    margin-top:0 !important;
+  }
+  body.hub-home #mainContent > #thBrandPillars .th-pillar-grid{
+    grid-template-columns:1fr !important;
+    grid-auto-rows:auto !important;
+  }
+  body.hub-home #mainContent > #thBrandPillars .th-pillar-grid .th-pillar:nth-child(3){
+    grid-column:auto !important;
+  }
+  body.hub-home #mainContent > #thBrandPillars .th-pillar{
+    height:auto !important;
+    min-height:280px !important;
+  }
+}
