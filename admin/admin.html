@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>TUBAL HUB | Admin v1.2.17</title><link rel="stylesheet" href="admin-dashboard.css?v=1.2.17"><link rel="stylesheet" href="admin-redesign-v1.2.17.css?v=20260925-signoutfix"><link rel="stylesheet" href="admin-modern-layout.css?v=20260927-safe"><style>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>TUBAL HUB | Admin v1.2.17</title><link rel="stylesheet" href="admin-dashboard.css?v=1.2.17"><link rel="stylesheet" href="admin-redesign-v1.2.17.css?v=20260925-signoutfix"><link rel="stylesheet" href="admin-modern-layout.css?v=20260927-safe"><script>tailwind={config:{prefix:"tu-",corePlugins:{preflight:false}}}</script><script src="https://cdn.tailwindcss.com"></script><style>
 .analytics-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:18px}
 .analytics-card{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:18px}
 .analytics-card span{display:block;font-size:12px;opacity:.65;text-transform:uppercase;letter-spacing:.08em}
@@ -106,30 +106,90 @@
 <button type="button" id="betaGoLive" class="tubal-go-live-v1218">✅ Go Live v1.2.18</button>
 </div>
 <div class="beta-meta">Go Live commits version.json v1.2.18 through the secure server release function. GitHub credentials never run in the browser.</div>
-</section><section class="panel updater-control-panel" id="updaterControl">
-<div class="panel-head"><div><small>RELEASE CONTROL</small><h2>Scheduled Updater Control</h2><p>PC + mobile • release appears only at the scheduled time</p></div><span>UPDATER</span></div>
-<div class="updater-grid">
-<div class="updater-card"><span>Current Version</span><strong id="updaterCurrentVersion">v1.2.17</strong><small>Source: version.json</small></div>
-<div class="updater-card"><span>Target Version</span><input id="updaterTargetVersion" placeholder="1.2.18" inputmode="decimal"><small>Future build already uploaded to GitHub</small></div>
-<div class="updater-card"><span>Release Status</span><strong id="updaterStatus" data-status="DRAFT">DRAFT</strong><small id="updaterScheduleText">No scheduled release</small></div>
-<div class="updater-card"><span>Last Check / Save</span><strong id="updaterLastCheck">—</strong><small>Admin control timestamp</small></div>
-</div>
-<div class="updater-form">
-<label>Release date & time<input id="updaterReleaseAt" type="datetime-local"></label>
-<label>Timezone<select id="updaterTimezone"><option value="Asia/Manila">Asia/Manila (PH)</option><option value="UTC">UTC</option><option value="Asia/Tokyo">Asia/Tokyo</option><option value="America/Los_Angeles">America/Los_Angeles</option><option value="America/New_York">America/New_York</option><option value="Europe/London">Europe/London</option></select></label>
-</div>
-<div class="updater-actions">
-<button type="button" id="updaterSave">Save Schedule</button>
-<button type="button" id="updaterPublishNow">Set LIVE Now</button>
-<button type="button" id="updaterCancel">Cancel Release</button>
-<button type="button" id="updaterCheckNow">Check Now</button>
-</div>
-<div class="updater-test">
-<div><b>🧪 Updater Test Mode</b><p>Admin-only test. Hindi nito binabago ang production version. Sinusubukan ang update notice sa PC/mobile browser na pinindot ang test.</p></div>
-<label class="switchReal"><input id="updaterTestMode" type="checkbox"><span></span></label>
-<div class="updater-test-row"><input id="updaterTestVersion" placeholder="9.9.99" inputmode="decimal"><button type="button" id="updaterRunTest">Run Update Test</button><button type="button" id="updaterClearTest">Clear Test</button></div>
-</div>
-<div class="updater-note">Release logic: <b>SCHEDULED</b> = hidden before release time, <b>LIVE</b> = updater available on PC + mobile, <b>CANCELLED</b> = hidden. The GitHub code can already be uploaded before the scheduled release.</div>
+</section><section class="panel updater-control-panel !bg-white !border !border-slate-200 !rounded-2xl !shadow-sm !p-6 !text-slate-800" id="updaterControl">
+  <div class="flex items-start justify-between gap-4 pb-5 border-b border-slate-100">
+    <div class="flex items-start gap-3 min-w-0">
+      <div class="tu-flex tu-items-center tu-justify-center tu-w-10 tu-h-10 tu-rounded-xl tu-bg-slate-100 tu-text-slate-600 tu-text-lg">⏱</div>
+      <div>
+        <div class="tu-text-xs tu-font-bold tu-tracking-widest tu-text-slate-400">UPDATER</div>
+        <h2 class="tu-mt-1 tu-text-xl tu-font-semibold tu-text-slate-900">Scheduled Updater Control</h2>
+        <p class="tu-mt-1 tu-text-sm tu-text-slate-500">PC + mobile • release appears only at the scheduled time</p>
+      </div>
+    </div>
+    <span class="tu-shrink-0 tu-inline-flex tu-items-center tu-rounded-full tu-border tu-border-slate-200 tu-bg-slate-50 tu-px-3 tu-py-1.5 tu-text-xs tu-font-semibold tu-text-slate-700">v1.2.17</span>
+  </div>
+
+  <div class="tu-grid tu-grid-cols-1 md:tu-grid-cols-2 tu-gap-4 tu-mt-5">
+    <div class="tu-rounded-xl tu-border tu-border-slate-200 tu-bg-white tu-p-4">
+      <div class="tu-text-xs tu-font-semibold tu-uppercase tu-tracking-wide tu-text-slate-400">Current Version</div>
+      <div class="tu-mt-2 tu-text-2xl tu-font-semibold tu-text-slate-900" id="updaterCurrentVersion">v1.2.17</div>
+      <div class="tu-mt-1 tu-text-xs tu-text-slate-500">Source: version.json</div>
+    </div>
+
+    <div class="tu-rounded-xl tu-border tu-border-slate-200 tu-bg-white tu-p-4">
+      <div class="tu-text-xs tu-font-semibold tu-uppercase tu-tracking-wide tu-text-slate-400">Target Version</div>
+      <input id="updaterTargetVersion" placeholder="1.2.18" inputmode="decimal"
+        class="tu-mt-2 tu-w-full tu-rounded-lg tu-border tu-border-slate-300 tu-bg-white tu-px-3 tu-py-2.5 tu-text-base tu-font-semibold tu-text-slate-900 tu-outline-none focus:tu-border-blue-500">
+      <div class="tu-mt-1 tu-text-xs tu-text-slate-500">Future build uploaded to GitHub Release</div>
+      <div class="tu-grid tu-grid-cols-1 sm:tu-grid-cols-2 tu-gap-3 tu-mt-4">
+        <label class="tu-block">
+          <span class="tu-block tu-text-xs tu-font-medium tu-text-slate-500">Release date &amp; time</span>
+          <input id="updaterReleaseAt" type="datetime-local" class="tu-mt-1.5 tu-w-full tu-rounded-lg tu-border tu-border-slate-300 tu-bg-white tu-px-3 tu-py-2 tu-text-sm tu-text-slate-900">
+        </label>
+        <label class="tu-block">
+          <span class="tu-block tu-text-xs tu-font-medium tu-text-slate-500">Timezone</span>
+          <select id="updaterTimezone" class="tu-mt-1.5 tu-w-full tu-rounded-lg tu-border tu-border-slate-300 tu-bg-white tu-px-3 tu-py-2 tu-text-sm tu-text-slate-900">
+            <option value="Asia/Manila">Asia/Manila (PH)</option>
+            <option value="UTC">UTC</option>
+            <option value="Asia/Tokyo">Asia/Tokyo</option>
+            <option value="America/Los_Angeles">America/Los_Angeles</option>
+            <option value="America/New_York">America/New_York</option>
+            <option value="Europe/London">Europe/London</option>
+          </select>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="tu-flex tu-flex-wrap tu-items-center tu-gap-2.5 tu-mt-5 tu-rounded-xl tu-border tu-border-slate-200 tu-bg-slate-50 tu-p-4">
+    <span class="tu-text-xs tu-font-semibold tu-uppercase tu-tracking-wide tu-text-slate-400">Status</span>
+    <strong id="updaterStatus" data-status="DRAFT" class="tu-inline-flex tu-items-center tu-rounded-full tu-bg-amber-50 tu-px-3 tu-py-1 tu-text-xs tu-font-bold tu-text-amber-700">DRAFT</strong>
+    <span id="updaterScheduleText" class="tu-text-sm tu-text-slate-600">No scheduled release</span>
+    <span class="tu-hidden sm:tu-inline text-slate-300">•</span>
+    <span class="tu-text-sm tu-text-slate-500">Last Check:</span>
+    <strong id="updaterLastCheck" class="tu-text-sm tu-font-semibold tu-text-slate-700">—</strong>
+    <button type="button" id="updaterCheckNow" class="tu-ml-auto tu-rounded-full tu-border tu-border-slate-200 tu-bg-white tu-px-3 tu-py-1.5 tu-text-xs tu-font-semibold tu-text-slate-700 hover:tu-bg-slate-100">Check Now</button>
+  </div>
+
+  <div class="tu-mt-5 tu-rounded-xl tu-border tu-border-blue-200 tu-bg-blue-50 tu-p-4">
+    <div class="tu-flex tu-items-start tu-justify-between tu-gap-4">
+      <div class="tu-min-w-0">
+        <h3 class="tu-text-sm tu-font-semibold tu-text-blue-950">🧪 Updater Test Mode</h3>
+        <p class="tu-mt-1 tu-text-sm tu-leading-6 tu-text-blue-800">Admin-only test. Hindi nito binabago ang production version. Sinusubukan ang update notice sa PC/mobile browser na pinindot ang test.</p>
+      </div>
+      <label class="switchReal tu-shrink-0"><input id="updaterTestMode" type="checkbox"><span></span></label>
+    </div>
+    <div class="tu-grid tu-grid-cols-1 sm:tu-grid-cols-[1fr_auto_auto] tu-gap-2 tu-mt-4">
+      <input id="updaterTestVersion" placeholder="9.9.99" inputmode="decimal" class="tu-w-full tu-rounded-lg tu-border tu-border-blue-200 tu-bg-white tu-px-3 tu-py-2.5 tu-text-sm tu-text-slate-900">
+      <button type="button" id="updaterRunTest" class="tu-rounded-lg tu-bg-blue-600 tu-px-4 tu-py-2.5 tu-text-sm tu-font-semibold tu-text-white hover:tu-bg-blue-700">Run Update Test</button>
+      <button type="button" id="updaterClearTest" class="tu-rounded-lg tu-border tu-border-blue-200 tu-bg-white tu-px-4 tu-py-2.5 tu-text-sm tu-font-semibold tu-text-blue-700 hover:tu-bg-blue-100">Clear Test</button>
+    </div>
+  </div>
+
+  <div class="tu-mt-5">
+    <div class="tu-text-xs tu-font-semibold tu-uppercase tu-tracking-wide tu-text-slate-400">Release Logic</div>
+    <div class="tu-grid tu-grid-cols-1 sm:tu-grid-cols-3 tu-gap-2 tu-mt-3">
+      <button type="button" id="updaterSave" class="tu-rounded-full tu-border tu-border-amber-200 tu-bg-amber-50 tu-px-4 tu-py-2.5 tu-text-sm tu-font-semibold tu-text-amber-700 hover:tu-bg-amber-100">SCHEDULED</button>
+      <button type="button" id="updaterPublishNow" class="tu-rounded-full tu-border tu-border-emerald-200 tu-bg-emerald-50 tu-px-4 tu-py-2.5 tu-text-sm tu-font-semibold tu-text-emerald-700 hover:tu-bg-emerald-100">LIVE</button>
+      <button type="button" id="updaterCancel" class="tu-rounded-full tu-border tu-border-rose-200 tu-bg-rose-50 tu-px-4 tu-py-2.5 tu-text-sm tu-font-semibold tu-text-rose-700 hover:tu-bg-rose-100">CANCELLED</button>
+    </div>
+    <div class="tu-grid tu-grid-cols-1 sm:tu-grid-cols-3 tu-gap-2 tu-mt-2 tu-text-xs tu-leading-5 tu-text-slate-500">
+      <div>Scheduled = hidden before release time.</div>
+      <div>Live = updater available on PC + mobile.</div>
+      <div>Cancelled = release is hidden.</div>
+    </div>
+    <p class="tu-mt-3 tu-text-xs tu-leading-5 tu-text-slate-400">The GitHub code can already be uploaded before the scheduled release.</p>
+  </div>
 </section><div class="admin-section-label tw"><span class="section-icon">⚙️</span><span>System</span></div><section class="panel" id="systemSettings"><div class="panel-head"><div><small>SYSTEM SETTINGS</small><h2>System Settings</h2><p>Control public site availability</p></div><span>FIRESTORE</span></div><div class="system-setting-row"><div><b>Maintenance mode</b><small>Temporarily show a maintenance screen to visitors. Admin access stays available.</small></div><label class="switchReal"><input id="maintenanceMode" type="checkbox"><span></span></label></div><div id="maintenanceStatus" class="system-setting-status">Loading setting…</div></section><div class="admin-section-label tw"><span class="section-icon">🧰</span><span>Operations</span></div><section class="panel" id="shopProducts"><div class="panel-head"><div><small>SHOP CONTROL</small><h2>Products</h2><p>Physical + Digital + Versioned products</p></div><span>FIRESTORE</span></div><div class="form-grid"><input id="spName" placeholder="Product name"><select id="spProductType"><option value="physical">Physical</option><option value="digital-product">Digital Product</option><option value="website-template">Website Template</option><option value="app-software">App / Software</option><option value="game-mod">Game / Mod</option></select><select id="spCategory"><option value="merchandise">Merchandise</option><option value="clothing">Clothing</option><option value="accessories">Accessories</option><option value="digital-products">Digital Products</option><option value="apps-software">Apps & Software</option><option value="gaming">Gaming</option><option value="mods-addons">Mods & Add-ons</option><option value="media">Media</option><option value="wellness">Wellness</option><option value="other">Other</option></select><input id="spVersion" placeholder="Version e.g. 1.2.17"><input id="spReleaseDate" type="date" title="Release date"><input id="spLicense" placeholder="License e.g. Personal / Commercial"><input id="spUpgradePrice" placeholder="Upgrade price e.g. ₱299 or Free"><input id="spLatestVersion" placeholder="Latest version e.g. 1.2.17"><input id="spPrice" placeholder="Price e.g. Free or ₱999"><input id="spIcon" placeholder="Icon / emoji e.g. 🧩"><input id="spBadge" placeholder="Badge e.g. NEW"><input id="spImage" placeholder="Image URL (optional)"><input id="spUrl" placeholder="Product URL (optional)"><input id="spDownloadUrl" placeholder="Protected download path or source (server only)"><textarea id="spDescription" placeholder="Product description..."></textarea><textarea id="spIncludes" placeholder="What's included..."></textarea><textarea id="spChangelog" placeholder="Changelog..."></textarea><button id="addShopProduct">Publish Product →</button></div><div id="shopProductList"></div></section>
 <section class="panel" id="shopOrders"><div class="panel-head"><div><small>SHOP CONTROL</small><h2>Orders & Payment Verification</h2><p>Pending manual payments • server unlock after approval</p></div><span>SECURE SERVER</span></div><div style="display:flex;gap:10px;flex-wrap:wrap;margin:0 0 14px"><button type="button" id="migrateShopDownloads">Protect Existing Download URLs →</button><small style="opacity:.7;align-self:center">Moves legacy product download URLs into private server-only storage.</small></div><div id="shopOrderList"></div></section>
 <section class="panel" id="content"><div class="panel-head"><div><small>CONTENT CONTROL</small><h2>News Manager</h2></div><span>FIRESTORE</span></div><div class="form-grid"><input id="nt" placeholder="News title"><input id="nd" placeholder="Date"><select id="nc"><option value="platform">Platform</option><option value="community">Community</option><option value="creator">Creator</option></select><input id="na" placeholder="Article link (optional)"><input id="ni" placeholder="Image URL (optional)"><textarea id="nx" placeholder="Write your news content..."></textarea><button id="addNews">Publish News →</button></div><div id="newsList"></div></section>
