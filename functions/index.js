@@ -738,6 +738,39 @@ function parseShopPriceReal(value) {
   return Number.isFinite(amount) && amount >= 0 ? amount : null;
 }
 
+const KAPENG_BARAKO_CHECKOUT_CATALOG = Object.freeze({
+  "kb-strong-250g": {
+    catalogKey: "barako-strong-250g",
+    name: "Barako Strong",
+    price: "350",
+    stock: 7,
+    productType: "physical",
+    category: "coffee",
+    brandKey: "kapeng",
+    brandName: "Kapeng Barako"
+  },
+  "kb-classic-500g": {
+    catalogKey: "barako-classic-500g",
+    name: "Barako Classic",
+    price: "620",
+    stock: 12,
+    productType: "physical",
+    category: "coffee",
+    brandKey: "kapeng",
+    brandName: "Kapeng Barako"
+  },
+  "kb-starter-bundle": {
+    catalogKey: "barako-starter-bundle",
+    name: "Barako Starter Bundle",
+    price: "870",
+    stock: 10,
+    productType: "physical",
+    category: "coffee",
+    brandKey: "kapeng",
+    brandName: "Kapeng Barako"
+  }
+});
+
 function normalizeShopItemsReal(items) {
   if (!Array.isArray(items) || items.length === 0 || items.length > 50) {
     throw new HttpsError("invalid-argument", "Invalid shop items.");
@@ -790,14 +823,19 @@ async function releaseShopOrderSlotReal(tx, uid) {
 }
 
 async function getShopProductsReal(items) {
-  const refs = items.map(item => db.collection("products").doc(item.productId));
-  const snaps = await db.getAll(...refs);
-  return snaps.map((snap, index) => {
-    if (!snap.exists) {
-      throw new HttpsError("not-found", "A selected product no longer exists.");
-    }
-    return { id: snap.id, data: snap.data() || {}, qty: items[index].qty };
-  });
+  const external = items.map(item => KAPENG_BARAKO_CHECKOUT_CATALOG[item.productId] ? { id: item.productId, data: KAPENG_BARAKO_CHECKOUT_CATALOG[item.productId], qty: item.qty } : null);
+  const firestoreItems = items.filter(item => !KAPENG_BARAKO_CHECKOUT_CATALOG[item.productId]);
+  let firestoreRecords = [];
+  if (firestoreItems.length) {
+    const refs = firestoreItems.map(item => db.collection("products").doc(item.productId));
+    const snaps = await db.getAll(...refs);
+    firestoreRecords = snaps.map((snap, index) => {
+      if (!snap.exists) throw new HttpsError("not-found", "A selected product no longer exists.");
+      return { id: snap.id, data: snap.data() || {}, qty: firestoreItems[index].qty };
+    });
+  }
+  const byId = new Map(firestoreRecords.map(x => [x.id, x]));
+  return items.map((item, index) => external[index] || byId.get(item.productId)).filter(Boolean);
 }
 
 exports.createShopOrderReal = onCall(async request => {
@@ -810,6 +848,8 @@ exports.createShopOrderReal = onCall(async request => {
 
   let total = 0;
   const orderItems = [];
+  const brandKeys = new Set();
+  const brandNames = new Set();
   let hasDigital = false;
   let hasPhysical = false;
 
@@ -824,13 +864,21 @@ exports.createShopOrderReal = onCall(async request => {
     if (productType === "physical") hasPhysical = true;
     else hasDigital = true;
 
+    const brandKey = String(p.brandKey || p.brandId || p.brand || (KAPENG_BARAKO_CHECKOUT_CATALOG[item.id]?.brandKey || "")).trim().toLowerCase();
+    const brandName = String(p.brandName || p.seller || (KAPENG_BARAKO_CHECKOUT_CATALOG[item.id]?.brandName || "")).trim();
+    if (brandKey) brandKeys.add(brandKey);
+    if (brandName) brandNames.add(brandName);
+
     total += price * item.qty;
     orderItems.push({
       productId: item.id,
+      sourceProductId: String(p.catalogKey || item.id).slice(0, 120),
       title: String(p.name || "Product").slice(0, 240),
       qty: item.qty,
       price: String(p.price ?? "Free").slice(0, 100),
       productType,
+      brandKey: brandKey || null,
+      brandName: brandName || null,
       version: p.version ? String(p.version).slice(0, 80) : null,
       latestVersion: String(p.latestVersion || p.version || "1.0.0").slice(0, 80),
       licenseType: String(p.license || "Standard").slice(0, 100)
@@ -847,6 +895,11 @@ exports.createShopOrderReal = onCall(async request => {
     tx.set(orderRef, {
       uid: request.auth.uid,
       items: orderItems,
+      brandKey: brandKeys.size === 1 ? Array.from(brandKeys)[0] : "mixed",
+      brandName: brandNames.size === 1 ? Array.from(brandNames)[0] : "Multiple Brands",
+      brandKeys: Array.from(brandKeys),
+      checkoutSource: "tubalhub-shop",
+      storefront: "TUBAL HUB Shop",
       total,
       paymentMethod,
       paymentReference,
