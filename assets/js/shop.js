@@ -93,6 +93,11 @@ const state={
   payment:"card",
   upgradeTarget:null
 };
+const shopUrlParams=new URLSearchParams(window.location.search);
+if(shopUrlParams.get("branch")==="kapeng"){
+  state.collection="kapeng";
+  state.categoryFilter="coffee";
+}
 
 const els={
   grid:document.getElementById("productsGrid"),
