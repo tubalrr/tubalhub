@@ -1,11 +1,16 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.2.40",
-  "build": "2026-09-30_1318",
-  "releasedAtReal": "2026-09-30T05:18:00Z",
+  "version": "1.2.41",
+  "build": "2026-09-30_1332",
+  "releasedAtReal": "2026-09-30T05:32:00Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.2.41 SECURITY — Shop inventory is now authoritative in Firestore: physical stock is checked and decremented atomically inside the server order transaction.",
+    "v1.2.41 FIX — Rejected physical orders release their reserved inventory back to the Firestore product stock atomically.",
+    "v1.2.41 ADMIN — Added physical-product stock entry and a Set Stock control in TUBAL HUB Admin.",
+    "v1.2.41 CLEANUP — Retired the legacy checkout sessionStorage order path; the shared TUBAL HUB Shop checkout is the only active order-creation flow.",
+    "v1.2.41 AUDIT — Browser-local cart and wishlist remain UI-only state; order pricing, availability, inventory, and orders are resolved from Firestore.",
     "v1.2.40 FEAT — Added a full Firestore-controlled Maintenance System with ON/OFF, custom title/message, start/end schedule, and allowed admin bypass users.",
     "v1.2.40 SECURITY — Firestore maintenance writes are admin-only and schema-validated; the public site only reads the maintenance setting.",
     "v1.2.40 REFACTOR — Maintenance runtime and styling were moved out of app.js and into dedicated maintenance.js / maintenance.css assets.",
@@ -187,6 +192,36 @@
   ],
   "breakingReal": false,
   "changelog": [
+    {
+      "type": "SECURITY",
+      "icon": "▣",
+      "title": "Firestore Inventory Authority",
+      "desc": "Physical stock is checked and decremented atomically from the Firestore product record during server-side order creation."
+    },
+    {
+      "type": "FIX",
+      "icon": "↻",
+      "title": "Inventory Release on Rejection",
+      "desc": "Reserved physical stock is restored atomically when a pending-payment order is rejected."
+    },
+    {
+      "type": "ADMIN",
+      "icon": "▤",
+      "title": "Inventory Controls",
+      "desc": "Admin product creation now requires stock for physical products, and existing physical products can use Set Stock."
+    },
+    {
+      "type": "CLEANUP",
+      "icon": "✓",
+      "title": "Legacy Checkout Retired",
+      "desc": "The old sessionStorage checkout path no longer creates or stores order records; it routes back to the shared Shop flow."
+    },
+    {
+      "type": "AUDIT",
+      "icon": "◌",
+      "title": "Local UI State Only",
+      "desc": "Cart and wishlist remain browser-local convenience state. Firestore remains authoritative for business data."
+    },
     {
       "type": "FEAT",
       "icon": "⚙",
@@ -553,5 +588,5 @@
     }
   ],
   "date": "2026-09-27",
-  "changes": "v1.2.40 — Full Firestore-controlled maintenance system with admin controls and dedicated runtime assets."
+  "changes": "v1.2.41 — Firestore-authoritative inventory and order-data cleanup."
 }
