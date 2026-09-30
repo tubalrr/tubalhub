@@ -5,7 +5,7 @@ const db=getFirestore();
 const BETA_REF=doc(db,"tubalhub_config","beta");
 const ADMIN_EMAIL="tubalrr@gmail.com";
 const DEFAULT_ADMIN_EMAIL="range.tubal.50@gmail.com";
-const TEST_VERSION="v1.2.18";
+const TEST_VERSION="";
 const $=id=>document.getElementById(id);
 
 function toast(message){
@@ -75,80 +75,8 @@ $("betaSave")?.addEventListener("click",async()=>{
   }catch(e){toast(e.message||"Save failed.");}
 });
 
-async function prepareGoLive(){
-  if(!currentAdmin())return toast("Primary admin only.");
-  if(!confirm("I-Go Live v1.2.18? Makikita na ng lahat"))return;
+function prepareGoLive(){ toast("Legacy release action retired. Use Release Control / version.json."); }
 
-  const button=$("betaGoLive");
-  if(button){button.disabled=true;button.textContent="Preparing v1.2.18...";}
-
-  try{
-    const response=await fetch("../version.json?release="+Date.now(),{cache:"no-store"});
-    if(!response.ok)throw new Error("Hindi mabasa ang current version.json.");
-    const manifest=await response.json();
-
-    const current=String(manifest.version||"").replace(/^v/i,"");
-    if(current!=="1.2.17" && current!=="1.2.18"){
-      throw new Error("Expected v1.2.17 before release, found v"+current+".");
-    }
-
-    manifest.version="1.2.18";
-    manifest.date="2026-05-13";
-    manifest.changes="Beta v1.2.18 — compact Feeds, Event and Games test release.";
-    manifest.build="2026-05-13_1218";
-    manifest.releasedAtReal=new Date().toISOString();
-    manifest.releasedByReal=auth.currentUser?.email||"tubalrr";
-    manifest.updatesReal=[
-      "v1.2.18 beta release — compact Feeds, Event and Games layout.",
-      ...(Array.isArray(manifest.updatesReal)?manifest.updatesReal:[])
-    ];
-    manifest.changelog=[
-      {version:"1.2.18",date:"2026-05-13",changes:"Beta v1.2.18 — compact Feeds, Event and Games test release."},
-      ...(Array.isArray(manifest.changelog)?manifest.changelog:[])
-    ];
-
-    // No-cloud release preparation: Firestore cleanup is best-effort only.
-    // A permission issue here must never block the actual version.json download.
-    try{
-      await setDoc(BETA_REF,{
-        admin_email:DEFAULT_ADMIN_EMAIL,
-        beta_emails:betaEmails.slice(0,3),
-        test_version:"",
-        updatedAt:serverTimestamp(),
-        updatedBy:auth.currentUser.uid
-      },{merge:true});
-    }catch(cleanupError){
-      console.warn("[TUBAL HUB] Beta cleanup skipped:",cleanupError);
-    }
-
-    // Do not write systemSettings/updateRelease here.
-    // No-cloud mode has no server-side release gate; version.json is the source of truth.
-    localStorage.removeItem("tubalhub_test");
-
-    const blob=new Blob([JSON.stringify(manifest,null,2)+"\n"],{type:"application/json"});
-    const url=URL.createObjectURL(blob);
-    const a=document.createElement("a");
-    a.href=url;
-    a.download="version-v1.2.18.json";
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setTimeout(()=>URL.revokeObjectURL(url),1000);
-
-    if(button){
-      button.textContent="⬇️ version.json ready";
-      button.disabled=false;
-    }
-    toast("v1.2.18 release file ready. Upload it to GitHub as version.json.");
-    alert("Prepared na ang v1.2.18. Na-download ang version-v1.2.18.json. I-upload/replace ito bilang version.json sa GitHub para maging live sa lahat.");
-  }catch(e){
-    if(button){button.disabled=false;button.textContent="✅ Go Live v1.2.18";}
-    toast(e?.message||"Release preparation failed.");
-    alert("Hindi naihanda ang release: "+(e?.message||"Unknown error"));
-  }
-}
-
-$("betaGoLive")?.addEventListener("click",prepareGoLive);
 auth.authStateReady?.().then(loadBeta).catch(()=>{});
 if(!auth.authStateReady)auth.onAuthStateChanged(user=>{if(user)loadBeta();});
 
@@ -156,7 +84,7 @@ function mountGoLiveButton(){
   if(!currentAdmin()||document.getElementById("betaGoLive"))return;
   const b=document.createElement("button");
   b.type="button"; b.id="betaGoLive"; b.className="tubal-go-live-v1218";
-  b.textContent="✅ Go Live v1.2.18";
+  b.textContent="Prepare release in Release Control";
   b.addEventListener("click",prepareGoLive);
   document.body.appendChild(b);
 }
