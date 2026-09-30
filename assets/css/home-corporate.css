@@ -622,329 +622,286 @@ body.hub-home .th-corp-hero .th-webgl-experience.is-fallback{
 @media(prefers-reduced-motion:reduce){
   body.hub-home .th-corp-hero-glow{animation:none!important}
 }
-
-
 /* =========================================================
-   TUBAL HUB — FEMALE HERO GUIDE
-   Animated presenter + automatic voice explanation.
+   TUBAL HUB — AI FEMALE SHOWCASE GUIDE v1.2.83
+   Silent visual presenter. Existing Welcome Bot remains the
+   voice layer; this guide visually demonstrates site content.
    ========================================================= */
-body.hub-home .th-corp-hero{
-  position:relative!important;
-}
-body.hub-home .th-hero-presenter{
+body.hub-home .th-corp-hero{position:relative!important}
+body.hub-home .th-ai-guide{
   position:absolute;
-  right:4%;
+  right:2.5%;
   top:50%;
-  width:min(440px,42%);
-  min-height:310px;
+  width:min(610px,48%);
+  height:390px;
   transform:translateY(-50%);
   z-index:7;
   display:grid;
-  grid-template-columns:180px 1fr;
-  align-items:center;
+  grid-template-columns:235px 1fr;
   gap:18px;
+  align-items:center;
   pointer-events:none;
 }
-body.hub-home .th-hero-presenter-stage{
+body.hub-home .th-ai-guide-stage{
   position:relative;
-  width:180px;
-  height:250px;
+  height:350px;
   display:grid;
   place-items:end center;
+  perspective:1000px;
 }
-body.hub-home .th-hero-presenter-aura{
+body.hub-home .th-ai-guide-aura{
   position:absolute;
-  width:170px;
-  height:170px;
+  width:230px;
+  height:230px;
   left:50%;
-  top:42%;
+  top:48%;
   transform:translate(-50%,-50%);
   border-radius:50%;
-  background:radial-gradient(circle,rgba(73,111,255,.22),rgba(73,111,255,.05) 43%,transparent 72%);
-  filter:blur(8px);
-  animation:thPresenterAura 4s ease-in-out infinite;
-}
-body.hub-home .th-hero-presenter-character{
-  position:relative;
-  width:118px;
-  height:224px;
-  transform-origin:50% 100%;
-  animation:thPresenterFloat 4.8s ease-in-out infinite;
-  filter:drop-shadow(0 22px 26px rgba(0,0,0,.38));
-}
-body.hub-home .th-presenter-hair{
-  position:absolute;
-  left:14px;
-  top:2px;
-  width:90px;
-  height:104px;
-  border-radius:48px 48px 38px 38px;
   background:
-    radial-gradient(circle at 32% 22%,rgba(255,255,255,.10),transparent 15%),
-    linear-gradient(145deg,#16171d 0%,#08090c 72%);
-  box-shadow:inset -12px -14px 22px rgba(0,0,0,.45),0 0 20px rgba(95,126,255,.10);
-  z-index:1;
-  transform:rotate(-2deg);
+    radial-gradient(circle,rgba(74,112,255,.22),rgba(74,112,255,.06) 45%,transparent 72%);
+  filter:blur(7px);
+  animation:thAiAura 4.2s ease-in-out infinite;
 }
-body.hub-home .th-presenter-hair:after{
+body.hub-home .th-ai-guide-avatar{
+  width:220px;
+  height:320px;
+  position:relative;
+  z-index:3;
+  overflow:visible;
+  filter:drop-shadow(0 22px 30px rgba(0,0,0,.40));
+  transform-origin:50% 100%;
+  animation:thAiFloat 5s ease-in-out infinite;
+}
+body.hub-home .th-ai-guide-avatar ellipse:first-of-type{animation:thAiShadowPulse 5s ease-in-out infinite}
+body.hub-home .th-ai-guide-ring{
+  position:absolute;
+  left:50%;
+  top:48%;
+  border:1px solid rgba(99,135,255,.34);
+  border-radius:50%;
+  transform:translate(-50%,-50%) rotateX(68deg);
+  transform-style:preserve-3d;
+  box-shadow:0 0 22px rgba(76,118,255,.13);
+}
+body.hub-home .th-ai-ring-a{width:206px;height:76px;animation:thAiRingA 8s linear infinite}
+body.hub-home .th-ai-ring-b{width:170px;height:58px;border-color:rgba(255,204,85,.27);animation:thAiRingB 6.6s linear infinite reverse}
+body.hub-home .th-ai-guide-showcase{
+  position:relative;
+  min-width:0;
+  min-height:280px;
+  padding:18px;
+  border-radius:22px;
+  border:1px solid rgba(255,255,255,.10);
+  background:linear-gradient(145deg,rgba(14,16,22,.80),rgba(7,9,13,.60));
+  box-shadow:0 22px 48px rgba(0,0,0,.30),inset 0 1px rgba(255,255,255,.04);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  overflow:hidden;
+}
+body.hub-home .th-ai-guide-showcase:before{
   content:"";
   position:absolute;
-  left:-5px;
-  top:34px;
-  width:26px;
-  height:78px;
-  border-radius:18px 10px 28px 22px;
-  background:linear-gradient(180deg,#101117,#05060a);
-}
-body.hub-home .th-presenter-face{
-  position:absolute;
-  left:28px;
-  top:26px;
-  width:64px;
-  height:76px;
-  border-radius:42% 42% 48% 48%;
-  background:linear-gradient(145deg,#f3d5c6,#d7ad98);
-  box-shadow:inset -5px -7px 12px rgba(97,56,39,.15),0 4px 10px rgba(0,0,0,.20);
-  z-index:2;
-}
-body.hub-home .th-eye{
-  position:absolute;
-  top:31px;
-  width:7px;
-  height:4px;
-  border-radius:50%;
-  background:#26222a;
-  box-shadow:0 0 1px #111;
-  transform-origin:center;
-  animation:thPresenterBlink 5.8s ease-in-out infinite;
-}
-body.hub-home .th-eye-left{left:18px}.th-eye-right{right:18px}
-body.hub-home .th-presenter-nose{
-  position:absolute;
-  left:30px;
-  top:37px;
-  width:4px;
-  height:13px;
-  border-right:1px solid rgba(117,73,62,.42);
-  border-radius:50%;
-}
-body.hub-home .th-presenter-mouth{
-  position:absolute;
-  left:24px;
-  top:55px;
-  width:16px;
-  height:4px;
-  border-bottom:2px solid rgba(121,55,62,.75);
-  border-radius:0 0 50% 50%;
-}
-body.hub-home .th-hero-presenter.is-speaking .th-presenter-mouth{
-  height:9px;
-  border:2px solid rgba(121,55,62,.78);
-  background:rgba(255,241,239,.75);
-  animation:thPresenterTalk .16s ease-in-out infinite alternate;
-}
-body.hub-home .th-presenter-neck{
-  position:absolute;
-  left:51px;
-  top:94px;
-  width:18px;
-  height:22px;
-  border-radius:0 0 7px 7px;
-  background:linear-gradient(180deg,#dfb7a2,#c89984);
-  z-index:1;
-}
-body.hub-home .th-presenter-body{
-  position:absolute;
-  left:9px;
-  top:108px;
-  width:101px;
-  height:116px;
-  border-radius:36px 36px 18px 18px;
+  inset:0;
   background:
-    radial-gradient(circle at 50% 10%,rgba(255,255,255,.10),transparent 17%),
-    linear-gradient(160deg,#202631,#0b0e14 74%);
-  border:1px solid rgba(255,255,255,.10);
-  box-shadow:inset 0 1px rgba(255,255,255,.07),0 16px 28px rgba(0,0,0,.28);
+    linear-gradient(rgba(255,255,255,.022) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.022) 1px,transparent 1px);
+  background-size:24px 24px;
+  mask-image:linear-gradient(to bottom,#000,transparent 85%);
+  opacity:.52;
+  pointer-events:none;
 }
-body.hub-home .th-presenter-collar{
-  position:absolute;
-  left:28px;
-  top:-2px;
-  width:44px;
-  height:40px;
-  border-left:1px solid rgba(255,255,255,.16);
-  border-right:1px solid rgba(255,255,255,.16);
-  clip-path:polygon(0 0,50% 58%,100% 0,78% 100%,22% 100%);
-}
-body.hub-home .th-presenter-badge{
-  position:absolute;
-  left:38px;
-  top:51px;
-  width:26px;
-  height:26px;
-  display:grid;
-  place-items:center;
-  border-radius:50%;
-  border:1px solid rgba(255,204,0,.48);
-  background:rgba(255,204,0,.08);
-  color:#ffcc00;
-  font-size:7px;
-  font-weight:1000;
-  letter-spacing:1px;
-  box-shadow:0 0 18px rgba(255,204,0,.10);
-}
-body.hub-home .th-presenter-glow-line{
-  position:absolute;
-  left:-8px;
-  right:-8px;
-  bottom:0;
-  height:2px;
-  border-radius:999px;
-  background:linear-gradient(90deg,transparent,#547eff,#ffcc55,transparent);
-  box-shadow:0 0 12px rgba(76,121,255,.65);
-  animation:thPresenterLine 2.8s ease-in-out infinite;
-}
-body.hub-home .th-hero-presenter-copy{
+body.hub-home .th-ai-guide-head{
   position:relative;
-  padding:18px 18px 16px;
-  border-radius:20px;
-  border:1px solid rgba(255,255,255,.10);
-  background:linear-gradient(145deg,rgba(15,17,22,.78),rgba(8,9,12,.55));
-  backdrop-filter:blur(15px);
-  -webkit-backdrop-filter:blur(15px);
-  box-shadow:0 20px 42px rgba(0,0,0,.28),inset 0 1px rgba(255,255,255,.04);
+  z-index:2;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
 }
-body.hub-home .th-presenter-status{
+body.hub-home .th-ai-guide-status{
   display:flex;
   align-items:center;
-  gap:7px;
-  margin-bottom:9px;
-  color:rgba(255,255,255,.46);
+  gap:6px;
+  color:#ffcc55;
   font-size:7px;
   font-weight:1000;
-  letter-spacing:1.7px;
+  letter-spacing:1.8px;
 }
-body.hub-home .th-presenter-status span{
-  width:6px;height:6px;border-radius:50%;
-  background:#59e3a1;
-  box-shadow:0 0 9px rgba(89,227,161,.72);
-  animation:thPresenterStatus 1.6s ease-in-out infinite;
+body.hub-home .th-ai-guide-status i{
+  width:6px;height:6px;
+  border-radius:50%;
+  background:#56e39d;
+  box-shadow:0 0 10px rgba(86,227,157,.7);
+  animation:thAiStatus 1.7s ease-in-out infinite;
 }
-body.hub-home .th-hero-presenter-copy strong{
+body.hub-home .th-ai-guide-head strong{
   display:block;
+  margin-top:6px;
   color:#fff;
-  font-size:17px;
-  letter-spacing:-.02em;
+  font-size:21px;
+  line-height:1.05;
+  letter-spacing:-.04em;
 }
-body.hub-home .th-hero-presenter-copy p{
-  margin:7px 28px 0 0!important;
-  max-width:260px;
-  color:#9ea6b3!important;
-  font-size:11px!important;
-  line-height:1.6!important;
+body.hub-home .th-ai-guide-count{
+  color:rgba(255,255,255,.32);
+  font-size:8px;
+  font-weight:900;
+  letter-spacing:1px;
 }
-body.hub-home .th-presenter-sound{
+body.hub-home .th-ai-guide-showcase>p{
+  position:relative;
+  z-index:2;
+  margin:10px 0 13px!important;
+  color:#9ca5b4!important;
+  font-size:10px!important;
+  line-height:1.55!important;
+  max-width:360px;
+}
+body.hub-home .th-ai-guide-panel-stage{
+  position:relative;
+  z-index:3;
+  height:104px;
+  display:grid;
+  align-items:center;
+}
+body.hub-home .th-ai-show-card{
   position:absolute;
-  right:10px;
-  bottom:10px;
-  width:30px;
-  height:30px;
+  inset:0;
+  display:grid;
+  grid-template-columns:42px 1fr auto;
+  gap:10px;
+  align-items:center;
+  padding:10px 11px;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.08);
+  background:rgba(255,255,255,.035);
+  transform:translateX(18px) rotateY(-10deg);
+  opacity:0;
+  transition:opacity .55s ease,transform .7s cubic-bezier(.22,1,.36,1);
+}
+body.hub-home .th-ai-show-card.is-active{
+  opacity:1;
+  transform:translateX(0) rotateY(0);
+}
+body.hub-home .th-ai-show-icon{
+  width:42px;height:42px;
   display:grid;
   place-items:center;
-  border-radius:50%;
-  border:1px solid rgba(255,255,255,.10);
-  background:rgba(255,255,255,.035);
+  border-radius:13px;
+  background:#0c0f16;
+  border:1px solid rgba(255,255,255,.08);
+  font-size:19px;
+  box-shadow:inset 0 1px rgba(255,255,255,.05);
+}
+body.hub-home .th-ai-show-copy strong{
+  display:block;
   color:#fff;
-  cursor:pointer;
-  pointer-events:auto;
+  font-size:12px;
 }
-body.hub-home .th-presenter-sound[aria-pressed="true"]{
-  color:#ffcc00;
-  border-color:rgba(255,204,0,.26);
+body.hub-home .th-ai-show-copy small{
+  display:block;
+  margin-top:3px;
+  color:#7f8897;
+  font-size:8px;
+  line-height:1.35;
 }
-@keyframes thPresenterFloat{
-  0%,100%{transform:translateY(0) rotate(-1deg)}
-  50%{transform:translateY(-9px) rotate(1deg)}
+body.hub-home .th-ai-show-open{
+  color:#ffcc55;
+  font-size:8px;
+  font-weight:900;
+  letter-spacing:.8px;
 }
-@keyframes thPresenterAura{
-  0%,100%{transform:translate(-50%,-50%) scale(.92);opacity:.56}
+body.hub-home .th-ai-guide-nav{
+  position:absolute;
+  left:18px;
+  right:18px;
+  bottom:13px;
+  z-index:4;
+  display:flex;
+  gap:4px;
+}
+body.hub-home .th-ai-guide-nav span{
+  display:block;
+  height:2px;
+  flex:1;
+  border-radius:99px;
+  background:rgba(255,255,255,.10);
+}
+body.hub-home .th-ai-guide-nav span.is-active{
+  background:linear-gradient(90deg,#587eff,#ffcc55);
+  box-shadow:0 0 8px rgba(88,126,255,.34);
+}
+body.hub-home .th-corp-hero-copy{z-index:8}
+@keyframes thAiFloat{
+  0%,100%{transform:translateY(0) rotate(-.7deg)}
+  50%{transform:translateY(-8px) rotate(.7deg)}
+}
+@keyframes thAiAura{
+  0%,100%{transform:translate(-50%,-50%) scale(.92);opacity:.48}
   50%{transform:translate(-50%,-50%) scale(1.08);opacity:1}
 }
-@keyframes thPresenterBlink{
-  0%,46%,52%,100%{transform:scaleY(1)}
-  49%{transform:scaleY(.12)}
+@keyframes thAiRingA{
+  to{transform:translate(-50%,-50%) rotateX(68deg) rotateZ(360deg)}
 }
-@keyframes thPresenterTalk{
-  from{transform:scaleY(.62)}
-  to{transform:scaleY(1.15)}
+@keyframes thAiRingB{
+  to{transform:translate(-50%,-50%) rotateX(68deg) rotateZ(-360deg)}
 }
-@keyframes thPresenterLine{
-  0%,100%{opacity:.42;transform:scaleX(.72)}
-  50%{opacity:1;transform:scaleX(1)}
+@keyframes thAiShadowPulse{
+  0%,100%{opacity:.16}
+  50%{opacity:.28}
 }
-@keyframes thPresenterStatus{
-  50%{transform:scale(1.4);opacity:.58}
+@keyframes thAiStatus{
+  50%{transform:scale(1.45);opacity:.62}
 }
-@media(max-width:1100px){
-  body.hub-home .th-hero-presenter{
-    right:1%;
-    width:390px;
-    grid-template-columns:150px 1fr;
-    gap:12px;
+@media(max-width:1150px){
+  body.hub-home .th-ai-guide{
+    width:570px;
+    grid-template-columns:205px 1fr;
+    right:-1%;
   }
-  body.hub-home .th-hero-presenter-stage{transform:scale(.86);transform-origin:center bottom}
+  body.hub-home .th-ai-guide-avatar{transform:scale(.90);transform-origin:50% 100%}
 }
 @media(max-width:900px){
-  body.hub-home .th-hero-presenter{
-    position:absolute;
-    right:12px;
-    left:12px;
-    top:auto;
-    bottom:18px;
+  body.hub-home .th-ai-guide{
     width:auto;
-    min-height:0;
-    grid-template-columns:120px 1fr;
+    left:24px;
+    right:24px;
+    top:auto;
+    bottom:12px;
+    height:280px;
     transform:none;
+    grid-template-columns:165px 1fr;
     gap:8px;
   }
-  body.hub-home .th-hero-presenter-stage{
-    width:120px;
-    height:160px;
-    transform:scale(.75);
-    transform-origin:center bottom;
-  }
-  body.hub-home .th-hero-presenter-copy{
-    padding:13px 14px;
-  }
-  body.hub-home .th-hero-presenter-copy strong{font-size:15px}
+  body.hub-home .th-ai-guide-stage{height:270px}
+  body.hub-home .th-ai-guide-avatar{transform:scale(.76);transform-origin:50% 100%}
+  body.hub-home .th-ai-guide-showcase{min-height:220px;padding:14px}
+  body.hub-home .th-ai-guide-showcase>p{font-size:9px!important}
 }
 @media(max-width:600px){
-  body.hub-home .th-hero-presenter{
-    right:10px;
+  body.hub-home .th-ai-guide{
     left:10px;
-    bottom:12px;
-    grid-template-columns:74px 1fr;
-    gap:6px;
+    right:10px;
+    bottom:9px;
+    height:205px;
+    grid-template-columns:88px 1fr;
   }
-  body.hub-home .th-hero-presenter-stage{
-    width:74px;
-    height:108px;
-    transform:scale(.52);
-  }
-  body.hub-home .th-hero-presenter-copy{
-    border-radius:16px;
-    padding:10px 11px;
-  }
-  body.hub-home .th-presenter-status{font-size:6px}
-  body.hub-home .th-hero-presenter-copy strong{font-size:12px}
-  body.hub-home .th-hero-presenter-copy p{font-size:9px!important}
-  body.hub-home .th-presenter-sound{width:26px;height:26px}
+  body.hub-home .th-ai-guide-stage{height:205px}
+  body.hub-home .th-ai-guide-avatar{transform:scale(.52);transform-origin:50% 100%}
+  body.hub-home .th-ai-guide-ring{display:none}
+  body.hub-home .th-ai-guide-showcase{min-height:180px;padding:10px;border-radius:16px}
+  body.hub-home .th-ai-guide-head strong{font-size:13px}
+  body.hub-home .th-ai-guide-showcase>p{font-size:8px!important;margin:7px 0 8px!important}
+  body.hub-home .th-ai-guide-panel-stage{height:72px}
+  body.hub-home .th-ai-show-card{grid-template-columns:31px 1fr auto;padding:7px;border-radius:12px}
+  body.hub-home .th-ai-show-icon{width:31px;height:31px;border-radius:9px;font-size:14px}
+  body.hub-home .th-ai-show-copy strong{font-size:9px}
+  body.hub-home .th-ai-show-copy small{font-size:6.5px}
+  body.hub-home .th-ai-show-open{font-size:6px}
 }
 @media(prefers-reduced-motion:reduce){
-  body.hub-home .th-hero-presenter-character,
-  body.hub-home .th-hero-presenter-aura,
-  body.hub-home .th-presenter-eye,
-  body.hub-home .th-presenter-glow-line,
-  body.hub-home .th-presenter-status span{animation:none!important}
+  body.hub-home .th-ai-guide-avatar,
+  body.hub-home .th-ai-guide-aura,
+  body.hub-home .th-ai-guide-ring,
+  body.hub-home .th-ai-guide-status i{animation:none!important}
 }
-\n
