@@ -22,7 +22,8 @@ service cloud.firestore {
       return realUser()
         && (
           request.auth.token.admin == true
-          || request.auth.token.email == 'tubalrr@gmail.com'
+          || (request.auth.token.email == 'tubalrr@gmail.com'
+              && request.auth.token.email_verified == true)
         );
     }
 
