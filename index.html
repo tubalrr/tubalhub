@@ -35,6 +35,7 @@
 <link rel="stylesheet" href="assets/css/mobile-browser-fix.css?v=1.2.55">
 <link rel="stylesheet" href="assets/css/home-overrides.css?v=20260930-tubaldark1" data-tubal-home-overrides>
 <link rel="stylesheet" href="assets/css/maintenance.css?v=1.2.55">
+<link rel="stylesheet" href="assets/css/tubal-main-bot.css?v=20260930-mainbot1">
     
 
 </head>
@@ -579,6 +580,23 @@
 </div>
 
 <!-- TUBAL HUB — REAL CHATBOT -->
+<!-- TUBAL HUB — FLOATING WELCOME BOT -->
+<div id="tubalMainBot" class="tubal-main-bot" aria-live="polite">
+  <div id="tubalMainBotBubble" class="tubal-main-bot-bubble" hidden>
+    <span class="tubal-main-bot-kicker">TUBAL BOT</span>
+    <strong id="tubalMainBotTitle">Welcome to TUBAL HUB</strong>
+    <p id="tubalMainBotText">I can explain the hub, its branches, and the latest updates.</p>
+    <div class="tubal-main-bot-actions">
+      <button id="tubalMainBotListen" type="button">🔊 Listen</button>
+      <button id="tubalMainBotReplay" type="button">↻ Replay</button>
+    </div>
+  </div>
+  <button id="tubalMainBotToggle" class="tubal-main-bot-toggle" type="button" aria-label="Open TUBAL Bot welcome guide" aria-expanded="false">
+    <span class="tubal-main-bot-face" aria-hidden="true"><i></i><i></i><b></b></span>
+    <span class="tubal-main-bot-pulse" aria-hidden="true"></span>
+  </button>
+</div>
+
 <div id="tubalChatbotReal" class="tubal-chatbot-real">
   <button id="chatToggleReal" class="tubal-chatbot-toggle-real" type="button" aria-label="Open TUBAL Bot" aria-expanded="false">🤖</button>
   <div id="chatWindowReal" class="tubal-chatbot-window-real" role="dialog" aria-label="TUBAL Bot">
@@ -615,6 +633,7 @@
 <script type="module" src="assets/js/home.js?v=1.2.50"></script>
 
 <script src="js/chatbot.js?v=1.2.50"></script>
+<script src="assets/js/tubal-main-bot.js?v=20260930-mainbot1"></script>
 
 </body>
 <!-- pages-refresh -->
