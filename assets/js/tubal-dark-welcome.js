@@ -10,8 +10,7 @@
   const loadVoice = () => {
     const voices = speechSynthesis.getVoices();
     voice = voices.find(v => /^en-PH$/i.test(v.lang)) ||
-            voices.find(v => /^en/i.test(v.lang)) ||
-            voices[0] || null;
+            voices.find(v => /^en/i.test(v.lang)) || null;
   };
   loadVoice();
   speechSynthesis.addEventListener?.("voiceschanged", loadVoice);
@@ -19,6 +18,7 @@
   function speak() {
     speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(message);
+    utterance.lang = "en-US";
     utterance.rate = 0.98;
     utterance.pitch = 1.0;
     utterance.volume = 1.0;
@@ -27,7 +27,7 @@
     speakBtn.textContent = "🔊 Speaking…";
     utterance.onend = () => {
       speakBtn.classList.remove("is-speaking");
-      speakBtn.textContent = "🔊 Pakinggan";
+      speakBtn.textContent = "🔊 Listen";
     };
     utterance.onerror = () => {
       speakBtn.classList.remove("is-speaking");
