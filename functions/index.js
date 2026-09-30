@@ -662,14 +662,53 @@ async function releaseShopOrderSlotReal(tx, uid) {
   }, { merge: true });
 }
 
-async function getShopProductsReal(items) {
-  const refs = items.map(item => db.collection("products").doc(item.productId));
-  const snaps = await db.getAll(...refs);
-  return items.map((item, index) => {
-    const snap = snaps[index];
-    if (!snap.exists) throw new HttpsError("not-found", "A selected product no longer exists.");
-    return { id: snap.id, data: snap.data() || {}, qty: item.qty };
-  });
+async function readShopProductsInTransactionReal(tx, items) {
+  const rows = [];
+  for (const item of items) {
+    const ref = db.collection("products").doc(item.productId);
+    const snap = await tx.get(ref);
+    if (!snap.exists) {
+      throw new HttpsError("not-found", "A selected product no longer exists.");
+    }
+    rows.push({ ref, id: snap.id, data: snap.data() || {}, qty: item.qty });
+  }
+  return rows;
+}
+
+async function readShopRateLimitInTransactionReal(tx, uid) {
+  const ref = db.collection("shopRateLimits").doc(uid);
+  const snap = await tx.get(ref);
+  const now = Date.now();
+  const data = snap.exists ? snap.data() || {} : {};
+  const windowStart = Number(data.windowStartMs || 0);
+  const withinWindow = windowStart > 0 && now - windowStart < 60 * 60 * 1000;
+  const windowCount = withinWindow ? Number(data.windowCount || 0) : 0;
+  const pendingCount = Number(data.pendingCount || 0);
+
+  if (pendingCount >= 5) {
+    throw new HttpsError("resource-exhausted", "You already have the maximum number of pending shop orders.");
+  }
+  if (windowCount >= 10) {
+    throw new HttpsError("resource-exhausted", "Too many shop orders. Please try again later.");
+  }
+
+  return {
+    ref,
+    uid,
+    windowStartMs: withinWindow ? windowStart : now,
+    windowCount: windowCount + 1,
+    pendingCount: pendingCount + 1
+  };
+}
+
+function writeShopRateLimitReservationReal(tx, reservation) {
+  tx.set(reservation.ref, {
+    uid: reservation.uid,
+    windowStartMs: reservation.windowStartMs,
+    windowCount: reservation.windowCount,
+    pendingCount: reservation.pendingCount,
+    updatedAt: FieldValue.serverTimestamp()
+  }, { merge: true });
 }
 
 exports.createShopOrderReal = onCall(async request => {
@@ -678,63 +717,88 @@ exports.createShopOrderReal = onCall(async request => {
   const items = normalizeShopItemsReal(request.data?.items);
   const paymentMethod = String(request.data?.paymentMethod || "").slice(0, 80) || "Manual payment";
   const paymentReference = String(request.data?.paymentReference || "").trim().slice(0, 160);
-  const products = await getShopProductsReal(items);
-
-  let total = 0;
-  const orderItems = [];
-  const brandKeys = new Set();
-  const brandNames = new Set();
-  let hasDigital = false;
-  let hasPhysical = false;
-
-  for (const item of products) {
-    const p = item.data;
-    const price = parseShopPriceReal(p.price);
-    if (price === null) {
-      throw new HttpsError("failed-precondition", "A selected product has an invalid price.");
-    }
-
-    const productType = String(p.productType || "physical").slice(0, 60);
-    if (productType === "physical") hasPhysical = true;
-    else hasDigital = true;
-
-    const sourceType = String(p.sourceType || "admin-managed").trim().toLowerCase();
-    const catalogStatus = String(p.catalogStatus || "live").trim().toLowerCase();
-    if (p.isDemo === true || sourceType === "demo" || sourceType === "external") {
-      throw new HttpsError("failed-precondition", "This product uses an external/demo checkout path.");
-    }
-    if (catalogStatus === "archived" || catalogStatus === "hidden" || p.isVisible === false) {
-      throw new HttpsError("failed-precondition", "This product is not currently available.");
-    }
-
-    const brandKey = String(p.brandKey || p.brandId || p.brand || "").trim().toLowerCase();
-    const brandName = String(p.brandName || p.seller || "").trim();
-    if (brandKey) brandKeys.add(brandKey);
-    if (brandName) brandNames.add(brandName);
-
-    total += price * item.qty;
-    orderItems.push({
-      productId: item.id,
-      sourceProductId: String(p.catalogKey || item.id).slice(0, 120),
-      title: String(p.name || "Product").slice(0, 240),
-      qty: item.qty,
-      price: String(p.price ?? "Free").slice(0, 100),
-      productType,
-      brandKey: brandKey || null,
-      brandName: brandName || null,
-      version: p.version ? String(p.version).slice(0, 80) : null,
-      latestVersion: String(p.latestVersion || p.version || "1.0.0").slice(0, 80),
-      licenseType: String(p.license || "Standard").slice(0, 100)
-    });
-  }
-
-  if (hasDigital && hasPhysical) {
-    throw new HttpsError("failed-precondition", "Digital and physical products must be purchased separately.");
-  }
-
   const orderRef = db.collection("orders").doc();
-  await db.runTransaction(async tx => {
-    await reserveShopOrderSlotReal(tx, request.auth.uid);
+
+  const result = await db.runTransaction(async tx => {
+    /*
+     * Firestore is the business-data authority:
+     * - product price and stock are read inside the transaction
+     * - physical inventory is atomically reserved/decremented
+     * - the order is created from those Firestore values
+     * Client cart/localStorage values are never trusted for pricing or stock.
+     */
+    const products = await readShopProductsInTransactionReal(tx, items);
+    const rateLimit = await readShopRateLimitInTransactionReal(tx, request.auth.uid);
+
+    let total = 0;
+    const orderItems = [];
+    const brandKeys = new Set();
+    const brandNames = new Set();
+    let hasDigital = false;
+    let hasPhysical = false;
+
+    for (const item of products) {
+      const p = item.data;
+      const price = parseShopPriceReal(p.price);
+      if (price === null) {
+        throw new HttpsError("failed-precondition", "A selected product has an invalid price.");
+      }
+
+      const productType = String(p.productType || "physical").slice(0, 60);
+      if (productType === "physical") hasPhysical = true;
+      else hasDigital = true;
+
+      const sourceType = String(p.sourceType || "admin-managed").trim().toLowerCase();
+      const catalogStatus = String(p.catalogStatus || "live").trim().toLowerCase();
+
+      if (p.isDemo === true || sourceType === "demo" || sourceType === "external") {
+        throw new HttpsError("failed-precondition", "This product uses an external/demo checkout path.");
+      }
+      if (catalogStatus === "archived" || catalogStatus === "hidden" || p.isVisible === false) {
+        throw new HttpsError("failed-precondition", "This product is not currently available.");
+      }
+
+      if (productType === "physical") {
+        const stock = Number(p.stock);
+        if (!Number.isInteger(stock) || stock < 0) {
+          throw new HttpsError("failed-precondition", "This physical product has no valid inventory quantity.");
+        }
+        if (stock < item.qty) {
+          throw new HttpsError("resource-exhausted", "Not enough inventory for " + String(p.name || "this product") + ".");
+        }
+        tx.update(item.ref, {
+          stock: stock - item.qty,
+          updatedAt: FieldValue.serverTimestamp()
+        });
+      }
+
+      const brandKey = String(p.brandKey || p.brandId || p.brand || "").trim().toLowerCase();
+      const brandName = String(p.brandName || p.seller || "").trim();
+      if (brandKey) brandKeys.add(brandKey);
+      if (brandName) brandNames.add(brandName);
+
+      total += price * item.qty;
+      orderItems.push({
+        productId: item.id,
+        sourceProductId: String(p.catalogKey || item.id).slice(0, 120),
+        title: String(p.name || "Product").slice(0, 240),
+        qty: item.qty,
+        price: String(p.price ?? "Free").slice(0, 100),
+        productType,
+        brandKey: brandKey || null,
+        brandName: brandName || null,
+        version: p.version ? String(p.version).slice(0, 80) : null,
+        latestVersion: String(p.latestVersion || p.version || "1.0.0").slice(0, 80),
+        licenseType: String(p.license || "Standard").slice(0, 100)
+      });
+    }
+
+    if (hasDigital && hasPhysical) {
+      throw new HttpsError("failed-precondition", "Digital and physical products must be purchased separately.");
+    }
+
+    writeShopRateLimitReservationReal(tx, rateLimit);
+
     tx.set(orderRef, {
       uid: request.auth.uid,
       items: orderItems,
@@ -748,16 +812,22 @@ exports.createShopOrderReal = onCall(async request => {
       paymentReference,
       status: "pending_payment",
       paymentVerified: false,
+      inventoryReserved: hasPhysical,
+      inventoryReservationStatus: hasPhysical ? "reserved" : "not-applicable",
+      inventoryReservedAt: hasPhysical ? FieldValue.serverTimestamp() : null,
       createdAt: FieldValue.serverTimestamp(),
       createdByServer: true
     });
+
+    return { total, hasPhysical };
   });
 
   return {
     success: true,
     orderId: orderRef.id,
-    total,
+    total: result.total,
     status: "pending_payment",
+    inventoryReserved: result.hasPhysical,
     licenseIds: []
   };
 });
@@ -875,6 +945,26 @@ exports.verifyShopOrderReal = onCall(async request => {
         throw new HttpsError("failed-precondition", "Only pending-payment orders can be rejected.");
       }
 
+      if (order.inventoryReserved === true && order.inventoryReservationStatus === "reserved") {
+        const items = Array.isArray(order.items) ? order.items : [];
+        for (const item of items) {
+          if (String(item?.productType || "physical") !== "physical") continue;
+          const productId = String(item?.productId || "").trim();
+          const qty = Number(item?.qty || 0);
+          if (!productId || !Number.isInteger(qty) || qty < 1) continue;
+
+          const productRef = db.collection("products").doc(productId);
+          const productSnap = await tx.get(productRef);
+          if (!productSnap.exists) {
+            throw new HttpsError("failed-precondition", "Inventory record is missing for a reserved product.");
+          }
+          tx.update(productRef, {
+            stock: FieldValue.increment(qty),
+            updatedAt: FieldValue.serverTimestamp()
+          });
+        }
+      }
+
       await releaseShopOrderSlotReal(tx, order.uid);
       tx.update(orderRef, {
         status: "rejected",
@@ -882,6 +972,7 @@ exports.verifyShopOrderReal = onCall(async request => {
         verifiedAt: FieldValue.serverTimestamp(),
         verifiedBy: request.auth.uid,
         verificationNote,
+        inventoryReservationStatus: order.inventoryReserved === true ? "released" : "not-applicable",
         updatedAt: FieldValue.serverTimestamp()
       });
       return { alreadyPaid: false, status: "rejected" };
@@ -1041,6 +1132,7 @@ exports.verifyShopOrderReal = onCall(async request => {
       verifiedBy: request.auth.uid,
       verificationNote,
       paymentReference: paymentReference || order.paymentReference || "",
+      inventoryReservationStatus: order.inventoryReserved === true ? "committed" : "not-applicable",
       updatedAt: FieldValue.serverTimestamp()
     });
 
