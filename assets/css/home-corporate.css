@@ -946,3 +946,18 @@ body.hub-home .th-ai-guide-nav span.is-active{
   body.hub-home .th-ai-guide-status i,
   body.hub-home .th-ai-guide-avatar-wrap:after{animation:none!important}
 }
+
+body.hub-home .th-ai-guide.is-showing .th-ai-guide-avatar-wrap{
+  animation:thAiGuideEnter .72s cubic-bezier(.22,1,.36,1),thAiFloat 5.2s ease-in-out .72s infinite;
+}
+body.hub-home .th-ai-guide.is-showing .th-ai-show-card.is-active{
+  animation:thAiCardEnter .72s cubic-bezier(.22,1,.36,1);
+}
+@keyframes thAiGuideEnter{
+  0%{opacity:.72;transform:translate3d(26px,10px,0) scale(.94) rotate(-2deg)}
+  100%{opacity:1;transform:translate3d(0,0,0) scale(1) rotate(0)}
+}
+@keyframes thAiCardEnter{
+  0%{filter:blur(4px);transform:translate3d(34px,0,-30px) rotateY(-18deg);opacity:0}
+  100%{filter:blur(0);transform:translate3d(0,0,0) rotateY(0);opacity:1}
+}
