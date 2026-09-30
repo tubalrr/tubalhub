@@ -20,13 +20,6 @@
       event.stopImmediatePropagation();
       openShop();
     }, true);
-
-    document.querySelectorAll('a[href$="pages/shop.html"]').forEach((link) => {
-      link.style.setProperty("pointer-events", "auto", "important");
-      link.style.setProperty("cursor", "pointer", "important");
-      link.style.setProperty("position", "relative", "important");
-      link.style.setProperty("z-index", "100000", "important");
-    });
   }
 
   function registerPwa() {
