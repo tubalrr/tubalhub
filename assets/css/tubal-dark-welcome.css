@@ -35,3 +35,5 @@
 @keyframes tdBotEyePulse{50%{transform:scale(.8);opacity:.55}}
 @keyframes tdBotMouth{from{height:3px;border-radius:999px}to{height:10px;border-radius:5px}}
 @media(prefers-reduced-motion:reduce){.td-welcome-bot-face.is-speaking{animation:none!important}.td-welcome-bot-face.is-speaking span,.td-welcome-bot-face.is-speaking i{animation:none!important}}
+
+.td-welcome-update{margin-top:10px!important;color:#7f8088!important;font-size:9.5px!important;line-height:1.5!important;border-left:2px solid rgba(255,204,0,.35);padding-left:9px}
