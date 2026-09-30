@@ -1,11 +1,12 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.2.44",
-  "build": "2026-09-30_1347",
-  "releasedAtReal": "2026-09-30T05:47:00Z",
+  "version": "1.2.45",
+  "build": "2026-09-30_1353",
+  "releasedAtReal": "2026-09-30T05:53:00Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.2.45 FIX — Removed the retired kapeng-admin/login.html destination from Shop and routed the Kapeng Barako Admin action to the central TUBAL HUB admin login.",
     "v1.2.44 FIX — Kapeng Barako Admin Room is hidden on the Master Hub dashboard until Kapeng Barako is explicitly selected.",
     "v1.2.44 UX — Switching back to Master Hub, Brand 2, or Brand 3 hides the Kapeng-specific dashboard room again.",
     "v1.2.43 FEAT — Added a dedicated Kapeng Barako landing-page preview directly inside TUBAL HUB Admin.",
@@ -200,6 +201,12 @@
   ],
   "breakingReal": false,
   "changelog": [
+    {
+      "type": "FIX",
+      "icon": "🔗",
+      "title": "Kapeng Admin Link",
+      "desc": "Shop now opens the central admin/login.html instead of the retired kapeng-admin path."
+    },
     {
       "type": "FIX",
       "icon": "☕",
