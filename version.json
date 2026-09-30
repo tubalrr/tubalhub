@@ -1,11 +1,12 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.2.69",
-  "build": "2026-09-30_2058",
-  "releasedAtReal": "2026-09-30T12:58:00Z",
+  "version": "1.2.70",
+  "build": "2026-09-30_2104",
+  "releasedAtReal": "2026-09-30T13:04:00Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.2.70 FIX — Welcome Bot now welcomes each logged-in user only once per login session. Refreshing the page does not repeat the welcome, logout clears the welcome state, and logging in again triggers a fresh welcome. When a new system release is detected, the bot explains the update instead of repeating the full welcome guide.",
     "v1.2.69 FEAT — Added a live animated frame around the hero visualization area, with moving perimeter glow, scan sweep, pulsing corners, and energy effects that sync visually with the rotating hub orbits.",
     "v1.2.68 FEAT — Welcome Bot now has an animated live LATEST ticker in the top bar. It cycles through recent version updates from version.json with smooth slide/fade transitions and refreshes its latest entries automatically while the page is open.",
     "v1.2.67 FEAT — Live update system now checks version.json every 60 seconds while the site is open and automatically reloads once when a new release is detected, so users do not need to manually refresh.",
