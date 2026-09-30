@@ -52,10 +52,15 @@ const state = {
 
 const $=(s,r=document)=>r.querySelector(s);
 const EMAIL_NOTIFY_CONFIG_REAL=Object.freeze({
-  serviceId:window.TUBAL_EMAILJS_CONFIG?.serviceId||"tubalhub_service_real",
-  templateId:window.TUBAL_EMAILJS_CONFIG?.templateId||"tubalhub_update_template",
-  publicKey:window.TUBAL_EMAILJS_CONFIG?.publicKey||""
+  serviceId:String(window.TUBAL_EMAILJS_CONFIG?.serviceId||"").trim(),
+  templateId:String(window.TUBAL_EMAILJS_CONFIG?.templateId||"").trim(),
+  publicKey:String(window.TUBAL_EMAILJS_CONFIG?.publicKey||"").trim()
 });
+const EMAIL_NOTIFICATIONS_CONFIGURED_REAL=Boolean(
+  EMAIL_NOTIFY_CONFIG_REAL.publicKey &&
+  EMAIL_NOTIFY_CONFIG_REAL.serviceId &&
+  EMAIL_NOTIFY_CONFIG_REAL.templateId
+);
 let emailJsReadyReal=false;
 
 function initEmailJsReal(){
@@ -99,6 +104,43 @@ function setSubscribeStatusReal(text,type=""){
   el.textContent=text;
   el.classList.toggle("is-ready",type==="ready");
   el.classList.toggle("is-error",type==="error");
+  el.classList.toggle("is-config-missing",type==="config-missing");
+}
+
+function renderEmailNotificationStateReal(){
+  const section=$("#subscribeUpdateReal");
+  const btn=$("#subscribeNotifyRealBtn");
+  const note=$("#notifyEmailConfigNoteReal");
+  if(!section)return;
+
+  if(EMAIL_NOTIFICATIONS_CONFIGURED_REAL){
+    section.classList.remove("email-config-missing");
+    if(btn){
+      btn.disabled=false;
+      btn.textContent="Subscribe Real";
+      btn.removeAttribute("title");
+      btn.setAttribute("aria-disabled","false");
+    }
+    if(note){
+      note.textContent="Email notifications are configured and ready.";
+      note.dataset.state="ready";
+    }
+    setSubscribeStatusReal("EMAIL READY","ready");
+    return;
+  }
+
+  section.classList.add("email-config-missing");
+  if(btn){
+    btn.disabled=true;
+    btn.textContent="Email Not Configured";
+    btn.title="Email notifications are not configured yet.";
+    btn.setAttribute("aria-disabled","true");
+  }
+  if(note){
+    note.textContent="Email notifications are not configured yet.";
+    note.dataset.state="missing";
+  }
+  setSubscribeStatusReal("NOT CONFIGURED","config-missing");
 }
 
 async function sendUpdateEmailReal(sub,newVersionData){
@@ -125,6 +167,11 @@ async function sendUpdateEmailReal(sub,newVersionData){
 }
 
 async function subscribeNotifyReal(){
+  if(!EMAIL_NOTIFICATIONS_CONFIGURED_REAL){
+    renderEmailNotificationStateReal();
+    showHomeToast("Email notifications are not configured yet.");
+    return;
+  }
   const emailEl=$("#notifyEmailReal");
   const phoneEl=$("#notifyPhoneReal");
   const consentEl=$("#notifyConsentReal");
@@ -173,7 +220,7 @@ async function subscribeNotifyReal(){
     btn.disabled=true;
     btn.textContent="Saving Real...";
   }
-  setSubscribeStatusReal("Saved locally","ready");
+  setSubscribeStatusReal("SAVED","ready");
 
   const welcomeData={
     version:"v"+String(document.getElementById("liveVersion")?.textContent||"0.0.0").replace(/^v/i,""),
@@ -216,6 +263,10 @@ function unsubscribeNotifyReal(){
 }
 
 async function notifySubscribersOnUpdateReal(newVersionData){
+  if(!EMAIL_NOTIFICATIONS_CONFIGURED_REAL){
+    console.log("[TUBAL HUB update email] Email notifications are not configured yet.");
+    return;
+  }
   const subs=getRealSubscribers();
   if(!subs.length)return;
   const version=String(newVersionData?.version||"").trim();
@@ -259,7 +310,7 @@ function initRealEmailSubscribe(){
     unsub.dataset.ready="1";
     unsub.addEventListener("click",unsubscribeNotifyReal);
   }
-  setSubscribeStatusReal(initEmailJsReal()?"EMAIL READY":"LOCAL","ready");
+  renderEmailNotificationStateReal();
 }
 
 const $$=(s,r=document)=>[...r.querySelectorAll(s)];
