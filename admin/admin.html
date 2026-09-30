@@ -661,11 +661,12 @@ function render(){
     const itemSummary=x.type==="upgrade"
       ? "Upgrade • "+esc(x.productId||"Product")
       : (Array.isArray(x.items)?x.items.map(i=>esc(i.title||i.productId||"Product")).join(", "):"Order");
-    return '<article class="item"><div><b>'+esc(type)+' • '+esc(x.id)+'</b><p>'+itemSummary+'</p><small>UID: '+esc(x.uid||"—")+' • '+esc(x.paymentMethod||"Manual payment")+' • Ref: '+esc(x.paymentReference||"—")+' • '+created+'</small><small>Total: ₱'+esc(Number(x.total||0).toLocaleString("en-PH"))+' • Status: <strong style="color:'+orderStatusColor(x.status)+'">'+esc(x.status||"pending_payment")+'</strong></small></div>'+action+'</article>';
+    const brandLabel=x.brandName||x.brandKey||"TUBAL HUB";
+    return '<article class="item"><div><b>'+esc(type)+' • '+esc(x.id)+' <span class="brand-data-badge" style="margin-left:6px">'+esc(brandLabel)+'</span></b><p>'+itemSummary+'</p><small>UID: '+esc(x.uid||"—")+' • '+esc(x.paymentMethod||"Manual payment")+' • Ref: '+esc(x.paymentReference||"—")+' • '+created+'</small><small>Total: ₱'+esc(Number(x.total||0).toLocaleString("en-PH"))+' • Status: <strong style="color:'+orderStatusColor(x.status)+'">'+esc(x.status||"pending_payment")+'</strong></small></div>'+action+'</article>';
   }).join("")||'<div class="empty">No shop orders yet.</div>';
 
   $("shopProductList").innerHTML=shopProducts.map(x=>
-    '<article class="item"><div><b>'+esc(x.icon||"◈")+' '+esc(x.name)+'</b><p>'+esc(x.description||"")+'</p><small>'+esc(x.productType||"physical")+' • v'+esc(x.version||"—")+' • '+esc(x.license||"No license set")+' • '+esc(x.price||"Free")+'</small>'+(x.latestVersion&&x.version&&x.latestVersion!==x.version?'<small style="color:#1dff91">Upgrade available → v'+esc(x.latestVersion)+'</small>':"")+'</div><div class="admin-item-actions"><button data-update-version="'+esc(x.id)+'">New Version</button><button data-del-product="'+esc(x.id)+'">×</button></div></article>'
+    '<article class="item"><div><b>'+esc(x.icon||"◈")+' '+esc(x.name)+'</b><p>'+esc(x.description||"")+'</p><small>'+esc(x.productType||"physical")+' • '+esc(x.category||"products")+' • '+esc(x.price||"Free")+(x.brandName?" • "+esc(x.brandName):"")+'</small>'+(x.latestVersion&&x.version&&x.latestVersion!==x.version?'<small style="color:#1dff91">Upgrade available → v'+esc(x.latestVersion)+'</small>':"")+'</div><div class="admin-item-actions"><button data-update-version="'+esc(x.id)+'">New Version</button><button data-del-product="'+esc(x.id)+'">×</button></div></article>'
   ).join("")||'<div class="empty">No shop products yet.</div>';
 
   $("chatList").innerHTML=chats.map(x=>
@@ -755,7 +756,7 @@ async function getAnalyticsMessagesPaged(collectionName,startDate,endDate){
     $("analyticsDau").textContent=$("analyticsWau").textContent=$("analyticsMessages").textContent=$("analyticsNewUsers").textContent="—";
   }
 }
-async function load(){try{const [n,a,c,p,o]=await Promise.all([getDocs(query(collection(db,"news"),orderBy("createdAt","desc"),limit(100))),getDocs(query(collection(db,"announcements"),orderBy("createdAt","desc"),limit(100))),getDocs(query(collection(db,"globalChats"),orderBy("createdAt","desc"),limit(100))),getDocs(query(collection(db,"products"),orderBy("createdAt","desc"),limit(100))),getDocs(query(collection(db,"orders"),orderBy("createdAt","desc"),limit(100)))]);news=n.docs.map(d=>({id:d.id,...d.data()}));anns=a.docs.map(d=>({id:d.id,...d.data()}));chats=c.docs.map(d=>({id:d.id,...d.data()}));shopProducts=p.docs.map(d=>({id:d.id,...d.data()}));shopOrders=o.docs.map(d=>({id:d.id,...d.data()}));render()}catch(e){toast("Firestore error: "+e.message);render()}}
+async function load(){try{await ensureKapengCatalog();const [n,a,c,p,o]=await Promise.all([getDocs(query(collection(db,"news"),orderBy("createdAt","desc"),limit(100))),getDocs(query(collection(db,"announcements"),orderBy("createdAt","desc"),limit(100))),getDocs(query(collection(db,"globalChats"),orderBy("createdAt","desc"),limit(100))),getDocs(query(collection(db,"products"),orderBy("createdAt","desc"),limit(100))),getDocs(query(collection(db,"orders"),orderBy("createdAt","desc"),limit(100)))]);news=n.docs.map(d=>({id:d.id,...d.data()}));anns=a.docs.map(d=>({id:d.id,...d.data()}));chats=c.docs.map(d=>({id:d.id,...d.data()}));shopProducts=p.docs.map(d=>({id:d.id,...d.data()}));shopOrders=o.docs.map(d=>({id:d.id,...d.data()}));render()}catch(e){toast("Firestore error: "+e.message);render()}}
 function listenToPresence(){
   if(presenceUnsubscribe)presenceUnsubscribe();
   presenceUnsubscribe=onSnapshot(collection(db,"presence"),snap=>{
