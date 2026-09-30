@@ -1,11 +1,12 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.2.77",
-  "build": "2026-09-30_2125",
-  "releasedAtReal": "2026-09-30T13:25:00Z",
+  "version": "1.2.78",
+  "build": "2026-09-30_2153",
+  "releasedAtReal": "2026-09-30T13:53:22.084Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.2.78 FEAT — Upgraded the existing TUBAL HUB hero into a cinematic 3D digital ecosystem: scroll-controlled camera motion, pointer parallax, depth-based core/rings/nodes, live HUD progress, cinematic grid atmosphere, and a single unified visual thread for the connected Hub branches. No duplicate homepage container and no human characters.",
     "v1.2.77 FIX — Removed the per-container 3D orb/ring accents. The modern 3D treatment is now reserved for the unified hero/background direction, keeping homepage cards clean and uncluttered.",
     "v1.2.76 FEAT — Switched homepage container accents to a clean modern 3D visual system: floating abstract orb, rotating depth rings, particles, and soft shadow animation. No human characters. Existing content and functionality are preserved.",
     "v1.2.75 FIX — Removed the animated male/female container characters from the homepage after the visual treatment was rejected. The existing homepage content, hero 3D ecosystem, and functionality remain unchanged.",
@@ -790,6 +791,6 @@
       "desc": "version.json is the single version/build source: v1.2.16 • build 2026-09-25_1216."
     }
   ],
-  "date": "2026-09-27",
-  "changes": "v1.2.41 — Firestore-authoritative inventory and order-data cleanup."
+  "date": "2026-09-30",
+  "changes": "v1.2.78 FEAT — Upgraded the existing TUBAL HUB hero into a cinematic 3D digital ecosystem: scroll-controlled camera motion, pointer parallax, depth-based core/rings/nodes, live HUD progress, cinematic grid atmosphere, and a single unified visual thread for the connected Hub branches. No duplicate homepage container and no human characters."
 }
