@@ -2,10 +2,11 @@
   "product": "TUBAL HUB Website",
   "manifestType": "website",
   "version": "1.2.46",
-  "build": "2026-09-30_1407",
-  "releasedAtReal": "2026-09-30T06:07:00Z",
+  "build": "2026-09-30_1353",
+  "releasedAtReal": "2026-09-30T05:53:00Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.2.46 META — Corrected release build metadata to match the actual 2026-09-30 13:53 Asia/Manila release time.",
     "v1.2.46 SECURITY — Removed raw card-number, expiry and CVV collection from the TUBAL HUB Shop checkout.",
     "v1.2.46 FIX — paymentReference now reads only bank / e-wallet or PayPal reference fields; card numbers are no longer used as payment references.",
     "v1.2.46 SECURITY — Cloud Functions now reject unsupported card payment methods server-side; the active manual checkout methods are Bank / E-Wallet and PayPal.",
