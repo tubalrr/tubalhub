@@ -1,5 +1,5 @@
 (() => {
-  const message = "Welcome to TUBAL DARK. Dito makikita mo ang Gaming Setups and Gear, Scripts and Custom Tools, at Simulation and Modding Hub. Choose a room and explore.";
+  const message = "Welcome to TUBAL DARK. Here you will find Gaming Setups and Gear, Scripts and Custom Tools, and the Simulation and Modding Hub. Choose a room and explore.";
   const speakBtn = document.getElementById("tdSpeakBtn");
   const replayBtn = document.getElementById("tdReplayBtn");
   if (!("speechSynthesis" in window) || !speakBtn) {
