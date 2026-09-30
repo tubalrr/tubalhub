@@ -156,12 +156,26 @@ service cloud.firestore {
       allow create: if realUser()
         && userId == request.auth.uid
         && request.resource.data.uid == request.auth.uid
-        && !('roleReal' in request.resource.data)
-        && !('isAdmin' in request.resource.data)
-        && !('strikesReal' in request.resource.data)
-        && !('chatStatus' in request.resource.data)
-        && !('banUntil' in request.resource.data)
-        && !('banReason' in request.resource.data);
+        && request.resource.data.diff({}).affectedKeys().hasNone([
+          'roleReal',
+          'role',
+          'isAdmin',
+          'admin',
+          'strikesReal',
+          'chatStatus',
+          'banUntil',
+          'banReason',
+          'warnings',
+          'mutedUntil',
+          'moderatedBy',
+          'moderatedAt',
+          'banned',
+          'bannedAt',
+          'bannedBy',
+          'lastStrikeAt',
+          'lastModerationReasonReal',
+          'lastModerationMessageIdReal'
+        ]);
 
       allow update: if adminUser()
         || (
@@ -372,7 +386,8 @@ service cloud.firestore {
     }
 
     match /systemSettings/{settingId} {
-      allow read: if true;
+      // Only explicitly public settings are readable by the public site.
+      allow read: if settingId == 'maintenance' || adminUser();
       allow create, update, delete: if adminUser();
     }
 
