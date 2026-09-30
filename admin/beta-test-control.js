@@ -78,17 +78,5 @@ $("betaSave")?.addEventListener("click",async()=>{
 function prepareGoLive(){ toast("Legacy release action retired. Use Release Control / version.json."); }
 
 auth.authStateReady?.().then(loadBeta).catch(()=>{});
+if(!auth.authStateReady)auth.authStateReady?.().then(loadBeta).catch(()=>{});
 if(!auth.authStateReady)auth.onAuthStateChanged(user=>{if(user)loadBeta();});
-
-function mountGoLiveButton(){
-  if(!currentAdmin()||document.getElementById("betaGoLive"))return;
-  const b=document.createElement("button");
-  b.type="button"; b.id="betaGoLive"; b.className="tubal-go-live-v1218";
-  b.textContent="Prepare release in Release Control";
-  b.addEventListener("click",prepareGoLive);
-  document.body.appendChild(b);
-}
-auth.onAuthStateChanged(user=>{
-  if(user&&currentAdmin())mountGoLiveButton();
-  else document.getElementById("betaGoLive")?.remove();
-});
