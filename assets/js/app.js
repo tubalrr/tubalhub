@@ -46,14 +46,14 @@ document.querySelectorAll('header nav a').forEach(a=>{if(a.href===location.href)
     if(!document.querySelector('link[data-tubal-video-call-css]')){
       const css=document.createElement('link');
       css.rel='stylesheet';
-      css.href='/tubalhub/assets/css/video-call.css?v=20260923-callfix2';
+      css.href='/tubalhub/assets/css/video-call.css?v=1.2.37';
       css.dataset.tubalVideoCallCss='1';
       document.head.appendChild(css);
     }
     if(document.querySelector('script[data-tubal-video-call]'))return;
     const s=document.createElement('script');
     s.type='module';
-    s.src='/tubalhub/assets/js/video-call.js?v=20260923-callfix2';
+    s.src='/tubalhub/assets/js/video-call.js?v=1.2.37';
     s.dataset.tubalVideoCall='1';
     document.head.appendChild(s);
   };
@@ -67,7 +67,7 @@ document.querySelectorAll('header nav a').forEach(a=>{if(a.href===location.href)
     if(document.querySelector('script[data-tubal-presence]'))return;
     const s=document.createElement('script');
     s.type='module';
-    s.src='/tubalhub/assets/js/presence.js?v=20260923';
+    s.src='/tubalhub/assets/js/presence.js?v=1.2.37';
     s.dataset.tubalPresence='1';
     document.head.appendChild(s);
   };
