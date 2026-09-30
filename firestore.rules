@@ -445,6 +445,11 @@ service cloud.firestore {
         && request.resource.data.get('badge', '') is string
         && request.resource.data.get('imageUrl', '') is string
         && request.resource.data.get('productUrl', '') is string
+        && request.resource.data.get('sourceType', 'admin-managed') in ['admin-managed', 'external', 'demo']
+        && request.resource.data.get('catalogStatus', 'live') in ['live', 'draft', 'hidden', 'archived']
+        && request.resource.data.get('isVisible', true) is bool
+        && (!('isDemo' in request.resource.data) || request.resource.data.isDemo is bool)
+        && (request.resource.data.category != 'coffee' || request.resource.data.get('brandKey', '') == 'kapeng')
         && !('downloadUrl' in request.resource.data);
 
       allow update: if adminUser()
@@ -461,6 +466,11 @@ service cloud.firestore {
         && request.resource.data.get('badge', '') is string
         && request.resource.data.get('imageUrl', '') is string
         && request.resource.data.get('productUrl', '') is string
+        && request.resource.data.get('sourceType', 'admin-managed') in ['admin-managed', 'external', 'demo']
+        && request.resource.data.get('catalogStatus', 'live') in ['live', 'draft', 'hidden', 'archived']
+        && request.resource.data.get('isVisible', true) is bool
+        && (!('isDemo' in request.resource.data) || request.resource.data.isDemo is bool)
+        && (request.resource.data.category != 'coffee' || request.resource.data.get('brandKey', '') == 'kapeng')
         && !('downloadUrl' in request.resource.data);
 
       allow delete: if adminUser();
