@@ -715,8 +715,11 @@ exports.createShopOrderReal = onCall(async request => {
   requireRealUser(request);
 
   const items = normalizeShopItemsReal(request.data?.items);
-  const paymentMethod = String(request.data?.paymentMethod || "").slice(0, 80) || "Manual payment";
+  const paymentMethod = String(request.data?.paymentMethod || "").trim().toLowerCase().slice(0, 80);
   const paymentReference = String(request.data?.paymentReference || "").trim().slice(0, 160);
+  if (!["bank","paypal"].includes(paymentMethod)) {
+    throw new HttpsError("failed-precondition", "This payment method is not currently available. Use Bank / E-Wallet or PayPal.");
+  }
   const orderRef = db.collection("orders").doc();
 
   const result = await db.runTransaction(async tx => {
@@ -837,8 +840,12 @@ exports.upgradeShopProductReal = onCall(async request => {
 
   const productId = String(request.data?.productId || "").trim();
   const licenseId = String(request.data?.licenseId || "").trim();
-  const paymentMethod = String(request.data?.paymentMethod || "").slice(0, 80) || "Manual payment";
+  const paymentMethod = String(request.data?.paymentMethod || "").trim().toLowerCase().slice(0, 80);
   const paymentReference = String(request.data?.paymentReference || "").trim().slice(0, 160);
+
+  if (!["bank","paypal"].includes(paymentMethod)) {
+    throw new HttpsError("failed-precondition", "This payment method is not currently available. Use Bank / E-Wallet or PayPal.");
+  }
 
   if (!productId || !licenseId) {
     throw new HttpsError("invalid-argument", "Product and license are required.");
