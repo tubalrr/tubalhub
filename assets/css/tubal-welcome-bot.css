@@ -236,3 +236,41 @@
 .tubal-welcome-bot.is-muted .tubal-welcome-live{background:#64748b;box-shadow:none}
 .tubal-welcome-bot.is-speaking .tubal-welcome-sound{border-color:rgba(29,255,145,.48)}
 .tubal-welcome-bot.speech-unavailable .tubal-welcome-sound{opacity:.45}
+
+/* Animated latest-release ticker */
+.tubal-welcome-label{
+  min-width:116px;
+  max-width:124px;
+}
+.tubal-welcome-label small{
+  display:block;
+  width:100%;
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+  color:rgba(255,255,255,.56);
+  font-size:6.5px;
+  font-weight:800;
+  letter-spacing:.045em;
+  text-transform:uppercase;
+}
+#tubalMainBotLatest{
+  will-change:transform,opacity;
+  transform-origin:left center;
+}
+#tubalMainBotLatest.is-changing{
+  animation:tubalLatestSlide .55s cubic-bezier(.2,.8,.2,1);
+}
+.tubal-welcome-bot.is-speaking #tubalMainBotLatest{
+  color:#8fffc5;
+  text-shadow:0 0 8px rgba(29,255,145,.2);
+}
+@keyframes tubalLatestSlide{
+  0%{opacity:0;transform:translate3d(10px,2px,0)}
+  55%{opacity:1;transform:translate3d(-2px,0,0)}
+  100%{opacity:1;transform:translate3d(0,0,0)}
+}
+@media(max-width:900px){
+  .tubal-welcome-label{display:flex;min-width:0;max-width:92px}
+  .tubal-welcome-label small{max-width:88px}
+}
