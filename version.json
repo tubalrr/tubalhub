@@ -1,11 +1,12 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.2.57",
-  "build": "2026-09-30_1924",
-  "releasedAtReal": "2026-09-30T11:24:00Z",
+  "version": "1.2.58",
+  "build": "2026-09-30_1937",
+  "releasedAtReal": "2026-09-30T11:37:00Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.2.58 FEAT — Added a TUBAL DARK Welcome panel with DARK BOT voice narration using the browser Speech Synthesis API.",
     "v1.2.57 FEAT — Added a dedicated TUBAL DARK Modding Hub for supported simulation projects, visual packs, community add-ons, profiles, world projects, and compatibility checks.",
     "v1.2.56 FEAT — Added a dedicated TUBAL DARK Tools Room for legitimate digital utilities, configuration helpers, diagnostics, workflow shortcuts, and setup resources.",
     "v1.2.55 FEAT — Added a TUBAL DARK switch at the top of the TUBAL HUB homepage for direct mode navigation.",
@@ -220,6 +221,12 @@
   ],
   "breakingReal": false,
   "changelog": [
+    {
+      "type": "FEAT",
+      "icon": "🔊",
+      "title": "DARK BOT Welcome",
+      "desc": "TUBAL DARK now explains its sections through a welcome bot with optional browser voice playback."
+    },
     {
       "type": "FEAT",
       "icon": "🛠",
