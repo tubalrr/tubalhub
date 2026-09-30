@@ -21,78 +21,60 @@
   const dotWrap = root.querySelector('[data-bot-dots]');
   if (!title || !kicker || !bodyText || !count || !bar || !screen || !dotWrap) return;
 
+  const CYCLE = 8600;
   let index = 0;
-  let stopped = false;
-  const timers = [];
+  let timer = null;
+  let screenTimer = null;
 
-  function clearTimers() {
-    timers.splice(0).forEach(t => window.clearTimeout(t));
-  }
+  root.classList.add('bot-cinematic');
 
-  function setAction(action) {
-    root.classList.remove(
-      'bot-action-idle',
-      'bot-action-walk',
-      'bot-action-present',
-      'bot-action-wave',
-      'bot-action-return',
-      'bot-action-observe'
-    );
-    root.classList.add('bot-action-' + action);
-  }
+  dotWrap.innerHTML = items.map((_, i) => '<span class="' + (i === 0 ? 'is-active' : '') + '"></span>').join('');
+  const dots = [...dotWrap.children];
 
-  function schedule(fn, ms) {
-    const timer = window.setTimeout(fn, ms);
-    timers.push(timer);
-    return timer;
-  }
-
-  function render(nextIndex, first = false) {
-    index = (nextIndex + items.length) % items.length;
-    const item = items[index];
-
-    root.classList.remove('is-changing');
-    if (!first) {
-      void root.offsetWidth;
-      root.classList.add('is-changing');
-    }
-
+  function paint(item) {
     kicker.textContent = item.kicker;
     title.textContent = item.title;
     bodyText.textContent = item.text;
     count.textContent = String(index + 1).padStart(2, '0') + ' / ' + String(items.length).padStart(2, '0');
     bar.style.setProperty('--bot-progress', ((index + 1) / items.length * 100) + '%');
-    [...dotWrap.children].forEach((d, i) => d.classList.toggle('is-active', i === index));
+    dots.forEach((d, i) => d.classList.toggle('is-active', i === index));
+
+    screen.classList.remove('bot-screen-refresh');
+    void screen.offsetWidth;
+    screen.classList.add('bot-screen-refresh');
 
     screen.innerHTML =
       '<div class="th-bot-screen-top"><span class="th-bot-screen-dot"></span><span>TUBAL HUB LIVE PREVIEW</span></div>' +
       '<div class="th-bot-screen-title">' + item.title + '</div>' +
       '<div class="th-bot-screen-lines"><i></i><i></i><i></i></div>' +
+      '<div class="th-bot-screen-progress"><i></i><i></i><i></i><i></i></div>' +
       '<div class="th-bot-screen-card"><b>' + item.icon + '</b><span><strong>' + item.title + '</strong><small>' + item.kicker + '</small></span></div>';
   }
 
-  function sequence() {
-    clearTimers();
-    if (stopped) return;
-
-    setAction('idle');
-    schedule(() => setAction('walk'), 850);
-    schedule(() => setAction('present'), 2100);
-    schedule(() => setAction('observe'), 3600);
-    schedule(() => setAction('wave'), 4550);
-    schedule(() => setAction('return'), 5450);
-    schedule(() => {
-      render(index + 1);
-      sequence();
-    }, 6400);
+  function nextSection() {
+    index = (index + 1) % items.length;
+    paint(items[index]);
   }
 
-  dotWrap.innerHTML = items.map((_, i) => '<span class="' + (i === 0 ? 'is-active' : '') + '"></span>').join('');
-  render(0, true);
-  sequence();
+  function schedule() {
+    window.clearTimeout(timer);
+    window.clearTimeout(screenTimer);
 
-  window.addEventListener('pagehide', () => {
-    stopped = true;
-    clearTimers();
-  }, {once:true});
+    // The character spends most of the cycle actually moving.
+    // The preview changes once, around the moment the bot reaches the panel.
+    screenTimer = window.setTimeout(nextSection, CYCLE * 0.57);
+    timer = window.setTimeout(schedule, CYCLE);
+  }
+
+  paint(items[0]);
+  schedule();
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      window.clearTimeout(timer);
+      window.clearTimeout(screenTimer);
+    } else {
+      schedule();
+    }
+  });
 })();
