@@ -1,11 +1,12 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.2.84",
-  "build": "2026-09-30_2240",
-  "releasedAtReal": "2026-09-30T14:40:51.916Z",
+  "version": "1.2.85",
+  "build": "2026-09-30_2247",
+  "releasedAtReal": "2026-09-30T14:47:25.541Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.2.85 FIX — Removed the old WebGL/3D Hero animation completely and wired the AI female guide into the existing Hero as the visual presenter. The guide uses the AI image asset, silently rotates through real TUBAL HUB sections, and keeps the Welcome Bot as the voice layer.",
     "v1.2.84 FEAT — Rebuilt the Hero AI guide using the actual AI-generated female presenter image. The presenter is silent; the existing Welcome Bot remains the voice layer. The female guide visually showcases real TUBAL HUB sections with animated showcase cards, progress navigation, and direct links, while staying inside the Hero.",
     "v1.2.83 FEAT — Replaced the talking CSS presenter with a silent AI-style female visual guide inside the Hero. She visually showcases the real TUBAL HUB sections one by one — Payapang Isip, Shop, Gaming Zone, News, Community & Chat, AI Music, and LifeHub/Personal OS — with animated panels and direct links. Voice was removed because Welcome Bot already handles spoken explanations.",
     "v1.2.82 FEAT — Added an animated female TUBAL HUB Guide inside the Hero. She speaks an automatic guided explanation of the main branches and navigation, with blinking/talking animation and a persistent mute control. The presenter stays inside the Hero only.",
@@ -798,5 +799,5 @@
     }
   ],
   "date": "2026-09-30",
-  "changes": "v1.2.84 FEAT — Rebuilt the Hero AI guide using the actual AI-generated female presenter image. The presenter is silent; the existing Welcome Bot remains the voice layer. The female guide visually showcases real TUBAL HUB sections with animated showcase cards, progress navigation, and direct links, while staying inside the Hero."
+  "changes": "v1.2.85 FIX — Removed the old WebGL/3D Hero animation completely and wired the AI female guide into the existing Hero as the visual presenter. The guide uses the AI image asset, silently rotates through real TUBAL HUB sections, and keeps the Welcome Bot as the voice layer."
 }
