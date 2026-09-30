@@ -229,7 +229,7 @@ function cardHtml(p,index){
   const isReal=Boolean(p.real);
   const priceHtml=isReal?'<strong class="product-price">'+esc(p.priceLabel)+'</strong>':'<strong class="product-price">'+money(p.price)+'</strong><span class="product-original">'+money(p.original)+'</span>';
   const metaHtml=isReal?'<div class="product-rating-row"><span>REAL ADMIN PRODUCT</span><span>'+esc(p.category)+'</span></div>':p.externalUrl?'<div class="product-rating-row"><span>KAPENG BARAKO</span><span>PHILIPPINE COFFEE</span><span class="stock-low">'+p.stock+' left</span></div>':'<div class="product-rating-row"><span>⭐ '+p.rating.toFixed(1)+'</span><span>Premium listing</span><span class="stock-low">'+p.stock+' left</span></div>';
-  const actionHtml=(isReal&&p.productUrl)||p.externalUrl?'<a class="add-btn real-product-link" href="'+esc(isReal?p.productUrl:p.externalUrl)+'" target="_blank" rel="noopener noreferrer">Open Product</a>':'<button class="add-btn" data-add="'+esc(p.id)+'" type="button">Add to Cart</button>';
+  const actionHtml=(isReal&&p.productUrl)?'<a class="add-btn real-product-link" href="'+esc(p.productUrl)+'" target="_blank" rel="noopener noreferrer">Open Product</a>':'<button class="add-btn" data-add="'+esc(p.id)+'" type="button">Add to Cart</button>';
   return '<article class="product-card" data-product-id="'+esc(p.id)+'" style="--stagger:'+(index*.05)+'s">'+
     '<div class="product-visual">'+
       (p.image?'<img src="'+esc(p.image)+'" alt="'+esc(p.title)+'" loading="lazy" decoding="async">':'<div class="product-no-image" aria-label="No product image">NO IMAGE</div>')+
