@@ -49,7 +49,7 @@
   loading.textContent = 'INITIALIZING 3D SYSTEM';
   experience.appendChild(loading);
 
-  document.body.prepend(experience);
+  hero.prepend(experience);
 
   let THREE;
   try {
@@ -444,13 +444,15 @@
   function clamp(v,a,b){return Math.min(b,Math.max(a,v));}
 
   function readScroll(){
-    const max=Math.max(document.documentElement.scrollHeight-window.innerHeight,1);
-    scrollTarget=clamp(window.scrollY/max,0,1);
+    const rect=hero.getBoundingClientRect();
+    const travel=Math.max(rect.height-window.innerHeight*0.42,1);
+    const progress=(window.innerHeight*0.20-rect.top)/travel;
+    scrollTarget=clamp(progress,0,1);
   }
 
   function setSize(){
-    const w=window.innerWidth;
-    const h=window.innerHeight;
+    const w=Math.max(experience.clientWidth,1);
+    const h=Math.max(experience.clientHeight,1);
     camera.aspect=w/h;
     camera.updateProjectionMatrix();
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1,1.6));
@@ -460,8 +462,10 @@
   function projectLabel(label,position){
     const p=position.clone();
     p.project(camera);
-    const x=(p.x*0.5+0.5)*window.innerWidth;
-    const y=(-p.y*0.5+0.5)*window.innerHeight;
+    const w=Math.max(experience.clientWidth,1);
+    const h=Math.max(experience.clientHeight,1);
+    const x=(p.x*0.5+0.5)*w;
+    const y=(-p.y*0.5+0.5)*h;
     const visible=p.z>-1 && p.z<1;
     label.style.left=x+'px';
     label.style.top=y+'px';
@@ -555,9 +559,13 @@
 
   window.addEventListener('scroll',readScroll,{passive:true});
   window.addEventListener('resize',setSize,{passive:true});
-  window.addEventListener('pointermove',(event)=>{
-    pointer.x=(event.clientX/window.innerWidth)*2-1;
-    pointer.y=(event.clientY/window.innerHeight)*2-1;
+  experience.addEventListener('pointermove',(event)=>{
+    const rect=experience.getBoundingClientRect();
+    pointer.x=((event.clientX-rect.left)/Math.max(rect.width,1))*2-1;
+    pointer.y=((event.clientY-rect.top)/Math.max(rect.height,1))*2-1;
+  },{passive:true});
+  experience.addEventListener('pointerleave',()=>{
+    pointer.set(0,0);
   },{passive:true});
   document.addEventListener('visibilitychange',()=>{
     if(!document.hidden && !raf) loop();
