@@ -1,11 +1,12 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.2.63",
-  "build": "2026-09-30_2018",
-  "releasedAtReal": "2026-09-30T12:18:00Z",
+  "version": "1.2.64",
+  "build": "2026-09-30_2025",
+  "releasedAtReal": "2026-09-30T12:25:00Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.2.64 FEAT — Added the Welcome Bot beside the homepage search in the top bar with automatic voice narration, waving-hand animation, speaking mouth/eyes, live reaction effects, and a compact guide panel.",
     "v1.2.62 FEAT — Expanded the floating TUBAL BOT into a full public-site guide. It explains the major branches, services, public pages, safety/community rules, prohibited actions, content/licensing rules, and the latest version.json release note in English voice narration.",
     "v1.2.61 FEAT — Added a floating TUBAL BOT to the main homepage. It automatically explains the three main branches, featured Kapeng Barako, core navigation areas, and the latest release from version.json with animated English voice narration.",
     "v1.2.60 FEAT — DARK BOT now explains every TUBAL DARK room and the community/updates areas, reads the current release note from version.json, highlights a newly changed version, and refreshes that information on each visit.",
