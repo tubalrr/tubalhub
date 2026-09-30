@@ -285,15 +285,6 @@
       if (muted) {
         if (speechAvailable) speechSynthesis.cancel();
         setSpeaking(false);
-      } else if (initialized) {
-        // Unmuting is intentionally not a separate Replay button; the bot resumes
-        // with a short welcome/update announcement only when state actually changed.
-        const currentVersion = (() => {
-          try { return localStorage.getItem(LAST_VERSION_KEY) || "current"; } catch (_) { return "current"; }
-        })();
-        if (activeUserId && currentVersion) {
-          speakOnce(`Welcome back to TUBAL HUB. The current system release is version ${currentVersion}.`);
-        }
       }
 
       setMutedUI();
@@ -313,7 +304,9 @@
     }
 
     loadVoice();
-    speechSynthesis?.addEventListener?.("voiceschanged", loadVoice);
+    if (speechAvailable) {
+      speechSynthesis.addEventListener?.("voiceschanged", loadVoice);
+    }
 
     // Direct link from the live update notifier while the page is open.
     document.addEventListener("tubalhub:live-update", async (event) => {
