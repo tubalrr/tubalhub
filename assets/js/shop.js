@@ -39,7 +39,7 @@ const state={
   selectedSize:"",
   selectedColor:"",
   filterOpen:false,
-  payment:"card",
+  payment:"bank",
   upgradeTarget:null
 };
 const shopUrlParams=new URLSearchParams(window.location.search);
@@ -372,17 +372,15 @@ function openQuick(id){
 }
 function closeQuick(){els.quickLayer.classList.remove("is-open");setTimeout(()=>{if(!els.quickLayer.classList.contains("is-open"))els.quickLayer.hidden=true},220)}
 function updatePaymentUI(){
-  const data={card:{title:"Card",formTitle:"Card details",brand:"VISA / MASTERCARD"},bank:{title:"Bank Transfer",formTitle:"Bank transfer details",brand:"BANK"},paypal:{title:"PayPal",formTitle:"PayPal details",brand:"PAYPAL"}}[state.payment];
+  const data={bank:{title:"Bank / E-Wallet",formTitle:"Bank / E-Wallet reference",brand:"GCASH / MAYA"},paypal:{title:"PayPal",formTitle:"PayPal reference",brand:"PAYPAL"}}[state.payment];
   if(!data)return;
   document.querySelectorAll(".payment-method").forEach(b=>b.classList.toggle("active",b.dataset.payment===state.payment));
   document.getElementById("paymentFormTitle").textContent=data.formTitle;
   document.getElementById("paymentFormBrand").textContent=data.brand;
   const grid=document.querySelector(".payment-form-grid");
   if(grid){
-    grid.innerHTML=state.payment==="card"
-      ? '<label class="payment-field-full">Cardholder name<input id="cardholderName" type="text" autocomplete="cc-name" placeholder="Full name" required></label><label class="payment-field-full">Card number<input id="cardNumber" type="text" inputmode="numeric" autocomplete="cc-number" maxlength="19" placeholder="1234 5678 9012 3456" required></label><label>Expiry date<input id="cardExpiry" type="text" inputmode="numeric" autocomplete="cc-exp" maxlength="5" placeholder="MM/YY" required></label><label>CVV<input id="cardCvv" type="password" inputmode="numeric" autocomplete="cc-csc" maxlength="4" placeholder="CVV" required></label>'
-      : state.payment==="bank"
-      ? '<label class="payment-field-full">Account name<input id="bankName" type="text" autocomplete="name" placeholder="Account name" required></label><label class="payment-field-full">Bank reference<input id="bankReference" type="text" placeholder="Reference number" required></label>'
+    grid.innerHTML=state.payment==="bank"
+      ? '<label class="payment-field-full">Account name<input id="bankName" type="text" autocomplete="name" placeholder="Account name" required></label><label class="payment-field-full">Bank / E-Wallet reference<input id="bankReference" type="text" placeholder="GCash / Maya reference number" required></label>'
       : '<label class="payment-field-full">PayPal email<input id="paypalEmail" type="email" autocomplete="email" placeholder="you@example.com" required></label><label class="payment-field-full">PayPal reference<input id="paypalReference" type="text" placeholder="Payment reference" required></label>';
   }
   const copy=document.getElementById("checkoutCopy");
@@ -477,10 +475,10 @@ document.querySelectorAll(".payment-method").forEach(btn=>btn.addEventListener("
 document.querySelectorAll(".payment-brand-logos img").forEach(img=>img.addEventListener("click",e=>{
   e.stopPropagation();
   const btn=img.closest(".payment-method");
-  if(btn){state.payment=btn.dataset.payment||"card";updatePaymentUI();burstAt(btn,6);requestAnimationFrame(()=>document.getElementById("cardholderName")?.focus());}
+  if(btn){state.payment=btn.dataset.payment||"bank";updatePaymentUI();burstAt(btn,6);}
 }));
 async function readPaymentReference(){
-  const ids={card:"cardNumber",bank:"bankReference",paypal:"paypalReference"};
+  const ids={bank:"bankReference",paypal:"paypalReference"};
   const el=document.getElementById(ids[state.payment]||"");
   return String(el?.value||"").trim().slice(0,160);
 }
@@ -526,12 +524,12 @@ function openOrderReview(){
     reviewShipping.textContent=money(shipping());
     reviewTotal.textContent=money(total());
   }
-  reviewPayment.textContent=state.payment==="bank"?"Bank Transfer":state.payment==="paypal"?"PayPal":"Card";
+  reviewPayment.textContent=state.payment==="bank"?"Bank / E-Wallet":"PayPal";
   layer.hidden=false;
   requestAnimationFrame(()=>layer.classList.add("is-open"));
 }
 async function placeOrder(){
-  const method=state.payment||"card";
+  const method=state.payment||"bank";
   const orderTotal=state.upgradeTarget?parseProductPrice(state.upgradeTarget.product.upgradePrice):total();
   if(state.upgradeTarget){
     try{
