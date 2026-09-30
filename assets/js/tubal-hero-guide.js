@@ -20,7 +20,7 @@
     {icon:"📰",title:"News & Updates",meta:"Announcements · releases · system changes",open:"READ",href:"pages/news.html",desc:"Stay informed about published news, announcements, and system releases."},
     {icon:"💬",title:"Community & Chat",meta:"Community · global chat · events",open:"JOIN",href:"pages/community.html",desc:"Connect with the TUBAL HUB community through discussion, chat, and events."},
     {icon:"🎵",title:"AI Music",meta:"Creative audio · saved tracks",open:"CREATE",href:"pages/ai-music.html",desc:"Create and explore the AI Music area and its saved audio experience."},
-    {icon:"▣",title:"LifeHub & Personal OS",meta:"Personal organization · tools",open:"OPEN",href:"v4.1/index.html",desc:"Personal productivity spaces for organizing your own work and information."}
+    {icon:"▣",title:"LifeHub & Personal OS",meta:"Personal organization · tools",open:"OPEN",href:"lifehub/index.html",desc:"Personal productivity spaces for organizing your own work and information."}
   ];
 
   const cards=items.map((item,i)=>{
@@ -39,8 +39,12 @@
   function select(next){
     index=(next+items.length)%items.length;
     cards.forEach((card,i)=>card.classList.toggle("is-active",i===index));
+    root.dataset.active = String(index);
     nav.forEach((n,i)=>n.classList.toggle("is-active",i===index));
     const item=items[index];
+    root.classList.remove("is-showing");
+    void root.offsetWidth;
+    root.classList.add("is-showing");
     if(title) title.textContent=item.title;
     if(text) text.textContent=item.desc;
     if(count) count.textContent=String(index+1).padStart(2,"0")+" / "+String(items.length).padStart(2,"0");
