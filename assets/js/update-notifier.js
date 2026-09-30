@@ -413,7 +413,7 @@
           clearTimeout(autoReloadTimer);
           autoReloadTimer = setTimeout(() => {
             try { window.location.reload(); } catch (_) {}
-          }, 1800);
+          }, 8000);
         } else {
           try {
             if (localStorage.getItem(reloadKey) === gated.version) {
