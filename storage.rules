@@ -8,6 +8,14 @@ service firebase.storage {
         && request.auth.token.firebase.sign_in_provider != 'anonymous';
     }
 
+    function adminUser() {
+      return realUser()
+        && (
+          request.auth.token.admin == true
+          || request.auth.token.email == 'tubalrr@gmail.com'
+        );
+    }
+
     // Existing Global Chat media uploads: max 8 MB and image-only MIME types.
     // Paid digital products are server-delivered through short-lived signed URLs.
     // Direct client reads/writes are blocked on this prefix.
@@ -16,7 +24,7 @@ service firebase.storage {
     }
 
     match /global-chat/{userId}/{fileName} {
-      allow read: if realUser();
+      allow read: if realUser() && (request.auth.uid == userId || adminUser());
 
       allow create: if realUser()
         && request.auth.uid == userId
