@@ -8,6 +8,7 @@ const shopFunctions=getFunctions(app);
 const createShopOrderReal=httpsCallable(shopFunctions,"createShopOrderReal");
 const upgradeShopProductReal=httpsCallable(shopFunctions,"upgradeShopProductReal");
 const getAuthorizedDownloadReal=httpsCallable(shopFunctions,"getAuthorizedDownloadReal");
+/* UI-only state: cart quantities are a browser convenience. Firestore is authoritative for price, availability, stock and orders. */
 const CART_KEY="tubalhub-shop-cart-v2";
 const WISH_KEY="tubalhub-shop-wishlist-v1";
 const THEME_KEY="tubalhub-theme";
@@ -23,7 +24,7 @@ let licenseUnsubscribe=null;
 let upgradeUnsubscribe=null;
 const parseProductPrice=v=>{const n=Number(String(v??"").replace(/[^0-9.]/g,""));return Number.isFinite(n)?n:0};
 const normalizeRealProduct=x=>({id:"real-"+x.id,firestoreId:x.id,real:true,collection:String(x.brandKey||x.collection||"th").toLowerCase()==="kapeng"?"kapeng":String(x.collection||"th"),catalogKey:String(x.catalogKey||"").trim(),sourceType:String(x.sourceType||"admin-managed").trim().toLowerCase(),catalogStatus:String(x.catalogStatus||"live").trim().toLowerCase(),isDemo:x.isDemo===true||String(x.sourceType||"").toLowerCase()==="demo",title:String(x.name||"Unnamed Product"),price:parseProductPrice(x.price),priceLabel:String(x.price||"Free"),original:parseProductPrice(x.originalPrice||x.compareAtPrice||x.original||0),originalLabel:String(x.originalPrice||x.compareAtPrice||"").trim(),image:String(x.imageUrl||x.image||"").trim(),seller:String(x.seller||x.brandName||"TUBAL HUB Shop"),sellerInitials:String(x.brandName||x.seller||"TH").slice(0,2).toUpperCase(),online:x.isVisible!==false,stock:Number.isFinite(Number(x.stock))?Number(x.stock):null,rating:Number.isFinite(Number(x.rating))?Number(x.rating):null,badge:String(x.badge||"").trim(),description:String(x.description||""),details:String(x.details||x.description||""),sizes:Array.isArray(x.sizes)?x.sizes:[],colors:Array.isArray(x.colors)?x.colors:[],productUrl:String(x.productUrl||"").trim(),externalUrl:String(x.externalUrl||"").trim(),category:String(x.category||"products"),productType:String(x.productType||"physical"),version:String(x.version||"1.0.0"),releaseDate:String(x.releaseDate||""),license:String(x.license||""),upgradePrice:String(x.upgradePrice||"Free"),latestVersion:String(x.latestVersion||x.version||"1.0.0"),includes:String(x.includes||""),changelog:String(x.changelog||"")});
-function listenToRealProducts(){if(realProductsUnsubscribe)realProductsUnsubscribe();realProductsUnsubscribe=onSnapshot(collection(db,"products"),snap=>{realProducts=snap.docs.map(d=>normalizeRealProduct({id:d.id,...d.data()}));renderProducts();updateCounts();renderMyProducts()},e=>console.warn("[TUBAL HUB Shop] real products listener failed",e))}
+function listenToRealProducts(){if(realProductsUnsubscribe)realProductsUnsubscribe();realProductsUnsubscribe=onSnapshot(collection(db,"products"),snap=>{realProducts=snap.docs.map(d=>normalizeRealProduct({id:d.id,...d.data()}));loadCart();renderProducts();updateCounts();updateCartUI();renderMyProducts()},e=>console.warn("[TUBAL HUB Shop] real products listener failed",e))}
 
 const state={
   collection:"all",
