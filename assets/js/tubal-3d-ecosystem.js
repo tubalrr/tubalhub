@@ -16,6 +16,12 @@
   const orbits = [...visual.querySelectorAll('.th-hub-orbit')];
   const rings = [...visual.querySelectorAll('.th-3d-ring')];
 
+  // Scroll is the primary director of the cinematic scene; pause the
+  // old free-running transforms so the camera has deterministic control.
+  [orb, ...rings, ...orbits].filter(Boolean).forEach((el) => {
+    el.style.animation = 'none';
+  });
+
   let hud = visual.querySelector('.th-cinematic-hud');
   if (!hud) {
     hud = document.createElement('div');
