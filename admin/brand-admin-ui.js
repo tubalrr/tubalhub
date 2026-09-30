@@ -5,8 +5,7 @@ const BRANDS={
   brand3:{label:"Brand 3",dot:"#3B82F6",soft:"#EFF6FF",border:"#BFDBFE"}
 };
 const STORAGE_KEY="tubalhub-admin-brand-scope";
-let activeBrand=localStorage.getItem(STORAGE_KEY)||"all";
-if(!BRANDS[activeBrand])activeBrand="all";
+let activeBrand="all";
 
 const BRAND_ALIASES={
   "kapeng barako":"kapeng","kapeng":"kapeng","brand 1":"kapeng","brand1":"kapeng","1":"kapeng","red":"kapeng",
@@ -51,6 +50,12 @@ function applyBrand(key){
   const previous=activeBrand;
   activeBrand=BRANDS[key]?key:"all";
   localStorage.setItem(STORAGE_KEY,activeBrand);
+  const kapengRoom=document.getElementById("kapengRoom");
+  if(kapengRoom){
+    const showKapeng=activeBrand==="kapeng";
+    kapengRoom.hidden=!showKapeng;
+    kapengRoom.setAttribute("aria-hidden",String(!showKapeng));
+  }
   const b=BRANDS[activeBrand];
   setVar("--brand-accent",b.dot);
   setVar("--brand-soft",b.soft);
