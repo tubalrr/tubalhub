@@ -1,11 +1,12 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.2.59",
-  "build": "2026-09-30_1948",
-  "releasedAtReal": "2026-09-30T11:48:00Z",
+  "version": "1.2.60",
+  "build": "2026-09-30_1955",
+  "releasedAtReal": "2026-09-30T11:55:00Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.2.60 FEAT — DARK BOT now explains every TUBAL DARK room and the community/updates areas, reads the current release note from version.json, highlights a newly changed version, and refreshes that information on each visit.",
     "v1.2.59 FEAT — DARK BOT now attempts automatic English welcome narration whenever TUBAL DARK is entered, with animated speaking state; a user gesture fallback is included for browsers that block autoplay audio.",
     "v1.2.58 FEAT — Added a TUBAL DARK Welcome panel with DARK BOT voice narration using the browser Speech Synthesis API.",
     "v1.2.57 FEAT — Added a dedicated TUBAL DARK Modding Hub for supported simulation projects, visual packs, community add-ons, profiles, world projects, and compatibility checks.",
