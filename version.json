@@ -1,11 +1,13 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.2.46",
+  "version": "1.2.47",
   "build": "2026-09-30_1353",
   "releasedAtReal": "2026-09-30T05:53:00Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.2.47 FIX — Admin brand revenue now includes only verified/paid orders and excludes pending_payment and rejected orders.",
+    "v1.2.47 UI — Revenue helper text now explicitly states that only verified paid orders are counted.",
     "v1.2.46 META — Corrected release build metadata to match the actual 2026-09-30 13:53 Asia/Manila release time.",
     "v1.2.46 SECURITY — Removed raw card-number, expiry and CVV collection from the TUBAL HUB Shop checkout.",
     "v1.2.46 FIX — paymentReference now reads only bank / e-wallet or PayPal reference fields; card numbers are no longer used as payment references.",
@@ -205,6 +207,12 @@
   ],
   "breakingReal": false,
   "changelog": [
+    {
+      "type": "FIX",
+      "icon": "₱",
+      "title": "Verified Sales Revenue",
+      "desc": "Brand revenue now sums only orders with paid status or paymentVerified=true; pending and rejected orders are excluded."
+    },
     {
       "type": "SECURITY",
       "icon": "🔒",
