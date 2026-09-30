@@ -1,11 +1,12 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.2.80",
-  "build": "2026-09-30_2206",
-  "releasedAtReal": "2026-09-30T14:06:12.917Z",
+  "version": "1.2.81",
+  "build": "2026-09-30_2209",
+  "releasedAtReal": "2026-09-30T14:09:08.312Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.2.81 FIX — Scoped the WebGL 3D experience to the existing TUBAL HUB Hero section only. It no longer sits as a fixed animation across the whole website/page.",
     "v1.2.80 FEAT — Replaced the rejected CSS orb animation with a real Three.js/WebGL homepage experience: cinematic camera path, 3D branch structures, animated data connections, particle field, moving scan plane, floating panels, scroll depth, pointer parallax, and a single persistent visual thread across the homepage. No human characters and no duplicate container.",
     "v1.2.79 FIX — Removed the rejected animated 3D hero visual from the homepage. The Hero now returns to a clean presentation without the orb, orbit, live frame, or cinematic 3D overlay. Existing homepage content and navigation remain intact.",
     "v1.2.78 FEAT — Upgraded the existing TUBAL HUB hero into a cinematic 3D digital ecosystem: scroll-controlled camera motion, pointer parallax, depth-based core/rings/nodes, live HUD progress, cinematic grid atmosphere, and a single unified visual thread for the connected Hub branches. No duplicate homepage container and no human characters.",
@@ -794,5 +795,5 @@
     }
   ],
   "date": "2026-09-30",
-  "changes": "v1.2.80 FEAT — Replaced the rejected CSS orb animation with a real Three.js/WebGL homepage experience: cinematic camera path, 3D branch structures, animated data connections, particle field, moving scan plane, floating panels, scroll depth, pointer parallax, and a single persistent visual thread across the homepage. No human characters and no duplicate container."
+  "changes": "v1.2.81 FIX — Scoped the WebGL 3D experience to the existing TUBAL HUB Hero section only. It no longer sits as a fixed animation across the whole website/page."
 }
