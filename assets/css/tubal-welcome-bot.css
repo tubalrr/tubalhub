@@ -1,0 +1,210 @@
+/* TUBAL HUB — Top Bar Welcome Bot */
+.tubal-welcome-bot{
+  position:relative;
+  z-index:40;
+  display:flex;
+  align-items:center;
+  flex:0 0 auto;
+  font-family:inherit;
+}
+.tubal-welcome-bot-toggle{
+  position:relative;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  min-height:42px;
+  padding:4px 10px 4px 5px;
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:999px;
+  background:rgba(255,255,255,.035);
+  color:#fff;
+  cursor:pointer;
+  transition:transform .2s ease,border-color .2s ease,background .2s ease,box-shadow .2s ease;
+}
+.tubal-welcome-bot-toggle:hover{
+  transform:translateY(-1px);
+  border-color:rgba(29,255,145,.35);
+  background:rgba(29,255,145,.055);
+  box-shadow:0 8px 24px rgba(0,0,0,.18);
+}
+.tubal-welcome-avatar{
+  position:relative;
+  width:34px;height:34px;
+  display:block;
+  flex:0 0 34px;
+}
+.tubal-bot-head{
+  position:absolute;
+  left:4px;top:3px;
+  width:25px;height:22px;
+  border:1px solid rgba(29,255,145,.55);
+  border-radius:8px;
+  background:#07110b;
+  box-shadow:inset 0 0 10px rgba(29,255,145,.08);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+}
+.tubal-bot-head i{
+  width:4px;height:4px;border-radius:50%;
+  background:#1dff91;
+  box-shadow:0 0 7px rgba(29,255,145,.7);
+  animation:tubalWelcomeBlink 4s infinite;
+}
+.tubal-bot-head b{
+  position:absolute;
+  left:50%;bottom:3px;
+  width:9px;height:2px;
+  transform:translateX(-50%);
+  border-radius:99px;
+  background:#b38cff;
+}
+.tubal-bot-body{
+  position:absolute;
+  left:9px;top:25px;
+  width:16px;height:8px;
+  border-radius:6px 6px 4px 4px;
+  background:#111a15;
+  border:1px solid rgba(255,255,255,.08);
+}
+.tubal-bot-arm{
+  position:absolute;
+  width:7px;height:12px;
+  border-radius:8px;
+  background:#1dff91;
+  opacity:.85;
+}
+.tubal-bot-arm-left{left:3px;top:24px;transform:rotate(28deg)}
+.tubal-bot-arm-right{
+  right:-1px;top:12px;
+  width:auto;height:auto;
+  background:none;
+  font-size:13px;
+  transform:rotate(-12deg);
+  transform-origin:bottom center;
+  filter:drop-shadow(0 0 4px rgba(29,255,145,.18));
+}
+.tubal-welcome-reaction{
+  position:absolute;
+  right:-5px;top:-5px;
+  font-size:10px;
+  opacity:.75;
+  animation:tubalWelcomeReaction 2.4s ease-in-out infinite;
+}
+.tubal-welcome-label{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  min-width:78px;
+  line-height:1.05;
+}
+.tubal-welcome-label strong{
+  color:#f4fff9;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.01em;
+}
+.tubal-welcome-label small{
+  margin-top:3px;
+  color:rgba(255,255,255,.43);
+  font-size:7px;
+  font-weight:700;
+}
+.tubal-welcome-live{
+  width:6px;height:6px;
+  margin-left:1px;
+  border-radius:50%;
+  background:#1dff91;
+  box-shadow:0 0 9px rgba(29,255,145,.7);
+}
+.tubal-welcome-bot-toggle.is-speaking{
+  border-color:rgba(29,255,145,.58);
+  background:rgba(29,255,145,.075);
+  box-shadow:0 0 22px rgba(29,255,145,.12);
+}
+.tubal-welcome-bot-toggle.is-speaking .tubal-bot-head{
+  animation:tubalWelcomeTalk .7s ease-in-out infinite;
+  border-color:rgba(29,255,145,.9);
+}
+.tubal-welcome-bot-toggle.is-speaking .tubal-bot-head b{
+  width:11px;height:6px;
+  animation:tubalWelcomeMouth .14s ease-in-out infinite alternate;
+}
+.tubal-welcome-bot-toggle.is-speaking .tubal-bot-head i{
+  animation:tubalWelcomeEyePulse .55s ease-in-out infinite;
+}
+.tubal-welcome-bot-toggle.is-speaking .tubal-bot-arm-right{
+  animation:tubalWelcomeWave .42s ease-in-out infinite alternate;
+}
+.tubal-welcome-bot-toggle.is-speaking .tubal-welcome-reaction{
+  content:"";
+  opacity:1;
+  animation:tubalWelcomeReactionSpeak .8s ease-in-out infinite;
+}
+.tubal-welcome-bubble{
+  position:absolute;
+  top:calc(100% + 10px);
+  right:0;
+  width:min(350px,calc(100vw - 28px));
+  padding:14px;
+  border:1px solid rgba(29,255,145,.18);
+  border-radius:17px;
+  background:rgba(7,13,9,.97);
+  box-shadow:0 18px 50px rgba(0,0,0,.42),inset 0 1px rgba(255,255,255,.04);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+}
+.tubal-welcome-bubble[hidden]{display:none}
+.tubal-main-bot-kicker{
+  display:block;
+  margin-bottom:4px;
+  color:#1dff91;
+  font-size:7px;
+  font-weight:900;
+  letter-spacing:1.5px;
+}
+.tubal-welcome-bubble strong{
+  display:block;
+  color:#f4fff9;
+  font-size:13px;
+}
+.tubal-welcome-bubble p{
+  margin:6px 0 0;
+  color:rgba(255,255,255,.58);
+  font-size:9px;
+  line-height:1.5;
+}
+.tubal-main-bot-actions{display:flex;gap:7px;margin-top:10px}
+.tubal-main-bot-actions button{
+  border:1px solid rgba(29,255,145,.18);
+  border-radius:9px;
+  background:rgba(255,255,255,.04);
+  color:#dfffea;
+  padding:7px 9px;
+  font:800 8px/1 inherit;
+  cursor:pointer;
+}
+.tubal-main-bot-actions button:first-child{
+  background:rgba(29,255,145,.08);
+  border-color:rgba(29,255,145,.3);
+  color:#1dff91;
+}
+@keyframes tubalWelcomeBlink{0%,43%,47%,100%{opacity:1}45%{opacity:.15}}
+@keyframes tubalWelcomeTalk{50%{transform:translateY(-1px) scale(1.04)}}
+@keyframes tubalWelcomeMouth{from{height:2px}to{height:6px}}
+@keyframes tubalWelcomeEyePulse{50%{transform:scale(.72);opacity:.5}}
+@keyframes tubalWelcomeWave{from{transform:rotate(-24deg) translateY(1px)}to{transform:rotate(18deg) translateY(-2px)}}
+@keyframes tubalWelcomeReaction{50%{transform:translateY(-2px) scale(1.12)}}
+@keyframes tubalWelcomeReactionSpeak{50%{transform:translateY(-4px) scale(1.3) rotate(8deg)}}
+@media(max-width:900px){
+  .tubal-welcome-label{display:none}
+  .tubal-welcome-bot-toggle{padding-right:6px}
+}
+@media(max-width:600px){
+  .tubal-welcome-bot{order:0}
+  .tubal-welcome-bubble{right:-8px;width:min(330px,calc(100vw - 24px))}
+}
+@media(prefers-reduced-motion:reduce){
+  .tubal-bot-head i,.tubal-welcome-reaction,.tubal-welcome-bot-toggle.is-speaking .tubal-bot-head,.tubal-welcome-bot-toggle.is-speaking .tubal-bot-head i,.tubal-welcome-bot-toggle.is-speaking .tubal-bot-arm-right{animation:none!important}
+}
