@@ -17,7 +17,7 @@ body.hub-home .th-value-grid{
 @media (min-width:768px){
   body.hub-home #thBrandPillars .th-pillar-grid,
   body.hub-home .th-value-grid{
-    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+    grid-template-columns:repeat(4,minmax(0,1fr)) !important;
   }
 
   body.hub-home #thBrandPillars .th-pillar-grid{
@@ -298,4 +298,13 @@ body.hub-home .th-branch-card:hover .th-branch-arrow{
 @media(max-width:600px){
   body.hub-home .th-branch-card{padding:.85rem !important}
   body.hub-home .th-branch-copy em{font-size:.6rem !important}
+}
+
+
+@media(max-width:1100px){
+  body.hub-home .th-branch-grid{grid-template-columns:repeat(2,minmax(0,1fr)) !important}
+}
+body.hub-home .th-branch-card--kapeng:hover{
+  border-color:rgba(255,204,0,.50) !important;
+  box-shadow:0 12px 28px rgba(0,0,0,.35),0 0 20px rgba(255,204,0,.08) !important;
 }
