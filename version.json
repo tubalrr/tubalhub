@@ -1,11 +1,14 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.2.39",
-  "build": "2026-09-30_1258",
-  "releasedAtReal": "2026-09-30T04:58:00Z",
+  "version": "1.2.40",
+  "build": "2026-09-30_1318",
+  "releasedAtReal": "2026-09-30T05:18:00Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.2.40 FEAT — Added a full Firestore-controlled Maintenance System with ON/OFF, custom title/message, start/end schedule, and allowed admin bypass users.",
+    "v1.2.40 SECURITY — Firestore maintenance writes are admin-only and schema-validated; the public site only reads the maintenance setting.",
+    "v1.2.40 REFACTOR — Maintenance runtime and styling were moved out of app.js and into dedicated maintenance.js / maintenance.css assets.",
     "v1.2.39 FIX — Removed generic Facebook, YouTube, TikTok, LinkedIn, Instagram, and X homepage destinations from the TUBAL HUB homepage.",
     "v1.2.39 UI — Unconfigured social accounts now show a clear \"Social accounts coming soon\" state instead of routing visitors to platform homepages.",
     "v1.2.39 CLEANUP — Community remains an internal TUBAL HUB link; only unverified external social destinations were removed.",
@@ -184,6 +187,36 @@
   ],
   "breakingReal": false,
   "changelog": [
+    {
+      "type": "FEAT",
+      "icon": "⚙",
+      "title": "Maintenance System Control",
+      "desc": "Admin can turn maintenance ON/OFF and configure the public maintenance experience from System Settings."
+    },
+    {
+      "type": "FEAT",
+      "icon": "◷",
+      "title": "Start / End Schedule",
+      "desc": "Maintenance can be scheduled with a start and end window and the public overlay changes automatically at the schedule boundaries."
+    },
+    {
+      "type": "FEAT",
+      "icon": "🛡",
+      "title": "Allowed Admin Users",
+      "desc": "Specific Firebase Auth UIDs can bypass the public maintenance overlay without granting additional admin privileges."
+    },
+    {
+      "type": "SECURITY",
+      "icon": "🔒",
+      "title": "Firestore Rule Validation",
+      "desc": "Maintenance writes stay admin-only and the maintenance document is restricted to the expected configuration fields and value types."
+    },
+    {
+      "type": "REFACTOR",
+      "icon": "↗",
+      "title": "Dedicated Maintenance Runtime",
+      "desc": "The maintenance overlay and logic are now external assets rather than injected by app.js."
+    },
     {
       "type": "FIX",
       "icon": "🔗",
@@ -520,5 +553,5 @@
     }
   ],
   "date": "2026-09-27",
-  "changes": "v1.2.39 — Removed generic social links and added a professional unconfigured social state."
+  "changes": "v1.2.40 — Full Firestore-controlled maintenance system with admin controls and dedicated runtime assets."
 }
