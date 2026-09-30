@@ -1,6 +1,6 @@
 const BRANDS={
   all:{label:"Master Hub",dot:"#1E1B16",soft:"#F5F0E8",border:"#E8DED2"},
-  brand1:{label:"Brand 1",dot:"#EF4444",soft:"#FEF2F2",border:"#FECACA"},
+  kapeng:{label:"Kapeng Barako",dot:"#C8A951",soft:"#FFF8E7",border:"#E7C96B"},
   brand2:{label:"Brand 2",dot:"#10B981",soft:"#ECFDF5",border:"#A7F3D0"},
   brand3:{label:"Brand 3",dot:"#3B82F6",soft:"#EFF6FF",border:"#BFDBFE"}
 };
@@ -9,17 +9,21 @@ let activeBrand=localStorage.getItem(STORAGE_KEY)||"all";
 if(!BRANDS[activeBrand])activeBrand="all";
 
 const BRAND_ALIASES={
-  "brand 1":"brand1","brand1":"brand1","1":"brand1","red":"brand1",
+  "kapeng barako":"kapeng","kapeng":"kapeng","brand 1":"kapeng","brand1":"kapeng","1":"kapeng","red":"kapeng",
   "brand 2":"brand2","brand2":"brand2","2":"brand2","green":"brand2",
   "brand 3":"brand3","brand3":"brand3","3":"brand3","blue":"brand3"
 };
 
 function normalizeBrand(value){
   const v=String(value??"").trim().toLowerCase();
-  return BRAND_ALIASES[v]||["brand1","brand2","brand3"].includes(v)?v:"unassigned";
+  return BRAND_ALIASES[v]||["kapeng","brand2","brand3"].includes(v)?v:"unassigned";
 }
 function productBrand(p){
-  return normalizeBrand(p?.brandKey??p?.brandId??p?.brand??p?.brandName);
+  const direct=normalizeBrand(p?.brandKey??p?.brandId??p?.brand??p?.brandName);
+  if(direct!=="unassigned")return direct;
+  const category=String(p?.category||"").trim().toLowerCase();
+  if(category==="coffee" || /barako|kapeng/i.test(String(p?.name||"")))return "kapeng";
+  return "unassigned";
 }
 function orderBrand(o,products){
   const direct=normalizeBrand(o?.brandKey??o?.brandId??o?.brand??o?.brandName);
