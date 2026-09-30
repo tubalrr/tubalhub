@@ -4,6 +4,7 @@
   const el = (id) => document.getElementById(id);
   const WELCOME_USER_KEY = "tubal_welcome_bot_last_user";
   const LAST_VERSION_KEY = "tubal_welcome_bot_last_version";
+  const UPDATE_ANNOUNCED_KEY = "tubal_welcome_bot_update_announced";
   const MUTED_KEY = "tubal_welcome_bot_muted";
   const GUEST_ID = "__guest__";
 
@@ -57,16 +58,16 @@
   }
 
   function buildUpdateMessage(release, items) {
-    const top = (items?.length ? items : [{
+    const first = (items?.length ? items[0] : {
       version: release.version,
       text: release.latest
-    }]).slice(0, 4);
+    }) || { version: release.version, text: release.latest };
 
-    const details = top.map((item, index) =>
-      `${index === 0 ? "" : " Also, "}${item.text || "A new system change is now available."}`
-    ).join("");
+    const detail = String(first.text || "A new system change is now available.")
+      .replace(/^v?\\d+\\.\\d+\\.\\d+\\s*/i, "")
+      .trim();
 
-    return `TUBAL HUB update detected. Version ${release.version} is now live. ${details}`;
+    return `Attention. New update detected in TUBAL HUB. Version ${release.version} is now live. ${detail}`;
   }
 
   function setLatestItem(latestEl, item, animate = true) {
@@ -245,6 +246,11 @@
 
       const changedUser = lastUser !== userId;
       const hasNewRelease = shouldUseUpdateMessage(release.version);
+      let justAnnouncedUpdate = false;
+      try {
+        justAnnouncedUpdate = sessionStorage.getItem(UPDATE_ANNOUNCED_KEY) === release.version;
+        if (justAnnouncedUpdate) sessionStorage.removeItem(UPDATE_ANNOUNCED_KEY);
+      } catch (_) {}
 
       if (changedUser) {
         welcomeSpokenForState = false;
@@ -256,14 +262,14 @@
       if (!initialized) {
         initialized = true;
 
-        if (hasNewRelease) {
+        if (hasNewRelease && !justAnnouncedUpdate) {
           if (!muted) showUpdate(release, release.latestItems);
         } else if (changedUser && !muted) {
           showWelcome(release);
         }
       } else if (changedUser && !muted) {
         // Happens after logout → login without a full page refresh.
-        if (hasNewRelease) {
+        if (hasNewRelease && !justAnnouncedUpdate) {
           showUpdate(release, release.latestItems);
         } else {
           welcomeSpokenForState = false;
@@ -316,8 +322,9 @@
       const release = await getRelease();
       if (String(release.version) !== String(data.version)) return;
 
-      rememberVersion(release.version);
+      try { sessionStorage.setItem(UPDATE_ANNOUNCED_KEY, release.version); } catch (_) {}
       showUpdate(release, release.latestItems);
+      rememberVersion(release.version);
     });
 
     loadAuth().then(bridge => {
