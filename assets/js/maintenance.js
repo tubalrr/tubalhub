@@ -25,10 +25,19 @@
       : [];
   }
 
-  function isAllowedAdmin(user, allowedUsers) {
+  async function isAllowedAdmin(user, allowedUsers) {
     if (!user) return false;
     const allowed = normalizedList(allowedUsers);
-    return allowed.includes(user.uid);
+    if (!allowed.includes(user.uid)) return false;
+
+    try {
+      const result = await user.getIdTokenResult();
+      const claims = result?.claims || {};
+      return claims.admin === true ||
+        (String(user.email || "").toLowerCase() === "tubalrr@gmail.com" && user.emailVerified === true);
+    } catch (_) {
+      return false;
+    }
   }
 
   function isMaintenanceActive(config) {
@@ -65,7 +74,7 @@
     const delay = Math.min(Math.max(boundaries[0] - now + 50, 250), 2147483647);
     boundaryTimer = setTimeout(() => {
       boundaryTimer = null;
-      render();
+      Promise.resolve(render()).catch(() => {});
       scheduleBoundary(config, render);
     }, delay);
   }
@@ -99,12 +108,17 @@
     document.getElementById("tubalMaintenanceOverlay")?.remove();
   }
 
-  function render(user) {
+  async function render(user) {
     const config = currentConfig || {};
     const active = isMaintenanceActive(config);
-    const allowed = isAllowedAdmin(user, config.allowedAdminUsers);
 
-    if (!active || allowed) {
+    if (!active) {
+      removeOverlay();
+      return;
+    }
+
+    const allowed = await isAllowedAdmin(user, config.allowedAdminUsers);
+    if (allowed) {
       removeOverlay();
       return;
     }
