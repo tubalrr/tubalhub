@@ -1,11 +1,14 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.2.38",
-  "build": "2026-09-30_1248",
-  "releasedAtReal": "2026-09-30T04:48:00Z",
+  "version": "1.2.39",
+  "build": "2026-09-30_1258",
+  "releasedAtReal": "2026-09-30T04:58:00Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.2.39 FIX — Removed generic Facebook, YouTube, TikTok, LinkedIn, Instagram, and X homepage destinations from the TUBAL HUB homepage.",
+    "v1.2.39 UI — Unconfigured social accounts now show a clear \"Social accounts coming soon\" state instead of routing visitors to platform homepages.",
+    "v1.2.39 CLEANUP — Community remains an internal TUBAL HUB link; only unverified external social destinations were removed.",
     "v1.2.38 FIX — EmailJS now requires a real public key, service ID, and template ID before the homepage marks email notifications as ready.",
     "v1.2.38 UI — The footer explicitly shows \"Email notifications are not configured yet.\" when EmailJS credentials are missing.",
     "v1.2.38 SECURITY — Removed misleading default service/template identifiers so the notification system cannot appear configured before the owner supplies real credentials.",
@@ -181,6 +184,24 @@
   ],
   "breakingReal": false,
   "changelog": [
+    {
+      "type": "FIX",
+      "icon": "🔗",
+      "title": "Removed Generic Social Destinations",
+      "desc": "The homepage no longer sends visitors to generic Facebook, YouTube, TikTok, LinkedIn, Instagram, or X homepages."
+    },
+    {
+      "type": "UI",
+      "icon": "◌",
+      "title": "Social Accounts Coming Soon",
+      "desc": "Unconfigured official social accounts now use a professional pending state instead of placeholder external links."
+    },
+    {
+      "type": "CLEANUP",
+      "icon": "✓",
+      "title": "Internal Community Link Preserved",
+      "desc": "The existing TUBAL HUB Community link remains available because it is an internal site destination."
+    },
     {
       "type": "FIX",
       "icon": "@",
@@ -499,5 +520,5 @@
     }
   ],
   "date": "2026-09-27",
-  "changes": "v1.2.38 — EmailJS configuration gate and explicit not-configured UI."
+  "changes": "v1.2.39 — Removed generic social links and added a professional unconfigured social state."
 }
