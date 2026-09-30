@@ -1,11 +1,12 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.2.66",
-  "build": "2026-09-30_2038",
-  "releasedAtReal": "2026-09-30T12:38:00Z",
+  "version": "1.2.67",
+  "build": "2026-09-30_2045",
+  "releasedAtReal": "2026-09-30T12:45:00Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.2.67 FEAT — Live update system now checks version.json every 60 seconds while the site is open and automatically reloads once when a new release is detected, so users do not need to manually refresh.",
     "v1.2.66 FIX — Removed the Listen and Replay buttons from the Welcome Bot. Voice narration is automatic, with only a speaker icon available to mute or unmute the bot; the mute choice is remembered in this browser.",
     "v1.2.65 FIX — Welcome Bot is now fully automatic on homepage entry with no Listen or Replay buttons. Added a persistent speaker mute/unmute control; when unmuted it speaks automatically, and when muted it stops narration and remembers the setting in this browser.",
     "v1.2.64 FEAT — Added the Welcome Bot beside the homepage search in the top bar with automatic voice narration, waving-hand animation, speaking mouth/eyes, live reaction effects, and a compact guide panel.",
