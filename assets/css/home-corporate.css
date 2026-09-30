@@ -609,9 +609,11 @@ body.theme-light.hub-home .feed-update-text{
 }
 .th-container-female{
   animation:thFemaleFloat 3.7s ease-in-out infinite;
+  animation-delay:var(--th-character-delay,0s);
 }
 .th-container-male{
   animation:thMaleFloat 4.1s ease-in-out infinite .25s;
+  animation-delay:calc(var(--th-character-delay,0s) + .25s);
 }
 .th-character-aura{
   animation:thCharacterGlow 2.8s ease-in-out infinite;
