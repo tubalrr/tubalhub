@@ -95,6 +95,7 @@ body{margin:0;min-width:320px;font-family:Inter,ui-sans-serif,system-ui,-apple-s
     <div class="mb-2 px-2 text-[9px] font-extrabold uppercase tracking-[.16em] text-slate-500">Workspace</div>
     <nav class="space-y-1">
       <a href="#dashboard" class="nav-link flex items-center gap-3 rounded-xl bg-slate-800 px-3 py-2.5 text-xs font-bold text-white"><span class="w-5 text-center">⌂</span><span>Dashboard</span></a>
+      <a href="#kapengRoom" class="nav-link flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-semibold text-slate-300 hover:bg-slate-800 hover:text-white"><span class="w-5 text-center">☕</span><span>Kapeng Barako</span></a>
       <a href="#analytics" class="nav-link flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-semibold text-slate-300 hover:bg-slate-800 hover:text-white"><span class="w-5 text-center">◌</span><span>Analytics</span></a>
       <a href="#shopProducts" class="nav-link flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-semibold text-slate-300 hover:bg-slate-800 hover:text-white"><span class="w-5 text-center">◈</span><span>Products</span></a>
       <a href="#shopOrders" class="nav-link flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-semibold text-slate-300 hover:bg-slate-800 hover:text-white"><span class="w-5 text-center">▣</span><span>Orders</span></a>
@@ -214,13 +215,50 @@ body{margin:0;min-width:320px;font-family:Inter,ui-sans-serif,system-ui,-apple-s
       </div>
 
       <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
-        <article class="admin-card p-5"><div class="flex items-center justify-between"><div class="flex items-center gap-2"><span class="h-2.5 w-2.5 rounded-full bg-red-500"></span><b class="text-sm">Brand 1</b></div><span class="rounded-full bg-red-50 px-2 py-1 text-[9px] font-extrabold text-red-700">RED</span></div><div class="mt-5 grid grid-cols-2 gap-4"><div><strong data-brand-orders="kapeng" class="text-xl">0</strong><div class="text-[10px] text-slate-500">orders</div></div><div><strong data-brand-products="kapeng" class="text-xl">0</strong><div class="text-[10px] text-slate-500">products</div></div></div></article>
+        <article class="admin-card p-5"><div class="flex items-center justify-between"><div class="flex items-center gap-2"><span class="h-2.5 w-2.5 rounded-full bg-amber-500"></span><b class="text-sm">Kapeng Barako</b></div><span class="rounded-full bg-amber-50 px-2 py-1 text-[9px] font-extrabold text-amber-700">COFFEE</span></div><div class="mt-5 grid grid-cols-2 gap-4"><div><strong data-brand-orders="kapeng" class="text-xl">0</strong><div class="text-[10px] text-slate-500">orders</div></div><div><strong data-brand-products="kapeng" class="text-xl">0</strong><div class="text-[10px] text-slate-500">products</div></div></div></article>
         <article class="admin-card p-5"><div class="flex items-center justify-between"><div class="flex items-center gap-2"><span class="h-2.5 w-2.5 rounded-full bg-emerald-500"></span><b class="text-sm">Brand 2</b></div><span class="rounded-full bg-emerald-50 px-2 py-1 text-[9px] font-extrabold text-emerald-700">GREEN</span></div><div class="mt-5 grid grid-cols-2 gap-4"><div><strong data-brand-orders="brand2" class="text-xl">0</strong><div class="text-[10px] text-slate-500">orders</div></div><div><strong data-brand-products="brand2" class="text-xl">0</strong><div class="text-[10px] text-slate-500">products</div></div></div></article>
         <article class="admin-card p-5"><div class="flex items-center justify-between"><div class="flex items-center gap-2"><span class="h-2.5 w-2.5 rounded-full bg-blue-500"></span><b class="text-sm">Brand 3</b></div><span class="rounded-full bg-blue-50 px-2 py-1 text-[9px] font-extrabold text-blue-700">BLUE</span></div><div class="mt-5 grid grid-cols-2 gap-4"><div><strong data-brand-orders="brand3" class="text-xl">0</strong><div class="text-[10px] text-slate-500">orders</div></div><div><strong data-brand-products="brand3" class="text-xl">0</strong><div class="text-[10px] text-slate-500">products</div></div></div></article>
       </div>
 
     </section>
 
+
+    <!-- KAPENG BARAKO ROOM -->
+    <section id="kapengRoom" class="mb-8">
+      <div class="admin-card overflow-hidden" style="border-color:#e7c96b">
+        <div class="p-6" style="background:linear-gradient(135deg,#1a1207 0%,#221a0e 60%,#30220f 100%);color:#f5e9d3">
+          <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <div class="text-[9px] font-extrabold uppercase tracking-[.18em]" style="color:#c8a951">TUBAL HUB BRANCH ROOM</div>
+              <h2 class="mt-1 text-2xl font-extrabold">☕ Kapeng Barako</h2>
+              <p class="mt-1 text-xs" style="color:#b8a998">Dedicated sales, products, inventory and orders workspace.</p>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              <button id="kapengAddProduct" type="button" class="admin-primary" style="background:#c8a951;border-color:#c8a951;color:#1a1207">+ Add Kapeng Product</button>
+              <button id="kapengManageOrders" type="button" class="admin-secondary">Manage Orders</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 p-4 md:grid-cols-4">
+          <article class="rounded-2xl border border-slate-200 bg-white p-4"><div class="text-[9px] font-extrabold uppercase tracking-[.12em] text-slate-400">Paid Sales</div><div id="kapengSales" class="mt-2 text-xl font-extrabold">₱0</div><div class="mt-1 text-[10px] text-slate-500">Verified orders</div></article>
+          <article class="rounded-2xl border border-slate-200 bg-white p-4"><div class="text-[9px] font-extrabold uppercase tracking-[.12em] text-slate-400">Paid Orders</div><div id="kapengPaidOrders" class="mt-2 text-xl font-extrabold">0</div><div class="mt-1 text-[10px] text-slate-500">Completed payments</div></article>
+          <article class="rounded-2xl border border-slate-200 bg-white p-4"><div class="text-[9px] font-extrabold uppercase tracking-[.12em] text-slate-400">Pending</div><div id="kapengPendingOrders" class="mt-2 text-xl font-extrabold">0</div><div class="mt-1 text-[10px] text-slate-500">Awaiting verification</div></article>
+          <article class="rounded-2xl border border-slate-200 bg-white p-4"><div class="text-[9px] font-extrabold uppercase tracking-[.12em] text-slate-400">Products</div><div id="kapengProducts" class="mt-2 text-xl font-extrabold">0</div><div class="mt-1 text-[10px] text-slate-500">Kapeng catalog</div></article>
+        </div>
+
+        <div class="grid grid-cols-1 gap-6 border-t border-slate-200 p-6 xl:grid-cols-2">
+          <div>
+            <div class="admin-card-head"><div><small>Kapeng Barako</small><h2 class="mt-1">Top Products</h2><p>Units sold and sales from verified orders.</p></div><span class="admin-badge">SALES</span></div>
+            <div id="kapengTopProducts"></div>
+          </div>
+          <div>
+            <div class="admin-card-head"><div><small>Kapeng Barako</small><h2 class="mt-1">Recent Orders</h2><p>Orders from the shared TUBAL HUB checkout.</p></div><span class="admin-badge">ORDERS</span></div>
+            <div id="kapengRecentOrders" class="max-h-[360px] overflow-auto"></div>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <div class="legacy-metrics" aria-hidden="true">
       <span id="totalUsersCard">0</span><span id="totalUsersReal">0</span><span id="totalMsgsReal">0</span><span id="blockedReal">0</span>
@@ -610,6 +648,62 @@ function userInitials(x){
   const name=String(x.displayName||x.email||"Member").trim();
   return name.split(/\s+/).filter(Boolean).slice(0,2).map(p=>p[0]).join("").toUpperCase()||"M";
 }
+function renderKapengRoom(){
+  const isKapengText=v=>/barako|kapeng/i.test(String(v||""));
+  const kapengProduct=p=>String(p?.brandKey||p?.brandId||p?.brandName||"").toLowerCase()==="kapeng" || String(p?.category||"").toLowerCase()==="coffee" || isKapengText(p?.name);
+  const productsById=new Map(shopProducts.map(p=>[p.id,p]));
+  const getItems=o=>{
+    const items=Array.isArray(o?.items)?o.items:[];
+    const tagged=items.filter(i=>String(i?.brandKey||"").toLowerCase()==="kapeng" || isKapengText(i?.brandName) || isKapengText(i?.title));
+    if(tagged.length)return tagged;
+    const isOrderKapeng=String(o?.brandKey||"").toLowerCase()==="kapeng" || isKapengText(o?.brandName);
+    return isOrderKapeng?items:[];
+  };
+  const kapengProducts=shopProducts.filter(kapengProduct);
+  const kapengOrders=shopOrders.filter(o=>getItems(o).length>0);
+  const paid=kapengOrders.filter(o=>String(o?.status||"").toLowerCase()==="paid");
+  const pending=kapengOrders.filter(o=>String(o?.status||"").toLowerCase()==="pending_payment");
+  const moneyValue=v=>{const n=Number(String(v??"").replace(/[^0-9.-]/g,""));return Number.isFinite(n)?n:0};
+  const sales=paid.reduce((sum,o)=>{
+    const items=getItems(o);
+    if(String(o?.brandKey||"").toLowerCase()==="kapeng" || items.every(i=>String(i?.brandKey||"").toLowerCase()==="kapeng"))return sum+moneyValue(o.total);
+    return sum+items.reduce((s,i)=>s+moneyValue(i.price)*Number(i.qty||0),0);
+  },0);
+  $("kapengSales").textContent="₱"+sales.toLocaleString("en-PH",{maximumFractionDigits:2});
+  $("kapengPaidOrders").textContent=String(paid.length);
+  $("kapengPendingOrders").textContent=String(pending.length);
+  $("kapengProducts").textContent=String(kapengProducts.length);
+
+  const top=new Map();
+  paid.forEach(o=>getItems(o).forEach(i=>{
+    const key=String(i?.productId||i?.sourceProductId||i?.title||"Product");
+    const row=top.get(key)||{title:String(i?.title||i?.productId||"Product"),qty:0,sales:0};
+    row.qty+=Number(i?.qty||0);
+    row.sales+=moneyValue(i?.price)*Number(i?.qty||0);
+    top.set(key,row);
+  }));
+  const topRows=Array.from(top.values()).sort((a,b)=>b.sales-a.sales).slice(0,8);
+  $("kapengTopProducts").innerHTML=topRows.length
+    ? topRows.map((x,i)=>'<div class="item"><div><b>'+(i+1)+'. '+esc(x.title)+'</b><p>'+x.qty+' unit(s) sold</p></div><strong class="text-xs">₱'+x.sales.toLocaleString("en-PH",{maximumFractionDigits:2})+'</strong></div>').join("")
+    : '<div class="empty">No verified Kapeng Barako sales yet.</div>';
+
+  const recent=kapengOrders.slice().sort((a,b)=>{
+    const av=a.createdAt?.toMillis?.()||0,bv=b.createdAt?.toMillis?.()||0;
+    return bv-av;
+  }).slice(0,12);
+  $("kapengRecentOrders").innerHTML=recent.length
+    ? recent.map(o=>{
+        const items=getItems(o);
+        const total=String(o?.brandKey||"").toLowerCase()==="kapeng" ? moneyValue(o.total) : items.reduce((s,i)=>s+moneyValue(i.price)*Number(i.qty||0),0);
+        const created=o.createdAt?.toMillis?.()?new Date(o.createdAt.toMillis()).toLocaleString():"Pending timestamp";
+        return '<div class="item"><div><b>'+esc(o.id)+'</b><p>'+esc(items.map(i=>String(i.title||i.productId||"Product")+" × "+Number(i.qty||0)).join(", "))+'</p><small>'+esc(o.paymentMethod||"Manual payment")+' • '+esc(o.status||"pending_payment")+' • '+created+'</small></div><strong class="text-xs">₱'+total.toLocaleString("en-PH",{maximumFractionDigits:2})+'</strong></div>';
+      }).join("")
+    : '<div class="empty">No Kapeng Barako orders yet.</div>';
+
+  const recentProductCount=kapengProducts.length;
+  const roomNote=document.querySelector("#kapengRoom .admin-card-head p");
+  if(roomNote)roomNote.textContent=recentProductCount+" Kapeng product"+(recentProductCount===1?"":"s")+" in the TUBAL HUB catalog.";
+}
 function render(){
   members.sort((a,b)=>userTime(b)-userTime(a));
   $("totalUsersCard").textContent=members.length;
@@ -651,6 +745,8 @@ function render(){
   }).join("")||'<div class="empty">No member profiles found.</div>';
 
   const orderStatusColor=s=>s==="paid"?"#55e6a5":s==="rejected"?"#ff7b8a":"#f6c86b";
+  renderKapengRoom();
+
   $("shopOrderList").innerHTML=shopOrders.map(x=>{
     const created=x.createdAt?.toMillis?.()?new Date(x.createdAt.toMillis()).toLocaleString():"Pending timestamp";
     const isPending=x.status==="pending_payment";
@@ -804,6 +900,21 @@ if(sidebarToggle&&sidebar){
     if(window.innerWidth<=900 && e.target.closest("a")) setSidebarState(false);
   });
 }
+$("kapengAddProduct")?.addEventListener("click",()=>{
+  const brand=$("spBrand"),category=$("spCategory");
+  if(brand)brand.value="kapeng";
+  if(category)category.value="coffee";
+  document.querySelector("#shopProducts")?.scrollIntoView({behavior:"smooth",block:"start"});
+  setTimeout(()=>$("spName")?.focus(),450);
+  document.querySelector('[data-brand-switch="kapeng"]')?.click();
+});
+$("kapengManageOrders")?.addEventListener("click",()=>{
+  document.querySelector('[data-brand-switch="kapeng"]')?.click();
+  document.querySelector("#shopOrders")?.scrollIntoView({behavior:"smooth",block:"start"});
+});
+document.querySelector('a[href="#kapengRoom"]')?.addEventListener("click",()=>{
+  setTimeout(()=>document.querySelector('[data-brand-switch="kapeng"]')?.click(),0);
+});
 $("logout").onclick=()=>signOut(auth);
 onAuthStateChanged(auth,async user=>{if(!user||user.email?.toLowerCase()!==ADMIN_EMAIL){location.replace("login.html");return}$("adminEmail").textContent=user.email;$("loading").remove();$("app").hidden=false;await load();listenToPresence();listenToCleanupStats();await loadMaintenanceSetting();await loadSponsoredAds();await loadAnalyticsReal()});
 </script>
