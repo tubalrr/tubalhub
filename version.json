@@ -1,11 +1,12 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.2.72",
-  "build": "2026-09-30_2120",
-  "releasedAtReal": "2026-09-30T13:20:00Z",
+  "version": "1.2.73",
+  "build": "2026-09-30_2127",
+  "releasedAtReal": "2026-09-30T13:27:00Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.2.73 FEAT — Added subtle animated female and male character accents to major homepage containers/cards, with 3D-style depth, floating motion, and matching shadow animation while keeping content unobstructed.",
     "v1.2.72 FEAT — Added a lightweight 3D Digital Ecosystem animation to the homepage hero: depth-based hub core, multi-axis rotating rings, floating particles, 3D brand-node depth, and animated logo elevation.",
     "v1.2.71 FIX — When a new system release is detected, Welcome Bot now explicitly announces that a NEW UPDATE has been detected, speaks the new version and latest change, then allows the automatic refresh to complete without asking the user to refresh manually.",
     "v1.2.70 FIX — Welcome Bot now welcomes each logged-in user only once per login session. Refreshing the page does not repeat the welcome, logout clears the welcome state, and logging in again triggers a fresh welcome. When a new system release is detected, the bot explains the update instead of repeating the full welcome guide.",
