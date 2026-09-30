@@ -835,6 +835,65 @@ exports.createShopOrderReal = onCall(async request => {
   };
 });
 
+exports.updateShopFulfillmentReal = onCall(async request => {
+  requireAdminUser(request);
+
+  const orderId = String(request.data?.orderId || "").trim();
+  const fulfillmentStatus = String(request.data?.fulfillmentStatus || "").trim().toLowerCase();
+
+  if (!orderId) throw new HttpsError("invalid-argument", "Order ID is required.");
+  if (!["pending","ready","delivered"].includes(fulfillmentStatus)) {
+    throw new HttpsError("invalid-argument", "Invalid fulfillment status.");
+  }
+
+  const orderRef = db.collection("orders").doc(orderId);
+
+  return db.runTransaction(async tx => {
+    const orderSnap = await tx.get(orderRef);
+    if (!orderSnap.exists) throw new HttpsError("not-found", "Order not found.");
+
+    const order = orderSnap.data() || {};
+    if (String(order.status || "").toLowerCase() !== "paid") {
+      throw new HttpsError("failed-precondition", "Payment must be verified before fulfillment can be updated.");
+    }
+
+    if (String(order.type || "purchase").toLowerCase() === "upgrade") {
+      throw new HttpsError("failed-precondition", "Upgrade orders do not use physical fulfillment.");
+    }
+
+    const items = Array.isArray(order.items) ? order.items : [];
+    const isPhysical = items.some(item => String(item?.productType || "physical").toLowerCase() === "physical");
+    if (!isPhysical) {
+      throw new HttpsError("failed-precondition", "This order has no physical items.");
+    }
+
+    const current = String(order.fulfillmentStatus || "pending").toLowerCase();
+    if (current === fulfillmentStatus) {
+      return { success: true, alreadySet: true, fulfillmentStatus: current };
+    }
+
+    const allowed =
+      (current === "pending" && fulfillmentStatus === "ready") ||
+      (current === "ready" && fulfillmentStatus === "delivered");
+
+    if (!allowed) {
+      throw new HttpsError("failed-precondition", "Fulfillment must progress Pending → Ready → Delivered.");
+    }
+
+    const update = {
+      fulfillmentStatus,
+      updatedAt: FieldValue.serverTimestamp(),
+      fulfillmentUpdatedAt: FieldValue.serverTimestamp(),
+      fulfillmentUpdatedBy: request.auth.uid
+    };
+    if (fulfillmentStatus === "ready") update.readyAt = FieldValue.serverTimestamp();
+    if (fulfillmentStatus === "delivered") update.deliveredAt = FieldValue.serverTimestamp();
+
+    tx.update(orderRef, update);
+    return { success: true, alreadySet: false, fulfillmentStatus };
+  });
+});
+
 exports.upgradeShopProductReal = onCall(async request => {
   requireRealUser(request);
 
