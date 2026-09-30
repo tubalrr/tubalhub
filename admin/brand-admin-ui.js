@@ -167,7 +167,8 @@ function refreshData(){
 
   const selectedOrders=activeBrand==="all"?orders:orders.filter(o=>orderBrand(o,products)===activeBrand);
   const selectedProducts=activeBrand==="all"?products:products.filter(p=>productBrand(p)===activeBrand);
-  const revenue=selectedOrders.reduce((sum,o)=>{
+  const verifiedOrders=selectedOrders.filter(o=>o?.status==="paid"||o?.paymentVerified===true);
+  const revenue=verifiedOrders.reduce((sum,o)=>{
     const n=Number(o?.total);
     return Number.isFinite(n)?sum+n:sum;
   },0);
@@ -180,7 +181,7 @@ function refreshData(){
   if(invEl)invEl.textContent=String(selectedProducts.length);
 
   const note=document.getElementById("brandRevenueNote");
-  if(note)note.textContent=revenue>0?"Loaded order totals":"No revenue totals in loaded records";
+  if(note)note.textContent=revenue>0?"Verified paid orders only":"No verified paid sales in loaded records";
   document.querySelectorAll("[data-brand-orders]").forEach(el=>{
     const key=el.dataset.brandOrders;
     el.textContent=String(orders.filter(o=>orderBrand(o,products)===key).length);
