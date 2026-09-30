@@ -1321,7 +1321,7 @@ async function initFooter(){
   updateLiveStatusReal();
 
   try{
-    const r=await fetch("version.json?t=1790743217974"+Date.now(),{cache:"no-store"});
+    const r=await fetch("version.json?t="+Date.now(),{cache:"no-store"});
     if(!r.ok)throw new Error("version "+r.status);
     const data=await r.json();
     setVersion(data?.version,data?.build);
@@ -1944,7 +1944,7 @@ async function renderRealData(){
 }
 async function loadBentoVersion(){
   try{
-    const response=await fetch(new URL("version.json?t=1790743217974"+Date.now(),document.baseURI).href,{cache:"no-store"});
+    const response=await fetch(new URL("version.json?t="+Date.now(),document.baseURI).href,{cache:"no-store"});
     if(!response.ok)throw new Error("version "+response.status);
     const data=await response.json();
     const version=String(data?.version||"").trim();
@@ -2211,7 +2211,7 @@ if(document.readyState==="loading"){
 
   function getRealAds(){
     const local=(()=>{try{const value=JSON.parse(localStorage.getItem(ADS_LOCAL_KEY)||"[]");return Array.isArray(value)?value:[]}catch(_){return[]}})();
-    return fetch("data/ads.json?t="+Date.now()+",{cache:"no-store"})
+    return fetch("data/ads.json?t="+Date.now(),{cache:"no-store"})
       .then(r=>r.ok?r.json():[])
       .catch(()=>[])
       .then(remote=>{
