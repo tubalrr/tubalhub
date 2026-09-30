@@ -1,11 +1,12 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.2.53",
-  "build": "2026-09-30_1838",
-  "releasedAtReal": "2026-09-30T10:38:00Z",
+  "version": "1.2.54",
+  "build": "2026-09-30_1845",
+  "releasedAtReal": "2026-09-30T10:45:00Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.2.54 FIX — Sidebar Branches now contains Payapang Isip, TUBAL HUB Shop, and Gaming Zone; Kapeng Barako remains a homepage highlight.",
     "v1.2.53 FEAT — Kapeng Barako is now presented as a dedicated homepage highlight below the three official TUBAL HUB branches.",
     "v1.2.52 FIX — Restored the original three-brand card grid while the WHY TUBAL HUB branch navigation uses four columns for Payapang Isip, Shop, Gaming Zone, and Kapeng Barako.",
     "v1.2.51 FEAT — Added Kapeng Barako as Branch 04 in the WHY TUBAL HUB branch navigation.",
@@ -216,6 +217,12 @@
   ],
   "breakingReal": false,
   "changelog": [
+    {
+      "type": "FIX",
+      "icon": "↗",
+      "title": "Branch Navigation Aligned",
+      "desc": "Payapang Isip and TUBAL HUB Shop now sit with Gaming Zone under the official sidebar Branches group; Kapeng Barako stays a featured highlight."
+    },
     {
       "type": "FEAT",
       "icon": "☕",
