@@ -1028,3 +1028,248 @@ body.theme-light.hub-home .feed-update-text{
   .th-bot-antenna i,
   .th-bot-eye{animation:none!important}
 }
+
+
+/* =========================================================
+   TUBAL HUB — 3D BOT MOTION DIRECTOR v1.2.91
+   Video-like staged body actions: idle → walk → present → observe → wave → return.
+   ========================================================= */
+.th-hero-bot-experience.bot-action-idle .th-bot-3d{
+  animation:thBotIdleBody 2.2s ease-in-out infinite;
+}
+.th-hero-bot-experience.bot-action-idle .th-bot-head{
+  animation:thBotIdleHead 2.8s ease-in-out infinite;
+}
+.th-hero-bot-experience.bot-action-idle .th-bot-arm-left,
+.th-hero-bot-experience.bot-action-idle .th-bot-arm-right{
+  animation:thBotIdleArm 2.6s ease-in-out infinite;
+}
+
+.th-hero-bot-experience.bot-action-walk .th-bot-3d{
+  animation:thBotWalkBody .58s ease-in-out infinite;
+}
+.th-hero-bot-experience.bot-action-walk .th-bot-head{
+  animation:thBotWalkHead .58s ease-in-out infinite;
+}
+.th-hero-bot-experience.bot-action-walk .th-bot-arm-left{
+  animation:thBotWalkArmA .58s ease-in-out infinite;
+}
+.th-hero-bot-experience.bot-action-walk .th-bot-arm-right{
+  animation:thBotWalkArmB .58s ease-in-out infinite;
+}
+.th-hero-bot-experience.bot-action-walk .th-bot-leg-left{
+  animation:thBotWalkLegA .58s ease-in-out infinite;
+}
+.th-hero-bot-experience.bot-action-walk .th-bot-leg-right{
+  animation:thBotWalkLegB .58s ease-in-out infinite;
+}
+
+.th-hero-bot-experience.bot-action-present .th-bot-3d{
+  animation:thBotPresentBody 1.25s cubic-bezier(.22,1,.36,1) forwards;
+}
+.th-hero-bot-experience.bot-action-present .th-bot-head{
+  animation:thBotLookRight 1.05s cubic-bezier(.22,1,.36,1) forwards;
+}
+.th-hero-bot-experience.bot-action-present .th-bot-arm-right{
+  animation:thBotPointRight 1.05s cubic-bezier(.22,1,.36,1) forwards;
+}
+.th-hero-bot-experience.bot-action-present .th-bot-arm-left{
+  animation:thBotPresentSupport 1.05s ease-in-out infinite;
+}
+.th-hero-bot-experience.bot-action-present .th-bot-leg-left{
+  animation:thBotPresentLegL .8s ease-in-out infinite alternate;
+}
+.th-hero-bot-experience.bot-action-present .th-bot-leg-right{
+  animation:thBotPresentLegR .8s ease-in-out infinite alternate;
+}
+
+.th-hero-bot-experience.bot-action-observe .th-bot-3d{
+  animation:thBotObserveBody 1.1s ease-in-out infinite;
+}
+.th-hero-bot-experience.bot-action-observe .th-bot-head{
+  animation:thBotLookRightSoft 2.1s ease-in-out infinite;
+}
+.th-hero-bot-experience.bot-action-observe .th-bot-arm-right{
+  animation:thBotPresentSupport 1.8s ease-in-out infinite;
+}
+.th-hero-bot-experience.bot-action-observe .th-bot-arm-left{
+  animation:thBotObserveArm 1.6s ease-in-out infinite;
+}
+
+.th-hero-bot-experience.bot-action-wave .th-bot-3d{
+  animation:thBotWaveBody 1.15s ease-in-out infinite;
+}
+.th-hero-bot-experience.bot-action-wave .th-bot-head{
+  animation:thBotWaveHead 1.15s ease-in-out infinite;
+}
+.th-hero-bot-experience.bot-action-wave .th-bot-arm-left{
+  animation:thBotWaveArm 1.15s ease-in-out infinite;
+}
+.th-hero-bot-experience.bot-action-wave .th-bot-arm-right{
+  animation:thBotWaveSupport 1.15s ease-in-out infinite;
+}
+.th-hero-bot-experience.bot-action-wave .th-bot-leg-left{
+  animation:thBotWaveLegL 1.15s ease-in-out infinite;
+}
+.th-hero-bot-experience.bot-action-wave .th-bot-leg-right{
+  animation:thBotWaveLegR 1.15s ease-in-out infinite;
+}
+
+.th-hero-bot-experience.bot-action-return .th-bot-3d{
+  animation:thBotReturnBody 1.15s cubic-bezier(.22,1,.36,1) forwards;
+}
+.th-hero-bot-experience.bot-action-return .th-bot-head{
+  animation:thBotReturnHead 1.15s cubic-bezier(.22,1,.36,1) forwards;
+}
+.th-hero-bot-experience.bot-action-return .th-bot-arm-left{
+  animation:thBotReturnArmA 1.15s ease-in-out forwards;
+}
+.th-hero-bot-experience.bot-action-return .th-bot-arm-right{
+  animation:thBotReturnArmB 1.15s ease-in-out forwards;
+}
+.th-hero-bot-experience.bot-action-return .th-bot-leg-left{
+  animation:thBotReturnLegA 1.15s ease-in-out forwards;
+}
+.th-hero-bot-experience.bot-action-return .th-bot-leg-right{
+  animation:thBotReturnLegB 1.15s ease-in-out forwards;
+}
+
+@keyframes thBotIdleBody{
+  0%,100%{transform:translate3d(0,0,0) rotateY(-3deg)}
+  50%{transform:translate3d(1px,-4px,0) rotateY(3deg)}
+}
+@keyframes thBotIdleHead{
+  0%,100%{transform:translateZ(26px) rotateY(-5deg) rotateZ(-.5deg)}
+  50%{transform:translateZ(26px) rotateY(4deg) rotateZ(.4deg)}
+}
+@keyframes thBotIdleArm{
+  0%,100%{transform:rotate(7deg) translateZ(0)}
+  50%{transform:rotate(-6deg) translateZ(2px)}
+}
+
+@keyframes thBotWalkBody{
+  0%,100%{transform:translate3d(-4px,0,0) rotateY(-9deg) rotateZ(-.5deg)}
+  50%{transform:translate3d(16px,-5px,0) rotateY(8deg) rotateZ(.7deg)}
+}
+@keyframes thBotWalkHead{
+  0%,100%{transform:translateZ(26px) rotateY(-11deg)}
+  50%{transform:translateZ(26px) rotateY(7deg)}
+}
+@keyframes thBotWalkArmA{
+  0%,100%{transform:rotate(-28deg) translateZ(3px)}
+  50%{transform:rotate(20deg) translateZ(3px)}
+}
+@keyframes thBotWalkArmB{
+  0%,100%{transform:rotate(22deg) translateZ(4px)}
+  50%{transform:rotate(-24deg) translateZ(4px)}
+}
+@keyframes thBotWalkLegA{
+  0%,100%{transform:rotate(10deg) translateZ(0)}
+  50%{transform:rotate(-13deg) translateZ(2px)}
+}
+@keyframes thBotWalkLegB{
+  0%,100%{transform:rotate(-13deg) translateZ(1px)}
+  50%{transform:rotate(10deg) translateZ(0)}
+}
+
+@keyframes thBotPresentBody{
+  0%{transform:translate3d(10px,0,0) rotateY(8deg)}
+  100%{transform:translate3d(24px,-1px,0) rotateY(14deg)}
+}
+@keyframes thBotLookRight{
+  0%{transform:translateZ(26px) rotateY(4deg)}
+  100%{transform:translateZ(26px) rotateY(22deg) rotateZ(1deg)}
+}
+@keyframes thBotPointRight{
+  0%{transform:rotate(-4deg) translateZ(2px)}
+  55%{transform:rotate(-44deg) translateZ(8px)}
+  100%{transform:rotate(-31deg) translateZ(10px)}
+}
+@keyframes thBotPresentSupport{
+  0%,100%{transform:rotate(5deg) translateZ(1px)}
+  50%{transform:rotate(-7deg) translateZ(3px)}
+}
+@keyframes thBotPresentLegL{
+  from{transform:rotate(3deg)}
+  to{transform:rotate(-2deg)}
+}
+@keyframes thBotPresentLegR{
+  from{transform:rotate(-2deg)}
+  to{transform:rotate(4deg)}
+}
+
+@keyframes thBotObserveBody{
+  0%,100%{transform:translate3d(22px,-1px,0) rotateY(13deg)}
+  50%{transform:translate3d(21px,-4px,0) rotateY(17deg)}
+}
+@keyframes thBotLookRightSoft{
+  0%,100%{transform:translateZ(26px) rotateY(18deg)}
+  50%{transform:translateZ(26px) rotateY(24deg) rotateZ(.8deg)}
+}
+@keyframes thBotObserveArm{
+  0%,100%{transform:rotate(8deg) translateZ(2px)}
+  50%{transform:rotate(-2deg) translateZ(3px)}
+}
+
+@keyframes thBotWaveBody{
+  0%,100%{transform:translate3d(18px,-1px,0) rotateY(10deg)}
+  50%{transform:translate3d(15px,-4px,0) rotateY(5deg)}
+}
+@keyframes thBotWaveHead{
+  0%,100%{transform:translateZ(26px) rotateY(16deg) rotateZ(1deg)}
+  50%{transform:translateZ(26px) rotateY(7deg) rotateZ(-1deg)}
+}
+@keyframes thBotWaveArm{
+  0%,100%{transform:rotate(-33deg) translateZ(8px)}
+  25%{transform:rotate(-47deg) translateZ(10px)}
+  60%{transform:rotate(-22deg) translateZ(12px)}
+}
+@keyframes thBotWaveSupport{
+  0%,100%{transform:rotate(5deg) translateZ(2px)}
+  50%{transform:rotate(-5deg) translateZ(2px)}
+}
+@keyframes thBotWaveLegL{
+  from{transform:rotate(2deg)}
+  to{transform:rotate(-4deg)}
+}
+@keyframes thBotWaveLegR{
+  from{transform:rotate(-3deg)}
+  to{transform:rotate(2deg)}
+}
+
+@keyframes thBotReturnBody{
+  0%{transform:translate3d(18px,-1px,0) rotateY(10deg)}
+  100%{transform:translate3d(-1px,0,0) rotateY(-4deg)}
+}
+@keyframes thBotReturnHead{
+  0%{transform:translateZ(26px) rotateY(18deg)}
+  100%{transform:translateZ(26px) rotateY(-4deg)}
+}
+@keyframes thBotReturnArmA{
+  from{transform:rotate(-25deg) translateZ(6px)}
+  to{transform:rotate(10deg) translateZ(0)}
+}
+@keyframes thBotReturnArmB{
+  from{transform:rotate(21deg) translateZ(5px)}
+  to{transform:rotate(16deg) translateZ(1px)}
+}
+@keyframes thBotReturnLegA{
+  from{transform:rotate(-7deg)}
+  to{transform:rotate(1deg)}
+}
+@keyframes thBotReturnLegB{
+  from{transform:rotate(6deg)}
+  to{transform:rotate(-1deg)}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .th-hero-bot-experience.bot-action-idle .th-bot-3d,
+  .th-hero-bot-experience.bot-action-walk .th-bot-3d,
+  .th-hero-bot-experience.bot-action-present .th-bot-3d,
+  .th-hero-bot-experience.bot-action-observe .th-bot-3d,
+  .th-hero-bot-experience.bot-action-wave .th-bot-3d,
+  .th-hero-bot-experience.bot-action-return .th-bot-3d{
+    animation:none!important;
+    transform:translate3d(0,0,0)!important;
+  }
+}
