@@ -1,25 +1,29 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.2.36",
-  "build": "2026-09-27_2040",
-  "releasedAtReal": "2026-09-27T12:40:00Z",
+  "version": "1.2.37",
+  "build": "2026-09-30_1212",
+  "releasedAtReal": "2026-09-30T04:12:00Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.2.37 FIX — TUBAL HUB Shop is now Firestore-first; the storefront no longer uses a hardcoded demo catalog.",
+    "v1.2.37 FEAT — Product records now carry explicit sourceType/catalogStatus/visibility metadata so admin-managed, external, and demo listings can be distinguished.",
+    "v1.2.37 FEAT — Kapeng Barako is now represented by live admin-managed Firestore catalog records and uses the shared TUBAL HUB checkout/order pipeline.",
+    "v1.2.37 SECURITY — Firestore, Storage, and Cloud Functions admin authorization were hardened; verified admin email is required for the email-based admin fallback.",
+    "v1.2.37 SECURITY — Global Chat media reads are restricted to the owning user or a verified admin.",
+    "v1.2.37 CLEANUP — Removed the duplicate Kapeng Barako admin portal so TUBAL HUB Admin is the single administration surface.",
+    "v1.2.37 BUILD — 1.2.37 is the canonical release/cache version for the homepage and Shop assets.",
     "v1.2.36 FIX — Live Stats and Sponsored 1 now share a balanced 6/6 desktop grid row instead of leaving a large empty column area beside the sponsor.",
     "v1.2.36 FIX — Sponsored 2 remains full-width, while the desktop layout collapses cleanly to one column on mobile.",
-    "v1.2.36 AUDIT — Existing sponsor rendering, Featured carousel, Obsidian surfaces, navigation, and prior card-alignment rules were preserved."
-  ,
+    "v1.2.36 AUDIT — Existing sponsor rendering, Featured carousel, Obsidian surfaces, navigation, and prior card-alignment rules were preserved.",
     "v1.2.35 FIX — Featured sa Website carousel now uses deterministic slide geometry, 500ms easing, safe initialization, drag controls, dot controls, and continuous 4-second autoplay.",
     "v1.2.35 FIX — Featured previews remain populated from the existing real journal, music, feeds, and Gaming Zone data pipeline without changing those data sources.",
     "v1.2.35 FIX — Sponsored 1/2 rendering retains real Firestore data, Shopee branding, image handling, cached fallback, and full-card interaction; malformed sponsor markup was repaired.",
-    "v1.2.35 AUDIT — Obsidian Gamer surfaces, existing navigation, Firebase data hooks, and previous card alignment rules were preserved."
-  ,
+    "v1.2.35 AUDIT — Obsidian Gamer surfaces, existing navigation, Firebase data hooks, and previous card alignment rules were preserved.",
     "v1.2.34 FIX — Sponsored 1/2 now render from real Firestore sponsor data with a cached last-known real sponsor fallback, so the panel no longer stays stuck on CHECKING... when the remote read is slow or temporarily unavailable.",
     "v1.2.34 FIX — Restored the real Shopee sponsored presentation, image handling, Obsidian Gamer surface styling, and full-card click interaction without changing existing navigation/data hooks.",
     "v1.2.34 FIX — Rotated the service-worker cache and refreshed homepage asset query versions so the sponsor fix is loaded instead of a stale cached home.js/home CSS build.",
-    "v1.2.34 AUDIT — Preserved the existing Three Brands / WHY TUBAL HUB grid alignment rules (`auto 1fr auto`), links, animation classes, and page scripts while changing only sponsor rendering/cache/styling."
-  ,
+    "v1.2.34 AUDIT — Preserved the existing Three Brands / WHY TUBAL HUB grid alignment rules (`auto 1fr auto`), links, animation classes, and page scripts while changing only sponsor rendering/cache/styling.",
     "v1.2.33 FIX — Target cards now use an explicit CSS Grid row template `grid-template-rows:auto 1fr auto` so header, flexible content, and footer/action occupy deterministic rows.",
     "v1.2.33 FIX — The previous target-card `display:flex !important` alignment override was removed because it could override inline grid declarations and cause uneven footer baselines.",
     "v1.2.33 AUDIT — Preserved existing section IDs, navigation links, animation classes, data hooks, and Obsidian Gamer colors/surfaces while changing only the target layout structure and alignment rules.",
@@ -174,6 +178,30 @@
   ],
   "breakingReal": false,
   "changelog": [
+    {
+      "type": "BUILD",
+      "icon": "✓",
+      "title": "Single Release Version 1.2.37",
+      "desc": "version.json is the canonical release/build manifest; homepage and Shop asset cache keys are aligned to v1.2.37."
+    },
+    {
+      "type": "FEAT",
+      "icon": "▣",
+      "title": "Firestore-First Shop Catalog",
+      "desc": "The Shop renders live products from Firestore and no longer carries a hardcoded demo catalog."
+    },
+    {
+      "type": "SECURITY",
+      "icon": "🛡",
+      "title": "Admin and Storage Hardening",
+      "desc": "Verified admin authorization and owner/admin access controls were tightened across Firestore, Storage, and server functions."
+    },
+    {
+      "type": "FEAT",
+      "icon": "☕",
+      "title": "Kapeng Barako Branch Room",
+      "desc": "Kapeng Barako products and shared checkout orders are represented as admin-managed Firestore records under one TUBAL HUB administration surface."
+    },
     {
       "type": "FIX",
       "icon": "▦",
@@ -450,5 +478,5 @@
     }
   ],
   "date": "2026-09-27",
-  "changes": "v1.2.35 — Featured carousel stability + sponsored UI repair."
+  "changes": "v1.2.37 — Firestore-first Shop + Kapeng Barako admin integration + security hardening."
 }
