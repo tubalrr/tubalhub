@@ -572,3 +572,152 @@ body.hub-home #bentoHero.th-corp-hero + .th-value-section{
     min-height:95px!important;
   }
 }
+
+
+/* =========================================================
+   HERO REFERENCE — VIEWPORT / DEVTOOLS-SAFE RESPONSIVE FIX
+   Keep the reference's horizontal composition until true mobile.
+   ========================================================= */
+
+/* 601px+ = keep the desktop composition. This is intentional:
+   Edge/Chrome DevTools can reduce the CSS viewport while the page
+   is still being viewed as the desktop hero reference. */
+@media (min-width:601px){
+  body.hub-home #bentoHero.th-corp-hero{
+    height:440px!important;
+    min-height:440px!important;
+  }
+
+  body.hub-home #bentoHero.th-corp-hero .th-corp-hero-copy{
+    position:absolute!important;
+    left:28px!important;
+    top:50%!important;
+    transform:translateY(-50%)!important;
+    width:43%!important;
+    max-width:535px!important;
+    padding:0!important;
+  }
+
+  body.hub-home #bentoHero.th-corp-hero .th-hero-bot-experience{
+    position:absolute!important;
+    left:40%!important;
+    right:1.2%!important;
+    top:50%!important;
+    bottom:auto!important;
+    width:58.8%!important;
+    height:355px!important;
+    transform:translateY(-50%)!important;
+    grid-template-columns:125px minmax(0,1fr)!important;
+    gap:12px!important;
+  }
+
+  body.hub-home #bentoHero.th-corp-hero .th-bot-stage{
+    height:335px!important;
+  }
+
+  body.hub-home #bentoHero.th-corp-hero .th-bot-3d{
+    transform:scale(.78)!important;
+    transform-origin:center bottom!important;
+  }
+
+  body.hub-home #bentoHero.th-corp-hero .th-bot-showcase{
+    height:255px!important;
+    padding:14px!important;
+    align-self:center!important;
+  }
+
+  body.hub-home #bentoHero.th-corp-hero .th-bot-screen{
+    height:112px!important;
+    min-height:112px!important;
+  }
+}
+
+/* Medium widths: preserve the same three-part composition while
+   tightening typography and the showcase card. */
+@media (min-width:601px) and (max-width:850px){
+  body.hub-home #bentoHero.th-corp-hero .th-corp-hero-copy{
+    width:40%!important;
+  }
+
+  body.hub-home #bentoHero.th-corp-hero h1{
+    font-size:clamp(44px,7vw,60px)!important;
+  }
+
+  body.hub-home #bentoHero.th-corp-hero h2{
+    font-size:clamp(21px,3.5vw,29px)!important;
+  }
+
+  body.hub-home #bentoHero.th-corp-hero p{
+    font-size:12px!important;
+    line-height:1.45!important;
+  }
+
+  body.hub-home #bentoHero.th-corp-hero .bento-cta-row{
+    margin-top:16px!important;
+  }
+
+  body.hub-home #bentoHero.th-corp-hero .th-hero-bot-experience{
+    left:38%!important;
+    width:61%!important;
+    grid-template-columns:92px minmax(0,1fr)!important;
+    gap:8px!important;
+  }
+
+  body.hub-home #bentoHero.th-corp-hero .th-bot-3d{
+    transform:scale(.62)!important;
+  }
+
+  body.hub-home #bentoHero.th-corp-hero .th-bot-showcase{
+    height:235px!important;
+    padding:11px!important;
+  }
+
+  body.hub-home #bentoHero.th-corp-hero .th-bot-showcase-header strong{
+    font-size:14px!important;
+  }
+
+  body.hub-home #bentoHero.th-corp-hero .th-bot-showcase > p{
+    font-size:8px!important;
+    margin:5px 0 7px!important;
+  }
+
+  body.hub-home #bentoHero.th-corp-hero .th-bot-screen{
+    height:96px!important;
+    min-height:96px!important;
+    margin-top:7px!important;
+  }
+}
+
+/* True mobile only. */
+@media (max-width:600px){
+  body.hub-home #bentoHero.th-corp-hero{
+    height:690px!important;
+    min-height:690px!important;
+  }
+
+  body.hub-home #bentoHero.th-corp-hero .th-corp-hero-copy{
+    position:relative!important;
+    left:auto!important;
+    top:auto!important;
+    transform:none!important;
+    width:100%!important;
+    max-width:none!important;
+    padding:30px 22px 0!important;
+  }
+
+  body.hub-home #bentoHero.th-corp-hero .th-hero-bot-experience{
+    position:absolute!important;
+    left:2%!important;
+    right:2%!important;
+    top:auto!important;
+    bottom:10px!important;
+    width:96%!important;
+    height:290px!important;
+    transform:none!important;
+    grid-template-columns:100px minmax(0,1fr)!important;
+  }
+
+  body.hub-home #bentoHero.th-corp-hero .th-bot-showcase{
+    height:225px!important;
+  }
+}
