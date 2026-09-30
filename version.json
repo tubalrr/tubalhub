@@ -1,11 +1,15 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.2.41",
-  "build": "2026-09-30_1332",
-  "releasedAtReal": "2026-09-30T05:32:00Z",
+  "version": "1.2.42",
+  "build": "2026-09-30_1329",
+  "releasedAtReal": "2026-09-30T05:29:32Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.2.42 FEAT — Added a dedicated Kapeng Barako public landing page under TUBAL HUB with its own premium brand presentation.",
+    "v1.2.42 FEAT — Kapeng Barako landing products are read live from the Firestore catalog and only show published, visible Kapeng records.",
+    "v1.2.42 UI — TUBAL HUB Admin Kapeng Barako Room now has a direct Open Landing Page action.",
+    "v1.2.42 FIX — TUBAL HUB Shop now links to the new internal Kapeng Barako landing page instead of the retired standalone storefront.",
     "v1.2.41 SECURITY — Shop inventory is now authoritative in Firestore: physical stock is checked and decremented atomically inside the server order transaction.",
     "v1.2.41 FIX — Rejected physical orders release their reserved inventory back to the Firestore product stock atomically.",
     "v1.2.41 ADMIN — Added physical-product stock entry and a Set Stock control in TUBAL HUB Admin.",
@@ -192,6 +196,30 @@
   ],
   "breakingReal": false,
   "changelog": [
+    {
+      "type": "FEAT",
+      "icon": "☕",
+      "title": "Dedicated Kapeng Barako Landing",
+      "desc": "Added a dedicated public Kapeng Barako landing page with brand-first hero, live catalog, story section and shared-shop CTAs."
+    },
+    {
+      "type": "FEAT",
+      "icon": "▣",
+      "title": "Firestore Live Catalog",
+      "desc": "Landing-page product cards read published Kapeng Barako records from the Firestore products collection."
+    },
+    {
+      "type": "ADMIN",
+      "icon": "↗",
+      "title": "Admin Landing Page Shortcut",
+      "desc": "Kapeng Barako Admin Room now opens the dedicated public landing page directly."
+    },
+    {
+      "type": "FIX",
+      "icon": "→",
+      "title": "Shop Bridge Updated",
+      "desc": "The TUBAL HUB Shop Kapeng Barako bridge now routes to the new internal landing page instead of the retired standalone storefront."
+    },
     {
       "type": "SECURITY",
       "icon": "▣",
