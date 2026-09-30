@@ -21,7 +21,7 @@
   const dotWrap = root.querySelector('[data-bot-dots]');
   if (!title || !kicker || !bodyText || !count || !bar || !screen || !dotWrap) return;
 
-  const CYCLE = 8600;
+  const CYCLE = 12000;
   let index = 0;
   let timer = null;
   let screenTimer = null;
@@ -62,7 +62,7 @@
 
     // The character spends most of the cycle actually moving.
     // The preview changes once, around the moment the bot reaches the panel.
-    screenTimer = window.setTimeout(nextSection, CYCLE * 0.57);
+    screenTimer = window.setTimeout(nextSection, CYCLE * 0.62);
     timer = window.setTimeout(schedule, CYCLE);
   }
 
