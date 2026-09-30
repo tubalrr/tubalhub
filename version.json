@@ -1,11 +1,12 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.2.90",
-  "build": "2026-10-01_0708",
-  "releasedAtReal": "2026-09-30T23:08:05.181Z",
+  "version": "1.2.91",
+  "build": "2026-10-01_0745",
+  "releasedAtReal": "2026-10-01T00:00:00.000Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.2.91 FEAT — Upgraded the 3D showcase bot from simple looping motion to a staged video-like action sequence: idle, walk toward the showcase, point/present, look/observe, wave, then walk back before cycling to the next Hub section.",
     "v1.2.90 FEAT — Replaced the removed AI presenter experiment with a CSS 3D TUBAL HUB showcase bot. The bot has a head, animated eyes, torso, two arms with hands, and two legs with feet, plus an animated showcase display that cycles through TUBAL HUB sections. The showcase is display-only/non-clickable and does not add voice.",
     "v1.2.89 REMOVE — Removed the AI female presenter experiment completely from the homepage, including its Hero markup, script, styles, and image assets, as requested. Existing TUBAL HUB functionality remains unchanged.",
     "v1.2.88 FEAT — Added an animated WebP demo for the AI female Hero presenter, replacing the static image as the displayed presenter asset. The animation uses cinematic camera/parallax motion and a light sweep to create a video-like presentation loop while the content-tour cards continue rotating silently. Welcome Bot remains the voice layer.",
