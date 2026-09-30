@@ -34,7 +34,6 @@ const IMG={
   poster:"https://images.unsplash.com/photo-1549490349-8643362247b5?auto=format&fit=crop&w=700&q=84"
 };
 
-const galleryPool=[IMG.tshirt,IMG.hoodie,IMG.cap,IMG.backpack,IMG.mug,IMG.poster];
 let realProducts=[];
 let realProductsUnsubscribe=null;
 let ownedLicenses=[];
@@ -42,40 +41,10 @@ let upgradeHistory=[];
 let licenseUnsubscribe=null;
 let upgradeUnsubscribe=null;
 const parseProductPrice=v=>{const n=Number(String(v??"").replace(/[^0-9.]/g,""));return Number.isFinite(n)?n:0};
-const normalizeRealProduct=x=>({id:"real-"+x.id,firestoreId:x.id,real:true,collection:String(x.brandKey||"").toLowerCase()==="kapeng"?"kapeng":"th",catalogKey:String(x.catalogKey||"").trim(),title:String(x.name||"Unnamed Product"),price:parseProductPrice(x.price),priceLabel:String(x.price||"Free"),original:0,originalLabel:"",image:String(x.imageUrl||"").trim(),seller:String(x.seller||x.brandName||"TUBAL HUB Shop"),sellerInitials:String(x.brandName||x.seller||"TH").slice(0,2).toUpperCase(),online:false,stock:Number.isFinite(Number(x.stock))?Number(x.stock):null,rating:null,badge:String(x.badge||"").trim(),description:String(x.description||""),details:String(x.description||""),sizes:[],colors:[],productUrl:String(x.productUrl||"").trim(),category:String(x.category||"products"),productType:String(x.productType||"physical"),version:String(x.version||"1.0.0"),releaseDate:String(x.releaseDate||""),license:String(x.license||""),upgradePrice:String(x.upgradePrice||"Free"),latestVersion:String(x.latestVersion||x.version||"1.0.0"),includes:String(x.includes||""),changelog:String(x.changelog||"")});
+const normalizeRealProduct=x=>({id:"real-"+x.id,firestoreId:x.id,real:true,collection:String(x.brandKey||x.collection||"th").toLowerCase()==="kapeng"?"kapeng":String(x.collection||"th"),catalogKey:String(x.catalogKey||"").trim(),sourceType:String(x.sourceType||"admin-managed").trim().toLowerCase(),catalogStatus:String(x.catalogStatus||"live").trim().toLowerCase(),isDemo:x.isDemo===true||String(x.sourceType||"").toLowerCase()==="demo",title:String(x.name||"Unnamed Product"),price:parseProductPrice(x.price),priceLabel:String(x.price||"Free"),original:parseProductPrice(x.originalPrice||x.compareAtPrice||x.original||0),originalLabel:String(x.originalPrice||x.compareAtPrice||"").trim(),image:String(x.imageUrl||x.image||"").trim(),seller:String(x.seller||x.brandName||"TUBAL HUB Shop"),sellerInitials:String(x.brandName||x.seller||"TH").slice(0,2).toUpperCase(),online:x.isVisible!==false,stock:Number.isFinite(Number(x.stock))?Number(x.stock):null,rating:Number.isFinite(Number(x.rating))?Number(x.rating):null,badge:String(x.badge||"").trim(),description:String(x.description||""),details:String(x.details||x.description||""),sizes:Array.isArray(x.sizes)?x.sizes:[],colors:Array.isArray(x.colors)?x.colors:[],productUrl:String(x.productUrl||"").trim(),externalUrl:String(x.externalUrl||"").trim(),category:String(x.category||"products"),productType:String(x.productType||"physical"),version:String(x.version||"1.0.0"),releaseDate:String(x.releaseDate||""),license:String(x.license||""),upgradePrice:String(x.upgradePrice||"Free"),latestVersion:String(x.latestVersion||x.version||"1.0.0"),includes:String(x.includes||""),changelog:String(x.changelog||"")});
 function listenToRealProducts(){if(realProductsUnsubscribe)realProductsUnsubscribe();realProductsUnsubscribe=onSnapshot(collection(db,"products"),snap=>{realProducts=snap.docs.map(d=>normalizeRealProduct({id:d.id,...d.data()}));renderProducts();updateCounts();renderMyProducts()},e=>console.warn("[TUBAL HUB Shop] real products listener failed",e))}
 
-const products=[
-  {id:"kb-strong-250g",collection:"kapeng",catalogKey:"barako-strong-250g",title:"Barako Strong",price:350,original:0,image:"https://tubalrr.github.io/Kapeng-Barako/images/gallery-01.svg",seller:"Kapeng Barako",sellerInitials:"KB",online:true,stock:7,rating:null,badge:"COFFEE",description:"100% Philippine Barako coffee, 250g.",details:"Barako Strong • 250g • Dark Roast • Batangas.",sizes:["250g"],colors:["Whole"],category:"coffee",externalUrl:"https://tubalrr.github.io/Kapeng-Barako/index.html"},
-  {id:"kb-classic-500g",collection:"kapeng",catalogKey:"barako-classic-500g",title:"Barako Classic",price:620,original:0,image:"https://tubalrr.github.io/Kapeng-Barako/images/gallery-02.svg",seller:"Kapeng Barako",sellerInitials:"KB",online:true,stock:12,rating:null,badge:"BESTSELLER",description:"Smooth Philippine Barako coffee, 500g.",details:"Barako Classic • 500g • Medium Roast • Batangas.",sizes:["500g"],colors:["Whole"],category:"coffee",externalUrl:"https://tubalrr.github.io/Kapeng-Barako/index.html"},
-  {id:"kb-starter-bundle",collection:"kapeng",catalogKey:"barako-starter-bundle",title:"Barako Starter Bundle",price:870,original:970,image:"https://tubalrr.github.io/Kapeng-Barako/images/gallery-03.svg",seller:"Kapeng Barako",sellerInitials:"KB",online:true,stock:10,rating:null,badge:"SAVE ₱100",description:"250g Barako Strong + 500g Barako Classic.",details:"Starter Bundle • Save ₱100.",sizes:["Bundle"],colors:["Whole"],category:"coffee",externalUrl:"https://tubalrr.github.io/Kapeng-Barako/index.html"},
-  {id:"th-hoodie",collection:"th",title:"TH Signature Hoodie",price:1790,original:2290,image:IMG.hoodie,seller:"Rr Studio",sellerInitials:"Rr",online:true,stock:5,rating:4.8,badge:"NEW",description:"Premium-weight community hoodie with a clean TUBAL HUB finish.",details:"Soft-touch hoodie silhouette, relaxed fit, everyday community wear.",sizes:["S","M","L","XL"],colors:["Black","Forest","Stone"]},
-  {id:"th-tee",collection:"th",title:"TUBAL HUB Core Tee",price:790,original:990,image:IMG.tshirt,seller:"Rr Studio",sellerInitials:"Rr",online:true,stock:8,rating:4.8,badge:"HOT",description:"Core TUBAL HUB tee for daily wear and creator sessions.",details:"Lightweight cotton tee with minimalist TH identity.",sizes:["S","M","L","XL"],colors:["Black","White","Green"]},
-  {id:"th-oversized",collection:"th",title:"TH Oversized Tee",price:890,original:1090,image:IMG.shirt,seller:"Rr Studio",sellerInitials:"Rr",online:false,stock:7,rating:4.8,badge:"SALE",description:"Oversized profile tee with clean streetwear proportions.",details:"Relaxed drop-shoulder cut for casual community fits.",sizes:["M","L","XL"],colors:["Black","Grey","Olive"]},
-  {id:"th-cap",collection:"th",title:"TUBAL HUB Mono Cap",price:650,original:780,image:IMG.cap,seller:"TUBAL HUB Goods",sellerInitials:"TH",online:true,stock:9,rating:4.8,badge:"NEW",description:"Low-profile cap with a simple TH badge.",details:"Adjustable strap and structured front.",sizes:["One Size"],colors:["Black","Forest"]},
-  {id:"th-sneaker",collection:"th",title:"Hub Runner Sneaker",price:2490,original:2990,image:IMG.shoes,seller:"TUBAL HUB Goods",sellerInitials:"TH",online:false,stock:5,rating:4.8,badge:"HOT",description:"Everyday runner concept built around the Hub palette.",details:"Mock product listing for the community shop UI.",sizes:["40","41","42","43"],colors:["Black","White"]},
-  {id:"th-pack",collection:"th",title:"Creator Daypack",price:1890,original:2190,image:IMG.backpack,seller:"Rr Studio",sellerInitials:"Rr",online:true,stock:6,rating:4.8,badge:"SALE",description:"Compact backpack for laptop, camera, and creator gear.",details:"Multi-compartment daypack concept for TUBAL HUB members.",sizes:["One Size"],colors:["Black","Green"]},
-  {id:"th-mug",collection:"th",title:"TH Creator Mug",price:520,original:650,image:IMG.mug,seller:"TUBAL HUB Goods",sellerInitials:"TH",online:true,stock:5,rating:4.8,badge:"NEW",description:"Glass-ready desk mug for work, editing, and streams.",details:"Ceramic mug concept with minimalist Hub identity.",sizes:["350ml"],colors:["Black","White"]},
-  {id:"th-watch",collection:"th",title:"Hub Time Watch",price:1590,original:1890,image:IMG.watch,seller:"Rr Studio",sellerInitials:"Rr",online:false,stock:5,rating:4.8,badge:"HOT",description:"Minimal watch concept for the polished TUBAL HUB look.",details:"Clean face, neutral strap, and everyday wear profile.",sizes:["One Size"],colors:["Black","Silver"]},
-  {id:"th-keyboard",collection:"th",title:"Creator Desk Keyboard",price:2190,original:2590,image:IMG.keyboard,seller:"CTRLZONE Supply",sellerInitials:"CZ",online:true,stock:4,rating:4.8,badge:"SALE",description:"Compact keyboard concept for creators and gamers.",details:"Desk accessory concept shown as a premium shop listing.",sizes:["75%"],colors:["Black","White"]},
-  {id:"th-control",collection:"th",title:"Hub Game Controller",price:1990,original:2290,image:IMG.controller,seller:"CTRLZONE Supply",sellerInitials:"CZ",online:true,stock:5,rating:4.8,badge:"HOT",description:"Controller concept styled for the TUBAL HUB gaming shelf.",details:"Wireless-ready controller concept for the catalog UI.",sizes:["Standard"],colors:["Black","Green"]},
-  {id:"th-chair",collection:"th",title:"Creator Lounge Chair",price:4290,original:4990,image:IMG.chair,seller:"Rr Studio",sellerInitials:"Rr",online:false,stock:5,rating:4.8,badge:"NEW",description:"Comfort-first creator chair concept for long sessions.",details:"Premium lounge-chair concept for the shop catalog.",sizes:["Standard"],colors:["Black","Forest"]},
-  {id:"th-headset",collection:"th",title:"Hub Studio Headphones",price:2390,original:2790,image:IMG.headphones,seller:"CTRLZONE Supply",sellerInitials:"CZ",online:true,stock:5,rating:4.8,badge:"SALE",description:"Closed-back headphone concept for editing and gaming.",details:"Over-ear headphone concept used in the premium storefront preview.",sizes:["Standard"],colors:["Black","Silver"]},
-
-  {id:"pi-journal",collection:"payapang",title:"Payapang Journal",price:590,original:740,image:IMG.journal,seller:"Payapang Isip",sellerInitials:"PI",online:true,stock:7,rating:4.8,badge:"NEW",description:"A calm journaling companion for thoughts, plans, and quiet notes.",details:"Minimal journal concept with a soft, nature-first identity.",sizes:["A5"],colors:["Sage","Cream"]},
-  {id:"pi-candle",collection:"payapang",title:"Payapang Candle",price:690,original:850,image:IMG.candle,seller:"Payapang Isip",sellerInitials:"PI",online:true,stock:5,rating:4.8,badge:"HOT",description:"Warm desk candle concept for a slower evening atmosphere.",details:"Decorative candle product concept for the Payapang Isip collection.",sizes:["Single"],colors:["Sage","Sand"]},
-  {id:"pi-notebook",collection:"payapang",title:"Peace Notes Notebook",price:480,original:590,image:IMG.notebook,seller:"Payapang Isip",sellerInitials:"PI",online:false,stock:9,rating:4.8,badge:"SALE",description:"A compact notebook for daily reflections and reminders.",details:"Everyday notebook concept with clean, quiet visual language.",sizes:["A6","A5"],colors:["Green","Natural"]},
-  {id:"pi-plant",collection:"payapang",title:"Quiet Desk Plant",price:790,original:950,image:IMG.plant,seller:"Payapang Isip",sellerInitials:"PI",online:true,stock:5,rating:4.8,badge:"NEW",description:"Nature-forward desk accent for a calmer workspace.",details:"Decorative plant concept for the Payapang Isip collection.",sizes:["Small"],colors:["Sage","Clay"]},
-  {id:"pi-mug",collection:"payapang",title:"Payapang Tea Mug",price:560,original:690,image:IMG.mug,seller:"Payapang Isip",sellerInitials:"PI",online:true,stock:6,rating:4.8,badge:"HOT",description:"A gentle ceramic mug concept for tea and quiet work.",details:"Minimal tableware concept for the calm collection.",sizes:["350ml"],colors:["Cream","Sage"]},
-  {id:"pi-poster",collection:"payapang",title:"Payapang Wall Print",price:620,original:760,image:IMG.poster,seller:"Payapang Isip",sellerInitials:"PI",online:false,stock:5,rating:4.8,badge:"SALE",description:"Minimal wall-art concept inspired by stillness and nature.",details:"Decorative print concept for home or workspace.",sizes:["A4","A3"],colors:["Green","Neutral"]},
-
-  {id:"cz-keyboard",collection:"ctrlzone",title:"CTRLZONE Compact Keyboard",price:2290,original:2790,image:IMG.keyboard,seller:"CTRLZONE Supply",sellerInitials:"CZ",online:true,stock:5,rating:4.8,badge:"HOT",description:"A compact gaming desk concept with a clean CTRLZONE feel.",details:"75% layout concept for modern gaming desks.",sizes:["75%"],colors:["Black","Purple"]},
-  {id:"cz-headset",collection:"ctrlzone",title:"CTRLZONE Headset",price:2590,original:3190,image:IMG.headphones,seller:"CTRLZONE Supply",sellerInitials:"CZ",online:true,stock:5,rating:4.8,badge:"NEW",description:"Immersive headset concept for ranked sessions and streams.",details:"Over-ear gaming audio concept with a premium storefront profile.",sizes:["Standard"],colors:["Black","Purple"]},
-  {id:"cz-controller",collection:"ctrlzone",title:"CTRLZONE Controller",price:2090,original:2490,image:IMG.controller,seller:"CTRLZONE Supply",sellerInitials:"CZ",online:false,stock:8,rating:4.8,badge:"SALE",description:"Controller concept for MOBA, racing, and action sessions.",details:"Modern controller concept with ergonomic shape.",sizes:["Standard"],colors:["Black","Neon"]},
-  {id:"cz-chair",collection:"ctrlzone",title:"CTRLZONE Gaming Chair",price:4690,original:5290,image:IMG.chair,seller:"CTRLZONE Supply",sellerInitials:"CZ",online:true,stock:5,rating:4.8,badge:"HOT",description:"Premium chair concept for long gaming and creator sessions.",details:"High-back gaming chair concept for the CTRLZONE catalog.",sizes:["Standard"],colors:["Black","Purple"]},
-  {id:"cz-pack",collection:"ctrlzone",title:"CTRLZONE Gear Pack",price:1790,original:2090,image:IMG.backpack,seller:"CTRLZONE Supply",sellerInitials:"CZ",online:true,stock:5,rating:4.8,badge:"NEW",description:"Compact gear pack concept for cables, controllers, and extras.",details:"Multi-use gaming carry pack concept.",sizes:["One Size"],colors:["Black","Purple"]},
-  {id:"cz-desk-mat",collection:"ctrlzone",title:"CTRLZONE Desk Mat",price:850,original:990,image:IMG.shirt,seller:"CTRLZONE Supply",sellerInitials:"CZ",online:false,stock:11,rating:4.8,badge:"SALE",description:"Wide desk-mat concept built around the CTRLZONE identity.",details:"Large desk surface concept for keyboard and mouse setups.",sizes:["XL"],colors:["Black","Purple"]}
-];
+const products=[];
 
 const state={
   collection:"all",
@@ -157,13 +126,8 @@ function readLocal(key,fallback){
 function saveLocal(key,value){
   try{localStorage.setItem(key,JSON.stringify(value))}catch(_){}
 }
-function productById(id){return [...realProducts,...products].find(p=>p.id===id)}
-function collectionProducts(){
-  const real=realProducts.slice();
-  const realKapengKeys=new Set(real.filter(p=>p.collection==="kapeng"&&p.catalogKey).map(p=>p.catalogKey));
-  const fallback=products.filter(p=>p.collection!=="kapeng"||!realKapengKeys.has(p.catalogKey||p.id));
-  return [...real,...fallback];
-}
+function productById(id){return realProducts.find(p=>p.id===id)}
+function collectionProducts(){return realProducts.slice()}
 function brandMarkHtml(collection,small=false){
   if(collection==="th") return '<span class="mini-brand-logo th"><img src="../tubal-hub-logo.png" width="'+(small?22:28)+'" height="'+(small?22:28)+'" alt="TUBAL HUB"></span>';
   if(collection==="kapeng") return '<span class="mini-brand-logo th" aria-hidden="true" style="font-size:18px">☕</span>';
@@ -219,7 +183,7 @@ document.addEventListener("pointermove",updateSpot,{passive:true});
 
 function filteredProducts(){
   const q=state.query.trim().toLowerCase();
-  let list=collectionProducts();
+  let list=collectionProducts().filter(p=>p.isDemo!==true&&p.sourceType!=="demo"&&p.catalogStatus!=="archived"&&p.catalogStatus!=="hidden"&&p.online!==false);
   if(q)list=list.filter(p=>(p.title+" "+p.seller+" "+p.description).toLowerCase().includes(q));
   if(state.categoryFilter!=="all")list=list.filter(p=>String(p.category||"").toLowerCase()===state.categoryFilter);
   if(state.stockFilter==="in-stock")list=list.filter(p=>p.stock>0);
@@ -233,8 +197,10 @@ function cardHtml(p,index){
   const wished=state.wishlist.has(p.id);
   const isReal=Boolean(p.real);
   const priceHtml=isReal?'<strong class="product-price">'+esc(p.priceLabel)+'</strong>':'<strong class="product-price">'+money(p.price)+'</strong><span class="product-original">'+money(p.original)+'</span>';
-  const metaHtml=isReal?'<div class="product-rating-row"><span>REAL ADMIN PRODUCT</span><span>'+esc(p.category)+'</span></div>':p.externalUrl?'<div class="product-rating-row"><span>KAPENG BARAKO</span><span>PHILIPPINE COFFEE</span><span class="stock-low">'+p.stock+' left</span></div>':'<div class="product-rating-row"><span>⭐ '+p.rating.toFixed(1)+'</span><span>Premium listing</span><span class="stock-low">'+p.stock+' left</span></div>';
-  const actionHtml=(isReal&&p.productUrl&&p.productType!=="physical"&&p.collection!=="kapeng")?'<a class="add-btn real-product-link" href="'+esc(p.productUrl)+'" target="_blank" rel="noopener noreferrer">Open Product</a>':'<button class="add-btn" data-add="'+esc(p.id)+'" type="button">Add to Cart</button>';
+  const sourceLabel=p.sourceType==="external"?"EXTERNAL":p.sourceType==="demo"?"DEMO":"ADMIN-MANAGED";
+  const metaHtml='<div class="product-rating-row"><span>'+esc(sourceLabel)+'</span><span>'+esc(p.category)+'</span>'+(p.stock!==null?'<span class="stock-low">'+esc(p.stock)+' left</span>':"")+'</div>';
+  const externalHref=p.externalUrl||p.productUrl;
+  const actionHtml=(p.sourceType==="external"&&externalHref)?'<a class="add-btn real-product-link" href="'+esc(externalHref)+'" target="_blank" rel="noopener noreferrer">Open Product</a>':'<button class="add-btn" data-add="'+esc(p.id)+'" type="button">Add to Cart</button>';
   return '<article class="product-card" data-product-id="'+esc(p.id)+'" style="--stagger:'+(index*.05)+'s">'+
     '<div class="product-visual">'+
       (p.image?'<img src="'+esc(p.image)+'" alt="'+esc(p.title)+'" loading="lazy" decoding="async">':'<div class="product-no-image" aria-label="No product image">NO IMAGE</div>')+
@@ -274,7 +240,7 @@ function updateCollectionUI(){
   renderProducts();
 }
 function updateCounts(){
-  const all=[...realProducts,...products];
+  const all=realProducts;
   const categories=["all","merchandise","clothing","accessories","digital-products","apps-software","gaming","mods-addons","media","wellness","coffee","other"];
   categories.forEach(cat=>{
     const n=cat==="all"?all.length:all.filter(p=>String(p.category||"").toLowerCase()===cat).length;
@@ -357,7 +323,7 @@ function toggleWishlist(id,btn){
 function openCart(){els.cartBackdrop.hidden=false;requestAnimationFrame(()=>els.cartDrawer.classList.add("open"));els.cartDrawer.setAttribute("aria-hidden","false")}
 function closeCart(){els.cartDrawer.classList.remove("open");els.cartDrawer.setAttribute("aria-hidden","true");setTimeout(()=>{if(!els.cartDrawer.classList.contains("open"))els.cartBackdrop.hidden=true},260)}
 function shopNow(){document.getElementById("catalog").scrollIntoView({behavior:"smooth",block:"start"});burstAt(document.getElementById("heroShopNow"),6)}
-function galleryFor(p){return [p.image,galleryPool[(products.indexOf(p)+1)%galleryPool.length],galleryPool[(products.indexOf(p)+2)%galleryPool.length],galleryPool[(products.indexOf(p)+3)%galleryPool.length]]}
+function galleryFor(p){return [p.image].filter(Boolean)}
 
 function licenseForProduct(id){return ownedLicenses.find(x=>x.productId===id)||null}
 async function openAuthorizedDownload(licenseId){
