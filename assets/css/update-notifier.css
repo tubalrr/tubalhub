@@ -23,7 +23,9 @@
 .th-update-bell-dot[hidden]{display:none!important}
 @keyframes thUpdateBellPulse{50%{transform:scale(1.28);box-shadow:0 0 12px rgba(255,26,26,1),0 0 24px rgba(255,26,26,.72)}}
 
-.th-version-badge{
+/* Bottom-right legacy version badge disabled. The footer is the single visible version source. */
+.th-version-badge{display:none!important;
+
   position:fixed;right:20px;bottom:20px;z-index:10040;
   display:inline-flex;align-items:center;gap:7px;padding:7px 10px;border:1px solid var(--th-up-border);
   border-radius:10px;background:rgba(2,6,4,.78);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
