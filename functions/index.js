@@ -823,19 +823,15 @@ async function releaseShopOrderSlotReal(tx, uid) {
 }
 
 async function getShopProductsReal(items) {
-  const external = items.map(item => KAPENG_BARAKO_CHECKOUT_CATALOG[item.productId] ? { id: item.productId, data: KAPENG_BARAKO_CHECKOUT_CATALOG[item.productId], qty: item.qty } : null);
-  const firestoreItems = items.filter(item => !KAPENG_BARAKO_CHECKOUT_CATALOG[item.productId]);
-  let firestoreRecords = [];
-  if (firestoreItems.length) {
-    const refs = firestoreItems.map(item => db.collection("products").doc(item.productId));
-    const snaps = await db.getAll(...refs);
-    firestoreRecords = snaps.map((snap, index) => {
-      if (!snap.exists) throw new HttpsError("not-found", "A selected product no longer exists.");
-      return { id: snap.id, data: snap.data() || {}, qty: firestoreItems[index].qty };
-    });
-  }
-  const byId = new Map(firestoreRecords.map(x => [x.id, x]));
-  return items.map((item, index) => external[index] || byId.get(item.productId)).filter(Boolean);
+  const refs = items.map(item => db.collection("products").doc(item.productId));
+  const snaps = await db.getAll(...refs);
+  return items.map((item, index) => {
+    const snap = snaps[index];
+    if (snap.exists) return { id: snap.id, data: snap.data() || {}, qty: item.qty };
+    const fallback = KAPENG_BARAKO_CHECKOUT_CATALOG[item.productId];
+    if (fallback) return { id: item.productId, data: fallback, qty: item.qty };
+    throw new HttpsError("not-found", "A selected product no longer exists.");
+  });
 }
 
 exports.createShopOrderReal = onCall(async request => {
