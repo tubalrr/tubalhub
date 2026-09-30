@@ -1,11 +1,14 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.2.37",
-  "build": "2026-09-30_1212",
-  "releasedAtReal": "2026-09-30T04:12:00Z",
+  "version": "1.2.38",
+  "build": "2026-09-30_1248",
+  "releasedAtReal": "2026-09-30T04:48:00Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.2.38 FIX — EmailJS now requires a real public key, service ID, and template ID before the homepage marks email notifications as ready.",
+    "v1.2.38 UI — The footer explicitly shows \"Email notifications are not configured yet.\" when EmailJS credentials are missing.",
+    "v1.2.38 SECURITY — Removed misleading default service/template identifiers so the notification system cannot appear configured before the owner supplies real credentials.",
     "v1.2.37 FIX — TUBAL HUB Shop is now Firestore-first; the storefront no longer uses a hardcoded demo catalog.",
     "v1.2.37 FEAT — Product records now carry explicit sourceType/catalogStatus/visibility metadata so admin-managed, external, and demo listings can be distinguished.",
     "v1.2.37 FEAT — Kapeng Barako is now represented by live admin-managed Firestore catalog records and uses the shared TUBAL HUB checkout/order pipeline.",
@@ -178,6 +181,24 @@
   ],
   "breakingReal": false,
   "changelog": [
+    {
+      "type": "FIX",
+      "icon": "@",
+      "title": "EmailJS Configuration Gate",
+      "desc": "Email notifications are marked ready only when a real public key, service ID, and template ID are present."
+    },
+    {
+      "type": "UI",
+      "icon": "!",
+      "title": "Clear Not-Configured State",
+      "desc": "The homepage footer explicitly states that email notifications are not configured yet when credentials are missing."
+    },
+    {
+      "type": "SECURITY",
+      "icon": "🔒",
+      "title": "Removed Misleading Defaults",
+      "desc": "Service and template defaults were removed from the homepage config so unconfigured EmailJS cannot look production-ready."
+    },
     {
       "type": "BUILD",
       "icon": "✓",
@@ -478,5 +499,5 @@
     }
   ],
   "date": "2026-09-27",
-  "changes": "v1.2.37 — Firestore-first Shop + Kapeng Barako admin integration + security hardening."
+  "changes": "v1.2.38 — EmailJS configuration gate and explicit not-configured UI."
 }
