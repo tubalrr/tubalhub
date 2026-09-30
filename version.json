@@ -1,11 +1,12 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.2.50",
-  "build": "2026-09-30_1818",
-  "releasedAtReal": "2026-09-30T10:18:00Z",
+  "version": "1.2.51",
+  "build": "2026-09-30_1826",
+  "releasedAtReal": "2026-09-30T10:26:00Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.2.51 FEAT — Added Kapeng Barako as Branch 04 in the WHY TUBAL HUB branch navigation.",
     "v1.2.50 FEAT — Added Branch navigation cards inside the WHY TUBAL HUB section for Payapang Isip, TUBAL HUB Shop, and Gaming Zone.",
     "v1.2.49 FEAT — Added physical-order fulfillment workflow: Paid → Pending fulfillment → Ready → Delivered.",
     "v1.2.49 ADMIN — Kapeng Barako physical orders now show fulfillment state and Mark Ready / Mark Delivered controls in Admin.",
@@ -213,6 +214,12 @@
   ],
   "breakingReal": false,
   "changelog": [
+    {
+      "type": "FEAT",
+      "icon": "☕",
+      "title": "Kapeng Barako Branch",
+      "desc": "Kapeng Barako now appears as the fourth direct branch in the WHY TUBAL HUB section."
+    },
     {
       "type": "FEAT",
       "icon": "↗",
