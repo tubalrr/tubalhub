@@ -258,3 +258,19 @@ a[href$="pages/shop.html"]{pointer-events:auto!important;cursor:pointer!importan
   cursor:not-allowed;
   filter:saturate(.7);
 }
+
+
+/* Social accounts — no generic platform homepages */
+.social-links-pending{color:rgba(255,255,255,.40)}
+.social-links-pending>a{margin-left:auto}
+.social-mini.social-links-pending{display:flex;align-items:center;gap:7px;min-height:31px}
+.social-mini.social-links-pending>span:first-child{
+  width:31px;height:31px;border-radius:50%;display:grid;place-items:center;
+  background:rgba(255,255,255,.035);border:1px dashed rgba(255,255,255,.12);
+  color:rgba(255,255,255,.34);font-size:15px;
+}
+.social-mini.social-links-pending small{max-width:95px;color:rgba(255,255,255,.34);font-size:7px;line-height:1.3}
+.footer-follow.social-links-pending{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;text-align:center}
+.footer-follow.social-links-pending>strong{color:rgba(255,255,255,.55)}
+.footer-follow.social-links-pending>span{color:rgba(255,255,255,.30);font-size:8px;line-height:1.4}
+@media(max-width:700px){.footer-follow.social-links-pending{align-items:flex-start;text-align:left}}
