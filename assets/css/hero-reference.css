@@ -361,3 +361,214 @@ body.hub-home .th-corp-hero .th-live-corner{
     animation:none!important;
   }
 }
+
+
+/* =========================================================
+   HERO REFERENCE — FINAL STRUCTURAL OVERRIDES
+   The uploaded reference is a FULL-WIDTH hero, not a 50/50 grid
+   card. These rules intentionally override the older hero layer.
+   ========================================================= */
+
+body.hub-home main.home-page > div.grid.grid-cols-1.lg\:grid-cols-2:first-child{
+  grid-template-columns:minmax(0,1fr)!important;
+  width:100%!important;
+  max-width:1400px!important;
+}
+
+body.hub-home #bentoHero.th-corp-hero{
+  grid-column:1 / -1!important;
+  width:100%!important;
+  min-height:440px!important;
+  height:440px!important;
+  margin:0!important;
+  padding:0!important;
+  border-radius:20px!important;
+  background:
+    radial-gradient(circle at 82% 48%,rgba(255,53,45,.075),transparent 24%),
+    radial-gradient(circle at 51% 54%,rgba(59,88,150,.09),transparent 28%),
+    linear-gradient(105deg,#111216 0%,#0d0f13 54%,#101016 100%)!important;
+}
+
+body.hub-home #bentoHero.th-corp-hero .th-corp-hero-copy{
+  position:absolute!important;
+  left:28px!important;
+  top:50%!important;
+  transform:translateY(-50%)!important;
+  width:calc(44% - 28px)!important;
+  max-width:535px!important;
+  padding:0!important;
+  z-index:10!important;
+}
+
+body.hub-home #bentoHero.th-corp-hero .th-corp-eyebrow{
+  margin:0 0 16px!important;
+}
+
+body.hub-home #bentoHero.th-corp-hero h1{
+  font-size:clamp(55px,5.8vw,82px)!important;
+  margin:0 0 10px!important;
+  line-height:.88!important;
+}
+
+body.hub-home #bentoHero.th-corp-hero h2{
+  font-size:clamp(26px,2.65vw,38px)!important;
+  margin:0 0 18px!important;
+  line-height:1!important;
+}
+
+body.hub-home #bentoHero.th-corp-hero p{
+  font-size:15px!important;
+  line-height:1.6!important;
+  max-width:520px!important;
+}
+
+body.hub-home #bentoHero.th-corp-hero .bento-cta-row{
+  display:flex!important;
+  margin-top:22px!important;
+}
+
+body.hub-home #bentoHero.th-corp-hero .th-hero-bot-experience{
+  position:absolute!important;
+  left:42%!important;
+  right:1.4%!important;
+  top:50%!important;
+  width:56%!important;
+  max-width:none!important;
+  height:365px!important;
+  grid-template-columns:170px minmax(0,1fr)!important;
+  gap:14px!important;
+  transform:translateY(-50%)!important;
+  z-index:8!important;
+}
+
+body.hub-home #bentoHero.th-corp-hero .th-bot-stage{
+  height:355px!important;
+}
+
+body.hub-home #bentoHero.th-corp-hero .th-bot-3d{
+  transform:scale(.92)!important;
+  transform-origin:center bottom!important;
+}
+
+body.hub-home #bentoHero.th-corp-hero .th-bot-caption{
+  font-size:7px!important;
+  letter-spacing:1.4px!important;
+  color:rgba(255,255,255,.38)!important;
+}
+
+body.hub-home #bentoHero.th-corp-hero .th-bot-showcase{
+  height:270px!important;
+  min-height:0!important;
+  padding:15px!important;
+  border-radius:18px!important;
+  background:linear-gradient(145deg,#fff 0%,#f1f2f5 100%)!important;
+  box-shadow:0 25px 55px rgba(0,0,0,.36),inset 0 1px rgba(255,255,255,.95)!important;
+}
+
+body.hub-home #bentoHero.th-corp-hero .th-bot-showcase-header strong{
+  font-size:17px!important;
+}
+
+body.hub-home #bentoHero.th-corp-hero .th-bot-showcase > p{
+  font-size:9px!important;
+  margin:7px 0 10px!important;
+}
+
+body.hub-home #bentoHero.th-corp-hero .th-bot-screen{
+  min-height:120px!important;
+  height:120px!important;
+  border-radius:13px!important;
+}
+
+body.hub-home #bentoHero.th-corp-hero .th-live-frame{
+  left:7px!important;
+  right:7px!important;
+  top:7px!important;
+  bottom:7px!important;
+  z-index:1!important;
+}
+
+body.hub-home #bentoHero.th-corp-hero .th-corp-hero-glow{
+  position:absolute!important;
+  inset:0!important;
+  z-index:0!important;
+  pointer-events:none!important;
+  background:
+    radial-gradient(circle at 43% 52%,rgba(68,96,160,.09),transparent 18%),
+    radial-gradient(circle at 77% 52%,rgba(255,54,46,.08),transparent 22%)!important;
+}
+
+/* Reference shows the next section directly beneath the hero. */
+body.hub-home main.home-page > div.grid.grid-cols-1.lg\:grid-cols-2:first-child{
+  margin-bottom:18px!important;
+}
+
+body.hub-home #bentoHero.th-corp-hero + .th-value-section{
+  margin-top:0!important;
+  border-radius:18px!important;
+}
+
+/* Smaller desktop/tablet */
+@media(max-width:1050px){
+  body.hub-home #bentoHero.th-corp-hero .th-corp-hero-copy{
+    width:43%!important;
+  }
+  body.hub-home #bentoHero.th-corp-hero .th-hero-bot-experience{
+    left:40%!important;
+    width:59%!important;
+    grid-template-columns:145px minmax(0,1fr)!important;
+  }
+}
+
+@media(max-width:800px){
+  body.hub-home #bentoHero.th-corp-hero{
+    height:650px!important;
+    min-height:650px!important;
+  }
+  body.hub-home #bentoHero.th-corp-hero .th-corp-hero-copy{
+    position:relative!important;
+    left:auto!important;
+    top:auto!important;
+    transform:none!important;
+    width:100%!important;
+    max-width:none!important;
+    padding:34px 24px 0!important;
+  }
+  body.hub-home #bentoHero.th-corp-hero .th-hero-bot-experience{
+    left:2%!important;
+    right:2%!important;
+    bottom:12px!important;
+    top:auto!important;
+    width:96%!important;
+    height:320px!important;
+    transform:none!important;
+    grid-template-columns:125px minmax(0,1fr)!important;
+  }
+}
+
+@media(max-width:560px){
+  body.hub-home #bentoHero.th-corp-hero{
+    height:690px!important;
+    min-height:690px!important;
+  }
+  body.hub-home #bentoHero.th-corp-hero h1{
+    font-size:50px!important;
+  }
+  body.hub-home #bentoHero.th-corp-hero h2{
+    font-size:25px!important;
+  }
+  body.hub-home #bentoHero.th-corp-hero .th-hero-bot-experience{
+    grid-template-columns:100px minmax(0,1fr)!important;
+    height:275px!important;
+  }
+  body.hub-home #bentoHero.th-corp-hero .th-bot-3d{
+    transform:scale(.68)!important;
+  }
+  body.hub-home #bentoHero.th-corp-hero .th-bot-showcase{
+    height:225px!important;
+  }
+  body.hub-home #bentoHero.th-corp-hero .th-bot-screen{
+    height:95px!important;
+    min-height:95px!important;
+  }
+}
