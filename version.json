@@ -1,11 +1,14 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.2.48",
+  "version": "1.2.49",
   "build": "2026-09-30_1353",
   "releasedAtReal": "2026-09-30T05:53:00Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.2.49 FEAT — Added physical-order fulfillment workflow: Paid → Pending fulfillment → Ready → Delivered.",
+    "v1.2.49 ADMIN — Kapeng Barako physical orders now show fulfillment state and Mark Ready / Mark Delivered controls in Admin.",
+    "v1.2.49 SECURITY — Fulfillment transitions are enforced server-side through updateShopFulfillmentReal and require verified payment plus a physical order.",
     "v1.2.48 FIX — Admin Inventory KPI now sums actual stock units from physical products instead of counting catalog records.",
     "v1.2.48 UI — Inventory KPI helper text now explicitly identifies the value as Physical stock units.",
     "v1.2.47 FIX — Admin brand revenue now includes only verified/paid orders and excludes pending_payment and rejected orders.",
@@ -209,6 +212,24 @@
   ],
   "breakingReal": false,
   "changelog": [
+    {
+      "type": "FEAT",
+      "icon": "📦",
+      "title": "Physical Order Fulfillment",
+      "desc": "Paid physical orders now progress through Pending → Ready → Delivered."
+    },
+    {
+      "type": "ADMIN",
+      "icon": "✓",
+      "title": "Kapeng Fulfillment Controls",
+      "desc": "Admin can mark paid Kapeng physical orders Ready and then Delivered from the Orders workflow."
+    },
+    {
+      "type": "SECURITY",
+      "icon": "🛡",
+      "title": "Server Transition Guard",
+      "desc": "Only verified paid physical orders can advance, and transitions cannot skip the required sequence."
+    },
     {
       "type": "FIX",
       "icon": "▤",
