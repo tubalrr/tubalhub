@@ -673,6 +673,16 @@ body.hub-home .home-premium-footer{
     font-size:17px;
     line-height:1;
   }
+  .hub-home .auth-user-actions .logout-btn{
+    position:relative!important;
+    z-index:5!important;
+    pointer-events:auto!important;
+  }
+  .hub-home .auth-user-actions .logout-btn::before{
+    content:"↪";
+    font-size:17px;
+    line-height:1;
+  }
   .hub-home .auth-actions .signup-btn::before{
     content:"+";
     font-size:21px;
