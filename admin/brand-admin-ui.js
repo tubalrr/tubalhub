@@ -16,7 +16,8 @@ const BRAND_ALIASES={
 
 function normalizeBrand(value){
   const v=String(value??"").trim().toLowerCase();
-  return BRAND_ALIASES[v]||["kapeng","brand2","brand3"].includes(v)?v:"unassigned";
+  if(BRAND_ALIASES[v])return BRAND_ALIASES[v];
+  return ["kapeng","brand2","brand3"].includes(v)?v:"unassigned";
 }
 function productBrand(p){
   const direct=normalizeBrand(p?.brandKey??p?.brandId??p?.brand??p?.brandName);
