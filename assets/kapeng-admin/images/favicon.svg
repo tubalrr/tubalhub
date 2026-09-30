@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Kapeng Barako favicon">
+  <rect width="64" height="64" rx="16" fill="#2B1B12"/>
+  <path d="M17 21h25a5 5 0 0 1 5 5v10a10 10 0 0 1-10 10H27a10 10 0 0 1-10-10V21Z" fill="#F2D0A4"/>
+  <path d="M47 27h3a7 7 0 0 1 0 14h-3v-4h3a3 3 0 0 0 0-6h-3v-4Z" fill="#F2D0A4"/>
+  <path d="M23 15c0 4 5 4 5 8M33 15c0 4 5 4 5 8" fill="none" stroke="#FFFCF6" stroke-width="3" stroke-linecap="round"/>
+</svg>
