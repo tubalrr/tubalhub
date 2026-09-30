@@ -14,19 +14,38 @@
 
   const title = root.querySelector('[data-bot-title]');
   const kicker = root.querySelector('[data-bot-kicker]');
-  const text = root.querySelector('[data-bot-text]');
-  const icon = root.querySelector('[data-bot-icon]');
+  const bodyText = root.querySelector('[data-bot-text]');
   const count = root.querySelector('[data-bot-count]');
   const bar = root.querySelector('[data-bot-progress]');
   const screen = root.querySelector('[data-bot-screen]');
   const dotWrap = root.querySelector('[data-bot-dots]');
-  if (!title || !kicker || !text || !icon || !count || !bar || !screen) return;
+  if (!title || !kicker || !bodyText || !count || !bar || !screen || !dotWrap) return;
 
   let index = 0;
-  let timer = null;
+  let stopped = false;
+  const timers = [];
 
-  dotWrap.innerHTML = items.map((_, i) => '<span class="' + (i === 0 ? 'is-active' : '') + '"></span>').join('');
-  const dots = [...dotWrap.children];
+  function clearTimers() {
+    timers.splice(0).forEach(t => window.clearTimeout(t));
+  }
+
+  function setAction(action) {
+    root.classList.remove(
+      'bot-action-idle',
+      'bot-action-walk',
+      'bot-action-present',
+      'bot-action-wave',
+      'bot-action-return',
+      'bot-action-observe'
+    );
+    root.classList.add('bot-action-' + action);
+  }
+
+  function schedule(fn, ms) {
+    const timer = window.setTimeout(fn, ms);
+    timers.push(timer);
+    return timer;
+  }
 
   function render(nextIndex, first = false) {
     index = (nextIndex + items.length) % items.length;
@@ -40,11 +59,10 @@
 
     kicker.textContent = item.kicker;
     title.textContent = item.title;
-    text.textContent = item.text;
-    icon.textContent = item.icon;
+    bodyText.textContent = item.text;
     count.textContent = String(index + 1).padStart(2, '0') + ' / ' + String(items.length).padStart(2, '0');
     bar.style.setProperty('--bot-progress', ((index + 1) / items.length * 100) + '%');
-    dots.forEach((d, i) => d.classList.toggle('is-active', i === index));
+    [...dotWrap.children].forEach((d, i) => d.classList.toggle('is-active', i === index));
 
     screen.innerHTML =
       '<div class="th-bot-screen-top"><span class="th-bot-screen-dot"></span><span>TUBAL HUB LIVE PREVIEW</span></div>' +
@@ -53,11 +71,28 @@
       '<div class="th-bot-screen-card"><b>' + item.icon + '</b><span><strong>' + item.title + '</strong><small>' + item.kicker + '</small></span></div>';
   }
 
-  function start() {
-    window.clearInterval(timer);
-    timer = window.setInterval(() => render(index + 1), 4200);
+  function sequence() {
+    clearTimers();
+    if (stopped) return;
+
+    setAction('idle');
+    schedule(() => setAction('walk'), 850);
+    schedule(() => setAction('present'), 2100);
+    schedule(() => setAction('observe'), 3600);
+    schedule(() => setAction('wave'), 4550);
+    schedule(() => setAction('return'), 5450);
+    schedule(() => {
+      render(index + 1);
+      sequence();
+    }, 6400);
   }
 
+  dotWrap.innerHTML = items.map((_, i) => '<span class="' + (i === 0 ? 'is-active' : '') + '"></span>').join('');
   render(0, true);
-  start();
+  sequence();
+
+  window.addEventListener('pagehide', () => {
+    stopped = true;
+    clearTimers();
+  }, {once:true});
 })();
