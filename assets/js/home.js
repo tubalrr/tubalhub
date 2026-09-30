@@ -838,7 +838,7 @@ function getRealGamePlayCount(id){
 }
 async function getRealGames(){
   try{
-    const response=await fetch('data/games.json?t="+Date.now()+",{cache:'no-store'});
+    const response=await fetch('data/games.json?t='+Date.now(),{cache:'no-store'});
     if(!response.ok)throw new Error('games.json '+response.status);
     const data=await response.json();
     const rows=Array.isArray(data)?data:(Array.isArray(data?.games)?data.games:[]);
