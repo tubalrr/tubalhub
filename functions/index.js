@@ -738,39 +738,6 @@ function parseShopPriceReal(value) {
   return Number.isFinite(amount) && amount >= 0 ? amount : null;
 }
 
-const KAPENG_BARAKO_CHECKOUT_CATALOG = Object.freeze({
-  "kb-strong-250g": {
-    catalogKey: "barako-strong-250g",
-    name: "Barako Strong",
-    price: "350",
-    stock: 7,
-    productType: "physical",
-    category: "coffee",
-    brandKey: "kapeng",
-    brandName: "Kapeng Barako"
-  },
-  "kb-classic-500g": {
-    catalogKey: "barako-classic-500g",
-    name: "Barako Classic",
-    price: "620",
-    stock: 12,
-    productType: "physical",
-    category: "coffee",
-    brandKey: "kapeng",
-    brandName: "Kapeng Barako"
-  },
-  "kb-starter-bundle": {
-    catalogKey: "barako-starter-bundle",
-    name: "Barako Starter Bundle",
-    price: "870",
-    stock: 10,
-    productType: "physical",
-    category: "coffee",
-    brandKey: "kapeng",
-    brandName: "Kapeng Barako"
-  }
-});
-
 function normalizeShopItemsReal(items) {
   if (!Array.isArray(items) || items.length === 0 || items.length > 50) {
     throw new HttpsError("invalid-argument", "Invalid shop items.");
@@ -827,10 +794,8 @@ async function getShopProductsReal(items) {
   const snaps = await db.getAll(...refs);
   return items.map((item, index) => {
     const snap = snaps[index];
-    if (snap.exists) return { id: snap.id, data: snap.data() || {}, qty: item.qty };
-    const fallback = KAPENG_BARAKO_CHECKOUT_CATALOG[item.productId];
-    if (fallback) return { id: item.productId, data: fallback, qty: item.qty };
-    throw new HttpsError("not-found", "A selected product no longer exists.");
+    if (!snap.exists) throw new HttpsError("not-found", "A selected product no longer exists.");
+    return { id: snap.id, data: snap.data() || {}, qty: item.qty };
   });
 }
 
@@ -860,8 +825,17 @@ exports.createShopOrderReal = onCall(async request => {
     if (productType === "physical") hasPhysical = true;
     else hasDigital = true;
 
-    const brandKey = String(p.brandKey || p.brandId || p.brand || (KAPENG_BARAKO_CHECKOUT_CATALOG[item.id]?.brandKey || "")).trim().toLowerCase();
-    const brandName = String(p.brandName || p.seller || (KAPENG_BARAKO_CHECKOUT_CATALOG[item.id]?.brandName || "")).trim();
+    const sourceType = String(p.sourceType || "admin-managed").trim().toLowerCase();
+    const catalogStatus = String(p.catalogStatus || "live").trim().toLowerCase();
+    if (p.isDemo === true || sourceType === "demo" || sourceType === "external") {
+      throw new HttpsError("failed-precondition", "This product uses an external/demo checkout path.");
+    }
+    if (catalogStatus === "archived" || catalogStatus === "hidden" || p.isVisible === false) {
+      throw new HttpsError("failed-precondition", "This product is not currently available.");
+    }
+
+    const brandKey = String(p.brandKey || p.brandId || p.brand || "").trim().toLowerCase();
+    const brandName = String(p.brandName || p.seller || "").trim();
     if (brandKey) brandKeys.add(brandKey);
     if (brandName) brandNames.add(brandName);
 
