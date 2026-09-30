@@ -14,11 +14,26 @@
       if (!response.ok) throw new Error("release fetch failed");
       const data = await response.json();
       const updates = Array.isArray(data.updatesReal) ? data.updatesReal : [];
-      const latest = String(updates[0] || fallback.latest)
-        .replace(/^v\d+\.\d+\.\d+\s*/i, "")
-        .replace(/^\b(FEAT|FIX|UI|SECURITY|ADMIN|BUILD|CLEANUP|REFACTOR|AUDIT|PERF|META)\b\s*[—:-]?\s*/i, "")
-        .trim();
-      return { version: String(data.version || "current"), latest };
+      const latestItems = updates
+        .slice(0, 6)
+        .map(item => String(item || "").trim())
+        .filter(Boolean)
+        .map(item => {
+          const versionMatch = item.match(/^(v?\d+\.\d+\.\d+)/i);
+          const version = versionMatch ? versionMatch[1].replace(/^v/i, "") : "";
+          const clean = item
+            .replace(/^v\d+\.\d+\.\d+\s*/i, "")
+            .replace(/^\b(FEAT|FIX|UI|SECURITY|ADMIN|BUILD|CLEANUP|REFACTOR|AUDIT|PERF|META)\b\s*[—:-]?\s*/i, "")
+            .replace(/^—\s*/,"")
+            .trim();
+          return { version, text: clean };
+        });
+      const latest = latestItems[0]?.text || fallback.latest;
+      return {
+        version: String(data.version || "current"),
+        latest,
+        latestItems
+      };
     } catch (_) {
       return fallback;
     }
@@ -54,6 +69,7 @@
     const sound = el("tubalMainBotSound");
     const text = el("tubalMainBotText");
     const title = el("tubalMainBotTitle");
+    const latestEl = el("tubalMainBotLatest");
 
     if (!root || !toggle || !bubble || !sound) return;
 
@@ -63,6 +79,9 @@
     let message = "Welcome to TUBAL HUB. I am your Welcome Bot.";
     let initialized = false;
     let gestureFallbackBound = false;
+    let latestTickerTimer = null;
+    let latestTickerItems = [];
+    let latestTickerIndex = 0;
 
     let muted = false;
     try {
@@ -77,6 +96,51 @@
       if (muted && speechAvailable) {
         speechSynthesis.cancel();
       }
+    };
+
+    const setLatestItem = (item, animate = true) => {
+      if (!latestEl) return;
+      const version = item?.version ? `v${item.version}` : "LIVE";
+      const message = item?.text || "Checking latest TUBAL HUB updates…";
+      latestEl.textContent = `LATEST · ${version} · ${message}`;
+      latestEl.title = latestEl.textContent;
+      if (animate) {
+        latestEl.classList.remove("is-changing");
+        void latestEl.offsetWidth;
+        latestEl.classList.add("is-changing");
+      }
+    };
+
+    const startLatestTicker = (items) => {
+      if (!latestEl) return;
+      latestTickerItems = Array.isArray(items) && items.length
+        ? items.filter(item => item && (item.text || item.version))
+        : [];
+
+      clearInterval(latestTickerTimer);
+      latestTickerIndex = 0;
+
+      if (!latestTickerItems.length) {
+        setLatestItem({version: "", text: "No release notes yet"}, false);
+        return;
+      }
+
+      setLatestItem(latestTickerItems[0], false);
+
+      if (latestTickerItems.length === 1) return;
+
+      latestTickerTimer = window.setInterval(() => {
+        latestTickerIndex = (latestTickerIndex + 1) % latestTickerItems.length;
+        setLatestItem(latestTickerItems[latestTickerIndex], true);
+      }, 4200);
+    };
+
+    const refreshLatestTicker = async () => {
+      const fresh = await getRelease();
+      if (fresh?.latestItems?.length) {
+        startLatestTicker(fresh.latestItems);
+      }
+      return fresh;
     };
 
     const loadVoice = () => {
@@ -180,6 +244,7 @@
 
       message = buildFullGuide(release, isNew);
 
+      startLatestTicker(release.latestItems);
       if (title) title.textContent = isNew ? "New update detected" : "Welcome to TUBAL HUB";
       if (text) {
         text.textContent = isNew
@@ -197,6 +262,11 @@
           armGestureFallback();
         }, 500);
       }
+
+      window.setInterval(async () => {
+        const fresh = await refreshLatestTicker();
+        if (!fresh?.version || fresh.version === release.version) return;
+      }, 60000);
     })();
   }
 
