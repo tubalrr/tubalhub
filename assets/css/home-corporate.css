@@ -453,7 +453,7 @@ body.hub-home .th-ai-guide-avatar-wrap{
     0 26px 55px rgba(0,0,0,.34),
     0 0 0 1px rgba(255,255,255,.025),
     inset 0 1px rgba(255,255,255,.08);
-  animation:thAiFloat 5.4s ease-in-out infinite;
+  animation:thAiPresenterMotion 8.4s cubic-bezier(.45,0,.55,1) infinite;
 }
 body.hub-home .th-ai-guide-avatar-wrap:before{
   content:"AI PRESENTER";
@@ -478,7 +478,8 @@ body.hub-home .th-ai-guide-avatar{
   height:100%;
   object-fit:cover;
   object-position:center 25%;
-  transform:scale(1.09);
+  transform-origin:center 34%;
+  animation:thAiCameraMove 8.4s cubic-bezier(.45,0,.55,1) infinite;
 }
 body.hub-home .th-ai-guide-avatar-wrap:after{
   content:"";
@@ -494,6 +495,7 @@ body.hub-home .th-ai-guide-avatar-wrap:after{
 }
 body.hub-home .th-ai-guide-showcase{
   position:relative;
+  animation:thAiShowcaseFloat 8.4s ease-in-out infinite;
   min-width:0;
   min-height:280px;
   padding:18px;
@@ -653,6 +655,20 @@ body.hub-home .th-ai-guide-nav span.is-active{
   box-shadow:0 0 8px rgba(90,131,255,.34);
 }
 body.hub-home .th-corp-hero-copy{position:relative;z-index:10}
+@keyframes thAiPresenterMotion{
+  0%,100%{transform:translate3d(0,0,0) rotate(0deg)}
+  18%{transform:translate3d(-4px,-2px,0) rotate(-.35deg)}
+  38%{transform:translate3d(3px,-7px,0) rotate(.5deg)}
+  58%{transform:translate3d(7px,-2px,0) rotate(.25deg)}
+  78%{transform:translate3d(-2px,-5px,0) rotate(-.45deg)}
+}
+@keyframes thAiCameraMove{
+  0%,100%{transform:scale(1.09) translate3d(0,4px,0)}
+  18%{transform:scale(1.12) translate3d(-4px,0,0)}
+  38%{transform:scale(1.15) translate3d(5px,-3px,0)}
+  58%{transform:scale(1.11) translate3d(9px,1px,0)}
+  78%{transform:scale(1.14) translate3d(-3px,-2px,0)}
+}
 @keyframes thAiFloat{
   0%,100%{transform:translateY(0) rotate(-.45deg)}
   50%{transform:translateY(-7px) rotate(.45deg)}
@@ -664,6 +680,11 @@ body.hub-home .th-corp-hero-copy{position:relative;z-index:10}
 @keyframes thAiScan{
   0%,100%{opacity:.34;transform:scaleX(.72)}
   50%{opacity:1;transform:scaleX(1)}
+}
+@keyframes thAiShowcaseFloat{
+  0%,100%{transform:translate3d(0,0,0)}
+  40%{transform:translate3d(-3px,-4px,0)}
+  70%{transform:translate3d(2px,-1px,0)}
 }
 @keyframes thAiStatus{
   50%{transform:scale(1.42);opacity:.60}
@@ -729,6 +750,8 @@ body.hub-home .th-corp-hero-copy{position:relative;z-index:10}
 }
 @media(prefers-reduced-motion:reduce){
   body.hub-home .th-ai-guide-avatar-wrap,
+  body.hub-home .th-ai-guide-avatar,
+  body.hub-home .th-ai-guide-showcase,
   body.hub-home .th-ai-guide-aura,
   body.hub-home .th-ai-guide-status i,
   body.hub-home .th-ai-guide-avatar-wrap:after{animation:none!important}
