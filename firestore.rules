@@ -157,7 +157,7 @@ service cloud.firestore {
       allow create: if realUser()
         && userId == request.auth.uid
         && request.resource.data.uid == request.auth.uid
-        && request.resource.data.diff({}).affectedKeys().hasNone([
+        && request.resource.data.keys().hasNone([
           'roleReal',
           'role',
           'isAdmin',
