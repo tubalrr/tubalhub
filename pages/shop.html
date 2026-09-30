@@ -10,6 +10,17 @@
 <link rel="stylesheet" href="../assets/css/global-theme.css?v=20260924">
 <link rel="stylesheet" href="../assets/css/premium-logos.css?v=20260925-logo2">
 <link rel="stylesheet" href="../assets/css/shop.css?v=20260925-v14">
+<style id="kapengBarakoBridgeStyle">
+.kapeng-store-bridge{display:grid;grid-template-columns:54px minmax(0,1fr) auto;align-items:center;gap:16px;margin:0 0 16px;padding:16px 18px;border-radius:20px;border-color:rgba(200,169,81,.28);background:linear-gradient(135deg,rgba(58,35,10,.88),rgba(12,10,7,.94));}
+.kapeng-store-mark{width:54px;height:54px;border-radius:16px;display:grid;place-items:center;font-size:25px;background:linear-gradient(135deg,#c8a951,#7a5b20);box-shadow:0 10px 30px rgba(200,169,81,.16);}
+.kapeng-store-copy h2{margin:4px 0 4px;font-size:21px;letter-spacing:-.5px;color:#f5e9d3;}
+.kapeng-store-copy p{margin:0;max-width:760px;color:#b8a998;font-size:10px;line-height:1.55;}
+.kapeng-store-btn{white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;}
+@media(max-width:700px){.kapeng-store-bridge{grid-template-columns:46px minmax(0,1fr);}.kapeng-store-mark{width:46px;height:46px;border-radius:13px;font-size:21px;}.kapeng-store-btn{grid-column:1/-1;width:100%;}.kapeng-store-copy h2{font-size:18px;}}
+body.theme-light .kapeng-store-bridge{background:linear-gradient(135deg,#fff8e8,#fff);border-color:#ead9a7;}
+body.theme-light .kapeng-store-copy h2{color:#3a2b14;}
+body.theme-light .kapeng-store-copy p{color:#776b58;}
+</style>
 </head>
 <body class="shop-page theme-midnight">
 <header class="shop-topbar">
@@ -32,6 +43,16 @@
   <section class="shop-hero glass-surface">
     <div class="shop-hero-copy"><span class="eyebrow">OFFICIAL MARKETPLACE</span><h1>Official Hub <em>Collection</em></h1><p>Premium drops for TUBAL HUB, Payapang Isip, and CTRLZONE.</p><button id="heroShopNow" class="gradient-btn hero-shop-btn" type="button">Shop Now <span>→</span></button></div>
     <div class="shop-hero-image-wrap"><img id="heroCollectionImage" src="https://images.unsplash.com/photo-1607083206968-13611e3d76db?auto=format&fit=crop&w=1280&q=86" alt="Official Hub Collection"><div class="hero-glass-label"><span class="hero-logo-mark th-mark"><img src="../tubal-hub-logo.png" width="26" height="26" alt="TUBAL HUB"></span><b>OFFICIAL DROP</b><small>New arrivals</small></div></div>
+  </section>
+
+  <section class="kapeng-store-bridge glass-surface" aria-label="Kapeng Barako official store">
+    <div class="kapeng-store-mark" aria-hidden="true">☕</div>
+    <div class="kapeng-store-copy">
+      <span class="eyebrow">OFFICIAL STOREFRONT CONNECTION</span>
+      <h2>Kapeng Barako</h2>
+      <p>Browse Kapeng Barako products inside TUBAL HUB Shop, then continue to the official Kapeng Barako storefront for checkout and live store management.</p>
+    </div>
+    <a class="gradient-btn kapeng-store-btn" href="https://tubalrr.github.io/Kapeng-Barako/" target="_blank" rel="noopener noreferrer">Open Kapeng Barako Store →</a>
   </section>
 
   <section class="collection-tabs-wrap">
