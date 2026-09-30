@@ -1,11 +1,12 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.2.87",
-  "build": "2026-09-30_2302",
-  "releasedAtReal": "2026-09-30T15:02:09.799Z",
+  "version": "1.2.88",
+  "build": "2026-09-30_2313",
+  "releasedAtReal": "2026-09-30T15:13:08.875Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.2.88 FEAT — Added an animated WebP demo for the AI female Hero presenter, replacing the static image as the displayed presenter asset. The animation uses cinematic camera/parallax motion and a light sweep to create a video-like presentation loop while the content-tour cards continue rotating silently. Welcome Bot remains the voice layer.",
     "v1.2.87 FIX — Repaired remaining homepage JavaScript fetch syntax and cache-busting URLs that were causing the console SyntaxError and stale version.json requests. The Hero AI female guide remains in place; a true video presenter asset is not yet available in the repository.",
     "v1.2.86 FEAT — Strengthened the AI female guide's presentation motion so the presenter feels more like a video demo: cinematic body float, subtle camera/push-in movement, directional shifts toward the showcase, and synchronized showcase-panel motion. Still silent; Welcome Bot remains the voice layer.",
     "v1.2.85 FIX — Removed the old WebGL/3D Hero animation completely and wired the AI female guide into the existing Hero as the visual presenter. The guide uses the AI image asset, silently rotates through real TUBAL HUB sections, and keeps the Welcome Bot as the voice layer.",
@@ -801,5 +802,5 @@
     }
   ],
   "date": "2026-09-30",
-  "changes": "v1.2.87 FIX — Repaired remaining homepage JavaScript fetch syntax and cache-busting URLs that were causing the console SyntaxError and stale version.json requests. The Hero AI female guide remains in place; a true video presenter asset is not yet available in the repository."
+  "changes": "v1.2.88 FEAT — Added an animated WebP demo for the AI female Hero presenter, replacing the static image as the displayed presenter asset. The animation uses cinematic camera/parallax motion and a light sweep to create a video-like presentation loop while the content-tour cards continue rotating silently. Welcome Bot remains the voice layer."
 }
