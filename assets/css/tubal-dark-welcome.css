@@ -27,3 +27,11 @@
 @media(max-width:980px){.td-welcome{grid-template-columns:auto 1fr}.td-welcome-map{grid-column:1 / -1;grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:650px){.td-welcome{grid-template-columns:1fr;gap:15px;padding:18px}.td-welcome-bot{flex-direction:row;justify-content:flex-start}.td-welcome-map{grid-template-columns:1fr}.td-welcome-actions{width:100%}.td-welcome-actions button{flex:1 1 auto}}
 @media(prefers-reduced-motion:reduce){.td-welcome-bot-face span,.td-welcome-speak.is-speaking{animation:none!important}}
+
+.td-welcome-bot-face.is-speaking{border-color:rgba(255,204,0,.62);box-shadow:0 0 30px rgba(255,204,0,.18),0 0 70px rgba(255,59,48,.08),inset 0 0 25px rgba(255,59,48,.1);animation:tdBotTalk 1.1s ease-in-out infinite}
+.td-welcome-bot-face.is-speaking span{animation:tdBotEyePulse .7s ease-in-out infinite}
+.td-welcome-bot-face.is-speaking i{height:7px;width:24px;animation:tdBotMouth 180ms ease-in-out infinite alternate}
+@keyframes tdBotTalk{50%{transform:translateY(-2px) scale(1.02)}}
+@keyframes tdBotEyePulse{50%{transform:scale(.8);opacity:.55}}
+@keyframes tdBotMouth{from{height:3px;border-radius:999px}to{height:10px;border-radius:5px}}
+@media(prefers-reduced-motion:reduce){.td-welcome-bot-face.is-speaking{animation:none!important}.td-welcome-bot-face.is-speaking span,.td-welcome-bot-face.is-speaking i{animation:none!important}}
