@@ -75,8 +75,7 @@ $("betaSave")?.addEventListener("click",async()=>{
   }catch(e){toast(e.message||"Save failed.");}
 });
 
-function prepareGoLive(){ toast("Legacy release action retired. Use Release Control / version.json."); }
 
 auth.authStateReady?.().then(loadBeta).catch(()=>{});
-if(!auth.authStateReady)auth.authStateReady?.().then(loadBeta).catch(()=>{});
+if(!auth.authStateReady)auth.onAuthStateChanged(user=>{if(user)loadBeta();});
 if(!auth.authStateReady)auth.onAuthStateChanged(user=>{if(user)loadBeta();});
