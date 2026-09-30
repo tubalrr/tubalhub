@@ -274,3 +274,51 @@ a[href$="pages/shop.html"]{pointer-events:auto!important;cursor:pointer!importan
 .footer-follow.social-links-pending>strong{color:rgba(255,255,255,.55)}
 .footer-follow.social-links-pending>span{color:rgba(255,255,255,.30);font-size:8px;line-height:1.4}
 @media(max-width:700px){.footer-follow.social-links-pending{align-items:flex-start;text-align:left}}
+
+
+/* =========================================================
+   TUBAL DARK — TOP MODE SWITCH
+   ========================================================= */
+body.hub-home .tubal-mode-switch{
+  display:inline-flex !important;
+  align-items:center !important;
+  gap:7px !important;
+  min-height:36px !important;
+  padding:0 11px !important;
+  border:1px solid rgba(255,59,48,.32) !important;
+  border-radius:999px !important;
+  background:linear-gradient(135deg,rgba(255,59,48,.10),rgba(255,204,0,.05)) !important;
+  color:#fff !important;
+  text-decoration:none !important;
+  box-shadow:inset 0 1px rgba(255,255,255,.035),0 0 16px rgba(255,59,48,.04) !important;
+  white-space:nowrap !important;
+  transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease,background .2s ease !important;
+}
+body.hub-home .tubal-mode-switch:hover{
+  transform:translateY(-1px) !important;
+  border-color:rgba(255,204,0,.55) !important;
+  background:linear-gradient(135deg,rgba(255,59,48,.16),rgba(255,204,0,.08)) !important;
+  box-shadow:0 8px 22px rgba(0,0,0,.24),0 0 20px rgba(255,204,0,.08) !important;
+}
+body.hub-home .tubal-mode-switch-dot{
+  width:8px !important;
+  height:8px !important;
+  border-radius:50% !important;
+  background:#ff3b30 !important;
+  box-shadow:0 0 10px rgba(255,59,48,.7) !important;
+  flex:0 0 auto !important;
+}
+body.hub-home .tubal-mode-switch-label{
+  font-size:8px !important;
+  font-weight:900 !important;
+  letter-spacing:.08em !important;
+}
+body.hub-home .tubal-mode-switch-arrow{
+  color:#ffcc00 !important;
+  font-size:12px !important;
+  line-height:1 !important;
+}
+@media(max-width:900px){
+  body.hub-home .tubal-mode-switch-label{display:none !important}
+  body.hub-home .tubal-mode-switch{min-width:36px !important;width:36px !important;padding:0 !important;justify-content:center !important}
+}
