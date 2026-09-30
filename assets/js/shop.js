@@ -46,6 +46,9 @@ const normalizeRealProduct=x=>({id:"real-"+x.id,firestoreId:x.id,real:true,colle
 function listenToRealProducts(){if(realProductsUnsubscribe)realProductsUnsubscribe();realProductsUnsubscribe=onSnapshot(collection(db,"products"),snap=>{realProducts=snap.docs.map(d=>normalizeRealProduct({id:d.id,...d.data()}));renderProducts();updateCounts();renderMyProducts()},e=>console.warn("[TUBAL HUB Shop] real products listener failed",e))}
 
 const products=[
+  {id:"kb-strong-250g",collection:"kapeng",title:"Barako Strong",price:350,original:0,image:"https://tubalrr.github.io/Kapeng-Barako/assets/img/barako-strong.jpg",seller:"Kapeng Barako",sellerInitials:"KB",online:true,stock:7,rating:null,badge:"COFFEE",description:"100% Philippine Barako coffee, 250g.",details:"Barako Strong • 250g • Dark Roast • Batangas.",sizes:["250g"],colors:["Whole"],category:"coffee",externalUrl:"https://tubalrr.github.io/Kapeng-Barako/index.html"},
+  {id:"kb-classic-500g",collection:"kapeng",title:"Barako Classic",price:620,original:0,image:"https://tubalrr.github.io/Kapeng-Barako/assets/img/barako-classic.jpg",seller:"Kapeng Barako",sellerInitials:"KB",online:true,stock:12,rating:null,badge:"BESTSELLER",description:"Smooth Philippine Barako coffee, 500g.",details:"Barako Classic • 500g • Medium Roast • Batangas.",sizes:["500g"],colors:["Whole"],category:"coffee",externalUrl:"https://tubalrr.github.io/Kapeng-Barako/index.html"},
+  {id:"kb-starter-bundle",collection:"kapeng",title:"Barako Starter Bundle",price:870,original:970,image:"https://tubalrr.github.io/Kapeng-Barako/assets/img/barako-bundle.jpg",seller:"Kapeng Barako",sellerInitials:"KB",online:true,stock:10,rating:null,badge:"SAVE ₱100",description:"250g Barako Strong + 500g Barako Classic.",details:"Starter Bundle • Save ₱100.",sizes:["Bundle"],colors:["Whole"],category:"coffee",externalUrl:"https://tubalrr.github.io/Kapeng-Barako/index.html"},
   {id:"th-hoodie",collection:"th",title:"TH Signature Hoodie",price:1790,original:2290,image:IMG.hoodie,seller:"Rr Studio",sellerInitials:"Rr",online:true,stock:5,rating:4.8,badge:"NEW",description:"Premium-weight community hoodie with a clean TUBAL HUB finish.",details:"Soft-touch hoodie silhouette, relaxed fit, everyday community wear.",sizes:["S","M","L","XL"],colors:["Black","Forest","Stone"]},
   {id:"th-tee",collection:"th",title:"TUBAL HUB Core Tee",price:790,original:990,image:IMG.tshirt,seller:"Rr Studio",sellerInitials:"Rr",online:true,stock:8,rating:4.8,badge:"HOT",description:"Core TUBAL HUB tee for daily wear and creator sessions.",details:"Lightweight cotton tee with minimalist TH identity.",sizes:["S","M","L","XL"],colors:["Black","White","Green"]},
   {id:"th-oversized",collection:"th",title:"TH Oversized Tee",price:890,original:1090,image:IMG.shirt,seller:"Rr Studio",sellerInitials:"Rr",online:false,stock:7,rating:4.8,badge:"SALE",description:"Oversized profile tee with clean streetwear proportions.",details:"Relaxed drop-shoulder cut for casual community fits.",sizes:["M","L","XL"],colors:["Black","Grey","Olive"]},
@@ -153,6 +156,7 @@ function productById(id){return [...realProducts,...products].find(p=>p.id===id)
 function collectionProducts(){return [...realProducts,...products]}
 function brandMarkHtml(collection,small=false){
   if(collection==="th") return '<span class="mini-brand-logo th"><img src="../tubal-hub-logo.png" width="'+(small?22:28)+'" height="'+(small?22:28)+'" alt="TUBAL HUB"></span>';
+  if(collection==="kapeng") return '<span class="mini-brand-logo th" aria-hidden="true" style="font-size:18px">☕</span>';
   if(collection==="payapang") return '<span class="mini-brand-logo pi" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M31 6C19 6 10 12 10 22c0 7 5 12 12 12 9 0 12-10 9-28Z"/><path d="M8 33c4-7 10-12 18-16"/></svg></span>';
   return '<span class="mini-brand-logo cz" aria-hidden="true"><svg viewBox="0 0 44 34"><path d="M8 11h28a8 8 0 0 1 7.1 11.2l-3.6 7.3a4 4 0 0 1-7.2.2l-3-5.5H14.7l-3 5.5a4 4 0 0 1-7.2-.2L1 22.2A8 8 0 0 1 8 11Z"/><path d="M12 17v7M8.5 20.5h7M31 17.5h.01M35 21.5h.01"/></svg></span>';
 }
@@ -219,8 +223,8 @@ function cardHtml(p,index){
   const wished=state.wishlist.has(p.id);
   const isReal=Boolean(p.real);
   const priceHtml=isReal?'<strong class="product-price">'+esc(p.priceLabel)+'</strong>':'<strong class="product-price">'+money(p.price)+'</strong><span class="product-original">'+money(p.original)+'</span>';
-  const metaHtml=isReal?'<div class="product-rating-row"><span>REAL ADMIN PRODUCT</span><span>'+esc(p.category)+'</span></div>':'<div class="product-rating-row"><span>⭐ '+p.rating.toFixed(1)+'</span><span>Premium listing</span><span class="stock-low">'+p.stock+' left</span></div>';
-  const actionHtml=isReal&&p.productUrl?'<a class="add-btn real-product-link" href="'+esc(p.productUrl)+'" target="_blank" rel="noopener noreferrer">Open Product</a>':'<button class="add-btn" data-add="'+esc(p.id)+'" type="button">Add to Cart</button>';
+  const metaHtml=isReal?'<div class="product-rating-row"><span>REAL ADMIN PRODUCT</span><span>'+esc(p.category)+'</span></div>':p.externalUrl?'<div class="product-rating-row"><span>KAPENG BARAKO</span><span>PHILIPPINE COFFEE</span><span class="stock-low">'+p.stock+' left</span></div>':'<div class="product-rating-row"><span>⭐ '+p.rating.toFixed(1)+'</span><span>Premium listing</span><span class="stock-low">'+p.stock+' left</span></div>';
+  const actionHtml=(isReal&&p.productUrl)||p.externalUrl?'<a class="add-btn real-product-link" href="'+esc(isReal?p.productUrl:p.externalUrl)+'" target="_blank" rel="noopener noreferrer">Open Product</a>':'<button class="add-btn" data-add="'+esc(p.id)+'" type="button">Add to Cart</button>';
   return '<article class="product-card" data-product-id="'+esc(p.id)+'" style="--stagger:'+(index*.05)+'s">'+
     '<div class="product-visual">'+
       (p.image?'<img src="'+esc(p.image)+'" alt="'+esc(p.title)+'" loading="lazy" decoding="async">':'<div class="product-no-image" aria-label="No product image">NO IMAGE</div>')+
@@ -255,13 +259,13 @@ function updateCollectionUI(){
     btn.classList.toggle("active",active);
     btn.setAttribute("aria-selected",active?"true":"false");
   });
-  const names={all:"ALL CATEGORIES",merchandise:"MERCHANDISE",clothing:"CLOTHING",accessories:"ACCESSORIES","digital-products":"DIGITAL PRODUCTS","apps-software":"APPS & SOFTWARE",gaming:"GAMING","mods-addons":"MODS & ADD-ONS",media:"MEDIA",wellness:"WELLNESS",other:"OTHER"};
+  const names={all:"ALL CATEGORIES",merchandise:"MERCHANDISE",clothing:"CLOTHING",accessories:"ACCESSORIES","digital-products":"DIGITAL PRODUCTS","apps-software":"APPS & SOFTWARE",gaming:"GAMING","mods-addons":"MODS & ADD-ONS",media:"MEDIA",wellness:"WELLNESS",coffee:"KAPENG BARAKO",other:"OTHER"};
   document.getElementById("catalogTitle").textContent=names[state.categoryFilter]||"ALL CATEGORIES";
   renderProducts();
 }
 function updateCounts(){
   const all=[...realProducts,...products];
-  const categories=["all","merchandise","clothing","accessories","digital-products","apps-software","gaming","mods-addons","media","wellness","other"];
+  const categories=["all","merchandise","clothing","accessories","digital-products","apps-software","gaming","mods-addons","media","wellness","coffee","other"];
   categories.forEach(cat=>{
     const n=cat==="all"?all.length:all.filter(p=>String(p.category||"").toLowerCase()===cat).length;
     const el=document.getElementById("count-category-"+cat);
