@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
+<title>Kapeng Barako — Admin Login</title>
+<link rel="icon" type="image/svg+xml" href="../../assets/kapeng-admin/images/favicon.svg">
+<link rel="stylesheet" href="../../assets/kapeng-admin/css/admin-login.css?v=kb-rebuild-3">
+<script src="../../assets/kapeng-admin/js/admin-auth.js?v=kb-firebase-auth-16" defer></script>
+</head>
+<body>
+<main class="login-shell"><a href="../shop.html" style="position:fixed;top:14px;left:18px;color:#C8A951;text-decoration:none;z-index:100">← TUBAL HUB Shop</a>
+  <section class="login-brand">
+    <img class="brand-mark" src="../../assets/kapeng-admin/images/favicon.svg" alt="Kapeng Barako">
+    <span class="eyebrow">RESTRICTED ADMIN PORTAL</span>
+    <h1>Run the<br><em>Barako.</em></h1>
+    <p>Orders, stock, customers and sales—inside the Kapeng Barako control room.</p>
+    <div class="login-rule"><span>FIREBASE ADMIN SESSION</span><b>8 HOURS</b></div>
+  </section>
+  <section class="login-card">
+    <span class="eyebrow">ADMIN ACCESS</span>
+    <h2>Sign in.</h2>
+    <p>Sign in with your authorized admin email and password.</p>
+    <form id="admin-email-form">
+      <label for="admin-email">EMAIL</label>
+      <input id="admin-email" type="email" placeholder="admin@example.com" autocomplete="email" required>
+      <label for="admin-password">PASSWORD</label>
+      <input id="admin-password" type="password" placeholder="Enter password" autocomplete="current-password" required>
+      <div id="login-error" class="error" role="alert"></div>
+      <button id="email-admin-login" class="login-button" type="submit">SIGN IN WITH EMAIL →</button>
+      <button id="google-admin-setup" class="login-button login-button-secondary" type="button">FIRST-TIME SETUP WITH GOOGLE</button>
+      <a class="login-button login-button-secondary" href="./preview.html?v=kb-admin-preview-2">OPEN ADMIN UI PREVIEW</a>
+      <small class="setup-help">UI Preview is read-only for live Firebase data and is available only while Firebase Web App configuration is not active.</small>
+      <small class="setup-help"></small>
+      <small class="setup-help">Use the Google account you configured as the authorized admin to create/sync the Email + Password credential. See the Firebase setup guide before first login.</small>
+    </form>
+    <div class="seed-note admin-email-note">
+      <strong>ADMIN EMAIL</strong>
+      <small>Use the admin email configured in your own Firebase project.</small>
+    </div>
+    <div class="seed-note">
+      <strong>EMAIL + PASSWORD ADMIN</strong>
+      <small>Access is allowed only when Firebase authenticates the email and the matching <code>/admins/{uid}</code> document is active.</small>
+    </div>
+    <a class="back-link" href="https://tubalrr.github.io/Kapeng-Barako/index.html">← Back to Kapeng Barako storefront</a>
+  </section>
+</main>
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+  const form = document.querySelector("#admin-email-form");
+  const emailInput = document.querySelector("#admin-email");
+  const passwordInput = document.querySelector("#admin-password");
+  const btn = document.querySelector("#email-admin-login");
+  const err = document.querySelector("#login-error");
+  const googleSetupBtn = document.querySelector("#google-admin-setup");
+  const reasonMessages = {
+    expired: "Your Admin session expired. Sign in again.",
+    "session-invalid": "The previous Admin session could not be verified. Sign in again.",
+    unauthorized: "Firebase authenticated this account, but it is not an active Kapeng Barako Admin.",
+    setup: "Firebase is not configured for this template. Configure the buyer-owned Firebase project before live Admin Login.",
+    timeout: "Firebase Authentication timed out. Check the Firebase project and Authorized Domains.",
+    login: "Admin sign-in could not be completed. Check the Firebase account and Admin authorization."
+  };
+  const reason = new URLSearchParams(window.location.search).get("reason");
+  if (reason && reasonMessages[reason]) {
+    err.textContent = reasonMessages[reason];
+  }
+
+  try {
+    const admin = await window.KBAdminAuth.restore();
+    if (admin) {
+      location.replace("./index.html?v=kb-admin-console-20260929-4");
+      return;
+    }
+  } catch (error) {
+    err.textContent = error?.message || "Could not restore the admin session.";
+  }
+
+  googleSetupBtn.addEventListener("click", async () => {
+    err.textContent = "";
+    const password = String(passwordInput.value || "");
+    if (password.length < 6) {
+      err.textContent = "Enter the password you want to use (minimum 6 characters), then run the one-time Google setup.";
+      return;
+    }
+
+    googleSetupBtn.disabled = true;
+    btn.disabled = true;
+    googleSetupBtn.textContent = "CONNECTING GOOGLE…";
+    try {
+      await window.KBAdminAuth.setupAdminEmailPassword(password);
+      location.replace("./index.html?v=kb-admin-console-20260929-4");
+    } catch (error) {
+      console.error("[Kapeng Barako] admin Google password setup failed", error);
+      err.textContent = error?.message || "Could not complete the admin password setup.";
+      googleSetupBtn.disabled = false;
+      googleSetupBtn.textContent = "FIRST-TIME SETUP WITH GOOGLE";
+      btn.disabled = false;
+    }
+  });
+
+  form.addEventListener("submit", async event => {
+    event.preventDefault();
+    err.textContent = "";
+    btn.disabled = true;
+    btn.textContent = "SIGNING IN…";
+    try {
+      await window.KBAdminAuth.signInWithEmailPassword(emailInput.value, passwordInput.value);
+      location.replace("./index.html?v=kb-admin-console-20260929-4");
+    } catch (error) {
+      console.error("[Kapeng Barako] admin email/password login failed", error);
+      err.textContent = error?.message || "Could not sign in.";
+      btn.disabled = false;
+      btn.textContent = "SIGN IN WITH EMAIL →";
+    }
+  });
+});</script>
+</body>
+</html>
