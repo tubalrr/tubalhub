@@ -1,11 +1,12 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.2.93",
-  "build": "2026-10-01_0825",
-  "releasedAtReal": "2026-10-01T00:25:00.000Z",
+  "version": "1.2.94",
+  "build": "2026-10-01_0845",
+  "releasedAtReal": "2026-10-01T00:45:00.000Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.2.94 FEAT — Reworked the Hero showcase itself into a living UI display. Each branch now has a different mini interface design (wellness, shop, gaming, feeds, AI music, LifeHub, and core) with its own continuous animated elements and a smooth 3D morph between designs.",
     "v1.2.93 FIX — Made the Hero bot's walking unmistakable by adding a dedicated walk-track wrapper and a large left-to-right character travel path with stronger alternating leg/arm cycles. The bot now visibly crosses the stage, stops at the showcase, presents/waves, and returns.",
     "v1.2.92 FEAT — Reworked the Hero 3D bot into one continuous cinematic motion loop. The bot now physically travels across the stage, turns toward the showcase, presents/waves, and walks back without action-by-action slideshow switching.",
     "v1.2.91 FEAT — Upgraded the 3D showcase bot from simple looping motion to a staged video-like action sequence: idle, walk toward the showcase, point/present, look/observe, wave, then walk back before cycling to the next Hub section.",
