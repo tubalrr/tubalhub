@@ -174,6 +174,9 @@
 .sponsored-empty-real span{font-size:24px;opacity:.2}
 .sponsored-empty-real b{font-size:11px;opacity:.3;margin-top:8px}
 .sponsored-empty-real small{font-size:9px;opacity:.2;margin-top:4px}
+/* Shop navigation hit area */
+a[href$="pages/shop.html"]{pointer-events:auto!important;cursor:pointer!important;position:relative!important;z-index:100000!important}
+
 #sidebarMenuTrigger,
 #sidebarToggle{
   z-index:1002 !important;
