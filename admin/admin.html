@@ -522,7 +522,7 @@ body{margin:0;min-width:320px;font-family:Inter,ui-sans-serif,system-ui,-apple-s
 <script type="module">
 import {auth} from "../assets/js/firebase-config.js";
 import {onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
-import {getFirestore,collection,getDocs,addDoc,deleteDoc,doc,query,where,orderBy,limit,startAfter,serverTimestamp,updateDoc,Timestamp,writeBatch,onSnapshot,setDoc} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+import {getFirestore,collection,getDocs,getDoc,addDoc,deleteDoc,doc,query,where,orderBy,limit,startAfter,serverTimestamp,updateDoc,Timestamp,writeBatch,onSnapshot,setDoc} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 import {getFunctions,httpsCallable} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-functions.js";
 const ADMIN_EMAIL="tubalrr@gmail.com",db=getFirestore(),shopFunctions=getFunctions(),analyticsFunctions=getFunctions(),getAdminAnalyticsReal=httpsCallable(analyticsFunctions,"getAdminAnalyticsReal"),verifyShopOrderReal=httpsCallable(shopFunctions,"verifyShopOrderReal"),migrateShopDownloadSecretsReal=httpsCallable(shopFunctions,"migrateShopDownloadSecretsReal"),$=id=>document.getElementById(id);
 let news=[],anns=[],members=[],chats=[],shopProducts=[],shopOrders=[],sponsoredAds=[];
