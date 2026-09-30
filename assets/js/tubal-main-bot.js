@@ -30,22 +30,20 @@
       : `The current TUBAL HUB release is version ${release.version}. The latest release note says: ${release.latest}`;
 
     return [
-      "Welcome to TUBAL HUB. This bot is your full site guide.",
+      "Welcome to TUBAL HUB. I am your Welcome Bot.",
+      "I will automatically guide you around the Hub and explain what is available.",
       "TUBAL HUB is a connected digital ecosystem with three main branches.",
-      "First, Payapang Isip is the wellness branch. It contains breathing and grounding activities, journals, calm digital experiences, AI Music, and other wellness-focused tools.",
-      "Second, TUBAL HUB Shop is the commerce branch. It contains the shared product catalog, physical products, digital products, apps and software, gaming-related products, mods and add-ons, media, wellness items, and the featured Kapeng Barako storefront.",
-      "Third, Gaming Zone is the gaming branch. It is for game discovery, featured sessions, official game links, and gaming-focused content.",
-      "Kapeng Barako is a featured brand inside TUBAL HUB, with its own dedicated landing page and live shop connection.",
-      "The main site also includes Feeds for posts and community content; News and Announcements for stories and official notices; Events and Live for scheduled activities and live sessions; Community and Global Chat for user interaction; Profiles and Friends for member activity; AI Music for music creation and playback; LifeHub and Personal OS for personal organization; TUBAL Academy for learning; and Library for saved content.",
-      "The site also provides Login and Sign Up, Settings for profile, theme, notifications, privacy, sound, language, and account controls, plus Help, FAQ, Contact, and informational pages.",
-      "There are also Privacy, Cookies, Terms, License, Copyright, and Community Guidelines pages so visitors can understand how the platform is used and how content is handled.",
-      "Here are the important rules. Do not harass, threaten, bully, impersonate other people, spam, scam, post unlawful material, distribute malicious code, or deliberately disrupt the service.",
-      "Do not bypass authentication, access another user's account, interfere with databases or APIs, scan or attack the service, or introduce malware or other harmful code.",
-      "Do not upload content you do not have the right to share. Do not redistribute, resell, modify, or claim ownership of protected digital content when the applicable license or purchase terms do not allow it.",
-      "AI and automated features can be inaccurate. Do not treat automated output as professional legal, medical, financial, or other specialized advice.",
+      "Payapang Isip is the wellness branch with breathing and grounding activities, journals, calm digital experiences, AI Music, and wellness-focused tools.",
+      "TUBAL HUB Shop is the commerce branch with the shared product catalog, physical and digital offerings, gaming products, mods and add-ons, media, wellness items, and the featured Kapeng Barako storefront.",
+      "Gaming Zone is the gaming branch for game discovery, featured sessions, official game links, and gaming-focused content.",
+      "Kapeng Barako is a featured brand inside TUBAL HUB with its own dedicated landing page and live shop connection.",
+      "The main site also includes Feeds, News and Announcements, Events and Live, Community and Global Chat, Profiles and Friends, AI Music, LifeHub, Personal OS, TUBAL Academy, and Library.",
+      "Login, Sign Up, Settings, Help, FAQ, Contact, Privacy, Cookies, Terms, License, Copyright, and Community Guidelines are also available.",
+      "Please follow the site rules. Do not harass, threaten, bully, impersonate, spam, scam, post unlawful material, distribute malicious code, bypass authentication, access another user's account, attack the service, or upload content you do not have the right to share.",
+      "AI and automated features can be inaccurate, so specialized decisions should be checked with qualified professionals.",
       updateLine,
-      "Whenever the site publishes a newer release, this bot checks version.json and updates its welcome message so visitors can hear what changed.",
-      "Choose any area of TUBAL HUB from the navigation and explore."
+      "Whenever the site publishes a newer release, I read version.json and automatically announce what changed.",
+      "Enjoy exploring TUBAL HUB."
     ].join(" ");
   }
 
@@ -53,38 +51,53 @@
     const root = el("tubalMainBot");
     const toggle = el("tubalMainBotToggle");
     const bubble = el("tubalMainBotBubble");
-    const listen = el("tubalMainBotListen");
-    const replay = el("tubalMainBotReplay");
+    const sound = el("tubalMainBotSound");
     const text = el("tubalMainBotText");
     const title = el("tubalMainBotTitle");
 
-    if (!root || !toggle || !bubble || !listen) return;
+    if (!root || !toggle || !bubble || !sound) return;
 
-    if (!("speechSynthesis" in window)) {
-      listen.disabled = true;
-      if (text) text.textContent = "Browser speech synthesis is not available. The guide is still visible here.";
-      return;
-    }
+    const speechAvailable = "speechSynthesis" in window && "SpeechSynthesisUtterance" in window;
 
     let voice = null;
-    let spokeEntry = false;
-    let message = "Welcome to TUBAL HUB. This bot is your full site guide.";
+    let message = "Welcome to TUBAL HUB. I am your Welcome Bot.";
+    let initialized = false;
+    let gestureFallbackBound = false;
+
+    let muted = false;
+    try {
+      muted = localStorage.getItem("tubal_welcome_bot_muted") === "1";
+    } catch (_) {}
+
+    const setMutedUI = () => {
+      sound.setAttribute("aria-pressed", String(muted));
+      sound.setAttribute("aria-label", muted ? "Unmute Welcome Bot voice" : "Mute Welcome Bot voice");
+      sound.title = muted ? "Unmute Welcome Bot voice" : "Mute Welcome Bot voice";
+      root.classList.toggle("is-muted", muted);
+      if (muted && speechAvailable) {
+        speechSynthesis.cancel();
+      }
+    };
 
     const loadVoice = () => {
+      if (!speechAvailable) return;
       const voices = speechSynthesis.getVoices();
       voice =
         voices.find(v => /^en-US$/i.test(v.lang)) ||
         voices.find(v => /^en-GB$/i.test(v.lang)) ||
         voices.find(v => /^en(-|_)/i.test(v.lang)) ||
+        voices[0] ||
         null;
     };
 
     const setSpeaking = (active) => {
-      toggle.classList.toggle("is-speaking", active);
-      listen.textContent = active ? "🔊 Speaking…" : "🔊 Listen";
+      root.classList.toggle("is-speaking", active && !muted);
+      root.classList.toggle("is-idle", !active || muted);
     };
 
     const speak = () => {
+      if (!speechAvailable || muted || !message) return;
+
       try {
         loadVoice();
         speechSynthesis.cancel();
@@ -106,15 +119,52 @@
       }
     };
 
-    toggle.addEventListener("click", () => {
-      const opening = bubble.hidden;
-      bubble.hidden = !opening;
-      toggle.setAttribute("aria-expanded", String(opening));
-      if (opening && !speechSynthesis.speaking) speak();
+    const armGestureFallback = () => {
+      if (gestureFallbackBound || !speechAvailable || muted) return;
+      gestureFallbackBound = true;
+
+      const fallback = () => {
+        if (!muted && !speechSynthesis.speaking) speak();
+        document.removeEventListener("pointerdown", fallback);
+        document.removeEventListener("keydown", fallback);
+      };
+
+      document.addEventListener("pointerdown", fallback, { once: true, passive: true });
+      document.addEventListener("keydown", fallback, { once: true });
+    };
+
+    sound.addEventListener("click", (event) => {
+      event.stopPropagation();
+      muted = !muted;
+
+      try {
+        localStorage.setItem("tubal_welcome_bot_muted", muted ? "1" : "0");
+      } catch (_) {}
+
+      if (muted) {
+        if (speechAvailable) speechSynthesis.cancel();
+        setSpeaking(false);
+      } else if (initialized) {
+        speak();
+      }
+      setMutedUI();
     });
 
-    listen.addEventListener("click", speak);
-    replay?.addEventListener("click", speak);
+    toggle.addEventListener("click", (event) => {
+      if (event.target === sound || sound.contains(event.target)) return;
+      bubble.hidden = !bubble.hidden;
+      toggle.setAttribute("aria-expanded", String(!bubble.hidden));
+      if (!muted && !speechAvailable) return;
+    });
+
+    setMutedUI();
+
+    if (!speechAvailable) {
+      root.classList.add("speech-unavailable");
+      if (text) text.textContent = "Voice narration is not available in this browser, but the Welcome Bot guide remains visible.";
+      return;
+    }
+
     loadVoice();
     speechSynthesis.addEventListener?.("voiceschanged", loadVoice);
 
@@ -133,29 +183,20 @@
       if (title) title.textContent = isNew ? "New update detected" : "Welcome to TUBAL HUB";
       if (text) {
         text.textContent = isNew
-          ? `New update · v${release.version}. The bot will explain the full site and what changed.`
-          : `Current release · v${release.version}. Full site guide, rules, and latest update included.`;
+          ? `New update · v${release.version}. I will automatically explain what changed and guide you around the site.`
+          : `Current release · v${release.version}. I automatically explain the Hub, rules, and latest update.`;
       }
 
-      // Open the floating guide and attempt automatic narration on every homepage entry.
       bubble.hidden = false;
       toggle.setAttribute("aria-expanded", "true");
-      window.setTimeout(() => {
-        if (!spokeEntry) {
-          spokeEntry = true;
-          speak();
-        }
-      }, 800);
+      initialized = true;
 
-      // Browser autoplay fallback: first user interaction activates speech when autoplay is blocked.
-      const gestureFallback = () => {
-        if (!speechSynthesis.speaking && !spokeEntry) {
-          spokeEntry = true;
-          speak();
-        }
-      };
-      document.addEventListener("pointerdown", gestureFallback, { once: true, passive: true });
-      document.addEventListener("keydown", gestureFallback, { once: true });
+      if (!muted) {
+        window.setTimeout(() => {
+          if (!muted && !speechSynthesis.speaking) speak();
+          armGestureFallback();
+        }, 500);
+      }
     })();
   }
 
