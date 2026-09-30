@@ -6,10 +6,10 @@
 <meta name="theme-color" content="#050a08">
 <title>Shop | TUBAL HUB</title>
 <link rel="icon" type="image/png" href="../tubal-hub-logo.png">
-<link rel="stylesheet" href="../assets/css/style.css?v=1.2.45">
-<link rel="stylesheet" href="../assets/css/global-theme.css?v=1.2.45">
-<link rel="stylesheet" href="../assets/css/premium-logos.css?v=1.2.45">
-<link rel="stylesheet" href="../assets/css/shop.css?v=1.2.45">
+<link rel="stylesheet" href="../assets/css/style.css?v=1.2.46">
+<link rel="stylesheet" href="../assets/css/global-theme.css?v=1.2.46">
+<link rel="stylesheet" href="../assets/css/premium-logos.css?v=1.2.46">
+<link rel="stylesheet" href="../assets/css/shop.css?v=1.2.46">
 <style id="kapengBarakoBridgeStyle">
 .kapeng-store-bridge{display:grid;grid-template-columns:54px minmax(0,1fr) auto;align-items:center;gap:16px;margin:0 0 16px;padding:16px 18px;border-radius:20px;border-color:rgba(200,169,81,.28);background:linear-gradient(135deg,rgba(58,35,10,.88),rgba(12,10,7,.94));}
 .kapeng-store-mark{width:54px;height:54px;border-radius:16px;display:grid;place-items:center;font-size:25px;background:linear-gradient(135deg,#c8a951,#7a5b20);box-shadow:0 10px 30px rgba(200,169,81,.16);}
@@ -111,18 +111,15 @@ body.theme-light .kapeng-store-copy p{color:#776b58;}
     <button id="backCheckout" class="payment-back" type="button" aria-label="Back to shop">← <span>Back</span></button><button id="closeCheckoutX" class="glass-close payment-close" type="button" aria-label="Close payment">×</button>
     <span class="eyebrow">SECURE PAYMENT</span><h2 id="checkoutTitle">Choose payment method</h2><p id="checkoutCopy">Select how you want to continue.</p>
     <div class="payment-methods">
-      <button class="payment-method active" data-payment="card" type="button"><span class="payment-method-icon payment-brand-logos"><img src="https://cdn.simpleicons.org/visa/1a1f71" alt="Visa"><img src="https://cdn.simpleicons.org/mastercard/eb001b" alt="Mastercard"></span><span><b>Card</b><small>Visa / Mastercard</small></span><i>✓</i></button>
       <button class="payment-method" data-payment="bank" type="button"><span class="payment-method-icon payment-brand-logos"><img src="https://cdn.simpleicons.org/gcash/007DFE" alt="GCash"><img src="https://cdn.simpleicons.org/maya/00A86B" alt="Maya"></span><span><b>Bank / E-Wallet</b><small>GCash / Maya transfer</small></span><i>✓</i></button>
       <button class="payment-method" data-payment="paypal" type="button"><span class="payment-method-icon payment-brand-logos"><img src="https://cdn.simpleicons.org/paypal/003087" alt="PayPal"></span><span><b>PayPal</b><small>Pay with PayPal</small></span><i>✓</i></button>
     </div>
     <div class="payment-summary"><span>Total to pay</span><strong id="checkoutTotal">₱0</strong></div>
     <div id="paymentFields" class="payment-fields">
-<div class="payment-form-head"><b id="paymentFormTitle">Card details</b><span id="paymentFormBrand">VISA / MASTERCARD</span></div>
+<div class="payment-form-head"><b id="paymentFormTitle">Bank / E-Wallet reference</b><span id="paymentFormBrand">GCASH / MAYA</span></div>
 <div class="payment-form-grid">
-<label class="payment-field-full">Cardholder name<input id="cardholderName" type="text" autocomplete="cc-name" placeholder="Full name"></label>
-<label class="payment-field-full">Card number<input id="cardNumber" type="text" inputmode="numeric" autocomplete="cc-number" maxlength="19" placeholder="1234 5678 9012 3456"></label>
-<label>Expiry date<input id="cardExpiry" type="text" inputmode="numeric" autocomplete="cc-exp" maxlength="5" placeholder="MM/YY"></label>
-<label>CVV<input id="cardCvv" type="password" inputmode="numeric" autocomplete="cc-csc" maxlength="4" placeholder="123"></label>
+<label class="payment-field-full">Account name<input id="bankName" type="text" autocomplete="name" placeholder="Account name"></label>
+<label class="payment-field-full">Bank / E-Wallet reference<input id="bankReference" type="text" placeholder="GCash / Maya reference number"></label>
 </div></div>
     <div class="checkout-note">Secure checkout</div>
     <button id="finishCheckout" class="gradient-btn checkout-confirm" type="button">Continue Payment →</button>
@@ -142,7 +139,7 @@ body.theme-light .kapeng-store-copy p{color:#776b58;}
       <div><span>Shipping</span><b id="reviewShipping">₱0</b></div>
       <div class="total-row"><span>Total</span><strong id="reviewTotal">₱0</strong></div>
     </div>
-    <div class="order-review-payment"><span>Payment method</span><strong id="reviewPayment">Card</strong></div>
+    <div class="order-review-payment"><span>Payment method</span><strong id="reviewPayment">Bank / E-Wallet</strong></div>
     <button id="placeOrderBtn" class="gradient-btn checkout-confirm" type="button">Place Order →</button>
     <button id="backToPayment" class="ghost-btn" type="button">Back to Payment</button>
   </section>
@@ -157,7 +154,7 @@ body.theme-light .kapeng-store-copy p{color:#776b58;}
     <div class="order-success-summary">
       <div><span>Order number</span><strong id="orderNumber">—</strong></div>
       <div><span>Total</span><strong id="successTotal">₱0</strong></div>
-      <div><span>Payment</span><strong id="successPayment">Card</strong></div>
+      <div><span>Payment</span><strong id="successPayment">Bank / E-Wallet</strong></div>
     </div>
     <button id="closeOrderSuccess" class="gradient-btn checkout-confirm" type="button">Back to Shop</button>
   </section>
@@ -165,7 +162,7 @@ body.theme-light .kapeng-store-copy p{color:#776b58;}
 
 <div id="filterToast" class="shop-toast" role="status" aria-live="polite"></div><div id="particleLayer" class="particle-layer" aria-hidden="true"></div>
 <footer class="shop-footer"><div><strong>TUBAL HUB</strong><span>YOUR HUB. YOUR COMMUNITY.</span></div><nav><a href="../index.html">Home</a><a href="feeds.html">Feeds</a><a class="active" href="shop.html">Shop</a><a href="chat.html">Global Chat</a></nav><small>© 2026 TUBAL HUB • Play • Create • Connect</small></footer>
-<script src="../assets/js/theme.js?v=1.2.45" defer></script>
-<script type="module" src="../assets/js/shop.js?v=1.2.45"></script>
+<script src="../assets/js/theme.js?v=1.2.46" defer></script>
+<script type="module" src="../assets/js/shop.js?v=1.2.46"></script>
 </body>
 </html>
