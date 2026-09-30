@@ -623,72 +623,94 @@ body.hub-home .th-corp-hero .th-webgl-experience.is-fallback{
   body.hub-home .th-corp-hero-glow{animation:none!important}
 }
 /* =========================================================
-   TUBAL HUB — AI FEMALE SHOWCASE GUIDE v1.2.83
-   Silent visual presenter. Existing Welcome Bot remains the
-   voice layer; this guide visually demonstrates site content.
+   TUBAL HUB — AI FEMALE SHOWCASE GUIDE v1.2.84
+   Real AI-generated presenter image + silent showcase cards.
    ========================================================= */
 body.hub-home .th-corp-hero{position:relative!important}
 body.hub-home .th-ai-guide{
   position:absolute;
   right:2.5%;
   top:50%;
-  width:min(610px,48%);
+  width:min(640px,49%);
   height:390px;
   transform:translateY(-50%);
   z-index:7;
   display:grid;
-  grid-template-columns:235px 1fr;
-  gap:18px;
+  grid-template-columns:250px 1fr;
+  gap:16px;
   align-items:center;
   pointer-events:none;
 }
 body.hub-home .th-ai-guide-stage{
   position:relative;
-  height:350px;
+  height:355px;
   display:grid;
   place-items:end center;
-  perspective:1000px;
+  perspective:1100px;
 }
 body.hub-home .th-ai-guide-aura{
   position:absolute;
-  width:230px;
-  height:230px;
+  width:250px;
+  height:250px;
   left:50%;
-  top:48%;
+  top:49%;
   transform:translate(-50%,-50%);
   border-radius:50%;
   background:
-    radial-gradient(circle,rgba(74,112,255,.22),rgba(74,112,255,.06) 45%,transparent 72%);
-  filter:blur(7px);
-  animation:thAiAura 4.2s ease-in-out infinite;
+    radial-gradient(circle,rgba(77,113,255,.22),rgba(77,113,255,.06) 45%,transparent 72%);
+  filter:blur(8px);
+  animation:thAiAura 4s ease-in-out infinite;
 }
-body.hub-home .th-ai-guide-avatar{
-  width:220px;
-  height:320px;
+body.hub-home .th-ai-guide-avatar-wrap{
   position:relative;
   z-index:3;
-  overflow:visible;
-  filter:drop-shadow(0 22px 30px rgba(0,0,0,.40));
+  width:220px;
+  height:315px;
+  overflow:hidden;
+  border-radius:110px 110px 24px 24px;
   transform-origin:50% 100%;
-  animation:thAiFloat 5s ease-in-out infinite;
+  animation:thAiFloat 5.2s ease-in-out infinite;
+  filter:drop-shadow(0 24px 34px rgba(0,0,0,.42));
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.06),
+    inset 0 0 0 1px rgba(255,255,255,.025);
 }
-body.hub-home .th-ai-guide-avatar ellipse:first-of-type{animation:thAiShadowPulse 5s ease-in-out infinite}
+body.hub-home .th-ai-guide-avatar-wrap:after{
+  content:"";
+  position:absolute;
+  left:12%;
+  right:12%;
+  bottom:3px;
+  height:2px;
+  border-radius:99px;
+  background:linear-gradient(90deg,transparent,#5b82ff,#ffcc55,transparent);
+  box-shadow:0 0 14px rgba(91,130,255,.70);
+  animation:thAiScanLine 2.6s ease-in-out infinite;
+}
+body.hub-home .th-ai-guide-avatar{
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center 31%;
+  transform:scale(1.08) translateY(5px);
+}
 body.hub-home .th-ai-guide-ring{
   position:absolute;
   left:50%;
   top:48%;
-  border:1px solid rgba(99,135,255,.34);
+  border:1px solid rgba(99,135,255,.30);
   border-radius:50%;
   transform:translate(-50%,-50%) rotateX(68deg);
   transform-style:preserve-3d;
   box-shadow:0 0 22px rgba(76,118,255,.13);
 }
-body.hub-home .th-ai-ring-a{width:206px;height:76px;animation:thAiRingA 8s linear infinite}
-body.hub-home .th-ai-ring-b{width:170px;height:58px;border-color:rgba(255,204,85,.27);animation:thAiRingB 6.6s linear infinite reverse}
+body.hub-home .th-ai-ring-a{width:214px;height:78px;animation:thAiRingA 8s linear infinite}
+body.hub-home .th-ai-ring-b{width:180px;height:60px;border-color:rgba(255,204,85,.25);animation:thAiRingB 6.6s linear infinite reverse}
 body.hub-home .th-ai-guide-showcase{
   position:relative;
   min-width:0;
-  min-height:280px;
+  min-height:286px;
   padding:18px;
   border-radius:22px;
   border:1px solid rgba(255,255,255,.10);
@@ -703,12 +725,22 @@ body.hub-home .th-ai-guide-showcase:before{
   position:absolute;
   inset:0;
   background:
-    linear-gradient(rgba(255,255,255,.022) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(255,255,255,.022) 1px,transparent 1px);
+    linear-gradient(rgba(255,255,255,.023) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.023) 1px,transparent 1px);
   background-size:24px 24px;
-  mask-image:linear-gradient(to bottom,#000,transparent 85%);
-  opacity:.52;
+  mask-image:linear-gradient(to bottom,#000,transparent 88%);
+  opacity:.50;
   pointer-events:none;
+}
+body.hub-home .th-ai-guide-showcase:after{
+  content:"LIVE CONTENT MAP";
+  position:absolute;
+  right:16px;
+  top:12px;
+  color:rgba(255,255,255,.16);
+  font-size:7px;
+  font-weight:900;
+  letter-spacing:1.8px;
 }
 body.hub-home .th-ai-guide-head{
   position:relative;
@@ -743,7 +775,7 @@ body.hub-home .th-ai-guide-head strong{
   letter-spacing:-.04em;
 }
 body.hub-home .th-ai-guide-count{
-  color:rgba(255,255,255,.32);
+  color:rgba(255,255,255,.34);
   font-size:8px;
   font-weight:900;
   letter-spacing:1px;
@@ -755,14 +787,15 @@ body.hub-home .th-ai-guide-showcase>p{
   color:#9ca5b4!important;
   font-size:10px!important;
   line-height:1.55!important;
-  max-width:360px;
+  max-width:370px;
 }
 body.hub-home .th-ai-guide-panel-stage{
   position:relative;
   z-index:3;
-  height:104px;
+  height:106px;
   display:grid;
   align-items:center;
+  perspective:800px;
 }
 body.hub-home .th-ai-show-card{
   position:absolute;
@@ -775,13 +808,13 @@ body.hub-home .th-ai-show-card{
   border-radius:16px;
   border:1px solid rgba(255,255,255,.08);
   background:rgba(255,255,255,.035);
-  transform:translateX(18px) rotateY(-10deg);
+  transform:translate3d(24px,0,-20px) rotateY(-14deg);
   opacity:0;
   transition:opacity .55s ease,transform .7s cubic-bezier(.22,1,.36,1);
 }
 body.hub-home .th-ai-show-card.is-active{
   opacity:1;
-  transform:translateX(0) rotateY(0);
+  transform:translate3d(0,0,0) rotateY(0);
 }
 body.hub-home .th-ai-show-icon{
   width:42px;height:42px;
@@ -791,7 +824,7 @@ body.hub-home .th-ai-show-icon{
   background:#0c0f16;
   border:1px solid rgba(255,255,255,.08);
   font-size:19px;
-  box-shadow:inset 0 1px rgba(255,255,255,.05);
+  box-shadow:inset 0 1px rgba(255,255,255,.05),0 0 18px rgba(91,126,255,.06);
 }
 body.hub-home .th-ai-show-copy strong{
   display:block;
@@ -826,18 +859,18 @@ body.hub-home .th-ai-guide-nav span{
   flex:1;
   border-radius:99px;
   background:rgba(255,255,255,.10);
+  transition:background .3s ease,box-shadow .3s ease;
 }
 body.hub-home .th-ai-guide-nav span.is-active{
   background:linear-gradient(90deg,#587eff,#ffcc55);
   box-shadow:0 0 8px rgba(88,126,255,.34);
 }
-body.hub-home .th-corp-hero-copy{z-index:8}
 @keyframes thAiFloat{
-  0%,100%{transform:translateY(0) rotate(-.7deg)}
-  50%{transform:translateY(-8px) rotate(.7deg)}
+  0%,100%{transform:translateY(0) rotate(-.55deg)}
+  50%{transform:translateY(-8px) rotate(.55deg)}
 }
 @keyframes thAiAura{
-  0%,100%{transform:translate(-50%,-50%) scale(.92);opacity:.48}
+  0%,100%{transform:translate(-50%,-50%) scale(.92);opacity:.46}
   50%{transform:translate(-50%,-50%) scale(1.08);opacity:1}
 }
 @keyframes thAiRingA{
@@ -846,9 +879,9 @@ body.hub-home .th-corp-hero-copy{z-index:8}
 @keyframes thAiRingB{
   to{transform:translate(-50%,-50%) rotateX(68deg) rotateZ(-360deg)}
 }
-@keyframes thAiShadowPulse{
-  0%,100%{opacity:.16}
-  50%{opacity:.28}
+@keyframes thAiScanLine{
+  0%,100%{opacity:.38;transform:scaleX(.72)}
+  50%{opacity:1;transform:scaleX(1)}
 }
 @keyframes thAiStatus{
   50%{transform:scale(1.45);opacity:.62}
@@ -856,25 +889,25 @@ body.hub-home .th-corp-hero-copy{z-index:8}
 @media(max-width:1150px){
   body.hub-home .th-ai-guide{
     width:570px;
-    grid-template-columns:205px 1fr;
+    grid-template-columns:215px 1fr;
     right:-1%;
   }
-  body.hub-home .th-ai-guide-avatar{transform:scale(.90);transform-origin:50% 100%}
+  body.hub-home .th-ai-guide-avatar-wrap{transform:scale(.92);transform-origin:50% 100%}
 }
 @media(max-width:900px){
   body.hub-home .th-ai-guide{
-    width:auto;
     left:24px;
     right:24px;
     top:auto;
     bottom:12px;
-    height:280px;
+    width:auto;
+    height:275px;
     transform:none;
     grid-template-columns:165px 1fr;
     gap:8px;
   }
-  body.hub-home .th-ai-guide-stage{height:270px}
-  body.hub-home .th-ai-guide-avatar{transform:scale(.76);transform-origin:50% 100%}
+  body.hub-home .th-ai-guide-stage{height:265px}
+  body.hub-home .th-ai-guide-avatar-wrap{transform:scale(.76);transform-origin:50% 100%}
   body.hub-home .th-ai-guide-showcase{min-height:220px;padding:14px}
   body.hub-home .th-ai-guide-showcase>p{font-size:9px!important}
 }
@@ -883,25 +916,33 @@ body.hub-home .th-corp-hero-copy{z-index:8}
     left:10px;
     right:10px;
     bottom:9px;
-    height:205px;
-    grid-template-columns:88px 1fr;
+    height:200px;
+    grid-template-columns:82px 1fr;
+    gap:6px;
   }
-  body.hub-home .th-ai-guide-stage{height:205px}
-  body.hub-home .th-ai-guide-avatar{transform:scale(.52);transform-origin:50% 100%}
+  body.hub-home .th-ai-guide-stage{height:200px}
+  body.hub-home .th-ai-guide-avatar-wrap{
+    width:180px;
+    height:250px;
+    transform:scale(.46);
+    transform-origin:50% 100%;
+  }
   body.hub-home .th-ai-guide-ring{display:none}
-  body.hub-home .th-ai-guide-showcase{min-height:180px;padding:10px;border-radius:16px}
+  body.hub-home .th-ai-guide-showcase{min-height:178px;padding:10px;border-radius:16px}
   body.hub-home .th-ai-guide-head strong{font-size:13px}
   body.hub-home .th-ai-guide-showcase>p{font-size:8px!important;margin:7px 0 8px!important}
-  body.hub-home .th-ai-guide-panel-stage{height:72px}
-  body.hub-home .th-ai-show-card{grid-template-columns:31px 1fr auto;padding:7px;border-radius:12px}
-  body.hub-home .th-ai-show-icon{width:31px;height:31px;border-radius:9px;font-size:14px}
+  body.hub-home .th-ai-guide-panel-stage{height:70px}
+  body.hub-home .th-ai-show-card{grid-template-columns:30px 1fr auto;padding:7px;border-radius:12px}
+  body.hub-home .th-ai-show-icon{width:30px;height:30px;border-radius:9px;font-size:13px}
   body.hub-home .th-ai-show-copy strong{font-size:9px}
   body.hub-home .th-ai-show-copy small{font-size:6.5px}
   body.hub-home .th-ai-show-open{font-size:6px}
+  body.hub-home .th-ai-guide-showcase:after{display:none}
 }
 @media(prefers-reduced-motion:reduce){
-  body.hub-home .th-ai-guide-avatar,
+  body.hub-home .th-ai-guide-avatar-wrap,
   body.hub-home .th-ai-guide-aura,
   body.hub-home .th-ai-guide-ring,
-  body.hub-home .th-ai-guide-status i{animation:none!important}
+  body.hub-home .th-ai-guide-status i,
+  body.hub-home .th-ai-guide-avatar-wrap:after{animation:none!important}
 }
