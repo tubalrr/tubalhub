@@ -1,5 +1,5 @@
 import { auth } from "./firebase-config.js";
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
 (function(){
   function sync(user){
@@ -37,6 +37,28 @@ import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/f
   document.getElementById("authGuestActions")?.setAttribute("hidden","");
   document.getElementById("authUserActions")?.setAttribute("hidden","");
   document.getElementById("sidebarUser")?.setAttribute("hidden","");
+
+  // Central logout handler: delegated/capture listener keeps Logout working even if
+  // the header is re-rendered by another home module.
+  document.addEventListener("click", async event => {
+    const button = event.target.closest?.("#logoutBtn");
+    if (!button) return;
+    event.preventDefault();
+    event.stopPropagation();
+    if (button.dataset.logoutBusy === "1") return;
+    button.dataset.logoutBusy = "1";
+    button.disabled = true;
+    button.setAttribute("aria-busy", "true");
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error("[TUBAL HUB Auth UI] Logout failed:", error);
+      button.disabled = false;
+      button.removeAttribute("aria-busy");
+    } finally {
+      button.dataset.logoutBusy = "0";
+    }
+  }, true);
 
   const boot=()=>{
     sync(auth.currentUser || null);
