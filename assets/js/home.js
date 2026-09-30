@@ -2377,7 +2377,7 @@ function renderAllReal(){
   const cartEl=document.getElementById('cartCountReal');
   if(cartEl)cartEl.textContent=cart.length+' '+(cart.length===1?'item':'items')+' real';
 
-  fetch('data/games.json?t="+Date.now()+",{cache:'no-store'})
+  fetch('data/games.json?t='+Date.now(),{cache:'no-store'})
     .then(r=>{if(!r.ok)throw new Error('games.json '+r.status);return r.json()})
     .then(games=>{
       const rows=Array.isArray(games)?games:(Array.isArray(games.games)?games.games:[]);
@@ -2514,7 +2514,7 @@ async function detectSystemUpdateReal(force=false){
   if(!force && now-lastCheckReal<3000)return;
   lastCheckReal=now;
   try{
-    const res=await fetch('version.json?t=1790743217974'+Date.now(),{
+    const res=await fetch('version.json?t='+Date.now(),{
       cache:'no-store',
       headers:{'Cache-Control':'no-cache','Pragma':'no-cache'}
     });
