@@ -224,7 +224,7 @@ async function subscribeNotifyReal(){
 
   const welcomeData={
     version:"v"+String(document.getElementById("liveVersion")?.textContent||"0.0.0").replace(/^v/i,""),
-    build:String(document.getElementById("liveBuild")?.textContent||"2026-09-25_1216"),
+    build:String(document.getElementById("liveBuild")?.textContent||"2026-09-30_1248"),
     updates:"System update notifications enabled.",
     phone:phone||"N/A",
     message:"Welcome sa TUBAL HUB updates! Real release notifications lang ang ipapadala kapag may bagong version."
@@ -2547,7 +2547,7 @@ async function detectSystemUpdateReal(force=false){
 async function loadLatestVersionReal(){
   const data=systemUpdatePendingReal;
   const badge=document.getElementById("updateVersionBadgeReal");
-  const targetVersion=String(data?.version||badge?.textContent||"1.2.17").replace(/^v/i,"").trim()||"1.2.17";
+  const targetVersion=String(data?.version||badge?.textContent||"1.2.38").replace(/^v/i,"").trim()||"1.2.38";
 
   try{
     if("caches" in window){
