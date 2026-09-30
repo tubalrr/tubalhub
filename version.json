@@ -1,11 +1,12 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.2.89",
-  "build": "2026-09-30_2316",
-  "releasedAtReal": "2026-09-30T15:16:50.699Z",
+  "version": "1.2.90",
+  "build": "2026-10-01_0708",
+  "releasedAtReal": "2026-09-30T23:08:05.181Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.2.90 FEAT — Replaced the removed AI presenter experiment with a CSS 3D TUBAL HUB showcase bot. The bot has a head, animated eyes, torso, two arms with hands, and two legs with feet, plus an animated showcase display that cycles through TUBAL HUB sections. The showcase is display-only/non-clickable and does not add voice.",
     "v1.2.89 REMOVE — Removed the AI female presenter experiment completely from the homepage, including its Hero markup, script, styles, and image assets, as requested. Existing TUBAL HUB functionality remains unchanged.",
     "v1.2.88 FEAT — Added an animated WebP demo for the AI female Hero presenter, replacing the static image as the displayed presenter asset. The animation uses cinematic camera/parallax motion and a light sweep to create a video-like presentation loop while the content-tour cards continue rotating silently. Welcome Bot remains the voice layer.",
     "v1.2.87 FIX — Repaired remaining homepage JavaScript fetch syntax and cache-busting URLs that were causing the console SyntaxError and stale version.json requests. The Hero AI female guide remains in place; a true video presenter asset is not yet available in the repository.",
@@ -802,6 +803,6 @@
       "desc": "version.json is the single version/build source: v1.2.16 • build 2026-09-25_1216."
     }
   ],
-  "date": "2026-09-30",
-  "changes": "v1.2.89 REMOVE — Removed the AI female presenter experiment completely from the homepage, including its Hero markup, script, styles, and image assets, as requested. Existing TUBAL HUB functionality remains unchanged."
+  "date": "2026-10-01",
+  "changes": "v1.2.90 FEAT — Replaced the removed AI presenter experiment with a CSS 3D TUBAL HUB showcase bot. The bot has a head, animated eyes, torso, two arms with hands, and two legs with feet, plus an animated showcase display that cycles through TUBAL HUB sections. The showcase is display-only/non-clickable and does not add voice."
 }
