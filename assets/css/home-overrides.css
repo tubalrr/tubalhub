@@ -239,3 +239,22 @@ a[href$="pages/shop.html"]{pointer-events:auto!important;cursor:pointer!importan
   .tubal-chatbot-real{right:12px;bottom:12px}
   .tubal-chatbot-window-real{bottom:66px;width:min(380px,calc(100vw - 24px));height:min(480px,70vh)}
 }
+/* EmailJS configuration state */
+.footer-email-config-note-real{
+  display:block;
+  margin-top:6px;
+  color:rgba(255,200,120,.82);
+  font-size:9px;
+  line-height:1.4;
+}
+.footer-email-config-note-real[data-state="ready"]{color:rgba(29,255,145,.80)}
+.footer-subscribe-status-real.is-config-missing{
+  color:#ffc878;
+  border-color:rgba(255,200,120,.28);
+  background:rgba(255,200,120,.06);
+}
+.footer-subscribe-real.email-config-missing .footer-subscribe-fields-real button:disabled{
+  opacity:.72;
+  cursor:not-allowed;
+  filter:saturate(.7);
+}
