@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#0B0F14">
-<title>TUBAL HUB | Admin v1.2.48 • Kapeng Barako</title>
+<title>TUBAL HUB | Admin v1.2.49 • Kapeng Barako</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="../assets/css/admin-maintenance.css?v=1.2.48">
+<link rel="stylesheet" href="../assets/css/admin-maintenance.css?v=1.2.49">
 <script>tailwind.config={theme:{extend:{boxShadow:{soft:"0 8px 28px rgba(15,23,42,.06)"}}}};</script>
 <style>
 html{scroll-behavior:smooth}
@@ -132,7 +132,7 @@ body{margin:0;min-width:320px;font-family:Inter,ui-sans-serif,system-ui,-apple-s
 
       <div class="min-w-0 shrink-0">
         <div class="truncate text-sm font-extrabold text-slate-950">TUBAL HUB Admin</div>
-        <div class="flex items-center gap-2 text-[10px] text-slate-500"><span>v1.2.48</span><span>•</span><span id="headerBrandLabel">Master Hub</span></div>
+        <div class="flex items-center gap-2 text-[10px] text-slate-500"><span>v1.2.49</span><span>•</span><span id="headerBrandLabel">Master Hub</span></div>
       </div>
 
       <div class="top-search admin-search-wrap mx-auto hidden md:block">
@@ -350,7 +350,7 @@ body{margin:0;min-width:320px;font-family:Inter,ui-sans-serif,system-ui,-apple-s
 
       <!-- Beta -->
       <section id="betaTestControl" class="admin-card p-6 xl:col-span-2">
-        <div class="admin-card-head"><div><small>Beta Access</small><h2 class="mt-1">v1.2.48 Beta Control</h2><p>Maximum 3 tester emails.</p></div><span class="admin-badge">BETA</span></div>
+        <div class="admin-card-head"><div><small>Beta Access</small><h2 class="mt-1">v1.2.49 Beta Control</h2><p>Maximum 3 tester emails.</p></div><span class="admin-badge">BETA</span></div>
 
         <div class="beta-test-grid">
           <input id="betaEmailInput" type="email" autocomplete="off" class="admin-input" placeholder="tester@email.com">
@@ -369,10 +369,10 @@ body{margin:0;min-width:320px;font-family:Inter,ui-sans-serif,system-ui,-apple-s
 
       <!-- Updater -->
       <section id="updaterControl" class="admin-card p-6">
-        <div class="admin-card-head"><div><small>Updater</small><h2 class="mt-1">Release Control</h2><p>Schedule, test and publish releases.</p></div><span class="admin-badge">v1.2.48</span></div>
+        <div class="admin-card-head"><div><small>Updater</small><h2 class="mt-1">Release Control</h2><p>Schedule, test and publish releases.</p></div><span class="admin-badge">v1.2.49</span></div>
 
         <div class="space-y-4">
-          <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4"><div class="text-[9px] font-extrabold uppercase tracking-[.12em] text-slate-400">Current Version</div><div id="updaterCurrentVersion" class="mt-1 text-2xl font-extrabold">v1.2.48</div></div>
+          <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4"><div class="text-[9px] font-extrabold uppercase tracking-[.12em] text-slate-400">Current Version</div><div id="updaterCurrentVersion" class="mt-1 text-2xl font-extrabold">v1.2.49</div></div>
 
           <div><label class="mb-1.5 block text-[10px] font-bold text-slate-500">Target Version</label><input id="updaterTargetVersion" class="admin-input" placeholder="Target version from version.json" inputmode="decimal"></div>
 
@@ -620,7 +620,7 @@ body{margin:0;min-width:320px;font-family:Inter,ui-sans-serif,system-ui,-apple-s
     <div id="toast" class="fixed bottom-5 right-5 z-[120] hidden rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-xs font-semibold text-white shadow-2xl"></div>
 
     <footer class="mt-10 border-t border-slate-200 pt-6 text-center text-xs text-slate-400">
-      © 2026 TUBAL HUB · Admin Control Center · v1.2.48
+      © 2026 TUBAL HUB · Admin Control Center · v1.2.49
     </footer>
 
   </div>
@@ -637,7 +637,7 @@ import {auth} from "../assets/js/firebase-config.js";
 import {onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 import {getFirestore,collection,getDocs,getDoc,addDoc,deleteDoc,doc,query,where,orderBy,limit,startAfter,serverTimestamp,updateDoc,Timestamp,writeBatch,onSnapshot,setDoc} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 import {getFunctions,httpsCallable} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-functions.js";
-const ADMIN_EMAIL="tubalrr@gmail.com",db=getFirestore(),shopFunctions=getFunctions(),analyticsFunctions=getFunctions(),getAdminAnalyticsReal=httpsCallable(analyticsFunctions,"getAdminAnalyticsReal"),verifyShopOrderReal=httpsCallable(shopFunctions,"verifyShopOrderReal"),migrateShopDownloadSecretsReal=httpsCallable(shopFunctions,"migrateShopDownloadSecretsReal"),$=id=>document.getElementById(id);
+const ADMIN_EMAIL="tubalrr@gmail.com",db=getFirestore(),shopFunctions=getFunctions(),analyticsFunctions=getFunctions(),getAdminAnalyticsReal=httpsCallable(analyticsFunctions,"getAdminAnalyticsReal"),verifyShopOrderReal=httpsCallable(shopFunctions,"verifyShopOrderReal"),updateShopFulfillmentReal=httpsCallable(shopFunctions,"updateShopFulfillmentReal"),migrateShopDownloadSecretsReal=httpsCallable(shopFunctions,"migrateShopDownloadSecretsReal"),$=id=>document.getElementById(id);
 let news=[],anns=[],members=[],chats=[],shopProducts=[],shopOrders=[],sponsoredAds=[];
 window.TUBAL_ADMIN_BRAND_STATE={getProducts:()=>shopProducts.slice(),getOrders:()=>shopOrders.slice()};
 window.TUBAL_ADMIN_CONTROL_STATE={
@@ -771,7 +771,9 @@ function renderKapengRoom(){
         const items=getItems(o);
         const total=String(o?.brandKey||"").toLowerCase()==="kapeng" ? moneyValue(o.total) : items.reduce((s,i)=>s+moneyValue(i.price)*Number(i.qty||0),0);
         const created=o.createdAt?.toMillis?.()?new Date(o.createdAt.toMillis()).toLocaleString():"Pending timestamp";
-        return '<div class="item"><div><b>'+esc(o.id)+'</b><p>'+esc(items.map(i=>String(i.title||i.productId||"Product")+" × "+Number(i.qty||0)).join(", "))+'</p><small>'+esc(o.paymentMethod||"Manual payment")+' • '+esc(o.status||"pending_payment")+' • '+created+'</small></div><strong class="text-xs">₱'+total.toLocaleString("en-PH",{maximumFractionDigits:2})+'</strong></div>';
+        const fulfillment=String(o?.fulfillmentStatus||"not-applicable").toLowerCase();
+        const fulfillmentLabel=fulfillment==="pending"?"Fulfillment: Pending":fulfillment==="ready"?"Fulfillment: Ready":fulfillment==="delivered"?"Fulfillment: Delivered":"";
+        return '<div class="item"><div><b>'+esc(o.id)+'</b><p>'+esc(items.map(i=>String(i.title||i.productId||"Product")+" × "+Number(i.qty||0)).join(", "))+'</p><small>'+esc(o.paymentMethod||"Manual payment")+' • '+esc(o.status||"pending_payment")+(fulfillmentLabel?" • "+fulfillmentLabel:"")+' • '+created+'</small></div><div class="admin-item-actions">'+fulfillmentActionHtml(o)+'<strong class="text-xs">₱'+total.toLocaleString("en-PH",{maximumFractionDigits:2})+'</strong></div></div>';
       }).join("")
     : '<div class="empty">No Kapeng Barako orders yet.</div>';
 
@@ -820,6 +822,15 @@ function render(){
   }).join("")||'<div class="empty">No member profiles found.</div>';
 
   const orderStatusColor=s=>s==="paid"?"#55e6a5":s==="rejected"?"#ff7b8a":"#f6c86b";
+  const fulfillmentActionHtml=x=>{
+    const items=Array.isArray(x?.items)?x.items:[];
+    const isPhysical=x?.type!=="upgrade" && items.some(i=>String(i?.productType||"physical").toLowerCase()==="physical");
+    if(!isPhysical || x?.status!=="paid")return "";
+    const state=String(x?.fulfillmentStatus||"pending").toLowerCase();
+    if(state==="pending")return '<button data-fulfillment-order="'+esc(x.id)+'" data-fulfillment-next="ready">Mark Ready</button>';
+    if(state==="ready")return '<button data-fulfillment-order="'+esc(x.id)+'" data-fulfillment-next="delivered">Mark Delivered</button>';
+    return '<small style="opacity:.65">Delivered</small>';
+  };
   renderKapengRoom();
 
   $("shopOrderList").innerHTML=shopOrders.map(x=>{
@@ -828,12 +839,16 @@ function render(){
     const type=x.type==="upgrade"?"Upgrade":"Purchase";
     const action=isPending
       ? '<div class="admin-item-actions"><button data-verify-order="'+esc(x.id)+'">Verify Paid</button><button data-reject-order="'+esc(x.id)+'">Reject</button></div>'
-      : '<small style="opacity:.65">No action</small>';
+      : '<div class="admin-item-actions">'+fulfillmentActionHtml(x)+(x?.status==="paid"&&String(x?.fulfillmentStatus||"").toLowerCase()==="pending"?'':'')+'</div>';
     const itemSummary=x.type==="upgrade"
       ? "Upgrade • "+esc(x.productId||"Product")
       : (Array.isArray(x.items)?x.items.map(i=>esc(i.title||i.productId||"Product")).join(", "):"Order");
     const brandLabel=x.brandName||x.brandKey||"TUBAL HUB";
-    return '<article class="item"><div><b>'+esc(type)+' • '+esc(x.id)+' <span class="brand-data-badge" style="margin-left:6px">'+esc(brandLabel)+'</span></b><p>'+itemSummary+'</p><small>UID: '+esc(x.uid||"—")+' • '+esc(x.paymentMethod||"Manual payment")+' • Ref: '+esc(x.paymentReference||"—")+' • '+created+'</small><small>Total: ₱'+esc(Number(x.total||0).toLocaleString("en-PH"))+' • Status: <strong style="color:'+orderStatusColor(x.status)+'">'+esc(x.status||"pending_payment")+'</strong></small></div>'+action+'</article>';
+    const items=Array.isArray(x?.items)?x.items:[];
+    const isPhysical= x.type!=="upgrade" && items.some(i=>String(i?.productType||"physical").toLowerCase()==="physical");
+    const fulfillment=String(x?.fulfillmentStatus||"not-applicable").toLowerCase();
+    const fulfillmentLabel=isPhysical&&x.status==="paid"? " • Fulfillment: "+(fulfillment==="pending"?"Pending":fulfillment==="ready"?"Ready":fulfillment==="delivered"?"Delivered":"Pending") : "";
+    return '<article class="item"><div><b>'+esc(type)+' • '+esc(x.id)+' <span class="brand-data-badge" style="margin-left:6px">'+esc(brandLabel)+'</span></b><p>'+itemSummary+'</p><small>UID: '+esc(x.uid||"—")+' • '+esc(x.paymentMethod||"Manual payment")+' • Ref: '+esc(x.paymentReference||"—")+' • '+created+'</small><small>Total: ₱'+esc(Number(x.total||0).toLocaleString("en-PH"))+' • Status: <strong style="color:'+orderStatusColor(x.status)+'">'+esc(x.status||"pending_payment")+'</strong>'+esc(fulfillmentLabel)+'</small></div>'+action+'</article>';
   }).join("")||'<div class="empty">No shop orders yet.</div>';
 
   $("shopProductList").innerHTML=shopProducts.map(x=>
@@ -985,7 +1000,7 @@ document.addEventListener("click",async e=>{const b=e.target.closest("[data-upda
 $("addNews").onclick=async()=>{const title=$("nt").value.trim(),text=$("nx").value.trim(),date=$("nd").value.trim()||"Latest",category=$("nc").value,articleUrl=$("na").value.trim(),imageUrl=$("ni").value.trim();if(!title||!text)return toast("Enter title and content.");try{const batch=writeBatch(db),ref=doc(collection(db,"news"));batch.set(ref,{title,text,date,category,articleUrl,imageUrl,createdAt:serverTimestamp(),createdBy:auth.currentUser.uid});mirrorHubPost(batch,ref,{contentType:"news",title,text,imageUrl,category,authorName:"TUBAL HUB News",destinations:["feeds","news"]});await batch.commit();["nt","nx","nd","na","ni"].forEach(id=>$(id).value="");$("nc").value="platform";await load();toast("News published to News + Feeds.")}catch(e){toast(firestoreError(e))}};
 $("addEvent").onclick=async()=>{const title=$("et").value.trim(),date=$("ed").value,time=$("etime").value,location=$("el").value.trim(),description=$("ex").value.trim();if(!title||!date||!description)return toast("Enter event title, date and details.");try{const batch=writeBatch(db),ref=doc(collection(db,"events"));batch.set(ref,{title,date,time,location,description,createdAt:serverTimestamp(),createdBy:auth.currentUser.uid});mirrorHubPost(batch,ref,{contentType:"event",title,text:description,authorName:"TUBAL HUB",destinations:["events","feeds","community"]});await batch.commit();["et","ed","etime","el","ex"].forEach(id=>{const el=$(id);if(el)el.value=""});await load();toast("Event published to Events + Feeds + Community.")}catch(e){toast(firestoreError(e))}};
 $("addAnn").onclick=async()=>{const title=$("at").value.trim(),text=$("ax").value.trim();if(!title||!text)return toast("Enter title and content.");try{const batch=writeBatch(db),ref=doc(collection(db,"announcements"));batch.set(ref,{title,text,createdAt:serverTimestamp(),createdBy:auth.currentUser.uid});mirrorHubPost(batch,ref,{contentType:"announcement",title,text,authorName:"TUBAL HUB",destinations:["feeds","news","community"]});await batch.commit();$("at").value=$("ax").value="";await load();toast("Announcement published across Feeds + News + Community.")}catch(e){toast(firestoreError(e))}};
-document.addEventListener("click",async e=>{const b=e.target.closest("[data-set-stock]");if(!b)return;const product=shopProducts.find(x=>x.id===b.dataset.setStock);if(!product)return;const current=Number.isInteger(Number(product.stock))?Number(product.stock):0;const raw=prompt("Set inventory stock for "+(product.name||"product")+":",String(current));if(raw===null)return;const stock=Number(raw);if(!Number.isInteger(stock)||stock<0)return toast("Stock must be a non-negative integer.");try{await updateDoc(doc(db,"products",product.id),{stock,updatedAt:serverTimestamp(),updatedBy:auth.currentUser.uid});await load();toast("Inventory updated in Firestore.");}catch(err){toast(firestoreError(err))}});document.addEventListener("click",async e=>{const name=e.target.closest("[data-member-ban]");if(name){const uid=name.dataset.memberBan;if(uid===auth.currentUser?.uid)return;const member=members.find(x=>(x.uid||x.id)===uid);window.__banTargetUid=uid;window.__banTargetName=member?.displayName||member?.email||"Member";window.__banDuration=null;$("banTargetName").textContent=window.__banTargetName;$("banReasonInput").value="";document.querySelectorAll(".ban-options button").forEach(x=>x.classList.remove("selected"));$("banModal").hidden=false;return}const b=e.target.closest("button");if(!b)return;try{if(b.dataset.delNews){if(!confirm("Delete this news article?"))return;await deleteDoc(doc(db,"news",b.dataset.delNews));await load()}if(b.dataset.editNews){const x=news.find(n=>n.id===b.dataset.editNews);if(!x)return;const title=prompt("News title:",x.title||"");if(title===null)return;const text=prompt("News content:",x.text||"");if(text===null)return;const date=prompt("Date:",x.date||"Latest");if(date===null)return;const category=prompt("Category (platform/community/creator):",x.category||"platform");if(category===null)return;await updateDoc(doc(db,"news",x.id),{title:title.trim(),text:text.trim(),date:date.trim()||"Latest",category:category.trim().toLowerCase()||"platform",updatedAt:serverTimestamp(),updatedBy:auth.currentUser.uid});await load();toast("News updated.")}if(b.dataset.delAnn){await deleteDoc(doc(db,"announcements",b.dataset.delAnn));await load()}if(b.dataset.delEvent){await deleteDoc(doc(db,"events",b.dataset.delEvent));await load()}if(b.dataset.delChat){await deleteDoc(doc(db,"globalChats",b.dataset.delChat));await load()}if(b.dataset.delProduct){await deleteDoc(doc(db,"products",b.dataset.delProduct));await load()}if(b.dataset.verifyOrder){const order=shopOrders.find(x=>x.id===b.dataset.verifyOrder);if(!order)return;const reference=prompt("Payment reference / receipt number (optional):",order.paymentReference||"");if(reference===null)return;const note=prompt("Verification note (optional):","Payment verified manually by admin.");if(note===null)return;const result=await verifyShopOrderReal({orderId:order.id,approved:true,paymentReference:reference.trim(),verificationNote:note.trim()});toast(result?.data?.alreadyPaid?"Order was already paid.":"Payment verified. Ownership unlocked by server.");await load()}if(b.dataset.rejectOrder){const order=shopOrders.find(x=>x.id===b.dataset.rejectOrder);if(!order)return;if(!confirm("Reject this pending payment?"))return;const note=prompt("Rejection note (optional):","Payment not verified.");if(note===null)return;await verifyShopOrderReal({orderId:order.id,approved:false,verificationNote:note.trim()});toast("Order rejected.");await load()}if(b.dataset.ban){const reason=prompt("Ban reason (optional):","Violation of Global Chat rules");if(reason===null)return;const duration=b.dataset.banDuration||$("banDuration").value;let banUntil=null;if(duration!=="permanent"){const hours={"1h":1,"6h":6,"12h":12,"1d":24,"3d":72,"7d":168,"30d":720}[duration];banUntil=Timestamp.fromDate(new Date(Date.now()+hours*60*60*1000))}await updateDoc(doc(db,"users",b.dataset.ban),{chatStatus:"banned",banned:true,banReason:reason.trim()||"Global Chat rules violation",bannedAt:serverTimestamp(),bannedBy:auth.currentUser.uid,banUntil});await load();toast(duration==="permanent"?"Member permanently banned.":"Member banned until "+banUntil.toDate().toLocaleString())}if(b.dataset.unban){if(!confirm("Unban this member from Global Chat?"))return;await updateDoc(doc(db,"users",b.dataset.unban),{chatStatus:"active",banned:false,banReason:null,bannedAt:null,bannedBy:null});await load();toast("Member unbanned.")}}catch(x){toast(x.message)}});
+document.addEventListener("click",async e=>{const b=e.target.closest("[data-set-stock]");if(!b)return;const product=shopProducts.find(x=>x.id===b.dataset.setStock);if(!product)return;const current=Number.isInteger(Number(product.stock))?Number(product.stock):0;const raw=prompt("Set inventory stock for "+(product.name||"product")+":",String(current));if(raw===null)return;const stock=Number(raw);if(!Number.isInteger(stock)||stock<0)return toast("Stock must be a non-negative integer.");try{await updateDoc(doc(db,"products",product.id),{stock,updatedAt:serverTimestamp(),updatedBy:auth.currentUser.uid});await load();toast("Inventory updated in Firestore.");}catch(err){toast(firestoreError(err))}});document.addEventListener("click",async e=>{const name=e.target.closest("[data-member-ban]");if(name){const uid=name.dataset.memberBan;if(uid===auth.currentUser?.uid)return;const member=members.find(x=>(x.uid||x.id)===uid);window.__banTargetUid=uid;window.__banTargetName=member?.displayName||member?.email||"Member";window.__banDuration=null;$("banTargetName").textContent=window.__banTargetName;$("banReasonInput").value="";document.querySelectorAll(".ban-options button").forEach(x=>x.classList.remove("selected"));$("banModal").hidden=false;return}const b=e.target.closest("button");if(!b)return;try{if(b.dataset.delNews){if(!confirm("Delete this news article?"))return;await deleteDoc(doc(db,"news",b.dataset.delNews));await load()}if(b.dataset.editNews){const x=news.find(n=>n.id===b.dataset.editNews);if(!x)return;const title=prompt("News title:",x.title||"");if(title===null)return;const text=prompt("News content:",x.text||"");if(text===null)return;const date=prompt("Date:",x.date||"Latest");if(date===null)return;const category=prompt("Category (platform/community/creator):",x.category||"platform");if(category===null)return;await updateDoc(doc(db,"news",x.id),{title:title.trim(),text:text.trim(),date:date.trim()||"Latest",category:category.trim().toLowerCase()||"platform",updatedAt:serverTimestamp(),updatedBy:auth.currentUser.uid});await load();toast("News updated.")}if(b.dataset.delAnn){await deleteDoc(doc(db,"announcements",b.dataset.delAnn));await load()}if(b.dataset.delEvent){await deleteDoc(doc(db,"events",b.dataset.delEvent));await load()}if(b.dataset.delChat){await deleteDoc(doc(db,"globalChats",b.dataset.delChat));await load()}if(b.dataset.delProduct){await deleteDoc(doc(db,"products",b.dataset.delProduct));await load()}if(b.dataset.verifyOrder){const order=shopOrders.find(x=>x.id===b.dataset.verifyOrder);if(!order)return;const reference=prompt("Payment reference / receipt number (optional):",order.paymentReference||"");if(reference===null)return;const note=prompt("Verification note (optional):","Payment verified manually by admin.");if(note===null)return;const result=await verifyShopOrderReal({orderId:order.id,approved:true,paymentReference:reference.trim(),verificationNote:note.trim()});toast(result?.data?.alreadyPaid?"Order was already paid.":"Payment verified. Ownership unlocked by server.");await load()}if(b.dataset.rejectOrder){const order=shopOrders.find(x=>x.id===b.dataset.rejectOrder);if(!order)return;if(!confirm("Reject this pending payment?"))return;const note=prompt("Rejection note (optional):","Payment not verified.");if(note===null)return;await verifyShopOrderReal({orderId:order.id,approved:false,verificationNote:note.trim()});toast("Order rejected.");await load()}if(b.dataset.fulfillmentOrder){const order=shopOrders.find(x=>x.id===b.dataset.fulfillmentOrder);if(!order)return;const next=String(b.dataset.fulfillmentNext||"").toLowerCase();const label=next==="ready"?"Ready":"Delivered";if(!confirm("Move this physical order to "+label+"?"))return;const result=await updateShopFulfillmentReal({orderId:order.id,fulfillmentStatus:next});toast(result?.data?.alreadySet?"Order was already "+label.toLowerCase()+".":"Order marked "+label+".");await load()}if(b.dataset.ban){const reason=prompt("Ban reason (optional):","Violation of Global Chat rules");if(reason===null)return;const duration=b.dataset.banDuration||$("banDuration").value;let banUntil=null;if(duration!=="permanent"){const hours={"1h":1,"6h":6,"12h":12,"1d":24,"3d":72,"7d":168,"30d":720}[duration];banUntil=Timestamp.fromDate(new Date(Date.now()+hours*60*60*1000))}await updateDoc(doc(db,"users",b.dataset.ban),{chatStatus:"banned",banned:true,banReason:reason.trim()||"Global Chat rules violation",bannedAt:serverTimestamp(),bannedBy:auth.currentUser.uid,banUntil});await load();toast(duration==="permanent"?"Member permanently banned.":"Member banned until "+banUntil.toDate().toLocaleString())}if(b.dataset.unban){if(!confirm("Unban this member from Global Chat?"))return;await updateDoc(doc(db,"users",b.dataset.unban),{chatStatus:"active",banned:false,banReason:null,bannedAt:null,bannedBy:null});await load();toast("Member unbanned.")}}catch(x){toast(x.message)}});
 document.querySelectorAll(".ban-options button").forEach(btn=>btn.onclick=()=>{window.__banDuration=btn.dataset.duration;document.querySelectorAll(".ban-options button").forEach(x=>x.classList.remove("selected"));btn.classList.add("selected")});
 $("closeBanModal").onclick=$("cancelBan").onclick=()=>{$("banModal").hidden=true};
 $("confirmBan").onclick=async()=>{const uid=window.__banTargetUid,duration=window.__banDuration;if(!uid||!duration)return toast("Select a ban duration.");let banUntil=null;if(duration!=="permanent"){const hours={"1h":1,"6h":6,"12h":12,"1d":24,"3d":72,"7d":168,"30d":720}[duration];banUntil=Timestamp.fromDate(new Date(Date.now()+hours*60*60*1000))}try{await updateDoc(doc(db,"users",uid),{chatStatus:"banned",banned:true,banReason:$("banReasonInput").value.trim()||"Global Chat rules violation",bannedAt:serverTimestamp(),bannedBy:auth.currentUser.uid,banUntil});$("banModal").hidden=true;await load();toast(duration==="permanent"?"Member permanently banned.":"Member banned until "+banUntil.toDate().toLocaleString())}catch(e){toast(e.message)}};
@@ -1028,11 +1043,11 @@ $("logout").onclick=()=>signOut(auth);
 onAuthStateChanged(auth,async user=>{if(!user||user.email?.toLowerCase()!==ADMIN_EMAIL){location.replace("login.html");return}$("adminEmail").textContent=user.email;$("loading").remove();$("app").hidden=false;await load();listenToPresence();listenToCleanupStats();await loadSponsoredAds();await loadAnalyticsReal()});
 </script>
 
-<script type="module" src="beta-test-control.js?v=1.2.48"></script>
-<script type="module" src="updater-control.js?v=1.2.48"></script>
-<script type="module" src="maintenance-control.js?v=1.2.48"></script>
-<script type="module" src="brand-admin-ui.js?v=1.2.48"></script>
-<script src="admin-command-ui.js?v=1.2.48"></script>
+<script type="module" src="beta-test-control.js?v=1.2.49"></script>
+<script type="module" src="updater-control.js?v=1.2.49"></script>
+<script type="module" src="maintenance-control.js?v=1.2.49"></script>
+<script type="module" src="brand-admin-ui.js?v=1.2.49"></script>
+<script src="admin-command-ui.js?v=1.2.49"></script>
 
 <script>
   const mobileSidebar=document.getElementById("sidebar");
