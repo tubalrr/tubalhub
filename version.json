@@ -1,11 +1,12 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.2.81",
-  "build": "2026-09-30_2209",
-  "releasedAtReal": "2026-09-30T14:09:08.312Z",
+  "version": "1.2.82",
+  "build": "2026-09-30_2212",
+  "releasedAtReal": "2026-09-30T14:12:38.797Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.2.82 FEAT — Added an animated female TUBAL HUB Guide inside the Hero. She speaks an automatic guided explanation of the main branches and navigation, with blinking/talking animation and a persistent mute control. The presenter stays inside the Hero only.",
     "v1.2.81 FIX — Scoped the WebGL 3D experience to the existing TUBAL HUB Hero section only. It no longer sits as a fixed animation across the whole website/page.",
     "v1.2.80 FEAT — Replaced the rejected CSS orb animation with a real Three.js/WebGL homepage experience: cinematic camera path, 3D branch structures, animated data connections, particle field, moving scan plane, floating panels, scroll depth, pointer parallax, and a single persistent visual thread across the homepage. No human characters and no duplicate container.",
     "v1.2.79 FIX — Removed the rejected animated 3D hero visual from the homepage. The Hero now returns to a clean presentation without the orb, orbit, live frame, or cinematic 3D overlay. Existing homepage content and navigation remain intact.",
@@ -795,5 +796,5 @@
     }
   ],
   "date": "2026-09-30",
-  "changes": "v1.2.81 FIX — Scoped the WebGL 3D experience to the existing TUBAL HUB Hero section only. It no longer sits as a fixed animation across the whole website/page."
+  "changes": "v1.2.82 FEAT — Added an animated female TUBAL HUB Guide inside the Hero. She speaks an automatic guided explanation of the main branches and navigation, with blinking/talking animation and a persistent mute control. The presenter stays inside the Hero only."
 }
