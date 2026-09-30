@@ -178,7 +178,12 @@ function refreshData(){
   const invEl=document.getElementById("brandTotalInventory");
   if(revenueEl)revenueEl.textContent=money(revenue);
   if(ordersEl)ordersEl.textContent=String(selectedOrders.length);
-  if(invEl)invEl.textContent=String(selectedProducts.length);
+  const physicalInventoryUnits=selectedProducts.reduce((sum,p)=>{
+    if(String(p?.productType||"physical").toLowerCase()!=="physical")return sum;
+    const stock=Number(p?.stock);
+    return Number.isInteger(stock)&&stock>=0?sum+stock:sum;
+  },0);
+  if(invEl)invEl.textContent=String(physicalInventoryUnits);
 
   const note=document.getElementById("brandRevenueNote");
   if(note)note.textContent=revenue>0?"Verified paid orders only":"No verified paid sales in loaded records";
