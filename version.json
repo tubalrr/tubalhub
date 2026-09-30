@@ -1,11 +1,13 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.2.43",
-  "build": "2026-09-30_1341",
-  "releasedAtReal": "2026-09-30T05:41:00Z",
+  "version": "1.2.44",
+  "build": "2026-09-30_1347",
+  "releasedAtReal": "2026-09-30T05:47:00Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.2.44 FIX — Kapeng Barako Admin Room is hidden on the Master Hub dashboard until Kapeng Barako is explicitly selected.",
+    "v1.2.44 UX — Switching back to Master Hub, Brand 2, or Brand 3 hides the Kapeng-specific dashboard room again.",
     "v1.2.43 FEAT — Added a dedicated Kapeng Barako landing-page preview directly inside TUBAL HUB Admin.",
     "v1.2.43 UI — Kapeng Barako Admin Room now shows the public landing page in a live embedded preview with Full Page and Shared Shop actions.",
     "v1.2.42 FEAT — Added a dedicated Kapeng Barako public landing page under TUBAL HUB with its own premium brand presentation.",
@@ -198,6 +200,18 @@
   ],
   "breakingReal": false,
   "changelog": [
+    {
+      "type": "FIX",
+      "icon": "☕",
+      "title": "Kapeng Room Hidden by Default",
+      "desc": "The Kapeng Barako Admin Room is no longer displayed on the general dashboard until the Kapeng Barako brand is selected."
+    },
+    {
+      "type": "UI",
+      "icon": "↔",
+      "title": "Brand-Scoped Dashboard",
+      "desc": "Kapeng-specific dashboard content appears only while the Kapeng Barako brand scope is active."
+    },
     {
       "type": "FEAT",
       "icon": "☕",
