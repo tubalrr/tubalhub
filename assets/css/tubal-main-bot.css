@@ -1,0 +1,116 @@
+/* TUBAL HUB — Floating Main Bot */
+.tubal-main-bot{
+  position:fixed;
+  left:24px;
+  bottom:24px;
+  z-index:1200;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:10px;
+  font-family:inherit;
+}
+.tubal-main-bot-toggle{
+  position:relative;
+  width:62px;height:62px;
+  border:1px solid rgba(29,255,145,.32);
+  border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#244b35,#08140c 68%,#030705);
+  box-shadow:0 14px 36px rgba(0,0,0,.42),0 0 28px rgba(29,255,145,.14);
+  cursor:pointer;
+  display:grid;
+  place-items:center;
+  transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease;
+}
+.tubal-main-bot-toggle:hover{
+  transform:translateY(-2px) scale(1.03);
+  border-color:rgba(29,255,145,.62);
+  box-shadow:0 18px 42px rgba(0,0,0,.48),0 0 34px rgba(29,255,145,.22);
+}
+.tubal-main-bot-face{
+  position:relative;
+  width:34px;height:30px;
+  border:1px solid rgba(255,255,255,.16);
+  border-radius:11px;
+  background:#050907;
+  box-shadow:inset 0 0 18px rgba(29,255,145,.07);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+}
+.tubal-main-bot-face i{
+  width:6px;height:6px;border-radius:50%;
+  background:#1dff91;
+  box-shadow:0 0 9px rgba(29,255,145,.72);
+  animation:mainBotBlink 4s ease-in-out infinite;
+}
+.tubal-main-bot-face b{
+  position:absolute;
+  left:50%;bottom:6px;
+  width:12px;height:3px;
+  transform:translateX(-50%);
+  border-radius:999px;
+  background:#7d5aff;
+  transition:height .12s ease,width .12s ease,border-radius .12s ease;
+}
+.tubal-main-bot-toggle.is-speaking .tubal-main-bot-face{
+  border-color:rgba(29,255,145,.65);
+  box-shadow:0 0 22px rgba(29,255,145,.16),inset 0 0 18px rgba(125,90,255,.08);
+  animation:mainBotTalkFloat 1s ease-in-out infinite;
+}
+.tubal-main-bot-toggle.is-speaking .tubal-main-bot-face i{animation:mainBotEyePulse .65s ease-in-out infinite}
+.tubal-main-bot-toggle.is-speaking .tubal-main-bot-face b{
+  width:14px;height:9px;border-radius:5px;
+  animation:mainBotMouth .16s ease-in-out infinite alternate;
+}
+.tubal-main-bot-pulse{
+  position:absolute;
+  inset:-7px;
+  border:1px solid rgba(29,255,145,.12);
+  border-radius:50%;
+  pointer-events:none;
+  animation:mainBotRing 2.2s ease-out infinite;
+}
+.tubal-main-bot-bubble{
+  width:min(360px,calc(100vw - 48px));
+  padding:15px 16px;
+  border:1px solid rgba(29,255,145,.16);
+  border-radius:18px;
+  background:rgba(6,14,9,.96);
+  box-shadow:0 18px 55px rgba(0,0,0,.48),inset 0 1px rgba(255,255,255,.03);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+}
+.tubal-main-bot-bubble[hidden]{display:none}
+.tubal-main-bot-kicker{display:block;color:#1dff91;font-size:8px;font-weight:900;letter-spacing:1.8px;margin-bottom:5px}
+.tubal-main-bot-bubble strong{display:block;color:#f4fff9;font-size:14px;line-height:1.2}
+.tubal-main-bot-bubble p{margin:6px 0 0;color:rgba(255,255,255,.58);font-size:10px;line-height:1.5}
+.tubal-main-bot-actions{display:flex;gap:7px;margin-top:11px}
+.tubal-main-bot-actions button{
+  border:1px solid rgba(29,255,145,.16);
+  border-radius:10px;
+  background:rgba(255,255,255,.04);
+  color:#dfffea;
+  padding:8px 10px;
+  font:800 9px/1 inherit;
+  cursor:pointer;
+}
+.tubal-main-bot-actions button:first-child{
+  background:rgba(29,255,145,.08);
+  border-color:rgba(29,255,145,.30);
+  color:#1dff91;
+}
+.tubal-main-bot-actions button:hover{border-color:rgba(29,255,145,.4);transform:translateY(-1px)}
+@keyframes mainBotBlink{0%,43%,47%,100%{opacity:1}45%{opacity:.15}}
+@keyframes mainBotRing{0%{transform:scale(.92);opacity:.5}70%,100%{transform:scale(1.16);opacity:0}}
+@keyframes mainBotTalkFloat{50%{transform:translateY(-1px) scale(1.02)}}
+@keyframes mainBotEyePulse{50%{transform:scale(.78);opacity:.55}}
+@keyframes mainBotMouth{from{height:3px}to{height:9px}}
+@media(max-width:600px){
+  .tubal-main-bot{left:14px;bottom:14px}
+  .tubal-main-bot-toggle{width:56px;height:56px}
+}
+@media(prefers-reduced-motion:reduce){
+  .tubal-main-bot-face i,.tubal-main-bot-pulse,.tubal-main-bot-toggle.is-speaking{animation:none!important}
+}
