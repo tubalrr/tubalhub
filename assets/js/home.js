@@ -176,7 +176,7 @@ async function subscribeNotifyReal(){
   setSubscribeStatusReal("Saved locally","ready");
 
   const welcomeData={
-    version:"v"+String(document.getElementById("liveVersion")?.textContent||"v1.2.17").replace(/^v/i,""),
+    version:"v"+String(document.getElementById("liveVersion")?.textContent||"0.0.0").replace(/^v/i,""),
     build:String(document.getElementById("liveBuild")?.textContent||"2026-09-25_1216"),
     updates:"System update notifications enabled.",
     phone:phone||"N/A",
