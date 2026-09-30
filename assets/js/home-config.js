@@ -1,6 +1,8 @@
-/* TUBAL HUB homepage configuration */
+/* TUBAL HUB homepage configuration
+   Leave these empty until the owner has configured EmailJS.
+*/
 window.TUBAL_EMAILJS_CONFIG = Object.freeze({
   publicKey: "",
-  serviceId: "tubalhub_service_real",
-  templateId: "tubalhub_update_template"
+  serviceId: "",
+  templateId: ""
 });
