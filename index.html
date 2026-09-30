@@ -150,17 +150,17 @@
       <span class="tubal-bot-arm tubal-bot-arm-right">👋</span>
       <span class="tubal-welcome-reaction">✨</span>
     </span>
-    <span class="tubal-welcome-label"><strong>Welcome Bot</strong><small>Tap to hear me</small></span>
+    <span class="tubal-welcome-label"><strong>Welcome Bot</strong><small>Auto voice</small></span>
     <span class="tubal-welcome-live" aria-hidden="true"></span>
   </button>
-  <div class="tubal-welcome-bubble" id="tubalMainBotBubble" hidden>
+  <button class="tubal-welcome-sound" id="tubalMainBotSound" type="button" aria-label="Mute Welcome Bot voice" title="Mute Welcome Bot voice" aria-pressed="false">
+    <span class="tubal-speaker-on" aria-hidden="true">🔊</span>
+    <span class="tubal-speaker-off" aria-hidden="true">🔇</span>
+  </button>
+  <div class="tubal-welcome-bubble" id="tubalMainBotBubble" role="status" aria-live="polite">
     <span class="tubal-main-bot-kicker">TUBAL HUB GUIDE</span>
     <strong id="tubalMainBotTitle">Welcome to TUBAL HUB</strong>
-    <p id="tubalMainBotText">Your guide to the Hub, its branches, rules, and latest update.</p>
-    <div class="tubal-main-bot-actions">
-      <button id="tubalMainBotListen" type="button">🔊 Listen</button>
-      <button id="tubalMainBotReplay" type="button">↻ Replay</button>
-    </div>
+    <p id="tubalMainBotText">Your guide to the Hub, branches, rules, and latest update.</p>
   </div>
 </div>
     <div class="search-box" id="tubalGlobalSearch" aria-label="Global search"><span>⌕</span><input id="searchInputReal" aria-label="Search TUBAL HUB" placeholder="Hanapin..." type="search" autocomplete="off" spellcheck="false"><kbd class="search-shortcut">⌘K</kbd></div>
