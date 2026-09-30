@@ -27,6 +27,29 @@ service cloud.firestore {
         );
     }
 
+    function validMaintenanceSetting() {
+      return request.resource.data.keys().hasOnly([
+          'enabled',
+          'title',
+          'message',
+          'startAt',
+          'endAt',
+          'allowedAdminUsers',
+          'updatedAt',
+          'updatedBy'
+        ])
+        && request.resource.data.enabled is bool
+        && request.resource.data.title is string
+        && request.resource.data.title.size() <= 120
+        && request.resource.data.message is string
+        && request.resource.data.message.size() <= 500
+        && (request.resource.data.startAt == null || request.resource.data.startAt is timestamp)
+        && (request.resource.data.endAt == null || request.resource.data.endAt is timestamp)
+        && request.resource.data.allowedAdminUsers is list
+        && request.resource.data.allowedAdminUsers.size() <= 25
+        && request.resource.data.updatedBy is string;
+    }
+
     function ownsNew() {
       return realUser()
         && request.resource.data.uid == request.auth.uid;
@@ -387,9 +410,14 @@ service cloud.firestore {
     }
 
     match /systemSettings/{settingId} {
-      // Only explicitly public settings are readable by the public site.
+      // Maintenance is public-read so the site can react in real time.
+      // All writes remain admin-only; maintenance writes are schema-validated.
       allow read: if settingId == 'maintenance' || adminUser();
-      allow create, update, delete: if adminUser();
+      allow create: if adminUser()
+        && (settingId != 'maintenance' || validMaintenanceSetting());
+      allow update: if adminUser()
+        && (settingId != 'maintenance' || validMaintenanceSetting());
+      allow delete: if adminUser();
     }
 
     match /systemStats/{statId} {
