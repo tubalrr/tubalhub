@@ -1,9 +1,9 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.2.62",
-  "build": "2026-09-30_2010",
-  "releasedAtReal": "2026-09-30T12:10:00Z",
+  "version": "1.2.63",
+  "build": "2026-09-30_2018",
+  "releasedAtReal": "2026-09-30T12:18:00Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
     "v1.2.62 FEAT — Expanded the floating TUBAL BOT into a full public-site guide. It explains the major branches, services, public pages, safety/community rules, prohibited actions, content/licensing rules, and the latest version.json release note in English voice narration.",
