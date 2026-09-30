@@ -1,11 +1,12 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.2.78",
-  "build": "2026-09-30_2132",
-  "releasedAtReal": "2026-09-30T13:32:00Z",
+  "version": "1.2.79",
+  "build": "2026-09-30_2138",
+  "releasedAtReal": "2026-09-30T13:38:00Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.2.79 FIX — Removed the duplicate standalone 3D container and placed the Latest 3D Animation directly inside the existing FEATURED SA WEBSITE carousel as a single dedicated slide.",
     "v1.2.78 FEAT — Added one dedicated Latest 3D Animation container to the homepage. It cycles through live Orb, Cube, and Torus 3D scenes with continuous depth motion, particles, lighting, and responsive layout, while keeping all existing cards clean.",
     "v1.2.77 FIX — Removed the per-container 3D orb/ring accents. The modern 3D treatment is now reserved for the unified hero/background direction, keeping homepage cards clean and uncluttered.",
     "v1.2.76 FEAT — Switched homepage container accents to a clean modern 3D visual system: floating abstract orb, rotating depth rings, particles, and soft shadow animation. No human characters. Existing content and functionality are preserved.",
