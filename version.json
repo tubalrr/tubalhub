@@ -1,11 +1,13 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.2.42",
-  "build": "2026-09-30_1329",
-  "releasedAtReal": "2026-09-30T05:29:32Z",
+  "version": "1.2.43",
+  "build": "2026-09-30_1341",
+  "releasedAtReal": "2026-09-30T05:41:00Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.2.43 FEAT — Added a dedicated Kapeng Barako landing-page preview directly inside TUBAL HUB Admin.",
+    "v1.2.43 UI — Kapeng Barako Admin Room now shows the public landing page in a live embedded preview with Full Page and Shared Shop actions.",
     "v1.2.42 FEAT — Added a dedicated Kapeng Barako public landing page under TUBAL HUB with its own premium brand presentation.",
     "v1.2.42 FEAT — Kapeng Barako landing products are read live from the Firestore catalog and only show published, visible Kapeng records.",
     "v1.2.42 UI — TUBAL HUB Admin Kapeng Barako Room now has a direct Open Landing Page action.",
@@ -196,6 +198,18 @@
   ],
   "breakingReal": false,
   "changelog": [
+    {
+      "type": "FEAT",
+      "icon": "☕",
+      "title": "Kapeng Landing in Admin",
+      "desc": "Kapeng Barako now has a dedicated landing-page experience accessible and previewable directly from its Admin Room."
+    },
+    {
+      "type": "UI",
+      "icon": "↗",
+      "title": "Live Landing Preview",
+      "desc": "Admin includes an embedded preview of the public Kapeng Barako landing page plus direct Full Page and Shared Shop actions."
+    },
     {
       "type": "FEAT",
       "icon": "☕",
