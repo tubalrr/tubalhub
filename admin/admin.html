@@ -377,14 +377,54 @@ body{margin:0;min-width:320px;font-family:Inter,ui-sans-serif,system-ui,-apple-s
       <!-- System -->
       <section id="systemSettings" class="admin-card p-6">
         <div id="firestore" class="scroll-mt-24"></div>
-        <div class="admin-card-head"><div><small>System</small><h2 class="mt-1">System Settings</h2><p>Platform availability control.</p></div><span class="admin-badge">FIRESTORE</span></div>
+        <div class="admin-card-head">
+          <div><small>System</small><h2 class="mt-1">System Settings</h2><p>Firestore-controlled platform availability and maintenance window.</p></div>
+          <span class="admin-badge">FIRESTORE</span>
+        </div>
 
         <div class="system-setting-row">
-          <div class="min-w-0"><b>Maintenance mode</b><small>Visitors see the maintenance screen while admin access remains available.</small></div>
+          <div class="min-w-0"><b>Maintenance ON/OFF</b><small>Controls the public maintenance overlay. Admin dashboard access remains available.</small></div>
           <label class="switchReal"><input id="maintenanceMode" type="checkbox"><span></span></label>
         </div>
 
-        <div id="maintenanceStatus" class="system-setting-status">Loading setting…</div>
+        <div class="maintenance-control-grid mt-4">
+          <div>
+            <label class="block text-[10px] font-extrabold uppercase tracking-[.12em] text-slate-500 mb-2" for="maintenanceTitle">Maintenance title</label>
+            <input id="maintenanceTitle" class="admin-input" maxlength="120" placeholder="We’ll be back soon">
+          </div>
+
+          <div>
+            <label class="block text-[10px] font-extrabold uppercase tracking-[.12em] text-slate-500 mb-2" for="maintenanceStartAt">Start</label>
+            <input id="maintenanceStartAt" class="admin-input" type="datetime-local">
+          </div>
+
+          <div class="maintenance-control-full">
+            <label class="block text-[10px] font-extrabold uppercase tracking-[.12em] text-slate-500 mb-2" for="maintenanceMessage">Maintenance message</label>
+            <textarea id="maintenanceMessage" class="admin-textarea" maxlength="500" placeholder="TUBAL HUB is temporarily under maintenance while we improve the platform."></textarea>
+          </div>
+
+          <div>
+            <label class="block text-[10px] font-extrabold uppercase tracking-[.12em] text-slate-500 mb-2" for="maintenanceEndAt">End</label>
+            <input id="maintenanceEndAt" class="admin-input" type="datetime-local">
+          </div>
+
+          <div>
+            <label class="block text-[10px] font-extrabold uppercase tracking-[.12em] text-slate-500 mb-2" for="maintenanceAllowedUsers">Allowed Admin Users</label>
+            <textarea id="maintenanceAllowedUsers" class="admin-textarea maintenance-allowed-users" placeholder="Firebase Auth UID — one per line"></textarea>
+            <div class="maintenance-control-note">These users bypass the public maintenance overlay. This list does not grant admin privileges.</div>
+            <div class="maintenance-admin-id">
+              <span>Current admin UID: <b id="maintenanceCurrentUid">Secure session</b></span>
+              <button id="maintenanceAddCurrentUid" type="button">Add my UID</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap gap-2 mt-4">
+          <button id="maintenanceSave" type="button" class="admin-primary">Save Maintenance Settings</button>
+          <button id="maintenanceClearSchedule" type="button" class="admin-secondary">Clear Start / End</button>
+        </div>
+
+        <div id="maintenanceStatus" class="system-setting-status">Loading maintenance settings…</div>
       </section>
 
 
@@ -952,14 +992,14 @@ document.querySelector('a[href="#kapengRoom"]')?.addEventListener("click",()=>{
   setTimeout(()=>document.querySelector('[data-brand-switch="kapeng"]')?.click(),0);
 });
 $("logout").onclick=()=>signOut(auth);
-onAuthStateChanged(auth,async user=>{if(!user||user.email?.toLowerCase()!==ADMIN_EMAIL){location.replace("login.html");return}$("adminEmail").textContent=user.email;$("loading").remove();$("app").hidden=false;await load();listenToPresence();listenToCleanupStats()await loadSponsoredAds();await loadAnalyticsReal()});
+onAuthStateChanged(auth,async user=>{if(!user||user.email?.toLowerCase()!==ADMIN_EMAIL){location.replace("login.html");return}$("adminEmail").textContent=user.email;$("loading").remove();$("app").hidden=false;await load();listenToPresence();listenToCleanupStats();await loadSponsoredAds();await loadAnalyticsReal()});
 </script>
 
-<script type="module" src="beta-test-control.js?v=1.2.37"></script>
+<script type="module" src="beta-test-control.js?v=1.2.40"></script>
 <script type="module" src="updater-control.js?v=1.2.40"></script>
 <script type="module" src="maintenance-control.js?v=1.2.40"></script>
-<script type="module" src="brand-admin-ui.js?v=1.2.37"></script>
-<script src="admin-command-ui.js?v=1.2.37"></script>
+<script type="module" src="brand-admin-ui.js?v=1.2.40"></script>
+<script src="admin-command-ui.js?v=1.2.40"></script>
 
 <script>
   const mobileSidebar=document.getElementById("sidebar");
