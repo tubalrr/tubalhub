@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#1A1207">
+<title>Kapeng Barako | TUBAL HUB</title>
+<link rel="icon" type="image/png" href="../tubal-hub-logo.png">
+<link rel="stylesheet" href="../assets/css/kapeng-landing.css?v=1.2.42">
+</head>
+<body>
+<div class="kb-page">
+  <header class="kb-nav">
+    <div class="kb-container kb-nav-inner">
+      <a class="kb-brand" href="../index.html">
+        <span class="kb-brand-mark">☕</span>
+        <span class="kb-brand-copy"><strong>Kapeng Barako</strong><small>A TUBAL HUB Storefront</small></span>
+      </a>
+      <nav class="kb-nav-links" aria-label="Kapeng Barako navigation">
+        <a href="#collection">Collection</a>
+        <a href="#story">The Brand</a>
+        <a href="#order">Order</a>
+      </nav>
+      <div class="kb-nav-actions">
+        <a class="kb-btn kb-btn-secondary" href="../index.html">Back to Hub</a>
+        <a class="kb-btn kb-btn-primary" href="../pages/shop.html?branch=kapeng">Shop Coffee →</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="kb-hero">
+      <div class="kb-container kb-hero-grid">
+        <div>
+          <span class="kb-eyebrow">Official Kapeng Barako landing page</span>
+          <h1>Bold coffee.<br><em>One dedicated place.</em></h1>
+          <p>Kapeng Barako now has its own storefront experience inside TUBAL HUB — with a dedicated brand presentation, live admin-managed products, and the same secure shared checkout used by the Hub.</p>
+          <div class="kb-hero-actions">
+            <a class="kb-btn kb-btn-primary" href="#collection">Explore Collection →</a>
+            <a class="kb-btn kb-btn-secondary" href="../pages/shop.html?branch=kapeng">Open Shared Shop</a>
+          </div>
+          <div class="kb-hero-note">Catalog source: Firestore • Orders: TUBAL HUB Shop</div>
+          <div class="kb-stats">
+            <div class="kb-stat"><strong id="kbCount">—</strong><span>Live products</span></div>
+            <div class="kb-stat"><strong id="kbFeatured">—</strong><span>Featured record</span></div>
+            <div class="kb-stat"><strong>1 Hub</strong><span>Shared checkout</span></div>
+          </div>
+        </div>
+        <div class="kb-visual" aria-label="Kapeng Barako coffee visual">
+          <div class="kb-cup-wrap">
+            <div class="kb-steam" aria-hidden="true"><span></span><span></span><span></span></div>
+            <div class="kb-cup">
+              <div class="kb-cup-mark">☕</div>
+              <div class="kb-beans" aria-hidden="true"><span></span><span></span><span></span></div>
+            </div>
+          </div>
+          <div class="kb-badge">KAPENG BARAKO • TUBAL HUB</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="kb-section" id="collection">
+      <div class="kb-container">
+        <div class="kb-section-head">
+          <div>
+            <span class="kb-eyebrow">Live catalog</span>
+            <h2>Kapeng Barako Collection</h2>
+          </div>
+          <p>Products shown here come from the same Firestore catalog controlled from TUBAL HUB Admin. Checkout continues in the shared TUBAL HUB Shop.</p>
+        </div>
+        <div id="kbProducts" class="kb-products"><div class="kb-loading">Loading live Kapeng Barako products…</div></div>
+      </div>
+    </section>
+
+    <section class="kb-section" id="story">
+      <div class="kb-container">
+        <div class="kb-section-head">
+          <div><span class="kb-eyebrow">Dedicated brand space</span><h2>Kapeng Barako, separated cleanly.</h2></div>
+          <p>A standalone landing experience without creating a second admin system or a second order database.</p>
+        </div>
+        <div class="kb-story-grid">
+          <article class="kb-story-card">
+            <h3>Own identity</h3>
+            <p>Espresso-inspired colors, gold accents, focused copy, and a product-first layout give Kapeng Barako its own visual room while keeping it under the TUBAL HUB platform.</p>
+          </article>
+          <article class="kb-story-card">
+            <h3>One source of truth</h3>
+            <p>Admin-managed Kapeng products stay in Firestore. The landing page only reads published catalog records, so there is no second hardcoded inventory list to maintain.</p>
+          </article>
+        </div>
+        <div class="kb-values">
+          <article class="kb-value"><b>Live Products</b><span>Public cards update when Kapeng records change in Admin.</span></article>
+          <article class="kb-value"><b>Shared Checkout</b><span>Customers continue through the existing TUBAL HUB Shop order pipeline.</span></article>
+          <article class="kb-value"><b>Admin Control</b><span>Products, stock and order operations stay in the central TUBAL HUB Admin.</span></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="kb-section" id="order">
+      <div class="kb-container">
+        <div class="kb-cta">
+          <div>
+            <h2>Ready for your next cup?</h2>
+            <p>Open the Kapeng Barako collection in the shared TUBAL HUB Shop.</p>
+          </div>
+          <a class="kb-btn kb-btn-primary" href="../pages/shop.html?branch=kapeng">Shop Kapeng Barako →</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="kb-footer">
+    <div class="kb-container kb-footer-inner">
+      <span>© <span id="kbYear"></span> TUBAL HUB • Kapeng Barako</span>
+      <span>Firestore-first catalog • Shared checkout</span>
+    </div>
+  </footer>
+</div>
+<script type="module" src="../assets/js/kapeng-landing.js?v=1.2.42"></script>
+</body>
+</html>
