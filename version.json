@@ -1,11 +1,13 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.2.47",
+  "version": "1.2.48",
   "build": "2026-09-30_1353",
   "releasedAtReal": "2026-09-30T05:53:00Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.2.48 FIX — Admin Inventory KPI now sums actual stock units from physical products instead of counting catalog records.",
+    "v1.2.48 UI — Inventory KPI helper text now explicitly identifies the value as Physical stock units.",
     "v1.2.47 FIX — Admin brand revenue now includes only verified/paid orders and excludes pending_payment and rejected orders.",
     "v1.2.47 UI — Revenue helper text now explicitly states that only verified paid orders are counted.",
     "v1.2.46 META — Corrected release build metadata to match the actual 2026-09-30 13:53 Asia/Manila release time.",
@@ -207,6 +209,12 @@
   ],
   "breakingReal": false,
   "changelog": [
+    {
+      "type": "FIX",
+      "icon": "▤",
+      "title": "Actual Inventory Units",
+      "desc": "Brand Inventory now totals stock quantities on physical products; digital products and catalog-record counts are excluded."
+    },
     {
       "type": "FIX",
       "icon": "₱",
