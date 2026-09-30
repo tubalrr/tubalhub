@@ -1,11 +1,12 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.2.74",
-  "build": "2026-09-30_2136",
-  "releasedAtReal": "2026-09-30T13:36:00Z",
+  "version": "1.2.75",
+  "build": "2026-09-30_2114",
+  "releasedAtReal": "2026-09-30T13:14:00Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.2.75 FIX — Removed the animated male/female container characters from the homepage after the visual treatment was rejected. The existing homepage content, hero 3D ecosystem, and functionality remain unchanged.",
     "v1.2.74 FIX — Replaced unreliable emoji pseudo-elements with actual DOM SVG male and female character pairs on major homepage containers. Characters are visible, animated, staggered, and automatically added to dynamic containers.",
     "v1.2.73 FEAT — Added subtle animated female and male character accents to major homepage containers/cards, with 3D-style depth, floating motion, and matching shadow animation while keeping content unobstructed.",
     "v1.2.72 FEAT — Added a lightweight 3D Digital Ecosystem animation to the homepage hero: depth-based hub core, multi-axis rotating rings, floating particles, 3D brand-node depth, and animated logo elevation.",
