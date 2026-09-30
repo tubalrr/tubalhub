@@ -1451,3 +1451,150 @@ body.theme-light.hub-home .feed-update-text{
     animation:none!important;
   }
 }
+
+
+/* =========================================================
+   TUBAL HUB — OBVIOUS CHARACTER WALK v1.2.93
+   The walker travels across the stage so the motion is
+   visually unmistakable, not a slideshow transition.
+   ========================================================= */
+.th-bot-stage{
+  overflow:visible!important;
+}
+.th-bot-walker{
+  position:absolute;
+  left:-18px;
+  bottom:20px;
+  width:150px;
+  height:310px;
+  z-index:3;
+  will-change:left,transform;
+  animation:thBotWalkAcross 12s cubic-bezier(.45,0,.55,1) infinite!important;
+}
+.th-bot-walker .th-bot-3d{
+  animation:thBotBodyWalkCycle 12s ease-in-out infinite!important;
+}
+.th-hero-bot-experience.bot-cinematic .th-bot-walker .th-bot-head{
+  animation:thBotHeadWalkCycle 12s ease-in-out infinite!important;
+}
+.th-hero-bot-experience.bot-cinematic .th-bot-walker .th-bot-arm-left{
+  animation:thBotArmWalkCycleL 12s ease-in-out infinite!important;
+}
+.th-hero-bot-experience.bot-cinematic .th-bot-walker .th-bot-arm-right{
+  animation:thBotArmWalkCycleR 12s ease-in-out infinite!important;
+}
+.th-hero-bot-experience.bot-cinematic .th-bot-walker .th-bot-leg-left{
+  animation:thBotLegWalkCycleL 12s linear infinite!important;
+}
+.th-hero-bot-experience.bot-cinematic .th-bot-walker .th-bot-leg-right{
+  animation:thBotLegWalkCycleR 12s linear infinite!important;
+}
+
+@keyframes thBotWalkAcross{
+  0%,8%{left:-18px;transform:rotateY(-4deg)}
+  20%{left:20px;transform:rotateY(4deg)}
+  32%{left:58px;transform:rotateY(10deg)}
+  40%{left:70px;transform:rotateY(15deg)}
+  58%{left:70px;transform:rotateY(15deg)}
+  70%{left:70px;transform:rotateY(2deg)}
+  82%{left:34px;transform:rotateY(-8deg)}
+  93%{left:-4px;transform:rotateY(-12deg)}
+  100%{left:-18px;transform:rotateY(-4deg)}
+}
+@keyframes thBotBodyWalkCycle{
+  0%,8%{transform:translateY(0) rotateZ(-.3deg)}
+  12%{transform:translateY(-6px) rotateZ(.6deg)}
+  16%{transform:translateY(0) rotateZ(-.3deg)}
+  22%{transform:translateY(-6px) rotateZ(.6deg)}
+  26%{transform:translateY(0) rotateZ(-.3deg)}
+  32%,40%{transform:translateY(-1px) rotateZ(0)}
+  48%{transform:translateY(-3px) rotateZ(.2deg)}
+  58%{transform:translateY(0) rotateZ(0)}
+  70%{transform:translateY(-2px) rotateZ(-.2deg)}
+  82%{transform:translateY(-5px) rotateZ(.4deg)}
+  93%{transform:translateY(0) rotateZ(-.4deg)}
+  100%{transform:translateY(0) rotateZ(-.3deg)}
+}
+@keyframes thBotHeadWalkCycle{
+  0%,8%{transform:translateZ(26px) rotateY(-7deg)}
+  20%{transform:translateZ(26px) rotateY(4deg)}
+  40%,58%{transform:translateZ(26px) rotateY(24deg) rotateZ(1deg)}
+  70%{transform:translateZ(26px) rotateY(7deg)}
+  82%{transform:translateZ(26px) rotateY(-5deg)}
+  100%{transform:translateZ(26px) rotateY(-7deg)}
+}
+@keyframes thBotArmWalkCycleL{
+  0%,8%{transform:rotate(8deg) translateZ(0)}
+  14%{transform:rotate(-25deg) translateZ(4px)}
+  20%{transform:rotate(20deg) translateZ(5px)}
+  26%{transform:rotate(-24deg) translateZ(4px)}
+  32%,40%{transform:rotate(-5deg) translateZ(4px)}
+  48%,58%{transform:rotate(-8deg) translateZ(5px)}
+  68%{transform:rotate(-40deg) translateZ(10px)}
+  72%{transform:rotate(-58deg) translateZ(14px)}
+  76%{transform:rotate(-38deg) translateZ(11px)}
+  80%{transform:rotate(-56deg) translateZ(14px)}
+  84%{transform:rotate(-22deg) translateZ(7px)}
+  92%{transform:rotate(8deg) translateZ(0)}
+  100%{transform:rotate(8deg) translateZ(0)}
+}
+@keyframes thBotArmWalkCycleR{
+  0%,8%{transform:rotate(16deg) translateZ(1px)}
+  14%{transform:rotate(30deg) translateZ(4px)}
+  20%{transform:rotate(-22deg) translateZ(5px)}
+  26%{transform:rotate(30deg) translateZ(4px)}
+  32%,40%{transform:rotate(-28deg) translateZ(7px)}
+  48%{transform:rotate(-30deg) translateZ(8px)}
+  58%{transform:rotate(-28deg) translateZ(8px)}
+  68%,80%{transform:rotate(14deg) translateZ(4px)}
+  92%{transform:rotate(16deg) translateZ(1px)}
+  100%{transform:rotate(16deg) translateZ(1px)}
+}
+@keyframes thBotLegWalkCycleL{
+  0%,8%,100%{transform:rotate(2deg) translateZ(0)}
+  12%{transform:rotate(-16deg) translateZ(3px)}
+  18%{transform:rotate(15deg) translateZ(3px)}
+  24%{transform:rotate(-15deg) translateZ(2px)}
+  30%{transform:rotate(12deg) translateZ(3px)}
+  36%,58%{transform:rotate(2deg)}
+  72%{transform:rotate(-3deg)}
+  82%{transform:rotate(11deg)}
+  92%{transform:rotate(-8deg)}
+}
+@keyframes thBotLegWalkCycleR{
+  0%,8%,100%{transform:rotate(-2deg) translateZ(0)}
+  12%{transform:rotate(15deg) translateZ(3px)}
+  18%{transform:rotate(-16deg) translateZ(3px)}
+  24%{transform:rotate(14deg) translateZ(3px)}
+  30%{transform:rotate(-12deg) translateZ(2px)}
+  36%,58%{transform:rotate(-2deg)}
+  72%{transform:rotate(4deg)}
+  82%{transform:rotate(-10deg)}
+  92%{transform:rotate(8deg)}
+}
+@media(max-width:900px){
+  .th-bot-walker{
+    left:-16px;
+    bottom:16px;
+    transform-origin:50% 100%;
+  }
+}
+@media(max-width:620px){
+  .th-bot-walker{
+    left:-16px;
+    bottom:9px;
+    transform:scale(.50);
+    transform-origin:50% 100%;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  .th-bot-walker,
+  .th-bot-walker .th-bot-3d,
+  .th-hero-bot-experience.bot-cinematic .th-bot-walker .th-bot-head,
+  .th-hero-bot-experience.bot-cinematic .th-bot-walker .th-bot-arm-left,
+  .th-hero-bot-experience.bot-cinematic .th-bot-walker .th-bot-arm-right,
+  .th-hero-bot-experience.bot-cinematic .th-bot-walker .th-bot-leg-left,
+  .th-hero-bot-experience.bot-cinematic .th-bot-walker .th-bot-leg-right{
+    animation:none!important;
+  }
+}
