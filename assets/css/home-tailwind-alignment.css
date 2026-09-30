@@ -17,7 +17,7 @@ body.hub-home .th-value-grid{
 @media (min-width:768px){
   body.hub-home #thBrandPillars .th-pillar-grid,
   body.hub-home .th-value-grid{
-    grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
   }
 
   body.hub-home #thBrandPillars .th-pillar-grid{
@@ -213,7 +213,7 @@ body.hub-home .th-branch-note{
 }
 body.hub-home .th-branch-grid{
   display:grid !important;
-  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  grid-template-columns:repeat(4,minmax(0,1fr)) !important;
   gap:1rem !important;
   width:100% !important;
 }
