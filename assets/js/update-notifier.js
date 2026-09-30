@@ -16,7 +16,7 @@
   const EVENT_KEY = "tubalhub_update_event";
   const NATIVE_EVENT_KEY = "tubalhub_last_native_update";
   const UPDATES_ENABLED_KEY = "tubalhub_notif_website_updates";
-  const POLL_MS = 1800000;
+  const POLL_MS = 60000;
   const TOAST_MS = 6000;
 
   let loadedUi = false;
@@ -26,6 +26,8 @@
   let currentData = null;
   let updateAvailable = false;
   let modalOpen = false;
+  let bootVersion = null;
+  let autoReloadTimer = null;
 
   const $ = id => document.getElementById(id);
   const updatesEnabled = () => localStorage.getItem(UPDATES_ENABLED_KEY) !== "0";
@@ -387,7 +389,41 @@
         localStorage.removeItem(UPDATE_KEY);
         return;
       }
+      if (bootVersion === null) {
+        bootVersion = gated.version;
+        compare(gated);
+        return;
+      }
+
+      const changedWhileOpen = String(gated.version) !== String(bootVersion);
       compare(gated);
+
+      if (changedWhileOpen) {
+        const reloadKey = "tubalhub_auto_reload_version";
+        let alreadyScheduled = false;
+        try {
+          alreadyScheduled = localStorage.getItem(reloadKey) === gated.version;
+        } catch (_) {}
+
+        if (!alreadyScheduled) {
+          try { localStorage.setItem(reloadKey, gated.version); } catch (_) {}
+          document.dispatchEvent(new CustomEvent("tubalhub:live-update", {
+            detail: { version: gated.version, data: gated }
+          }));
+          clearTimeout(autoReloadTimer);
+          autoReloadTimer = setTimeout(() => {
+            try { window.location.reload(); } catch (_) {}
+          }, 1800);
+        } else {
+          try {
+            if (localStorage.getItem(reloadKey) === gated.version) {
+              localStorage.removeItem(reloadKey);
+            }
+          } catch (_) {}
+        }
+
+        bootVersion = gated.version;
+      }
     } catch (error) {
       console.warn("[TUBAL HUB update check]", error);
     }
@@ -496,6 +532,12 @@
 
   async function init() {
     try {
+      try {
+        const pending = localStorage.getItem("tubalhub_auto_reload_version");
+        if (pending) {
+          localStorage.removeItem("tubalhub_auto_reload_version");
+        }
+      } catch (_) {}
       await loadUi();
       openChannel();
       listenServiceWorker();
