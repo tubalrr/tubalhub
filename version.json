@@ -1,11 +1,14 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.2.45",
-  "build": "2026-09-30_1353",
-  "releasedAtReal": "2026-09-30T05:53:00Z",
+  "version": "1.2.46",
+  "build": "2026-09-30_1407",
+  "releasedAtReal": "2026-09-30T06:07:00Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.2.46 SECURITY — Removed raw card-number, expiry and CVV collection from the TUBAL HUB Shop checkout.",
+    "v1.2.46 FIX — paymentReference now reads only bank / e-wallet or PayPal reference fields; card numbers are no longer used as payment references.",
+    "v1.2.46 SECURITY — Cloud Functions now reject unsupported card payment methods server-side; the active manual checkout methods are Bank / E-Wallet and PayPal.",
     "v1.2.45 FIX — Removed the retired kapeng-admin/login.html destination from Shop and routed the Kapeng Barako Admin action to the central TUBAL HUB admin login.",
     "v1.2.44 FIX — Kapeng Barako Admin Room is hidden on the Master Hub dashboard until Kapeng Barako is explicitly selected.",
     "v1.2.44 UX — Switching back to Master Hub, Brand 2, or Brand 3 hides the Kapeng-specific dashboard room again.",
@@ -201,6 +204,24 @@
   ],
   "breakingReal": false,
   "changelog": [
+    {
+      "type": "SECURITY",
+      "icon": "🔒",
+      "title": "No Raw Card Details",
+      "desc": "Shop checkout no longer collects card number, expiry date or CVV."
+    },
+    {
+      "type": "FIX",
+      "icon": "✓",
+      "title": "Reference-Only Payment",
+      "desc": "Orders submit only bank / e-wallet or PayPal payment references to the server."
+    },
+    {
+      "type": "SECURITY",
+      "icon": "🛡",
+      "title": "Server Payment Method Guard",
+      "desc": "Cloud Functions reject unsupported payment methods instead of accepting arbitrary card checkout payloads."
+    },
     {
       "type": "FIX",
       "icon": "🔗",
