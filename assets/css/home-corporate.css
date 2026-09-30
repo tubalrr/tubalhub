@@ -1273,3 +1273,181 @@ body.theme-light.hub-home .feed-update-text{
     transform:translate3d(0,0,0)!important;
   }
 }
+
+
+/* =========================================================
+   TUBAL HUB — CINEMATIC 3D BOT v1.2.92
+   One uninterrupted motion timeline instead of slideshow-like
+   state switching. The character physically travels, turns,
+   presents, waves, and walks back.
+   ========================================================= */
+.th-hero-bot-experience.bot-cinematic .th-bot-3d{
+  animation:thBotCinematicBody 8.6s cubic-bezier(.45,0,.55,1) infinite!important;
+  will-change:transform;
+}
+.th-hero-bot-experience.bot-cinematic .th-bot-head{
+  animation:thBotCinematicHead 8.6s ease-in-out infinite!important;
+  will-change:transform;
+}
+.th-hero-bot-experience.bot-cinematic .th-bot-arm-left{
+  animation:thBotCinematicArmLeft 8.6s ease-in-out infinite!important;
+  transform-origin:top center;
+}
+.th-hero-bot-experience.bot-cinematic .th-bot-arm-right{
+  animation:thBotCinematicArmRight 8.6s ease-in-out infinite!important;
+  transform-origin:top center;
+}
+.th-hero-bot-experience.bot-cinematic .th-bot-leg-left{
+  animation:thBotCinematicLegLeft 8.6s linear infinite!important;
+  transform-origin:top center;
+}
+.th-hero-bot-experience.bot-cinematic .th-bot-leg-right{
+  animation:thBotCinematicLegRight 8.6s linear infinite!important;
+  transform-origin:top center;
+}
+.th-hero-bot-experience.bot-cinematic .th-bot-floor{
+  animation:thBotCinematicFloor 8.6s ease-in-out infinite!important;
+}
+.th-hero-bot-experience.bot-cinematic .th-bot-glow{
+  animation:thBotCinematicGlow 8.6s ease-in-out infinite!important;
+}
+.th-hero-bot-experience.bot-cinematic .th-bot-stage{
+  overflow:visible;
+}
+.th-hero-bot-experience.bot-cinematic .th-bot-showcase{
+  animation:thBotPanelBreathe 8.6s ease-in-out infinite;
+}
+.bot-screen-refresh{
+  animation:thBotScreenTravelIn .72s cubic-bezier(.22,1,.36,1);
+}
+.th-bot-screen-progress{
+  display:flex;
+  gap:5px;
+  margin-top:11px;
+}
+.th-bot-screen-progress i{
+  display:block;
+  height:5px;
+  flex:1;
+  border-radius:999px;
+  background:linear-gradient(90deg,#dde5f0,#eef2f7);
+  transform-origin:left center;
+  animation:thBotMiniProgress 1.8s ease-in-out infinite;
+}
+.th-bot-screen-progress i:nth-child(2){animation-delay:.16s}
+.th-bot-screen-progress i:nth-child(3){animation-delay:.32s}
+.th-bot-screen-progress i:nth-child(4){animation-delay:.48s}
+
+@keyframes thBotCinematicBody{
+  0%,7%{transform:translate3d(-1px,0,0) rotateY(-4deg) rotateZ(-.3deg)}
+  14%{transform:translate3d(5px,-3px,0) rotateY(-8deg) rotateZ(-.2deg)}
+  24%{transform:translate3d(17px,-6px,0) rotateY(6deg) rotateZ(.7deg)}
+  33%{transform:translate3d(27px,-2px,0) rotateY(15deg) rotateZ(.2deg)}
+  42%{transform:translate3d(25px,0,0) rotateY(16deg) rotateZ(0)}
+  52%{transform:translate3d(25px,-3px,0) rotateY(18deg) rotateZ(.4deg)}
+  61%{transform:translate3d(24px,-1px,0) rotateY(15deg) rotateZ(-.3deg)}
+  69%{transform:translate3d(21px,-4px,0) rotateY(5deg) rotateZ(-.4deg)}
+  78%{transform:translate3d(13px,-2px,0) rotateY(-7deg) rotateZ(.2deg)}
+  88%{transform:translate3d(4px,0,0) rotateY(-12deg) rotateZ(-.3deg)}
+  100%{transform:translate3d(-1px,0,0) rotateY(-4deg) rotateZ(-.3deg)}
+}
+@keyframes thBotCinematicHead{
+  0%,9%{transform:translateZ(26px) rotateY(-5deg) rotateZ(-.5deg)}
+  22%{transform:translateZ(26px) rotateY(5deg) rotateZ(.2deg)}
+  34%,55%{transform:translateZ(26px) rotateY(24deg) rotateZ(1deg)}
+  64%{transform:translateZ(26px) rotateY(18deg) rotateZ(.3deg)}
+  76%{transform:translateZ(26px) rotateY(2deg) rotateZ(-.8deg)}
+  90%{transform:translateZ(26px) rotateY(-13deg) rotateZ(-.2deg)}
+  100%{transform:translateZ(26px) rotateY(-5deg) rotateZ(-.5deg)}
+}
+@keyframes thBotCinematicArmLeft{
+  0%,12%{transform:rotate(8deg) translateZ(0)}
+  20%{transform:rotate(-22deg) translateZ(4px)}
+  32%{transform:rotate(18deg) translateZ(5px)}
+  42%,55%{transform:rotate(-4deg) translateZ(3px)}
+  62%{transform:rotate(7deg) translateZ(2px)}
+  69%{transform:rotate(-37deg) translateZ(10px)}
+  73%{transform:rotate(-58deg) translateZ(13px)}
+  76%{transform:rotate(-40deg) translateZ(11px)}
+  80%{transform:rotate(-60deg) translateZ(13px)}
+  85%{transform:rotate(-30deg) translateZ(8px)}
+  92%{transform:rotate(7deg) translateZ(2px)}
+  100%{transform:rotate(8deg) translateZ(0)}
+}
+@keyframes thBotCinematicArmRight{
+  0%,12%{transform:rotate(16deg) translateZ(1px)}
+  20%{transform:rotate(30deg) translateZ(4px)}
+  30%{transform:rotate(-23deg) translateZ(5px)}
+  42%,55%{transform:rotate(-28deg) translateZ(8px)}
+  64%{transform:rotate(-2deg) translateZ(5px)}
+  72%{transform:rotate(11deg) translateZ(3px)}
+  80%{transform:rotate(22deg) translateZ(4px)}
+  92%{transform:rotate(17deg) translateZ(2px)}
+  100%{transform:rotate(16deg) translateZ(1px)}
+}
+@keyframes thBotCinematicLegLeft{
+  0%,12%{transform:rotate(1deg) translateZ(0)}
+  17%{transform:rotate(-11deg) translateZ(2px)}
+  22%{transform:rotate(13deg) translateZ(3px)}
+  27%{transform:rotate(-13deg) translateZ(1px)}
+  32%{transform:rotate(10deg) translateZ(2px)}
+  37%{transform:rotate(-8deg) translateZ(1px)}
+  42%,55%{transform:rotate(2deg) translateZ(0)}
+  64%{transform:rotate(4deg) translateZ(1px)}
+  72%{transform:rotate(-5deg) translateZ(1px)}
+  80%{transform:rotate(7deg) translateZ(2px)}
+  86%{transform:rotate(-8deg) translateZ(1px)}
+  92%,100%{transform:rotate(1deg) translateZ(0)}
+}
+@keyframes thBotCinematicLegRight{
+  0%,12%{transform:rotate(-1deg) translateZ(0)}
+  17%{transform:rotate(12deg) translateZ(2px)}
+  22%{transform:rotate(-13deg) translateZ(2px)}
+  27%{transform:rotate(12deg) translateZ(3px)}
+  32%{transform:rotate(-10deg) translateZ(1px)}
+  37%{transform:rotate(9deg) translateZ(2px)}
+  42%,55%{transform:rotate(-2deg) translateZ(0)}
+  64%{transform:rotate(-4deg) translateZ(1px)}
+  72%{transform:rotate(6deg) translateZ(2px)}
+  80%{transform:rotate(-7deg) translateZ(1px)}
+  86%{transform:rotate(8deg) translateZ(2px)}
+  92%,100%{transform:rotate(-1deg) translateZ(0)}
+}
+@keyframes thBotCinematicFloor{
+  0%,10%,100%{transform:translateX(-50%) rotateX(68deg) scale(.94);opacity:.55}
+  25%,35%{transform:translateX(-50%) rotateX(68deg) scale(1.06);opacity:.9}
+  52%{transform:translateX(-50%) rotateX(68deg) scale(1.04);opacity:.82}
+  78%{transform:translateX(-50%) rotateX(68deg) scale(1);opacity:.72}
+}
+@keyframes thBotCinematicGlow{
+  0%,100%{transform:translate(-50%,-50%) scale(.92);opacity:.48}
+  28%{transform:translate(-50%,-50%) scale(1.13);opacity:1}
+  52%{transform:translate(-50%,-50%) scale(1.04);opacity:.8}
+  75%{transform:translate(-50%,-50%) scale(.98);opacity:.65}
+}
+@keyframes thBotPanelBreathe{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-2px)}
+}
+@keyframes thBotScreenTravelIn{
+  from{opacity:0;transform:translate3d(24px,0,0) scale(.985)}
+  to{opacity:1;transform:translate3d(0,0,0) scale(1)}
+}
+@keyframes thBotMiniProgress{
+  0%,100%{transform:scaleX(.55);opacity:.6}
+  50%{transform:scaleX(1);opacity:1}
+}
+@media(prefers-reduced-motion:reduce){
+  .th-hero-bot-experience.bot-cinematic .th-bot-3d,
+  .th-hero-bot-experience.bot-cinematic .th-bot-head,
+  .th-hero-bot-experience.bot-cinematic .th-bot-arm-left,
+  .th-hero-bot-experience.bot-cinematic .th-bot-arm-right,
+  .th-hero-bot-experience.bot-cinematic .th-bot-leg-left,
+  .th-hero-bot-experience.bot-cinematic .th-bot-leg-right,
+  .th-hero-bot-experience.bot-cinematic .th-bot-floor,
+  .th-hero-bot-experience.bot-cinematic .th-bot-glow,
+  .th-hero-bot-experience.bot-cinematic .th-bot-showcase,
+  .th-bot-screen-progress i{
+    animation:none!important;
+  }
+}
