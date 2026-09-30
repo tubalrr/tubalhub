@@ -818,6 +818,7 @@ exports.createShopOrderReal = onCall(async request => {
       inventoryReserved: hasPhysical,
       inventoryReservationStatus: hasPhysical ? "reserved" : "not-applicable",
       inventoryReservedAt: hasPhysical ? FieldValue.serverTimestamp() : null,
+      fulfillmentStatus: hasPhysical ? "pending" : "not-applicable",
       createdAt: FieldValue.serverTimestamp(),
       createdByServer: true
     });
@@ -1199,6 +1200,7 @@ exports.verifyShopOrderReal = onCall(async request => {
       verificationNote,
       paymentReference: paymentReference || order.paymentReference || "",
       inventoryReservationStatus: order.inventoryReserved === true ? "committed" : "not-applicable",
+      fulfillmentStatus: order.inventoryReserved === true ? "pending" : "not-applicable",
       updatedAt: FieldValue.serverTimestamp()
     });
 
