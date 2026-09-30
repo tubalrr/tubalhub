@@ -12,7 +12,20 @@
     ".bento-home-page .th-target-grid-card",
     ".bento-home-page .sponsored-container-real",
     ".bento-home-page #ctrlzoneCard",
-    ".bento-home-page .featured-slide"
+    ".bento-home-page .featured-slide",
+    ".bento-home-page .th-branch-card",
+    ".bento-home-page .th-kapeng-highlight",
+    ".bento-home-page .featured-preview-card",
+    ".bento-home-page .featured-feature-card",
+    ".bento-home-page .brand-card",
+    ".bento-home-page .live-card",
+    ".bento-home-page .social-card",
+    ".bento-home-page .journal-card",
+    ".bento-home-page .music-real-card",
+    ".bento-home-page .game-feature-card",
+    ".bento-home-page .feed-card",
+    ".bento-home-page .real-data-card",
+    ".bento-home-page .video-card"
   ].join(",");
 
   const personSvg = () => `
