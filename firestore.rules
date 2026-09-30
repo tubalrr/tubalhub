@@ -388,7 +388,7 @@ service cloud.firestore {
 
     match /systemSettings/{settingId} {
       // Only explicitly public settings are readable by the public site.
-      allow read: if settingId == 'maintenance' || adminUser();
+      allow read: if settingId == 'maintenance' || settingId == 'updateRelease' || adminUser();
       allow create, update, delete: if adminUser();
     }
 
