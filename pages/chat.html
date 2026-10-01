@@ -165,7 +165,7 @@ import { app, auth } from "../assets/js/firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 import { getFirestore, collection, addDoc, query, orderBy, limit, limitToLast, onSnapshot, doc, setDoc, getDoc, deleteDoc, serverTimestamp, where, updateDoc, getDocsFromServer, startAfter } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-functions.js";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-storage.js";
+import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-storage.js";
 
 const db=getFirestore(app), storage=getStorage(app), functionsReal=getFunctions(app);
 const sendMessageFnReal=httpsCallable(functionsReal,'sendMessageReal');
@@ -1102,16 +1102,28 @@ async function sendMessage(payload){
     const limited=window.tubalHubChatGuardReal?.isRateLimitedReal?.(currentUser.uid) ?? (Date.now()-lastMessageTime<2000);
     if(limited)throw new Error('RATE_LIMIT');
 
-    const result=await sendGlobalMediaFnReal({
-      type:String(payload.type),
-      channel,
-      mediaUrl:String(payload.mediaUrl||''),
-      storagePath:String(payload.storagePath||''),
-      text:String(payload.text||payload.textReal||'').trim()
-    });
-    lastMessageTime=Date.now();
-    if(result?.data?.moderated)showModerationNotice('🛡️ Server moderation cleaned this caption before publishing.');
-    return result?.data;
+    const storagePath=String(payload.storagePath||'');
+    try{
+      const result=await sendGlobalMediaFnReal({
+        type:String(payload.type),
+        channel,
+        mediaUrl:String(payload.mediaUrl||''),
+        storagePath,
+        text:String(payload.text||payload.textReal||'').trim()
+      });
+      lastMessageTime=Date.now();
+      if(result?.data?.moderated)showModerationNotice('🛡️ Server moderation cleaned this caption before publishing.');
+      return result?.data;
+    }catch(error){
+      if(storagePath){
+        try{
+          await deleteObject(ref(storage,storagePath));
+        }catch(cleanupError){
+          console.warn('[TUBAL HUB] failed media orphan cleanup',cleanupError);
+        }
+      }
+      throw error;
+    }
   }
 
   throw new Error('INVALID_MESSAGE_TYPE');
