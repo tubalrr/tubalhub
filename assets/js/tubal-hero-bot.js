@@ -125,6 +125,13 @@
         position:absolute;top:126px;width:27px;height:100px;z-index:2;
         border-radius:16px;background:linear-gradient(145deg,#172432,#060b10);
         border:2px solid #293d4e;transform-origin:50% 12px;
+        will-change:transform;
+      }
+      .th-code-arm:before{
+        content:"";position:absolute;left:50%;top:38px;width:21px;height:21px;
+        transform:translateX(-50%);border-radius:50%;
+        background:radial-gradient(circle,#3a5368 0 28%,#0a1118 31% 100%);
+        border:1px solid #31495b;
       }
       .th-code-arm.left{left:4px;transform:rotate(9deg)}
       .th-code-arm.right{right:4px;transform:rotate(-9deg)}
@@ -155,12 +162,15 @@
         animation:thCodeTalk .12s ease-in-out infinite alternate;
       }
       .th-code-bot.is-speaking .th-code-eye{animation:thCodeEye .55s ease-in-out infinite}
-      .th-code-bot.is-speaking .th-code-arm.left{animation:thCodeWaveL .42s ease-in-out infinite alternate}
-      .th-code-bot.is-speaking .th-code-arm.right{animation:thCodeWaveR .42s ease-in-out infinite alternate}
-      .th-code-bot.is-speaking{animation:thCodeTalkBody .75s ease-in-out infinite alternate}
+      .th-code-bot.is-speaking .th-code-arm.left{animation:thCodeTalkArmL .9s ease-in-out infinite}
+      .th-code-bot.is-speaking .th-code-arm.right{animation:thCodeTalkArmR 1.05s ease-in-out infinite}
+      .th-code-bot.is-greeting .th-code-arm.right{animation:thCodeGreeting .72s cubic-bezier(.35,.1,.25,1) 4}
+      .th-code-bot.is-presenting .th-code-arm.left{animation:thCodePresentL 1.25s ease-in-out infinite}
+      .th-code-bot.is-presenting .th-code-arm.right{animation:thCodePresentR 1.4s ease-in-out infinite}
+      .th-code-bot.is-speaking{animation:thCodeTalkBody .85s ease-in-out infinite alternate}
       .th-code-bot.is-idle{animation:thCodeIdle 3.2s ease-in-out infinite}
-      .th-code-bot.is-speaking .th-code-leg.left{animation:thCodeStepL .42s ease-in-out infinite alternate}
-      .th-code-bot.is-speaking .th-code-leg.right{animation:thCodeStepR .42s ease-in-out infinite alternate}
+      .th-code-bot.is-speaking .th-code-leg.left{animation:thCodeWeightL 1.2s ease-in-out infinite alternate}
+      .th-code-bot.is-speaking .th-code-leg.right{animation:thCodeWeightR 1.2s ease-in-out infinite alternate}
       .th-code-bot-shadow{position:absolute;left:50%;bottom:2px;width:135px;height:22px;transform:translateX(-50%);border-radius:50%;background:rgba(23,113,219,.18);filter:blur(8px);animation:thCodeShadow 3.2s ease-in-out infinite}
       @keyframes thCodeIdle{0%,100%{transform:translateY(3px) rotate(0)}50%{transform:translateY(-7px) rotate(-1deg)}}
       @keyframes thCodeShadow{0%,100%{transform:translateX(-50%) scale(.92);opacity:.55}50%{transform:translateX(-50%) scale(1.06);opacity:.85}}
@@ -168,11 +178,14 @@
       @keyframes thCodeBlink{0%,44%,48%,100%{opacity:1}46%{opacity:.05}}
       @keyframes thCodeEye{50%{transform:scaleY(.35)}}
       @keyframes thCodeTalk{from{transform:translateX(-50%) scaleY(.35)}to{transform:translateX(-50%) scaleY(1.15)}}
-      @keyframes thCodeTalkBody{to{transform:translateY(-4px) scale(1.015)}}
-      @keyframes thCodeWaveL{from{transform:rotate(9deg)}to{transform:rotate(-34deg) translateY(-5px)}}
-      @keyframes thCodeWaveR{from{transform:rotate(-9deg)}to{transform:rotate(36deg) translateY(-7px)}}
-      @keyframes thCodeStepL{from{transform:rotate(4deg)}to{transform:rotate(-8deg) translateY(-3px)}}
-      @keyframes thCodeStepR{from{transform:rotate(-4deg)}to{transform:rotate(8deg) translateY(-3px)}}
+      @keyframes thCodeTalkBody{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-3px) rotate(-.6deg)}}
+      @keyframes thCodeTalkArmL{0%,100%{transform:rotate(8deg)}45%{transform:rotate(20deg) translateY(-2px)}75%{transform:rotate(2deg) translateY(1px)}}
+      @keyframes thCodeTalkArmR{0%,100%{transform:rotate(-8deg)}35%{transform:rotate(-19deg) translateY(-2px)}70%{transform:rotate(-3deg) translateY(2px)}}
+      @keyframes thCodeGreeting{0%,100%{transform:rotate(-8deg)}25%{transform:rotate(-32deg) translateY(-8px)}50%{transform:rotate(-50deg) translateY(-12px)}75%{transform:rotate(-32deg) translateY(-8px)}}
+      @keyframes thCodePresentL{0%,100%{transform:rotate(8deg)}50%{transform:rotate(32deg) translateY(-2px)}}
+      @keyframes thCodePresentR{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(-20deg) translateY(-3px)}}
+      @keyframes thCodeWeightL{0%,100%{transform:rotate(3deg)}50%{transform:rotate(-3deg) translateY(2px)}}
+      @keyframes thCodeWeightR{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(4deg) translateY(-1px)}}
       @media(max-width:600px){
         body.hub-home #bentoHero .th-hero-bot-visual{width:260px!important;height:280px!important}
         .th-code-bot{transform:scale(.84);transform-origin:50% 85%}
@@ -265,6 +278,7 @@
         u.voice = voices.find(v => /^en-US$/i.test(v.lang)) || voices.find(v => /^en-GB$/i.test(v.lang)) || voices[0] || null;
         u.lang = "en-US"; u.rate = .92; u.pitch = 1.02; u.volume = 1;
         setSpeaking(true);
+        bot.classList.remove("is-greeting","is-presenting");
         u.onend = () => setSpeaking(false);
         u.onerror = () => setSpeaking(false);
         speechSynthesis.speak(u);
@@ -292,7 +306,9 @@
     window.setTimeout(async () => {
       if (muted) return;
       const latestMessage = await loadLatestWebsiteUpdate();
+      bot.classList.add("is-greeting");
       speak(latestMessage);
+      window.setTimeout(() => bot.classList.remove("is-greeting"), 3200);
     }, 1400);
   }
 
