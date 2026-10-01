@@ -7,6 +7,7 @@ const { defineSecret } = require("firebase-functions/params");
 const { initializeApp } = require("firebase-admin/app");
 const { getFirestore, FieldValue, Timestamp } = require("firebase-admin/firestore");
 const { getStorage } = require("firebase-admin/storage");
+const { createHash } = require("crypto");
 
 initializeApp();
 const db = getFirestore();
@@ -90,6 +91,42 @@ function requireRealUser(request) {
   }
 }
 
+function timestampMsReal(value) {
+  if (value?.toMillis) return value.toMillis();
+  if (value?.toDate) return value.toDate().getTime();
+  if (value instanceof Date) return value.getTime();
+  return Number(value || 0);
+}
+
+async function requireChatAccessReal(request) {
+  requireRealUser(request);
+  const snap = await db.collection("users").doc(request.auth.uid).get();
+  const data = snap.exists ? (snap.data() || {}) : {};
+  const now = Date.now();
+  const banUntil = timestampMsReal(data.banUntil);
+  const muteUntil = timestampMsReal(data.mutedUntil);
+
+  if (data.chatStatus === "banned" && (banUntil === 0 || banUntil > now)) {
+    throw new HttpsError("permission-denied", "Global Chat access is banned for this account.");
+  }
+  if (data.chatStatus === "muted" && muteUntil > now) {
+    throw new HttpsError("permission-denied", "Global Chat is temporarily muted for this account.");
+  }
+}
+
+function secureChatTextReal(value) {
+  const raw = String(value || "").trim();
+  if (/(?:\\bjavascript|\\bvbscript)\\s*:/i.test(raw)
+      || /\\bdata\\s*:\\s*(?:text\\/html|image\\/svg\\+xml)/i.test(raw)) {
+    throw new HttpsError("invalid-argument", "Unsafe link content is not allowed.");
+  }
+  const urls = raw.match(/\\bhttps?:\\/\\/\\S+/gi) || [];
+  if (urls.length > 5) {
+    throw new HttpsError("resource-exhausted", "Too many links in one message.");
+  }
+  return raw;
+}
+
 function requireAdminUser(request) {
   requireRealUser(request);
   const token = request.auth.token || {};
@@ -117,22 +154,29 @@ function channelToFirestoreReal(value) {
   return map[String(value || "")] || null;
 }
 
-async function enforceRateLimitReal(uid) {
+async function enforceRateLimitReal(uid, text="") {
   const ref = db.collection("rateLimits").doc(uid);
   const now = Date.now();
+  const normalized = String(text || "").toLowerCase().replace(/\\s+/g, " ").trim();
+  const hash = normalized ? createHash("sha256").update(normalized).digest("hex") : "";
 
   await db.runTransaction(async tx => {
     const snap = await tx.get(ref);
-    const last = snap.exists ? Number(snap.data().lastMessageAtMs || 0) : 0;
+    const data = snap.exists ? (snap.data() || {}) : {};
+    const last = Number(data.lastMessageAtMs || 0);
 
     if (last && now - last < 2000) {
       throw new HttpsError("resource-exhausted", "Please wait a moment before sending another message.");
+    }
+    if (hash && data.lastMessageHash === hash && last && now - last < 30000) {
+      throw new HttpsError("resource-exhausted", "Repeated identical messages are temporarily blocked.");
     }
 
     tx.set(ref, {
       uid,
       lastMessageAtMs: now,
       lastMessageAt: FieldValue.serverTimestamp(),
+      lastMessageHash: hash,
       updatedAt: FieldValue.serverTimestamp()
     }, { merge: true });
   });
@@ -406,9 +450,9 @@ exports.moderatePrivateChatReal = onDocumentCreated("messages/{messageId}", asyn
 });
 
 exports.sendMessageReal = onCall(async request => {
-  requireRealUser(request);
+  requireChatAccessReal(request);
 
-  const textReal = String((request.data && (request.data.text || request.data.textReal)) || "").trim();
+  const textReal = secureChatTextReal((request.data && (request.data.text || request.data.textReal)) || "");
   const channel = channelToFirestoreReal(request.data && request.data.channel);
 
   if (!textReal || textReal.length > 500) {
@@ -432,7 +476,7 @@ exports.sendMessageReal = onCall(async request => {
     throw new HttpsError("invalid-argument", "Offensive language is not allowed.");
   }
 
-  await enforceRateLimitReal(request.auth.uid);
+  await enforceRateLimitReal(request.auth.uid, textReal);
 
   const name = displayNameFromRequest(request);
   const token = request.auth.token || {};
@@ -485,13 +529,13 @@ exports.sendMessageReal = onCall(async request => {
 });
 
 exports.sendGlobalMediaMessageReal = onCall(async request => {
-  requireRealUser(request);
+  requireChatAccessReal(request);
 
   const type = String(request.data?.type || "");
   const channel = channelToFirestoreReal(request.data?.channel);
   const mediaUrl = String(request.data?.mediaUrl || "").trim();
   const storagePath = String(request.data?.storagePath || "").trim();
-  const textReal = String(request.data?.text || request.data?.textReal || "").trim();
+  const textReal = secureChatTextReal(request.data?.text || request.data?.textReal || "");
 
   if (!["image", "gif"].includes(type) || !channel || !mediaUrl || mediaUrl.length > 3000) {
     throw new HttpsError("invalid-argument", "Invalid media message.");
@@ -502,6 +546,25 @@ exports.sendGlobalMediaMessageReal = onCall(async request => {
 
   if (storagePath && !storagePath.startsWith("global-chat/" + request.auth.uid + "/")) {
     throw new HttpsError("permission-denied", "Invalid media ownership.");
+  }
+
+  if (storagePath) {
+    const bucket = getStorage().bucket();
+    const [exists] = await bucket.file(storagePath).exists();
+    if (!exists) throw new HttpsError("not-found", "Uploaded media was not found.");
+    let host = "";
+    try { host = new URL(mediaUrl).hostname.toLowerCase(); } catch (_) {}
+    if (!["firebasestorage.googleapis.com","storage.googleapis.com","tubalhub.firebasestorage.app"].includes(host)) {
+      throw new HttpsError("invalid-argument", "Invalid Firebase media URL.");
+    }
+  } else {
+    let parsed;
+    try { parsed = new URL(mediaUrl); } catch (_) {
+      throw new HttpsError("invalid-argument", "Invalid external image URL.");
+    }
+    if (parsed.protocol !== "https:" || parsed.hostname.toLowerCase() !== "i.imgur.com" || !/\\.(png|jpe?g|webp|gif)$/i.test(parsed.pathname)) {
+      throw new HttpsError("invalid-argument", "Only direct i.imgur.com image URLs are allowed.");
+    }
   }
 
   const moderation = textReal
@@ -520,7 +583,7 @@ exports.sendGlobalMediaMessageReal = onCall(async request => {
     throw new HttpsError("invalid-argument", "Media caption blocked by server moderation.");
   }
 
-  await enforceRateLimitReal(request.auth.uid);
+  await enforceRateLimitReal(request.auth.uid, textReal);
 
   const name = displayNameFromRequest(request);
   const token = request.auth.token || {};
@@ -550,7 +613,7 @@ exports.sendGlobalMediaMessageReal = onCall(async request => {
 });
 
 exports.sendReplyReal = onCall(async request => {
-  requireRealUser(request);
+  requireChatAccessReal(request);
 
   const textReal = String((request.data && (request.data.text || request.data.textReal)) || "").trim();
   const messageId = String((request.data && request.data.messageId) || "");
@@ -578,7 +641,7 @@ exports.sendReplyReal = onCall(async request => {
     throw new HttpsError("invalid-argument", "Offensive language is not allowed.");
   }
 
-  await enforceRateLimitReal(request.auth.uid);
+  await enforceRateLimitReal(request.auth.uid, textReal);
 
   const ref = await db.collection("globalChatReplies").add({
     messageId,
@@ -1445,6 +1508,34 @@ exports.getMessengerMembersReal = onCall(async request => {
     };
   }).filter(x => x.uid);
   return { success: true, members };
+});
+
+exports.reportGlobalChatMessageReal = onCall(async request => {
+  requireRealUser(request);
+  const messageId = String(request.data?.messageId || "").trim();
+  const reason = String(request.data?.reason || "Other").trim().slice(0, 300);
+  if (!messageId) throw new HttpsError("invalid-argument", "Message ID is required.");
+
+  const message = await db.collection("globalChats").doc(messageId).get();
+  if (!message.exists) throw new HttpsError("not-found", "Message not found.");
+  const data = message.data() || {};
+  if (data.uid === request.auth.uid) {
+    throw new HttpsError("invalid-argument", "You cannot report your own message.");
+  }
+
+  const id = messageId + "_" + request.auth.uid;
+  await db.collection("chatReports").doc(id).set({
+    messageId,
+    reporterUid: request.auth.uid,
+    reportedUid: String(data.uid || ""),
+    channel: String(data.channel || ""),
+    reason,
+    status: "open",
+    createdAt: FieldValue.serverTimestamp(),
+    updatedAt: FieldValue.serverTimestamp()
+  }, { merge: true });
+
+  return { success: true, id, status: "open" };
 });
 
 exports.sendPrivateMessageReal = onCall(async request => {
