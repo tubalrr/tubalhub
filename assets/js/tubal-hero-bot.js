@@ -315,6 +315,78 @@
         body.hub-home #bentoHero .th-hero-bot-visual{width:260px!important;height:280px!important}
         .th-code-bot{transform:scale(.84);transform-origin:50% 85%}
       }
+      /* Two independent robot slots — separated, centered, never clipped */
+      .th-bot-duo{
+        position:relative!important;
+        display:grid!important;
+        grid-template-columns:140px 140px;
+        gap:34px;
+        align-items:end;
+        justify-content:center;
+        width:100%;
+        height:100%;
+        overflow:visible!important;
+        box-sizing:border-box;
+      }
+      .th-bot-slot{
+        position:relative;
+        width:140px;height:300px;
+        overflow:visible;
+      }
+      .th-bot-slot .th-code-bot{
+        position:absolute;
+        left:50%;
+        top:4px;
+        width:190px;height:300px;
+        margin-left:-95px!important;
+        transform:scale(.66);
+        transform-origin:50% 86%;
+      }
+      .th-bot-slot-welcome{order:1}
+      .th-bot-slot-announcer{order:2}
+      .th-bot-slot .th-code-bot.is-idle{
+        animation:thCodeDuoIdle 3.2s ease-in-out infinite;
+      }
+      .th-bot-slot .th-code-bot.is-speaking{
+        animation:thCodeDuoTalkBody .85s ease-in-out infinite alternate;
+      }
+      @keyframes thCodeDuoIdle{
+        0%,100%{transform:scale(.66) translateY(3px) rotate(0)}
+        50%{transform:scale(.66) translateY(-7px) rotate(-1deg)}
+      }
+      @keyframes thCodeDuoTalkBody{
+        0%,100%{transform:scale(.66) translateY(0) rotate(0)}
+        50%{transform:scale(.66) translateY(-3px) rotate(-.6deg)}
+      }
+      @media(max-width:600px){
+        .th-bot-duo{
+          grid-template-columns:116px 116px;
+          gap:12px;
+        }
+        .th-bot-slot{
+          width:116px;height:290px;
+        }
+        .th-bot-slot .th-code-bot{
+          width:190px;height:300px;
+          top:18px;
+          margin-left:-95px!important;
+          transform:scale(.50);
+        }
+        .th-bot-slot .th-code-bot.is-idle{
+          animation:thCodeDuoIdleMobile 3.2s ease-in-out infinite;
+        }
+        .th-bot-slot .th-code-bot.is-speaking{
+          animation:thCodeDuoTalkMobile .85s ease-in-out infinite alternate;
+        }
+      }
+      @keyframes thCodeDuoIdleMobile{
+        0%,100%{transform:scale(.50) translateY(3px) rotate(0)}
+        50%{transform:scale(.50) translateY(-6px) rotate(-1deg)}
+      }
+      @keyframes thCodeDuoTalkMobile{
+        0%,100%{transform:scale(.50) translateY(0) rotate(0)}
+        50%{transform:scale(.50) translateY(-3px) rotate(-.6deg)}
+      }
       @media(prefers-reduced-motion:reduce){
         .th-code-bot,.th-code-bot.is-speaking,.th-code-bot.is-idle,.th-code-shadow,.th-code-antenna:before,
         .th-code-eye,.th-code-bot.is-speaking .th-code-arm.left,.th-code-bot.is-speaking .th-code-arm.right,
@@ -352,8 +424,8 @@
 
     visual.innerHTML = `
       <div class="th-bot-duo">
-        ${botMarkup("welcome","TH")}
-        ${botMarkup("announcer","NEWS")}
+        <div class="th-bot-slot th-bot-slot-welcome">${botMarkup("welcome","TH")}</div>
+        <div class="th-bot-slot th-bot-slot-announcer">${botMarkup("announcer","NEWS")}</div>
       </div>
       <div class="th-code-bot-shadow"></div>
     `;
