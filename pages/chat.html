@@ -463,7 +463,7 @@ function renderChatSnapshotReal(snap, channelValue, sourceReal){
   const latestDocs=snap.docs.map(d=>({id:d.id,data:d.data()}));
   latestChannelMessagesReal=latestDocs;
   if(!olderChannelMessagesReal.length && snap.docs.length){
-    channelCursorReal=snap.docs[0];
+    channelCursorReal=snap.docs[snap.docs.length-1];
     channelHasOlderReal=snap.size===100;
   }
   renderLoadedChannelMessagesReal({latestDocs,preserveTop:false,sourceReal});
@@ -478,9 +478,9 @@ async function loadOlderMessagesReal(){
     const snap=await getDocsFromServer(query(
       collection(db,'globalChats'),
       where('channel','==',(activeChannelReal==='general'?'global-chat':activeChannelReal)),
-      orderBy('createdAt','asc'),
-      endBefore(channelCursorReal),
-      limitToLast(100)
+      orderBy('createdAt','desc'),
+      startAfter(channelCursorReal),
+      limit(100)
     ));
     const page=snap.docs.map(d=>({id:d.id,data:d.data()}));
     const known=new Set(olderChannelMessagesReal.map(x=>x.id));
@@ -647,8 +647,8 @@ function subscribeMessages(){
   const optimized=query(
     collection(db,'globalChats'),
     where('channel','==',channelValue),
-    orderBy('createdAt','asc'),
-    limitToLast(100)
+    orderBy('createdAt','desc'),
+    limit(100)
   );
 
   const fallback=query(
@@ -668,7 +668,7 @@ function subscribeMessages(){
         channelCursorReal=null;
         channelHasOlderReal=false;
         renderLoadedChannelMessagesReal({latestDocs:docs,preserveTop:false,sourceReal:'index-fallback'});
-        setStatus('Live • # '+activeChannelReal+' • compatibility mode (Firestore index not deployed yet).');
+        setStatus('Live • # '+activeChannelReal+' • compatibility mode');
       }else{
         renderChatSnapshotReal(snap,channelValue,'realtime');
 
