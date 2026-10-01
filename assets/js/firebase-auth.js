@@ -32,6 +32,8 @@ function authReturnUrl() {
 function markWelcomeBotLogin() {
   try {
     sessionStorage.setItem("tubalhub_bot_login_pending", "1");
+    sessionStorage.removeItem("tubal_bot_site_tour_done");
+    sessionStorage.removeItem("tubal_bot_conversation_index");
   } catch (_) {}
 }
 
