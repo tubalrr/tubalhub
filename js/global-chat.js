@@ -3,7 +3,7 @@
    Firebase Global Chat implementation in pages/chat.html.
    No hardcoded community messages or fake online users are generated here.
 */
-const TUBAL_VERSION_REAL = "1.2.16";
+const TUBAL_VERSION_REAL = "1.3.18";
 
 (() => {
   "use strict";
