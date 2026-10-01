@@ -333,6 +333,18 @@
     if (!response.ok) throw new Error("version.json " + response.status);
     return validate(normalize(await response.json()));
   }
+  async function fetchPageVersion() {
+    try {
+      const response = await fetch(rootUrl.href + "?page-version=" + Date.now(), {cache:"no-store"});
+      if (!response.ok) return null;
+      const html = await response.text();
+      const match = html.match(/id=["']liveVersion["'][^>]*>\\s*v?([0-9]+(?:\\.[0-9]+){1,3})\\s*<\\/b>/i);
+      return match ? match[1] : null;
+    } catch (_) {
+      return null;
+    }
+  }
+
 
   async function fetchReleaseConfig() {
     try {
@@ -381,8 +393,28 @@
     if (!updatesEnabled()) return;
     try {
       const data = await fetchVersion();
+      const pageVersion = await fetchPageVersion();
       const release = await fetchReleaseConfig();
       const gated = applyReleaseGate(data, release);
+
+      // GitHub Pages can keep the already-open HTML/JS build in memory.
+      // Compare the server's fresh index.html version with the manifest so
+      // a new release is detected even when version.json itself is already new.
+      if (gated && pageVersion && String(pageVersion) !== String(gated.version)) {
+        const reloadKey = "tubalhub_auto_reload_version";
+        let alreadyScheduled = false;
+        try { alreadyScheduled = localStorage.getItem(reloadKey) === gated.version; } catch (_) {}
+        if (!alreadyScheduled) {
+          try { localStorage.setItem(reloadKey, gated.version); } catch (_) {}
+          document.dispatchEvent(new CustomEvent("tubalhub:live-update", {
+            detail: { version: gated.version, data: gated, pageVersion }
+          }));
+          clearTimeout(autoReloadTimer);
+          autoReloadTimer = setTimeout(() => {
+            try { window.location.reload(); } catch (_) {}
+          }, 1800);
+        }
+      }
       if (!gated) {
         currentData = null;
         setBellState(false);
