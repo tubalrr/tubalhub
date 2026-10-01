@@ -184,7 +184,11 @@ async function sendMessageClientReal(payload){
 
   const name=String(currentUser.displayName || currentUser.email?.split('@')[0] || 'Member').slice(0,120);
   const photoURL=String(currentUser.photoURL || '').slice(0,2000);
-  const isAdmin=String(currentUser.email || '').toLowerCase()==='tubalrr@gmail.com';
+  let isAdmin=String(currentUser.email || '').toLowerCase()==='tubalrr@gmail.com';
+  try{
+    const tokenResult=await currentUser.getIdTokenResult();
+    isAdmin=tokenResult?.claims?.admin===true || isAdmin;
+  }catch(_){}
 
   const docData={
     uid:currentUser.uid,
