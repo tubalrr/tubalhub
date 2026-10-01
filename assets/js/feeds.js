@@ -6,6 +6,7 @@ import {publishHubPost,subscribeHubPosts} from "./hub-content.js?v=20261001-real
 import {saveItem,removeSaved,getSavedItems,sharedUrl} from "./retention.js";
 
 const db=getFirestore(app);
+const FEED_LOAD_LIMITS={products:40,users:50,presence:50,hubPosts:60};
 let storage=null;
 const REACTIONS={
   like:{emoji:"👍",label:"Like"},love:{emoji:"❤️",label:"Love"},haha:{emoji:"😂",label:"Haha"},
@@ -90,13 +91,13 @@ function normalizeProduct(s){
   sourceCollection:"products",sourceId:s.id,url:x.productUrl||"",productUrl:x.productUrl||""}
 }
 async function loadProducts(){
-  try{const snap=await getDocs(query(collection(db,"products"),orderBy("createdAt","desc"),limit(100)));state.products=snap.docs.map(normalizeProduct)}
+  try{const snap=await getDocs(query(collection(db,"products"),orderBy("createdAt","desc"),limit(FEED_LOAD_LIMITS.products)));state.products=snap.docs.map(normalizeProduct)}
   catch(e){console.warn("[Feeds] products unavailable",e);state.products=[]}
 }
 async function loadPeople(){
   try{
     const [usersSnap,presenceSnap]=await Promise.all([
-      getDocs(query(collection(db,"users"),limit(200))),getDocs(query(collection(db,"presence"),limit(200)))
+      getDocs(query(collection(db,"users"),limit(FEED_LOAD_LIMITS.users))),getDocs(query(collection(db,"presence"),limit(FEED_LOAD_LIMITS.presence)))
     ]);
     state.userMap.clear();state.presence.clear();
     usersSnap.forEach(s=>{const x=s.data();state.userMap.set(s.id,{uid:s.id,...x})});
@@ -836,6 +837,6 @@ onAuthStateChanged(auth,async user=>{
   state.auth=user&&!user.isAnonymous?user:null;
   setupUI();updateAvatarStatus();renderStories();buildFeed();
   await Promise.all([loadPeople(),loadProducts()]);
-  setupPresence();setupHubContent();loadRemoteComments();loadRemoteReactions();
+  setupHubContent();loadRemoteComments();loadRemoteReactions();
   buildFeed();updateAvatarStatus();
 });
