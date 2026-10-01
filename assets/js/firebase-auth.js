@@ -29,6 +29,12 @@ function authReturnUrl() {
   }
 }
 
+function markWelcomeBotLogin() {
+  try {
+    sessionStorage.setItem("tubalhub_bot_login_pending", "1");
+  } catch (_) {}
+}
+
 function friendlyAuthError(code, errorMessage="") {
   const normalizedCode=String(code||"").toLowerCase();
   const normalizedMessage=String(errorMessage||"").toLowerCase();
@@ -98,7 +104,8 @@ if (signupForm) {
       }
 
       // The account is already signed in by createUserWithEmailAndPassword.
-      // Use replace() so the mobile browser does not remain on the signup page.
+      // Mark a one-time homepage bot welcome before redirecting.
+      markWelcomeBotLogin();
       window.location.replace(authReturnUrl());
     } catch (error) {
       message("signupMessage", friendlyAuthError(error.code, error.message));
@@ -117,6 +124,7 @@ if (loginForm) {
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
+      markWelcomeBotLogin();
       window.location.replace(authReturnUrl());
     } catch (error) {
       message("loginMessage", friendlyAuthError(error.code, error.message));
@@ -150,6 +158,7 @@ if (googleButtons.length) {
         );
 
         if (result?.user) {
+          markWelcomeBotLogin();
           window.location.replace(authReturnUrl());
         }
       } catch (error) {
@@ -178,6 +187,7 @@ guestButtons.forEach((button) => {
     message(button.dataset.messageTarget || "loginMessage", "");
     try {
       await signInAnonymously(auth);
+      markWelcomeBotLogin();
       window.location.replace(authReturnUrl());
     } catch (error) {
       message(button.dataset.messageTarget || "loginMessage", friendlyAuthError(error.code, error.message));
@@ -240,6 +250,7 @@ if (phoneVerifyButton) {
 
     try {
       await confirmationResult.confirm(code);
+      markWelcomeBotLogin();
       window.location.replace(authReturnUrl());
     } catch (error) {
       message("phoneMessage", friendlyAuthError(error.code));
