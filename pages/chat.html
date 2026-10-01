@@ -176,6 +176,7 @@ const setPrivateTypingFnReal=httpsCallable(functionsReal,'setPrivateTypingReal')
 const sendGlobalMediaFnReal=httpsCallable(functionsReal,'sendGlobalMediaMessageReal');
 const cleanupGlobalChatMediaFnReal=httpsCallable(functionsReal,'cleanupGlobalChatMediaReal');
 const getGlobalChatMediaStorageFnReal=httpsCallable(functionsReal,'getGlobalChatMediaStorageReal');
+const reportGlobalChatMessageFnReal=httpsCallable(functionsReal,'reportGlobalChatMessageReal');
 const deleteGlobalChatMediaFnReal=httpsCallable(functionsReal,'deleteGlobalChatMediaReal');
 const TUBAL_VERSION_REAL='1.2.16';
 const lock=document.getElementById('chatLock'),content=document.getElementById('chatContent'),messages=document.getElementById('messages'),form=document.getElementById('chatForm'),input=document.getElementById('messageInput'),sendButton=document.getElementById('sendButton'),statusEl=document.getElementById('chatStatus'),memberList=document.getElementById('memberList'),onlineCount=document.getElementById('onlineCount'),onlineMembers=document.getElementById('onlineMembers'),globalMessageCount=document.getElementById('globalMessageCount'),replyingBar=document.getElementById('replyingBar'),replyingName=document.getElementById('replyingName'),cancelReply=document.getElementById('cancelReply'),emojiPicker=document.getElementById('emojiPicker');
@@ -183,7 +184,7 @@ let currentUser=null,stopMessages=null,heartbeatTimer=null,stopPresence=null,sto
 let activeChannelReal="general";
 let latestChannelMessagesReal=[],olderChannelMessagesReal=[],channelCursorReal=null,channelHasOlderReal=false,loadingOlderChannelMessagesReal=false,currentChannelMessageIdsReal=[];
 let scopedReplyStopsReal=[],scopedReactionStopsReal=[],scopedReplyStateReal=new Map(),scopedReactionDocsReal=new Map(),scopedReactionListenerDocsReal=new Map();
-let privateConversationIdReal="",latestPrivateMessagesReal=[],privateOlderMessagesReal=[],privateCursorReal=null,privateHasOlderReal=false,privateLoadingOlderReal=false;
+let privateConversationIdReal="",latestPrivateMessagesReal=[],privateOlderMessagesReal=[],privateCursorReal=null,privateHasOlderReal=false,privateLoadingOlderReal=false,privateLegacyFallbackLoadedReal=false;
 let privateTarget=null,stopPrivateMessages=null,stopPrivateTyping=null,privateLastMessageTime=0,privateReplyTarget=null,privateTypingTimer=null,privateTypingOffTimer=null;
 let pendingExternalImageUrlReal="";
 const emojis=['😀','😂','😍','🥰','😎','😭','😡','😮','👍','👎','❤️','🔥','💯','🎮','🎉','👏','🤣','🤔','😅','🙌','💚','✨','👀','🙏','🥳','😴','🤝','🚀','💀','😇','😱','🤩','💪','🌿','⭐','🎯','🏆','❤️‍🔥','🫶','😊'];
@@ -324,6 +325,23 @@ function renderMessage(id,data){
  if(me){
    const del=document.createElement('button');del.type='button';del.className='action-btn delete-btn';del.textContent='🗑 Delete';del.title='Delete your message';row.querySelector('.message-actions').appendChild(del);
    del.addEventListener('click',async ev=>{ev.stopPropagation();if(!confirm('Delete this message?'))return;del.disabled=true;try{await deleteDoc(doc(db,'globalChats',id))}catch(err){console.error(err);alert('Hindi ma-delete ang message. Check Firestore Rules.')}finally{del.disabled=false}});
+ }else{
+   const report=document.createElement('button');
+   report.type='button';report.className='action-btn report-btn';report.textContent='⚑ Report';report.title='Report this message';
+   row.querySelector('.message-actions').appendChild(report);
+   report.addEventListener('click',async ev=>{
+     ev.stopPropagation();
+     const reason=prompt('Report reason (optional):','Inappropriate content');
+     if(reason===null)return;
+     report.disabled=true;
+     try{
+       await reportGlobalChatMessageFnReal({messageId:id,reason:String(reason||'Other').trim().slice(0,300)});
+       alert('Report submitted for moderator review.');
+     }catch(err){
+       console.error(err);
+       alert(err.code==='functions/permission-denied'?'Chat access is unavailable.':'Report could not be submitted.');
+     }finally{report.disabled=false;}
+   });
  }
  row.querySelector('.reply-btn').addEventListener('click',e=>{e.stopPropagation();setReplyTarget(id,data.displayName||data.name||'Member',rawText.slice(0,100))});
  row.querySelector('.inline-react-btn').addEventListener('click',e=>{e.preventDefault();e.stopPropagation();document.querySelectorAll('.msg.reaction-open').forEach(x=>{if(x!==row)x.classList.remove('reaction-open')});row.classList.toggle('reaction-open');openReactionMenu(e.currentTarget,id)});
@@ -922,7 +940,21 @@ function subscribeDirectMessages(){
   if(!currentUser||!isRealUser())return;
   const q=query(collection(db,'dmConversations'),where('participants','array-contains',currentUser.uid),orderBy('lastMessageAt','desc'),limit(100));
   stopDmList=onSnapshot(q,snap=>{
-    const list=snap.docs.map(s=>({uid:s.data().otherUid||s.data().participants?.find(x=>x!==currentUser.uid),displayName:s.data().otherDisplayName||'Member',photoURL:s.data().otherPhotoURL||'',data:{createdAt:s.data().lastMessageAt,text:s.data().lastMessagePreview||'',type:s.data().lastMessageType||'text',unreadCount:s.data().unreadCount||0}})).filter(x=>x.uid);
+    const list=snap.docs.map(s=>{
+      const d=s.data()||{};
+      const otherUid=Array.isArray(d.participants)?d.participants.find(x=>String(x)!==String(currentUser.uid)):'';
+      return {
+        uid:otherUid||'',
+        displayName:d.participantNames?.[otherUid]||'Member',
+        photoURL:d.participantPhotos?.[otherUid]||'',
+        data:{
+          createdAt:d.lastMessageAt,
+          text:d.lastMessagePreview||'',
+          type:d.lastMessageType||'text',
+          unreadCount:d.unreadCount||0
+        }
+      };
+    }).filter(x=>x.uid);
     window.__tubalDmList=list;
     renderDmList(list);
   },err=>{
@@ -1038,14 +1070,37 @@ function subscribePrivateMessages(){
     privateCursorReal=snap.docs[snap.docs.length-1]||privateCursorReal;
     if(privateOlderMessagesReal.length===0)privateHasOlderReal=snap.size===100;
     renderPrivateMessagesReal(list,{initial:true});
+    if(snap.size<100&&!privateLegacyFallbackLoadedReal)loadLegacyPrivateFallbackReal(list);
   },err=>{
     console.error(err);
     document.getElementById('privateMessages').innerHTML='<div class="private-empty error">Private chat is unavailable. Check Firestore Rules.</div>';
   });
   subscribePrivateTyping();
 }
+async function loadLegacyPrivateFallbackReal(existingList){
+  if(privateLegacyFallbackLoadedReal||!privateTarget||!isRealUser())return;
+  privateLegacyFallbackLoadedReal=true;
+  try{
+    const snap=await getDocsFromServer(query(
+      collection(db,'messages'),
+      where('participants','array-contains',currentUser.uid),
+      orderBy('createdAt','desc'),
+      limit(200)
+    ));
+    const existing=new Set(existingList.map(x=>x.id));
+    snap.docs.forEach(s=>{
+      const d=s.data()||{};
+      if(existing.has(s.id))return;
+      if(!Array.isArray(d.participants)||!d.participants.includes(privateTarget.uid))return;
+      privateOlderMessagesReal.push({id:s.id,data:d});
+    });
+    renderPrivateMessagesReal(latestPrivateMessagesReal,{initial:true});
+  }catch(e){
+    console.warn('[TUBAL HUB private legacy fallback]',e);
+  }
+}
 function conversationIdForReal(a,b){return [String(a||''),String(b||'')].sort().join('_');}
-function openPrivateChat(target){if(!isRealUser()||!target?.uid||target.uid===currentUser.uid)return;privateTarget={uid:target.uid,displayName:target.displayName||'Member',photoURL:target.photoURL||''};privateConversationIdReal=conversationIdForReal(currentUser.uid,privateTarget.uid);latestPrivateMessagesReal=[];privateOlderMessagesReal=[];privateCursorReal=null;privateHasOlderReal=false;privateLoadingOlderReal=false;clearPrivateReply();const panel=document.getElementById('privateChatPanel'),name=document.getElementById('privateChatName'),avatar=document.getElementById('privateChatAvatar'),status=document.getElementById('privateChatStatus'),box=document.getElementById('privateMessages');name.textContent=privateTarget.displayName;avatar.innerHTML=privateAvatarHtml(privateTarget);status.textContent='● Online';panel.hidden=false;box.innerHTML='<div class="private-empty">Loading messages…</div>';requestAnimationFrame(()=>{document.getElementById('privateInput')?.focus();subscribePrivateMessages()})}
+function openPrivateChat(target){if(!isRealUser()||!target?.uid||target.uid===currentUser.uid)return;privateTarget={uid:target.uid,displayName:target.displayName||'Member',photoURL:target.photoURL||''};privateConversationIdReal=conversationIdForReal(currentUser.uid,privateTarget.uid);latestPrivateMessagesReal=[];privateOlderMessagesReal=[];privateCursorReal=null;privateHasOlderReal=false;privateLoadingOlderReal=false;privateLegacyFallbackLoadedReal=false;if(stopDmList){stopDmList();stopDmList=null;}clearPrivateReply();const panel=document.getElementById('privateChatPanel'),name=document.getElementById('privateChatName'),avatar=document.getElementById('privateChatAvatar'),status=document.getElementById('privateChatStatus'),box=document.getElementById('privateMessages');name.textContent=privateTarget.displayName;avatar.innerHTML=privateAvatarHtml(privateTarget);status.textContent='● Online';panel.hidden=false;box.innerHTML='<div class="private-empty">Loading messages…</div>';requestAnimationFrame(()=>{document.getElementById('privateInput')?.focus();subscribePrivateMessages()})}
 async function loadOlderPrivateMessagesReal(){
   if(privateLoadingOlderReal||!privateHasOlderReal||!privateCursorReal||!privateTarget)return;
   privateLoadingOlderReal=true;
@@ -1075,7 +1130,7 @@ async function loadOlderPrivateMessagesReal(){
   }
 }
 
-function closePrivateChat(){setPrivateTyping(false);privateTarget=null;privateConversationIdReal='';latestPrivateMessagesReal=[];privateOlderMessagesReal=[];privateCursorReal=null;privateHasOlderReal=false;if(stopPrivateMessages){stopPrivateMessages();stopPrivateMessages=null}if(stopPrivateTyping){stopPrivateTyping();stopPrivateTyping=null}clearPrivateReply();document.getElementById('privateChatPanel').hidden=true}
+function closePrivateChat(){setPrivateTyping(false);privateTarget=null;privateConversationIdReal='';if(stopDmList){stopDmList();stopDmList=null;}if(currentUser&&isRealUser())subscribeDirectMessages();latestPrivateMessagesReal=[];privateOlderMessagesReal=[];privateCursorReal=null;privateHasOlderReal=false;if(stopPrivateMessages){stopPrivateMessages();stopPrivateMessages=null}if(stopPrivateTyping){stopPrivateTyping();stopPrivateTyping=null}clearPrivateReply();document.getElementById('privateChatPanel').hidden=true}
 async function sendPrivateMessage(text){
   if(!privateTarget||!isRealUser())return;
   const cleanText=String(text||'').trim();
@@ -1167,16 +1222,24 @@ async function sendMessage(payload){
     const limited=window.tubalHubChatGuardReal?.isRateLimitedReal?.(currentUser.uid) ?? (Date.now()-lastMessageTime<2000);
     if(limited)throw new Error('RATE_LIMIT');
 
-    const result=await sendGlobalMediaFnReal({
-      type:String(payload.type),
-      channel,
-      mediaUrl:String(payload.mediaUrl||''),
-      storagePath:String(payload.storagePath||''),
-      text:String(payload.text||payload.textReal||'').trim()
-    });
-    lastMessageTime=Date.now();
-    if(result?.data?.moderated)showModerationNotice('🛡️ Server moderation cleaned this caption before publishing.');
-    return result?.data;
+    try{
+      const result=await sendGlobalMediaFnReal({
+        type:String(payload.type),
+        channel,
+        mediaUrl:String(payload.mediaUrl||''),
+        storagePath:String(payload.storagePath||''),
+        text:String(payload.text||payload.textReal||'').trim()
+      });
+      lastMessageTime=Date.now();
+      if(result?.data?.moderated)showModerationNotice('🛡️ Server moderation cleaned this caption before publishing.');
+      return result?.data;
+    }catch(error){
+      const storagePath=String(payload.storagePath||'').trim();
+      if(storagePath){
+        deleteGlobalChatMediaFnReal({storagePath}).catch(cleanupError=>console.warn('[TUBAL HUB] orphan media cleanup failed',cleanupError));
+      }
+      throw error;
+    }
   }
 
   throw new Error('INVALID_MESSAGE_TYPE');
