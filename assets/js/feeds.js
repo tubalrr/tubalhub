@@ -2,7 +2,7 @@ import {app,auth} from "./firebase-config.js";
 import {onAuthStateChanged} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 import {getFirestore,collection,getDocs,getDoc,doc,addDoc,setDoc,updateDoc,deleteDoc,query,orderBy,limit,startAfter,serverTimestamp} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 import {getStorage,ref as storageRef,uploadBytes,getDownloadURL} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-storage.js";
-import {publishHubPost,subscribeHubPosts} from "./hub-content.js?v=20261001-realtime2";
+import {publishHubPost,subscribeHubPosts} from "./hub-content.js?v=20261001-pagination1";
 import {saveItem,removeSaved,getSavedItems,sharedUrl} from "./retention.js";
 
 const db=getFirestore(app);
@@ -63,7 +63,7 @@ function hubItem(x){
     photo:x.authorPhotoURL||"",uid:x.createdBy||"",createdAt:x.createdAt||0,likes:Number(x.likes||0),comments:Number(x.comments||0),
     shares:Number(x.shares||0),sponsored:x.sponsored===true,sourceCollection:x.sourceCollection||"",sourceId:x.sourceId||x.id,
     destinations:Array.isArray(x.destinations)?x.destinations:[],contentType:kind,
-    free:x.free===true||x.isFree===true||String(x.price??"").trim().toLowerCase()==="free"||Number(x.price)===0};
+    free:x.free===true||x.isFree===true||String(x.price??"").trim().toLowerCase()==="free"||(String(x.price??"").trim()!==""&&Number(x.price)===0)};
 }
 function contentKey(x){return x.sourceCollection&&x.sourceId?x.sourceCollection+":"+x.sourceId:x.type+":"+x.id}
 function isFreeItem(x){
@@ -154,7 +154,6 @@ async function ensureFeedItems(targetCount){
     rebuildFeedItems();
     attempts++;
     if(state.items.length===before&&!state.hubHasMore&&!state.productsHasMore)break;
-    if(state.items.length===before&&attempts>=2)break;
   }
 }
 async function loadPeople(){
