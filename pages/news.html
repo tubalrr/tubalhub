@@ -26,6 +26,8 @@
       <section aria-labelledby="latestNewsHeading">
         <div class="news-section-heading"><div><h2 id="latestNewsHeading">Latest stories</h2></div><p>Published in TUBAL HUB</p></div>
         <div class="news-grid" id="newsGrid" aria-live="polite"></div>
+        <div id="newsLoadMoreSentinel" class="news-load-more-sentinel" aria-hidden="true"></div>
+        <div id="newsLoadMoreStatus" class="news-load-more-status" hidden aria-live="polite">Loading older stories…</div>
       </section>
 
       <section class="news-related" aria-labelledby="relatedHeading">
@@ -35,7 +37,7 @@
 
       <section class="news-newsletter" aria-labelledby="newsletterHeading">
         <h3 id="newsletterHeading">Stay close to the hub.</h3>
-        <p>Get newsroom updates when newsletter delivery is connected.</p>
+        <p>Get newsroom updates. Your subscription is saved securely in TUBAL HUB.</p>
         <form class="news-newsletter-form" id="newsNewsletterForm">
           <input id="newsNewsletterEmail" type="email" autocomplete="email" placeholder="you@example.com" aria-label="Email address" required>
           <button type="submit">Subscribe</button>
@@ -55,7 +57,7 @@
           <h3>Editor&apos;s Pick</h3>
           <span class="news-editors-logo">◇</span>
         </div>
-        <div class="news-side-copy"><p>The featured story is selected from real published news data. Featured flags are respected when present.</p></div>
+        <div id="editorPickSlot"></div>
       </section>
 
       <div class="news-ad">Premium placement</div>
@@ -82,6 +84,10 @@
       <section class="news-reader-comments" aria-labelledby="commentsHeading">
         <h3 id="commentsHeading">Comments</h3>
         <div id="newsCommentsList"></div>
+        <form class="news-comment-form" id="newsCommentForm">
+          <textarea id="newsCommentInput" rows="3" maxlength="2000" placeholder="Write a comment…" aria-label="Write a comment"></textarea>
+          <div class="news-comment-form-row"><span id="newsCommentStatus">Sign in to join the discussion.</span><button id="newsCommentSubmit" type="submit" disabled>Post Comment</button></div>
+        </form>
       </section>
       <div class="news-related" style="margin-top:28px">
         <div class="news-section-heading"><div><h2 style="font-size:22px">Read next</h2></div></div>
@@ -98,9 +104,9 @@
   </div>
   <div class="news-share-actions">
     <input class="news-share-copy" id="newsShareCopy" readonly aria-label="Share link">
-    <button type="button" id="newsShareCopyBtn">Copy</button>
+    <button type="button" id="newsShareNativeBtn">Share</button><button type="button" id="newsShareCopyBtn">Copy</button>
   </div>
-</div><footer class="news-footer"><div><b>TUBAL HUB</b><span>Three Brands. One Hub.</span></div><nav><a href="../index.html">Home</a><a href="community.html">Community</a><a href="privacy.html">Privacy</a><a href="cookies.html">Cookies</a><a href="terms.html">Terms</a><a href="license.html">License</a></nav><small>© 2026 TUBAL HUB. All rights reserved.</small></footer><script type="module" src="../assets/js/news-premium.js?v=20261001-trendingviews1"></script>
+</div><footer class="news-footer"><div><b>TUBAL HUB</b><span>Three Brands. One Hub.</span></div><nav><a href="../index.html">Home</a><a href="community.html">Community</a><a href="privacy.html">Privacy</a><a href="cookies.html">Cookies</a><a href="terms.html">Terms</a><a href="license.html">License</a></nav><small>© 2026 TUBAL HUB. All rights reserved.</small></footer><script type="module" src="../assets/js/news-premium.js?v=20261001-dataflow1"></script>
 <script src="../assets/js/theme.js?v=20260922" defer></script>
 <script type="module" src="../assets/js/presence.js?v=20260923"></script>
 </body>
