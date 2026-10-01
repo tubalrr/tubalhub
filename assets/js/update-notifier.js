@@ -157,11 +157,11 @@
     const updateStrings = Array.isArray(data?.updatesReal) ? data.updatesReal : [];
     const fromUpdates = updateStrings.map((value, index) => {
       const raw = String(value || "").trim();
-      const type = /\\b(FIX|REMOVE|SECURITY|ADMIN|BUILD|AUDIT|CLEANUP|REFACTOR)\\b/i.test(raw) ? "Improved" : "New";
+      const type = /\b(FIX|REMOVE|SECURITY|ADMIN|BUILD|AUDIT|CLEANUP|REFACTOR)\b/i.test(raw) ? "Improved" : "New";
       const icon = /SECURITY/i.test(raw) ? "🛡" : (/FIX|REMOVE|CLEANUP|REFACTOR/i.test(raw) ? "🔧" : "✨");
       const desc = raw
-        .replace(/^v?\\d+(?:\\.\\d+){1,3}\\s*/i, "")
-        .replace(/^(FEAT|FIX|ADMIN|SECURITY|UI|BUILD|AUDIT|CLEANUP|REMOVE|REFACTOR)\\s*[—:-]?\\s*/i, "")
+        .replace(/^v?\d+(?:\.\d+){1,3}\s*/i, "")
+        .replace(/^(FEAT|FIX|ADMIN|SECURITY|UI|BUILD|AUDIT|CLEANUP|REMOVE|REFACTOR)\s*[—:-]?\s*/i, "")
         .trim();
       return {type,icon,title:"Release update " + (index + 1),desc};
     }).filter(item => item.desc);
