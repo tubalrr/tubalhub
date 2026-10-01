@@ -453,12 +453,15 @@ function subscribeMessages(){
   if(stopMessages)stopMessages();
   const channelValue=activeChannelReal==='general'?'global-chat':activeChannelReal;
 
-  // Use a single-field channel query so Global Chat does not depend on
-  // a Firestore composite index. Results are sorted client-side in
-  // renderChatSnapshotReal() and capped to the latest 100 real messages.
+  // Bound the realtime read at the Firestore query level.
+  // The repo already declares the required composite index:
+  // channel ASC + createdAt DESC.
+  // The snapshot is then sorted ascending for display.
   const qReal=query(
     collection(db,'globalChats'),
-    where('channel','==',channelValue)
+    where('channel','==',channelValue),
+    orderBy('createdAt','desc'),
+    limit(100)
   );
 
   stopMessages=onSnapshot(qReal,snap=>{
