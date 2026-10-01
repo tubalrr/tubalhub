@@ -28,6 +28,36 @@
         cursor:pointer!important;
         isolation:isolate!important;
       }
+      .th-bot-duo{
+        position:relative;width:100%;height:100%;display:flex;
+        align-items:flex-end;justify-content:center;gap:8px;
+      }
+      .th-bot-duo .th-code-bot{
+        flex:0 0 190px;transform:scale(.72);transform-origin:50% 88%;
+      }
+      .th-bot-duo .th-welcome-bot{margin-right:-18px}
+      .th-bot-duo .th-announcer-bot{
+        margin-left:-18px;
+        --blue:#a879ff;--blue2:#6733c8;--cyan:#d0b6ff;
+        filter:drop-shadow(0 24px 25px rgba(84,45,170,.34));
+      }
+      .th-announcer-bot .th-code-eye,
+      .th-announcer-bot .th-code-mouth,
+      .th-announcer-bot .th-code-core,
+      .th-announcer-bot .th-code-foot:after{
+        background:#b78cff;
+        box-shadow:0 0 10px rgba(183,140,255,.8);
+      }
+      .th-announcer-bot .th-code-antenna:before{
+        background:#ffd36b;
+        box-shadow:0 0 8px #ffb62e,0 0 22px rgba(255,182,46,.65);
+      }
+      .th-announcer-bot .th-code-badge{color:#d8c2ff}
+      .th-bot-duo .th-code-bot-shadow{bottom:2px;width:170px}
+      @media(max-width:600px){
+        .th-bot-duo{gap:0}
+        .th-bot-duo .th-code-bot{transform:scale(.57);margin:0 -28px}
+      }
       .th-code-bot{
         --blue:#48a9ff;--blue2:#126bdb;--cyan:#79d7ff;
         position:relative;width:190px;height:285px;
@@ -201,11 +231,11 @@
     // Remove the old slideshow/CSS bot and build the robot entirely from HTML/CSS.
     hero.querySelectorAll(".th-bot-stage,.th-bot-showcase").forEach(node => node.remove());
     visual.style.background = "transparent";
-    visual.innerHTML = `
-      <div class="th-code-bot is-idle" aria-hidden="true">
+    const botMarkup = (role, badge) => `
+      <div class="th-code-bot ${role === "announcer" ? "th-announcer-bot" : "th-welcome-bot"} is-idle" data-bot-role="${role}" aria-hidden="true">
         <div class="th-code-antenna"></div>
         <div class="th-code-head">
-          <span class="th-code-badge">TH</span>
+          <span class="th-code-badge">${badge}</span>
           <div class="th-code-face">
             <i class="th-code-eye left"></i><i class="th-code-eye right"></i>
             <span class="th-code-mouth"></span>
@@ -216,18 +246,26 @@
         <div class="th-code-arm right"><span class="th-code-hand"></span></div>
         <div class="th-code-body">
           <div class="th-code-chest">
-            <div class="th-code-logo">TH</div>
+            <div class="th-code-logo">${badge}</div>
             <div class="th-code-panel"></div>
             <div class="th-code-core"></div>
           </div>
         </div>
         <div class="th-code-leg left"><span class="th-code-foot"></span></div>
         <div class="th-code-leg right"><span class="th-code-foot"></span></div>
+      </div>`;
+
+    visual.innerHTML = `
+      <div class="th-bot-duo">
+        ${botMarkup("welcome","TH")}
+        ${botMarkup("announcer","NEWS")}
       </div>
       <div class="th-code-bot-shadow"></div>
     `;
 
-    const bot = visual.querySelector(".th-code-bot");
+    const bot = visual.querySelector(".th-welcome-bot");
+    const announcerBot = visual.querySelector(".th-announcer-bot");
+    const bots = [bot, announcerBot];
     if (title) title.textContent = "Hello! Ako ang TUBAL HUB Bot";
     const fallbackMessage = "Hello! Welcome sa TUBAL HUB. Ako ang interactive guide mo. Ipapakita ko ang latest website version at mga bagong features.";
     let message = fallbackMessage;
@@ -262,27 +300,65 @@
     let muted = false;
     try { muted = localStorage.getItem("tubal_welcome_bot_muted") === "1"; } catch (_) {}
 
-    function setSpeaking(on){
-      bot.classList.toggle("is-speaking", on && !muted);
-      bot.classList.toggle("is-idle", !on || muted);
+    function setSpeaking(activeBot, on){
+      bots.forEach(item => {
+        item.classList.toggle("is-speaking", on && item === activeBot && !muted);
+        item.classList.toggle("is-idle", !(on && item === activeBot) || muted);
+      });
       root.classList.toggle("is-speaking", on && !muted);
       bubble.classList.toggle("is-speaking", on && !muted);
     }
 
-    function speak(msg=message){
-      if (!speechAvailable || muted) return;
-      try{
-        speechSynthesis.cancel();
-        const u = new SpeechSynthesisUtterance(msg);
-        const voices = speechSynthesis.getVoices();
-        u.voice = voices.find(v => /^en-US$/i.test(v.lang)) || voices.find(v => /^en-GB$/i.test(v.lang)) || voices[0] || null;
-        u.lang = "en-US"; u.rate = .92; u.pitch = 1.02; u.volume = 1;
-        setSpeaking(true);
-        bot.classList.remove("is-greeting","is-presenting");
-        u.onend = () => setSpeaking(false);
-        u.onerror = () => setSpeaking(false);
-        speechSynthesis.speak(u);
-      }catch(_){ setSpeaking(false); }
+    function speak(msg, activeBot=bot, options={}){
+      if (!speechAvailable || muted) return Promise.resolve();
+      return new Promise(resolve => {
+        try{
+          speechSynthesis.cancel();
+          const u = new SpeechSynthesisUtterance(msg);
+          const voices = speechSynthesis.getVoices();
+          u.voice = voices.find(v => /^en-US$/i.test(v.lang)) || voices.find(v => /^en-GB$/i.test(v.lang)) || voices[0] || null;
+          u.lang = "en-US"; u.rate = options.rate || .9; u.pitch = options.pitch || 1.02; u.volume = 1;
+          setSpeaking(activeBot, true);
+          bots.forEach(item => item.classList.remove("is-greeting","is-presenting"));
+          if (options.greeting) activeBot.classList.add("is-greeting");
+          if (options.presenting) activeBot.classList.add("is-presenting");
+          const finish = () => {
+            setSpeaking(activeBot, false);
+            activeBot.classList.remove("is-greeting","is-presenting");
+            resolve();
+          };
+          u.onend = finish;
+          u.onerror = finish;
+          speechSynthesis.speak(u);
+        }catch(_){ setSpeaking(activeBot, false); resolve(); }
+      });
+    }
+
+    async function botConversation(latest){
+      if (muted) return;
+      const version = latest.match(/version ay ([0-9.]+)/i)?.[1] || "latest";
+      await speak(
+        "Hello! Welcome sa TUBAL HUB. Ako ang Welcome Bot. Samahan mo kami habang ipinapakilala namin ang bagong update.",
+        bot,
+        {greeting:true}
+      );
+      if (muted) return;
+      await new Promise(r => setTimeout(r, 350));
+      await speak(
+        "Hello din! Ako naman ang TUBAL HUB Update Announcer. Ang current website version ay " + version + ". Pag-usapan natin ang mga bagong features at improvements.",
+        announcerBot,
+        {greeting:true, pitch:1.04}
+      );
+      if (muted) return;
+      await new Promise(r => setTimeout(r, 350));
+      await speak(latest, announcerBot, {presenting:true});
+      if (muted) return;
+      await new Promise(r => setTimeout(r, 300));
+      await speak(
+        "Salamat! Welcome sa bagong version ng TUBAL HUB. Patuloy naming ipapakita ang mga bagong features sa bawat update.",
+        bot,
+        {presenting:true}
+      );
     }
 
     if (sound) {
@@ -300,15 +376,13 @@
     visual.addEventListener("click", e => {
       if (sound && (e.target === sound || sound.contains(e.target))) return;
       bubble.hidden = false;
-      if (speechAvailable) speak();
+      if (speechAvailable) botConversation(message);
     });
 
     window.setTimeout(async () => {
       if (muted) return;
       const latestMessage = await loadLatestWebsiteUpdate();
-      bot.classList.add("is-greeting");
-      speak(latestMessage);
-      window.setTimeout(() => bot.classList.remove("is-greeting"), 3200);
+      await botConversation(latestMessage);
     }, 1400);
   }
 
