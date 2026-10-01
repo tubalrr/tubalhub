@@ -2547,7 +2547,7 @@ async function detectSystemUpdateReal(force=false){
 async function loadLatestVersionReal(){
   const data=systemUpdatePendingReal;
   const badge=document.getElementById("updateVersionBadgeReal");
-  const targetVersion=String(data?.version||badge?.textContent||"1.2.38").replace(/^v/i,"").trim()||"1.2.38";
+  const targetVersion=String(data?.version||badge?.textContent||"1.3.29").replace(/^v/i,"").trim()||"1.3.29";
 
   try{
     if("caches" in window){
