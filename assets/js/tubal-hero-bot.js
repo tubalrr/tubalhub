@@ -515,31 +515,119 @@
       });
     }
 
+    function getSiteTour(){
+      const links = [...document.querySelectorAll("a[href]")]
+        .map(a => (a.textContent || "").replace(/\\s+/g," ").trim())
+        .filter(Boolean);
+      const uniqueLinks = [...new Set(links)].slice(0, 24);
+
+      const headings = [...document.querySelectorAll("main h1, main h2, main h3")]
+        .map(h => (h.textContent || "").replace(/\\s+/g," ").trim())
+        .filter(Boolean);
+      const uniqueHeadings = [...new Set(headings)].slice(0, 16);
+
+      const branches = [...document.querySelectorAll(".th-branch-card, .th-pillar")]
+        .map(card => {
+          const title = card.querySelector("strong,h3")?.textContent?.replace(/\\s+/g," ").trim();
+          const desc = card.querySelector("em,.th-pillar-description,.th-pillar-content p")?.textContent?.replace(/\\s+/g," ").trim();
+          return title ? (desc ? title + ", " + desc : title) : "";
+        })
+        .filter(Boolean);
+
+      const parts = [];
+      parts.push("TUBAL HUB is the main digital home connecting its services and experiences in one website.");
+      if (branches.length) parts.push("The main branches include " + [...new Set(branches)].slice(0, 6).join("; ") + ".");
+      parts.push("The website also includes Feeds, News, Global Chat, TUBAL DARK, Profiles, AI Music, Community, Events, Shop, About, Contact, Settings, LifeHub, and Personal OS.");
+      if (uniqueHeadings.length) parts.push("The homepage currently presents " + uniqueHeadings.slice(0, 10).join(", ") + ".");
+      if (uniqueLinks.length) parts.push("Visitors can navigate directly to " + uniqueLinks.slice(0, 14).join(", ") + ".");
+      return parts.join(" ");
+    }
+
+    function cleanUpdateForSpeech(value){
+      return String(value || "")
+        .replace(/^v?\\d+(?:\\.\\d+){1,3}\\s*/i,"")
+        .replace(/^(FEAT|FIX|ADMIN|SECURITY|UI|BUILD|AUDIT|CLEANUP|REMOVE|REFACTOR)\\s*[—:-]?\\s*/i,"")
+        .replace(/https?:\\/\\/\\S+/g,"")
+        .replace(/\\s+/g," ")
+        .trim();
+    }
+
+    async function buildConversationData(latest){
+      const siteTour = getSiteTour();
+      let version = "the latest version";
+      let updates = [];
+      try{
+        const res = await fetch("/tubalhub/version.json?conversation=" + Date.now(), {cache:"no-store"});
+        if(res.ok){
+          const data = await res.json();
+          version = String(data.version || version);
+          if(Array.isArray(data.updatesReal)) updates = data.updatesReal.map(cleanUpdateForSpeech).filter(Boolean);
+        }
+      }catch(_){}
+      if(!updates.length){
+        updates = String(latest || "").split(/(?=\\d+\\.\\d+)/).map(cleanUpdateForSpeech).filter(Boolean);
+      }
+      return {version,updates,siteTour};
+    }
+
     async function botConversation(latest){
       if (muted) return;
-      const version = latest.match(/version (?:is|is currently) ([0-9.]+)/i)?.[1] || "latest";
-      await speak(
-        "Hello! Welcome to TUBAL HUB. I am the Welcome Bot. Join us as we introduce the latest website update.",
-        bot,
-        {greeting:true}
-      );
+      const data = await buildConversationData(latest);
+
+      const conversations = [
+        {
+          welcome:"Hello! Welcome to TUBAL HUB. I am the Welcome Bot. I will give you a quick tour of what is available on the website, and then my partner will announce the newest updates.",
+          announce:"Hello! I am the TUBAL HUB News Announcer. The current website version is " + data.version + ". Let us go through what is new.",
+          tour:"Here is the website tour: " + data.siteTour,
+          update:"The newest release includes " + data.updates.slice(0,2).join(". ") + ".",
+          follow:"And there is more. Recent improvements also include " + data.updates.slice(2,4).join(". ") + ".",
+          close:"That is the latest TUBAL HUB briefing. Welcome, explore the Hub, and check back for future updates."
+        },
+        {
+          welcome:"Welcome to TUBAL HUB. I am your Welcome Bot. I will introduce the website and its main experiences before we hand the microphone to our News Announcer.",
+          announce:"Thank you. I am the TUBAL HUB News Announcer. We are currently running website version " + data.version + ", and I have the latest release information ready.",
+          tour:"The Hub brings together these experiences: " + data.siteTour,
+          update:"The most recent changes are " + data.updates.slice(0,2).join(". ") + ".",
+          follow:"And the recent release history continues with " + data.updates.slice(2,4).join(". ") + ".",
+          close:"Thanks for listening. This concludes today's TUBAL HUB welcome and update conversation."
+        },
+        {
+          welcome:"Hi there! Welcome to TUBAL HUB. I am the Welcome Bot. Think of me as your guide to the whole website.",
+          announce:"And I am the News Announcer. I handle version news, feature announcements, fixes, and other release information. The current version is " + data.version + ".",
+          tour:"Let us start with the site itself: " + data.siteTour,
+          update:"Now for the news. The latest release changes are " + data.updates.slice(0,2).join(". ") + ".",
+          follow:"For the rest of the recent changes: " + data.updates.slice(2,4).join(". ") + ".",
+          close:"Welcome again to TUBAL HUB. We will keep this conversation fresh as the website evolves."
+        }
+      ];
+
+      let index = 0;
+      try{
+        index = Number(sessionStorage.getItem("tubal_bot_conversation_index") || "0");
+        if(!Number.isFinite(index)) index = 0;
+        sessionStorage.setItem("tubal_bot_conversation_index", String((index + 1) % conversations.length));
+      }catch(_){}
+      const convo = conversations[index % conversations.length];
+
+      if(title) title.textContent = "Welcome Bot & News Announcer";
+      await speak(convo.welcome, bot, {greeting:true});
       if (muted) return;
-      await new Promise(r => setTimeout(r, 350));
-      await speak(
-        "Hello! I am the TUBAL HUB Update Announcer. The current website version is " + version + ". Let us go through the latest features and improvements.",
-        announcerBot,
-        {greeting:true, pitch:1.04}
-      );
+      await new Promise(r => setTimeout(r, 420));
+      await speak(convo.announce, announcerBot, {greeting:true, pitch:1.04});
       if (muted) return;
-      await new Promise(r => setTimeout(r, 350));
-      await speak(latest, announcerBot, {presenting:true});
+      await new Promise(r => setTimeout(r, 420));
+      await speak(convo.tour, bot, {presenting:true, rate:.88});
       if (muted) return;
-      await new Promise(r => setTimeout(r, 300));
-      await speak(
-        "Thank you! Welcome to the latest version of TUBAL HUB. We will continue to introduce new features with every update.",
-        bot,
-        {presenting:true}
-      );
+      await new Promise(r => setTimeout(r, 420));
+      await speak(convo.update, announcerBot, {presenting:true, pitch:1.04, rate:.88});
+      if (muted) return;
+      await new Promise(r => setTimeout(r, 420));
+      if (convo.follow.replace(/\\s+/g," ").trim().length > 45) {
+        await speak(convo.follow, announcerBot, {presenting:true, pitch:1.04, rate:.88});
+        if (muted) return;
+        await new Promise(r => setTimeout(r, 420));
+      }
+      await speak(convo.close, bot, {presenting:true});
     }
 
     if (sound) {
