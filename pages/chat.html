@@ -197,6 +197,134 @@ function clearReply(){replyTarget=null;replyingBar.style.display='none'}
 let reactionUsersState={};
 let reactionFxTimers=new Map();
 let reactionSnapshotReady=false;
+let reactionStopFnsReal=[];
+let reactionSubscriptionKeyReal='';
+let reactionChunkDocsReal=new Map();
+
+function clearReactionSubscriptionsReal(){
+  reactionStopFnsReal.forEach(stop=>{try{stop()}catch(_){ }});
+  reactionStopFnsReal=[];
+  reactionChunkDocsReal.clear();
+}
+
+function rebuildReactionStateReal(){
+  const previous=reactionState;
+  reactionState={};
+  reactionUsersState={};
+
+  reactionChunkDocsReal.forEach(docs=>{
+    docs.forEach((x)=>{
+      const key=x.replyId?'reply_'+x.replyId:x.messageId;
+      if(!key)return;
+      if(!reactionState[key])reactionState[key]={};
+      if(!reactionUsersState[key])reactionUsersState[key]={};
+      (x.reactions||[]).forEach(e=>{
+        reactionState[key][e]=(reactionState[key][e]||0)+1;
+        if(!reactionUsersState[key][e])reactionUsersState[key][e]=new Set();
+        if(x.uid)reactionUsersState[key][e].add(x.uid);
+      });
+    });
+  });
+
+  document.querySelectorAll('.msg').forEach(row=>{
+    const id=row.dataset.id;
+    const bar=row.querySelector('.reaction-bar');
+    if(bar){
+      const prevCounts=previous[id]||{};
+      bar.innerHTML=reactionHtml(id,prevCounts);
+      bar.querySelectorAll('.reaction-chip').forEach(btn=>{
+        btn.addEventListener('click',e=>{
+          e.stopPropagation();
+          animateReactionTarget(btn);
+          toggleReaction(id,btn.dataset.react);
+        });
+      });
+
+      if(reactionSnapshotReady){
+        Object.keys(reactionState[id]||{}).forEach(e=>{
+          const nextCount=reactionState[id]?.[e]||0;
+          const prevCount=prevCounts[e]||0;
+          if(nextCount>=5 && prevCount<5)burstFiveConfetti(row,e);
+        });
+      }
+    }
+
+    row.querySelectorAll('.quick-reaction').forEach(btn=>{
+      btn.addEventListener('click',e=>{
+        e.stopPropagation();
+        toggleReaction(id,btn.dataset.e);
+      });
+    });
+
+    row.querySelectorAll('.reply-item').forEach(item=>{
+      const rid=item.dataset.replyId;
+      if(rid)renderReplyReactions(item,rid);
+    });
+  });
+}
+
+function refreshReactionSubscriptionsReal(){
+  const messageIds=[...new Set(
+    [...document.querySelectorAll('.msg[data-id]')].map(el=>String(el.dataset.id||'').trim()).filter(Boolean)
+  )].sort();
+  const replyIds=[...new Set(
+    [...document.querySelectorAll('.reply-item[data-reply-id]')].map(el=>String(el.dataset.replyId||'').trim()).filter(Boolean)
+  )].sort();
+
+  const key='m:'+messageIds.join(',')+'|r:'+replyIds.join(',');
+  if(key===reactionSubscriptionKeyReal)return;
+  reactionSubscriptionKeyReal=key;
+
+  clearReactionSubscriptionsReal();
+  reactionSnapshotReady=false;
+
+  const chunks=(ids,size=30)=>{
+    const out=[];
+    for(let i=0;i<ids.length;i+=size)out.push(ids.slice(i,i+size));
+    return out;
+  };
+
+  const subscriptions=[
+    ...chunks(messageIds).map((ids,i)=>({field:'messageId',ids,key:'m'+i})),
+    ...chunks(replyIds).map((ids,i)=>({field:'replyId',ids,key:'r'+i}))
+  ];
+
+  if(!subscriptions.length){
+    reactionState={};
+    reactionUsersState={};
+    reactionSnapshotReady=true;
+    return;
+  }
+
+  let pending=subscriptions.length;
+  const markReady=()=>{
+    pending-=1;
+    if(pending<=0){
+      reactionSnapshotReady=true;
+      rebuildReactionStateReal();
+    }else{
+      rebuildReactionStateReal();
+    }
+  };
+
+  subscriptions.forEach(sub=>{
+    const q=query(
+      collection(db,'globalChatReactions'),
+      where(sub.field,'in',sub.ids)
+    );
+    const stop=onSnapshot(q,snap=>{
+      const docs=[];
+      snap.forEach(d=>docs.push({id:d.id,...d.data()}));
+      reactionChunkDocsReal.set(sub.key,docs);
+      markReady();
+    },err=>{
+      console.error('[TUBAL HUB reaction query]',sub.field,err);
+      reactionChunkDocsReal.set(sub.key,[]);
+      markReady();
+    });
+    reactionStopFnsReal.push(stop);
+  });
+}
 
 function reactionButtonHtml(messageId,emoji,count,isActive=false,isNew=false,index=0,countChanged=false){
   const delay=(index*0.05).toFixed(2)+'s';
@@ -355,67 +483,11 @@ function renderReplyReactions(item,replyId){
 function openReplyReactionMenu(button,replyId){const existing=document.querySelector('.reply-inline-reactions');if(existing)existing.remove();const box=document.createElement('div');box.className='reply-inline-reactions';box.style.cssText='position:fixed;z-index:60;background:#061713;border:1px solid #1d7550;border-radius:12px;padding:7px;box-shadow:0 15px 40px #000b;display:flex;gap:3px;flex-wrap:wrap;max-width:260px';box.innerHTML=emojis.slice(0,18).map(e=>`<button type="button" class="emoji-choice" data-e="${esc(e)}">${e}</button>`).join('');document.body.appendChild(box);const r=button.getBoundingClientRect();box.style.left=Math.min(r.left,innerWidth-270)+'px';box.style.top=Math.max(10,r.top-52)+'px';box.querySelectorAll('[data-e]').forEach(b=>b.onclick=()=>{toggleReplyReaction(replyId,b.dataset.e);box.remove()});setTimeout(()=>document.addEventListener('click',function close(ev){if(!box.contains(ev.target)&&ev.target!==button){box.remove();document.removeEventListener('click',close)}},{once:false}),0)}
 async function toggleReplyReaction(replyId,emoji){if(!isRealUser())return;const id=`reply_${replyId}_${currentUser.uid}`;const r=doc(db,'globalChatReactions',id);const snap=await getDoc(r);let arr=snap.exists()?Array.isArray(snap.data().reactions)?snap.data().reactions:[]:[];arr=arr.includes(emoji)?arr.filter(x=>x!==emoji):[...arr,emoji];if(arr.length)await setDoc(r,{replyId,uid:currentUser.uid,reactions:arr,updatedAt:serverTimestamp()},{merge:true});else if(snap.exists())await deleteDoc(r)}
 function subscribeReactions(){
- if(stopReactions)stopReactions();
- const q=query(collection(db,'globalChatReactions'),limit(1000));
- stopReactions=onSnapshot(q,snap=>{
-   const previous=reactionState;
-   const wasReady=reactionSnapshotReady;
-   reactionState={};
-   reactionUsersState={};
-
-   snap.forEach(d=>{
-     const x=d.data();
-     const key=x.replyId?'reply_'+x.replyId:x.messageId;
-     if(!key)return;
-     if(!reactionState[key])reactionState[key]={};
-     if(!reactionUsersState[key])reactionUsersState[key]={};
-     (x.reactions||[]).forEach(e=>{
-       reactionState[key][e]=(reactionState[key][e]||0)+1;
-       if(!reactionUsersState[key][e])reactionUsersState[key][e]=new Set();
-       if(x.uid)reactionUsersState[key][e].add(x.uid);
-     });
-   });
-
-   document.querySelectorAll('.msg').forEach(row=>{
-     const id=row.dataset.id;
-     const bar=row.querySelector('.reaction-bar');
-     if(bar){
-       const prevCounts=previous[id]||{};
-       bar.innerHTML=reactionHtml(id,prevCounts);
-       bar.querySelectorAll('.reaction-chip').forEach(btn=>{
-         btn.addEventListener('click',e=>{
-           e.stopPropagation();
-           animateReactionTarget(btn);
-           toggleReaction(id,btn.dataset.react);
-         });
-       });
-
-       if(wasReady){
-         Object.keys(reactionState[id]||{}).forEach(e=>{
-           const nextCount=reactionState[id]?.[e]||0;
-           const prevCount=prevCounts[e]||0;
-           if(nextCount>=5 && prevCount<5)burstFiveConfetti(row,e);
-         });
-       }
-     }
-
-     row.querySelectorAll('.quick-reaction').forEach(btn=>{
-       btn.addEventListener('click',e=>{
-         e.stopPropagation();
-         toggleReaction(id,btn.dataset.e);
-       });
-     });
-
-     row.querySelectorAll('.reply-item').forEach(item=>{
-       const rid=item.dataset.replyId;
-       if(rid)renderReplyReactions(item,rid);
-     });
-   });
-
-   reactionSnapshotReady=true;
- },err=>console.error('Reaction error',err));
+  if(stopReactions)stopReactions();
+  stopReactions=()=>clearReactionSubscriptionsReal();
+  refreshReactionSubscriptionsReal();
 }
-function subscribeReplies(){if(stopReplies)stopReplies();const q=query(collection(db,'globalChatReplies'),orderBy('createdAt','asc'),limit(500));stopReplies=onSnapshot(q,snap=>{document.querySelectorAll('.reply-box').forEach(x=>x.innerHTML='');snap.forEach(d=>{const x=d.data(),root=x.messageId,box=document.getElementById(`replies-${root}`);if(!box)return;const item=document.createElement('div');item.className='reply-item'+(x.parentReplyId?' nested-reply':'');item.dataset.replyId=d.id;item.innerHTML=`<div class="reply-meta"><b class="private-member-name">${esc(x.displayName||'Member')}</b> • ${esc(timeText(x.createdAt))}</div><div class="reply-text">${esc(x.text)}</div><div class="reply-actions"><button type="button" class="reply-react-btn" title="React">😊</button><button type="button" class="reply-to-reply">↩ Reply</button></div><div class="reply-reaction-bar"></div>`;item.querySelector('.reply-to-reply').onclick=e=>{e.stopPropagation();setReplyTarget(root,x.displayName||'Member',String(x.text||'').slice(0,100),d.id)};item.querySelector('.reply-react-btn').onclick=e=>{e.stopPropagation();openReplyReactionMenu(e.currentTarget,d.id)};renderReplyReactions(item,d.id);box.appendChild(item)});},err=>console.error('Reply error',err))}
+function subscribeReplies(){if(stopReplies)stopReplies();const q=query(collection(db,'globalChatReplies'),orderBy('createdAt','asc'),limit(500));stopReplies=onSnapshot(q,snap=>{document.querySelectorAll('.reply-box').forEach(x=>x.innerHTML='');snap.forEach(d=>{const x=d.data(),root=x.messageId,box=document.getElementById(`replies-${root}`);if(!box)return;const item=document.createElement('div');item.className='reply-item'+(x.parentReplyId?' nested-reply':'');item.dataset.replyId=d.id;item.innerHTML=`<div class="reply-meta"><b class="private-member-name">${esc(x.displayName||'Member')}</b> • ${esc(timeText(x.createdAt))}</div><div class="reply-text">${esc(x.text)}</div><div class="reply-actions"><button type="button" class="reply-react-btn" title="React">😊</button><button type="button" class="reply-to-reply">↩ Reply</button></div><div class="reply-reaction-bar"></div>`;item.querySelector('.reply-to-reply').onclick=e=>{e.stopPropagation();setReplyTarget(root,x.displayName||'Member',String(x.text||'').slice(0,100),d.id)};item.querySelector('.reply-react-btn').onclick=e=>{e.stopPropagation();openReplyReactionMenu(e.currentTarget,d.id)};renderReplyReactions(item,d.id);box.appendChild(item)});refreshReactionSubscriptionsReal();},err=>console.error('Reply error',err))}
 function messageMillisReal(data){
   return data?.createdAt?.toMillis?.()
     ?? data?.createdAt?.toDate?.()?.getTime?.()
@@ -467,6 +539,8 @@ function renderLoadedChannelMessagesReal(options={}){
   });
 
   setStatus('Live • # '+activeChannelReal+' • '+docs.length+' loaded message'+(docs.length===1?'':'s'));
+  refreshReactionSubscriptionsReal();
+
   window.dispatchEvent(new CustomEvent('tubalhub-chat-channel-loaded',{
     detail:{channel:activeChannelReal,count:docs.length,source:options.sourceReal||'realtime'}
   }));
