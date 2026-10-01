@@ -1,12 +1,12 @@
 import {app,auth} from "./firebase-config.js";
 import {onAuthStateChanged} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
-import {getFirestore,collection,getDocs,getDoc,doc,addDoc,setDoc,updateDoc,deleteDoc,query,orderBy,limit,serverTimestamp} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+import {getFirestore,collection,getDocs,getDoc,doc,addDoc,setDoc,updateDoc,deleteDoc,query,orderBy,limit,startAfter,serverTimestamp} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 import {getStorage,ref as storageRef,uploadBytes,getDownloadURL} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-storage.js";
 import {publishHubPost,subscribeHubPosts} from "./hub-content.js?v=20261001-realtime2";
 import {saveItem,removeSaved,getSavedItems,sharedUrl} from "./retention.js";
 
 const db=getFirestore(app);
-const FEED_LOAD_LIMITS={products:40,users:50,presence:50,hubPosts:60};
+const FEED_LOAD_LIMITS={products:20,users:50,presence:50,hubPosts:20};
 let storage=null;
 const REACTIONS={
   like:{emoji:"👍",label:"Like"},love:{emoji:"❤️",label:"Love"},haha:{emoji:"😂",label:"Haha"},
@@ -15,11 +15,12 @@ const REACTIONS={
 const REACTION_KEYS=Object.keys(REACTIONS);
 const QUICK_REACTIONS=REACTION_KEYS;
 const state={
-  auth:null,items:[],products:[],hubPosts:[],users:[],presence:new Map(),userMap:new Map(),
+  auth:null,items:[],products:[],hubPosts:[],hubOlderPosts:[],users:[],presence:new Map(),userMap:new Map(),
   reactions:readLocal("tubalhub-feed-reactions",{}),comments:readLocal("tubalhub-feed-comments",{}),
   commentReactions:readLocal("tubalhub-feed-comment-reactions",{}),shareCounts:readLocal("tubalhub-feed-shares",{}),
   saved:new Set([...readLocal("tubalhub-feed-saved",[]),...getSavedItems().map(x=>x.id)]),filter:"all",query:"",sort:"latest",
   page:0,pageSize:5,loading:false,liveRefreshQueued:false,savedMode:false,currentCommentId:null,commentLimit:6,
+  hubPageCursor:null,hubHasMore:true,hubPageLoading:false,productsPageCursor:null,productsHasMore:true,productsPageLoading:false,
   replyingTo:null,editingCommentId:null,deleteCommentId:null,emojiOffset:0,emojiQuery:"",
   postFile:null,commentPhotoData:""
 };
@@ -90,9 +91,71 @@ function normalizeProduct(s){
   sponsored:x.sponsored===true,free:x.free===true||x.isFree===true||String(x.price??"").trim().toLowerCase()==="free"||(String(x.price??"").trim()!==""&&Number(x.price)===0),
   sourceCollection:"products",sourceId:s.id,url:x.productUrl||"",productUrl:x.productUrl||""}
 }
-async function loadProducts(){
-  try{const snap=await getDocs(query(collection(db,"products"),orderBy("createdAt","desc"),limit(FEED_LOAD_LIMITS.products)));state.products=snap.docs.map(normalizeProduct)}
-  catch(e){console.warn("[Feeds] products unavailable",e);state.products=[]}
+async function loadProducts(reset=true){
+  if(!reset&&(!state.productsHasMore||state.productsPageLoading))return false;
+  state.productsPageLoading=true;
+  try{
+    const base=collection(db,"products");
+    const q=reset||!state.productsPageCursor
+      ? query(base,orderBy("createdAt","desc"),limit(FEED_LOAD_LIMITS.products))
+      : query(base,orderBy("createdAt","desc"),startAfter(state.productsPageCursor),limit(FEED_LOAD_LIMITS.products));
+    const snap=await getDocs(q);
+    const rows=snap.docs.map(normalizeProduct);
+    if(reset){
+      state.products=rows;
+      state.productsPageCursor=snap.docs.at(-1)||null;
+    }else{
+      const seen=new Set(state.products.map(x=>x.sourceId||x.id));
+      rows.forEach(x=>{const k=x.sourceId||x.id;if(!seen.has(k)){state.products.push(x);seen.add(k)}});
+      state.productsPageCursor=snap.docs.at(-1)||state.productsPageCursor;
+    }
+    state.productsHasMore=snap.docs.length===FEED_LOAD_LIMITS.products;
+    return snap.docs.length>0;
+  }catch(e){
+    console.warn("[Feeds] products page unavailable",e);
+    if(reset)state.products=[];
+    state.productsHasMore=false;
+    return false;
+  }finally{state.productsPageLoading=false}
+}
+async function loadHubPostsPage(){
+  if(!state.hubHasMore||state.hubPageLoading)return false;
+  state.hubPageLoading=true;
+  try{
+    const base=collection(db,"hubPosts");
+    const q=state.hubPageCursor
+      ? query(base,orderBy("createdAt","desc"),startAfter(state.hubPageCursor),limit(FEED_LOAD_LIMITS.hubPosts))
+      : query(base,orderBy("createdAt","desc"),limit(FEED_LOAD_LIMITS.hubPosts));
+    const snap=await getDocs(q);
+    const seen=new Set([...state.hubPosts,...state.hubOlderPosts].map(x=>x.id));
+    snap.docs.forEach(s=>{if(!seen.has(s.id))state.hubOlderPosts.push({id:s.id,...s.data()})});
+    state.hubPageCursor=snap.docs.at(-1)||state.hubPageCursor;
+    state.hubHasMore=snap.docs.length===FEED_LOAD_LIMITS.hubPosts;
+    return snap.docs.length>0;
+  }catch(e){
+    console.warn("[Feeds] hubPosts page unavailable",e);
+    state.hubHasMore=false;
+    return false;
+  }finally{state.hubPageLoading=false}
+}
+function rebuildFeedItems(){
+  const raw=[...state.hubPosts,...state.hubOlderPosts].map(hubItem).concat(state.products,games.map(gameItem));
+  const seen=new Set();
+  state.items=raw.filter(x=>{const k=contentKey(x);if(seen.has(k))return false;seen.add(k);return true});
+}
+async function ensureFeedItems(targetCount){
+  let attempts=0;
+  while(visible().length<targetCount&&(state.hubHasMore||state.productsHasMore)&&attempts<6){
+    const before=state.items.length;
+    await Promise.all([
+      state.hubHasMore?loadHubPostsPage():Promise.resolve(false),
+      state.productsHasMore?loadProducts(false):Promise.resolve(false)
+    ]);
+    rebuildFeedItems();
+    attempts++;
+    if(state.items.length===before&&!state.hubHasMore&&!state.productsHasMore)break;
+    if(state.items.length===before&&attempts>=2)break;
+  }
 }
 async function loadPeople(){
   try{
@@ -107,9 +170,7 @@ async function loadPeople(){
   }catch(e){console.warn("[Feeds] people unavailable",e)}
 }
 function buildFeed(live=false){
-  const raw=[...state.hubPosts.map(hubItem),...state.products,...games.map(gameItem)];
-  const seen=new Set();
-  state.items=raw.filter(x=>{const k=contentKey(x);if(seen.has(k))return false;seen.add(k);return true});
+  rebuildFeedItems();
 
   if(live){
     // Realtime updates must reconcile the existing DOM instead of resetting
@@ -353,25 +414,33 @@ function renderFeedLive(){
     });
   }
 }
-function renderFeed(reset){
-  const list=visible(),box=document.getElementById("feedList");if(!box||state.loading)return;
+async function renderFeed(reset){
+  const box=document.getElementById("feedList");if(!box||state.loading)return;
   if(reset){state.page=0;box.innerHTML=""}
-  const start=state.page*state.pageSize,slice=list.slice(start,start+state.pageSize);
-  if(!slice.length&&state.page===0){box.innerHTML="<div class='feed-empty'><strong>No posts in your feed</strong><span>Published TUBAL HUB content will appear here.</span></div>";return}
-  state.loading=true;const sk=document.createElement("div");sk.className="load-more-skeleton";sk.innerHTML="<div class='skeleton'></div>";box.appendChild(sk);
-  setTimeout(()=>{
+  const targetCount=(state.page+1)*state.pageSize;
+  state.loading=true;
+  try{
+    await ensureFeedItems(targetCount);
+    const list=visible(),start=state.page*state.pageSize,slice=list.slice(start,start+state.pageSize);
+    if(!slice.length&&state.page===0){
+      box.innerHTML="<div class='feed-empty'><strong>No posts in your feed</strong><span>Published TUBAL HUB content will appear here.</span></div>";
+      return;
+    }
+    const sk=document.createElement("div");sk.className="load-more-skeleton";sk.innerHTML="<div class='skeleton'></div>";box.appendChild(sk);
+    await new Promise(resolve=>setTimeout(resolve,100));
     sk.remove();
     const frag=document.createDocumentFragment();
     slice.forEach(x=>frag.appendChild(makePostNode(x)));
     box.appendChild(frag);
     state.page++;
-    state.loading=false;
     bindPosts();
+  }finally{
+    state.loading=false;
     if(state.liveRefreshQueued){
       state.liveRefreshQueued=false;
       renderFeedLive();
     }
-  },100);
+  }
 }
 function renderContacts(){
   const box=document.getElementById("contactsList");if(!box)return;
@@ -756,7 +825,14 @@ async function loadRemoteReactions(){
   }catch(e){console.warn(e)}
 }
 function setupHubContent(){
-  try{stopHub=subscribeHubPosts(items=>{state.hubPosts=items;buildFeed(true)})}catch(e){console.warn("[Feeds] hub content unavailable",e)}
+  try{
+    stopHub=subscribeHubPosts((items,snap)=>{
+      state.hubPosts=items;
+      if(!state.hubPageCursor&&snap?.docs?.length)state.hubPageCursor=snap.docs.at(-1);
+      if(snap?.docs)state.hubHasMore=snap.docs.length===FEED_LOAD_LIMITS.hubPosts;
+      buildFeed(true);
+    });
+  }catch(e){console.warn("[Feeds] hub content unavailable",e)}
 }
 async function setupPresence(){
   try{
@@ -830,7 +906,7 @@ function setupUI(){
   document.getElementById("feedQuickBackdrop")?.addEventListener("click",e=>{if(e.target.id==="feedQuickBackdrop")closeQuickProduct()});
   document.addEventListener("keydown",e=>{if(e.key==="Escape")closeQuickProduct()});
   document.getElementById("featuredViewAll")?.addEventListener("click",()=>{state.filter="products";state.savedMode=false;document.querySelectorAll(".feed-filter").forEach(x=>x.classList.toggle("active",x.dataset.filter==="products"));renderFeed(true);document.getElementById("feedList")?.scrollIntoView({behavior:"smooth",block:"start"})});
-  const sentinel=document.getElementById("feedSentinel");if(sentinel&&"IntersectionObserver" in window){const observer=new IntersectionObserver(en=>{if(!en[0].isIntersecting||state.loading)return;if(state.page<Math.ceil(visible().length/state.pageSize))renderFeed(false)},{rootMargin:"700px 0px"});observer.observe(sentinel)}
+  const sentinel=document.getElementById("feedSentinel");if(sentinel&&"IntersectionObserver" in window){const observer=new IntersectionObserver(en=>{if(!en[0].isIntersecting||state.loading)return;renderFeed(false)},{rootMargin:"700px 0px"});observer.observe(sentinel)}
   setupTyping();
 }
 onAuthStateChanged(auth,async user=>{
