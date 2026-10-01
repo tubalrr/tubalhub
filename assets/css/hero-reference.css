@@ -1095,3 +1095,32 @@ body.hub-home #bentoHero.th-corp-hero .th-hero-welcome-bot.is-speaking .th-hero-
     right:calc(50% - 115px)!important;
   }
 }
+
+
+/* HERO BOT — picture only, animated in place */
+body.hub-home #bentoHero.th-corp-hero .th-hero-welcome-bot{
+  pointer-events:none!important;
+}
+body.hub-home #bentoHero.th-corp-hero .th-hero-bot-visual{
+  pointer-events:none!important;
+  border-radius:0!important;
+  background-size:contain!important;
+  background-position:center!important;
+  background-repeat:no-repeat!important;
+  box-shadow:none!important;
+  animation:thHeroPictureFloat 3.8s ease-in-out infinite!important;
+}
+body.hub-home #bentoHero.th-corp-hero .th-hero-bot-dialog,
+body.hub-home #bentoHero.th-corp-hero .th-hero-bot-status,
+body.hub-home #bentoHero.th-corp-hero .th-hero-bot-sound{
+  display:none!important;
+}
+@keyframes thHeroPictureFloat{
+  0%,100%{transform:translate3d(0,4px,0) rotate(0deg) scale(1)}
+  50%{transform:translate3d(0,-9px,0) rotate(-1deg) scale(1.015)}
+}
+@media (max-width:600px){
+  body.hub-home #bentoHero.th-corp-hero .th-hero-bot-visual{
+    animation-duration:3.5s!important;
+  }
+}
