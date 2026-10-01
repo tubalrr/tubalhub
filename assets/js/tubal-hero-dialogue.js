@@ -1,1 +1,1 @@
-// TUBAL HUB hero dialogue extension placeholder.
+// TUBAL HUB hero dialogue extension.
