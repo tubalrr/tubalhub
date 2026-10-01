@@ -190,6 +190,8 @@ function enableMemberNameClick(){if(!memberList||memberList.dataset.privateClick
 
 
 // TUBAL Error Bot: captures browser/runtime/Firebase errors locally and explains common causes.
+// Diagnostics are collected locally, but the Error Bot UI is admin-only.
+let tubalErrorAdminReal=false;
 const tubalErrorLogReal=[];
 const tubalErrorSeenReal=new Set();
 function analyzeTubalErrorReal(message,source='runtime'){
@@ -217,13 +219,17 @@ function recordTubalErrorReal(message,source='runtime',details=''){
 }
 function renderTubalErrorBotReal(){
   const list=document.getElementById('tubalErrorBotList'),summary=document.getElementById('tubalErrorBotSummary'),fab=document.getElementById('tubalErrorBotFab');
-  if(!list)return;
+  if(!list||!tubalErrorAdminReal)return;
   summary.textContent=tubalErrorLogReal.length?(tubalErrorLogReal.length+' error event(s) captured locally.'):'Watching browser and Firebase errors.';
   fab.hidden=!tubalErrorLogReal.length;
   fab.classList.toggle('has-error',tubalErrorLogReal.length>0);
   list.innerHTML=tubalErrorLogReal.length?tubalErrorLogReal.map(x=>'<article class="tubal-error-item"><div class="tubal-error-meta">'+esc(x.time.toLocaleTimeString())+' • '+esc(x.source)+'</div><div class="tubal-error-message">'+esc(x.message)+'</div><div class="tubal-error-analysis">🤖 '+esc(x.analysis)+'</div>'+(x.details?'<details><summary>Details</summary><pre>'+esc(x.details)+'</pre></details>':'')+'</article>').join(''):'<div class="private-empty">No errors detected.</div>';
 }
-function openTubalErrorBotReal(){const panel=document.getElementById('tubalErrorBot');if(panel){panel.hidden=false;renderTubalErrorBotReal()}}
+function openTubalErrorBotReal(){
+  if(!tubalErrorAdminReal)return;
+  const panel=document.getElementById('tubalErrorBot');
+  if(panel){panel.hidden=false;renderTubalErrorBotReal()}
+}
 window.addEventListener('error',e=>recordTubalErrorReal(e.message||'Unknown browser error','window.error',e.error?.stack||e.filename||''));
 window.addEventListener('unhandledrejection',e=>recordTubalErrorReal(e.reason?.message||String(e.reason||'Unhandled Promise rejection'),'unhandledrejection',e.reason?.stack||''));
 const originalConsoleErrorReal=console.error.bind(console);
@@ -737,15 +743,23 @@ function subscribeMessages(){
     limitToLast(100)
   );
 
-  const showIndexRequiredState=()=>{
-    channelIndexFallbackReal=false;
-    latestChannelMessagesReal=[];
+  const fallbackQuery=query(
+    collection(db,'globalChats'),
+    where('channel','==',channelValue)
+  );
+
+  const renderFallback= snap=>{
+    channelIndexFallbackReal=true;
+    const docs=snap.docs
+      .map(d=>({id:d.id,data:d.data()}))
+      .sort((a,b)=>messageMillisReal(a.data)-messageMillisReal(b.data)||a.id.localeCompare(b.id));
+    const latest=docs.slice(-100);
+    latestChannelMessagesReal=latest;
     olderChannelMessagesReal=[];
     channelCursorReal=null;
     channelHasOlderReal=false;
-    loadingOlderChannelMessagesReal=false;
-    messages.innerHTML='<div class="empty-chat"><strong>Global Chat needs its Firestore index.</strong><span>The latest-message query cannot safely fall back to an unordered 100-document query. Deploy the composite index for channel + createdAt, then reload.</span></div>';
-    setStatus('Chat unavailable • deploy Firestore index for latest-100 ordering.',true);
+    renderLoadedChannelMessagesReal({sourceReal:'compatibility-fallback'});
+    setStatus('Live • # '+activeChannelReal+' • compatibility mode');
   };
 
   stopMessages=onSnapshot(indexedQuery,snap=>{
@@ -753,7 +767,17 @@ function subscribeMessages(){
     renderChatSnapshotReal(snap,channelValue,'realtime');
   },err=>{
     console.error('[TUBAL HUB chat indexed query]',err);
-    showIndexRequiredState();
+    // Firestore can legitimately reject this compound query when the index
+    // has not yet been deployed. Keep Global Chat usable using the single-field
+    // channel index; sort and bound the visible history in the client.
+    stopMessages=onSnapshot(fallbackQuery,renderFallback,fallbackErr=>{
+      console.error('[TUBAL HUB chat compatibility query]',fallbackErr);
+      latestChannelMessagesReal=[];
+      olderChannelMessagesReal=[];
+      channelHasOlderReal=false;
+      messages.innerHTML='<div class="empty-chat"><strong>Global Chat is temporarily unavailable.</strong><span>Firestore could not read this channel. Check Firebase connection and permissions.</span></div>';
+      setStatus('Chat unavailable • Firebase read failed.',true);
+    });
   });
 }
 function setActiveChannelReal(channel){
@@ -1245,7 +1269,7 @@ async function loadMediaStorageReal(){const panel=document.getElementById('media
 document.getElementById('closeMediaStorage')?.addEventListener('click',()=>{document.getElementById('mediaStoragePanel').hidden=true;});
 document.getElementById('mediaStorageBtn')?.addEventListener('click',()=>window.tubalHubOpenMediaStorageReal?.());
 window.tubalHubOpenMediaStorageReal=()=>{const p=document.getElementById('mediaStoragePanel');if(p){p.hidden=false;loadMediaStorageReal();p.scrollIntoView({behavior:'smooth',block:'start'});}};
-onAuthStateChanged(auth,async user=>{if(!user||user.isAnonymous){currentUser=null;lock.style.display='block';content.style.display='none';content.setAttribute('aria-hidden','true');if(stopMessages)stopMessages();if(stopPresence)stopPresence();if(stopReactions)stopReactions();if(stopReplies)stopReplies();if(stopDmList)stopDmList();window.__tubalDmList=[];renderDmList([]);reactionSnapshotReady=false;reactionState={};reactionUsersState={};if(stopBanStatus)stopBanStatus();if(window.__banPollTimer)clearInterval(window.__banPollTimer);if(stopPrivateMessages)stopPrivateMessages();privateTarget=null;document.getElementById('privateChatPanel').hidden=true;if(heartbeatTimer)clearInterval(heartbeatTimer);document.getElementById('profileName').textContent='TUBAL HUB';document.getElementById('profileStatus').textContent='● Login required';return}currentUser=user;lock.style.display='none';content.style.display='grid';content.setAttribute('aria-hidden','false');const name=user.displayName||user.email?.split('@')[0]||'Member';document.getElementById('profileName').textContent=name;document.getElementById('profileStatus').textContent='● Online';document.getElementById('profileAvatar').innerHTML=user.photoURL?`<img src="${esc(user.photoURL)}" alt="">`:esc(initials(name));sendButton.disabled=false;input.disabled=false;try{await updatePresence(user,true)}catch(e){console.error(e)}if(stopBanStatus)stopBanStatus();let chatAccessActive=false;const applyBanStatus=d=>{const until=d.banUntil?.toMillis?.()||d.banUntil?.toDate?.()?.getTime?.()||0;const banned=d.chatStatus==='banned'&&(until===0||until>Date.now());if(banned){input.disabled=true;sendButton.disabled=true;const banMessage='🚫 GLOBAL CHAT ACCESS BANNED'+(d.banReason?'\nReason: '+d.banReason+'.':'')+(until?'\nBan ends: '+new Date(until).toLocaleString()+'.':'\nPermanent ban.');const notice=document.getElementById('moderationNotice');if(notice){notice.textContent=banMessage;notice.className='moderation-notice show danger';clearTimeout(window.__moderationNoticeTimer);}setStatus('Chat access blocked while your ban is active.',true);if(stopMessages){stopMessages();stopMessages=null}if(stopReactions){stopReactions();stopReactions=null}if(stopReplies){stopReplies();stopReplies=null}chatAccessActive=false}else{input.disabled=false;sendButton.disabled=false;document.getElementById('moderationNotice').classList.remove('show');setStatus('Connected to TUBAL HUB');if(!chatAccessActive){subscribeMessages();subscribePresence();subscribeReactions();subscribeReplies();subscribeDirectMessages();chatAccessActive=true}}};stopBanStatus=onSnapshot(doc(db,'users',user.uid),snap=>applyBanStatus(snap.exists()?snap.data():{}),err=>console.error('Ban status listener failed:',err));const checkBanStatus=async()=>{try{const snap=await getDoc(doc(db,'users',user.uid));applyBanStatus(snap.exists()?snap.data():{});}catch(e){console.error('Ban status check failed:',e)}};await checkBanStatus();if(window.__banPollTimer)clearInterval(window.__banPollTimer);window.__banPollTimer=setInterval(checkBanStatus,3000);if(heartbeatTimer)clearInterval(heartbeatTimer);heartbeatTimer=setInterval(()=>updatePresence(currentUser,true).catch(()=>{}),20000)});
+onAuthStateChanged(auth,async user=>{if(!user||user.isAnonymous){tubalErrorAdminReal=false;document.getElementById('tubalErrorBot')?.setAttribute('hidden','');document.getElementById('tubalErrorBotFab')?.setAttribute('hidden','');currentUser=null;lock.style.display='block';content.style.display='none';content.setAttribute('aria-hidden','true');if(stopMessages)stopMessages();if(stopPresence)stopPresence();if(stopReactions)stopReactions();if(stopReplies)stopReplies();if(stopDmList)stopDmList();window.__tubalDmList=[];renderDmList([]);reactionSnapshotReady=false;reactionState={};reactionUsersState={};if(stopBanStatus)stopBanStatus();if(window.__banPollTimer)clearInterval(window.__banPollTimer);if(stopPrivateMessages)stopPrivateMessages();privateTarget=null;document.getElementById('privateChatPanel').hidden=true;if(heartbeatTimer)clearInterval(heartbeatTimer);document.getElementById('profileName').textContent='TUBAL HUB';document.getElementById('profileStatus').textContent='● Login required';return}currentUser=user;tubalErrorAdminReal=false;try{const tokenResult=await user.getIdTokenResult();tubalErrorAdminReal=tokenResult?.claims?.admin===true||String(user.email||'').toLowerCase()==='tubalrr@gmail.com';}catch(_){tubalErrorAdminReal=String(user.email||'').toLowerCase()==='tubalrr@gmail.com';}if(!tubalErrorAdminReal){document.getElementById('tubalErrorBot')?.setAttribute('hidden','');document.getElementById('tubalErrorBotFab')?.setAttribute('hidden','');}else{renderTubalErrorBotReal()}lock.style.display='none';content.style.display='grid';content.setAttribute('aria-hidden','false');const name=user.displayName||user.email?.split('@')[0]||'Member';document.getElementById('profileName').textContent=name;document.getElementById('profileStatus').textContent='● Online';document.getElementById('profileAvatar').innerHTML=user.photoURL?`<img src="${esc(user.photoURL)}" alt="">`:esc(initials(name));sendButton.disabled=false;input.disabled=false;try{await updatePresence(user,true)}catch(e){console.error(e)}if(stopBanStatus)stopBanStatus();let chatAccessActive=false;const applyBanStatus=d=>{const until=d.banUntil?.toMillis?.()||d.banUntil?.toDate?.()?.getTime?.()||0;const banned=d.chatStatus==='banned'&&(until===0||until>Date.now());if(banned){input.disabled=true;sendButton.disabled=true;const banMessage='🚫 GLOBAL CHAT ACCESS BANNED'+(d.banReason?'\nReason: '+d.banReason+'.':'')+(until?'\nBan ends: '+new Date(until).toLocaleString()+'.':'\nPermanent ban.');const notice=document.getElementById('moderationNotice');if(notice){notice.textContent=banMessage;notice.className='moderation-notice show danger';clearTimeout(window.__moderationNoticeTimer);}setStatus('Chat access blocked while your ban is active.',true);if(stopMessages){stopMessages();stopMessages=null}if(stopReactions){stopReactions();stopReactions=null}if(stopReplies){stopReplies();stopReplies=null}chatAccessActive=false}else{input.disabled=false;sendButton.disabled=false;document.getElementById('moderationNotice').classList.remove('show');setStatus('Connected to TUBAL HUB');if(!chatAccessActive){subscribeMessages();subscribePresence();subscribeReactions();subscribeReplies();subscribeDirectMessages();chatAccessActive=true}}};stopBanStatus=onSnapshot(doc(db,'users',user.uid),snap=>applyBanStatus(snap.exists()?snap.data():{}),err=>console.error('Ban status listener failed:',err));const checkBanStatus=async()=>{try{const snap=await getDoc(doc(db,'users',user.uid));applyBanStatus(snap.exists()?snap.data():{});}catch(e){console.error('Ban status check failed:',e)}};await checkBanStatus();if(window.__banPollTimer)clearInterval(window.__banPollTimer);window.__banPollTimer=setInterval(checkBanStatus,3000);if(heartbeatTimer)clearInterval(heartbeatTimer);heartbeatTimer=setInterval(()=>updatePresence(currentUser,true).catch(()=>{}),20000)});
 document.addEventListener('visibilitychange',()=>{if(currentUser&&!document.hidden){updatePresence(currentUser,true).catch(()=>{});subscribePresence()}});window.addEventListener('pageshow',()=>{if(currentUser)updatePresence(currentUser,true).catch(()=>{})});window.addEventListener('focus',()=>{if(currentUser)updatePresence(currentUser,true).catch(()=>{})});window.addEventListener('beforeunload',()=>{if(currentUser)updatePresence(currentUser,false).catch(()=>{})});
 </script>
 
