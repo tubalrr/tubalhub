@@ -168,7 +168,50 @@ import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-storage.js";
 
 const db=getFirestore(app), storage=getStorage(app), functionsReal=getFunctions(app);
-const sendMessageFnReal=httpsCallable(functionsReal,'sendMessageReal');
+async function sendMessageClientReal(payload){
+  if(!currentUser || !isRealUser()) throw new Error('LOGIN_REQUIRED');
+  const channel=String(payload?.channel || activeChannelReal || 'general');
+  const text=String(payload?.text || '').trim();
+  if(!text) throw new Error('EMPTY_MESSAGE');
+  const moderation=moderationResultReal(text);
+  if(!moderation.allowed){
+    moderationWarning();
+    const err=new Error('MODERATION_BLOCKED');
+    err.code='client/moderation-blocked';
+    throw err;
+  }
+  if(text.length>500) throw new Error('MESSAGE_TOO_LONG');
+
+  const name=String(currentUser.displayName || currentUser.email?.split('@')[0] || 'Member').slice(0,120);
+  const photoURL=String(currentUser.photoURL || '').slice(0,2000);
+  const isAdmin=String(currentUser.email || '').toLowerCase()==='tubalrr@gmail.com';
+
+  const docData={
+    uid:currentUser.uid,
+    displayName:name,
+    name,
+    photoURL,
+    createdAt:serverTimestamp(),
+    text:moderation.cleanText,
+    textReal:moderation.cleanText,
+    type:'text',
+    channel:channel==='general'?'global-chat':channel,
+    roleReal:isAdmin?'admin':'user',
+    verifiedReal:true
+  };
+
+  if(replyTarget){
+    docData.replyTo={
+      name:String(replyTarget.name||'').slice(0,120),
+      preview:String(replyTarget.preview||'').slice(0,160)
+    };
+  }
+
+  const ref=await addDoc(collection(db,'globalChats'),docData);
+  lastMessageTime=Date.now();
+  if(moderation.flagged) showModerationNotice('⚠️ May salitang awtomatikong inayos bago ipadala.');
+  return {success:true,id:ref.id,moderated:!!moderation.flagged,cleanText:moderation.cleanText};
+}
 const sendReplyFnReal=httpsCallable(functionsReal,'sendReplyReal');
 const sendPrivateMessageFnReal=httpsCallable(functionsReal,'sendPrivateMessageReal');
 const updatePrivateMessageFnReal=httpsCallable(functionsReal,'updatePrivateMessageReal');
@@ -1146,7 +1189,7 @@ async function sendMessage(payload){
   if(payload?.type==='text'){
     const cleanText=String(payload.text||'').trim();
     if(!cleanText)throw new Error('EMPTY_MESSAGE');
-    const result=await sendMessageFnReal({text:cleanText,channel});
+    const result=await sendMessageClientReal({text:cleanText,channel});
     lastMessageTime=Date.now();
     if(result?.data?.moderated)showModerationNotice('🛡️ Server moderation cleaned this message before publishing.');
     return result?.data;
