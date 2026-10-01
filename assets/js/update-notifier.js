@@ -415,47 +415,39 @@
   async function poll() {
     if (!updatesEnabled()) return;
     try {
-  async function fetchReleaseConfig() {
-    try {
-      const mod = await import("./firebase-config.js");
-      const { getFirestore, doc, getDoc } = await import("https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js");
-      const db = getFirestore();
-      const snap = await getDoc(doc(db, "systemSettings", "updateRelease"));
-      return snap.exists() ? snap.data() : null;
-    } catch (_) {
-      // Firebase scheduling is optional. Website version checking must
-      // continue even when Firestore rules/auth are unavailable.
-      return null;
-    }
-  }
+      const data = await fetchVersion();
+      const pageVersion = await fetchPageVersion();
+      const release = await fetchReleaseConfig();
+      const gated = applyReleaseGate(data, release);
 
-  function scheduleFreshReload(version) {
-    const reloadKey = "tubalhub_auto_reload_version";
-    try {
-      if (localStorage.getItem(reloadKey) === String(version)) return;
-      localStorage.setItem(reloadKey, String(version));
-    } catch (_) {}
-    document.dispatchEvent(new CustomEvent("tubalhub:live-update", {
-      detail: { version: String(version) }
-    }));
-    clearTimeout(autoReloadTimer);
-    autoReloadTimer = setTimeout(() => {
-      try {
-        const url = new URL(window.location.href);
-        url.searchParams.set("v", String(version));
-        url.searchParams.set("update", String(Date.now()));
-        window.location.replace(url.href);
-      } catch (_) {
-        try { window.location.reload(); } catch (_) {}
-      }
-    }, 1800);
-  }
       if (!gated) {
         currentData = null;
         setBellState(false);
         localStorage.removeItem(UPDATE_KEY);
         return;
       }
+
+      // Keep checking the real manifest even if Firebase is unavailable.
+      // A mismatch means the open page is older than the published release.
+      if (pageVersion && String(pageVersion) !== String(gated.version)) {
+        currentData = gated;
+        setVersionBadge(gated.version);
+        setBellState(true);
+        renderModal(gated);
+        showToast();
+
+        const reloadKey = "tubalhub_auto_reload_version";
+        let alreadyScheduled = false;
+        try {
+          alreadyScheduled = localStorage.getItem(reloadKey) === String(gated.version);
+        } catch (_) {}
+
+        if (!alreadyScheduled) {
+          scheduleFreshReload(gated.version);
+        }
+        return;
+      }
+
       if (bootVersion === null) {
         bootVersion = gated.version;
         compare(gated);
@@ -463,27 +455,14 @@
       }
 
       const changedWhileOpen = String(gated.version) !== String(bootVersion);
-      compare(gated);
-
       if (changedWhileOpen) {
-        const reloadKey = "tubalhub_auto_reload_version";
-        let alreadyScheduled = false;
-        try {
-          alreadyScheduled = localStorage.getItem(reloadKey) === gated.version;
-        } catch (_) {}
-
-        if (!alreadyScheduled) {
-          try { localStorage.setItem(reloadKey, gated.version); } catch (_) {}
-          scheduleFreshReload(gated.version);
-        } else {
-          try {
-            if (localStorage.getItem(reloadKey) === gated.version) {
-              localStorage.removeItem(reloadKey);
-            }
-          } catch (_) {}
-        }
-
+        showUpdate(gated);
+        scheduleFreshReload(gated.version);
         bootVersion = gated.version;
+      } else {
+        currentData = gated;
+        setBellState(false);
+        setVersionBadge(gated.version);
       }
     } catch (error) {
       console.warn("[TUBAL HUB update check]", error);
