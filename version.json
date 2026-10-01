@@ -1,11 +1,12 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.3.08",
-  "build": "2026-10-01_soft-feeds-containers",
+  "version": "1.3.09",
+  "build": "2026-10-01_container-color",
   "releasedAtReal": "2026-10-01T03:40:00.000Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.3.09 UI — Changed the Feeds container surfaces from plain white to a distinct soft blue-gray palette while keeping inner controls lighter for hierarchy and readability.",
     "v1.3.08 UI — Softened the Feeds containers themselves: panels, stories, create-post, featured, toolbar, side cards, product/game cards, filters, and action surfaces now share the same light low-contrast container palette.",
     "v1.3.07 UI — Aligned the Feeds base design tokens with the softer palette so legacy surfaces also inherit light panels, muted slate borders, and gentler shadows.",
     "v1.3.06 UI — Reworked Feeds from bright neon green/purple/red accents into a softer slate-blue, muted lavender, sage, and warm-red palette for lower visual strain while preserving the existing structure and interactions.",
@@ -822,5 +823,5 @@
     }
   ],
   "date": "2026-10-01",
-  "changes": "v1.3.08 UI — Feeds containers softened for a calmer, more consistent visual surface."
+  "changes": "v1.3.09 UI — Feeds containers now use a distinct soft blue-gray surface."
 }
