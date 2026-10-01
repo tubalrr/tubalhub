@@ -932,3 +932,13 @@ body.hub-home #bentoHero.th-corp-hero{
     padding-right:10px!important;
   }
 }
+
+
+/* HERO CLEANUP — slideshow and robot removed */
+body.hub-home #bentoHero.th-corp-hero .th-hero-bot-experience{
+  display:none!important;
+}
+body.hub-home #bentoHero.th-corp-hero .th-corp-hero-copy{
+  width:min(700px,calc(100% - 56px))!important;
+  max-width:700px!important;
+}
