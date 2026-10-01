@@ -507,7 +507,7 @@ function renderLoadedRepliesReal(){
     return am-bm||a.id.localeCompare(b.id);
   });
 
-  allReplies.forEach(({id,d})=>{
+  allReplies.forEach(({id,data:d})=>{
     const x=d,root=x.messageId,box=document.getElementById(`replies-${root}`);
     if(!box)return;
     const item=document.createElement('div');
