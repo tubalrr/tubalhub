@@ -18,6 +18,7 @@
   const UPDATES_ENABLED_KEY = "tubalhub_notif_website_updates";
   const POLL_MS = 60000;
   const TOAST_MS = 6000;
+  const RELOAD_FALLBACK_MS = 15000;
 
   let loadedUi = false;
   let pollTimer = null;
@@ -29,9 +30,14 @@
   let bootVersion = null;
   let autoReloadTimer = null;
   let waitingForBotAnnouncement = false;
+  let pollInFlight = false;
+  let bootReleaseKey = null;
 
   const $ = id => document.getElementById(id);
-  const updatesEnabled = () => localStorage.getItem(UPDATES_ENABLED_KEY) !== "0";
+  const updatesEnabled = () => {
+    const value = localStorage.getItem(UPDATES_ENABLED_KEY);
+    return value !== "0";
+  };
 
   function ensureCss() {
     if (document.querySelector("link[data-tubal-update-css]")) return;
@@ -149,15 +155,16 @@
   function normalize(data) {
     const explicit = Array.isArray(data?.changelog) ? data.changelog : [];
     const updateStrings = Array.isArray(data?.updatesReal) ? data.updatesReal : [];
-    const fromUpdates = updateStrings.map((value, index) => ({
-      type: /\\b(FIX|REMOVE|SECURITY|ADMIN|BUILD|AUDIT|CLEANUP|REFACTOR)\\b/i.test(String(value)) ? "Improved" : "New",
-      icon: /SECURITY/i.test(String(value)) ? "🛡" : (/FIX|REMOVE|CLEANUP|REFACTOR/i.test(String(value)) ? "🔧" : "✨"),
-      title: "Release update " + (index + 1),
-      desc: String(value || "")
+    const fromUpdates = updateStrings.map((value, index) => {
+      const raw = String(value || "").trim();
+      const type = /\\b(FIX|REMOVE|SECURITY|ADMIN|BUILD|AUDIT|CLEANUP|REFACTOR)\\b/i.test(raw) ? "Improved" : "New";
+      const icon = /SECURITY/i.test(raw) ? "🛡" : (/FIX|REMOVE|CLEANUP|REFACTOR/i.test(raw) ? "🔧" : "✨");
+      const desc = raw
         .replace(/^v?\\d+(?:\\.\\d+){1,3}\\s*/i, "")
         .replace(/^(FEAT|FIX|ADMIN|SECURITY|UI|BUILD|AUDIT|CLEANUP|REMOVE|REFACTOR)\\s*[—:-]?\\s*/i, "")
-        .trim()
-    })).filter(item => item.desc);
+        .trim();
+      return {type,icon,title:"Release update " + (index + 1),desc};
+    }).filter(item => item.desc);
 
     const changelog = (explicit.length ? explicit : fromUpdates).slice(0, 40);
     return {
@@ -170,6 +177,11 @@
       message: String(data?.message || data?.changes || ""),
       changelog
     };
+  }
+
+  function releaseKey(data) {
+    if (!data?.version) return "";
+    return [data.version, data.build || "", data.date || data.time || ""].join("|");
   }
 
   function validate(data) {
@@ -347,31 +359,12 @@
         signal: controller?.signal
       });
       if (!response.ok) throw new Error("version.json " + response.status);
-      const data = await response.json();
-      return validate(normalize(data));
+      return validate(normalize(await response.json()));
     } finally {
       if (timer) clearTimeout(timer);
     }
   }
-  async function fetchPageVersion() {
-    const controller = "AbortController" in window ? new AbortController() : null;
-    const timer = controller ? setTimeout(() => controller.abort(), 10000) : null;
-    try {
-      const response = await fetch(rootUrl.href + "index.html?page-version=" + Date.now(), {
-        cache:"no-store",
-        credentials:"omit",
-        signal: controller?.signal
-      });
-      if (!response.ok) return null;
-      const html = await response.text();
-      const match = html.match(/id=["']liveVersion["'][^>]*>\s*v?([0-9]+(?:\.[0-9]+){1,3})\s*<\//i);
-      return match ? match[1] : null;
-    } catch (_) {
-      return null;
-    } finally {
-      if (timer) clearTimeout(timer);
-    }
-  }
+
 
 
   async function fetchReleaseConfig() {
@@ -466,59 +459,39 @@
   }
 
   async function poll() {
-    if (!updatesEnabled()) return;
+    if (!updatesEnabled() || pollInFlight) return;
+    pollInFlight = true;
     try {
       const data = await fetchVersion();
-      const pageVersion = await fetchPageVersion();
-      const release = await fetchReleaseConfig();
-      const gated = applyReleaseGate(data, release);
+      const key = releaseKey(data);
+      if (!key) return;
 
-      if (!gated) {
-        currentData = null;
+      // First successful check establishes the current release. Every later
+      // change in version/build/release timestamp is treated as a new release.
+      if (bootReleaseKey === null) {
+        bootReleaseKey = key;
+        currentData = data;
         setBellState(false);
-        localStorage.removeItem(UPDATE_KEY);
+        setVersionBadge(data.version);
         return;
       }
 
-      // Keep checking the real manifest even if Firebase is unavailable.
-      // A mismatch means the open page is older than the published release.
-      if (pageVersion && String(pageVersion) !== String(gated.version)) {
-        currentData = gated;
-        setVersionBadge(gated.version);
-        setBellState(true);
-        renderModal(gated);
-        showToast();
-
-        const reloadKey = "tubalhub_auto_reload_version";
-        let alreadyScheduled = false;
-        try {
-          alreadyScheduled = localStorage.getItem(reloadKey) === String(gated.version);
-        } catch (_) {}
-
-        if (!alreadyScheduled) {
-          scheduleFreshReload(gated.version, gated);
-        }
+      if (key !== bootReleaseKey) {
+        bootReleaseKey = key;
+        showUpdate(data);
+        scheduleFreshReload(data.version, data);
         return;
       }
 
-      if (bootVersion === null) {
-        bootVersion = gated.version;
-        compare(gated);
-        return;
-      }
-
-      const changedWhileOpen = String(gated.version) !== String(bootVersion);
-      if (changedWhileOpen) {
-        showUpdate(gated);
-        scheduleFreshReload(gated.version, gated);
-        bootVersion = gated.version;
-      } else {
-        currentData = gated;
-        setBellState(false);
-        setVersionBadge(gated.version);
-      }
+      currentData = data;
+      setBellState(false);
+      setVersionBadge(data.version);
     } catch (error) {
+      // Network failures, temporary CDN errors, malformed JSON, or Firebase
+      // outages must never stop the 60-second polling loop.
       console.warn("[TUBAL HUB update check]", error);
+    } finally {
+      pollInFlight = false;
     }
   }
 
@@ -622,6 +595,7 @@
   window.tubalHubUpdateNotifier.isEnabled = updatesEnabled;
   window.tubalHubUpdateNotifier.open = openModal;
   window.tubalHubUpdateNotifier.markSeen = markSeenAndClose;
+  window.tubalHubUpdateNotifier.checkNow = poll;
 
   async function init() {
     try {
