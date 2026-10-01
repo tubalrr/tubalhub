@@ -737,30 +737,15 @@ function subscribeMessages(){
     limit(100)
   );
 
-  const fallbackQuery=query(
-    collection(db,'globalChats'),
-    where('channel','==',channelValue),
-    limit(100)
-  );
-
-  const startFallback=()=>{
-    if(stopMessages)stopMessages();
-    channelIndexFallbackReal=true;
+  const showIndexRequiredState=()=>{
+    channelIndexFallbackReal=false;
     latestChannelMessagesReal=[];
     olderChannelMessagesReal=[];
     channelCursorReal=null;
     channelHasOlderReal=false;
     loadingOlderChannelMessagesReal=false;
-    stopMessages=onSnapshot(fallbackQuery,snap=>{
-      const docs=snap.docs.map(d=>({id:d.id,data:d.data()}))
-        .sort((a,b)=>messageMillisReal(b.data)-messageMillisReal(a.data)||b.id.localeCompare(a.id));
-      renderChatSnapshotReal({docs:docs.map(x=>({id:x.id,data:()=>x.data}))},channelValue,'realtime-fallback');
-      setStatus('Live • # '+activeChannelReal+' • fallback mode (deploy Firestore index for latest-100 ordering)',true);
-    },fallbackErr=>{
-      console.error('[TUBAL HUB chat fallback query]',fallbackErr);
-      messages.innerHTML='<div class="empty-chat"><strong>Chat temporarily unavailable.</strong><span>Firestore index is missing and the fallback query also failed.</span></div>';
-      setStatus('Could not load this channel. Check Firebase index/rules.',true);
-    });
+    messages.innerHTML='<div class="empty-chat"><strong>Global Chat needs its Firestore index.</strong><span>The latest-message query cannot safely fall back to an unordered 100-document query. Deploy the composite index for channel + createdAt, then reload.</span></div>';
+    setStatus('Chat unavailable • deploy Firestore index for latest-100 ordering.',true);
   };
 
   stopMessages=onSnapshot(indexedQuery,snap=>{
@@ -768,7 +753,7 @@ function subscribeMessages(){
     renderChatSnapshotReal(snap,channelValue,'realtime');
   },err=>{
     console.error('[TUBAL HUB chat indexed query]',err);
-    startFallback();
+    showIndexRequiredState();
   });
 }
 function setActiveChannelReal(channel){
