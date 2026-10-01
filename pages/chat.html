@@ -765,7 +765,21 @@ async function subscribePresence(){
     render();
   };
 
-  stopPresence=onSnapshot(query(presenceRef),readPresence,err=>console.error('[TUBAL HUB presence]',err));
+  const onlineQuery=query(
+    presenceRef,
+    where('online','==',true),
+    limit(100)
+  );
+  stopPresence=onSnapshot(onlineQuery,readPresence,err=>{
+    console.error('[TUBAL HUB presence]',err);
+    // Compatibility fallback for older Presence records / deployments.
+    stopPresence=onSnapshot(query(presenceRef),readPresence,fallbackError=>{
+      console.error('[TUBAL HUB presence fallback]',fallbackError);
+      onlineCount.textContent='0';
+      onlineMembers.textContent='0';
+      memberList.innerHTML='<div class="empty-side">Online members are temporarily unavailable.</div>';
+    });
+  });
 }
 function dmTime(ts){
   const d=ts?.toDate?ts.toDate():(typeof ts==='number'?new Date(ts):null);
