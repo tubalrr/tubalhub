@@ -116,14 +116,22 @@ async function requireChatAccessReal(request) {
 
 function secureChatTextReal(value) {
   const raw = String(value || "").trim();
-  if (/(?:\\bjavascript|\\bvbscript)\\s*:/i.test(raw)
-      || /\\bdata\\s*:\\s*(?:text\\/html|image\\/svg\\+xml)/i.test(raw)) {
+  const lower = raw.toLowerCase();
+
+  if (
+    lower.includes("javascript:") ||
+    lower.includes("vbscript:") ||
+    lower.includes("data:text/html") ||
+    lower.includes("data:image/svg+xml")
+  ) {
     throw new HttpsError("invalid-argument", "Unsafe link content is not allowed.");
   }
-  const urls = raw.match(/\\bhttps?:\\/\\/\\S+/gi) || [];
+
+  const urls = raw.match(new RegExp("https?://", "gi")) || [];
   if (urls.length > 5) {
     throw new HttpsError("resource-exhausted", "Too many links in one message.");
   }
+
   return raw;
 }
 
