@@ -60,7 +60,8 @@ function hubItem(x){
     url:x.productUrl||"",productUrl:x.productUrl||"",price:x.price??"",stock:x.stock??"",author:x.authorName||"Member",
     photo:x.authorPhotoURL||"",uid:x.createdBy||"",createdAt:x.createdAt||0,likes:Number(x.likes||0),comments:Number(x.comments||0),
     shares:Number(x.shares||0),sponsored:x.sponsored===true,sourceCollection:x.sourceCollection||"",sourceId:x.sourceId||x.id,
-    destinations:Array.isArray(x.destinations)?x.destinations:[],contentType:kind};
+    destinations:Array.isArray(x.destinations)?x.destinations:[],contentType:kind,
+    free:x.free===true||x.isFree===true||String(x.price??"").trim().toLowerCase()==="free"||Number(x.price)===0};
 }
 function contentKey(x){return x.sourceCollection&&x.sourceId?x.sourceCollection+":"+x.sourceId:x.type+":"+x.id}
 const games=[
@@ -74,7 +75,7 @@ const games=[
  ["Cities: Skylines","CS • Simulation","https://www.paradoxinteractive.com/games/cities-skylines/about",""],
  ["Transport Fever 2","TF2 • Strategy","https://www.transportfever2.com/",""]
 ];
-function gameItem(g){return{id:"game-"+g[0].toLowerCase().replace(/[^a-z0-9]+/g,"-"),type:"game",title:g[0],description:g[1],image:g[3],url:g[2],createdAt:0,author:"CTRLZONE",likes:0,shares:0}}
+function gameItem(g){return{id:"game-"+g[0].toLowerCase().replace(/[^a-z0-9]+/g,"-"),type:"game",title:g[0],description:g[1],image:g[3],url:g[2],createdAt:0,author:"CTRLZONE",likes:0,shares:0,free:g[4]===true}}
 function normalizeProduct(s){
   const x=s.data();return{id:"product-"+s.id,type:"product",title:x.name||x.title||"Product",description:x.description||"",
   image:x.imageURL||x.imageUrl||x.image||x.thumbnailUrl||"",price:x.price??"",stock:x.stock??"",createdAt:x.createdAt||0,
