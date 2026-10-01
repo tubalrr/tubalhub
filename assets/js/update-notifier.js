@@ -353,10 +353,33 @@
       const db = getFirestore();
       const snap = await getDoc(doc(db, "systemSettings", "updateRelease"));
       return snap.exists() ? snap.data() : null;
-    } catch (error) {
-      console.warn("[TUBAL HUB scheduled updater]", error);
+    } catch (_) {
+      // Firebase scheduling is optional. Website version checking must
+      // continue even when Firestore rules/auth are unavailable.
       return null;
     }
+  }
+
+  function scheduleFreshReload(version) {
+    const reloadKey = "tubalhub_auto_reload_version";
+    try {
+      if (localStorage.getItem(reloadKey) === String(version)) return;
+      localStorage.setItem(reloadKey, String(version));
+    } catch (_) {}
+    document.dispatchEvent(new CustomEvent("tubalhub:live-update", {
+      detail: { version: String(version) }
+    }));
+    clearTimeout(autoReloadTimer);
+    autoReloadTimer = setTimeout(() => {
+      try {
+        const url = new URL(window.location.href);
+        url.searchParams.set("v", String(version));
+        url.searchParams.set("update", String(Date.now()));
+        window.location.replace(url.href);
+      } catch (_) {
+        try { window.location.reload(); } catch (_) {}
+      }
+    }, 1800);
   }
 
   function applyReleaseGate(data, release) {
@@ -392,29 +415,41 @@
   async function poll() {
     if (!updatesEnabled()) return;
     try {
-      const data = await fetchVersion();
-      const pageVersion = await fetchPageVersion();
-      const release = await fetchReleaseConfig();
-      const gated = applyReleaseGate(data, release);
+  async function fetchReleaseConfig() {
+    try {
+      const mod = await import("./firebase-config.js");
+      const { getFirestore, doc, getDoc } = await import("https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js");
+      const db = getFirestore();
+      const snap = await getDoc(doc(db, "systemSettings", "updateRelease"));
+      return snap.exists() ? snap.data() : null;
+    } catch (_) {
+      // Firebase scheduling is optional. Website version checking must
+      // continue even when Firestore rules/auth are unavailable.
+      return null;
+    }
+  }
 
-      // GitHub Pages can keep the already-open HTML/JS build in memory.
-      // Compare the server's fresh index.html version with the manifest so
-      // a new release is detected even when version.json itself is already new.
-      if (gated && pageVersion && String(pageVersion) !== String(gated.version)) {
-        const reloadKey = "tubalhub_auto_reload_version";
-        let alreadyScheduled = false;
-        try { alreadyScheduled = localStorage.getItem(reloadKey) === gated.version; } catch (_) {}
-        if (!alreadyScheduled) {
-          try { localStorage.setItem(reloadKey, gated.version); } catch (_) {}
-          document.dispatchEvent(new CustomEvent("tubalhub:live-update", {
-            detail: { version: gated.version, data: gated, pageVersion }
-          }));
-          clearTimeout(autoReloadTimer);
-          autoReloadTimer = setTimeout(() => {
-            try { window.location.reload(); } catch (_) {}
-          }, 1800);
-        }
+  function scheduleFreshReload(version) {
+    const reloadKey = "tubalhub_auto_reload_version";
+    try {
+      if (localStorage.getItem(reloadKey) === String(version)) return;
+      localStorage.setItem(reloadKey, String(version));
+    } catch (_) {}
+    document.dispatchEvent(new CustomEvent("tubalhub:live-update", {
+      detail: { version: String(version) }
+    }));
+    clearTimeout(autoReloadTimer);
+    autoReloadTimer = setTimeout(() => {
+      try {
+        const url = new URL(window.location.href);
+        url.searchParams.set("v", String(version));
+        url.searchParams.set("update", String(Date.now()));
+        window.location.replace(url.href);
+      } catch (_) {
+        try { window.location.reload(); } catch (_) {}
       }
+    }, 1800);
+  }
       if (!gated) {
         currentData = null;
         setBellState(false);
@@ -439,13 +474,7 @@
 
         if (!alreadyScheduled) {
           try { localStorage.setItem(reloadKey, gated.version); } catch (_) {}
-          document.dispatchEvent(new CustomEvent("tubalhub:live-update", {
-            detail: { version: gated.version, data: gated }
-          }));
-          clearTimeout(autoReloadTimer);
-          autoReloadTimer = setTimeout(() => {
-            try { window.location.reload(); } catch (_) {}
-          }, 8000);
+          scheduleFreshReload(gated.version);
         } else {
           try {
             if (localStorage.getItem(reloadKey) === gated.version) {
