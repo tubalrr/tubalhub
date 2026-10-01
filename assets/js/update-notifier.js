@@ -32,6 +32,9 @@
   let waitingForBotAnnouncement = false;
   let pollInFlight = false;
   let bootReleaseKey = null;
+  let firstPollDone = false;
+  let firstPollResolve = null;
+  const firstPollPromise = new Promise(resolve => { firstPollResolve = resolve; });
 
   const $ = id => document.getElementById(id);
   const updatesEnabled = () => {
@@ -492,6 +495,13 @@
       console.warn("[TUBAL HUB update check]", error);
     } finally {
       pollInFlight = false;
+      if (!firstPollDone) {
+        firstPollDone = true;
+        try { firstPollResolve?.({version:currentData?.version||null,data:currentData}); } catch (_) {}
+        document.dispatchEvent(new CustomEvent("tubalhub:update-check-complete", {
+          detail: {version:currentData?.version||null,data:currentData}
+        }));
+      }
     }
   }
 
@@ -596,6 +606,7 @@
   window.tubalHubUpdateNotifier.open = openModal;
   window.tubalHubUpdateNotifier.markSeen = markSeenAndClose;
   window.tubalHubUpdateNotifier.checkNow = poll;
+  window.tubalHubUpdateNotifier.ready = firstPollPromise;
 
   async function init() {
     try {
