@@ -1,11 +1,12 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.2.96",
-  "build": "2026-10-01_0920",
-  "releasedAtReal": "2026-10-01T01:20:00.000Z",
+  "version": "1.2.97",
+  "build": "2026-10-01_0935",
+  "releasedAtReal": "2026-10-01T01:35:00.000Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.2.97 FEAT — Moved the Welcome Bot from the top bar into the Hero, replaced its visual with the supplied robot image, and made its spoken explanations appear directly in the Hero dialogue panel.",
     "v1.2.96 FIX — Reduced the oversized 3D Hero bot significantly while preserving its walking, floating, presenting, waving, and return animations.",
     "v1.2.95 FIX — Hero reference layout corrected for desktop/tablet viewports, including DevTools-docked widths. The full-width hero now keeps the copy, 3D bot, and showcase panel in the intended horizontal composition.",
     "v1.2.94 FEAT — Reworked the Hero showcase itself into a living UI display. Each branch now has a different mini interface design (wellness, shop, gaming, feeds, AI music, LifeHub, and core) with its own continuous animated elements and a smooth 3D morph between designs.",
