@@ -200,6 +200,9 @@ let reactionSnapshotReady=false;
 let reactionStopFnsReal=[];
 let reactionSubscriptionKeyReal='';
 let reactionChunkDocsReal=new Map();
+let replyStopFnsReal=[];
+let replySubscriptionKeyReal='';
+let replyChunkDocsReal=new Map();
 
 function clearReactionSubscriptionsReal(){
   reactionStopFnsReal.forEach(stop=>{try{stop()}catch(_){ }});
@@ -487,7 +490,85 @@ function subscribeReactions(){
   stopReactions=()=>clearReactionSubscriptionsReal();
   refreshReactionSubscriptionsReal();
 }
-function subscribeReplies(){if(stopReplies)stopReplies();const q=query(collection(db,'globalChatReplies'),orderBy('createdAt','asc'),limit(500));stopReplies=onSnapshot(q,snap=>{document.querySelectorAll('.reply-box').forEach(x=>x.innerHTML='');snap.forEach(d=>{const x=d.data(),root=x.messageId,box=document.getElementById(`replies-${root}`);if(!box)return;const item=document.createElement('div');item.className='reply-item'+(x.parentReplyId?' nested-reply':'');item.dataset.replyId=d.id;item.innerHTML=`<div class="reply-meta"><b class="private-member-name">${esc(x.displayName||'Member')}</b> • ${esc(timeText(x.createdAt))}</div><div class="reply-text">${esc(x.text)}</div><div class="reply-actions"><button type="button" class="reply-react-btn" title="React">😊</button><button type="button" class="reply-to-reply">↩ Reply</button></div><div class="reply-reaction-bar"></div>`;item.querySelector('.reply-to-reply').onclick=e=>{e.stopPropagation();setReplyTarget(root,x.displayName||'Member',String(x.text||'').slice(0,100),d.id)};item.querySelector('.reply-react-btn').onclick=e=>{e.stopPropagation();openReplyReactionMenu(e.currentTarget,d.id)};renderReplyReactions(item,d.id);box.appendChild(item)});refreshReactionSubscriptionsReal();},err=>console.error('Reply error',err))}
+function clearReplySubscriptionsReal(){
+  replyStopFnsReal.forEach(stop=>{try{stop()}catch(_){ }});
+  replyStopFnsReal=[];
+  replyChunkDocsReal.clear();
+}
+
+function renderLoadedRepliesReal(){
+  document.querySelectorAll('.reply-box').forEach(x=>x.innerHTML='');
+
+  const allReplies=[];
+  replyChunkDocsReal.forEach(docs=>docs.forEach(x=>allReplies.push(x)));
+  allReplies.sort((a,b)=>{
+    const am=a.data?.createdAt?.toMillis?.()??a.data?.createdAt?.toDate?.()?.getTime?.()??Number(a.data?.createdAt||0);
+    const bm=b.data?.createdAt?.toMillis?.()??b.data?.createdAt?.toDate?.()?.getTime?.()??Number(b.data?.createdAt||0);
+    return am-bm||a.id.localeCompare(b.id);
+  });
+
+  allReplies.forEach(({id,d})=>{
+    const x=d,root=x.messageId,box=document.getElementById(`replies-${root}`);
+    if(!box)return;
+    const item=document.createElement('div');
+    item.className='reply-item'+(x.parentReplyId?' nested-reply':'');
+    item.dataset.replyId=id;
+    item.innerHTML=`<div class="reply-meta"><b class="private-member-name">${esc(x.displayName||'Member')}</b> • ${esc(timeText(x.createdAt))}</div><div class="reply-text">${esc(x.text)}</div><div class="reply-actions"><button type="button" class="reply-react-btn" title="React">😊</button><button type="button" class="reply-to-reply">↩ Reply</button></div><div class="reply-reaction-bar"></div>`;
+    item.querySelector('.reply-to-reply').onclick=e=>{e.stopPropagation();setReplyTarget(root,x.displayName||'Member',String(x.text||'').slice(0,100),id)};
+    item.querySelector('.reply-react-btn').onclick=e=>{e.stopPropagation();openReplyReactionMenu(e.currentTarget,id)};
+    renderReplyReactions(item,id);
+    box.appendChild(item);
+  });
+
+  refreshReactionSubscriptionsReal();
+}
+
+function refreshReplySubscriptionsReal(){
+  const messageIds=[...new Set(
+    [...document.querySelectorAll('.msg[data-id]')].map(el=>String(el.dataset.id||'').trim()).filter(Boolean)
+  )].sort();
+  const key=messageIds.join(',');
+  if(key===replySubscriptionKeyReal)return;
+  replySubscriptionKeyReal=key;
+
+  clearReplySubscriptionsReal();
+
+  const chunks=(ids,size=30)=>{
+    const out=[];
+    for(let i=0;i<ids.length;i+=size)out.push(ids.slice(i,i+size));
+    return out;
+  };
+  const batches=chunks(messageIds);
+
+  if(!batches.length){
+    renderLoadedRepliesReal();
+    return;
+  }
+
+  batches.forEach((ids,i)=>{
+    const q=query(
+      collection(db,'globalChatReplies'),
+      where('messageId','in',ids)
+    );
+    const stop=onSnapshot(q,snap=>{
+      const docs=[];
+      snap.forEach(d=>docs.push({id:d.id,data:d.data()}));
+      replyChunkDocsReal.set('r'+i,docs);
+      renderLoadedRepliesReal();
+    },err=>{
+      console.error('[TUBAL HUB reply query]',err);
+      replyChunkDocsReal.set('r'+i,[]);
+      renderLoadedRepliesReal();
+    });
+    replyStopFnsReal.push(stop);
+  });
+}
+
+function subscribeReplies(){
+  if(stopReplies)stopReplies();
+  stopReplies=()=>clearReplySubscriptionsReal();
+  refreshReplySubscriptionsReal();
+}
 function messageMillisReal(data){
   return data?.createdAt?.toMillis?.()
     ?? data?.createdAt?.toDate?.()?.getTime?.()
@@ -539,6 +620,7 @@ function renderLoadedChannelMessagesReal(options={}){
   });
 
   setStatus('Live • # '+activeChannelReal+' • '+docs.length+' loaded message'+(docs.length===1?'':'s'));
+  refreshReplySubscriptionsReal();
   refreshReactionSubscriptionsReal();
 
   window.dispatchEvent(new CustomEvent('tubalhub-chat-channel-loaded',{
