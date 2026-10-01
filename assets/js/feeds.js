@@ -18,7 +18,7 @@ const state={
   reactions:readLocal("tubalhub-feed-reactions",{}),comments:readLocal("tubalhub-feed-comments",{}),
   commentReactions:readLocal("tubalhub-feed-comment-reactions",{}),shareCounts:readLocal("tubalhub-feed-shares",{}),
   saved:new Set([...readLocal("tubalhub-feed-saved",[]),...getSavedItems().map(x=>x.id)]),filter:"all",query:"",sort:"latest",
-  page:0,pageSize:5,loading:false,savedMode:false,currentCommentId:null,commentLimit:6,
+  page:0,pageSize:5,loading:false,liveRefreshQueued:false,savedMode:false,currentCommentId:null,commentLimit:6,
   replyingTo:null,editingCommentId:null,deleteCommentId:null,emojiOffset:0,emojiQuery:"",
   postFile:null,commentPhotoData:""
 };
@@ -97,16 +97,31 @@ async function loadPeople(){
     renderContacts();renderBirthdays?.();updateAvatarStatus();renderActiveGames();renderSuggested();
   }catch(e){console.warn("[Feeds] people unavailable",e)}
 }
-function buildFeed(){
+function buildFeed(live=false){
   const raw=[...state.hubPosts.map(hubItem),...state.products,...games.map(gameItem)];
-  const seen=new Set();state.items=raw.filter(x=>{const k=contentKey(x);if(seen.has(k))return false;seen.add(k);return true});
+  const seen=new Set();
+  state.items=raw.filter(x=>{const k=contentKey(x);if(seen.has(k))return false;seen.add(k);return true});
+
+  if(live){
+    // Realtime updates must reconcile the existing DOM instead of resetting
+    // pagination, scroll position, or the number of already-loaded posts.
+    renderStories();
+    renderTrending();
+    if(state.loading){
+      state.liveRefreshQueued=true;
+      return;
+    }
+    renderFeedLive();
+    return;
+  }
+
   renderStories();renderFeatured();renderFeed(true);renderSponsored();renderTrending();renderActiveGames();renderSuggested();renderRecentlyViewed();
   openSharedTarget();
 }
 function visible(){
   let arr=state.items.filter(x=>!state.savedMode||state.saved.has(x.id));
   if(state.filter==="games")arr=arr.filter(x=>x.type==="game");
-  else if(state.filter==="free")arr=arr.filter(x=>x.type==="game" && (String(x.price??"").toLowerCase()==="" || String(x.price??"").toLowerCase()==="free" || Number(x.price)===0));
+  else if(state.filter==="free")arr=arr.filter(x=>x.free===true || String(x.price??"").trim().toLowerCase()==="free" || Number(x.price)===0);
   else if(state.filter==="today"){
     const start=new Date();start.setHours(0,0,0,0);
     arr=arr.filter(x=>millis(x.createdAt)>=start.getTime());
@@ -252,13 +267,102 @@ function renderStories(){
   });
   document.getElementById("createStory")?.addEventListener("click",openPostModal);
 }
+function postSignature(x){
+  return [
+    x.title,x.text,x.description,x.image,x.mediaUrl,x.productUrl,x.price,x.stock,
+    x.author,x.photo,x.likes,x.comments,x.shares,x.sponsored,x.createdAt
+  ].map(v=>String(v??"")).join("|");
+}
+function makePostNode(x){
+  const wrap=document.createElement("div");
+  wrap.innerHTML=postMarkup(x);
+  const node=wrap.firstElementChild;
+  node.dataset.signature=postSignature(x);
+  return node;
+}
+function firstVisiblePostAnchor(box){
+  const cards=[...box.querySelectorAll(".post-card")];
+  for(const card of cards){
+    const rect=card.getBoundingClientRect();
+    if(rect.bottom>0 && rect.top<window.innerHeight) return {id:card.dataset.id,top:rect.top};
+  }
+  return null;
+}
+function renderFeedLive(){
+  const list=visible(),box=document.getElementById("feedList");
+  if(!box)return;
+
+  const anchor=firstVisiblePostAnchor(box);
+  const loadedCount=Math.min(list.length,Math.max(state.page*state.pageSize,state.pageSize));
+  const desired=list.slice(0,loadedCount);
+  const desiredIds=new Set(desired.map(x=>x.id));
+  const existing=new Map([...box.querySelectorAll(".post-card")].map(node=>[node.dataset.id,node]));
+
+  // Remove stale cards without touching the user's pagination state.
+  existing.forEach((node,id)=>{
+    if(!desiredIds.has(id)) node.remove();
+  });
+
+  if(!desired.length){
+    box.querySelectorAll(".load-more-skeleton").forEach(node=>node.remove());
+    if(state.filter==="all" && !state.query && !state.savedMode){
+      box.innerHTML="<div class='feed-empty'><strong>No posts in your feed</strong><span>Published TUBAL HUB content will appear here.</span></div>";
+    }else{
+      box.innerHTML="<div class='feed-empty'><strong>No matching content</strong><span>Try another filter or search.</span></div>";
+    }
+    return;
+  }
+
+  box.querySelector(".feed-empty")?.remove();
+  box.querySelectorAll(".load-more-skeleton").forEach(node=>node.remove());
+
+  const frag=document.createDocumentFragment();
+  desired.forEach(item=>{
+    const current=existing.get(item.id);
+    if(current && current.dataset.signature===postSignature(item)){
+      frag.appendChild(current);
+    }else{
+      const next=makePostNode(item);
+      if(current) current.replaceWith(next);
+      frag.appendChild(next);
+    }
+  });
+  box.appendChild(frag);
+
+  box.querySelectorAll(".post-card").forEach(node=>{
+    if(!node.dataset.bound) bindPost(node);
+  });
+
+  // Keep the same visible post anchored when a new realtime item arrives.
+  if(anchor){
+    requestAnimationFrame(()=>{
+      const same=box.querySelector(".post-card[data-id='"+CSS.escape(anchor.id)+"']");
+      if(same){
+        const delta=same.getBoundingClientRect().top-anchor.top;
+        if(Math.abs(delta)>1) window.scrollBy(0,delta);
+      }
+    });
+  }
+}
 function renderFeed(reset){
   const list=visible(),box=document.getElementById("feedList");if(!box||state.loading)return;
   if(reset){state.page=0;box.innerHTML=""}
   const start=state.page*state.pageSize,slice=list.slice(start,start+state.pageSize);
   if(!slice.length&&state.page===0){box.innerHTML="<div class='feed-empty'><strong>No posts in your feed</strong><span>Published TUBAL HUB content will appear here.</span></div>";return}
   state.loading=true;const sk=document.createElement("div");sk.className="load-more-skeleton";sk.innerHTML="<div class='skeleton'></div>";box.appendChild(sk);
-  setTimeout(()=>{sk.remove();const frag=document.createDocumentFragment();slice.forEach(x=>{const wrap=document.createElement("div");wrap.innerHTML=postMarkup(x);frag.appendChild(wrap.firstElementChild)});box.appendChild(frag);state.page++;state.loading=false;bindPosts()},100);
+  setTimeout(()=>{
+    sk.remove();
+    const frag=document.createDocumentFragment();
+    slice.forEach(x=>frag.appendChild(makePostNode(x)));
+    box.appendChild(frag);
+    state.page++;
+    state.loading=false;
+    bindPosts();
+    if(state.liveRefreshQueued){
+      state.liveRefreshQueued=false;
+      renderFeedLive();
+    }
+  },100);
 }
 function renderContacts(){
   const box=document.getElementById("contactsList");if(!box)return;
@@ -643,7 +747,7 @@ async function loadRemoteReactions(){
   }catch(e){console.warn(e)}
 }
 function setupHubContent(){
-  try{stopHub=subscribeHubPosts(items=>{state.hubPosts=items;buildFeed()})}catch(e){console.warn("[Feeds] hub content unavailable",e)}
+  try{stopHub=subscribeHubPosts(items=>{state.hubPosts=items;buildFeed(true)})}catch(e){console.warn("[Feeds] hub content unavailable",e)}
 }
 async function setupPresence(){
   try{
