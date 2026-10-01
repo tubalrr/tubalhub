@@ -1123,3 +1123,22 @@ body.hub-home #bentoHero.th-corp-hero .th-hero-bot-sound{
     animation-duration:3.5s!important;
   }
 }
+
+
+/* HERO BOT — blend its visual surface into the exact Hero palette */
+body.hub-home #bentoHero.th-corp-hero .th-hero-bot-visual{
+  background:
+    radial-gradient(circle at 50% 42%,rgba(59,88,150,.055),transparent 48%),
+    radial-gradient(circle at 52% 62%,rgba(255,53,45,.035),transparent 66%),
+    linear-gradient(105deg,#111216 0%,#0d0f13 54%,#101016 100%)!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  background-color:#0d0f13!important;
+}
+body.hub-home #bentoHero.th-corp-hero .th-hero-bot-visual:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:radial-gradient(circle at 50% 52%,rgba(72,169,255,.045),transparent 52%);
+}
