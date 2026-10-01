@@ -12,6 +12,7 @@ const { createHash } = require("crypto");
 initializeApp();
 const db = getFirestore();
 const GITHUB_TOKEN = defineSecret("GITHUB_TOKEN");
+const CHAT_CORS_OPTIONS = { cors: ["https://tubalrr.github.io"] };
 
 const BANNED_WORDS_REAL = [
   "fuck", "fucking", "shit", "bitch", "asshole", "bastard", "damn",
@@ -457,7 +458,7 @@ exports.moderatePrivateChatReal = onDocumentCreated("messages/{messageId}", asyn
   }
 });
 
-exports.sendMessageReal = onCall(async request => {
+exports.sendMessageReal = onCall(CHAT_CORS_OPTIONS, async request => {
   requireChatAccessReal(request);
 
   const textReal = secureChatTextReal((request.data && (request.data.text || request.data.textReal)) || "");
@@ -536,7 +537,7 @@ exports.sendMessageReal = onCall(async request => {
   };
 });
 
-exports.sendGlobalMediaMessageReal = onCall(async request => {
+exports.sendGlobalMediaMessageReal = onCall(CHAT_CORS_OPTIONS, async request => {
   requireChatAccessReal(request);
 
   const type = String(request.data?.type || "");
@@ -620,7 +621,7 @@ exports.sendGlobalMediaMessageReal = onCall(async request => {
   return { success: true, id: ref.id, moderated: !!moderation.flagged };
 });
 
-exports.sendReplyReal = onCall(async request => {
+exports.sendReplyReal = onCall(CHAT_CORS_OPTIONS, async request => {
   requireChatAccessReal(request);
 
   const textReal = secureChatTextReal((request.data && (request.data.text || request.data.textReal)) || "");
@@ -1390,7 +1391,7 @@ function privateParticipant(data, uid) {
   return Array.isArray(data?.participants) && data.participants.includes(uid);
 }
 
-exports.updatePrivateMessageReal = onCall(async request => {
+exports.updatePrivateMessageReal = onCall(CHAT_CORS_OPTIONS, async request => {
   requireRealUser(request);
   const messageId = String(request.data?.messageId || "");
   const action = String(request.data?.action || "");
@@ -1488,7 +1489,7 @@ exports.updatePrivateMessageReal = onCall(async request => {
   }
 });
 
-exports.setPrivateTypingReal = onCall(async request => {
+exports.setPrivateTypingReal = onCall(CHAT_CORS_OPTIONS, async request => {
   requireRealUser(request);
   const receiverId = String(request.data?.receiverId || "");
   const typing = request.data?.typing === true;
@@ -1504,7 +1505,7 @@ exports.setPrivateTypingReal = onCall(async request => {
   return { success: true };
 });
 
-exports.getMessengerMembersReal = onCall(async request => {
+exports.getMessengerMembersReal = onCall(CHAT_CORS_OPTIONS, async request => {
   requireRealUser(request);
   const snap = await db.collection("users").limit(100).get();
   const members = snap.docs.map(doc => {
@@ -1518,7 +1519,7 @@ exports.getMessengerMembersReal = onCall(async request => {
   return { success: true, members };
 });
 
-exports.reportGlobalChatMessageReal = onCall(async request => {
+exports.reportGlobalChatMessageReal = onCall(CHAT_CORS_OPTIONS, async request => {
   requireRealUser(request);
   const messageId = String(request.data?.messageId || "").trim();
   const reason = String(request.data?.reason || "Other").trim().slice(0, 300);
@@ -1546,7 +1547,7 @@ exports.reportGlobalChatMessageReal = onCall(async request => {
   return { success: true, id, status: "open" };
 });
 
-exports.sendPrivateMessageReal = onCall(async request => {
+exports.sendPrivateMessageReal = onCall(CHAT_CORS_OPTIONS, async request => {
   requireRealUser(request);
 
   const textReal = String((request.data && (request.data.text || request.data.textReal)) || "").trim();
@@ -1658,7 +1659,7 @@ async function getGlobalChatMediaSettingsReal() {
   }
 }
 
-exports.getGlobalChatMediaStorageReal = onCall(async request => {
+exports.getGlobalChatMediaStorageReal = onCall(CHAT_CORS_OPTIONS, async request => {
   requireRealUser(request);
   const uid = request.auth.uid;
   const settings = await getGlobalChatMediaSettingsReal();
@@ -1707,7 +1708,7 @@ exports.getGlobalChatMediaStorageReal = onCall(async request => {
   };
 });
 
-exports.deleteGlobalChatMediaReal = onCall(async request => {
+exports.deleteGlobalChatMediaReal = onCall(CHAT_CORS_OPTIONS, async request => {
   requireRealUser(request);
   const uid = request.auth.uid;
   const storagePath = String(request.data?.storagePath || "").trim();
@@ -1729,7 +1730,7 @@ exports.deleteGlobalChatMediaReal = onCall(async request => {
   return {success: true, storagePath};
 });
 
-exports.updateGlobalChatMediaSettingsReal = onCall(async request => {
+exports.updateGlobalChatMediaSettingsReal = onCall(CHAT_CORS_OPTIONS, async request => {
   requireAdminUser(request);
   const current = await getGlobalChatMediaSettingsReal();
   const maxFilesPerUser = Math.min(200, Math.max(1, Math.floor(Number(request.data?.maxFilesPerUser ?? current.maxFilesPerUser))));
@@ -1765,7 +1766,7 @@ async function recordCleanupStatsReal(data) {
   }, { merge: true });
 }
 
-exports.cleanupGlobalChatMediaReal = onCall(async request => {
+exports.cleanupGlobalChatMediaReal = onCall(CHAT_CORS_OPTIONS, async request => {
   requireRealUser(request);
 
   const uid = request.auth.uid;
