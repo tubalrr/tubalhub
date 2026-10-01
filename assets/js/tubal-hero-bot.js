@@ -721,7 +721,15 @@
     });
 
     window.setTimeout(async () => {
-      if (muted) return;
+      // Automatic Welcome Bot narration is triggered only by a successful login.
+      // Refreshes, tab returns, and update reloads do not trigger the tour.
+      let loginPending = false;
+      try {
+        loginPending = sessionStorage.getItem("tubalhub_bot_login_pending") === "1";
+        if (loginPending) sessionStorage.removeItem("tubalhub_bot_login_pending");
+      } catch (_) {}
+      if (!loginPending || muted) return;
+
       const latestMessage = await loadLatestWebsiteUpdate();
       await botConversation(latestMessage);
     }, 1400);
