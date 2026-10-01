@@ -179,7 +179,7 @@ const cleanupGlobalChatMediaFnReal=httpsCallable(functionsReal,'cleanupGlobalCha
 const getGlobalChatMediaStorageFnReal=httpsCallable(functionsReal,'getGlobalChatMediaStorageReal');
 const reportGlobalChatMessageFnReal=httpsCallable(functionsReal,'reportGlobalChatMessageReal');
 const deleteGlobalChatMediaFnReal=httpsCallable(functionsReal,'deleteGlobalChatMediaReal');
-const TUBAL_VERSION_REAL='1.3.24';
+const TUBAL_VERSION_REAL='1.3.27';
 const lock=document.getElementById('chatLock'),content=document.getElementById('chatContent'),messages=document.getElementById('messages'),form=document.getElementById('chatForm'),input=document.getElementById('messageInput'),sendButton=document.getElementById('sendButton'),statusEl=document.getElementById('chatStatus'),memberList=document.getElementById('memberList'),onlineCount=document.getElementById('onlineCount'),onlineMembers=document.getElementById('onlineMembers'),globalMessageCount=document.getElementById('globalMessageCount'),replyingBar=document.getElementById('replyingBar'),replyingName=document.getElementById('replyingName'),cancelReply=document.getElementById('cancelReply'),emojiPicker=document.getElementById('emojiPicker');
 let currentUser=null,stopMessages=null,heartbeatTimer=null,stopPresence=null,stopUsersPresence=null,heartbeatPresenceRefresh=null,stopBanStatus=null,stopReactions=null,stopReplies=null,stopDmList=null,replyTarget=null,lastMessageTime=0,reactionState={};
 let activeChannelReal="general";
@@ -1548,7 +1548,7 @@ document.addEventListener('visibilitychange',()=>{if(currentUser&&!document.hidd
 
 <script type="module" src="../assets/js/video-call.js?v=20260920-webRTC2"></script>
 
-<script src="../js/global-chat.js?v=20261001-chatflow4" defer></script>
+<script src="../js/global-chat.js?v=20261001-chatflow5" defer></script>
 <script src="../assets/js/theme.js?v=20260922" defer></script>
 <script src="../assets/js/global-chat-emoji.js?v=20260924-v4" defer></script>
 <script src="../assets/js/global-chat-gif-stickers.js?v=20260924-v1" defer></script>
