@@ -338,7 +338,7 @@
       const response = await fetch(rootUrl.href + "?page-version=" + Date.now(), {cache:"no-store"});
       if (!response.ok) return null;
       const html = await response.text();
-      const match = html.match(/id=["']liveVersion["'][^>]*>\\s*v?([0-9]+(?:\\.[0-9]+){1,3})\\s*<\\/b>/i);
+      const match = html.match(/id=["']liveVersion["'][^>]*>\s*v?([0-9]+(?:\.[0-9]+){1,3})\s*<\//i);
       return match ? match[1] : null;
     } catch (_) {
       return null;
