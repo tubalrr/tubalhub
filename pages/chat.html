@@ -796,7 +796,6 @@ async function subscribePresence(){
     where('online','==',true),
     limit(100)
   );
-  stopPresence=onSnapshot(onlineQuery,readPresence,err=>{
 
   const readPresence=snap=>{
     presenceMap=new Map();
@@ -805,6 +804,7 @@ async function subscribePresence(){
       presenceMap.set(x.uid||d.id,{...x,uid:x.uid||d.id});
     });
     render();
+
     if(!snap.docs.length && currentUser && !window.__tubalPresenceRetryReal){
       window.__tubalPresenceRetryReal=true;
       updatePresence(currentUser,true)
@@ -818,9 +818,9 @@ async function subscribePresence(){
     }
   };
 
-
+  stopPresence=onSnapshot(onlineQuery,readPresence,err=>{
     console.error('[TUBAL HUB presence]',err);
-    // Compatibility fallback for older Presence records / deployments.
+    // Bounded compatibility fallback for older Presence records/deployments.
     stopPresence=onSnapshot(query(presenceRef,limit(100)),readPresence,fallbackError=>{
       console.error('[TUBAL HUB presence fallback]',fallbackError);
       onlineCount.textContent='0';
