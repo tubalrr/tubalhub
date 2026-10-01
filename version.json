@@ -1,11 +1,12 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.2.98",
-  "build": "2026-10-01_1010",
-  "releasedAtReal": "2026-10-01T02:10:00.000Z",
+  "version": "1.2.99",
+  "build": "2026-10-01_1025",
+  "releasedAtReal": "2026-10-01T02:25:00.000Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.2.99 FEAT — Replaced the Hero robot image with a fully CSS/HTML-designed TUBAL robot with animated eyes, mouth, antenna, arms, legs, chest core, idle motion, walking-style movement, and talking animation.",
     "v1.2.98 FEAT — Hero robot now has visible hand-waving motion, talking mouth animation, automatic voice greeting, click-to-talk, and a live bot indicator.",
     "v1.2.97 FEAT — Moved the Welcome Bot from the top bar into the Hero, replaced its visual with the supplied robot image, and made its spoken explanations appear directly in the Hero dialogue panel.",
     "v1.2.96 FIX — Reduced the oversized 3D Hero bot significantly while preserving its walking, floating, presenting, waving, and return animations.",
