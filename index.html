@@ -34,7 +34,7 @@
 <link rel="stylesheet" href="assets/css/notification-search.css?v=1.2.55">
 <link rel="stylesheet" href="assets/css/mobile-browser-fix.css?v=1.2.55">
 <link rel="stylesheet" href="assets/css/home-overrides.css?v=20260930-tubaldark1" data-tubal-home-overrides>
-<link rel="stylesheet" href="assets/css/hero-reference.css?v=20261001-hero6" data-tubal-hero-reference>
+<link rel="stylesheet" href="assets/css/hero-reference.css?v=20261001-hero7" data-tubal-hero-reference>
 <link rel="stylesheet" href="assets/css/maintenance.css?v=1.2.55">
 <link rel="stylesheet" href="assets/css/tubal-main-bot.css?v=20260930-mainbot2">
 <link rel="stylesheet" href="assets/css/tubal-welcome-bot.css?v=20260930-welcome3">
@@ -142,28 +142,6 @@
       <button data-theme-btn="forest" class="theme-btn" title="Forest"><span class="dot"></span> Forest</button>
       <button data-theme-btn="light" class="theme-btn" title="Light"><span class="dot"></span> Light</button>
     </div>
-    <div class="tubal-welcome-bot" id="tubalMainBot" aria-label="TUBAL HUB Welcome Bot">
-  <button class="tubal-welcome-bot-toggle" id="tubalMainBotToggle" type="button" aria-expanded="false" aria-controls="tubalMainBotBubble" title="Welcome Bot">
-    <span class="tubal-welcome-avatar" aria-hidden="true">
-      <span class="tubal-bot-head"><i></i><i></i><b></b></span>
-      <span class="tubal-bot-body"></span>
-      <span class="tubal-bot-arm tubal-bot-arm-left"></span>
-      <span class="tubal-bot-arm tubal-bot-arm-right">👋</span>
-      <span class="tubal-welcome-reaction">✨</span>
-    </span>
-    <span class="tubal-welcome-label"><strong>Welcome Bot</strong><small id="tubalMainBotLatest" aria-live="polite">LATEST · —</small></span>
-    <span class="tubal-welcome-live" aria-hidden="true"></span>
-  </button>
-  <button class="tubal-welcome-sound" id="tubalMainBotSound" type="button" aria-label="Mute Welcome Bot voice" title="Mute Welcome Bot voice" aria-pressed="false">
-    <span class="tubal-speaker-on" aria-hidden="true">🔊</span>
-    <span class="tubal-speaker-off" aria-hidden="true">🔇</span>
-  </button>
-  <div class="tubal-welcome-bubble" id="tubalMainBotBubble" role="status" aria-live="polite">
-    <span class="tubal-main-bot-kicker">TUBAL HUB GUIDE</span>
-    <strong id="tubalMainBotTitle">Welcome to TUBAL HUB</strong>
-    <p id="tubalMainBotText">Your guide to the Hub, branches, rules, and latest update.</p>
-  </div>
-</div>
     <div class="search-box" id="tubalGlobalSearch" aria-label="Global search"><span>⌕</span><input id="searchInputReal" aria-label="Search TUBAL HUB" placeholder="Hanapin..." type="search" autocomplete="off" spellcheck="false"><kbd class="search-shortcut">⌘K</kbd></div>
     <div class="top-actions">
       <button id="videoBtnReal" class="tubal-video-btn-real" type="button" aria-label="Open TUBAL HUB Videos" aria-expanded="false" title="Tubal Hub Videos Real">📹</button>
@@ -198,8 +176,25 @@
     </div>
   </div>
 
-  
-  
+  <div class="th-hero-welcome-bot" id="tubalMainBot" aria-label="TUBAL HUB Welcome Bot">
+    <button class="th-hero-bot-visual" id="tubalMainBotToggle" type="button" aria-expanded="true" aria-controls="tubalMainBotBubble" title="TUBAL HUB Welcome Bot">
+      <span class="th-hero-bot-image" aria-hidden="true"></span>
+      <span class="th-hero-bot-status" aria-hidden="true"></span>
+    </button>
+
+    <div class="th-hero-bot-dialog" id="tubalMainBotBubble" role="status" aria-live="polite">
+      <span class="th-hero-bot-kicker">TUBAL HUB GUIDE</span>
+      <strong id="tubalMainBotTitle">Welcome to TUBAL HUB</strong>
+      <p id="tubalMainBotText">Your guide to the Hub, branches, rules, and latest updates.</p>
+      <small id="tubalMainBotLatest" aria-live="polite">LATEST · —</small>
+    </div>
+
+    <button class="th-hero-bot-sound tubal-welcome-sound" id="tubalMainBotSound" type="button" aria-label="Mute Welcome Bot voice" title="Mute Welcome Bot voice" aria-pressed="false">
+      <span class="tubal-speaker-on" aria-hidden="true">🔊</span>
+      <span class="tubal-speaker-off" aria-hidden="true">🔇</span>
+    </button>
+  </div>
+
   </section>
 <section class="th-corp-section th-value-section bento-span-12" aria-labelledby="thValueTitle">
   <div class="th-section-head">
@@ -614,7 +609,7 @@
 <script type="module" src="assets/js/auth-ui.js?v=20260930-logout1"></script>
 <script type="module" src="assets/js/home.js?v=1.2.87"></script>
 
-<script src="assets/js/tubal-main-bot.js?v=20260930-welcome5"></script>
+<script src="assets/js/tubal-main-bot.js?v=20261001-hero-bot1"></script>
 <script src="assets/js/tubal-hero-bot.js?v=1.2.94"></script>
 </body>
 <!-- pages-refresh -->
