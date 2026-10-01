@@ -1,11 +1,12 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.3.24",
-  "build": "2026-10-01_global-chat-send-diagnostic",
+  "version": "1.3.25",
+  "build": "2026-10-01_global-chat-cors-index-fix",
   "releasedAtReal": "2026-10-01T03:40:00.000Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.3.25 FIX — Global Chat callable endpoints now explicitly allow the GitHub Pages origin, and the latest-100 channel query uses the conventional createdAt DESC + limit(100) path with its matching composite index manifest.",
     "v1.3.24 FIX — Global Chat send failures now expose the exact Firebase callable error in the UI instead of the generic connection message, making undeployed/misconfigured Cloud Functions immediately identifiable.",
     "v1.3.23 FIX — Runtime audit found and corrected a Global Chat presence listener initialization bug and made media cleanup safe against ambiguous callable/network failures; cache keys were refreshed after the fixes.",
     "v1.3.22 FIX — Full Global Chat audit cleanup: removed the duplicate DM fallback, routed media creation through the secure callable instead of a forbidden direct Firestore write, removed unused composite indexes, bounded compatibility fallbacks, removed redundant 3-second ban polling, and made chat startup resilient to transient profile-read failures.",
@@ -838,5 +839,5 @@
     }
   ],
   "date": "2026-10-01",
-  "changes": "v1.3.24 FIX — Global Chat send diagnostics now expose the actual Firebase callable failure."
+  "changes": "v1.3.25 FIX — Global Chat send CORS and latest-message indexing were aligned with the production query path."
 }
