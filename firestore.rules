@@ -250,6 +250,16 @@ service cloud.firestore {
     }
 
     // =========================================================
+    // PRIVATE CONVERSATION SUMMARIES — SERVER GENERATED
+    // =========================================================
+
+    match /dmConversations/{conversationId} {
+      allow read: if realUser()
+        && request.auth.uid in resource.data.participants;
+      allow create, update, delete: if false;
+    }
+
+    // =========================================================
     // PRIVATE TYPING INDICATORS
     // =========================================================
     match /typing/{typingId} {
@@ -710,6 +720,15 @@ service cloud.firestore {
           'updatedBy'
         ]);
       allow delete: if false;
+    }
+
+    // =========================================================
+    // GLOBAL CHAT REPORTS — SERVER GENERATED / ADMIN REVIEW
+    // =========================================================
+
+    match /chatReports/{reportId} {
+      allow read: if adminUser();
+      allow create, update, delete: if false;
     }
 
     // =========================================================
