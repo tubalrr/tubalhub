@@ -621,13 +621,25 @@ const TUBAL_VERSION_REAL = "1.3.18";
         text: caption
       });
     } catch (error) {
-      // The Storage upload succeeded but the message was rejected. Remove the
-      // orphaned file immediately; the server-side function remains authoritative.
-      try {
-        const deleteMediaFn = api.httpsCallable(api.functions, "deleteGlobalChatMediaReal");
-        await deleteMediaFn({ storagePath: path });
-      } catch (cleanupError) {
-        console.warn("Global Chat orphan-media cleanup failed:", cleanupError);
+      // Only deterministic validation/authorization failures are safe to clean
+      // immediately. Network/internal errors may be ambiguous because the server
+      // could have written the message successfully; scheduled cleanup handles
+      // any resulting orphan without risking a valid media message.
+      const code = String(error?.code || "");
+      const deterministic = new Set([
+        "functions/invalid-argument",
+        "functions/permission-denied",
+        "functions/not-found",
+        "functions/failed-precondition",
+        "functions/resource-exhausted"
+      ]);
+      if (deterministic.has(code)) {
+        try {
+          const deleteMediaFn = api.httpsCallable(api.functions, "deleteGlobalChatMediaReal");
+          await deleteMediaFn({ storagePath: path });
+        } catch (cleanupError) {
+          console.warn("Global Chat orphan-media cleanup failed:", cleanupError);
+        }
       }
       throw error;
     }
