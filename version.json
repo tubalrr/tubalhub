@@ -1,11 +1,12 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.3.00",
-  "build": "2026-10-01_1115",
-  "releasedAtReal": "2026-10-01T03:15:00.000Z",
+  "version": "1.3.01",
+  "build": "2026-10-01_1122",
+  "releasedAtReal": "2026-10-01T03:22:00.000Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.3.01 FIX — Realtime Feeds updates now reconcile the existing DOM without resetting pagination or the loaded page, preserve the visible scroll anchor, and use explicit Free-content metadata instead of treating every game as free.",
     "v1.3.00 FIX — Main-page updater release marker refreshed so the updater can detect the latest Feeds UI changes and perform its automatic refresh flow.",
     "v1.2.99 FEAT — Replaced the Hero robot image with a fully CSS/HTML-designed TUBAL robot with animated eyes, mouth, antenna, arms, legs, chest core, idle motion, walking-style movement, and talking animation.",
     "v1.2.98 FEAT — Hero robot now has visible hand-waving motion, talking mouth animation, automatic voice greeting, click-to-talk, and a live bot indicator.",
@@ -814,5 +815,5 @@
     }
   ],
   "date": "2026-10-01",
-  "changes": "v1.3.00 FIX — Main-page updater release marker refreshed for the latest TUBAL HUB release."
+  "changes": "v1.3.01 FIX — Realtime Feed reconciliation and Free-filter correctness."
 }
