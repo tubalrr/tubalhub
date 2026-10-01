@@ -843,5 +843,5 @@
     }
   ],
   "date": "2026-10-01",
-  "changes": "v1.3.26 AUDIT — Global Chat deployment-state diagnostics and index/rules alignment."
+  "changes": "v1.3.29 RESTORE — Global Chat frontend and helper returned to the last proven working baseline before the recent index/dataflow refactor. Existing messages and Firebase data are untouched."
 }
