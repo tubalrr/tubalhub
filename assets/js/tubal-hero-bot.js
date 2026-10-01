@@ -640,6 +640,63 @@
       await speak(convo.close, bot, {presenting:true});
     }
 
+    let liveUpdateConversationBusy = false;
+
+    document.addEventListener("tubalhub:live-update", async event => {
+      if (liveUpdateConversationBusy) return;
+      const version = String(event.detail?.version || "").trim();
+      if (!version) return;
+
+      liveUpdateConversationBusy = true;
+      try {
+        const raw = event.detail?.data?.changelog || [];
+        let updates = raw
+          .map(item => item?.desc || item?.title || "")
+          .map(cleanUpdateForSpeech)
+          .filter(Boolean);
+
+        if (!updates.length) {
+          try {
+            const manifestUrl = new URL("version.json", document.baseURI).href;
+            const response = await fetch(manifestUrl + "?live-news=" + Date.now(), {cache:"no-store"});
+            if (response.ok) {
+              const data = await response.json();
+              if (Array.isArray(data.updatesReal)) {
+                updates = data.updatesReal.map(cleanUpdateForSpeech).filter(Boolean);
+              }
+            }
+          } catch (_) {}
+        }
+
+        const newsItems = updates.slice(0, 3);
+        const newsSummary = newsItems.length
+          ? newsItems.join(". ")
+          : "The latest release includes new features and improvements across the website.";
+
+        if (title) title.textContent = "NEW UPDATE · News Announcer";
+        if (text) text.textContent = "New update detected: Version " + version + ". The News Announcer will brief you before the page refreshes.";
+
+        if (!muted && speechAvailable) {
+          await speak(
+            "News alert. A new TUBAL HUB website update has been detected. The new version is " +
+            version +
+            ". Here are the latest changes: " +
+            newsSummary +
+            ". I have announced the update, and TUBAL HUB will now refresh automatically.",
+            announcerBot,
+            {presenting:true, pitch:1.04, rate:.86}
+          );
+        }
+      } catch (_) {
+        // Never allow update news errors to block the updater fallback.
+      } finally {
+        document.dispatchEvent(new CustomEvent("tubalhub:update-announce-complete", {
+          detail: {version}
+        }));
+        liveUpdateConversationBusy = false;
+      }
+    });
+
     if (sound) {
       sound.style.display = "grid";
       sound.addEventListener("click", e => {
