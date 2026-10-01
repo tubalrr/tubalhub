@@ -1,11 +1,12 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.3.06",
-  "build": "2026-10-01_soft-feeds-palette",
+  "version": "1.3.07",
+  "build": "2026-10-01_soft-feeds-palette2",
   "releasedAtReal": "2026-10-01T03:40:00.000Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.3.07 UI — Aligned the Feeds base design tokens with the softer palette so legacy surfaces also inherit light panels, muted slate borders, and gentler shadows.",
     "v1.3.06 UI — Reworked Feeds from bright neon green/purple/red accents into a softer slate-blue, muted lavender, sage, and warm-red palette for lower visual strain while preserving the existing structure and interactions.",
     "v1.3.05 REFACTOR — Consolidated the layered Feeds CSS refresh/eye-comfort/premium override sections into one authoritative UI layer, reducing duplicate selectors and override conflicts without changing the existing JS hooks.",
     "v1.3.04 FEAT — Feeds now uses Firestore cursor pagination for hub posts and products instead of loading the full dataset before frontend page slicing; older data is fetched only as the user reaches the end.",
@@ -820,5 +821,5 @@
     }
   ],
   "date": "2026-10-01",
-  "changes": "v1.3.06 UI — Softened Feeds colors to reduce eye strain."
+  "changes": "v1.3.07 UI — Feeds base color tokens fully aligned with the soft eye-comfort palette."
 }
