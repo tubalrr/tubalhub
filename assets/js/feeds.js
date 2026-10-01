@@ -64,6 +64,12 @@ function hubItem(x){
     free:x.free===true||x.isFree===true||String(x.price??"").trim().toLowerCase()==="free"||Number(x.price)===0};
 }
 function contentKey(x){return x.sourceCollection&&x.sourceId?x.sourceCollection+":"+x.sourceId:x.type+":"+x.id}
+function isFreeItem(x){
+  return x?.free===true ||
+    x?.isFree===true ||
+    String(x?.price??"").trim().toLowerCase()==="free" ||
+    (String(x?.price??"").trim()!=="" && Number(x?.price)===0);
+}
 const games=[
  ["Mobile Legends: Bang Bang","ML • MOBA","https://play.google.com/store/apps/details?id=com.mobile.legends","https://commons.wikimedia.org/wiki/Special:Redirect/file/Mobile_Legends_Logo.webp"],
  ["Honor of Kings","HOK • MOBA","https://www.honorofkings.com/","https://commons.wikimedia.org/wiki/Special:Redirect/file/Honor_of_Kings_Wordmark_Logo.png"],
@@ -80,7 +86,8 @@ function normalizeProduct(s){
   const x=s.data();return{id:"product-"+s.id,type:"product",title:x.name||x.title||"Product",description:x.description||"",
   image:x.imageURL||x.imageUrl||x.image||x.thumbnailUrl||"",price:x.price??"",stock:x.stock??"",createdAt:x.createdAt||0,
   author:x.shopName||x.authorName||"TUBAL HUB Shop",uid:x.createdBy||"",likes:Number(x.likes||0),shares:Number(x.shares||0),
-  sponsored:x.sponsored===true,sourceCollection:"products",sourceId:s.id,url:x.productUrl||"",productUrl:x.productUrl||""}
+  sponsored:x.sponsored===true,free:x.free===true||x.isFree===true||String(x.price??"").trim().toLowerCase()==="free"||(String(x.price??"").trim()!==""&&Number(x.price)===0),
+  sourceCollection:"products",sourceId:s.id,url:x.productUrl||"",productUrl:x.productUrl||""}
 }
 async function loadProducts(){
   try{const snap=await getDocs(query(collection(db,"products"),orderBy("createdAt","desc"),limit(100)));state.products=snap.docs.map(normalizeProduct)}
@@ -122,7 +129,7 @@ function buildFeed(live=false){
 function visible(){
   let arr=state.items.filter(x=>!state.savedMode||state.saved.has(x.id));
   if(state.filter==="games")arr=arr.filter(x=>x.type==="game");
-  else if(state.filter==="free")arr=arr.filter(x=>x.free===true || String(x.price??"").trim().toLowerCase()==="free" || Number(x.price)===0);
+  else if(state.filter==="free")arr=arr.filter(isFreeItem);
   else if(state.filter==="today"){
     const start=new Date();start.setHours(0,0,0,0);
     arr=arr.filter(x=>millis(x.createdAt)>=start.getTime());
@@ -761,6 +768,11 @@ async function setupPresence(){
 function setupUI(){
   if(uiReady)return;uiReady=true;
   document.body.addEventListener("pointermove",e=>{document.body.style.setProperty("--mx",e.clientX+"px");document.body.style.setProperty("--my",e.clientY+"px");const card=e.target.closest(".post-card,.feeds-panel,.feed-toolbar");if(card){const r=card.getBoundingClientRect();card.style.setProperty("--card-mx",((e.clientX-r.left)/Math.max(1,r.width)*100)+"%");card.style.setProperty("--card-my",((e.clientY-r.top)/Math.max(1,r.height)*100)+"%")}}, {passive:true});
+  const freeFilter=document.querySelector('.feed-filter[data-filter="free"]');
+  if(freeFilter){
+    freeFilter.title="Free = content explicitly marked free or priced at ₱0.";
+    freeFilter.setAttribute("aria-label","Show free content: explicitly free or priced at zero");
+  }
   document.querySelectorAll(".feed-filter").forEach(b=>b.addEventListener("click",()=>{
     state.savedMode=false;
     state.filter=b.dataset.filter||"all";
