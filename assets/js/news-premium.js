@@ -104,7 +104,7 @@ async function load(){
   const grid=document.getElementById("newsGrid");
   if(grid)grid.innerHTML="<div class='news-skeleton'><div class='news-skeleton-card'></div><div class='news-skeleton-card'></div><div class='news-skeleton-card'></div></div>";
   const mapNewsSnapshot=snap=>{
-    state.sourceNews=snap.docs.map(d=>({id:"news-"+d.id,sourceCollection:"news",sourceId:d.id,contentType:"news",title:d.data().title||"",text:d.data().text||d.data().summary||"",description:d.data().text||d.data().summary||"",imageUrl:d.data().imageUrl||d.data().image||"",createdAt:d.data().createdAt||0,authorName:d.data().authorName||"TUBAL HUB News",category:d.data().category||"platform",articleUrl:d.data().articleUrl||""}));
+    state.sourceNews=snap.docs.map(d=>({id:"news-"+d.id,sourceCollection:"news",sourceId:d.id,contentType:"news",title:d.data().title||"",text:d.data().text||d.data().summary||"",description:d.data().text||d.data().summary||"",body:d.data().body||"",imageUrl:d.data().imageUrl||d.data().image||"",createdAt:d.data().createdAt||0,authorName:d.data().authorName||"TUBAL HUB News",category:d.data().category||"platform",articleUrl:d.data().articleUrl||""}));
   };
   const merge=()=>{
     const hub=state.hubNews.filter(x=>Array.isArray(x.destinations)?x.destinations.includes("news"):x.contentType==="news").map(x=>({...x,id:"hub-"+x.id}));
