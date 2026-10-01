@@ -18,7 +18,7 @@
   const UPDATES_ENABLED_KEY = "tubalhub_notif_website_updates";
   const POLL_MS = 60000;
   const TOAST_MS = 6000;
-  const RELOAD_FALLBACK_MS = 15000;
+  const RELOAD_FALLBACK_MS = 90000;
 
   let loadedUi = false;
   let pollTimer = null;
@@ -413,8 +413,10 @@
     }));
 
     clearTimeout(autoReloadTimer);
-    // The News Announcer gets first chance to speak. If speech is blocked
-    // or the bot is unavailable, the hardened fallback reloads automatically.
+    // The News Announcer gets first chance to finish the full explanation.
+    // Only after the bot sends tubalhub:update-announce-complete does the
+    // normal reload happen. This timeout is only a safety fallback for cases
+    // where the bot script or browser speech engine never reports completion.
     autoReloadTimer = setTimeout(() => {
       waitingForBotAnnouncement = false;
       performFreshReload(String(version));
