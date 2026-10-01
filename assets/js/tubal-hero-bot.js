@@ -516,40 +516,48 @@
     }
 
     function getSiteTour(){
-      const links = [...document.querySelectorAll("a[href]")]
-        .map(a => (a.textContent || "").replace(/\\s+/g," ").trim())
-        .filter(Boolean);
-      const uniqueLinks = [...new Set(links)].slice(0, 24);
+      try{
+        const links = [...document.querySelectorAll("a[href]")]
+          .map(a => (a.textContent || "").replace(/\s+/g," ").trim())
+          .filter(Boolean);
+        const uniqueLinks = [...new Set(links)].slice(0, 24);
 
-      const headings = [...document.querySelectorAll("main h1, main h2, main h3")]
-        .map(h => (h.textContent || "").replace(/\\s+/g," ").trim())
-        .filter(Boolean);
-      const uniqueHeadings = [...new Set(headings)].slice(0, 16);
+        const headings = [...document.querySelectorAll("main h1, main h2, main h3")]
+          .map(h => (h.textContent || "").replace(/\s+/g," ").trim())
+          .filter(Boolean);
+        const uniqueHeadings = [...new Set(headings)].slice(0, 16);
 
-      const branches = [...document.querySelectorAll(".th-branch-card, .th-pillar")]
-        .map(card => {
-          const title = card.querySelector("strong,h3")?.textContent?.replace(/\\s+/g," ").trim();
-          const desc = card.querySelector("em,.th-pillar-description,.th-pillar-content p")?.textContent?.replace(/\\s+/g," ").trim();
-          return title ? (desc ? title + ", " + desc : title) : "";
-        })
-        .filter(Boolean);
+        const branches = [...document.querySelectorAll(".th-branch-card, .th-pillar")]
+          .map(card => {
+            const title = card.querySelector("strong,h3")?.textContent?.replace(/\s+/g," ").trim();
+            const desc = card.querySelector("em,.th-pillar-description,.th-pillar-content p")?.textContent?.replace(/\s+/g," ").trim();
+            return title ? (desc ? title + ", " + desc : title) : "";
+          })
+          .filter(Boolean);
 
-      const parts = [];
-      parts.push("TUBAL HUB is the main digital home connecting its services and experiences in one website.");
-      if (branches.length) parts.push("The main branches include " + [...new Set(branches)].slice(0, 6).join("; ") + ".");
-      parts.push("The website also includes Feeds, News, Global Chat, TUBAL DARK, Profiles, AI Music, Community, Events, Shop, About, Contact, Settings, LifeHub, and Personal OS.");
-      if (uniqueHeadings.length) parts.push("The homepage currently presents " + uniqueHeadings.slice(0, 10).join(", ") + ".");
-      if (uniqueLinks.length) parts.push("Visitors can navigate directly to " + uniqueLinks.slice(0, 14).join(", ") + ".");
-      return parts.join(" ");
+        const parts = [];
+        parts.push("TUBAL HUB is the main digital home connecting its services and experiences in one website.");
+        if (branches.length) parts.push("The main branches include " + [...new Set(branches)].slice(0, 6).join("; ") + ".");
+        parts.push("The website also includes Feeds, News, Global Chat, TUBAL DARK, Profiles, AI Music, Community, Events, Shop, About, Contact, Settings, LifeHub, and Personal OS.");
+        if (uniqueHeadings.length) parts.push("The homepage currently presents " + uniqueHeadings.slice(0, 10).join(", ") + ".");
+        if (uniqueLinks.length) parts.push("Visitors can navigate directly to " + uniqueLinks.slice(0, 14).join(", ") + ".");
+        return parts.join(" ");
+      }catch(_){
+        return "TUBAL HUB connects its main branches, community areas, shop, gaming experiences, wellness tools, music features, news, profiles, and personal spaces in one website.";
+      }
     }
 
     function cleanUpdateForSpeech(value){
-      return String(value || "")
-        .replace(/^v?\\d+(?:\\.\\d+){1,3}\\s*/i,"")
-        .replace(/^(FEAT|FIX|ADMIN|SECURITY|UI|BUILD|AUDIT|CLEANUP|REMOVE|REFACTOR)\\s*[—:-]?\\s*/i,"")
-        .replace(/https?:\\/\\/\\S+/g,"")
-        .replace(/\\s+/g," ")
-        .trim();
+      try{
+        return String(value || "")
+          .replace(/^v?\d+(?:\.\d+){1,3}\s*/i,"")
+          .replace(/^(FEAT|FIX|ADMIN|SECURITY|UI|BUILD|AUDIT|CLEANUP|REMOVE|REFACTOR)\s*[—:-]?\s*/i,"")
+          .replace(/https?:\/\/\S+/g,"")
+          .replace(/\s+/g," ")
+          .trim();
+      }catch(_){
+        return String(value || "").trim();
+      }
     }
 
     async function buildConversationData(latest){
@@ -557,7 +565,8 @@
       let version = "the latest version";
       let updates = [];
       try{
-        const res = await fetch("/tubalhub/version.json?conversation=" + Date.now(), {cache:"no-store"});
+        const manifestUrl = new URL("version.json", document.baseURI).href;
+        const res = await fetch(manifestUrl + "?conversation=" + Date.now(), {cache:"no-store"});
         if(res.ok){
           const data = await res.json();
           version = String(data.version || version);
