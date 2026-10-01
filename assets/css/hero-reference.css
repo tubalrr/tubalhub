@@ -811,3 +811,78 @@ body.hub-home #bentoHero.th-corp-hero .th-bot-progress{
 body.hub-home #bentoHero.th-corp-hero .th-bot-no-click{
   color:#687486!important;
 }
+
+
+/* =========================================================
+   HERO SLIDESHOW — COMPACT
+   Reduce the showcase card footprint without changing the
+   overall Hero composition.
+   ========================================================= */
+@media (min-width:601px){
+  body.hub-home #bentoHero.th-corp-hero .th-hero-bot-experience{
+    grid-template-columns:88px minmax(0,285px)!important;
+    justify-content:start!important;
+    gap:10px!important;
+  }
+
+  body.hub-home #bentoHero.th-corp-hero .th-bot-showcase{
+    width:285px!important;
+    height:205px!important;
+    min-height:205px!important;
+    padding:11px!important;
+    border-radius:15px!important;
+    align-self:center!important;
+  }
+
+  body.hub-home #bentoHero.th-corp-hero .th-bot-showcase-header strong{
+    font-size:14px!important;
+  }
+
+  body.hub-home #bentoHero.th-corp-hero .th-bot-showcase > p{
+    font-size:8px!important;
+    line-height:1.35!important;
+    margin:5px 0 7px!important;
+  }
+
+  body.hub-home #bentoHero.th-corp-hero .th-bot-screen{
+    height:82px!important;
+    min-height:82px!important;
+    border-radius:10px!important;
+  }
+}
+
+@media (min-width:601px) and (max-width:850px){
+  body.hub-home #bentoHero.th-corp-hero .th-hero-bot-experience{
+    grid-template-columns:68px minmax(0,235px)!important;
+  }
+
+  body.hub-home #bentoHero.th-corp-hero .th-bot-showcase{
+    width:235px!important;
+    height:185px!important;
+    min-height:185px!important;
+    padding:9px!important;
+  }
+
+  body.hub-home #bentoHero.th-corp-hero .th-bot-showcase-header strong{
+    font-size:12px!important;
+  }
+
+  body.hub-home #bentoHero.th-corp-hero .th-bot-screen{
+    height:70px!important;
+    min-height:70px!important;
+  }
+}
+
+@media (max-width:600px){
+  body.hub-home #bentoHero.th-corp-hero .th-bot-showcase{
+    width:auto!important;
+    height:180px!important;
+    min-height:180px!important;
+    padding:9px!important;
+  }
+
+  body.hub-home #bentoHero.th-corp-hero .th-bot-screen{
+    height:62px!important;
+    min-height:62px!important;
+  }
+}
