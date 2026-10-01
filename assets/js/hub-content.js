@@ -17,6 +17,7 @@ export async function publishHubPost(data){
     category:String(data.category||"").slice(0,80),
     price:String(data.price??"").slice(0,100),
     stock:String(data.stock??"").slice(0,80),
+    free:data.free===true||data.isFree===true,
     authorName:String(data.authorName||user.displayName||"Member").slice(0,120),
     authorPhotoURL:String(data.authorPhotoURL||user.photoURL||"").slice(0,3000),
     createdBy:user.uid,
