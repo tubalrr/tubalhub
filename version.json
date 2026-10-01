@@ -1,11 +1,12 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.3.29",
-  "build": "2026-10-01_v1.3.29-cache-cleanup",
+  "version": "1.3.30",
+  "build": "2026-10-01_global-chat-spark-direct",
   "releasedAtReal": "2026-10-01T10:00:00.000Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.3.30 FIX — Global Chat text sending is now Spark-compatible: direct Firestore client create with strict Firestore Rules validation; the text send no longer depends on sendMessageReal Cloud Functions.",
     "v1.3.29 CLEANUP — Removed stale version/cache markers from the live update path and refreshed the Service Worker cache key so old cached builds are retired.",
     "v1.3.28 RESTORE — Global Chat frontend restored to the last stable working baseline from before the recent dataflow/index refactor. Existing chat data is untouched; the page returns to the proven single-field channel query and original realtime presence flow.",
     "v1.3.27 AUDIT — Final repository alignment: the Global Chat frontend marker/cache is synchronized with the current backend CORS fix and query architecture; live Firebase deployment remains the only external state not verifiable from GitHub.",
@@ -843,5 +844,5 @@
     }
   ],
   "date": "2026-10-01",
-  "changes": "v1.3.29 CLEANUP — Removed stale version/cache markers from the live update path and refreshed the Service Worker cache key so old cached builds are retired."
+  "changes": "v1.3.30 FIX — Global Chat text sending unlocked for Firebase Spark Plan with direct Firestore writes and strict Firestore Rules."
 }
