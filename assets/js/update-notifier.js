@@ -28,6 +28,7 @@
   let modalOpen = false;
   let bootVersion = null;
   let autoReloadTimer = null;
+  let waitingForBotAnnouncement = false;
 
   const $ = id => document.getElementById(id);
   const updatesEnabled = () => localStorage.getItem(UPDATES_ENABLED_KEY) !== "0";
@@ -387,27 +388,51 @@
     }
   }
 
-  function scheduleFreshReload(version) {
+  function performFreshReload(version) {
+    try {
+      localStorage.setItem(LAST_SEEN_KEY, String(version));
+      localStorage.setItem(LEGACY_VERSION_KEY, String(version));
+      localStorage.removeItem(UPDATE_KEY);
+    } catch (_) {}
+    try {
+      const url = new URL(window.location.href);
+      url.searchParams.set("v", String(version));
+      url.searchParams.set("update", String(Date.now()));
+      window.location.replace(url.href);
+    } catch (_) {
+      try { window.location.reload(); } catch (_) {}
+    }
+  }
+
+  function scheduleFreshReload(version, data=null) {
     const reloadKey = "tubalhub_auto_reload_version";
     try {
       if (localStorage.getItem(reloadKey) === String(version)) return;
       localStorage.setItem(reloadKey, String(version));
     } catch (_) {}
+
+    waitingForBotAnnouncement = true;
     document.dispatchEvent(new CustomEvent("tubalhub:live-update", {
-      detail: { version: String(version) }
+      detail: { version: String(version), data }
     }));
+
     clearTimeout(autoReloadTimer);
+    // The News Announcer gets first chance to speak. If speech is blocked
+    // or the bot is unavailable, the hardened fallback reloads automatically.
     autoReloadTimer = setTimeout(() => {
-      try {
-        const url = new URL(window.location.href);
-        url.searchParams.set("v", String(version));
-        url.searchParams.set("update", String(Date.now()));
-        window.location.replace(url.href);
-      } catch (_) {
-        try { window.location.reload(); } catch (_) {}
-      }
-    }, 1800);
+      waitingForBotAnnouncement = false;
+      performFreshReload(String(version));
+    }, 15000);
   }
+
+  document.addEventListener("tubalhub:update-announce-complete", event => {
+    if (!waitingForBotAnnouncement) return;
+    const version = String(event.detail?.version || "");
+    if (!version) return;
+    waitingForBotAnnouncement = false;
+    clearTimeout(autoReloadTimer);
+    performFreshReload(version);
+  });
 
   function applyReleaseGate(data, release) {
     const testRaw = localStorage.getItem("tubalhub_updater_test_release");
@@ -471,7 +496,7 @@
         } catch (_) {}
 
         if (!alreadyScheduled) {
-          scheduleFreshReload(gated.version);
+          scheduleFreshReload(gated.version, gated);
         }
         return;
       }
@@ -485,7 +510,7 @@
       const changedWhileOpen = String(gated.version) !== String(bootVersion);
       if (changedWhileOpen) {
         showUpdate(gated);
-        scheduleFreshReload(gated.version);
+        scheduleFreshReload(gated.version, gated);
         bootVersion = gated.version;
       } else {
         currentData = gated;
