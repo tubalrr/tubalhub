@@ -792,38 +792,32 @@ function dmTime(ts){
   return same?d.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'}):d.toLocaleDateString([], {month:'short',day:'numeric'});
 }
 function deriveDmConversations(snapshot){
-  const me=currentUser?.uid;
+  const me=String(currentUser?.uid||'');
   if(!me)return [];
-  const map=new Map();
+  const list=[];
   snapshot.forEach(s=>{
-    const d=s.data();
-    const participants=Array.isArray(d.participants)?d.participants:[];
-    const otherId=String(d.senderId||'')===String(me)
-      ? (d.receiverId||participants.find(x=>x!==me))
-      : (d.senderId||participants.find(x=>x!==me));
-    if(!otherId||otherId===me)return;
-    const ts=d.createdAt?.toMillis?.()||0;
-    const prev=map.get(otherId);
-    if(!prev || ts>prev.ts)map.set(otherId,{uid:otherId,data:d,ts});
-    if(!map.has(otherId)||(!map.get(otherId).displayName && d.displayName)){
-      const cur=map.get(otherId)||{uid:otherId,data:d,ts};
-      cur.displayName=d.displayName||cur.displayName;
-      cur.photoURL=d.senderPhotoURL||d.photoURL||cur.photoURL;
-      map.set(otherId,cur);
-    }
+    const d=s.data()||{};
+    const participants=Array.isArray(d.participants)?d.participants.map(String):[];
+    const otherId=participants.find(x=>x!==me)||'';
+    if(!otherId)return;
+    const names=d.participantNames&&typeof d.participantNames==='object'?d.participantNames:{};
+    const photos=d.participantPhotos&&typeof d.participantPhotos==='object'?d.participantPhotos:{};
+    list.push({
+      uid:otherId,
+      displayName:String(names[otherId]||'Member'),
+      photoURL:String(photos[otherId]||''),
+      data:{
+        ...d,
+        createdAt:d.lastMessageAt||d.updatedAt||null,
+        text:d.lastMessagePreview||'',
+        type:d.lastMessageType||'text',
+        lastSenderId:String(d.lastSenderId||''),
+        unreadCount:Number(d.unreadCount||0)
+      },
+      ts:d.lastMessageAt?.toMillis?.()||d.updatedAt?.toMillis?.()||0
+    });
   });
-  // Second pass fills profile data from any actual message sent by the other participant.
-  snapshot.forEach(s=>{
-    const d=s.data();
-    const senderId=String(d.senderId||'');
-    if(!senderId||senderId===String(me))return;
-    const cur=map.get(senderId);
-    if(cur){
-      cur.displayName=cur.displayName||d.displayName||d.name||'';
-      cur.photoURL=cur.photoURL||d.senderPhotoURL||d.photoURL||'';
-    }
-  });
-  return [...map.values()].sort((a,b)=>b.ts-a.ts);
+  return list.sort((a,b)=>b.ts-a.ts);
 }
 function dmPreview(d){
   if(d.type==='image')return 'Sent an image';
