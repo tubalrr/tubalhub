@@ -168,7 +168,6 @@ import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-storage.js";
 
 const db=getFirestore(app), storage=getStorage(app), functionsReal=getFunctions(app);
-const sendMessageFnReal=httpsCallable(functionsReal,'sendMessageReal');
 const sendReplyFnReal=httpsCallable(functionsReal,'sendReplyReal');
 const sendPrivateMessageFnReal=httpsCallable(functionsReal,'sendPrivateMessageReal');
 const updatePrivateMessageFnReal=httpsCallable(functionsReal,'updatePrivateMessageReal');
@@ -177,7 +176,7 @@ const sendGlobalMediaFnReal=httpsCallable(functionsReal,'sendGlobalMediaMessageR
 const cleanupGlobalChatMediaFnReal=httpsCallable(functionsReal,'cleanupGlobalChatMediaReal');
 const getGlobalChatMediaStorageFnReal=httpsCallable(functionsReal,'getGlobalChatMediaStorageReal');
 const deleteGlobalChatMediaFnReal=httpsCallable(functionsReal,'deleteGlobalChatMediaReal');
-const TUBAL_VERSION_REAL='1.3.29';
+const TUBAL_VERSION_REAL='1.3.30';
 const lock=document.getElementById('chatLock'),content=document.getElementById('chatContent'),messages=document.getElementById('messages'),form=document.getElementById('chatForm'),input=document.getElementById('messageInput'),sendButton=document.getElementById('sendButton'),statusEl=document.getElementById('chatStatus'),memberList=document.getElementById('memberList'),onlineCount=document.getElementById('onlineCount'),onlineMembers=document.getElementById('onlineMembers'),globalMessageCount=document.getElementById('globalMessageCount'),replyingBar=document.getElementById('replyingBar'),replyingName=document.getElementById('replyingName'),cancelReply=document.getElementById('cancelReply'),emojiPicker=document.getElementById('emojiPicker');
 let currentUser=null,stopMessages=null,heartbeatTimer=null,stopPresence=null,stopUsersPresence=null,heartbeatPresenceRefresh=null,stopBanStatus=null,stopReactions=null,stopReplies=null,stopDmList=null,replyTarget=null,lastMessageTime=0,reactionState={};
 let activeChannelReal="general";
@@ -185,6 +184,86 @@ let latestChannelMessagesReal=[];
 let olderChannelMessagesReal=[],channelCursorReal=null,channelHasOlderReal=false,loadingOlderChannelMessagesReal=false;
 let privateTarget=null,stopPrivateMessages=null,stopPrivateTyping=null,privateLastMessageTime=0,privateReplyTarget=null,privateTypingTimer=null,privateTypingOffTimer=null;
 let pendingExternalImageUrlReal="";
+
+async function sendMessageClientReal(payload){
+  if(!currentUser || !isRealUser()) throw new Error('LOGIN_REQUIRED');
+
+  const requestedChannel=String(payload?.channel || activeChannelReal || 'general');
+  const channelMap={
+    general:'global-chat',
+    'payapang-isip':'payapang-isip',
+    ctrlzone:'ctrlzone',
+    'shop-talk':'shop-talk',
+    announcements:'announcements'
+  };
+  const channel=channelMap[requestedChannel];
+  if(!channel) throw new Error('INVALID_CHANNEL');
+
+  const text=String(payload?.text || '').trim();
+  if(!text) throw new Error('EMPTY_MESSAGE');
+  if(text.length>500) throw new Error('MESSAGE_TOO_LONG');
+
+  const limited=window.tubalHubChatGuardReal?.isRateLimitedReal?.(currentUser.uid)
+    ?? (Date.now()-lastMessageTime<2000);
+  if(limited) throw new Error('RATE_LIMIT');
+
+  const moderation=moderationResultReal(text);
+  if(!moderation.allowed){
+    moderationWarning();
+    const err=new Error('MODERATION_BLOCKED');
+    err.code='client/moderation-blocked';
+    throw err;
+  }
+
+  const name=String(
+    currentUser.displayName ||
+    currentUser.email?.split('@')[0] ||
+    'Member'
+  ).slice(0,120);
+
+  const photoURL=String(currentUser.photoURL || '').slice(0,2000);
+
+  let isAdmin=String(currentUser.email || '').toLowerCase()==='tubalrr@gmail.com';
+  try{
+    const tokenResult=await currentUser.getIdTokenResult();
+    isAdmin=tokenResult?.claims?.admin===true || isAdmin;
+  }catch(_){}
+
+  const docData={
+    uid:currentUser.uid,
+    displayName:name,
+    name,
+    photoURL,
+    createdAt:serverTimestamp(),
+    text:moderation.cleanText,
+    textReal:moderation.cleanText,
+    type:'text',
+    channel,
+    roleReal:isAdmin?'admin':'user',
+    verifiedReal:true
+  };
+
+  if(replyTarget){
+    docData.replyTo={
+      name:String(replyTarget.name||'Member').slice(0,120),
+      preview:String(replyTarget.preview||'').slice(0,160)
+    };
+  }
+
+  const ref=await addDoc(collection(db,'globalChats'),docData);
+  lastMessageTime=Date.now();
+
+  if(moderation.flagged){
+    showModerationNotice('⚠️ May salitang awtomatikong inayos bago ipadala.');
+  }
+
+  return {
+    success:true,
+    id:ref.id,
+    moderated:!!moderation.flagged,
+    cleanText:moderation.cleanText
+  };
+}
 const emojis=['😀','😂','😍','🥰','😎','😭','😡','😮','👍','👎','❤️','🔥','💯','🎮','🎉','👏','🤣','🤔','😅','🙌','💚','✨','👀','🙏','🥳','😴','🤝','🚀','💀','😇','😱','🤩','💪','🌿','⭐','🎯','🏆','❤️‍🔥','🫶','😊'];
 function enableMemberNameClick(){if(!memberList||memberList.dataset.privateClickReady)return;memberList.dataset.privateClickReady='1';memberList.addEventListener('click',e=>{const nameBtn=e.target.closest?.('.private-member-name');if(!nameBtn)return;const member=nameBtn.closest?.('.member');if(!member)return;const uid=member.dataset.uid;if(!uid||uid===currentUser?.uid)return;const name=nameBtn.textContent||'Member';const img=member.querySelector('.mini img');e.preventDefault();e.stopPropagation();openPrivateChat({uid,displayName:name,photoURL:img?.src||''})},true)}
 
@@ -911,7 +990,7 @@ async function sendMessage(payload){
   if(payload?.type==='text'){
     const cleanText=String(payload.text||'').trim();
     if(!cleanText)throw new Error('EMPTY_MESSAGE');
-    const result=await sendMessageFnReal({text:cleanText,channel});
+    const result=await sendMessageClientReal({text:cleanText,channel});
     lastMessageTime=Date.now();
     if(result?.data?.moderated)showModerationNotice('🛡️ Server moderation cleaned this message before publishing.');
     return result?.data;
