@@ -1604,22 +1604,29 @@ exports.sendPrivateMessageReal = onCall(async request => {
     moderatedBy: "server"
   });
 
-  await db.collection("dmConversations").doc(conversationId).set({
-    participants: [request.auth.uid, receiverId],
-    participantNames: {
-      [request.auth.uid]: name,
-      [receiverId]: String(receiverData.displayName || receiverData.name || receiverData.email || "Member").slice(0, 120)
-    },
-    participantPhotos: {
-      [request.auth.uid]: String(token.picture || receiverData.photoURL || "").slice(0, 2000),
-      [receiverId]: String(receiverData.photoURL || "").slice(0, 2000)
-    },
-    lastMessageAt: FieldValue.serverTimestamp(),
-    lastMessagePreview: moderation.cleanText.slice(0, 160),
-    lastMessageType: "text",
-    lastSenderId: request.auth.uid,
-    updatedAt: FieldValue.serverTimestamp()
-  }, { merge: true });
+  try {
+    await db.collection("dmConversations").doc(conversationId).set({
+      participants: [request.auth.uid, receiverId],
+      participantNames: {
+        [request.auth.uid]: name,
+        [receiverId]: String(receiverData.displayName || receiverData.name || receiverData.email || "Member").slice(0, 120)
+      },
+      participantPhotos: {
+        [request.auth.uid]: String(token.picture || receiverData.photoURL || "").slice(0, 2000),
+        [receiverId]: String(receiverData.photoURL || "").slice(0, 2000)
+      },
+      lastMessageAt: FieldValue.serverTimestamp(),
+      lastMessagePreview: moderation.cleanText.slice(0, 160),
+      lastMessageType: "text",
+      lastSenderId: request.auth.uid,
+      updatedAt: FieldValue.serverTimestamp()
+    }, { merge: true });
+  } catch (summaryError) {
+    logger.warn("Could not update DM conversation summary.", {
+      conversationId,
+      error: summaryError?.message || String(summaryError)
+    });
+  }
 
   return {
     success: true,
