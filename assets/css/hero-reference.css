@@ -721,3 +721,43 @@ body.hub-home #bentoHero.th-corp-hero + .th-value-section{
     height:225px!important;
   }
 }
+
+
+/* =========================================================
+   HERO 3D BOT — SCALE DOWN
+   Keep the animation/motion; reduce only the mascot footprint.
+   ========================================================= */
+@media (min-width:601px){
+  body.hub-home #bentoHero.th-corp-hero .th-hero-bot-experience{
+    grid-template-columns:100px minmax(0,1fr)!important;
+  }
+  body.hub-home #bentoHero.th-corp-hero .th-bot-stage{
+    height:325px!important;
+  }
+  body.hub-home #bentoHero.th-corp-hero .th-bot-3d{
+    transform:scale(.58)!important;
+    transform-origin:center bottom!important;
+  }
+  body.hub-home #bentoHero.th-corp-hero .th-bot-glow{
+    width:145px!important;
+    height:145px!important;
+  }
+  body.hub-home #bentoHero.th-corp-hero .th-bot-floor{
+    width:125px!important;
+  }
+}
+
+@media (min-width:601px) and (max-width:850px){
+  body.hub-home #bentoHero.th-corp-hero .th-hero-bot-experience{
+    grid-template-columns:78px minmax(0,1fr)!important;
+  }
+  body.hub-home #bentoHero.th-corp-hero .th-bot-3d{
+    transform:scale(.46)!important;
+  }
+}
+
+@media (max-width:600px){
+  body.hub-home #bentoHero.th-corp-hero .th-bot-3d{
+    transform:scale(.52)!important;
+  }
+}
