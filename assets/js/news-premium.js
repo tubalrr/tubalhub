@@ -648,7 +648,7 @@ async function toggleNewsReaction(x, emoji, button) {
 
   const d = reactionSummary(x.id);
   const previous = d.my;
-  const refId = encodeURIComponent(String(x.id)) + "_" + encodeURIComponent(state.user.uid);
+  const refId = String(x.id) + "_" + String(state.user.uid);
   const ref = doc(db, "newsReactions", refId);
 
   button?.classList.remove("is-pop");
