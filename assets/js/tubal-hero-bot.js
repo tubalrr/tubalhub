@@ -448,7 +448,7 @@
     const announcerBot = visual.querySelector(".th-announcer-bot");
     const bots = [bot, announcerBot];
     if (title) title.textContent = "Hello! Ako ang TUBAL HUB Bot";
-    const fallbackMessage = "Hello! Welcome sa TUBAL HUB. Ako ang interactive guide mo. Ipapakita ko ang latest website version at mga bagong features.";
+    const fallbackMessage = "Hello! Welcome to TUBAL HUB. I am your interactive guide. I will present the latest website version and new features.";
     let message = fallbackMessage;
     if (text) text.textContent = message;
     bubble.hidden = false;
@@ -468,8 +468,8 @@
         const latest = updates.slice(0, 4).map(clean).filter(Boolean);
         const latestText = latest.length
           ? latest.map((item, i) => (i + 1) + ". " + item).join(" ")
-          : String(data.changes || "May mga bagong improvements at fixes sa website.");
-        message = "Welcome sa TUBAL HUB. Ang current website version ay " + version + ". Narito ang latest updates. " + latestText;
+          : String(data.changes || "There are new improvements and fixes across the website.");
+        message = "Welcome to TUBAL HUB. The current website version is " + version + ". Here are the latest updates. " + latestText;
         if (text) text.textContent = "Version " + version + " • " + (latest[0] || "Latest website updates available.");
         return message;
       }catch(_){
@@ -519,14 +519,14 @@
       if (muted) return;
       const version = latest.match(/version ay ([0-9.]+)/i)?.[1] || "latest";
       await speak(
-        "Hello! Welcome sa TUBAL HUB. Ako ang Welcome Bot. Samahan mo kami habang ipinapakilala namin ang bagong update.",
+        "Hello! Welcome to TUBAL HUB. I am the Welcome Bot. Join us as we introduce the latest website update.",
         bot,
         {greeting:true}
       );
       if (muted) return;
       await new Promise(r => setTimeout(r, 350));
       await speak(
-        "Hello din! Ako naman ang TUBAL HUB Update Announcer. Ang current website version ay " + version + ". Pag-usapan natin ang mga bagong features at improvements.",
+        "Hello! I am the TUBAL HUB Update Announcer. The current website version is " + version + . Let us go through the latest features and improvements.,
         announcerBot,
         {greeting:true, pitch:1.04}
       );
@@ -536,7 +536,7 @@
       if (muted) return;
       await new Promise(r => setTimeout(r, 300));
       await speak(
-        "Salamat! Welcome sa bagong version ng TUBAL HUB. Patuloy naming ipapakita ang mga bagong features sa bawat update.",
+        "Thank you! Welcome to the latest version of TUBAL HUB. We will continue to introduce new features with every update.",
         bot,
         {presenting:true}
       );
