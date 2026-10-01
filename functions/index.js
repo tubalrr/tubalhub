@@ -1563,6 +1563,9 @@ exports.sendPrivateMessageReal = onCall(async request => {
 
   await enforceRateLimitReal(request.auth.uid);
 
+  const conversationId = [String(request.auth.uid), receiverId].sort().join("_");
+  const receiverSnap = await db.collection("users").doc(receiverId).get();
+  const receiverData = receiverSnap.exists ? (receiverSnap.data() || {}) : {};
   const name = displayNameFromRequest(request);
   const token = request.auth.token || {};
   const ref = await db.collection("messages").add({
@@ -1570,6 +1573,7 @@ exports.sendPrivateMessageReal = onCall(async request => {
     senderId: request.auth.uid,
     receiverId,
     participants: [request.auth.uid, receiverId],
+    conversationId,
     displayName: name,
     senderPhotoURL: token.picture || "",
     text: moderation.cleanText,
@@ -1591,6 +1595,23 @@ exports.sendPrivateMessageReal = onCall(async request => {
     verifiedReal: true,
     moderatedBy: "server"
   });
+
+  await db.collection("dmConversations").doc(conversationId).set({
+    participants: [request.auth.uid, receiverId],
+    participantNames: {
+      [request.auth.uid]: name,
+      [receiverId]: String(receiverData.displayName || receiverData.name || receiverData.email || "Member").slice(0, 120)
+    },
+    participantPhotos: {
+      [request.auth.uid]: String(token.picture || receiverData.photoURL || "").slice(0, 2000),
+      [receiverId]: String(receiverData.photoURL || "").slice(0, 2000)
+    },
+    lastMessageAt: FieldValue.serverTimestamp(),
+    lastMessagePreview: moderation.cleanText.slice(0, 160),
+    lastMessageType: "text",
+    lastSenderId: request.auth.uid,
+    updatedAt: FieldValue.serverTimestamp()
+  }, { merge: true });
 
   return {
     success: true,
