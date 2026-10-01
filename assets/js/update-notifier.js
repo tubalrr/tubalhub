@@ -629,6 +629,13 @@
         pollTimer=setInterval(poll,POLL_MS);
       } else {
         hideAllUi();
+        if (!firstPollDone) {
+          firstPollDone = true;
+          try { firstPollResolve?.({version:currentData?.version||null,data:currentData}); } catch (_) {}
+          document.dispatchEvent(new CustomEvent("tubalhub:update-check-complete", {
+            detail: {version:currentData?.version||null,data:currentData}
+          }));
+        }
       }
     } catch (error) {
       console.warn("[TUBAL HUB update notifier]",error);
