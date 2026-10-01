@@ -17,7 +17,7 @@
 .lock-wrap{padding:70px 25px;display:none}.lock-card{max-width:650px;margin:auto;text-align:center;padding:48px 30px;border:1px solid #1c8150;border-radius:18px;background:linear-gradient(145deg,#061711,#020a07);box-shadow:0 20px 55px #0009}.lock-icon{font-size:54px}.lock-card h2{font-size:30px;margin:12px 0 8px}.lock-card p{color:#99aaa1;line-height:1.7;font-size:14px}.lock-actions{display:flex;justify-content:center;gap:12px;margin-top:24px;flex-wrap:wrap}.lock-actions a{padding:13px 22px;border-radius:10px;font-weight:800}.login{background:#49fa73;color:#061108}.signup{border:1px solid #37634d;color:#c6dfcf}.status-msg{padding:9px 18px;color:#8da198;font-size:11px;border-bottom:1px solid #10271f}.status-msg.error{color:#ff8c8c}.footer{border-top:1px solid #123629;margin-top:15px;padding:18px 30px;display:flex;justify-content:space-between;color:#83928b;font-size:11px}.footer b{color:#dff6e6;font-size:16px}.footer span{margin-left:8px}.social{font-size:16px;letter-spacing:12px}
 @media(max-width:1100px){.topnav{gap:12px}.topnav a{font-size:12px}.layout{grid-template-columns:190px 1fr}.hero{padding-left:35px}.hero h1{font-size:45px}.hero-note{display:none}.chat-grid{grid-template-columns:1fr}.right{display:grid;grid-template-columns:1fr 1fr}.messages{height:440px}}
 @media(max-width:760px){.topbar{padding:0 12px}.brand{min-width:auto}.brand strong{font-size:17px}.brand small{display:none}.topnav,.profile-name,.profile .online{display:none}.profile{min-width:auto}.layout{display:block}.sidebar{display:none}.hero{height:170px;padding:22px}.hero h1{font-size:38px}.chat-grid{padding:10px}.right{display:flex}.right .panel{display:block}.right .panel:first-child #memberList{display:block}.right .panel:first-child .member{min-width:0;max-width:none;padding:7px 0;border:0;border-radius:0;background:transparent}.right .panel:not(:first-child){display:none}.chat-head{height:auto;gap:10px}.chat-title p{display:none}.count{padding:8px 10px}.messages{height:55vh}.composer{flex-wrap:wrap}.composer input{height:44px;order:2;flex-basis:100%}.send{height:44px}.footer{display:block;text-align:center;line-height:2}.social{margin-top:6px}.emoji-grid{grid-template-columns:repeat(6,34px)}}
-.moderation-notice{display:none;margin:10px 18px;padding:12px 14px;border:1px solid #ffb020;border-radius:10px;background:rgba(90,55,0,.22);color:#ffd98a;font-size:13px;font-weight:700;box-shadow:0 8px 24px #0005}.moderation-notice.show{display:block}.moderation-notice.danger{border-color:#ff5b5b;background:rgba(100,0,0,.22);color:#ffb1b1}
+.moderation-notice{display:none;margin:10px 18px;padding:12px 14px;border:1px solid #ffb020;border-radius:10px;background:rgba(90,55,0,.22);color:#ffd98a;font-size:13px;font-weight:700;box-shadow:0 8px 24px #0005}.moderation-notice.show{display:block}.load-older-chat-btn{display:block;width:calc(100% - 36px);margin:10px 18px 0;padding:9px 14px;border:1px solid #70ffe033;border-radius:10px;background:#70ffe00d;color:#70ffe0;font-weight:700;font-size:12px;cursor:pointer}.load-older-chat-btn:hover{background:#70ffe018;border-color:#70ffe055}.load-older-chat-btn:disabled{opacity:.6;cursor:wait}.moderation-notice.danger{border-color:#ff5b5b;background:rgba(100,0,0,.22);color:#ffb1b1}
 /* GLOBAL CHAT — ADVANCED MODERN UI */
 body{background:radial-gradient(circle at 75% 0%,#17345d55,transparent 30%),radial-gradient(circle at 25% 80%,#0b765333,transparent 28%),#03050b!important;color:#eef7f4}
 .topbar{height:68px!important;background:rgba(5,7,17,.78)!important;border-bottom:1px solid #ffffff12!important;backdrop-filter:blur(22px);box-shadow:0 12px 45px #0007!important}.topnav a{transition:.2s}.topnav a:hover{color:#70ffe0!important;transform:translateY(-1px)}.profile .online{color:#70ffe0}.avatar{border-color:#70ffe055!important;box-shadow:0 0 22px #70ffe01c}
@@ -96,6 +96,7 @@ body{background:radial-gradient(circle at 75% 0%,#17345d55,transparent 30%),radi
     </div>
     <div id="chatStatus" class="status-msg chat-connect"><span class="status-dot"></span>Connecting to TUBAL HUB...</div>
     <div id="moderationNotice" class="moderation-notice" role="alert" aria-live="assertive"></div>
+    <button id="loadOlderMessagesBtn" class="load-older-chat-btn" type="button" hidden>↑ Load older messages</button>
     <div class="messages chat-messages" id="messages"><div class="chat-build-marker-real" id="chatBuildMarkerReal">Today</div><div class="empty-chat"><strong>No messages yet.</strong>Start the first conversation in Global Chat.</div></div>
     <div id="replyingBar" class="replying"><span>Replying to <b id="replyingName"></b></span><button id="cancelReply" type="button">Cancel</button></div>
     <form class="composer chat-composer" id="chatForm">
@@ -162,7 +163,7 @@ body{background:radial-gradient(circle at 75% 0%,#17345d55,transparent 30%),radi
 <script type="module">
 import { app, auth } from "../assets/js/firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
-import { getFirestore, collection, addDoc, query, orderBy, limit, limitToLast, onSnapshot, doc, setDoc, getDoc, deleteDoc, serverTimestamp, where, updateDoc, getDocsFromServer } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, query, orderBy, limit, limitToLast, onSnapshot, doc, setDoc, getDoc, deleteDoc, serverTimestamp, where, updateDoc, getDocsFromServer, startAfter } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-functions.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-storage.js";
 
@@ -180,6 +181,8 @@ const TUBAL_VERSION_REAL='1.3.29';
 const lock=document.getElementById('chatLock'),content=document.getElementById('chatContent'),messages=document.getElementById('messages'),form=document.getElementById('chatForm'),input=document.getElementById('messageInput'),sendButton=document.getElementById('sendButton'),statusEl=document.getElementById('chatStatus'),memberList=document.getElementById('memberList'),onlineCount=document.getElementById('onlineCount'),onlineMembers=document.getElementById('onlineMembers'),globalMessageCount=document.getElementById('globalMessageCount'),replyingBar=document.getElementById('replyingBar'),replyingName=document.getElementById('replyingName'),cancelReply=document.getElementById('cancelReply'),emojiPicker=document.getElementById('emojiPicker');
 let currentUser=null,stopMessages=null,heartbeatTimer=null,stopPresence=null,stopUsersPresence=null,heartbeatPresenceRefresh=null,stopBanStatus=null,stopReactions=null,stopReplies=null,stopDmList=null,replyTarget=null,lastMessageTime=0,reactionState={};
 let activeChannelReal="general";
+let latestChannelMessagesReal=[];
+let olderChannelMessagesReal=[],channelCursorReal=null,channelHasOlderReal=false,loadingOlderChannelMessagesReal=false;
 let privateTarget=null,stopPrivateMessages=null,stopPrivateTyping=null,privateLastMessageTime=0,privateReplyTarget=null,privateTypingTimer=null,privateTypingOffTimer=null;
 let pendingExternalImageUrlReal="";
 const emojis=['😀','😂','😍','🥰','😎','😭','😡','😮','👍','👎','❤️','🔥','💯','🎮','🎉','👏','🤣','🤔','😅','🙌','💚','✨','👀','🙏','🥳','😴','🤝','🚀','💀','😇','😱','🤩','💪','🌿','⭐','🎯','🏆','❤️‍🔥','🫶','😊'];
@@ -413,21 +416,28 @@ function subscribeReactions(){
  },err=>console.error('Reaction error',err));
 }
 function subscribeReplies(){if(stopReplies)stopReplies();const q=query(collection(db,'globalChatReplies'),orderBy('createdAt','asc'),limit(500));stopReplies=onSnapshot(q,snap=>{document.querySelectorAll('.reply-box').forEach(x=>x.innerHTML='');snap.forEach(d=>{const x=d.data(),root=x.messageId,box=document.getElementById(`replies-${root}`);if(!box)return;const item=document.createElement('div');item.className='reply-item'+(x.parentReplyId?' nested-reply':'');item.dataset.replyId=d.id;item.innerHTML=`<div class="reply-meta"><b class="private-member-name">${esc(x.displayName||'Member')}</b> • ${esc(timeText(x.createdAt))}</div><div class="reply-text">${esc(x.text)}</div><div class="reply-actions"><button type="button" class="reply-react-btn" title="React">😊</button><button type="button" class="reply-to-reply">↩ Reply</button></div><div class="reply-reaction-bar"></div>`;item.querySelector('.reply-to-reply').onclick=e=>{e.stopPropagation();setReplyTarget(root,x.displayName||'Member',String(x.text||'').slice(0,100),d.id)};item.querySelector('.reply-react-btn').onclick=e=>{e.stopPropagation();openReplyReactionMenu(e.currentTarget,d.id)};renderReplyReactions(item,d.id);box.appendChild(item)});},err=>console.error('Reply error',err))}
-function renderChatSnapshotReal(snap, channelValue, sourceReal){
-  const docs=snap.docs
-    .map(d=>({id:d.id,data:d.data()}))
-    .filter(item=>item.data?.channel===channelValue)
-    .sort((a,b)=>{
-      const ta=a.data?.createdAt?.toMillis?.()
-        ?? a.data?.createdAt?.toDate?.()?.getTime?.()
-        ?? (typeof a.data?.createdAt==='number'?a.data.createdAt:0);
-      const tb=b.data?.createdAt?.toMillis?.()
-        ?? b.data?.createdAt?.toDate?.()?.getTime?.()
-        ?? (typeof b.data?.createdAt==='number'?b.data.createdAt:0);
-      return ta-tb || a.id.localeCompare(b.id);
-    })
-    .slice(-100);
+function messageMillisReal(data){
+  return data?.createdAt?.toMillis?.()
+    ?? data?.createdAt?.toDate?.()?.getTime?.()
+    ?? (typeof data?.createdAt==='number'?data.createdAt:0);
+}
 
+function mergeChannelMessagesReal(){
+  const seen=new Set();
+  return [...latestChannelMessagesReal,...olderChannelMessagesReal]
+    .filter(item=>{
+      if(seen.has(item.id))return false;
+      seen.add(item.id);
+      return true;
+    })
+    .sort((a,b)=>messageMillisReal(a.data)-messageMillisReal(b.data)||a.id.localeCompare(b.id));
+}
+
+function renderLoadedChannelMessagesReal(options={}){
+  const previousHeight=Number(options.previousHeight||0);
+  const previousTop=Number(options.previousTop||0);
+  const preserveTop=options.preserveTop===true;
+  const docs=mergeChannelMessagesReal();
   messages.innerHTML='<div class="chat-build-marker-real" id="chatBuildMarkerReal">Today</div>';
 
   if(!docs.length){
@@ -437,20 +447,77 @@ function renderChatSnapshotReal(snap, channelValue, sourceReal){
   }
 
   if(globalMessageCount)globalMessageCount.textContent=String(docs.length);
-
   document.querySelectorAll('.channel-count-real').forEach(el=>{
     if(el.dataset.channelCount===activeChannelReal)el.textContent=String(docs.length);
   });
 
-  messages.scrollTop=messages.scrollHeight;
-  setStatus('Live • # '+activeChannelReal+' • '+docs.length+' real message'+(docs.length===1?'':'s')+(sourceReal==='fallback'?' • fallback':''));
+  const btn=document.getElementById('loadOlderMessagesBtn');
+  if(btn){
+    btn.hidden=!channelHasOlderReal;
+    btn.disabled=loadingOlderChannelMessagesReal;
+    btn.textContent=loadingOlderChannelMessagesReal?'Loading older messages…':'↑ Load older messages';
+  }
+
+  requestAnimationFrame(()=>{
+    if(preserveTop){
+      messages.scrollTop=previousTop+(messages.scrollHeight-previousHeight);
+    }else{
+      messages.scrollTop=messages.scrollHeight;
+    }
+  });
+
+  setStatus('Live • # '+activeChannelReal+' • '+docs.length+' loaded message'+(docs.length===1?'':'s'));
   window.dispatchEvent(new CustomEvent('tubalhub-chat-channel-loaded',{
-    detail:{channel:activeChannelReal,count:docs.length,source:sourceReal}
+    detail:{channel:activeChannelReal,count:docs.length,source:options.sourceReal||'realtime'}
   }));
+}
+
+function renderChatSnapshotReal(snap, channelValue, sourceReal){
+  latestChannelMessagesReal=snap.docs.map(d=>({id:d.id,data:d.data()}));
+  if(!olderChannelMessagesReal.length){
+    channelCursorReal=snap.docs[snap.docs.length-1]||null;
+    channelHasOlderReal=snap.size===100;
+  }
+  renderLoadedChannelMessagesReal({sourceReal});
+}
+
+async function loadOlderMessagesReal(){
+  if(loadingOlderChannelMessagesReal||!channelHasOlderReal||!channelCursorReal||!currentUser)return;
+  loadingOlderChannelMessagesReal=true;
+  const previousHeight=messages.scrollHeight;
+  const previousTop=messages.scrollTop;
+  const channelValue=activeChannelReal==='general'?'global-chat':activeChannelReal;
+  try{
+    const snap=await getDocsFromServer(query(
+      collection(db,'globalChats'),
+      where('channel','==',channelValue),
+      orderBy('createdAt','desc'),
+      startAfter(channelCursorReal),
+      limit(100)
+    ));
+    const page=snap.docs.map(d=>({id:d.id,data:d.data()}));
+    const known=new Set([...latestChannelMessagesReal,...olderChannelMessagesReal].map(x=>x.id));
+    page.forEach(item=>{if(!known.has(item.id))olderChannelMessagesReal.push(item)});
+    if(snap.docs.length)channelCursorReal=snap.docs[snap.docs.length-1];
+    channelHasOlderReal=snap.size===100;
+    renderLoadedChannelMessagesReal({preserveTop:true,previousHeight,previousTop,sourceReal:'pagination'});
+  }catch(e){
+    console.error('[TUBAL HUB chat pagination]',e);
+    setStatus('Could not load older messages.',true);
+  }finally{
+    loadingOlderChannelMessagesReal=false;
+    const btn=document.getElementById('loadOlderMessagesBtn');
+    if(btn){btn.disabled=false;btn.hidden=!channelHasOlderReal;btn.textContent='↑ Load older messages';}
+  }
 }
 
 function subscribeMessages(){
   if(stopMessages)stopMessages();
+  latestChannelMessagesReal=[];
+  olderChannelMessagesReal=[];
+  channelCursorReal=null;
+  channelHasOlderReal=false;
+  loadingOlderChannelMessagesReal=false;
   const channelValue=activeChannelReal==='general'?'global-chat':activeChannelReal;
 
   // Bound the realtime read at the Firestore query level.
@@ -489,6 +556,7 @@ function setActiveChannelReal(channel){
   }
 }
 window.tubalHubSetChatChannelReal=setActiveChannelReal;
+document.getElementById('loadOlderMessagesBtn')?.addEventListener('click',loadOlderMessagesReal);
 
 async function subscribePresence(){
   if(stopPresence)stopPresence();
