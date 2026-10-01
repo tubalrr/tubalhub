@@ -590,7 +590,7 @@ async function addNewsComment() {
 
   const user = state.user;
   const item = {
-    newsId: state.current.sourceId,
+    newsId: state.current.id,
     uid: user.uid,
     authorName: user.displayName || user.email?.split("@")[0] || "Member",
     authorPhotoURL: user.photoURL || "",
@@ -616,10 +616,7 @@ async function loadReactionSummariesForIds(ids) {
     try {
       const snap = await getDocs(query(
         collection(db, "newsReactions"),
-        where("newsId", "in", batch.map(id => {
-          const item = state.all.find(x => x.id === id);
-          return item?.sourceId || id.replace(/^news-/, "");
-        }))
+        where("newsId", "in", batch)
       ));
       batch.forEach(id => {
         const articleKey = id;
@@ -651,7 +648,7 @@ async function toggleNewsReaction(x, emoji, button) {
 
   const d = reactionSummary(x.id);
   const previous = d.my;
-  const refId = encodeURIComponent(String(x.sourceId)) + "_" + encodeURIComponent(state.user.uid);
+  const refId = encodeURIComponent(String(x.id)) + "_" + encodeURIComponent(state.user.uid);
   const ref = doc(db, "newsReactions", refId);
 
   button?.classList.remove("is-pop");
@@ -1010,10 +1007,13 @@ function setup() {
 
   onAuthStateChanged(auth, user => {
     state.user = user;
+    state.reactionLoadedIds.clear();
+    state.reactionSummary.clear();
     updateCommentComposer();
     setupPresenceListeners();
     renderGrid(filtered());
     renderComments(state.current || {});
+    loadReactionSummariesForIds(state.all.map(x => x.id));
   });
 
   document.getElementById("newsReaderClose")?.addEventListener("click", closeReader);
