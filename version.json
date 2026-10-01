@@ -1,11 +1,12 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.3.13",
-  "build": "2026-10-01_news-body",
+  "version": "1.3.14",
+  "build": "2026-10-01_update-before-bot",
   "releasedAtReal": "2026-10-01T03:40:00.000Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.3.14 FIX — Main-page Welcome Bot now waits for the updater's first version check to complete before automatic narration starts, ensuring the bot briefs the latest verified release state.",
     "v1.3.13 FIX — News Firestore records now carry the full body field into the normalized article object, so the reader can display complete article content instead of only text/summary excerpts.",
     "v1.3.12 PERF — Removed the redundant second presence collection read. Feed now uses the 50-record presence snapshot loaded by loadPeople() instead of fetching another 200-record presence snapshot later.",
     "v1.3.11 FEAT — Feed products now subscribe to the Firestore products collection in realtime; new, edited, or removed products in Shop are reflected in the Feed without waiting for reload or the next cursor page.",
@@ -827,5 +828,5 @@
     }
   ],
   "date": "2026-10-01",
-  "changes": "v1.3.13 FIX — News reader now receives the full Firestore article body."
+  "changes": "v1.3.14 FIX — Updater checks the release first, then the Main Page bot speaks."
 }
