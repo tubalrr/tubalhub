@@ -441,11 +441,29 @@ service cloud.firestore {
     match /newsletterSubscribers/{subscriberId} {
       allow read: if adminUser();
 
-      allow create, update: if
+      allow create: if
         request.resource.data.email is string
         && request.resource.data.email.size() >= 5
         && request.resource.data.email.size() <= 254
-        && request.resource.data.email.matches('^[^\\s@]+@[^\\s@]+\\.[^\\s@]+
+        && request.resource.data.email.matches('^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$')
+        && request.resource.data.source == 'news'
+        && request.resource.data.status == 'subscribed'
+        && request.resource.data.consent == true;
+
+      allow update: if
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'email','source','status','consent','uid','subscribedAt','updatedAt'
+        ])
+        && request.resource.data.email is string
+        && request.resource.data.email.size() >= 5
+        && request.resource.data.email.size() <= 254
+        && request.resource.data.email.matches('^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$')
+        && request.resource.data.source == 'news'
+        && request.resource.data.status == 'subscribed'
+        && request.resource.data.consent == true;
+
+      allow delete: if adminUser();
+    }
 
     match /announcements/{announcementId} {
       allow read: if true;
