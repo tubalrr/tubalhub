@@ -61,7 +61,9 @@ speechSynthesis.speak=function(utterance){
     let i=0;
     const next=()=>{
       if(i>=lines.length){
-        ui("welcome","");
+        const root=document.getElementById("tubalMainBotToggle");
+        [root?.querySelector(".th-welcome-bot"),root?.querySelector(".th-announcer-bot")]
+          .forEach(x=>x?.classList.remove("is-speaking","is-presenting"));
         try{originalEnd?.({type:"end"});}catch(_){}
         return;
       }
