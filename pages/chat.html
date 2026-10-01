@@ -644,20 +644,46 @@ function subscribeMessages(){
   currentChannelMessageIdsReal=[];
   const channelValue=activeChannelReal==='general'?'global-chat':activeChannelReal;
 
-  const qReal=query(
+  const optimized=query(
     collection(db,'globalChats'),
     where('channel','==',channelValue),
     orderBy('createdAt','desc'),
     limit(100)
   );
 
-  stopMessages=onSnapshot(qReal,snap=>{
-    renderChatSnapshotReal(snap,channelValue,'realtime');
-  },err=>{
-    console.error('[TUBAL HUB chat query]',err);
-    messages.innerHTML='<div class="empty-chat"><strong>Chat temporarily unavailable.</strong><span>Firestore could not load the real messages for this channel.</span></div>';
-    setStatus('Could not load this channel. Check Firebase access/rules.',true);
-  });
+  const fallback=query(
+    collection(db,'globalChats'),
+    where('channel','==',channelValue)
+  );
+
+  const attach=(queryRef,source)=>{
+    stopMessages=onSnapshot(queryRef,snap=>{
+      if(source==='fallback'){
+        const docs=snap.docs
+          .map(d=>({id:d.id,data:d.data()}))
+          .sort((a,b)=>messageMillisReal(b.data)-messageMillisReal(a.data)||b.id.localeCompare(a.id))
+          .slice(0,100);
+        latestChannelMessagesReal=docs;
+        channelCursorReal=null;
+        channelHasOlderReal=false;
+        renderLoadedChannelMessagesReal({latestDocs:docs,preserveTop:false,sourceReal:'index-fallback'});
+        setStatus('Live • # '+activeChannelReal+' • compatibility mode (Firestore index not deployed yet).');
+      }else{
+        renderChatSnapshotReal(snap,channelValue,'realtime');
+      }
+    },err=>{
+      if(source==='optimized' && (err?.code==='failed-precondition' || /requires an index/i.test(String(err?.message||'')))){
+        console.warn('[TUBAL HUB chat] optimized query needs a Firestore index; using temporary compatibility mode.',err);
+        attach(fallback,'fallback');
+        return;
+      }
+      console.error('[TUBAL HUB chat query]',err);
+      messages.innerHTML='<div class="empty-chat"><strong>Chat temporarily unavailable.</strong><span>Firestore could not load the real messages for this channel.</span></div>';
+      setStatus('Could not load this channel. Check Firebase access/rules.',true);
+    });
+  };
+
+  attach(optimized,'optimized');
 }
 function setActiveChannelReal(channel){
   const allowed=['general','payapang-isip','ctrlzone','shop-talk','announcements'];
@@ -888,33 +914,78 @@ async function loadLegacyDmListFallbackReal(){
   }
 }
 
+async function loadLegacyDmListFallbackReal(){
+  if(legacyDmListFallbackLoadedReal||!currentUser||!isRealUser())return;
+  legacyDmListFallbackLoadedReal=true;
+  try{
+    const snap=await getDocsFromServer(query(
+      collection(db,'messages'),
+      where('participants','array-contains',currentUser.uid),
+      orderBy('createdAt','desc'),
+      limit(200)
+    ));
+    const list=deriveDmConversations(snap);
+    if(list.length){
+      window.__tubalDmList=list;
+      renderDmList(list);
+    }
+  }catch(e){
+    console.warn('[TUBAL HUB DMs] legacy fallback unavailable',e);
+  }
+}
+
 function subscribeDirectMessages(){
   if(stopDmList)stopDmList();
   if(!currentUser||!isRealUser())return;
-  const q=query(collection(db,'dmConversations'),where('participants','array-contains',currentUser.uid),orderBy('lastMessageAt','desc'),limit(100));
-  stopDmList=onSnapshot(q,snap=>{
-    const list=snap.docs.map(s=>{
-      const d=s.data()||{};
-      const otherUid=Array.isArray(d.participants)?d.participants.find(x=>String(x)!==String(currentUser.uid)):'';
-      return {
-        uid:otherUid||'',
-        displayName:d.participantNames?.[otherUid]||'Member',
-        photoURL:d.participantPhotos?.[otherUid]||'',
-        data:{
-          createdAt:d.lastMessageAt,
-          text:d.lastMessagePreview||'',
-          type:d.lastMessageType||'text',
-          unreadCount:d.unreadCount||0
-        }
-      };
-    }).filter(x=>x.uid);
-    window.__tubalDmList=list;
-    renderDmList(list);
-    if(!list.length)loadLegacyDmListFallbackReal();
-  },err=>{
-    console.error('[TUBAL HUB DMs]',err);
-    loadLegacyDmListFallbackReal();
-  });
+
+  const optimized=query(
+    collection(db,'dmConversations'),
+    where('participants','array-contains',currentUser.uid),
+    orderBy('lastMessageAt','desc'),
+    limit(100)
+  );
+  const fallback=query(
+    collection(db,'dmConversations'),
+    where('participants','array-contains',currentUser.uid),
+    limit(100)
+  );
+
+  const attach=(queryRef,source)=>{
+    stopDmList=onSnapshot(queryRef,snap=>{
+      const list=snap.docs.map(s=>{
+        const d=s.data()||{};
+        const otherUid=Array.isArray(d.participants)?d.participants.find(x=>String(x)!==String(currentUser.uid)):'';
+        return {
+          uid:otherUid||'',
+          displayName:d.participantNames?.[otherUid]||'Member',
+          photoURL:d.participantPhotos?.[otherUid]||'',
+          data:{
+            createdAt:d.lastMessageAt,
+            text:d.lastMessagePreview||'',
+            type:d.lastMessageType||'text',
+            unreadCount:d.unreadCount||0
+          },
+          _sortMs:d.lastMessageAt?.toMillis?.()||0
+        };
+      }).filter(x=>x.uid);
+
+      if(source==='fallback')list.sort((a,b)=>b._sortMs-a._sortMs);
+
+      window.__tubalDmList=list;
+      renderDmList(list);
+      if(!list.length)loadLegacyDmListFallbackReal();
+    },err=>{
+      if(source==='optimized' && (err?.code==='failed-precondition' || /requires an index/i.test(String(err?.message||'')))){
+        console.warn('[TUBAL HUB DMs] summary index not deployed; using temporary compatibility mode.',err);
+        attach(fallback,'fallback');
+        return;
+      }
+      console.error('[TUBAL HUB DMs]',err);
+      loadLegacyDmListFallbackReal();
+    });
+  };
+
+  attach(optimized,'optimized');
 }
 function privateDmListRefresh(){
   renderDmList(window.__tubalDmList||[]);
@@ -1010,50 +1081,45 @@ function subscribePrivateMessages(){
   if(stopPrivateMessages)stopPrivateMessages();
   if(!privateTarget||!isRealUser())return;
   const conversationId=privateConversationIdReal;
-  const q=query(
+
+  const optimized=query(
     collection(db,'messages'),
     where('participants','array-contains',currentUser.uid),
     where('conversationId','==',conversationId),
     orderBy('createdAt','desc'),
     limit(100)
   );
-  stopPrivateMessages=onSnapshot(q,snap=>{
-    const list=snap.docs.map(s=>({id:s.id,data:s.data()}));
-    latestPrivateMessagesReal=list;
-    privateCursorReal=snap.docs[snap.docs.length-1]||privateCursorReal;
-    if(privateOlderMessagesReal.length===0)privateHasOlderReal=snap.size===100;
-    renderPrivateMessagesReal(list,{initial:true});
-    if(snap.size<100&&!privateLegacyFallbackLoadedReal)loadLegacyPrivateFallbackReal(list);
-  },err=>{
-    console.error(err);
-    document.getElementById('privateMessages').innerHTML='<div class="private-empty error">Private chat is unavailable. Check Firestore Rules.</div>';
-  });
+  const fallback=query(
+    collection(db,'messages'),
+    where('conversationId','==',conversationId),
+    limit(100)
+  );
+
+  const attach=(queryRef,source)=>{
+    stopPrivateMessages=onSnapshot(queryRef,snap=>{
+      let list=snap.docs.map(s=>({id:s.id,data:s.data()}));
+      if(source==='fallback'){
+        list.sort((a,b)=>privateMs(b.data)-privateMs(a.data)||b.id.localeCompare(a.id));
+      }
+      latestPrivateMessagesReal=list;
+      privateCursorReal=(source==='optimized'?snap.docs[snap.docs.length-1]:null);
+      if(privateOlderMessagesReal.length===0)privateHasOlderReal=source==='optimized'&&snap.size===100;
+      renderPrivateMessagesReal(list,{initial:true});
+      if(snap.size<100&&!privateLegacyFallbackLoadedReal)loadLegacyPrivateFallbackReal(list);
+    },err=>{
+      if(source==='optimized' && (err?.code==='failed-precondition' || /requires an index/i.test(String(err?.message||'')))){
+        console.warn('[TUBAL HUB private chat] composite index not deployed; using conversation-only compatibility mode.',err);
+        attach(fallback,'fallback');
+        return;
+      }
+      console.error(err);
+      document.getElementById('privateMessages').innerHTML='<div class="private-empty error">Private chat is unavailable. Check Firestore Rules.</div>';
+    });
+  };
+
+  attach(optimized,'optimized');
   subscribePrivateTyping();
 }
-async function loadLegacyPrivateFallbackReal(existingList){
-  if(privateLegacyFallbackLoadedReal||!privateTarget||!isRealUser())return;
-  privateLegacyFallbackLoadedReal=true;
-  try{
-    const snap=await getDocsFromServer(query(
-      collection(db,'messages'),
-      where('participants','array-contains',currentUser.uid),
-      orderBy('createdAt','desc'),
-      limit(200)
-    ));
-    const existing=new Set(existingList.map(x=>x.id));
-    snap.docs.forEach(s=>{
-      const d=s.data()||{};
-      if(existing.has(s.id))return;
-      if(!Array.isArray(d.participants)||!d.participants.includes(privateTarget.uid))return;
-      privateOlderMessagesReal.push({id:s.id,data:d});
-    });
-    renderPrivateMessagesReal(latestPrivateMessagesReal,{initial:true});
-  }catch(e){
-    console.warn('[TUBAL HUB private legacy fallback]',e);
-  }
-}
-function conversationIdForReal(a,b){return [String(a||''),String(b||'')].sort().join('_');}
-function openPrivateChat(target){if(!isRealUser()||!target?.uid||target.uid===currentUser.uid)return;privateTarget={uid:target.uid,displayName:target.displayName||'Member',photoURL:target.photoURL||''};privateConversationIdReal=conversationIdForReal(currentUser.uid,privateTarget.uid);latestPrivateMessagesReal=[];privateOlderMessagesReal=[];privateCursorReal=null;privateHasOlderReal=false;privateLoadingOlderReal=false;privateLegacyFallbackLoadedReal=false;if(stopDmList){stopDmList();stopDmList=null;}clearPrivateReply();const panel=document.getElementById('privateChatPanel'),name=document.getElementById('privateChatName'),avatar=document.getElementById('privateChatAvatar'),status=document.getElementById('privateChatStatus'),box=document.getElementById('privateMessages');name.textContent=privateTarget.displayName;avatar.innerHTML=privateAvatarHtml(privateTarget);status.textContent='● Online';panel.hidden=false;box.innerHTML='<div class="private-empty">Loading messages…</div>';requestAnimationFrame(()=>{document.getElementById('privateInput')?.focus();subscribePrivateMessages()})}
 async function loadOlderPrivateMessagesReal(){
   if(privateLoadingOlderReal||!privateHasOlderReal||!privateCursorReal||!privateTarget)return;
   privateLoadingOlderReal=true;
