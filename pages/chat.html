@@ -35,7 +35,7 @@ body{background:radial-gradient(circle at 75% 0%,#17345d55,transparent 30%),radi
 <link rel="stylesheet" href="../assets/css/global-chat-gif-stickers.css?v=20260924-v1">
 <link rel="stylesheet" href="../assets/css/global-chat-focus.css?v=20260924-v4">
   <link rel="stylesheet" href="../assets/css/premium-logos.css?v=20260924-logo1">
-<style id="tubal-error-bot-style">.tubal-error-bot{position:fixed;right:22px;bottom:22px;width:min(430px,calc(100vw - 30px));max-height:min(620px,calc(100vh - 40px));overflow:hidden;z-index:100;background:#07110d;border:1px solid #24543b;border-radius:18px;box-shadow:0 20px 70px #000b;color:#eef5f0}.tubal-error-bot[hidden]{display:none}.tubal-error-bot-head{display:flex;align-items:flex-start;justify-content:space-between;padding:16px 18px;border-bottom:1px solid #173b2a}.tubal-error-bot-head h2{margin:3px 0;font-size:17px}.tubal-error-bot-head p{margin:4px 0 0;color:#9fb0a6;font-size:11px}.tubal-error-bot-head button{background:none;border:0;color:#aabdb2;font-size:24px;cursor:pointer}.tubal-error-bot-actions{display:flex;gap:8px;padding:10px 14px;border-bottom:1px solid #173b2a}.tubal-error-bot-actions button{border:1px solid #2b6346;background:#0d2118;color:#dff8e9;border-radius:9px;padding:7px 11px;cursor:pointer}.tubal-error-bot-list{padding:12px;overflow:auto;max-height:440px}.tubal-error-item{border:1px solid #75413a;background:#0a1711;border-radius:12px;padding:11px;margin-bottom:9px}.tubal-error-meta{font-size:10px;color:#789286;margin-bottom:5px}.tubal-error-message{font-size:12px;line-height:1.45;word-break:break-word}.tubal-error-analysis{margin-top:8px;padding:8px 9px;border-radius:9px;background:#0e2419;color:#cfe9d8;font-size:11px;line-height:1.5}.tubal-error-fab{position:fixed;right:22px;bottom:22px;z-index:99;border:1px solid #2d7a50;background:#092015;color:#dff8e9;border-radius:999px;padding:11px 15px;box-shadow:0 10px 35px #0008;cursor:pointer;font-weight:700}.tubal-error-fab.has-error{border-color:#a34d42}.tubal-error-fab[hidden]{display:none}@media(max-width:600px){.tubal-error-bot{right:10px;bottom:10px;width:calc(100vw - 20px)}.tubal-error-fab{right:10px;bottom:10px}}</style></head>
+</head>
 <body class="global-chat-page">
 <button id="sidebarToggle" class="global-chat-menu-toggle" type="button" aria-controls="chatLeftRail" aria-expanded="false" aria-label="Toggle Global Chat sidebar" title="Toggle sidebar">
   <span></span><span></span><span></span>
@@ -159,63 +159,16 @@ body{background:radial-gradient(circle at 75% 0%,#17345d55,transparent 30%),radi
   <div class="chat-drawer-backdrop" id="chatDrawerBackdrop" hidden></div>
 </section>
 
-<section id="tubalErrorBot" class="tubal-error-bot" hidden aria-label="TUBAL Error Bot"><div class="tubal-error-bot-head"><div><span class="rail-kicker">SYSTEM</span><h2>🛠 TUBAL Error Bot</h2><p id="tubalErrorBotSummary">Watching browser and Firebase errors.</p></div><button type="button" id="closeTubalErrorBot" aria-label="Close error bot">×</button></div><div class="tubal-error-bot-actions"><button type="button" id="analyzeTubalErrors">Analyze errors</button><button type="button" id="clearTubalErrors">Clear</button></div><div id="tubalErrorBotList" class="tubal-error-bot-list"><div class="private-empty">No errors detected.</div></div></section><section id="mediaStoragePanel" class="media-storage-panel" hidden><div class="media-storage-head"><div><span class="rail-kicker">MEDIA</span><h2>My Image Storage</h2><p id="mediaStorageSummary">Loading your Global Chat images…</p></div><button type="button" id="closeMediaStorage">Close</button></div><div class="media-storage-meter"><div class="media-storage-meter-top"><strong id="mediaStorageCount">0 / 40</strong><span id="mediaStoragePercent">0%</span></div><div class="media-storage-bar"><i id="mediaStorageBarFill"></i></div><small>Maximum 40 images per account • automatic expiry protects storage</small></div><div id="mediaStorageList" class="media-storage-list"><div class="private-empty">No images loaded.</div></div></section><section id="privateChatPanel" class="private-chat-panel" hidden><div class="private-chat-head"><button type="button" id="closePrivateChat" class="private-back">←</button><div id="privateChatAvatar" class="private-avatar">M</div><div class="private-person"><b id="privateChatName">Member</b><span id="privateChatStatus">● Online</span></div><button type="button" id="privateVideoCall" class="private-call" title="Video call">📹</button></div><div id="privatePinnedBar" class="private-pinned-bar"></div><div id="privateMessages" class="private-messages"><div class="private-empty">Select an online member to start a private conversation.</div></div><div id="privateTyping" class="private-typing"></div><div id="privateReplyBar" class="private-reply-bar"><span>↩ Replying to <b id="privateReplyName">Member</b>: <span id="privateReplyPreview"></span></span><button type="button" class="private-reply-cancel" id="privateReplyCancel">×</button></div><form id="privateForm" class="private-composer"><input id="privateInput" maxlength="500" placeholder="Message..." autocomplete="off"><button type="submit">Send ➤</button></form></section><button type="button" id="tubalErrorBotFab" class="tubal-error-fab" hidden>🛠 Error Bot</button><footer class="footer chat-footer"><div><b>TUBAL HUB</b><span>YOUR HUB. YOUR COMMUNITY.</span></div><div>© 2026 TUBAL HUB. All rights reserved. &nbsp; | &nbsp; Play • Create • Connect</div><div class="social">● ● ● ●</div></main></div>
+<section id="mediaStoragePanel" class="media-storage-panel" hidden><div class="media-storage-head"><div><span class="rail-kicker">MEDIA</span><h2>My Image Storage</h2><p id="mediaStorageSummary">Loading your Global Chat images…</p></div><button type="button" id="closeMediaStorage">Close</button></div><div class="media-storage-meter"><div class="media-storage-meter-top"><strong id="mediaStorageCount">0 / 40</strong><span id="mediaStoragePercent">0%</span></div><div class="media-storage-bar"><i id="mediaStorageBarFill"></i></div><small>Maximum 40 images per account • automatic expiry protects storage</small></div><div id="mediaStorageList" class="media-storage-list"><div class="private-empty">No images loaded.</div></div></section><section id="privateChatPanel" class="private-chat-panel" hidden><div class="private-chat-head"><button type="button" id="closePrivateChat" class="private-back">←</button><div id="privateChatAvatar" class="private-avatar">M</div><div class="private-person"><b id="privateChatName">Member</b><span id="privateChatStatus">● Online</span></div><button type="button" id="privateVideoCall" class="private-call" title="Video call">📹</button></div><div id="privatePinnedBar" class="private-pinned-bar"></div><div id="privateMessages" class="private-messages"><div class="private-empty">Select an online member to start a private conversation.</div></div><div id="privateTyping" class="private-typing"></div><div id="privateReplyBar" class="private-reply-bar"><span>↩ Replying to <b id="privateReplyName">Member</b>: <span id="privateReplyPreview"></span></span><button type="button" class="private-reply-cancel" id="privateReplyCancel">×</button></div><form id="privateForm" class="private-composer"><input id="privateInput" maxlength="500" placeholder="Message..." autocomplete="off"><button type="submit">Send ➤</button></form></section><footer class="footer chat-footer"><div><b>TUBAL HUB</b><span>YOUR HUB. YOUR COMMUNITY.</span></div><div>© 2026 TUBAL HUB. All rights reserved. &nbsp; | &nbsp; Play • Create • Connect</div><div class="social">● ● ● ●</div></main></div>
 <script type="module">
 import { app, auth } from "../assets/js/firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
-import { getFirestore, collection, addDoc, query, orderBy, limit, limitToLast, onSnapshot, doc, setDoc, getDoc, deleteDoc, serverTimestamp, where, updateDoc, getDocsFromServer, startAfter, endBefore } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, query, orderBy, limit, limitToLast, onSnapshot, doc, setDoc, getDoc, deleteDoc, serverTimestamp, where, updateDoc, getDocsFromServer, startAfter } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-functions.js";
-import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-storage.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-storage.js";
 
 const db=getFirestore(app), storage=getStorage(app), functionsReal=getFunctions(app);
-async function sendMessageClientReal(payload){
-  if(!currentUser || !isRealUser()) throw new Error('LOGIN_REQUIRED');
-  const channel=String(payload?.channel || activeChannelReal || 'general');
-  const text=String(payload?.text || '').trim();
-  if(!text) throw new Error('EMPTY_MESSAGE');
-  const moderation=moderationResultReal(text);
-  if(!moderation.allowed){
-    moderationWarning();
-    const err=new Error('MODERATION_BLOCKED');
-    err.code='client/moderation-blocked';
-    throw err;
-  }
-  if(text.length>500) throw new Error('MESSAGE_TOO_LONG');
-
-  const name=String(currentUser.displayName || currentUser.email?.split('@')[0] || 'Member').slice(0,120);
-  const photoURL=String(currentUser.photoURL || '').slice(0,2000);
-  let isAdmin=String(currentUser.email || '').toLowerCase()==='tubalrr@gmail.com';
-  try{
-    const tokenResult=await currentUser.getIdTokenResult();
-    isAdmin=tokenResult?.claims?.admin===true || isAdmin;
-  }catch(_){}
-
-  const docData={
-    uid:currentUser.uid,
-    displayName:name,
-    name,
-    photoURL,
-    createdAt:serverTimestamp(),
-    text:moderation.cleanText,
-    textReal:moderation.cleanText,
-    type:'text',
-    channel:channel==='general'?'global-chat':channel,
-    roleReal:isAdmin?'admin':'user',
-    verifiedReal:true
-  };
-
-  if(replyTarget){
-    docData.replyTo={
-      name:String(replyTarget.name||'').slice(0,120),
-      preview:String(replyTarget.preview||'').slice(0,160)
-    };
-  }
-
-  const ref=await addDoc(collection(db,'globalChats'),docData);
-  lastMessageTime=Date.now();
-  if(moderation.flagged) showModerationNotice('⚠️ May salitang awtomatikong inayos bago ipadala.');
-  return {success:true,id:ref.id,moderated:!!moderation.flagged,cleanText:moderation.cleanText};
-}
+const sendMessageFnReal=httpsCallable(functionsReal,'sendMessageReal');
 const sendReplyFnReal=httpsCallable(functionsReal,'sendReplyReal');
 const sendPrivateMessageFnReal=httpsCallable(functionsReal,'sendPrivateMessageReal');
 const updatePrivateMessageFnReal=httpsCallable(functionsReal,'updatePrivateMessageReal');
@@ -229,62 +182,11 @@ const lock=document.getElementById('chatLock'),content=document.getElementById('
 let currentUser=null,stopMessages=null,heartbeatTimer=null,stopPresence=null,stopUsersPresence=null,heartbeatPresenceRefresh=null,stopBanStatus=null,stopReactions=null,stopReplies=null,stopDmList=null,replyTarget=null,lastMessageTime=0,reactionState={};
 let activeChannelReal="general";
 let latestChannelMessagesReal=[];
-let olderChannelMessagesReal=[],channelCursorReal=null,channelHasOlderReal=false,loadingOlderChannelMessagesReal=false,channelIndexFallbackReal=false;
+let olderChannelMessagesReal=[],channelCursorReal=null,channelHasOlderReal=false,loadingOlderChannelMessagesReal=false;
 let privateTarget=null,stopPrivateMessages=null,stopPrivateTyping=null,privateLastMessageTime=0,privateReplyTarget=null,privateTypingTimer=null,privateTypingOffTimer=null;
 let pendingExternalImageUrlReal="";
 const emojis=['😀','😂','😍','🥰','😎','😭','😡','😮','👍','👎','❤️','🔥','💯','🎮','🎉','👏','🤣','🤔','😅','🙌','💚','✨','👀','🙏','🥳','😴','🤝','🚀','💀','😇','😱','🤩','💪','🌿','⭐','🎯','🏆','❤️‍🔥','🫶','😊'];
 function enableMemberNameClick(){if(!memberList||memberList.dataset.privateClickReady)return;memberList.dataset.privateClickReady='1';memberList.addEventListener('click',e=>{const nameBtn=e.target.closest?.('.private-member-name');if(!nameBtn)return;const member=nameBtn.closest?.('.member');if(!member)return;const uid=member.dataset.uid;if(!uid||uid===currentUser?.uid)return;const name=nameBtn.textContent||'Member';const img=member.querySelector('.mini img');e.preventDefault();e.stopPropagation();openPrivateChat({uid,displayName:name,photoURL:img?.src||''})},true)}
-
-
-// TUBAL Error Bot: captures browser/runtime/Firebase errors locally and explains common causes.
-// Diagnostics are collected locally, but the Error Bot UI is admin-only.
-let tubalErrorAdminReal=false;
-const tubalErrorLogReal=[];
-const tubalErrorSeenReal=new Set();
-function analyzeTubalErrorReal(message,source='runtime'){
-  const m=String(message||'').toLowerCase();
-  if(m.includes('failed-precondition')&&m.includes('index'))return 'Firestore composite index is likely missing or not deployed. Check firestore.indexes.json and Firebase deployment.';
-  if(m.includes('permission-denied')||m.includes('missing or insufficient permissions'))return 'Firestore Rules rejected the request. Check the query constraints against the allow-read rule.';
-  if(m.includes('resource-exhausted'))return 'Firebase rate/quota protection triggered. Check repeated listeners, callable frequency, or project quota.';
-  if(m.includes('unauthenticated')||m.includes('login_required'))return 'The user is not authenticated or the session expired. Check Firebase Auth state before the request.';
-  if(m.includes('network')||m.includes('offline')||m.includes('failed to fetch'))return 'Network connectivity may have interrupted Firebase. Retry after the connection is restored.';
-  if(m.includes('storage/object-not-found'))return 'The Firebase Storage object was not found. The URL/path may be stale or the upload may have failed.';
-  if(m.includes('storage/unauthorized'))return 'Firebase Storage Rules rejected the file operation. Check the authenticated UID and storage path rules.';
-  if(m.includes('cannot read properties')||m.includes('undefined'))return 'A JavaScript value is missing. Check the stack trace and the DOM/data object used at the reported line.';
-  if(source==='unhandledrejection')return 'An async Promise failed without being handled. Inspect the error text and the operation that returned the Promise.';
-  return 'Unknown runtime error. Open the details/stack trace and trace the first application file in the stack.';
-}
-function recordTubalErrorReal(message,source='runtime',details=''){
-  const clean=String(message||'').trim();
-  if(!clean)return;
-  const key=source+'|'+clean+'|'+String(details||'').slice(0,500);
-  if(tubalErrorSeenReal.has(key))return;
-  tubalErrorSeenReal.add(key);
-  tubalErrorLogReal.unshift({time:new Date(),source,message:clean,details:String(details||''),analysis:analyzeTubalErrorReal(clean,source)});
-  if(tubalErrorLogReal.length>30)tubalErrorLogReal.pop();
-  renderTubalErrorBotReal();
-}
-function renderTubalErrorBotReal(){
-  const list=document.getElementById('tubalErrorBotList'),summary=document.getElementById('tubalErrorBotSummary'),fab=document.getElementById('tubalErrorBotFab');
-  if(!list||!tubalErrorAdminReal)return;
-  summary.textContent=tubalErrorLogReal.length?(tubalErrorLogReal.length+' error event(s) captured locally.'):'Watching browser and Firebase errors.';
-  fab.hidden=!tubalErrorLogReal.length;
-  fab.classList.toggle('has-error',tubalErrorLogReal.length>0);
-  list.innerHTML=tubalErrorLogReal.length?tubalErrorLogReal.map(x=>'<article class="tubal-error-item"><div class="tubal-error-meta">'+esc(x.time.toLocaleTimeString())+' • '+esc(x.source)+'</div><div class="tubal-error-message">'+esc(x.message)+'</div><div class="tubal-error-analysis">🤖 '+esc(x.analysis)+'</div>'+(x.details?'<details><summary>Details</summary><pre>'+esc(x.details)+'</pre></details>':'')+'</article>').join(''):'<div class="private-empty">No errors detected.</div>';
-}
-function openTubalErrorBotReal(){
-  if(!tubalErrorAdminReal)return;
-  const panel=document.getElementById('tubalErrorBot');
-  if(panel){panel.hidden=false;renderTubalErrorBotReal()}
-}
-window.addEventListener('error',e=>recordTubalErrorReal(e.message||'Unknown browser error','window.error',e.error?.stack||e.filename||''));
-window.addEventListener('unhandledrejection',e=>recordTubalErrorReal(e.reason?.message||String(e.reason||'Unhandled Promise rejection'),'unhandledrejection',e.reason?.stack||''));
-const originalConsoleErrorReal=console.error.bind(console);
-console.error=(...args)=>{originalConsoleErrorReal(...args);const first=args.map(x=>x?.message||String(x)).join(' ');recordTubalErrorReal(first,'console.error',args.find(x=>x?.stack)?.stack||'')};
-document.getElementById('tubalErrorBotFab')?.addEventListener('click',openTubalErrorBotReal);
-document.getElementById('closeTubalErrorBot')?.addEventListener('click',()=>{document.getElementById('tubalErrorBot').hidden=true});
-document.getElementById('analyzeTubalErrors')?.addEventListener('click',renderTubalErrorBotReal);
-document.getElementById('clearTubalErrors')?.addEventListener('click',()=>{tubalErrorLogReal.length=0;tubalErrorSeenReal.clear();renderTubalErrorBotReal();document.getElementById('tubalErrorBot').hidden=true});
 
 enableMemberNameClick();
 setupChatFocusUi();
@@ -295,137 +197,6 @@ function clearReply(){replyTarget=null;replyingBar.style.display='none'}
 let reactionUsersState={};
 let reactionFxTimers=new Map();
 let reactionSnapshotReady=false;
-let reactionStopFnsReal=[];
-let reactionSubscriptionKeyReal='';
-let reactionChunkDocsReal=new Map();
-let replyStopFnsReal=[];
-let replySubscriptionKeyReal='';
-let replyChunkDocsReal=new Map();
-
-function clearReactionSubscriptionsReal(){
-  reactionStopFnsReal.forEach(stop=>{try{stop()}catch(_){ }});
-  reactionStopFnsReal=[];
-  reactionChunkDocsReal.clear();
-}
-
-function rebuildReactionStateReal(){
-  const previous=reactionState;
-  reactionState={};
-  reactionUsersState={};
-
-  reactionChunkDocsReal.forEach(docs=>{
-    docs.forEach((x)=>{
-      const key=x.replyId?'reply_'+x.replyId:x.messageId;
-      if(!key)return;
-      if(!reactionState[key])reactionState[key]={};
-      if(!reactionUsersState[key])reactionUsersState[key]={};
-      (x.reactions||[]).forEach(e=>{
-        reactionState[key][e]=(reactionState[key][e]||0)+1;
-        if(!reactionUsersState[key][e])reactionUsersState[key][e]=new Set();
-        if(x.uid)reactionUsersState[key][e].add(x.uid);
-      });
-    });
-  });
-
-  document.querySelectorAll('.msg').forEach(row=>{
-    const id=row.dataset.id;
-    const bar=row.querySelector('.reaction-bar');
-    if(bar){
-      const prevCounts=previous[id]||{};
-      bar.innerHTML=reactionHtml(id,prevCounts);
-      bar.querySelectorAll('.reaction-chip').forEach(btn=>{
-        btn.addEventListener('click',e=>{
-          e.stopPropagation();
-          animateReactionTarget(btn);
-          toggleReaction(id,btn.dataset.react);
-        });
-      });
-
-      if(reactionSnapshotReady){
-        Object.keys(reactionState[id]||{}).forEach(e=>{
-          const nextCount=reactionState[id]?.[e]||0;
-          const prevCount=prevCounts[e]||0;
-          if(nextCount>=5 && prevCount<5)burstFiveConfetti(row,e);
-        });
-      }
-    }
-
-    row.querySelectorAll('.quick-reaction').forEach(btn=>{
-      btn.addEventListener('click',e=>{
-        e.stopPropagation();
-        toggleReaction(id,btn.dataset.e);
-      });
-    });
-
-    row.querySelectorAll('.reply-item').forEach(item=>{
-      const rid=item.dataset.replyId;
-      if(rid)renderReplyReactions(item,rid);
-    });
-  });
-}
-
-function refreshReactionSubscriptionsReal(){
-  const messageIds=[...new Set(
-    [...document.querySelectorAll('.msg[data-id]')].map(el=>String(el.dataset.id||'').trim()).filter(Boolean)
-  )].sort();
-  const replyIds=[...new Set(
-    [...document.querySelectorAll('.reply-item[data-reply-id]')].map(el=>String(el.dataset.replyId||'').trim()).filter(Boolean)
-  )].sort();
-
-  const key='m:'+messageIds.join(',')+'|r:'+replyIds.join(',');
-  if(key===reactionSubscriptionKeyReal)return;
-  reactionSubscriptionKeyReal=key;
-
-  clearReactionSubscriptionsReal();
-  reactionSnapshotReady=false;
-
-  const chunks=(ids,size=30)=>{
-    const out=[];
-    for(let i=0;i<ids.length;i+=size)out.push(ids.slice(i,i+size));
-    return out;
-  };
-
-  const subscriptions=[
-    ...chunks(messageIds).map((ids,i)=>({field:'messageId',ids,key:'m'+i})),
-    ...chunks(replyIds).map((ids,i)=>({field:'replyId',ids,key:'r'+i}))
-  ];
-
-  if(!subscriptions.length){
-    reactionState={};
-    reactionUsersState={};
-    reactionSnapshotReady=true;
-    return;
-  }
-
-  let pending=subscriptions.length;
-  const markReady=()=>{
-    pending-=1;
-    if(pending<=0){
-      reactionSnapshotReady=true;
-      rebuildReactionStateReal();
-    }else{
-      rebuildReactionStateReal();
-    }
-  };
-
-  subscriptions.forEach(sub=>{
-    const q=query(
-      collection(db,'globalChatReactions'),
-      where(sub.field,'in',sub.ids)
-    );
-    const stop=onSnapshot(q,snap=>{
-      const docs=[];
-      snap.forEach(d=>docs.push({id:d.id,...d.data()}));
-      reactionChunkDocsReal.set(sub.key,docs);
-      markReady();
-    },err=>{
-      console.error('[TUBAL HUB reaction query]',sub.field,err);
-      reactionChunkDocsReal.set(sub.key,[]);
-      markReady();
-    });
-    reactionStopFnsReal.push(stop);
-  });
-}
 
 function reactionButtonHtml(messageId,emoji,count,isActive=false,isNew=false,index=0,countChanged=false){
   const delay=(index*0.05).toFixed(2)+'s';
@@ -584,89 +355,67 @@ function renderReplyReactions(item,replyId){
 function openReplyReactionMenu(button,replyId){const existing=document.querySelector('.reply-inline-reactions');if(existing)existing.remove();const box=document.createElement('div');box.className='reply-inline-reactions';box.style.cssText='position:fixed;z-index:60;background:#061713;border:1px solid #1d7550;border-radius:12px;padding:7px;box-shadow:0 15px 40px #000b;display:flex;gap:3px;flex-wrap:wrap;max-width:260px';box.innerHTML=emojis.slice(0,18).map(e=>`<button type="button" class="emoji-choice" data-e="${esc(e)}">${e}</button>`).join('');document.body.appendChild(box);const r=button.getBoundingClientRect();box.style.left=Math.min(r.left,innerWidth-270)+'px';box.style.top=Math.max(10,r.top-52)+'px';box.querySelectorAll('[data-e]').forEach(b=>b.onclick=()=>{toggleReplyReaction(replyId,b.dataset.e);box.remove()});setTimeout(()=>document.addEventListener('click',function close(ev){if(!box.contains(ev.target)&&ev.target!==button){box.remove();document.removeEventListener('click',close)}},{once:false}),0)}
 async function toggleReplyReaction(replyId,emoji){if(!isRealUser())return;const id=`reply_${replyId}_${currentUser.uid}`;const r=doc(db,'globalChatReactions',id);const snap=await getDoc(r);let arr=snap.exists()?Array.isArray(snap.data().reactions)?snap.data().reactions:[]:[];arr=arr.includes(emoji)?arr.filter(x=>x!==emoji):[...arr,emoji];if(arr.length)await setDoc(r,{replyId,uid:currentUser.uid,reactions:arr,updatedAt:serverTimestamp()},{merge:true});else if(snap.exists())await deleteDoc(r)}
 function subscribeReactions(){
-  if(stopReactions)stopReactions();
-  stopReactions=()=>clearReactionSubscriptionsReal();
-  refreshReactionSubscriptionsReal();
+ if(stopReactions)stopReactions();
+ const q=query(collection(db,'globalChatReactions'),limit(1000));
+ stopReactions=onSnapshot(q,snap=>{
+   const previous=reactionState;
+   const wasReady=reactionSnapshotReady;
+   reactionState={};
+   reactionUsersState={};
+
+   snap.forEach(d=>{
+     const x=d.data();
+     const key=x.replyId?'reply_'+x.replyId:x.messageId;
+     if(!key)return;
+     if(!reactionState[key])reactionState[key]={};
+     if(!reactionUsersState[key])reactionUsersState[key]={};
+     (x.reactions||[]).forEach(e=>{
+       reactionState[key][e]=(reactionState[key][e]||0)+1;
+       if(!reactionUsersState[key][e])reactionUsersState[key][e]=new Set();
+       if(x.uid)reactionUsersState[key][e].add(x.uid);
+     });
+   });
+
+   document.querySelectorAll('.msg').forEach(row=>{
+     const id=row.dataset.id;
+     const bar=row.querySelector('.reaction-bar');
+     if(bar){
+       const prevCounts=previous[id]||{};
+       bar.innerHTML=reactionHtml(id,prevCounts);
+       bar.querySelectorAll('.reaction-chip').forEach(btn=>{
+         btn.addEventListener('click',e=>{
+           e.stopPropagation();
+           animateReactionTarget(btn);
+           toggleReaction(id,btn.dataset.react);
+         });
+       });
+
+       if(wasReady){
+         Object.keys(reactionState[id]||{}).forEach(e=>{
+           const nextCount=reactionState[id]?.[e]||0;
+           const prevCount=prevCounts[e]||0;
+           if(nextCount>=5 && prevCount<5)burstFiveConfetti(row,e);
+         });
+       }
+     }
+
+     row.querySelectorAll('.quick-reaction').forEach(btn=>{
+       btn.addEventListener('click',e=>{
+         e.stopPropagation();
+         toggleReaction(id,btn.dataset.e);
+       });
+     });
+
+     row.querySelectorAll('.reply-item').forEach(item=>{
+       const rid=item.dataset.replyId;
+       if(rid)renderReplyReactions(item,rid);
+     });
+   });
+
+   reactionSnapshotReady=true;
+ },err=>console.error('Reaction error',err));
 }
-function clearReplySubscriptionsReal(){
-  replyStopFnsReal.forEach(stop=>{try{stop()}catch(_){ }});
-  replyStopFnsReal=[];
-  replyChunkDocsReal.clear();
-}
-
-function renderLoadedRepliesReal(){
-  document.querySelectorAll('.reply-box').forEach(x=>x.innerHTML='');
-
-  const allReplies=[];
-  replyChunkDocsReal.forEach(docs=>docs.forEach(x=>allReplies.push(x)));
-  allReplies.sort((a,b)=>{
-    const am=a.data?.createdAt?.toMillis?.()??a.data?.createdAt?.toDate?.()?.getTime?.()??Number(a.data?.createdAt||0);
-    const bm=b.data?.createdAt?.toMillis?.()??b.data?.createdAt?.toDate?.()?.getTime?.()??Number(b.data?.createdAt||0);
-    return am-bm||a.id.localeCompare(b.id);
-  });
-
-  allReplies.forEach(({id,data:d})=>{
-    const x=d,root=x.messageId,box=document.getElementById(`replies-${root}`);
-    if(!box)return;
-    const item=document.createElement('div');
-    item.className='reply-item'+(x.parentReplyId?' nested-reply':'');
-    item.dataset.replyId=id;
-    item.innerHTML=`<div class="reply-meta"><b class="private-member-name">${esc(x.displayName||'Member')}</b> • ${esc(timeText(x.createdAt))}</div><div class="reply-text">${esc(x.text)}</div><div class="reply-actions"><button type="button" class="reply-react-btn" title="React">😊</button><button type="button" class="reply-to-reply">↩ Reply</button></div><div class="reply-reaction-bar"></div>`;
-    item.querySelector('.reply-to-reply').onclick=e=>{e.stopPropagation();setReplyTarget(root,x.displayName||'Member',String(x.text||'').slice(0,100),id)};
-    item.querySelector('.reply-react-btn').onclick=e=>{e.stopPropagation();openReplyReactionMenu(e.currentTarget,id)};
-    renderReplyReactions(item,id);
-    box.appendChild(item);
-  });
-
-  refreshReactionSubscriptionsReal();
-}
-
-function refreshReplySubscriptionsReal(){
-  const messageIds=[...new Set(
-    [...document.querySelectorAll('.msg[data-id]')].map(el=>String(el.dataset.id||'').trim()).filter(Boolean)
-  )].sort();
-  const key=messageIds.join(',');
-  if(key===replySubscriptionKeyReal)return;
-  replySubscriptionKeyReal=key;
-
-  clearReplySubscriptionsReal();
-
-  const chunks=(ids,size=30)=>{
-    const out=[];
-    for(let i=0;i<ids.length;i+=size)out.push(ids.slice(i,i+size));
-    return out;
-  };
-  const batches=chunks(messageIds);
-
-  if(!batches.length){
-    renderLoadedRepliesReal();
-    return;
-  }
-
-  batches.forEach((ids,i)=>{
-    const q=query(
-      collection(db,'globalChatReplies'),
-      where('messageId','in',ids)
-    );
-    const stop=onSnapshot(q,snap=>{
-      const docs=[];
-      snap.forEach(d=>docs.push({id:d.id,data:d.data()}));
-      replyChunkDocsReal.set('r'+i,docs);
-      renderLoadedRepliesReal();
-    },err=>{
-      console.error('[TUBAL HUB reply query]',err);
-      replyChunkDocsReal.set('r'+i,[]);
-      renderLoadedRepliesReal();
-    });
-    replyStopFnsReal.push(stop);
-  });
-}
-
-function subscribeReplies(){
-  if(stopReplies)stopReplies();
-  stopReplies=()=>clearReplySubscriptionsReal();
-  refreshReplySubscriptionsReal();
-}
+function subscribeReplies(){if(stopReplies)stopReplies();const q=query(collection(db,'globalChatReplies'),orderBy('createdAt','asc'),limit(500));stopReplies=onSnapshot(q,snap=>{document.querySelectorAll('.reply-box').forEach(x=>x.innerHTML='');snap.forEach(d=>{const x=d.data(),root=x.messageId,box=document.getElementById(`replies-${root}`);if(!box)return;const item=document.createElement('div');item.className='reply-item'+(x.parentReplyId?' nested-reply':'');item.dataset.replyId=d.id;item.innerHTML=`<div class="reply-meta"><b class="private-member-name">${esc(x.displayName||'Member')}</b> • ${esc(timeText(x.createdAt))}</div><div class="reply-text">${esc(x.text)}</div><div class="reply-actions"><button type="button" class="reply-react-btn" title="React">😊</button><button type="button" class="reply-to-reply">↩ Reply</button></div><div class="reply-reaction-bar"></div>`;item.querySelector('.reply-to-reply').onclick=e=>{e.stopPropagation();setReplyTarget(root,x.displayName||'Member',String(x.text||'').slice(0,100),d.id)};item.querySelector('.reply-react-btn').onclick=e=>{e.stopPropagation();openReplyReactionMenu(e.currentTarget,d.id)};renderReplyReactions(item,d.id);box.appendChild(item)});},err=>console.error('Reply error',err))}
 function messageMillisReal(data){
   return data?.createdAt?.toMillis?.()
     ?? data?.createdAt?.toDate?.()?.getTime?.()
@@ -718,26 +467,15 @@ function renderLoadedChannelMessagesReal(options={}){
   });
 
   setStatus('Live • # '+activeChannelReal+' • '+docs.length+' loaded message'+(docs.length===1?'':'s'));
-  refreshReplySubscriptionsReal();
-  refreshReactionSubscriptionsReal();
-
   window.dispatchEvent(new CustomEvent('tubalhub-chat-channel-loaded',{
     detail:{channel:activeChannelReal,count:docs.length,source:options.sourceReal||'realtime'}
   }));
 }
 
 function renderChatSnapshotReal(snap, channelValue, sourceReal){
-  const nextLatest=snap.docs.map(d=>({id:d.id,data:d.data()}));
-  if(olderChannelMessagesReal.length && latestChannelMessagesReal.length){
-    const nextIds=new Set(nextLatest.map(item=>item.id));
-    const loadedIds=new Set(olderChannelMessagesReal.map(item=>item.id));
-    latestChannelMessagesReal.forEach(item=>{
-      if(!nextIds.has(item.id)&&!loadedIds.has(item.id))olderChannelMessagesReal.push(item);
-    });
-  }
-  latestChannelMessagesReal=nextLatest;
+  latestChannelMessagesReal=snap.docs.map(d=>({id:d.id,data:d.data()}));
   if(!olderChannelMessagesReal.length){
-    channelCursorReal=snap.docs[0]||null;
+    channelCursorReal=snap.docs[snap.docs.length-1]||null;
     channelHasOlderReal=snap.size===100;
   }
   renderLoadedChannelMessagesReal({sourceReal});
@@ -753,14 +491,14 @@ async function loadOlderMessagesReal(){
     const snap=await getDocsFromServer(query(
       collection(db,'globalChats'),
       where('channel','==',channelValue),
-      orderBy('createdAt','asc'),
-      endBefore(channelCursorReal),
-      limitToLast(100)
+      orderBy('createdAt','desc'),
+      startAfter(channelCursorReal),
+      limit(100)
     ));
     const page=snap.docs.map(d=>({id:d.id,data:d.data()}));
     const known=new Set([...latestChannelMessagesReal,...olderChannelMessagesReal].map(x=>x.id));
-    snap.docs.map(d=>({id:d.id,data:d.data()})).forEach(item=>{if(!known.has(item.id))olderChannelMessagesReal.unshift(item)});
-    if(snap.docs.length)channelCursorReal=snap.docs[0];
+    page.forEach(item=>{if(!known.has(item.id))olderChannelMessagesReal.push(item)});
+    if(snap.docs.length)channelCursorReal=snap.docs[snap.docs.length-1];
     channelHasOlderReal=snap.size===100;
     renderLoadedChannelMessagesReal({preserveTop:true,previousHeight,previousTop,sourceReal:'pagination'});
   }catch(e){
@@ -780,51 +518,25 @@ function subscribeMessages(){
   channelCursorReal=null;
   channelHasOlderReal=false;
   loadingOlderChannelMessagesReal=false;
-  channelIndexFallbackReal=false;
   const channelValue=activeChannelReal==='general'?'global-chat':activeChannelReal;
 
-  const indexedQuery=query(
+  // Bound the realtime read at the Firestore query level.
+  // The repo already declares the required composite index:
+  // channel ASC + createdAt DESC.
+  // The snapshot is then sorted ascending for display.
+  const qReal=query(
     collection(db,'globalChats'),
     where('channel','==',channelValue),
-    orderBy('createdAt','asc'),
-    limitToLast(100)
+    orderBy('createdAt','desc'),
+    limit(100)
   );
 
-  const fallbackQuery=query(
-    collection(db,'globalChats'),
-    where('channel','==',channelValue)
-  );
-
-  const renderFallback= snap=>{
-    channelIndexFallbackReal=true;
-    const docs=snap.docs
-      .map(d=>({id:d.id,data:d.data()}))
-      .sort((a,b)=>messageMillisReal(a.data)-messageMillisReal(b.data)||a.id.localeCompare(b.id));
-    const latest=docs.slice(-100);
-    latestChannelMessagesReal=latest;
-    olderChannelMessagesReal=[];
-    channelCursorReal=null;
-    channelHasOlderReal=false;
-    renderLoadedChannelMessagesReal({sourceReal:'compatibility-fallback'});
-    setStatus('Live • # '+activeChannelReal+' • compatibility mode');
-  };
-
-  stopMessages=onSnapshot(indexedQuery,snap=>{
-    channelIndexFallbackReal=false;
+  stopMessages=onSnapshot(qReal,snap=>{
     renderChatSnapshotReal(snap,channelValue,'realtime');
   },err=>{
-    console.error('[TUBAL HUB chat indexed query]',err);
-    // Firestore can legitimately reject this compound query when the index
-    // has not yet been deployed. Keep Global Chat usable using the single-field
-    // channel index; sort and bound the visible history in the client.
-    stopMessages=onSnapshot(fallbackQuery,renderFallback,fallbackErr=>{
-      console.error('[TUBAL HUB chat compatibility query]',fallbackErr);
-      latestChannelMessagesReal=[];
-      olderChannelMessagesReal=[];
-      channelHasOlderReal=false;
-      messages.innerHTML='<div class="empty-chat"><strong>Global Chat is temporarily unavailable.</strong><span>Firestore could not read this channel. Check Firebase connection and permissions.</span></div>';
-      setStatus('Chat unavailable • Firebase read failed.',true);
-    });
+    console.error('[TUBAL HUB chat query]',err);
+    messages.innerHTML='<div class="empty-chat"><strong>Chat temporarily unavailable.</strong><span>Firestore could not load the real messages for this channel.</span></div>';
+    setStatus('Could not load this channel. Check Firebase access/rules.',true);
   });
 }
 function setActiveChannelReal(channel){
@@ -924,32 +636,38 @@ function dmTime(ts){
   return same?d.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'}):d.toLocaleDateString([], {month:'short',day:'numeric'});
 }
 function deriveDmConversations(snapshot){
-  const me=String(currentUser?.uid||'');
+  const me=currentUser?.uid;
   if(!me)return [];
-  const list=[];
+  const map=new Map();
   snapshot.forEach(s=>{
-    const d=s.data()||{};
-    const participants=Array.isArray(d.participants)?d.participants.map(String):[];
-    const otherId=participants.find(x=>x!==me)||'';
-    if(!otherId)return;
-    const names=d.participantNames&&typeof d.participantNames==='object'?d.participantNames:{};
-    const photos=d.participantPhotos&&typeof d.participantPhotos==='object'?d.participantPhotos:{};
-    list.push({
-      uid:otherId,
-      displayName:String(names[otherId]||'Member'),
-      photoURL:String(photos[otherId]||''),
-      data:{
-        ...d,
-        createdAt:d.lastMessageAt||d.updatedAt||null,
-        text:d.lastMessagePreview||'',
-        type:d.lastMessageType||'text',
-        lastSenderId:String(d.lastSenderId||''),
-        unreadCount:Number(d.unreadCount||0)
-      },
-      ts:d.lastMessageAt?.toMillis?.()||d.updatedAt?.toMillis?.()||0
-    });
+    const d=s.data();
+    const participants=Array.isArray(d.participants)?d.participants:[];
+    const otherId=String(d.senderId||'')===String(me)
+      ? (d.receiverId||participants.find(x=>x!==me))
+      : (d.senderId||participants.find(x=>x!==me));
+    if(!otherId||otherId===me)return;
+    const ts=d.createdAt?.toMillis?.()||0;
+    const prev=map.get(otherId);
+    if(!prev || ts>prev.ts)map.set(otherId,{uid:otherId,data:d,ts});
+    if(!map.has(otherId)||(!map.get(otherId).displayName && d.displayName)){
+      const cur=map.get(otherId)||{uid:otherId,data:d,ts};
+      cur.displayName=d.displayName||cur.displayName;
+      cur.photoURL=d.senderPhotoURL||d.photoURL||cur.photoURL;
+      map.set(otherId,cur);
+    }
   });
-  return list.sort((a,b)=>b.ts-a.ts);
+  // Second pass fills profile data from any actual message sent by the other participant.
+  snapshot.forEach(s=>{
+    const d=s.data();
+    const senderId=String(d.senderId||'');
+    if(!senderId||senderId===String(me))return;
+    const cur=map.get(senderId);
+    if(cur){
+      cur.displayName=cur.displayName||d.displayName||d.name||'';
+      cur.photoURL=cur.photoURL||d.senderPhotoURL||d.photoURL||'';
+    }
+  });
+  return [...map.values()].sort((a,b)=>b.ts-a.ts);
 }
 function dmPreview(d){
   if(d.type==='image')return 'Sent an image';
@@ -1040,7 +758,7 @@ function refreshDmOnlineStates(){
 function subscribeDirectMessages(){
   if(stopDmList)stopDmList();
   if(!currentUser||!isRealUser())return;
-  const q=query(collection(db,'dmConversations'),where('participants','array-contains',currentUser.uid),orderBy('lastMessageAt','desc'),limit(100));
+  const q=query(collection(db,'messages'),where('participants','array-contains',currentUser.uid),limit(200));
   stopDmList=onSnapshot(q,snap=>{
     const list=deriveDmConversations(snap);
     window.__tubalDmList=list;
@@ -1109,7 +827,7 @@ async function privateAction(id,action,extra={}){try{await updatePrivateMessageF
 async function privateEdit(id,d){const next=prompt('Edit message',String(d.text||''));if(next===null||!next.trim())return;await privateAction(id,'edit',{text:next.trim()})}
 function setPrivateTyping(typing){if(!privateTarget||!isRealUser())return;clearTimeout(privateTypingOffTimer);if(privateTypingTimer)clearTimeout(privateTypingTimer);privateTypingTimer=setTimeout(()=>setPrivateTypingFnReal({receiverId:privateTarget.uid,typing}).catch(()=>{}),120);if(typing)privateTypingOffTimer=setTimeout(()=>setPrivateTyping(false),1600)}
 function subscribePrivateTyping(){if(stopPrivateTyping)stopPrivateTyping();if(!privateTarget||!isRealUser())return;const typingRef=doc(db,'typing',privateTarget.uid+'_'+currentUser.uid);stopPrivateTyping=onSnapshot(typingRef,s=>{const d=s.exists()?s.data():null;const fresh=d?.typing===true&&Date.now()-(d.updatedAt?.toMillis?.()||0)<5000;document.getElementById('privateTyping').innerHTML=fresh?esc(privateTarget.displayName)+' is typing <span class="typing-dots"><i></i><i></i><i></i></span>':''})}
-function subscribePrivateMessages(){if(stopPrivateMessages)stopPrivateMessages();if(!privateTarget||!isRealUser())return;const conversationId=[String(currentUser.uid),String(privateTarget.uid)].sort().join('_');const q=query(collection(db,'messages'),where('participants','array-contains',currentUser.uid),where('conversationId','==',conversationId),orderBy('createdAt','desc'),limit(200));stopPrivateMessages=onSnapshot(q,snap=>{const list=[];snap.forEach(s=>{const d=s.data();if(d.conversationId===conversationId)list.push({id:s.id,data:d})});list.reverse();const box=document.getElementById('privateMessages');box.innerHTML='';if(!list.length)box.innerHTML='<div class="private-empty">No private messages yet. Say hello! 👋</div>';else{list.forEach(x=>{box.appendChild(renderPrivateMessage(x.id,x.data));if(x.data.receiverId===currentUser.uid&&!x.data.seenAt)privateAction(x.id,'seen')});const pinned=list.find(x=>x.data.pinnedReal===true);const pin=document.getElementById('privatePinnedBar');pin.classList.toggle('show',!!pinned);pin.innerHTML=pinned?'<b>📌 Pinned:</b> '+esc(String(pinned.data.text||'').slice(0,100)):'';box.scrollTop=box.scrollHeight;}},err=>{console.error(err);document.getElementById('privateMessages').innerHTML='<div class="private-empty error">Private chat is unavailable. Check Firestore Rules or the required Firestore index.</div>'});subscribePrivateTyping()}
+function subscribePrivateMessages(){if(stopPrivateMessages)stopPrivateMessages();if(!privateTarget||!isRealUser())return;const q=query(collection(db,'messages'),where('participants','array-contains',currentUser.uid),limit(200));stopPrivateMessages=onSnapshot(q,snap=>{const list=[];snap.forEach(s=>{const d=s.data();if(Array.isArray(d.participants)&&d.participants.includes(privateTarget.uid))list.push({id:s.id,data:d})});list.sort((a,b)=>privateMs(a.data)-privateMs(b.data));const box=document.getElementById('privateMessages');box.innerHTML='';if(!list.length)box.innerHTML='<div class="private-empty">No private messages yet. Say hello! 👋</div>';else{list.forEach(x=>{box.appendChild(renderPrivateMessage(x.id,x.data));if(x.data.receiverId===currentUser.uid&&!x.data.seenAt)privateAction(x.id,'seen')});const pinned=list.find(x=>x.data.pinnedReal===true);const pin=document.getElementById('privatePinnedBar');pin.classList.toggle('show',!!pinned);pin.innerHTML=pinned?'<b>📌 Pinned:</b> '+esc(String(pinned.data.text||'').slice(0,100)):'';box.scrollTop=box.scrollHeight;}},err=>{console.error(err);document.getElementById('privateMessages').innerHTML='<div class="private-empty error">Private chat is unavailable. Check Firestore Rules.</div>'});subscribePrivateTyping()}
 function openPrivateChat(target){if(!isRealUser()||!target?.uid||target.uid===currentUser.uid)return;privateTarget={uid:target.uid,displayName:target.displayName||'Member',photoURL:target.photoURL||''};clearPrivateReply();const panel=document.getElementById('privateChatPanel'),name=document.getElementById('privateChatName'),avatar=document.getElementById('privateChatAvatar'),status=document.getElementById('privateChatStatus'),box=document.getElementById('privateMessages');name.textContent=privateTarget.displayName;avatar.innerHTML=privateAvatarHtml(privateTarget);status.textContent='● Online';panel.hidden=false;box.innerHTML='<div class="private-empty">Loading messages…</div>';requestAnimationFrame(()=>{document.getElementById('privateInput')?.focus();subscribePrivateMessages()})}
 function closePrivateChat(){setPrivateTyping(false);privateTarget=null;if(stopPrivateMessages){stopPrivateMessages();stopPrivateMessages=null}if(stopPrivateTyping){stopPrivateTyping();stopPrivateTyping=null}clearPrivateReply();document.getElementById('privateChatPanel').hidden=true}
 async function sendPrivateMessage(text){
@@ -1193,7 +911,7 @@ async function sendMessage(payload){
   if(payload?.type==='text'){
     const cleanText=String(payload.text||'').trim();
     if(!cleanText)throw new Error('EMPTY_MESSAGE');
-    const result=await sendMessageClientReal({text:cleanText,channel});
+    const result=await sendMessageFnReal({text:cleanText,channel});
     lastMessageTime=Date.now();
     if(result?.data?.moderated)showModerationNotice('🛡️ Server moderation cleaned this message before publishing.');
     return result?.data;
@@ -1203,28 +921,16 @@ async function sendMessage(payload){
     const limited=window.tubalHubChatGuardReal?.isRateLimitedReal?.(currentUser.uid) ?? (Date.now()-lastMessageTime<2000);
     if(limited)throw new Error('RATE_LIMIT');
 
-    const storagePath=String(payload.storagePath||'');
-    try{
-      const result=await sendGlobalMediaFnReal({
-        type:String(payload.type),
-        channel,
-        mediaUrl:String(payload.mediaUrl||''),
-        storagePath,
-        text:String(payload.text||payload.textReal||'').trim()
-      });
-      lastMessageTime=Date.now();
-      if(result?.data?.moderated)showModerationNotice('🛡️ Server moderation cleaned this caption before publishing.');
-      return result?.data;
-    }catch(error){
-      if(storagePath){
-        try{
-          await deleteObject(ref(storage,storagePath));
-        }catch(cleanupError){
-          console.warn('[TUBAL HUB] failed media orphan cleanup',cleanupError);
-        }
-      }
-      throw error;
-    }
+    const result=await sendGlobalMediaFnReal({
+      type:String(payload.type),
+      channel,
+      mediaUrl:String(payload.mediaUrl||''),
+      storagePath:String(payload.storagePath||''),
+      text:String(payload.text||payload.textReal||'').trim()
+    });
+    lastMessageTime=Date.now();
+    if(result?.data?.moderated)showModerationNotice('🛡️ Server moderation cleaned this caption before publishing.');
+    return result?.data;
   }
 
   throw new Error('INVALID_MESSAGE_TYPE');
@@ -1316,7 +1022,7 @@ async function loadMediaStorageReal(){const panel=document.getElementById('media
 document.getElementById('closeMediaStorage')?.addEventListener('click',()=>{document.getElementById('mediaStoragePanel').hidden=true;});
 document.getElementById('mediaStorageBtn')?.addEventListener('click',()=>window.tubalHubOpenMediaStorageReal?.());
 window.tubalHubOpenMediaStorageReal=()=>{const p=document.getElementById('mediaStoragePanel');if(p){p.hidden=false;loadMediaStorageReal();p.scrollIntoView({behavior:'smooth',block:'start'});}};
-onAuthStateChanged(auth,async user=>{if(!user||user.isAnonymous){tubalErrorAdminReal=false;document.getElementById('tubalErrorBot')?.setAttribute('hidden','');document.getElementById('tubalErrorBotFab')?.setAttribute('hidden','');currentUser=null;lock.style.display='block';content.style.display='none';content.setAttribute('aria-hidden','true');if(stopMessages)stopMessages();if(stopPresence)stopPresence();if(stopReactions)stopReactions();if(stopReplies)stopReplies();if(stopDmList)stopDmList();window.__tubalDmList=[];renderDmList([]);reactionSnapshotReady=false;reactionState={};reactionUsersState={};if(stopBanStatus)stopBanStatus();if(window.__banPollTimer)clearInterval(window.__banPollTimer);if(stopPrivateMessages)stopPrivateMessages();privateTarget=null;document.getElementById('privateChatPanel').hidden=true;if(heartbeatTimer)clearInterval(heartbeatTimer);document.getElementById('profileName').textContent='TUBAL HUB';document.getElementById('profileStatus').textContent='● Login required';return}currentUser=user;tubalErrorAdminReal=false;try{const tokenResult=await user.getIdTokenResult();tubalErrorAdminReal=tokenResult?.claims?.admin===true||String(user.email||'').toLowerCase()==='tubalrr@gmail.com';}catch(_){tubalErrorAdminReal=String(user.email||'').toLowerCase()==='tubalrr@gmail.com';}if(!tubalErrorAdminReal){document.getElementById('tubalErrorBot')?.setAttribute('hidden','');document.getElementById('tubalErrorBotFab')?.setAttribute('hidden','');}else{renderTubalErrorBotReal()}lock.style.display='none';content.style.display='grid';content.setAttribute('aria-hidden','false');const name=user.displayName||user.email?.split('@')[0]||'Member';document.getElementById('profileName').textContent=name;document.getElementById('profileStatus').textContent='● Online';document.getElementById('profileAvatar').innerHTML=user.photoURL?`<img src="${esc(user.photoURL)}" alt="">`:esc(initials(name));sendButton.disabled=false;input.disabled=false;try{await updatePresence(user,true)}catch(e){console.error(e)}if(stopBanStatus)stopBanStatus();let chatAccessActive=false;const applyBanStatus=d=>{const until=d.banUntil?.toMillis?.()||d.banUntil?.toDate?.()?.getTime?.()||0;const banned=d.chatStatus==='banned'&&(until===0||until>Date.now());if(banned){input.disabled=true;sendButton.disabled=true;const banMessage='🚫 GLOBAL CHAT ACCESS BANNED'+(d.banReason?'\nReason: '+d.banReason+'.':'')+(until?'\nBan ends: '+new Date(until).toLocaleString()+'.':'\nPermanent ban.');const notice=document.getElementById('moderationNotice');if(notice){notice.textContent=banMessage;notice.className='moderation-notice show danger';clearTimeout(window.__moderationNoticeTimer);}setStatus('Chat access blocked while your ban is active.',true);if(stopMessages){stopMessages();stopMessages=null}if(stopReactions){stopReactions();stopReactions=null}if(stopReplies){stopReplies();stopReplies=null}chatAccessActive=false}else{input.disabled=false;sendButton.disabled=false;document.getElementById('moderationNotice').classList.remove('show');setStatus('Connected to TUBAL HUB');if(!chatAccessActive){subscribeMessages();subscribePresence();subscribeReactions();subscribeReplies();subscribeDirectMessages();chatAccessActive=true}}};stopBanStatus=onSnapshot(doc(db,'users',user.uid),snap=>applyBanStatus(snap.exists()?snap.data():{}),err=>console.error('Ban status listener failed:',err));const checkBanStatus=async()=>{try{const snap=await getDoc(doc(db,'users',user.uid));applyBanStatus(snap.exists()?snap.data():{});}catch(e){console.error('Ban status check failed:',e)}};await checkBanStatus();if(window.__banPollTimer)clearInterval(window.__banPollTimer);window.__banPollTimer=setInterval(checkBanStatus,3000);if(heartbeatTimer)clearInterval(heartbeatTimer);heartbeatTimer=setInterval(()=>updatePresence(currentUser,true).catch(()=>{}),20000)});
+onAuthStateChanged(auth,async user=>{if(!user||user.isAnonymous){currentUser=null;lock.style.display='block';content.style.display='none';content.setAttribute('aria-hidden','true');if(stopMessages)stopMessages();if(stopPresence)stopPresence();if(stopReactions)stopReactions();if(stopReplies)stopReplies();if(stopDmList)stopDmList();window.__tubalDmList=[];renderDmList([]);reactionSnapshotReady=false;reactionState={};reactionUsersState={};if(stopBanStatus)stopBanStatus();if(window.__banPollTimer)clearInterval(window.__banPollTimer);if(stopPrivateMessages)stopPrivateMessages();privateTarget=null;document.getElementById('privateChatPanel').hidden=true;if(heartbeatTimer)clearInterval(heartbeatTimer);document.getElementById('profileName').textContent='TUBAL HUB';document.getElementById('profileStatus').textContent='● Login required';return}currentUser=user;lock.style.display='none';content.style.display='grid';content.setAttribute('aria-hidden','false');const name=user.displayName||user.email?.split('@')[0]||'Member';document.getElementById('profileName').textContent=name;document.getElementById('profileStatus').textContent='● Online';document.getElementById('profileAvatar').innerHTML=user.photoURL?`<img src="${esc(user.photoURL)}" alt="">`:esc(initials(name));sendButton.disabled=false;input.disabled=false;try{await updatePresence(user,true)}catch(e){console.error(e)}if(stopBanStatus)stopBanStatus();let chatAccessActive=false;const applyBanStatus=d=>{const until=d.banUntil?.toMillis?.()||d.banUntil?.toDate?.()?.getTime?.()||0;const banned=d.chatStatus==='banned'&&(until===0||until>Date.now());if(banned){input.disabled=true;sendButton.disabled=true;const banMessage='🚫 GLOBAL CHAT ACCESS BANNED'+(d.banReason?'\nReason: '+d.banReason+'.':'')+(until?'\nBan ends: '+new Date(until).toLocaleString()+'.':'\nPermanent ban.');const notice=document.getElementById('moderationNotice');if(notice){notice.textContent=banMessage;notice.className='moderation-notice show danger';clearTimeout(window.__moderationNoticeTimer);}setStatus('Chat access blocked while your ban is active.',true);if(stopMessages){stopMessages();stopMessages=null}if(stopReactions){stopReactions();stopReactions=null}if(stopReplies){stopReplies();stopReplies=null}chatAccessActive=false}else{input.disabled=false;sendButton.disabled=false;document.getElementById('moderationNotice').classList.remove('show');setStatus('Connected to TUBAL HUB');if(!chatAccessActive){subscribeMessages();subscribePresence();subscribeReactions();subscribeReplies();subscribeDirectMessages();chatAccessActive=true}}};stopBanStatus=onSnapshot(doc(db,'users',user.uid),snap=>applyBanStatus(snap.exists()?snap.data():{}),err=>console.error('Ban status listener failed:',err));const checkBanStatus=async()=>{try{const snap=await getDoc(doc(db,'users',user.uid));applyBanStatus(snap.exists()?snap.data():{});}catch(e){console.error('Ban status check failed:',e)}};await checkBanStatus();if(window.__banPollTimer)clearInterval(window.__banPollTimer);window.__banPollTimer=setInterval(checkBanStatus,3000);if(heartbeatTimer)clearInterval(heartbeatTimer);heartbeatTimer=setInterval(()=>updatePresence(currentUser,true).catch(()=>{}),20000)});
 document.addEventListener('visibilitychange',()=>{if(currentUser&&!document.hidden){updatePresence(currentUser,true).catch(()=>{});subscribePresence()}});window.addEventListener('pageshow',()=>{if(currentUser)updatePresence(currentUser,true).catch(()=>{})});window.addEventListener('focus',()=>{if(currentUser)updatePresence(currentUser,true).catch(()=>{})});window.addEventListener('beforeunload',()=>{if(currentUser)updatePresence(currentUser,false).catch(()=>{})});
 </script>
 
