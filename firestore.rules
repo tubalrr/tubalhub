@@ -373,7 +373,340 @@ service cloud.firestore {
 
     match /news/{newsId} {
       allow read: if true;
+
+      // Public article publishing stays admin-only. Readers may atomically
+      // increment the view counter by exactly one and cannot alter any other
+      // News field from the client.
+      allow create, delete: if adminUser();
+      allow update: if adminUser()
+        || (
+          realUser()
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['views'])
+          && (
+            (!('views' in resource.data)
+              && request.resource.data.views is int
+              && request.resource.data.views == 1)
+            || (
+              ('views' in resource.data)
+              && resource.data.views is int
+              && request.resource.data.views is int
+              && request.resource.data.views == resource.data.views + 1
+            )
+          )
+        );
+    }
+
+    // =========================================================
+    // NEWS REACTIONS — ONE REACTION PER USER / ARTICLE
+    // =========================================================
+    match /newsReactions/{reactionId} {
+      allow read: if true;
+
+      allow create, update: if realUser()
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.newsId is string
+        && request.resource.data.reaction in ['haha','love']
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'newsId','uid','reaction','updatedAt'
+        ]);
+
+      allow delete: if realUser()
+        && resource.data.uid == request.auth.uid;
+    }
+
+    // =========================================================
+    // NEWS COMMENTS
+    // =========================================================
+    match /newsComments/{commentId} {
+      allow read: if true;
+
+      allow create: if realUser()
+        && request.resource.data.newsId is string
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.authorName is string
+        && request.resource.data.authorName.size() <= 120
+        && request.resource.data.authorPhotoURL is string
+        && request.resource.data.authorPhotoURL.size() <= 2000
+        && request.resource.data.text is string
+        && request.resource.data.text.size() > 0
+        && request.resource.data.text.size() <= 2000;
+
+      allow delete: if realUser()
+        && resource.data.uid == request.auth.uid;
+    }
+
+    // =========================================================
+    // NEWSLETTER SUBSCRIBERS — PUBLIC OPT-IN / ADMIN READ
+    // =========================================================
+    match /newsletterSubscribers/{subscriberId} {
+      allow read: if adminUser();
+
+      allow create, update: if
+        request.resource.data.email is string
+        && request.resource.data.email.size() >= 5
+        && request.resource.data.email.size() <= 254
+        && request.resource.data.email.matches('^[^\\s@]+@[^\\s@]+\\.[^\\s@]+
+
+    match /announcements/{announcementId} {
+      allow read: if true;
       allow create, update, delete: if adminUser();
+    }
+
+    match /events/{eventId} {
+      allow read: if true;
+      allow create, update, delete: if adminUser();
+    }
+
+    match /systemSettings/{settingId} {
+      // Only explicitly public settings are readable by the public site.
+      allow read: if settingId == 'maintenance' || settingId == 'updateRelease' || adminUser();
+      allow create, update, delete: if adminUser();
+    }
+
+    match /systemStats/{statId} {
+      allow read: if adminUser();
+      allow create, update, delete: if false;
+    }
+
+    match /facebookVideos/{videoId} {
+      allow read: if true;
+
+      allow create: if adminUser()
+        && request.resource.data.title is string
+        && request.resource.data.title.size() > 0
+        && request.resource.data.title.size() <= 200
+        && request.resource.data.url is string
+        && request.resource.data.url.size() > 0
+        && request.resource.data.url.size() <= 2000
+        && (
+          !('thumbnail' in request.resource.data)
+          || request.resource.data.thumbnail is string
+        )
+        && request.resource.data.createdBy == request.auth.uid;
+
+      allow update: if adminUser()
+        && request.resource.data.title is string
+        && request.resource.data.title.size() > 0
+        && request.resource.data.title.size() <= 200
+        && request.resource.data.url is string
+        && request.resource.data.url.size() > 0
+        && request.resource.data.url.size() <= 2000;
+
+      allow delete: if adminUser();
+    }
+
+    // =========================================================
+    // SHOP PRODUCTS — ADMIN WRITE
+    // =========================================================
+
+    match /products/{productId} {
+      allow read: if true;
+
+      allow create: if adminUser()
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() <= 200
+        && request.resource.data.category in ['merchandise', 'clothing', 'accessories', 'digital-products', 'apps-software', 'gaming', 'mods-addons', 'media', 'wellness', 'coffee', 'other']
+        && request.resource.data.price is string
+        && request.resource.data.price.size() <= 100
+        && request.resource.data.description is string
+        && request.resource.data.description.size() <= 2000
+        && request.resource.data.createdBy == request.auth.uid
+        && request.resource.data.get('icon', '') is string
+        && request.resource.data.get('badge', '') is string
+        && request.resource.data.get('imageUrl', '') is string
+        && request.resource.data.get('productUrl', '') is string
+        && request.resource.data.get('sourceType', 'admin-managed') in ['admin-managed', 'external', 'demo']
+        && request.resource.data.get('catalogStatus', 'live') in ['live', 'draft', 'hidden', 'archived']
+        && request.resource.data.get('isVisible', true) is bool
+        && request.resource.data.get('productType', 'physical') is string
+        && (
+          request.resource.data.get('productType', 'physical') != 'physical'
+          || (
+            'stock' in request.resource.data
+            && request.resource.data.stock is int
+            && request.resource.data.stock >= 0
+          )
+        )
+        && (!('isDemo' in request.resource.data) || request.resource.data.isDemo is bool)
+        && (request.resource.data.category != 'coffee' || request.resource.data.get('brandKey', '') == 'kapeng')
+        && !('downloadUrl' in request.resource.data);
+
+      allow update: if adminUser()
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() <= 200
+        && request.resource.data.category in ['merchandise', 'clothing', 'accessories', 'digital-products', 'apps-software', 'gaming', 'mods-addons', 'media', 'wellness', 'coffee', 'other']
+        && request.resource.data.price is string
+        && request.resource.data.price.size() <= 100
+        && request.resource.data.description is string
+        && request.resource.data.description.size() <= 2000
+        && request.resource.data.createdBy == resource.data.createdBy
+        && request.resource.data.get('icon', '') is string
+        && request.resource.data.get('badge', '') is string
+        && request.resource.data.get('imageUrl', '') is string
+        && request.resource.data.get('productUrl', '') is string
+        && request.resource.data.get('sourceType', 'admin-managed') in ['admin-managed', 'external', 'demo']
+        && request.resource.data.get('catalogStatus', 'live') in ['live', 'draft', 'hidden', 'archived']
+        && request.resource.data.get('isVisible', true) is bool
+        && request.resource.data.get('productType', 'physical') is string
+        && (
+          request.resource.data.get('productType', 'physical') != 'physical'
+          || (
+            'stock' in request.resource.data
+            && request.resource.data.stock is int
+            && request.resource.data.stock >= 0
+          )
+        )
+        && (!('isDemo' in request.resource.data) || request.resource.data.isDemo is bool)
+        && (request.resource.data.category != 'coffee' || request.resource.data.get('brandKey', '') == 'kapeng')
+        && !('downloadUrl' in request.resource.data);
+
+      allow delete: if adminUser();
+    }
+
+    match /productSecrets/{productId} {
+      // Actual download source/path is never public.
+      allow read, write: if adminUser();
+    }
+
+    match /shopRateLimits/{userId} {
+      // Rate-limit state is maintained by trusted server code.
+      allow read, write: if adminUser();
+    }
+
+    // =========================================================
+    // SHOP ORDERS / DIGITAL OWNERSHIP / VERSIONS
+    // =========================================================
+
+    match /productVersions/{versionId} {
+      allow read: if true;
+      allow create, update, delete: if adminUser()
+        && !('downloadUrl' in request.resource.data);
+    }
+
+    match /orders/{orderId} {
+      // Order/ownership records are server-generated only.
+      allow create, update, delete: if adminUser();
+      // Buyers can read only their own orders; admins can review all orders
+      // for manual payment verification.
+      allow read: if adminUser()
+        || (realUser() && resource.data.uid == request.auth.uid);
+    }
+
+    match /licenses/{licenseId} {
+      // Licenses are issued or upgraded only by trusted server code.
+      allow create, update, delete: if adminUser();
+      allow read: if realUser()
+        && resource.data.uid == request.auth.uid;
+    }
+
+    match /downloads/{downloadId} {
+      // Download records are server-generated only.
+      allow create, update, delete: if adminUser();
+      allow read: if realUser()
+        && resource.data.uid == request.auth.uid;
+    }
+
+    match /upgrades/{upgradeId} {
+      // Upgrade records are server-generated only.
+      allow create, update, delete: if adminUser();
+      allow read: if realUser()
+        && resource.data.uid == request.auth.uid;
+    }
+
+    // =========================================================
+    // NOTIFICATIONS
+    // =========================================================
+
+    match /notifications/{notificationId} {
+      allow read: if realUser()
+        && resource.data.recipientUid == request.auth.uid;
+
+      // Notification writers are restricted to the admin/backend path.
+      allow create: if adminUser()
+        && request.resource.data.recipientUid is string
+        && request.resource.data.type is string
+        && request.resource.data.title is string
+        && request.resource.data.title.size() <= 240;
+
+      allow update: if adminUser()
+        || (
+          realUser()
+          && resource.data.recipientUid == request.auth.uid
+          && request.resource.data.recipientUid == resource.data.recipientUid
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+            'read',
+            'readAt'
+          ])
+        );
+
+      allow delete: if adminUser()
+        || (
+          realUser()
+          && resource.data.recipientUid == request.auth.uid
+        );
+    }
+
+    // =========================================================
+    // SERVER MODERATION / RATE LIMIT STATE
+    // =========================================================
+
+    match /moderationLogs/{logId} {
+      allow read: if adminUser();
+      allow create, update, delete: if false;
+    }
+
+    match /rateLimits/{uid} {
+      allow read, write: if false;
+    }
+
+
+    // =========================================================
+    // BETA TEST ACCESS — PUBLIC READ / ADMIN WRITE
+    // =========================================================
+    match /tubalhub_config/{configId} {
+      allow read: if configId == 'beta';
+      allow create: if configId == 'beta'
+        && adminUser()
+        && request.resource.data.admin_email is string
+        && request.resource.data.test_version is string
+        && request.resource.data.beta_emails is list
+        && request.resource.data.beta_emails.size() <= 3;
+      allow update: if configId == 'beta'
+        && adminUser()
+        && request.resource.data.admin_email is string
+        && request.resource.data.test_version is string
+        && request.resource.data.beta_emails is list
+        && request.resource.data.beta_emails.size() <= 3
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'admin_email',
+          'beta_emails',
+          'test_version',
+          'updatedAt',
+          'updatedBy'
+        ]);
+      allow delete: if false;
+    }
+
+    // =========================================================
+    // DEFAULT DENY
+    // =========================================================
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+)
+        && request.resource.data.source == 'news'
+        && request.resource.data.status == 'subscribed'
+        && request.resource.data.consent == true
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'email','source','status','consent','uid','subscribedAt','updatedAt'
+        ]);
+
+      allow delete: if adminUser();
     }
 
     match /announcements/{announcementId} {
