@@ -908,7 +908,7 @@ function refreshDmOnlineStates(){
 function subscribeDirectMessages(){
   if(stopDmList)stopDmList();
   if(!currentUser||!isRealUser())return;
-  const q=query(collection(db,'messages'),where('participants','array-contains',currentUser.uid),limit(200));
+  const q=query(collection(db,'dmConversations'),where('participants','array-contains',currentUser.uid),orderBy('lastMessageAt','desc'),limit(100));
   stopDmList=onSnapshot(q,snap=>{
     const list=deriveDmConversations(snap);
     window.__tubalDmList=list;
