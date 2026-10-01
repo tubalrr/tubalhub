@@ -517,7 +517,7 @@
 
     async function botConversation(latest){
       if (muted) return;
-      const version = latest.match(/version ay ([0-9.]+)/i)?.[1] || "latest";
+      const version = latest.match(/version (?:is|is currently) ([0-9.]+)/i)?.[1] || "latest";
       await speak(
         "Hello! Welcome to TUBAL HUB. I am the Welcome Bot. Join us as we introduce the latest website update.",
         bot,
@@ -526,7 +526,7 @@
       if (muted) return;
       await new Promise(r => setTimeout(r, 350));
       await speak(
-        "Hello! I am the TUBAL HUB Update Announcer. The current website version is " + version + . Let us go through the latest features and improvements.,
+        "Hello! I am the TUBAL HUB Update Announcer. The current website version is " + version + ". Let us go through the latest features and improvements.",
         announcerBot,
         {greeting:true, pitch:1.04}
       );
