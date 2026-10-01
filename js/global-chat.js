@@ -3,7 +3,7 @@
    Firebase Global Chat implementation in pages/chat.html.
    No hardcoded community messages or fake online users are generated here.
 */
-const TUBAL_VERSION_REAL = "1.3.18";
+const TUBAL_VERSION_REAL = "1.2.16";
 
 (() => {
   "use strict";
@@ -599,6 +599,9 @@ const TUBAL_VERSION_REAL = "1.3.18";
     }
 
     const url = await api.getDownloadURL(snapshot.ref);
+    const uid = user.uid;
+    if (window.tubalHubChatGuardReal?.isRateLimitedReal?.(uid)) throw new Error("RATE_LIMIT");
+
     const input = document.getElementById("messageInput");
     const caption = type === "image" ? String(input?.value || "").trim() : "";
     const channelMap = {
@@ -611,38 +614,28 @@ const TUBAL_VERSION_REAL = "1.3.18";
     const selected = document.querySelector(".channelReal.active")?.dataset.channel || "general";
     const displayName = user.displayName || user.email?.split("@")[0] || "Member";
 
-    const sendMediaFn = api.httpsCallable(api.functions, "sendGlobalMediaMessageReal");
-    try {
-      await sendMediaFn({
-        type,
-        channel: channelMap[selected] || "general",
-        mediaUrl: url,
-        storagePath: path,
-        text: caption
-      });
-    } catch (error) {
-      // Only deterministic validation/authorization failures are safe to clean
-      // immediately. Network/internal errors may be ambiguous because the server
-      // could have written the message successfully; scheduled cleanup handles
-      // any resulting orphan without risking a valid media message.
-      const code = String(error?.code || "");
-      const deterministic = new Set([
-        "functions/invalid-argument",
-        "functions/permission-denied",
-        "functions/not-found",
-        "functions/failed-precondition",
-        "functions/resource-exhausted"
-      ]);
-      if (deterministic.has(code)) {
-        try {
-          const deleteMediaFn = api.httpsCallable(api.functions, "deleteGlobalChatMediaReal");
-          await deleteMediaFn({ storagePath: path });
-        } catch (cleanupError) {
-          console.warn("Global Chat orphan-media cleanup failed:", cleanupError);
-        }
-      }
-      throw error;
-    }
+    const firestoreMod = await import("https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js");
+    const db = firestoreMod.getFirestore(api.app);
+    await firestoreMod.addDoc(firestoreMod.collection(db, "globalChats"), {
+      uid,
+      displayName,
+      name: displayName,
+      email: user.email || "",
+      photoURL: user.photoURL || "",
+      createdAt: firestoreMod.serverTimestamp(),
+      text: caption,
+      textReal: caption,
+      type,
+      mediaUrl: url,
+      imageUrlReal: url,
+      storagePath: path,
+      storagePathReal: path,
+      fileNameReal: safe.split("/").pop(),
+      channel: channelMap[selected] || "global-chat",
+      hasImageReal: type === "image",
+      imageExpiredReal: false,
+      isSticker: type === "gif"
+    });
 
     if (input && type === "image") {
       input.value = "";
