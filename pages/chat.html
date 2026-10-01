@@ -684,7 +684,7 @@ function renderChatSnapshotReal(snap, channelValue, sourceReal){
   }
   latestChannelMessagesReal=nextLatest;
   if(!olderChannelMessagesReal.length){
-    channelCursorReal=snap.docs[snap.docs.length-1]||null;
+    channelCursorReal=snap.docs[0]||null;
     channelHasOlderReal=snap.size===100;
   }
   renderLoadedChannelMessagesReal({sourceReal});
@@ -700,14 +700,14 @@ async function loadOlderMessagesReal(){
     const snap=await getDocsFromServer(query(
       collection(db,'globalChats'),
       where('channel','==',channelValue),
-      orderBy('createdAt','desc'),
-      startAfter(channelCursorReal),
-      limit(100)
+      orderBy('createdAt','asc'),
+      endBefore(channelCursorReal),
+      limitToLast(100)
     ));
     const page=snap.docs.map(d=>({id:d.id,data:d.data()}));
     const known=new Set([...latestChannelMessagesReal,...olderChannelMessagesReal].map(x=>x.id));
-    page.forEach(item=>{if(!known.has(item.id))olderChannelMessagesReal.push(item)});
-    if(snap.docs.length)channelCursorReal=snap.docs[snap.docs.length-1];
+    snap.docs.map(d=>({id:d.id,data:d.data()})).forEach(item=>{if(!known.has(item.id))olderChannelMessagesReal.unshift(item)});
+    if(snap.docs.length)channelCursorReal=snap.docs[0];
     channelHasOlderReal=snap.size===100;
     renderLoadedChannelMessagesReal({preserveTop:true,previousHeight,previousTop,sourceReal:'pagination'});
   }catch(e){
@@ -733,8 +733,8 @@ function subscribeMessages(){
   const indexedQuery=query(
     collection(db,'globalChats'),
     where('channel','==',channelValue),
-    orderBy('createdAt','desc'),
-    limit(100)
+    orderBy('createdAt','asc'),
+    limitToLast(100)
   );
 
   const showIndexRequiredState=()=>{
