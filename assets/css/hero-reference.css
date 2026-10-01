@@ -761,3 +761,53 @@ body.hub-home #bentoHero.th-corp-hero + .th-value-section{
     transform:scale(.52)!important;
   }
 }
+
+
+/* =========================================================
+   HERO SHOWCASE — OBSIDIAN / EYE-COMFORT
+   The slideshow should belong to the dark Hero, not look like
+   a bright white webpage card.
+   ========================================================= */
+body.hub-home #bentoHero.th-corp-hero .th-bot-showcase{
+  color:#eef2f7!important;
+  background:
+    radial-gradient(circle at 85% 20%,rgba(72,102,170,.16),transparent 35%),
+    linear-gradient(145deg,#171b23 0%,#10141b 55%,#0d1117 100%)!important;
+  border:1px solid rgba(255,255,255,.10)!important;
+  box-shadow:
+    0 22px 55px rgba(0,0,0,.45),
+    inset 0 1px rgba(255,255,255,.06)!important;
+}
+
+body.hub-home #bentoHero.th-corp-hero .th-bot-showcase:before{
+  background:linear-gradient(90deg,transparent,rgba(120,150,210,.08),transparent)!important;
+}
+
+body.hub-home #bentoHero.th-corp-hero .th-bot-showcase-header strong{
+  color:#f3f6fa!important;
+}
+body.hub-home #bentoHero.th-corp-hero .th-bot-kicker{
+  color:#8d9bb0!important;
+}
+body.hub-home #bentoHero.th-corp-hero .th-bot-count{
+  color:#8b96a5!important;
+}
+body.hub-home #bentoHero.th-corp-hero .th-bot-showcase p{
+  color:#aab4c2!important;
+}
+
+body.hub-home #bentoHero.th-corp-hero .th-bot-screen{
+  background:#11161e!important;
+  border-color:rgba(255,255,255,.09)!important;
+  box-shadow:
+    0 8px 24px rgba(0,0,0,.32),
+    inset 0 1px rgba(255,255,255,.04)!important;
+}
+
+body.hub-home #bentoHero.th-corp-hero .th-bot-progress{
+  background:rgba(255,255,255,.10)!important;
+}
+
+body.hub-home #bentoHero.th-corp-hero .th-bot-no-click{
+  color:#687486!important;
+}
