@@ -2,7 +2,7 @@ import {app,auth} from "./firebase-config.js";
 import {onAuthStateChanged} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 import {getFirestore,collection,getDocs,getDoc,doc,addDoc,setDoc,updateDoc,deleteDoc,query,orderBy,limit,serverTimestamp} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 import {getStorage,ref as storageRef,uploadBytes,getDownloadURL} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-storage.js";
-import {publishHubPost,subscribeHubPosts} from "./hub-content.js?v=20261001-realtime1";
+import {publishHubPost,subscribeHubPosts} from "./hub-content.js?v=20261001-realtime2";
 import {saveItem,removeSaved,getSavedItems,sharedUrl} from "./retention.js";
 
 const db=getFirestore(app);
