@@ -3147,3 +3147,69 @@ body.feeds-page{
   background:#f5f6f8!important;
   border-color:#d9dee6!important;
 }
+
+/* =========================================================
+   FEEDS CONTAINER COLOR — WARM CREAM
+   Distinct container surface with low visual strain.
+   ========================================================= */
+.feeds-panel,
+.feeds-menu,
+.feed-toolbar,
+.feeds-stories-wrap,
+.feed-featured,
+.create-post{
+  background:#eee8dc!important;
+  border-color:#d9d1c3!important;
+  box-shadow:0 2px 10px rgba(71,64,53,.07)!important;
+}
+.post-card{
+  background:#f2ede4!important;
+  border-color:#dbd4c8!important;
+  box-shadow:0 2px 10px rgba(71,64,53,.06)!important;
+}
+.left-rail .feeds-panel,
+.right-rail .feeds-panel{
+  background:#e9e2d5!important;
+}
+.feed-featured,
+.feeds-stories-wrap,
+.create-post{
+  background:#eee8dc!important;
+}
+.feed-toolbar{
+  background:rgba(238,232,220,.98)!important;
+}
+.feed-article-content,
+.product-card,
+.game-card,
+.featured-item,
+.recent-item,
+.suggested-row,
+.trending-item,
+.active-game-row,
+.create-action,
+.create-trigger{
+  background:#f8f5ef!important;
+  border-color:#ddd6ca!important;
+}
+.feed-menu-icon,
+.featured-media,
+.game-cover,
+.product-media{
+  background:#e7e0d5!important;
+  border-color:#d5cec2!important;
+}
+.intro-chip,
+.feed-filter,
+.feed-sort{
+  background:#f5f1e9!important;
+  border-color:#d8d0c4!important;
+}
+.intro-chip:hover,
+.feed-filter:hover,
+.feed-sort:hover,
+.create-action:hover,
+.featured-item:hover,
+.feed-menu-item:hover{
+  background:#e9e4db!important;
+}
