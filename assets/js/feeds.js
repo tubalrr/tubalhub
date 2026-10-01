@@ -1,6 +1,6 @@
 import {app,auth} from "./firebase-config.js";
 import {onAuthStateChanged} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
-import {getFirestore,collection,getDocs,getDoc,doc,addDoc,setDoc,updateDoc,deleteDoc,query,orderBy,limit,startAfter,serverTimestamp} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+import {getFirestore,collection,getDocs,getDoc,doc,addDoc,setDoc,updateDoc,deleteDoc,query,orderBy,limit,startAfter,onSnapshot,serverTimestamp} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 import {getStorage,ref as storageRef,uploadBytes,getDownloadURL} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-storage.js";
 import {publishHubPost,subscribeHubPosts} from "./hub-content.js?v=20261001-pagination1";
 import {saveItem,removeSaved,getSavedItems,sharedUrl} from "./retention.js";
@@ -15,7 +15,7 @@ const REACTIONS={
 const REACTION_KEYS=Object.keys(REACTIONS);
 const QUICK_REACTIONS=REACTION_KEYS;
 const state={
-  auth:null,items:[],products:[],hubPosts:[],hubOlderPosts:[],users:[],presence:new Map(),userMap:new Map(),
+  auth:null,items:[],products:[],productOlderProducts:[],hubPosts:[],hubOlderPosts:[],users:[],presence:new Map(),userMap:new Map(),
   reactions:readLocal("tubalhub-feed-reactions",{}),comments:readLocal("tubalhub-feed-comments",{}),
   commentReactions:readLocal("tubalhub-feed-comment-reactions",{}),shareCounts:readLocal("tubalhub-feed-shares",{}),
   saved:new Set([...readLocal("tubalhub-feed-saved",[]),...getSavedItems().map(x=>x.id)]),filter:"all",query:"",sort:"latest",
@@ -24,7 +24,7 @@ const state={
   replyingTo:null,editingCommentId:null,deleteCommentId:null,emojiOffset:0,emojiQuery:"",
   postFile:null,commentPhotoData:""
 };
-let stopHub=null,stopRemoteComments=null,stopRemoteReactions=null,uiReady=false;
+let stopHub=null,stopProducts=null,stopRemoteComments=null,stopRemoteReactions=null,uiReady=false;
 let pickerTimer=null,pickerCloseTimer=null,pickerState={postId:null,targetType:"post",commentId:null,button:null,longPressTriggered:false};
 let typingTimer=null;
 
@@ -105,8 +105,8 @@ async function loadProducts(reset=true){
       state.products=rows;
       state.productsPageCursor=snap.docs.at(-1)||null;
     }else{
-      const seen=new Set(state.products.map(x=>x.sourceId||x.id));
-      rows.forEach(x=>{const k=x.sourceId||x.id;if(!seen.has(k)){state.products.push(x);seen.add(k)}});
+      const seen=new Set([...state.products,...state.productOlderProducts].map(x=>x.sourceId||x.id));
+      rows.forEach(x=>{const k=x.sourceId||x.id;if(!seen.has(k)){state.productOlderProducts.push(x);seen.add(k)}});
       state.productsPageCursor=snap.docs.at(-1)||state.productsPageCursor;
     }
     state.productsHasMore=snap.docs.length===FEED_LOAD_LIMITS.products;
@@ -117,6 +117,34 @@ async function loadProducts(reset=true){
     state.productsHasMore=false;
     return false;
   }finally{state.productsPageLoading=false}
+}
+function setupProductsRealtime(){
+  if(stopProducts)return;
+  try{
+    const productsQuery=query(
+      collection(db,"products"),
+      orderBy("createdAt","desc"),
+      limit(FEED_LOAD_LIMITS.products)
+    );
+    stopProducts=onSnapshot(
+      productsQuery,
+      snap=>{
+        const latest=snap.docs.map(normalizeProduct);
+        const latestIds=new Set(latest.map(x=>x.sourceId||x.id));
+        const olderById=new Map(state.productOlderProducts.map(x=>[x.sourceId||x.id,x]));
+        state.products=latest;
+        state.productOlderProducts=[...olderById.values()].filter(x=>!latestIds.has(x.sourceId||x.id));
+        state.productsPageCursor=snap.docs.at(-1)||state.productsPageCursor;
+        state.productsHasMore=snap.docs.length===FEED_LOAD_LIMITS.products;
+        buildFeed(true);
+      },
+      err=>{
+        console.warn("[Feeds] realtime products listener unavailable",err);
+      }
+    );
+  }catch(e){
+    console.warn("[Feeds] could not start products realtime listener",e);
+  }
 }
 async function loadHubPostsPage(){
   if(!state.hubHasMore||state.hubPageLoading)return false;
@@ -139,7 +167,7 @@ async function loadHubPostsPage(){
   }finally{state.hubPageLoading=false}
 }
 function rebuildFeedItems(){
-  const raw=[...state.hubPosts,...state.hubOlderPosts].map(hubItem).concat(state.products,games.map(gameItem));
+  const raw=[...state.hubPosts,...state.hubOlderPosts].map(hubItem).concat([...state.products,...state.productOlderProducts],games.map(gameItem));
   const seen=new Set();
   state.items=raw.filter(x=>{const k=contentKey(x);if(seen.has(k))return false;seen.add(k);return true});
 }
@@ -911,7 +939,9 @@ function setupUI(){
 onAuthStateChanged(auth,async user=>{
   state.auth=user&&!user.isAnonymous?user:null;
   setupUI();updateAvatarStatus();renderStories();buildFeed();
-  await Promise.all([loadPeople(),loadProducts()]);
-  setupHubContent();loadRemoteComments();loadRemoteReactions();
+  await loadPeople();
+  setupHubContent();
+  setupProductsRealtime();
+  loadRemoteComments();loadRemoteReactions();
   buildFeed();updateAvatarStatus();
 });
