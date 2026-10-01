@@ -1,11 +1,12 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.3.17",
-  "build": "2026-10-01_news-dataflow",
+  "version": "1.3.18",
+  "build": "2026-10-01_global-chat-dataflow-security",
   "releasedAtReal": "2026-10-01T03:40:00.000Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.3.18 FIX — Global Chat now limits channel message reads at Firestore, scopes replies/reactions to loaded messages, adds older-history pagination, moves DM list/history toward conversation-scoped queries, enforces server-side chat bans/mutes and stronger link validation, cleans failed media uploads, blocks repeated identical messages, and adds server-backed message reporting.",
     "v1.3.17 FEAT — News data flow is now persistent and paginated: article reactions and comments use Firestore, search/category can load the full News index, native Share is supported with Copy fallback, Editor's Pick is a real article card, related stories use metadata relevance, author presence follows the live presence collection, and newsletter subscriptions are saved to Firestore.",
     "v1.3.16 FIX — Automatic update refresh now waits for the News Announcer to finish its full spoken explanation; the old 15-second fallback was extended to 90 seconds as a safety timeout only.",
     "v1.3.15 FIX — News records now include Firestore views in the normalized data, and opening an official News article increments its views count so Trending Now has a real engagement metric.",
@@ -831,5 +832,5 @@
     }
   ],
   "date": "2026-10-01",
-  "changes": "v1.3.17 FEAT — News interactions, realtime presence, related content, pagination, sharing, and newsletter subscription now use real data flows."
+  "changes": "v1.3.18 FIX — Global Chat data loading, history pagination, DM scaling, server security, media cleanup, anti-spam, and reporting were hardened."
 }
