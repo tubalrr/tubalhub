@@ -35,7 +35,7 @@ body{background:radial-gradient(circle at 75% 0%,#17345d55,transparent 30%),radi
 <link rel="stylesheet" href="../assets/css/global-chat-gif-stickers.css?v=20260924-v1">
 <link rel="stylesheet" href="../assets/css/global-chat-focus.css?v=20260924-v4">
   <link rel="stylesheet" href="../assets/css/premium-logos.css?v=20260924-logo1">
-</head>
+<style id="tubal-error-bot-style">.tubal-error-bot{position:fixed;right:22px;bottom:22px;width:min(430px,calc(100vw - 30px));max-height:min(620px,calc(100vh - 40px));overflow:hidden;z-index:100;background:#07110d;border:1px solid #24543b;border-radius:18px;box-shadow:0 20px 70px #000b;color:#eef5f0}.tubal-error-bot[hidden]{display:none}.tubal-error-bot-head{display:flex;align-items:flex-start;justify-content:space-between;padding:16px 18px;border-bottom:1px solid #173b2a}.tubal-error-bot-head h2{margin:3px 0;font-size:17px}.tubal-error-bot-head p{margin:4px 0 0;color:#9fb0a6;font-size:11px}.tubal-error-bot-head button{background:none;border:0;color:#aabdb2;font-size:24px;cursor:pointer}.tubal-error-bot-actions{display:flex;gap:8px;padding:10px 14px;border-bottom:1px solid #173b2a}.tubal-error-bot-actions button{border:1px solid #2b6346;background:#0d2118;color:#dff8e9;border-radius:9px;padding:7px 11px;cursor:pointer}.tubal-error-bot-list{padding:12px;overflow:auto;max-height:440px}.tubal-error-item{border:1px solid #75413a;background:#0a1711;border-radius:12px;padding:11px;margin-bottom:9px}.tubal-error-meta{font-size:10px;color:#789286;margin-bottom:5px}.tubal-error-message{font-size:12px;line-height:1.45;word-break:break-word}.tubal-error-analysis{margin-top:8px;padding:8px 9px;border-radius:9px;background:#0e2419;color:#cfe9d8;font-size:11px;line-height:1.5}.tubal-error-fab{position:fixed;right:22px;bottom:22px;z-index:99;border:1px solid #2d7a50;background:#092015;color:#dff8e9;border-radius:999px;padding:11px 15px;box-shadow:0 10px 35px #0008;cursor:pointer;font-weight:700}.tubal-error-fab.has-error{border-color:#a34d42}.tubal-error-fab[hidden]{display:none}@media(max-width:600px){.tubal-error-bot{right:10px;bottom:10px;width:calc(100vw - 20px)}.tubal-error-fab{right:10px;bottom:10px}}</style></head>
 <body class="global-chat-page">
 <button id="sidebarToggle" class="global-chat-menu-toggle" type="button" aria-controls="chatLeftRail" aria-expanded="false" aria-label="Toggle Global Chat sidebar" title="Toggle sidebar">
   <span></span><span></span><span></span>
@@ -159,7 +159,7 @@ body{background:radial-gradient(circle at 75% 0%,#17345d55,transparent 30%),radi
   <div class="chat-drawer-backdrop" id="chatDrawerBackdrop" hidden></div>
 </section>
 
-<section id="mediaStoragePanel" class="media-storage-panel" hidden><div class="media-storage-head"><div><span class="rail-kicker">MEDIA</span><h2>My Image Storage</h2><p id="mediaStorageSummary">Loading your Global Chat images…</p></div><button type="button" id="closeMediaStorage">Close</button></div><div class="media-storage-meter"><div class="media-storage-meter-top"><strong id="mediaStorageCount">0 / 40</strong><span id="mediaStoragePercent">0%</span></div><div class="media-storage-bar"><i id="mediaStorageBarFill"></i></div><small>Maximum 40 images per account • automatic expiry protects storage</small></div><div id="mediaStorageList" class="media-storage-list"><div class="private-empty">No images loaded.</div></div></section><section id="privateChatPanel" class="private-chat-panel" hidden><div class="private-chat-head"><button type="button" id="closePrivateChat" class="private-back">←</button><div id="privateChatAvatar" class="private-avatar">M</div><div class="private-person"><b id="privateChatName">Member</b><span id="privateChatStatus">● Online</span></div><button type="button" id="privateVideoCall" class="private-call" title="Video call">📹</button></div><div id="privatePinnedBar" class="private-pinned-bar"></div><div id="privateMessages" class="private-messages"><div class="private-empty">Select an online member to start a private conversation.</div></div><div id="privateTyping" class="private-typing"></div><div id="privateReplyBar" class="private-reply-bar"><span>↩ Replying to <b id="privateReplyName">Member</b>: <span id="privateReplyPreview"></span></span><button type="button" class="private-reply-cancel" id="privateReplyCancel">×</button></div><form id="privateForm" class="private-composer"><input id="privateInput" maxlength="500" placeholder="Message..." autocomplete="off"><button type="submit">Send ➤</button></form></section><footer class="footer chat-footer"><div><b>TUBAL HUB</b><span>YOUR HUB. YOUR COMMUNITY.</span></div><div>© 2026 TUBAL HUB. All rights reserved. &nbsp; | &nbsp; Play • Create • Connect</div><div class="social">● ● ● ●</div></main></div>
+<section id="tubalErrorBot" class="tubal-error-bot" hidden aria-label="TUBAL Error Bot"><div class="tubal-error-bot-head"><div><span class="rail-kicker">SYSTEM</span><h2>🛠 TUBAL Error Bot</h2><p id="tubalErrorBotSummary">Watching browser and Firebase errors.</p></div><button type="button" id="closeTubalErrorBot" aria-label="Close error bot">×</button></div><div class="tubal-error-bot-actions"><button type="button" id="analyzeTubalErrors">Analyze errors</button><button type="button" id="clearTubalErrors">Clear</button></div><div id="tubalErrorBotList" class="tubal-error-bot-list"><div class="private-empty">No errors detected.</div></div></section><section id="mediaStoragePanel" class="media-storage-panel" hidden><div class="media-storage-head"><div><span class="rail-kicker">MEDIA</span><h2>My Image Storage</h2><p id="mediaStorageSummary">Loading your Global Chat images…</p></div><button type="button" id="closeMediaStorage">Close</button></div><div class="media-storage-meter"><div class="media-storage-meter-top"><strong id="mediaStorageCount">0 / 40</strong><span id="mediaStoragePercent">0%</span></div><div class="media-storage-bar"><i id="mediaStorageBarFill"></i></div><small>Maximum 40 images per account • automatic expiry protects storage</small></div><div id="mediaStorageList" class="media-storage-list"><div class="private-empty">No images loaded.</div></div></section><section id="privateChatPanel" class="private-chat-panel" hidden><div class="private-chat-head"><button type="button" id="closePrivateChat" class="private-back">←</button><div id="privateChatAvatar" class="private-avatar">M</div><div class="private-person"><b id="privateChatName">Member</b><span id="privateChatStatus">● Online</span></div><button type="button" id="privateVideoCall" class="private-call" title="Video call">📹</button></div><div id="privatePinnedBar" class="private-pinned-bar"></div><div id="privateMessages" class="private-messages"><div class="private-empty">Select an online member to start a private conversation.</div></div><div id="privateTyping" class="private-typing"></div><div id="privateReplyBar" class="private-reply-bar"><span>↩ Replying to <b id="privateReplyName">Member</b>: <span id="privateReplyPreview"></span></span><button type="button" class="private-reply-cancel" id="privateReplyCancel">×</button></div><form id="privateForm" class="private-composer"><input id="privateInput" maxlength="500" placeholder="Message..." autocomplete="off"><button type="submit">Send ➤</button></form></section><button type="button" id="tubalErrorBotFab" class="tubal-error-fab" hidden>🛠 Error Bot</button><footer class="footer chat-footer"><div><b>TUBAL HUB</b><span>YOUR HUB. YOUR COMMUNITY.</span></div><div>© 2026 TUBAL HUB. All rights reserved. &nbsp; | &nbsp; Play • Create • Connect</div><div class="social">● ● ● ●</div></main></div>
 <script type="module">
 import { app, auth } from "../assets/js/firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
@@ -187,6 +187,51 @@ let privateTarget=null,stopPrivateMessages=null,stopPrivateTyping=null,privateLa
 let pendingExternalImageUrlReal="";
 const emojis=['😀','😂','😍','🥰','😎','😭','😡','😮','👍','👎','❤️','🔥','💯','🎮','🎉','👏','🤣','🤔','😅','🙌','💚','✨','👀','🙏','🥳','😴','🤝','🚀','💀','😇','😱','🤩','💪','🌿','⭐','🎯','🏆','❤️‍🔥','🫶','😊'];
 function enableMemberNameClick(){if(!memberList||memberList.dataset.privateClickReady)return;memberList.dataset.privateClickReady='1';memberList.addEventListener('click',e=>{const nameBtn=e.target.closest?.('.private-member-name');if(!nameBtn)return;const member=nameBtn.closest?.('.member');if(!member)return;const uid=member.dataset.uid;if(!uid||uid===currentUser?.uid)return;const name=nameBtn.textContent||'Member';const img=member.querySelector('.mini img');e.preventDefault();e.stopPropagation();openPrivateChat({uid,displayName:name,photoURL:img?.src||''})},true)}
+
+
+// TUBAL Error Bot: captures browser/runtime/Firebase errors locally and explains common causes.
+const tubalErrorLogReal=[];
+const tubalErrorSeenReal=new Set();
+function analyzeTubalErrorReal(message,source='runtime'){
+  const m=String(message||'').toLowerCase();
+  if(m.includes('failed-precondition')&&m.includes('index'))return 'Firestore composite index is likely missing or not deployed. Check firestore.indexes.json and Firebase deployment.';
+  if(m.includes('permission-denied')||m.includes('missing or insufficient permissions'))return 'Firestore Rules rejected the request. Check the query constraints against the allow-read rule.';
+  if(m.includes('resource-exhausted'))return 'Firebase rate/quota protection triggered. Check repeated listeners, callable frequency, or project quota.';
+  if(m.includes('unauthenticated')||m.includes('login_required'))return 'The user is not authenticated or the session expired. Check Firebase Auth state before the request.';
+  if(m.includes('network')||m.includes('offline')||m.includes('failed to fetch'))return 'Network connectivity may have interrupted Firebase. Retry after the connection is restored.';
+  if(m.includes('storage/object-not-found'))return 'The Firebase Storage object was not found. The URL/path may be stale or the upload may have failed.';
+  if(m.includes('storage/unauthorized'))return 'Firebase Storage Rules rejected the file operation. Check the authenticated UID and storage path rules.';
+  if(m.includes('cannot read properties')||m.includes('undefined'))return 'A JavaScript value is missing. Check the stack trace and the DOM/data object used at the reported line.';
+  if(source==='unhandledrejection')return 'An async Promise failed without being handled. Inspect the error text and the operation that returned the Promise.';
+  return 'Unknown runtime error. Open the details/stack trace and trace the first application file in the stack.';
+}
+function recordTubalErrorReal(message,source='runtime',details=''){
+  const clean=String(message||'').trim();
+  if(!clean)return;
+  const key=source+'|'+clean+'|'+String(details||'').slice(0,500);
+  if(tubalErrorSeenReal.has(key))return;
+  tubalErrorSeenReal.add(key);
+  tubalErrorLogReal.unshift({time:new Date(),source,message:clean,details:String(details||''),analysis:analyzeTubalErrorReal(clean,source)});
+  if(tubalErrorLogReal.length>30)tubalErrorLogReal.pop();
+  renderTubalErrorBotReal();
+}
+function renderTubalErrorBotReal(){
+  const list=document.getElementById('tubalErrorBotList'),summary=document.getElementById('tubalErrorBotSummary'),fab=document.getElementById('tubalErrorBotFab');
+  if(!list)return;
+  summary.textContent=tubalErrorLogReal.length?(tubalErrorLogReal.length+' error event(s) captured locally.'):'Watching browser and Firebase errors.';
+  fab.hidden=!tubalErrorLogReal.length;
+  fab.classList.toggle('has-error',tubalErrorLogReal.length>0);
+  list.innerHTML=tubalErrorLogReal.length?tubalErrorLogReal.map(x=>'<article class="tubal-error-item"><div class="tubal-error-meta">'+esc(x.time.toLocaleTimeString())+' • '+esc(x.source)+'</div><div class="tubal-error-message">'+esc(x.message)+'</div><div class="tubal-error-analysis">🤖 '+esc(x.analysis)+'</div>'+(x.details?'<details><summary>Details</summary><pre>'+esc(x.details)+'</pre></details>':'')+'</article>').join(''):'<div class="private-empty">No errors detected.</div>';
+}
+function openTubalErrorBotReal(){const panel=document.getElementById('tubalErrorBot');if(panel){panel.hidden=false;renderTubalErrorBotReal()}}
+window.addEventListener('error',e=>recordTubalErrorReal(e.message||'Unknown browser error','window.error',e.error?.stack||e.filename||''));
+window.addEventListener('unhandledrejection',e=>recordTubalErrorReal(e.reason?.message||String(e.reason||'Unhandled Promise rejection'),'unhandledrejection',e.reason?.stack||''));
+const originalConsoleErrorReal=console.error.bind(console);
+console.error=(...args)=>{originalConsoleErrorReal(...args);const first=args.map(x=>x?.message||String(x)).join(' ');recordTubalErrorReal(first,'console.error',args.find(x=>x?.stack)?.stack||'')};
+document.getElementById('tubalErrorBotFab')?.addEventListener('click',openTubalErrorBotReal);
+document.getElementById('closeTubalErrorBot')?.addEventListener('click',()=>{document.getElementById('tubalErrorBot').hidden=true});
+document.getElementById('analyzeTubalErrors')?.addEventListener('click',renderTubalErrorBotReal);
+document.getElementById('clearTubalErrors')?.addEventListener('click',()=>{tubalErrorLogReal.length=0;tubalErrorSeenReal.clear();renderTubalErrorBotReal();document.getElementById('tubalErrorBot').hidden=true});
 
 enableMemberNameClick();
 setupChatFocusUi();
