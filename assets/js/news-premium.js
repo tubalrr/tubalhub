@@ -551,7 +551,7 @@ function startCommentListener(x) {
   try {
     const q = query(
       collection(db, "newsComments"),
-      where("newsId", "==", x.sourceId),
+      where("newsId", "==", x.id),
       limit(100)
     );
     stopComments = onSnapshot(q, snap => {
@@ -622,11 +622,11 @@ async function loadReactionSummariesForIds(ids) {
         }))
       ));
       batch.forEach(id => {
-        const sourceId = state.all.find(x => x.id === id)?.sourceId || id.replace(/^news-/, "");
+        const articleKey = id;
         const d = {haha:0, love:0, my:""};
         snap.forEach(s => {
           const x = s.data();
-          if (x.newsId !== sourceId) return;
+          if (x.newsId !== articleKey) return;
           if (x.reaction === "haha") d.haha++;
           if (x.reaction === "love") d.love++;
           if (x.uid === state.user?.uid) d.my = x.reaction;
@@ -667,13 +667,13 @@ async function toggleNewsReaction(x, emoji, button) {
       if (previous) {
         const prevRef = doc(db, "newsReactions", refId);
         await setDoc(prevRef, {
-          newsId:x.sourceId, uid:state.user.uid, reaction, updatedAt:serverTimestamp()
+          newsId:x.id, uid:state.user.uid, reaction, updatedAt:serverTimestamp()
         }, {merge:true});
         d[previous] = Math.max(0, Number(d[previous] || 0) - 1);
         d[reaction] = Number(d[reaction] || 0) + 1;
       } else {
         await setDoc(ref, {
-          newsId:x.sourceId, uid:state.user.uid, reaction, updatedAt:serverTimestamp()
+          newsId:x.id, uid:state.user.uid, reaction, updatedAt:serverTimestamp()
         }, {merge:true});
         d[reaction] = Number(d[reaction] || 0) + 1;
       }
