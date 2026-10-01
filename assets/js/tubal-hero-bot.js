@@ -1,135 +1,119 @@
 (() => {
-  const root = document.getElementById('thHeroBotExperience');
-  if (!root) return;
+  "use strict";
 
-  const items = [
-    {title:'Payapang Isip', kicker:'WELLNESS · COMMUNITY', icon:'🌿', text:'Calm digital space for journals, wellness tools, AI music, and peaceful everyday experiences.', mode:'wellness'},
-    {title:'TUBAL HUB Shop', kicker:'E-COMMERCE · DIGITAL', icon:'🛒', text:'Connected shop for products, digital offerings, and Kapeng Barako.', mode:'shop'},
-    {title:'Gaming Zone', kicker:'GAMING · ENTERTAINMENT', icon:'🎮', text:'Gaming catalog, featured sessions, and the latest gaming experiences.', mode:'gaming'},
-    {title:'Feeds & Community', kicker:'SOCIAL · COMMUNITY', icon:'💬', text:'Community feeds, global chat, updates, and shared conversations.', mode:'feeds'},
-    {title:'AI Music', kicker:'CREATIVE · AUDIO', icon:'♫', text:'Create, save, and explore the AI Music experience inside TUBAL HUB.', mode:'music'},
-    {title:'LifeHub & Personal OS', kicker:'PRODUCTIVITY · TOOLS', icon:'▣', text:'Personal organization tools for tasks, goals, habits, notes, and more.', mode:'life'},
-    {title:'TUBAL HUB Core', kicker:'ONE DIGITAL ECOSYSTEM', icon:'✦', text:'One connected home that brings every TUBAL HUB experience together.', mode:'core'}
-  ];
+  function init() {
+    const root = document.getElementById("tubalMainBot");
+    const visual = document.getElementById("tubalMainBotToggle");
+    const bubble = document.getElementById("tubalMainBotBubble");
+    const title = document.getElementById("tubalMainBotTitle");
+    const text = document.getElementById("tubalMainBotText");
+    const sound = document.getElementById("tubalMainBotSound");
+    if (!root || !visual || !bubble) return;
 
-  const title = root.querySelector('[data-bot-title]');
-  const kicker = root.querySelector('[data-bot-kicker]');
-  const bodyText = root.querySelector('[data-bot-text]');
-  const count = root.querySelector('[data-bot-count]');
-  const bar = root.querySelector('[data-bot-progress]');
-  const screen = root.querySelector('[data-bot-screen]');
-  const dotWrap = root.querySelector('[data-bot-dots]');
-  if (!title || !kicker || !bodyText || !count || !bar || !screen || !dotWrap) return;
+    const style = document.createElement("style");
+    style.textContent = `
+      body.hub-home #bentoHero .th-hero-welcome-bot{pointer-events:auto!important}
+      body.hub-home #bentoHero .th-hero-bot-visual{pointer-events:auto!important;cursor:pointer!important;position:relative!important;overflow:visible!important;isolation:isolate!important}
+      body.hub-home #bentoHero .th-hero-bot-dialog{display:block!important;pointer-events:auto!important}
+      body.hub-home #bentoHero .th-hero-bot-sound{display:grid!important;pointer-events:auto!important}
+      .th-live-bot-mouth{position:absolute;z-index:8;left:50%;top:38.5%;width:24px;height:5px;transform:translate(-50%,-50%);border-radius:999px;background:rgba(89,180,255,.82);box-shadow:0 0 12px rgba(45,145,255,.72);opacity:.35;transition:opacity .15s,height .15s;pointer-events:none}
+      .th-live-bot-mouth.is-speaking{opacity:1;height:10px;width:28px;animation:thLiveMouth .13s ease-in-out infinite alternate}
+      .th-live-bot-hand{position:absolute;z-index:7;width:46px;height:62px;border:2px solid rgba(65,145,255,.65);border-radius:45% 45% 48% 48%;background:linear-gradient(145deg,rgba(80,150,255,.13),rgba(10,18,30,.05));box-shadow:0 0 14px rgba(42,117,255,.45),inset 0 0 12px rgba(42,117,255,.22);pointer-events:none;transform-origin:50% 10%}
+      .th-live-bot-hand:before{content:"";position:absolute;left:8px;right:8px;top:10px;height:3px;border-radius:99px;background:#62a8ff;box-shadow:0 10px #62a8ff,0 20px #62a8ff;opacity:.75}
+      .th-live-bot-hand:after{content:"";position:absolute;width:8px;height:8px;border-radius:50%;left:50%;bottom:7px;transform:translateX(-50%);background:#8bc1ff;box-shadow:0 0 12px #3787ff}
+      .th-live-bot-hand-left{left:calc(50% - 105px);top:52%;animation:thLiveLeftHand .9s ease-in-out infinite alternate}
+      .th-live-bot-hand-right{right:calc(50% - 105px);top:52%;animation:thLiveRightHand .72s ease-in-out infinite alternate}
+      .th-live-bot-hand-left:before{transform:rotate(-8deg)}
+      .th-live-bot-hand-right:before{transform:rotate(8deg)}
+      .th-live-bot-hand.is-speaking{animation-duration:.42s}
+      .th-live-bot-hand-left.is-speaking{animation-name:thLiveLeftHandFast}
+      .th-live-bot-hand-right.is-speaking{animation-name:thLiveRightHandFast}
+      .th-live-bot-status-live{position:absolute;right:14px;bottom:14px;z-index:10;display:flex;align-items:center;gap:5px;padding:5px 8px;border:1px solid rgba(70,160,255,.3);border-radius:999px;background:rgba(5,10,17,.82);color:#8fc3ff;font:900 7px/1 inherit;letter-spacing:1px;box-shadow:0 6px 16px rgba(0,0,0,.3);pointer-events:none}
+      .th-live-bot-status-live i{width:6px;height:6px;border-radius:50%;background:#43a1ff;box-shadow:0 0 9px #368dff;animation:thLiveDot .7s ease-in-out infinite alternate}
+      .th-live-bot-dialog.is-speaking{border-color:rgba(68,150,255,.42)!important;box-shadow:0 18px 45px rgba(0,0,0,.38),0 0 24px rgba(44,116,255,.12)!important}
+      @keyframes thLiveLeftHand{from{transform:rotate(12deg) translateY(0)}to{transform:rotate(-18deg) translateY(-7px)}}
+      @keyframes thLiveRightHand{from{transform:rotate(-12deg) translateY(0)}to{transform:rotate(20deg) translateY(-9px)}}
+      @keyframes thLiveLeftHandFast{from{transform:rotate(25deg) translateY(1px)}to{transform:rotate(-24deg) translateY(-10px)}}
+      @keyframes thLiveRightHandFast{from{transform:rotate(-25deg) translateY(1px)}to{transform:rotate(26deg) translateY(-11px)}}
+      @keyframes thLiveMouth{from{transform:translate(-50%,-50%) scaleY(.35)}to{transform:translate(-50%,-50%) scaleY(1.2)}}
+      @keyframes thLiveDot{to{transform:scale(1.45);opacity:.55}}
+      @media(max-width:600px){.th-live-bot-hand-left{left:calc(50% - 82px);top:51%;transform:scale(.82)}.th-live-bot-hand-right{right:calc(50% - 82px);top:51%;transform:scale(.82)}}
+      @media(prefers-reduced-motion:reduce){.th-live-bot-hand,.th-live-bot-hand.is-speaking,.th-live-bot-mouth.is-speaking,.th-live-bot-status-live i{animation:none!important}}
+    `;
+    document.head.appendChild(style);
 
-  const CYCLE = 12000;
-  let index = 0;
-  let timer = null;
-  let screenTimer = null;
+    ["th-bot-stage","th-bot-showcase"].forEach(cls => root.querySelectorAll("." + cls).forEach(node => node.remove()));
 
-  const screenDesigns = {
-    wellness: () => `
-      <div class="th-ui-top"><span class="th-ui-brand">PAYAPANG ISIP</span><span class="th-ui-live">● CALM</span></div>
-      <div class="th-ui-wellness">
-        <div class="th-ui-breathe"><i></i><b>INHALE</b><small>4s</small></div>
-        <div class="th-ui-stack"><span>Journal</span><span>Breathing</span><span>AI Music</span></div>
-      </div>
-    `,
-    shop: () => `
-      <div class="th-ui-top"><span class="th-ui-brand">TUBAL HUB SHOP</span><span class="th-ui-bag">3 ITEMS</span></div>
-      <div class="th-ui-shop">
-        <div class="th-ui-product"><b>☕</b><span>Kapeng Barako</span><strong>₱350</strong></div>
-        <div class="th-ui-product"><b>◈</b><span>Digital Pack</span><strong>₱199</strong></div>
-        <div class="th-ui-product is-featured"><b>✦</b><span>Starter Bundle</span><strong>VIEW</strong></div>
-      </div>
-    `,
-    gaming: () => `
-      <div class="th-ui-top"><span class="th-ui-brand">GAMING ZONE</span><span class="th-ui-hud">LIVE CATALOG</span></div>
-      <div class="th-ui-gaming">
-        <div class="th-ui-game-hero"><b>VALORANT</b><small>FEATURED SESSION</small><i></i></div>
-        <div class="th-ui-score"><span>02</span><em>VS</em><span>01</span></div>
-        <div class="th-ui-bars"><i></i><i></i><i></i><i></i></div>
-      </div>
-    `,
-    feeds: () => `
-      <div class="th-ui-top"><span class="th-ui-brand">TUBAL HUB FEEDS</span><span class="th-ui-live">● LIVE</span></div>
-      <div class="th-ui-feed">
-        <div class="th-ui-avatar">TH</div>
-        <div class="th-ui-post"><strong>Community Update</strong><span>New activity across the Hub</span><i></i><i></i></div>
-        <div class="th-ui-reactions"><b>♥ 24</b><b>↗ 8</b><b>💬 12</b></div>
-      </div>
-    `,
-    music: () => `
-      <div class="th-ui-top"><span class="th-ui-brand">AI MUSIC STUDIO</span><span class="th-ui-wave">♫ GENERATING</span></div>
-      <div class="th-ui-music">
-        <div class="th-ui-album">♫</div>
-        <div class="th-ui-waveform">${Array.from({length:18},(_,i)=>`<i style="--h:${12 + ((i*17)%38)}px"></i>`).join('')}</div>
-        <div class="th-ui-track"><strong>Peaceful Signal</strong><small>00:42 / 03:18</small></div>
-      </div>
-    `,
-    life: () => `
-      <div class="th-ui-top"><span class="th-ui-brand">LIFEHUB</span><span class="th-ui-day">TODAY</span></div>
-      <div class="th-ui-life">
-        <div class="th-ui-kpi"><strong>06</strong><small>TASKS</small></div>
-        <div class="th-ui-kpi"><strong>03</strong><small>HABITS</small></div>
-        <div class="th-ui-kpi"><strong>82%</strong><small>FOCUS</small></div>
-        <div class="th-ui-task"><i></i><span>Finish weekly plan</span><b>✓</b></div>
-      </div>
-    `,
-    core: () => `
-      <div class="th-ui-top"><span class="th-ui-brand">TUBAL HUB CORE</span><span class="th-ui-live">● CONNECTED</span></div>
-      <div class="th-ui-core">
-        <div class="th-ui-core-orbit"><b>TH</b><i></i><i></i><i></i><i></i></div>
-        <div class="th-ui-core-labels"><span>WELLNESS</span><span>SHOP</span><span>GAMING</span><span>COMMUNITY</span></div>
-      </div>
-    `
-  };
+    const mouth = document.createElement("span");
+    mouth.className = "th-live-bot-mouth";
+    visual.appendChild(mouth);
 
-  root.classList.add('bot-cinematic');
+    const leftHand = document.createElement("span");
+    leftHand.className = "th-live-bot-hand th-live-bot-hand-left";
+    const rightHand = document.createElement("span");
+    rightHand.className = "th-live-bot-hand th-live-bot-hand-right";
+    visual.append(leftHand, rightHand);
 
-  dotWrap.innerHTML = items.map((_, i) => '<span class="' + (i === 0 ? 'is-active' : '') + '"></span>').join('');
-  const dots = [...dotWrap.children];
+    const live = document.createElement("span");
+    live.className = "th-live-bot-status-live";
+    live.innerHTML = "<i></i> LIVE BOT";
+    visual.appendChild(live);
 
-  function paint(item, direction='forward') {
-    kicker.textContent = item.kicker;
-    title.textContent = item.title;
-    bodyText.textContent = item.text;
-    count.textContent = String(index + 1).padStart(2, '0') + ' / ' + String(items.length).padStart(2, '0');
-    bar.style.setProperty('--bot-progress', ((index + 1) / items.length * 100) + '%');
-    dots.forEach((d, i) => d.classList.toggle('is-active', i === index));
+    if (title) title.textContent = "Hello! Ako ang TUBAL HUB Bot";
+    const message = "Hello! Welcome sa TUBAL HUB. Ako ang iyong interactive guide. I can talk, wave, and guide you around Payapang Isip, Shop, Gaming Zone, Community, at LifeHub.";
+    if (text) text.textContent = message;
+    bubble.hidden = false;
+    visual.setAttribute("aria-label", "TUBAL HUB interactive robot — click to talk");
 
-    screen.dataset.mode = item.mode;
-    screen.dataset.direction = direction;
-    screen.classList.remove('bot-screen-morph');
-    void screen.offsetWidth;
-    screen.innerHTML =
-      '<div class="th-bot-screen-top"><span class="th-bot-screen-dot"></span><span>TUBAL HUB LIVE PREVIEW</span></div>' +
-      '<div class="th-ui-canvas">' + (screenDesigns[item.mode] ? screenDesigns[item.mode]() : '') + '</div>';
-    screen.classList.add('bot-screen-morph');
-  }
+    const speechAvailable = "speechSynthesis" in window && "SpeechSynthesisUtterance" in window;
+    let muted = false;
+    try { muted = localStorage.getItem("tubal_welcome_bot_muted") === "1"; } catch (_) {}
 
-  function nextSection() {
-    index = (index + 1) % items.length;
-    paint(items[index], 'forward');
-  }
-
-  function schedule() {
-    window.clearTimeout(timer);
-    window.clearTimeout(screenTimer);
-    // The bot walks in while the current interface is alive, then the interface
-    // morphs to the next branch just after the bot reaches the showcase.
-    screenTimer = window.setTimeout(nextSection, CYCLE * 0.62);
-    timer = window.setTimeout(schedule, CYCLE);
-  }
-
-  paint(items[0], 'forward');
-  schedule();
-
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden) {
-      window.clearTimeout(timer);
-      window.clearTimeout(screenTimer);
-    } else {
-      schedule();
+    function setSpeaking(on){
+      root.classList.toggle("is-speaking", on && !muted);
+      bubble.classList.toggle("is-speaking", on && !muted);
+      mouth.classList.toggle("is-speaking", on && !muted);
+      leftHand.classList.toggle("is-speaking", on && !muted);
+      rightHand.classList.toggle("is-speaking", on && !muted);
     }
-  });
+
+    function speak(msg=message){
+      if (!speechAvailable || muted) return;
+      try{
+        speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(msg);
+        const voices = speechSynthesis.getVoices();
+        u.voice = voices.find(v => /^en-US$/i.test(v.lang)) || voices.find(v => /^en-GB$/i.test(v.lang)) || voices[0] || null;
+        u.lang = "en-US";
+        u.rate = .92; u.pitch = 1.02; u.volume = 1;
+        setSpeaking(true);
+        u.onend = () => setSpeaking(false);
+        u.onerror = () => setSpeaking(false);
+        speechSynthesis.speak(u);
+      }catch(_){ setSpeaking(false); }
+    }
+
+    if (sound) {
+      sound.style.display = "grid";
+      sound.addEventListener("click", e => {
+        e.stopPropagation();
+        muted = !muted;
+        try { localStorage.setItem("tubal_welcome_bot_muted", muted ? "1" : "0"); } catch (_) {}
+        if (muted && speechAvailable) speechSynthesis.cancel();
+        setSpeaking(false);
+        sound.setAttribute("aria-pressed", String(muted));
+      });
+    }
+
+    visual.addEventListener("click", e => {
+      if (sound && (e.target === sound || sound.contains(e.target))) return;
+      bubble.hidden = false;
+      if (speechAvailable) speak();
+    });
+
+    window.setTimeout(() => { if (!muted) speak(); }, 1400);
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init, {once:true});
+  else init();
 })();
