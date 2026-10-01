@@ -730,6 +730,11 @@
       } catch (_) {}
       if (!loginPending || muted) return;
 
+      // Let the main-page updater finish its first release check before the
+      // Welcome Bot starts speaking, so the bot never briefs an older state.
+      try {
+        if (window.tubalHubUpdateNotifier?.ready) await window.tubalHubUpdateNotifier.ready;
+      } catch (_) {}
       const latestMessage = await loadLatestWebsiteUpdate();
       await botConversation(latestMessage);
     }, 1400);
