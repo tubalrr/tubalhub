@@ -96,6 +96,7 @@ body{background:radial-gradient(circle at 75% 0%,#17345d55,transparent 30%),radi
     </div>
     <div id="chatStatus" class="status-msg chat-connect"><span class="status-dot"></span>Connecting to TUBAL HUB...</div>
     <div id="moderationNotice" class="moderation-notice" role="alert" aria-live="assertive"></div>
+    <button id="loadOlderMessagesBtn" class="load-older-chat-btn" type="button" hidden>↑ Load older messages</button>
     <div class="messages chat-messages" id="messages"><div class="chat-build-marker-real" id="chatBuildMarkerReal">Today</div><div class="empty-chat"><strong>No messages yet.</strong>Start the first conversation in Global Chat.</div></div>
     <div id="replyingBar" class="replying"><span>Replying to <b id="replyingName"></b></span><button id="cancelReply" type="button">Cancel</button></div>
     <form class="composer chat-composer" id="chatForm">
@@ -158,11 +159,11 @@ body{background:radial-gradient(circle at 75% 0%,#17345d55,transparent 30%),radi
   <div class="chat-drawer-backdrop" id="chatDrawerBackdrop" hidden></div>
 </section>
 
-<section id="mediaStoragePanel" class="media-storage-panel" hidden><div class="media-storage-head"><div><span class="rail-kicker">MEDIA</span><h2>My Image Storage</h2><p id="mediaStorageSummary">Loading your Global Chat images…</p></div><button type="button" id="closeMediaStorage">Close</button></div><div class="media-storage-meter"><div class="media-storage-meter-top"><strong id="mediaStorageCount">0 / 40</strong><span id="mediaStoragePercent">0%</span></div><div class="media-storage-bar"><i id="mediaStorageBarFill"></i></div><small>Maximum 40 images per account • automatic expiry protects storage</small></div><div id="mediaStorageList" class="media-storage-list"><div class="private-empty">No images loaded.</div></div></section><section id="privateChatPanel" class="private-chat-panel" hidden><div class="private-chat-head"><button type="button" id="closePrivateChat" class="private-back">←</button><div id="privateChatAvatar" class="private-avatar">M</div><div class="private-person"><b id="privateChatName">Member</b><span id="privateChatStatus">● Online</span></div><button type="button" id="privateVideoCall" class="private-call" title="Video call">📹</button></div><div id="privatePinnedBar" class="private-pinned-bar"></div><div id="privateMessages" class="private-messages"><div class="private-empty">Select an online member to start a private conversation.</div></div><div id="privateTyping" class="private-typing"></div><div id="privateReplyBar" class="private-reply-bar"><span>↩ Replying to <b id="privateReplyName">Member</b>: <span id="privateReplyPreview"></span></span><button type="button" class="private-reply-cancel" id="privateReplyCancel">×</button></div><form id="privateForm" class="private-composer"><input id="privateInput" maxlength="500" placeholder="Message..." autocomplete="off"><button type="submit">Send ➤</button></form></section><footer class="footer chat-footer"><div><b>TUBAL HUB</b><span>YOUR HUB. YOUR COMMUNITY.</span></div><div>© 2026 TUBAL HUB. All rights reserved. &nbsp; | &nbsp; Play • Create • Connect</div><div class="social">● ● ● ●</div></main></div>
+<section id="mediaStoragePanel" class="media-storage-panel" hidden><div class="media-storage-head"><div><span class="rail-kicker">MEDIA</span><h2>My Image Storage</h2><p id="mediaStorageSummary">Loading your Global Chat images…</p></div><button type="button" id="closeMediaStorage">Close</button></div><div class="media-storage-meter"><div class="media-storage-meter-top"><strong id="mediaStorageCount">0 / 40</strong><span id="mediaStoragePercent">0%</span></div><div class="media-storage-bar"><i id="mediaStorageBarFill"></i></div><small>Maximum 40 images per account • automatic expiry protects storage</small></div><div id="mediaStorageList" class="media-storage-list"><div class="private-empty">No images loaded.</div></div></section><section id="privateChatPanel" class="private-chat-panel" hidden><div class="private-chat-head"><button type="button" id="closePrivateChat" class="private-back">←</button><div id="privateChatAvatar" class="private-avatar">M</div><div class="private-person"><b id="privateChatName">Member</b><span id="privateChatStatus">● Online</span></div><button type="button" id="privateVideoCall" class="private-call" title="Video call">📹</button></div><div id="privatePinnedBar" class="private-pinned-bar"></div><button id="privateLoadOlder" type="button" class="private-load-older" hidden>↑ Load older messages</button><div id="privateMessages" class="private-messages"><div class="private-empty">Select an online member to start a private conversation.</div></div><div id="privateTyping" class="private-typing"></div><div id="privateReplyBar" class="private-reply-bar"><span>↩ Replying to <b id="privateReplyName">Member</b>: <span id="privateReplyPreview"></span></span><button type="button" class="private-reply-cancel" id="privateReplyCancel">×</button></div><form id="privateForm" class="private-composer"><input id="privateInput" maxlength="500" placeholder="Message..." autocomplete="off"><button type="submit">Send ➤</button></form></section><footer class="footer chat-footer"><div><b>TUBAL HUB</b><span>YOUR HUB. YOUR COMMUNITY.</span></div><div>© 2026 TUBAL HUB. All rights reserved. &nbsp; | &nbsp; Play • Create • Connect</div><div class="social">● ● ● ●</div></main></div>
 <script type="module">
 import { app, auth } from "../assets/js/firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
-import { getFirestore, collection, addDoc, query, orderBy, limit, limitToLast, onSnapshot, doc, setDoc, getDoc, deleteDoc, serverTimestamp, where, updateDoc, getDocsFromServer } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, query, orderBy, limit, limitToLast, onSnapshot, doc, setDoc, getDoc, deleteDoc, serverTimestamp, where, updateDoc, getDocsFromServer, startAfter } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-functions.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-storage.js";
 
@@ -180,6 +181,9 @@ const TUBAL_VERSION_REAL='1.2.16';
 const lock=document.getElementById('chatLock'),content=document.getElementById('chatContent'),messages=document.getElementById('messages'),form=document.getElementById('chatForm'),input=document.getElementById('messageInput'),sendButton=document.getElementById('sendButton'),statusEl=document.getElementById('chatStatus'),memberList=document.getElementById('memberList'),onlineCount=document.getElementById('onlineCount'),onlineMembers=document.getElementById('onlineMembers'),globalMessageCount=document.getElementById('globalMessageCount'),replyingBar=document.getElementById('replyingBar'),replyingName=document.getElementById('replyingName'),cancelReply=document.getElementById('cancelReply'),emojiPicker=document.getElementById('emojiPicker');
 let currentUser=null,stopMessages=null,heartbeatTimer=null,stopPresence=null,stopUsersPresence=null,heartbeatPresenceRefresh=null,stopBanStatus=null,stopReactions=null,stopReplies=null,stopDmList=null,replyTarget=null,lastMessageTime=0,reactionState={};
 let activeChannelReal="general";
+let olderChannelMessagesReal=[],channelCursorReal=null,channelHasOlderReal=false,loadingOlderChannelMessagesReal=false,currentChannelMessageIdsReal=[];
+let scopedReplyStopsReal=[],scopedReactionStopsReal=[],scopedReplyStateReal=new Map(),scopedReactionDocsReal=new Map(),scopedReactionListenerDocsReal=new Map();
+let privateConversationIdReal="",privateOlderMessagesReal=[],privateCursorReal=null,privateHasOlderReal=false,privateLoadingOlderReal=false;
 let privateTarget=null,stopPrivateMessages=null,stopPrivateTyping=null,privateLastMessageTime=0,privateReplyTarget=null,privateTypingTimer=null,privateTypingOffTimer=null;
 let pendingExternalImageUrlReal="";
 const emojis=['😀','😂','😍','🥰','😎','😭','😡','😮','👍','👎','❤️','🔥','💯','🎮','🎉','👏','🤣','🤔','😅','🙌','💚','✨','👀','🙏','🥳','😴','🤝','🚀','💀','😇','😱','🤩','💪','🌿','⭐','🎯','🏆','❤️‍🔥','🫶','😊'];
@@ -413,20 +417,32 @@ function subscribeReactions(){
  },err=>console.error('Reaction error',err));
 }
 function subscribeReplies(){if(stopReplies)stopReplies();const q=query(collection(db,'globalChatReplies'),orderBy('createdAt','asc'),limit(500));stopReplies=onSnapshot(q,snap=>{document.querySelectorAll('.reply-box').forEach(x=>x.innerHTML='');snap.forEach(d=>{const x=d.data(),root=x.messageId,box=document.getElementById(`replies-${root}`);if(!box)return;const item=document.createElement('div');item.className='reply-item'+(x.parentReplyId?' nested-reply':'');item.dataset.replyId=d.id;item.innerHTML=`<div class="reply-meta"><b class="private-member-name">${esc(x.displayName||'Member')}</b> • ${esc(timeText(x.createdAt))}</div><div class="reply-text">${esc(x.text)}</div><div class="reply-actions"><button type="button" class="reply-react-btn" title="React">😊</button><button type="button" class="reply-to-reply">↩ Reply</button></div><div class="reply-reaction-bar"></div>`;item.querySelector('.reply-to-reply').onclick=e=>{e.stopPropagation();setReplyTarget(root,x.displayName||'Member',String(x.text||'').slice(0,100),d.id)};item.querySelector('.reply-react-btn').onclick=e=>{e.stopPropagation();openReplyReactionMenu(e.currentTarget,d.id)};renderReplyReactions(item,d.id);box.appendChild(item)});},err=>console.error('Reply error',err))}
-function renderChatSnapshotReal(snap, channelValue, sourceReal){
-  const docs=snap.docs
-    .map(d=>({id:d.id,data:d.data()}))
-    .filter(item=>item.data?.channel===channelValue)
-    .sort((a,b)=>{
-      const ta=a.data?.createdAt?.toMillis?.()
-        ?? a.data?.createdAt?.toDate?.()?.getTime?.()
-        ?? (typeof a.data?.createdAt==='number'?a.data.createdAt:0);
-      const tb=b.data?.createdAt?.toMillis?.()
-        ?? b.data?.createdAt?.toDate?.()?.getTime?.()
-        ?? (typeof b.data?.createdAt==='number'?b.data.createdAt:0);
-      return ta-tb || a.id.localeCompare(b.id);
+function messageMillisReal(data){
+  return data?.createdAt?.toMillis?.()
+    ?? data?.createdAt?.toDate?.()?.getTime?.()
+    ?? (typeof data?.createdAt==='number'?data.createdAt:0);
+}
+
+function mergedChannelMessagesReal(latestDocs){
+  const seen=new Set();
+  return [...latestDocs,...olderChannelMessagesReal]
+    .filter(item=>{
+      if(seen.has(item.id))return false;
+      seen.add(item.id);
+      return true;
     })
-    .slice(-100);
+    .sort((a,b)=>messageMillisReal(a.data)-messageMillisReal(b.data)||a.id.localeCompare(b.id));
+}
+
+function renderLoadedChannelMessagesReal(options={}){
+  const previousHeight=Number(options.previousHeight||0);
+  const previousTop=Number(options.previousTop||0);
+  const preserveTop=options.preserveTop===true;
+  const wasNearBottom=Math.abs(messages.scrollHeight-messages.scrollTop-messages.clientHeight)<80;
+
+  const latestDocs=Array.isArray(options.latestDocs)?options.latestDocs:[];
+  const docs=mergedChannelMessagesReal(latestDocs);
+  currentChannelMessageIdsReal=docs.map(x=>x.id);
 
   messages.innerHTML='<div class="chat-build-marker-real" id="chatBuildMarkerReal">Today</div>';
 
@@ -437,28 +453,223 @@ function renderChatSnapshotReal(snap, channelValue, sourceReal){
   }
 
   if(globalMessageCount)globalMessageCount.textContent=String(docs.length);
-
   document.querySelectorAll('.channel-count-real').forEach(el=>{
     if(el.dataset.channelCount===activeChannelReal)el.textContent=String(docs.length);
   });
 
-  messages.scrollTop=messages.scrollHeight;
-  setStatus('Live • # '+activeChannelReal+' • '+docs.length+' real message'+(docs.length===1?'':'s')+(sourceReal==='fallback'?' • fallback':''));
+  const olderBtn=document.getElementById('loadOlderMessagesBtn');
+  if(olderBtn){
+    olderBtn.hidden=!channelHasOlderReal;
+    olderBtn.disabled=loadingOlderChannelMessagesReal;
+    olderBtn.textContent=loadingOlderChannelMessagesReal?'Loading older messages…':'↑ Load older messages';
+  }
+
+  requestAnimationFrame(()=>{
+    if(preserveTop){
+      const nextHeight=messages.scrollHeight;
+      messages.scrollTop=previousTop+(nextHeight-previousHeight);
+    }else if(wasNearBottom || previousHeight===0){
+      messages.scrollTop=messages.scrollHeight;
+    }
+  });
+
+  setStatus('Live • # '+activeChannelReal+' • '+docs.length+' loaded message'+(docs.length===1?'':'s')+' • latest 100 from server window');
+  scheduleScopedChatQueriesReal();
   window.dispatchEvent(new CustomEvent('tubalhub-chat-channel-loaded',{
-    detail:{channel:activeChannelReal,count:docs.length,source:sourceReal}
+    detail:{channel:activeChannelReal,count:docs.length,source:options.sourceReal||'realtime'}
   }));
+}
+
+function renderChatSnapshotReal(snap, channelValue, sourceReal){
+  const latestDocs=snap.docs.map(d=>({id:d.id,data:d.data()}));
+  if(!olderChannelMessagesReal.length && snap.docs.length){
+    channelCursorReal=snap.docs[snap.docs.length-1];
+    channelHasOlderReal=snap.size===100;
+  }
+  renderLoadedChannelMessagesReal({latestDocs,preserveTop:false,sourceReal});
+}
+
+async function loadOlderMessagesReal(){
+  if(loadingOlderChannelMessagesReal||!channelHasOlderReal||!channelCursorReal||!currentUser)return;
+  loadingOlderChannelMessagesReal=true;
+  const previousHeight=messages.scrollHeight;
+  const previousTop=messages.scrollTop;
+  const latestQuery=query(
+    collection(db,'globalChats'),
+    where('channel','==',(activeChannelReal==='general'?'global-chat':activeChannelReal)),
+    orderBy('createdAt','desc'),
+    limit(100)
+  );
+  try{
+    const snap=await getDocsFromServer(query(
+      collection(db,'globalChats'),
+      where('channel','==',(activeChannelReal==='general'?'global-chat':activeChannelReal)),
+      orderBy('createdAt','desc'),
+      startAfter(channelCursorReal),
+      limit(100)
+    ));
+    const page=snap.docs.map(d=>({id:d.id,data:d.data()}));
+    const known=new Set(olderChannelMessagesReal.map(x=>x.id));
+    page.forEach(item=>{if(!known.has(item.id))olderChannelMessagesReal.push(item)});
+    if(snap.docs.length)channelCursorReal=snap.docs[snap.docs.length-1];
+    channelHasOlderReal=snap.size===100;
+    renderLoadedChannelMessagesReal({
+      latestDocs:Array.from(document.querySelectorAll('.msg')).map(()=>null).filter(Boolean),
+      preserveTop:true,
+      previousHeight,
+      previousTop,
+      sourceReal:'pagination'
+    });
+    // The realtime listener remains authoritative for the newest 100. Rebuild
+    // from its current snapshot after pagination; older pages remain in memory.
+    if(stopMessages){ /* listener continues; next snapshot will reconcile */ }
+  }catch(e){
+    console.warn('[TUBAL HUB chat pagination]',e);
+    setStatus('Could not load older messages.',true);
+  }finally{
+    loadingOlderChannelMessagesReal=false;
+    const btn=document.getElementById('loadOlderMessagesBtn');
+    if(btn){btn.disabled=false;btn.hidden=!channelHasOlderReal;btn.textContent='↑ Load older messages';}
+  }
+}
+
+function scheduleScopedChatQueriesReal(){
+  clearTimeout(window.__tubalScopedChatQueryTimer);
+  window.__tubalScopedChatQueryTimer=setTimeout(()=>{
+    subscribeReplies();
+    subscribeReactions();
+  },60);
+}
+
+function stopScopedReplyListenersReal(){
+  scopedReplyStopsReal.forEach(stop=>{try{stop()}catch(_){}});
+  scopedReplyStopsReal=[];
+}
+function stopScopedReactionListenersReal(){
+  scopedReactionStopsReal.forEach(stop=>{try{stop()}catch(_){}});
+  scopedReactionStopsReal=[];
+  scopedReactionDocsReal.clear();
+  scopedReactionListenerDocsReal.clear();
+}
+
+function renderScopedRepliesReal(){
+  document.querySelectorAll('.reply-box').forEach(x=>x.innerHTML='');
+  const rows=[...scopedReplyStateReal.values()].sort((a,b)=>messageMillisReal(a.data)-messageMillisReal(b.data)||a.id.localeCompare(b.id));
+  rows.forEach(item=>{
+    const x=item.data,root=x.messageId,box=document.getElementById('replies-'+root);
+    if(!box)return;
+    const el=document.createElement('div');
+    el.className='reply-item'+(x.parentReplyId?' nested-reply':'');
+    el.dataset.replyId=item.id;
+    el.innerHTML='<div class="reply-meta"><b>'+esc(x.displayName||'Member')+'</b> • '+esc(timeText(x.createdAt))+'</div><div class="reply-text">'+esc(x.text||'')+'</div><div class="reply-actions"><button type="button" class="reply-react-btn" title="React">😊</button><button type="button" class="reply-to-reply">↩ Reply</button></div><div class="reply-reaction-bar"></div>';
+    el.querySelector('.reply-to-reply').onclick=e=>{e.stopPropagation();setReplyTarget(root,x.displayName||'Member',String(x.text||'').slice(0,100),item.id)};
+    el.querySelector('.reply-react-btn').onclick=e=>{e.stopPropagation();openReplyReactionMenu(e.currentTarget,item.id)};
+    box.appendChild(el);
+  });
+  scheduleScopedChatQueriesReal();
+}
+
+function subscribeReplies(){
+  if(stopReplies)stopReplies();
+  stopScopedReplyListenersReal();
+  scopedReplyStateReal.clear();
+  const ids=currentChannelMessageIdsReal.filter(Boolean);
+  if(!ids.length)return;
+  for(let i=0;i<ids.length;i+=30){
+    const batch=ids.slice(i,i+30);
+    const q=query(collection(db,'globalChatReplies'),where('messageId','in',batch));
+    const stop=onSnapshot(q,snap=>{
+      for(const key of [...scopedReplyStateReal.keys()]){
+        const old=scopedReplyStateReal.get(key);
+        if(old?.__listener===stop)scopedReplyStateReal.delete(key);
+      }
+      snap.forEach(d=>scopedReplyStateReal.set(d.id,{id:d.id,data:{...d.data(),__listener:stop}}));
+      renderScopedRepliesReal();
+    },err=>console.error('[TUBAL HUB scoped replies]',err));
+    scopedReplyStopsReal.push(stop);
+  }
+  stopReplies=()=>stopScopedReplyListenersReal();
+}
+
+function rebuildScopedReactionStateReal(){
+  const previous=reactionState;
+  const wasReady=reactionSnapshotReady;
+  reactionState={};
+  reactionUsersState={};
+  scopedReactionDocsReal.forEach(data=>{
+    const key=data.replyId?'reply_'+data.replyId:data.messageId;
+    if(!key)return;
+    if(!reactionState[key])reactionState[key]={};
+    if(!reactionUsersState[key])reactionUsersState[key]={};
+    (data.reactions||[]).forEach(e=>{
+      reactionState[key][e]=(reactionState[key][e]||0)+1;
+      if(!reactionUsersState[key][e])reactionUsersState[key][e]={};
+      if(!(reactionUsersState[key][e] instanceof Set))reactionUsersState[key][e]=new Set();
+      if(data.uid)reactionUsersState[key][e].add(data.uid);
+    });
+  });
+  document.querySelectorAll('.msg').forEach(row=>{
+    const id=row.dataset.id,bar=row.querySelector('.reaction-bar');
+    if(bar){
+      const prevCounts=previous[id]||{};
+      bar.innerHTML=reactionHtml(id,prevCounts);
+      bar.querySelectorAll('.reaction-chip').forEach(btn=>btn.addEventListener('click',e=>{
+        e.stopPropagation();animateReactionTarget(btn);toggleReaction(id,btn.dataset.react);
+      }));
+    }
+    row.querySelectorAll('.quick-reaction').forEach(btn=>btn.addEventListener('click',e=>{
+      e.stopPropagation();toggleReaction(id,btn.dataset.e);row.classList.remove('reaction-open');
+    }));
+    row.querySelectorAll('.reply-item').forEach(item=>{
+      const rid=item.dataset.replyId;
+      if(rid)renderReplyReactions(item,rid);
+    });
+  });
+  reactionSnapshotReady=true;
+}
+
+function subscribeReactions(){
+  if(stopReactions)stopReactions();
+  stopScopedReactionListenersReal();
+  reactionSnapshotReady=false;
+  const messageIds=currentChannelMessageIdsReal.filter(Boolean);
+  const replyIds=[...scopedReplyStateReal.keys()];
+  const queries=[];
+  for(let i=0;i<messageIds.length;i+=30)queries.push({kind:'message',batch:messageIds.slice(i,i+30)});
+  for(let i=0;i<replyIds.length;i+=30)queries.push({kind:'reply',batch:replyIds.slice(i,i+30)});
+  if(!queries.length){reactionState={};reactionUsersState={};reactionSnapshotReady=true;return;}
+  for(const part of queries){
+    const field=part.kind==='message'?'messageId':'replyId';
+    const q=query(collection(db,'globalChatReactions'),where(field,'in',part.batch));
+    const stop=onSnapshot(q,snap=>{
+      const key=stop;
+      const previousIds=scopedReactionListenerDocsReal.get(key)||new Set();
+      previousIds.forEach(id=>scopedReactionDocsReal.delete(id));
+      const nextIds=new Set();
+      snap.forEach(d=>{nextIds.add(d.id);scopedReactionDocsReal.set(d.id,d.data())});
+      scopedReactionListenerDocsReal.set(key,nextIds);
+      rebuildScopedReactionStateReal();
+    },err=>console.error('[TUBAL HUB scoped reactions]',err));
+    scopedReactionStopsReal.push(stop);
+  }
+  stopReactions=()=>stopScopedReactionListenersReal();
 }
 
 function subscribeMessages(){
   if(stopMessages)stopMessages();
+  stopScopedReplyListenersReal();
+  stopScopedReactionListenersReal();
+  olderChannelMessagesReal=[];
+  channelCursorReal=null;
+  channelHasOlderReal=false;
+  currentChannelMessageIdsReal=[];
   const channelValue=activeChannelReal==='general'?'global-chat':activeChannelReal;
 
-  // Use a single-field channel query so Global Chat does not depend on
-  // a Firestore composite index. Results are sorted client-side in
-  // renderChatSnapshotReal() and capped to the latest 100 real messages.
   const qReal=query(
     collection(db,'globalChats'),
-    where('channel','==',channelValue)
+    where('channel','==',channelValue),
+    orderBy('createdAt','desc'),
+    limit(100)
   );
 
   stopMessages=onSnapshot(qReal,snap=>{
@@ -486,6 +697,7 @@ function setActiveChannelReal(channel){
   }
 }
 window.tubalHubSetChatChannelReal=setActiveChannelReal;
+document.getElementById('loadOlderMessagesBtn')?.addEventListener('click',loadOlderMessagesReal);
 
 async function subscribePresence(){
   if(stopPresence)stopPresence();
@@ -680,9 +892,9 @@ function refreshDmOnlineStates(){
 function subscribeDirectMessages(){
   if(stopDmList)stopDmList();
   if(!currentUser||!isRealUser())return;
-  const q=query(collection(db,'messages'),where('participants','array-contains',currentUser.uid),limit(200));
+  const q=query(collection(db,'dmConversations'),where('participants','array-contains',currentUser.uid),orderBy('lastMessageAt','desc'),limit(100));
   stopDmList=onSnapshot(q,snap=>{
-    const list=deriveDmConversations(snap);
+    const list=snap.docs.map(s=>({uid:s.data().otherUid||s.data().participants?.find(x=>x!==currentUser.uid),displayName:s.data().otherDisplayName||'Member',photoURL:s.data().otherPhotoURL||'',data:{createdAt:s.data().lastMessageAt,text:s.data().lastMessagePreview||'',type:s.data().lastMessageType||'text',unreadCount:s.data().unreadCount||0}})).filter(x=>x.uid);
     window.__tubalDmList=list;
     renderDmList(list);
   },err=>{
@@ -749,9 +961,92 @@ async function privateAction(id,action,extra={}){try{await updatePrivateMessageF
 async function privateEdit(id,d){const next=prompt('Edit message',String(d.text||''));if(next===null||!next.trim())return;await privateAction(id,'edit',{text:next.trim()})}
 function setPrivateTyping(typing){if(!privateTarget||!isRealUser())return;clearTimeout(privateTypingOffTimer);if(privateTypingTimer)clearTimeout(privateTypingTimer);privateTypingTimer=setTimeout(()=>setPrivateTypingFnReal({receiverId:privateTarget.uid,typing}).catch(()=>{}),120);if(typing)privateTypingOffTimer=setTimeout(()=>setPrivateTyping(false),1600)}
 function subscribePrivateTyping(){if(stopPrivateTyping)stopPrivateTyping();if(!privateTarget||!isRealUser())return;const typingRef=doc(db,'typing',privateTarget.uid+'_'+currentUser.uid);stopPrivateTyping=onSnapshot(typingRef,s=>{const d=s.exists()?s.data():null;const fresh=d?.typing===true&&Date.now()-(d.updatedAt?.toMillis?.()||0)<5000;document.getElementById('privateTyping').innerHTML=fresh?esc(privateTarget.displayName)+' is typing <span class="typing-dots"><i></i><i></i><i></i></span>':''})}
-function subscribePrivateMessages(){if(stopPrivateMessages)stopPrivateMessages();if(!privateTarget||!isRealUser())return;const q=query(collection(db,'messages'),where('participants','array-contains',currentUser.uid),limit(200));stopPrivateMessages=onSnapshot(q,snap=>{const list=[];snap.forEach(s=>{const d=s.data();if(Array.isArray(d.participants)&&d.participants.includes(privateTarget.uid))list.push({id:s.id,data:d})});list.sort((a,b)=>privateMs(a.data)-privateMs(b.data));const box=document.getElementById('privateMessages');box.innerHTML='';if(!list.length)box.innerHTML='<div class="private-empty">No private messages yet. Say hello! 👋</div>';else{list.forEach(x=>{box.appendChild(renderPrivateMessage(x.id,x.data));if(x.data.receiverId===currentUser.uid&&!x.data.seenAt)privateAction(x.id,'seen')});const pinned=list.find(x=>x.data.pinnedReal===true);const pin=document.getElementById('privatePinnedBar');pin.classList.toggle('show',!!pinned);pin.innerHTML=pinned?'<b>📌 Pinned:</b> '+esc(String(pinned.data.text||'').slice(0,100)):'';box.scrollTop=box.scrollHeight;}},err=>{console.error(err);document.getElementById('privateMessages').innerHTML='<div class="private-empty error">Private chat is unavailable. Check Firestore Rules.</div>'});subscribePrivateTyping()}
-function openPrivateChat(target){if(!isRealUser()||!target?.uid||target.uid===currentUser.uid)return;privateTarget={uid:target.uid,displayName:target.displayName||'Member',photoURL:target.photoURL||''};clearPrivateReply();const panel=document.getElementById('privateChatPanel'),name=document.getElementById('privateChatName'),avatar=document.getElementById('privateChatAvatar'),status=document.getElementById('privateChatStatus'),box=document.getElementById('privateMessages');name.textContent=privateTarget.displayName;avatar.innerHTML=privateAvatarHtml(privateTarget);status.textContent='● Online';panel.hidden=false;box.innerHTML='<div class="private-empty">Loading messages…</div>';requestAnimationFrame(()=>{document.getElementById('privateInput')?.focus();subscribePrivateMessages()})}
-function closePrivateChat(){setPrivateTyping(false);privateTarget=null;if(stopPrivateMessages){stopPrivateMessages();stopPrivateMessages=null}if(stopPrivateTyping){stopPrivateTyping();stopPrivateTyping=null}clearPrivateReply();document.getElementById('privateChatPanel').hidden=true}
+function renderPrivateMessagesReal(latestList,options={}){
+  const previousHeight=Number(options.previousHeight||0),previousTop=Number(options.previousTop||0);
+  const preserveTop=options.preserveTop===true;
+  const mergedMap=new Map();
+  [...latestList,...privateOlderMessagesReal].forEach(x=>{if(x&&!mergedMap.has(x.id))mergedMap.set(x.id,x)});
+  const list=[...mergedMap.values()].sort((a,b)=>privateMs(a.data)-privateMs(b.data)||a.id.localeCompare(b.id));
+  const box=document.getElementById('privateMessages');
+  if(!box)return;
+  box.innerHTML='';
+  if(!list.length)box.innerHTML='<div class="private-empty">No private messages yet. Say hello! 👋</div>';
+  else{
+    list.forEach(x=>{
+      box.appendChild(renderPrivateMessage(x.id,x.data));
+      if(x.data.receiverId===currentUser.uid&&!x.data.seenAt)privateAction(x.id,'seen');
+    });
+    const pinned=list.find(x=>x.data.pinnedReal===true);
+    const pin=document.getElementById('privatePinnedBar');
+    pin.classList.toggle('show',!!pinned);
+    pin.innerHTML=pinned?'<b>📌 Pinned:</b> '+esc(String(pinned.data.text||'').slice(0,100)):'';
+  }
+  const btn=document.getElementById('privateLoadOlder');
+  if(btn){btn.hidden=!privateHasOlderReal;btn.disabled=privateLoadingOlderReal;btn.textContent=privateLoadingOlderReal?'Loading older messages…':'↑ Load older messages';}
+  requestAnimationFrame(()=>{
+    if(preserveTop){
+      box.scrollTop=previousTop+(box.scrollHeight-previousHeight);
+    }else if(options.initial||Math.abs(box.scrollHeight-box.scrollTop-box.clientHeight)<100){
+      box.scrollTop=box.scrollHeight;
+    }
+  });
+}
+
+function subscribePrivateMessages(){
+  if(stopPrivateMessages)stopPrivateMessages();
+  if(!privateTarget||!isRealUser())return;
+  const conversationId=privateConversationIdReal;
+  const q=query(
+    collection(db,'messages'),
+    where('participants','array-contains',currentUser.uid),
+    where('conversationId','==',conversationId),
+    orderBy('createdAt','desc'),
+    limit(100)
+  );
+  stopPrivateMessages=onSnapshot(q,snap=>{
+    const list=snap.docs.map(s=>({id:s.id,data:s.data()}));
+    privateCursorReal=snap.docs[snap.docs.length-1]||privateCursorReal;
+    if(privateOlderMessagesReal.length===0)privateHasOlderReal=snap.size===100;
+    renderPrivateMessagesReal(list,{initial:true});
+  },err=>{
+    console.error(err);
+    document.getElementById('privateMessages').innerHTML='<div class="private-empty error">Private chat is unavailable. Check Firestore Rules.</div>';
+  });
+  subscribePrivateTyping();
+}
+function conversationIdForReal(a,b){return [String(a||''),String(b||'')].sort().join('_');}
+function openPrivateChat(target){if(!isRealUser()||!target?.uid||target.uid===currentUser.uid)return;privateTarget={uid:target.uid,displayName:target.displayName||'Member',photoURL:target.photoURL||''};privateConversationIdReal=conversationIdForReal(currentUser.uid,privateTarget.uid);privateOlderMessagesReal=[];privateCursorReal=null;privateHasOlderReal=false;privateLoadingOlderReal=false;clearPrivateReply();const panel=document.getElementById('privateChatPanel'),name=document.getElementById('privateChatName'),avatar=document.getElementById('privateChatAvatar'),status=document.getElementById('privateChatStatus'),box=document.getElementById('privateMessages');name.textContent=privateTarget.displayName;avatar.innerHTML=privateAvatarHtml(privateTarget);status.textContent='● Online';panel.hidden=false;box.innerHTML='<div class="private-empty">Loading messages…</div>';requestAnimationFrame(()=>{document.getElementById('privateInput')?.focus();subscribePrivateMessages()})}
+async function loadOlderPrivateMessagesReal(){
+  if(privateLoadingOlderReal||!privateHasOlderReal||!privateCursorReal||!privateTarget)return;
+  privateLoadingOlderReal=true;
+  const box=document.getElementById('privateMessages');
+  const previousHeight=box?.scrollHeight||0,previousTop=box?.scrollTop||0;
+  try{
+    const snap=await getDocsFromServer(query(
+      collection(db,'messages'),
+      where('participants','array-contains',currentUser.uid),
+      where('conversationId','==',privateConversationIdReal),
+      orderBy('createdAt','desc'),
+      startAfter(privateCursorReal),
+      limit(100)
+    ));
+    const known=new Set(privateOlderMessagesReal.map(x=>x.id));
+    snap.docs.forEach(s=>{if(!known.has(s.id))privateOlderMessagesReal.push({id:s.id,data:s.data()})});
+    if(snap.docs.length)privateCursorReal=snap.docs[snap.docs.length-1];
+    privateHasOlderReal=snap.size===100;
+    const current=[...document.querySelectorAll('#privateMessages .private-msg')].map(el=>el.dataset.id).filter(Boolean);
+    // Latest 100 remain in the realtime listener; older pages are retained in memory.
+    renderPrivateMessagesReal(privateOlderMessagesReal.concat(current.map(id=>({id,data:{}})).filter(x=>x.data&&Object.keys(x.data).length)),{preserveTop:true,previousHeight,previousTop});
+  }catch(e){
+    console.error('[TUBAL HUB private pagination]',e);
+  }finally{
+    privateLoadingOlderReal=false;
+    const btn=document.getElementById('privateLoadOlder');
+    if(btn){btn.disabled=false;btn.hidden=!privateHasOlderReal;btn.textContent='↑ Load older messages';}
+  }
+}
+
+function closePrivateChat(){setPrivateTyping(false);privateTarget=null;privateConversationIdReal='';privateOlderMessagesReal=[];privateCursorReal=null;privateHasOlderReal=false;if(stopPrivateMessages){stopPrivateMessages();stopPrivateMessages=null}if(stopPrivateTyping){stopPrivateTyping();stopPrivateTyping=null}clearPrivateReply();document.getElementById('privateChatPanel').hidden=true}
 async function sendPrivateMessage(text){
   if(!privateTarget||!isRealUser())return;
   const cleanText=String(text||'').trim();
@@ -778,7 +1073,7 @@ document.getElementById('privateVideoCall').onclick=()=>{if(privateTarget)window
 document.getElementById('privateInput').addEventListener('input',()=>setPrivateTyping(true));
 document.getElementById('privateInput').addEventListener('blur',()=>setPrivateTyping(false));
 document.getElementById('privateReplyCancel').onclick=clearPrivateReply;
-document.getElementById('privateForm').addEventListener('submit',async e=>{e.preventDefault();setPrivateTyping(false);const field=document.getElementById('privateInput'),text=field.value.trim();if(!text||!privateTarget)return;const btn=e.submitter||e.currentTarget.querySelector('button[type="submit"]');btn.disabled=true;try{await sendPrivateMessage(text);field.value=''}catch(err){console.error(err);alert(err.code==='functions/resource-exhausted'?'Please wait a moment.':err.code==='functions/invalid-argument'?'Message blocked by server moderation.':'Private message was not sent. Check your Firebase connection.')}finally{btn.disabled=false;field.focus()}});
+document.getElementById('privateLoadOlder')?.addEventListener('click',loadOlderPrivateMessagesReal);document.getElementById('privateForm').addEventListener('submit',async e=>{e.preventDefault();setPrivateTyping(false);const field=document.getElementById('privateInput'),text=field.value.trim();if(!text||!privateTarget)return;const btn=e.submitter||e.currentTarget.querySelector('button[type="submit"]');btn.disabled=true;try{await sendPrivateMessage(text);field.value=''}catch(err){console.error(err);alert(err.code==='functions/resource-exhausted'?'Please wait a moment.':err.code==='functions/invalid-argument'?'Message blocked by server moderation.':'Private message was not sent. Check your Firebase connection.')}finally{btn.disabled=false;field.focus()}});
 async function compressImageReal(file){
   if(!file || !/^image\/(jpeg|png|webp)$/i.test(file.type)) return file;
   const bitmap=await createImageBitmap(file);
