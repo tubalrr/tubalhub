@@ -146,19 +146,27 @@
   }
 
   function normalize(data) {
-    const changelog = Array.isArray(data?.changelog) ? data.changelog.map(item => ({
-      type: String(item?.type || "Updated"),
-      icon: String(item?.icon || "•"),
-      title: String(item?.title || "Update"),
-      desc: String(item?.desc || "")
-    })).filter(item => item.title && item.desc) : [];
+    const explicit = Array.isArray(data?.changelog) ? data.changelog : [];
+    const updateStrings = Array.isArray(data?.updatesReal) ? data.updatesReal : [];
+    const fromUpdates = updateStrings.map((value, index) => ({
+      type: /\\b(FIX|REMOVE|SECURITY|ADMIN|BUILD|AUDIT|CLEANUP|REFACTOR)\\b/i.test(String(value)) ? "Improved" : "New",
+      icon: /SECURITY/i.test(String(value)) ? "🛡" : (/FIX|REMOVE|CLEANUP|REFACTOR/i.test(String(value)) ? "🔧" : "✨"),
+      title: "Release update " + (index + 1),
+      desc: String(value || "")
+        .replace(/^v?\\d+(?:\\.\\d+){1,3}\\s*/i, "")
+        .replace(/^(FEAT|FIX|ADMIN|SECURITY|UI|BUILD|AUDIT|CLEANUP|REMOVE|REFACTOR)\\s*[—:-]?\\s*/i, "")
+        .trim()
+    })).filter(item => item.desc);
+
+    const changelog = (explicit.length ? explicit : fromUpdates).slice(0, 40);
     return {
       product: String(data?.product || ""),
       manifestType: String(data?.manifestType || ""),
       version: String(data?.version || ""),
-      date: String(data?.date || data?.time || ""),
-      time: String(data?.time || ""),
-      message: String(data?.message || ""),
+      build: String(data?.build || ""),
+      date: String(data?.date || data?.releasedAtReal || data?.time || ""),
+      time: String(data?.time || data?.releasedAtReal || ""),
+      message: String(data?.message || data?.changes || ""),
       changelog
     };
   }
@@ -167,7 +175,6 @@
     if (data.product && data.product !== "TUBAL HUB Website") throw new Error("Wrong update manifest product");
     if (data.manifestType && data.manifestType !== "website") throw new Error("Wrong update manifest type");
     if (!data.version) throw new Error("version.json missing version");
-    if (!data.changelog.length) throw new Error("version.json missing changelog");
     return data;
   }
 
@@ -329,19 +336,39 @@
   }
 
   async function fetchVersion() {
-    const response = await fetch(versionUrl + "?t=" + Date.now(), {cache:"no-store"});
-    if (!response.ok) throw new Error("version.json " + response.status);
-    return validate(normalize(await response.json()));
+    const controller = "AbortController" in window ? new AbortController() : null;
+    const timer = controller ? setTimeout(() => controller.abort(), 10000) : null;
+    try {
+      const response = await fetch(versionUrl + "?t=" + Date.now(), {
+        cache:"no-store",
+        credentials:"omit",
+        headers:{Accept:"application/json"},
+        signal: controller?.signal
+      });
+      if (!response.ok) throw new Error("version.json " + response.status);
+      const data = await response.json();
+      return validate(normalize(data));
+    } finally {
+      if (timer) clearTimeout(timer);
+    }
   }
   async function fetchPageVersion() {
+    const controller = "AbortController" in window ? new AbortController() : null;
+    const timer = controller ? setTimeout(() => controller.abort(), 10000) : null;
     try {
-      const response = await fetch(rootUrl.href + "?page-version=" + Date.now(), {cache:"no-store"});
+      const response = await fetch(rootUrl.href + "index.html?page-version=" + Date.now(), {
+        cache:"no-store",
+        credentials:"omit",
+        signal: controller?.signal
+      });
       if (!response.ok) return null;
       const html = await response.text();
       const match = html.match(/id=["']liveVersion["'][^>]*>\s*v?([0-9]+(?:\.[0-9]+){1,3})\s*<\//i);
       return match ? match[1] : null;
     } catch (_) {
       return null;
+    } finally {
+      if (timer) clearTimeout(timer);
     }
   }
 
@@ -400,6 +427,7 @@
     }
     if (release.status === "LIVE" || release.status === "SCHEDULED") {
       const target = String(release.targetVersion).replace(/^v/,"");
+      if (!target) return data;
       const autoChangelog = Array.isArray(release.autoChangelog) ? release.autoChangelog : [];
       return normalize({
         ...data,
@@ -581,6 +609,10 @@
       await loadUi();
       openChannel();
       listenServiceWorker();
+      window.addEventListener("online", () => { poll(); }, {passive:true});
+      document.addEventListener("visibilitychange", () => {
+        if (!document.hidden) poll();
+      });
       if (updatesEnabled()) {
         await poll();
         clearInterval(pollTimer);
