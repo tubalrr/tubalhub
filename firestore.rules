@@ -405,13 +405,15 @@ service cloud.firestore {
       allow create: if realUser()
         && request.resource.data.uid == request.auth.uid
         && request.resource.data.newsId is string
-        && request.resource.data.reaction in ['haha','love'];
+        && request.resource.data.reaction in ['haha','love']
+        && reactionId == request.resource.data.newsId + '_' + request.auth.uid;
 
       allow update: if realUser()
         && resource.data.uid == request.auth.uid
         && request.resource.data.uid == request.auth.uid
         && request.resource.data.newsId == resource.data.newsId
-        && request.resource.data.reaction in ['haha','love'];
+        && request.resource.data.reaction in ['haha','love']
+        && reactionId == request.resource.data.newsId + '_' + request.auth.uid;
 
       allow delete: if realUser()
         && resource.data.uid == request.auth.uid;
