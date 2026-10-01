@@ -71,39 +71,10 @@ service cloud.firestore {
     match /globalChats/{messageId} {
       allow read: if adminUser() || chatAllowed();
 
-      // Text messages may be created directly by authenticated users.
-      // Keep the write schema strict: the author must be the signed-in user,
-      // the channel must be a supported chat channel, and the timestamp must
-      // be the server request time. Admin-only diagnostics stay separate.
-      allow create: if chatAllowed()
-        && request.resource.data.uid == request.auth.uid
-        && request.resource.data.uid is string
-        && request.resource.data.displayName is string
-        && request.resource.data.displayName.size() > 0
-        && request.resource.data.displayName.size() <= 120
-        && request.resource.data.text is string
-        && request.resource.data.text.size() > 0
-        && request.resource.data.text.size() <= 500
-        && request.resource.data.textReal is string
-        && request.resource.data.textReal == request.resource.data.text
-        && request.resource.data.type == 'text'
-        && request.resource.data.channel in ['global-chat','payapang-isip','ctrlzone','shop-talk','announcements']
-        && request.resource.data.createdAt == request.time
-        && (
-          (adminUser() && request.resource.data.roleReal == 'admin')
-          || (!adminUser() && request.resource.data.roleReal == 'user')
-        )
-        && request.resource.data.verifiedReal == true
-        && (!('photoURL' in request.resource.data) || request.resource.data.photoURL is string)
-        && (!('name' in request.resource.data) || request.resource.data.name is string)
-        && (!('replyTo' in request.resource.data)
-            || (
-              request.resource.data.replyTo is map
-              && request.resource.data.replyTo.name is string
-              && request.resource.data.replyTo.name.size() <= 120
-              && request.resource.data.replyTo.preview is string
-              && request.resource.data.replyTo.preview.size() <= 160
-            ));
+      // Global Chat writes are server-only. Client content must pass through
+      // sendMessageReal/sendGlobalMediaMessageReal for validation, rate limiting,
+      // moderation and trusted metadata.
+      allow create: if false;
 
       // Message content is server-managed after creation.
       allow update: if adminUser();
