@@ -5,9 +5,9 @@
    ========================================================= */
 :root{
   --fd-green:#5d6f9f;--fd-purple:#8a82a4;--fd-red:#c56f73;
-  --fd-bg:#f3f4f6;--fd-panel:rgba(7,16,11,.72);--fd-panel-2:rgba(4,10,7,.82);
-  --fd-line:rgba(120,255,170,.14);--fd-text:#2d3238;--fd-muted:#747b83;
-  --fd-shadow:0 18px 58px rgba(0,0,0,.34);--fd-radius:20px;
+  --fd-bg:#f3f4f6;--fd-panel:rgba(255,255,255,.96);--fd-panel-2:rgba(248,249,251,.98);
+  --fd-line:rgba(93,111,159,.16);--fd-text:#2d3238;--fd-muted:#747b83;
+  --fd-shadow:0 12px 34px rgba(45,50,56,.10);--fd-radius:20px;
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
