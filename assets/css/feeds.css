@@ -3102,3 +3102,48 @@ body.feeds-page{
   background:#eef0f4!important;
   color:#5e6470!important;
 }
+
+/* =========================================================
+   FEEDS CONTAINER COLOR UPDATE — 2026-10-01
+   Give containers a distinct soft blue-gray surface instead of plain white.
+   ========================================================= */
+.feeds-panel,
+.feeds-menu,
+.feed-toolbar,
+.feeds-stories-wrap,
+.feed-featured,
+.create-post{
+  background:#e7ebf1!important;
+  border-color:#d2d8e1!important;
+  box-shadow:0 2px 10px rgba(45,50,56,.065)!important;
+}
+.post-card{
+  background:#edf0f4!important;
+  border-color:#d5dbe4!important;
+  box-shadow:0 2px 10px rgba(45,50,56,.06)!important;
+}
+.right-rail .feeds-panel,
+.left-rail .feeds-panel{
+  background:#e4e9f0!important;
+}
+.feed-featured,
+.feeds-stories-wrap,
+.create-post{
+  background:#e9edf2!important;
+}
+.feed-toolbar{
+  background:rgba(231,235,241,.98)!important;
+}
+.feed-article-content,
+.product-card,
+.game-card,
+.featured-item,
+.recent-item,
+.suggested-row,
+.trending-item,
+.active-game-row,
+.create-action,
+.create-trigger{
+  background:#f5f6f8!important;
+  border-color:#d9dee6!important;
+}
