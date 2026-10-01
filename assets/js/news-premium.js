@@ -1,5 +1,5 @@
 
-import {getFirestore,collection,getDocs,query,orderBy,limit,onSnapshot} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+import {getFirestore,collection,getDocs,query,orderBy,limit,onSnapshot,doc,updateDoc,increment} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 import {subscribeHubPosts} from "./hub-content.js";
 import {app} from "./firebase-config.js";
 const db=getFirestore(app);
@@ -77,12 +77,25 @@ function renderComments(x){
   const box=document.getElementById("newsCommentsList"),comments=Array.isArray(x.comments)?x.comments:[];
   if(!box)return;box.innerHTML=comments.length?comments.slice(0,20).map(c=>"<div class='news-comment-bubble'><b>"+esc(c.authorName||c.displayName||"Member")+"</b><div>"+esc(c.text||"")+"</div></div>").join(""):"<div class='news-comment-empty'>No comments yet.</div>"
 }
+async function recordNewsView(x){
+  if(!x?.sourceCollection||x.sourceCollection!=="news"||!x.sourceId)return;
+  try{
+    await updateDoc(doc(db,"news",x.sourceId),{views:increment(1)});
+    x.views=Number(x.views||0)+1;
+    const source=state.sourceNews.find(item=>item.id===x.id);
+    if(source)source.views=x.views;
+    renderTrending();
+  }catch(e){
+    console.warn("[TUBAL HUB News] view count update unavailable",e);
+  }
+}
 function openReader(x){
   state.current=x;const r=document.getElementById("newsReader"),cover=document.getElementById("newsReaderCover"),src=imageOf(x);
   cover.hidden=!src;if(src)cover.src=src;
   document.getElementById("newsReaderCategory").textContent=categoryLabel(categoryOf(x));document.getElementById("newsReaderTitle").textContent=titleOf(x);
   document.getElementById("newsReaderByline").innerHTML=avatarHtml(x,true)+"<div><div class='news-author-main'>"+esc(authorName(x))+" <span class='news-author-online "+(authorOnline(x)?"":"offline")+"'></span></div><div class='news-author-meta'>"+esc(minutesToRead(x))+(timeLabel(x)?" · "+esc(timeLabel(x)):"")+"</div></div>";
-  document.getElementById("newsReaderText").textContent=String(x.body||x.text||x.excerpt||"");renderComments(x);renderRelated();document.getElementById("newsShareSheet").hidden=true;r.hidden=false;document.body.classList.add("news-reader-open");document.getElementById("newsReaderShell").scrollTop=0
+  document.getElementById("newsReaderText").textContent=String(x.body||x.text||x.excerpt||"");renderComments(x);renderRelated();document.getElementById("newsShareSheet").hidden=true;r.hidden=false;document.body.classList.add("news-reader-open");document.getElementById("newsReaderShell").scrollTop=0;
+  recordNewsView(x);
 }
 function closeReader(){document.getElementById("newsReader").hidden=true;document.body.classList.remove("news-reader-open")}
 function setup(){
@@ -104,7 +117,7 @@ async function load(){
   const grid=document.getElementById("newsGrid");
   if(grid)grid.innerHTML="<div class='news-skeleton'><div class='news-skeleton-card'></div><div class='news-skeleton-card'></div><div class='news-skeleton-card'></div></div>";
   const mapNewsSnapshot=snap=>{
-    state.sourceNews=snap.docs.map(d=>({id:"news-"+d.id,sourceCollection:"news",sourceId:d.id,contentType:"news",title:d.data().title||"",text:d.data().text||d.data().summary||"",description:d.data().text||d.data().summary||"",body:d.data().body||"",imageUrl:d.data().imageUrl||d.data().image||"",createdAt:d.data().createdAt||0,authorName:d.data().authorName||"TUBAL HUB News",category:d.data().category||"platform",articleUrl:d.data().articleUrl||""}));
+    state.sourceNews=snap.docs.map(d=>({id:"news-"+d.id,sourceCollection:"news",sourceId:d.id,contentType:"news",title:d.data().title||"",text:d.data().text||d.data().summary||"",description:d.data().text||d.data().summary||"",body:d.data().body||"",views:Number(d.data().views||0),imageUrl:d.data().imageUrl||d.data().image||"",createdAt:d.data().createdAt||0,authorName:d.data().authorName||"TUBAL HUB News",category:d.data().category||"platform",articleUrl:d.data().articleUrl||""}));
   };
   const merge=()=>{
     const hub=state.hubNews.filter(x=>Array.isArray(x.destinations)?x.destinations.includes("news"):x.contentType==="news").map(x=>({...x,id:"hub-"+x.id}));
