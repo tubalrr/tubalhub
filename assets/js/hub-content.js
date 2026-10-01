@@ -34,15 +34,15 @@ export function subscribeHubPosts(callback){
   const postsQuery=query(
     collection(db,"hubPosts"),
     orderBy("createdAt","desc"),
-    // Keep the realtime window intentionally small; Feed pagination can grow independently.
-    limit(60)
+    // Realtime listener covers only the newest database page. Older pages use cursors.
+    limit(20)
   );
 
   return onSnapshot(
     postsQuery,
     snap=>{
       const items=snap.docs.map(d=>({id:d.id,...d.data()}));
-      callback(items);
+      callback(items,snap);
     },
     err=>{
       console.warn("[TUBAL HUB] realtime hubPosts listener unavailable",err);
