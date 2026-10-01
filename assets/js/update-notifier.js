@@ -420,7 +420,7 @@
     autoReloadTimer = setTimeout(() => {
       waitingForBotAnnouncement = false;
       performFreshReload(String(version));
-    }, 15000);
+    }, RELOAD_FALLBACK_MS);
   }
 
   document.addEventListener("tubalhub:update-announce-complete", event => {
