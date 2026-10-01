@@ -1142,3 +1142,12 @@ body.hub-home #bentoHero.th-corp-hero .th-hero-bot-visual:after{
 body.hub-home #bentoHero.th-corp-hero .th-hero-bot-visual .th-code-bot-shadow{
   background:transparent!important;
 }
+
+
+/* HERO BOT — no visual panel/glow while speaking */
+body.hub-home #bentoHero.th-corp-hero .th-hero-welcome-bot.is-speaking .th-hero-bot-visual{
+  background:transparent!important;
+  background-color:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+}
