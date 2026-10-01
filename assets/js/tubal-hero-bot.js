@@ -216,10 +216,34 @@
 
     const bot = visual.querySelector(".th-code-bot");
     if (title) title.textContent = "Hello! Ako ang TUBAL HUB Bot";
-    const message = "Hello! Welcome sa TUBAL HUB. Ako ang interactive guide mo. Click mo ako para magsalita at makita ang movement ko.";
+    const fallbackMessage = "Hello! Welcome sa TUBAL HUB. Ako ang interactive guide mo. Ipapakita ko ang latest website version at mga bagong features.";
+    let message = fallbackMessage;
     if (text) text.textContent = message;
     bubble.hidden = false;
-    visual.setAttribute("aria-label", "TUBAL HUB interactive robot — click to talk");
+    visual.setAttribute("aria-label", "TUBAL HUB update guide robot — click to hear the latest version and features");
+
+    async function loadLatestWebsiteUpdate(){
+      try{
+        const res = await fetch("/tubalhub/version.json?bot=" + Date.now(), {cache:"no-store"});
+        if (!res.ok) throw new Error("version.json unavailable");
+        const data = await res.json();
+        const version = data.version || "unknown";
+        const updates = Array.isArray(data.updatesReal) ? data.updatesReal : [];
+        const clean = value => String(value || "")
+          .replace(/^v?\\d+(?:\\.\\d+){1,3}\\s*/i, "")
+          .replace(/^(FEAT|FIX|ADMIN|SECURITY|UI|BUILD|AUDIT|CLEANUP|REMOVE|REFACTOR)\\s*[—:-]?\\s*/i, "")
+          .trim();
+        const latest = updates.slice(0, 4).map(clean).filter(Boolean);
+        const latestText = latest.length
+          ? latest.map((item, i) => (i + 1) + ". " + item).join(" ")
+          : String(data.changes || "May mga bagong improvements at fixes sa website.");
+        message = "Welcome sa TUBAL HUB. Ang current website version ay " + version + ". Narito ang latest updates. " + latestText;
+        if (text) text.textContent = "Version " + version + " • " + (latest[0] || "Latest website updates available.");
+        return message;
+      }catch(_){
+        return message;
+      }
+    }
 
     const speechAvailable = "speechSynthesis" in window && "SpeechSynthesisUtterance" in window;
     let muted = false;
@@ -265,7 +289,11 @@
       if (speechAvailable) speak();
     });
 
-    window.setTimeout(() => { if (!muted) speak(); }, 1400);
+    window.setTimeout(async () => {
+      if (muted) return;
+      const latestMessage = await loadLatestWebsiteUpdate();
+      speak(latestMessage);
+    }, 1400);
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init, {once:true});
