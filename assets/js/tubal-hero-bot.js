@@ -583,6 +583,8 @@
     async function botConversation(latest){
       if (muted) return;
       const data = await buildConversationData(latest);
+      let siteTourDone = false;
+      try { siteTourDone = sessionStorage.getItem("tubal_bot_site_tour_done") === "1"; } catch (_) {}
 
       const conversations = [
         {
@@ -625,9 +627,12 @@
       await new Promise(r => setTimeout(r, 420));
       await speak(convo.announce, announcerBot, {greeting:true, pitch:1.04});
       if (muted) return;
-      await new Promise(r => setTimeout(r, 420));
-      await speak(convo.tour, bot, {presenting:true, rate:.88});
-      if (muted) return;
+      if (!siteTourDone) {
+        await new Promise(r => setTimeout(r, 420));
+        await speak(convo.tour, bot, {presenting:true, rate:.88});
+        if (muted) return;
+        try { sessionStorage.setItem("tubal_bot_site_tour_done","1"); } catch (_) {}
+      }
       await new Promise(r => setTimeout(r, 420));
       await speak(convo.update, announcerBot, {presenting:true, pitch:1.04, rate:.88});
       if (muted) return;
