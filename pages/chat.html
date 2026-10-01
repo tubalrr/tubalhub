@@ -395,68 +395,6 @@ async function toggleReplyReaction(replyId,emoji){
   else if(snap.exists())await deleteDoc(r);
 }
 
-function subscribeReactions(){
- if(stopReactions)stopReactions();
- const q=query(collection(db,'globalChatReactions'),limit(1000));
- stopReactions=onSnapshot(q,snap=>{
-   const previous=reactionState;
-   const wasReady=reactionSnapshotReady;
-   reactionState={};
-   reactionUsersState={};
-
-   snap.forEach(d=>{
-     const x=d.data();
-     const key=x.replyId?'reply_'+x.replyId:x.messageId;
-     if(!key)return;
-     if(!reactionState[key])reactionState[key]={};
-     if(!reactionUsersState[key])reactionUsersState[key]={};
-     (x.reactions||[]).forEach(e=>{
-       reactionState[key][e]=(reactionState[key][e]||0)+1;
-       if(!reactionUsersState[key][e])reactionUsersState[key][e]=new Set();
-       if(x.uid)reactionUsersState[key][e].add(x.uid);
-     });
-   });
-
-   document.querySelectorAll('.msg').forEach(row=>{
-     const id=row.dataset.id;
-     const bar=row.querySelector('.reaction-bar');
-     if(bar){
-       const prevCounts=previous[id]||{};
-       bar.innerHTML=reactionHtml(id,prevCounts);
-       bar.querySelectorAll('.reaction-chip').forEach(btn=>{
-         btn.addEventListener('click',e=>{
-           e.stopPropagation();
-           animateReactionTarget(btn);
-           toggleReaction(id,btn.dataset.react);
-         });
-       });
-
-       if(wasReady){
-         Object.keys(reactionState[id]||{}).forEach(e=>{
-           const nextCount=reactionState[id]?.[e]||0;
-           const prevCount=prevCounts[e]||0;
-           if(nextCount>=5 && prevCount<5)burstFiveConfetti(row,e);
-         });
-       }
-     }
-
-     row.querySelectorAll('.quick-reaction').forEach(btn=>{
-       btn.addEventListener('click',e=>{
-         e.stopPropagation();
-         toggleReaction(id,btn.dataset.e);
-       });
-     });
-
-     row.querySelectorAll('.reply-item').forEach(item=>{
-       const rid=item.dataset.replyId;
-       if(rid)renderReplyReactions(item,rid);
-     });
-   });
-
-   reactionSnapshotReady=true;
- },err=>console.error('Reaction error',err));
-}
-function subscribeReplies(){if(stopReplies)stopReplies();const q=query(collection(db,'globalChatReplies'),orderBy('createdAt','asc'),limit(500));stopReplies=onSnapshot(q,snap=>{document.querySelectorAll('.reply-box').forEach(x=>x.innerHTML='');snap.forEach(d=>{const x=d.data(),root=x.messageId,box=document.getElementById(`replies-${root}`);if(!box)return;const item=document.createElement('div');item.className='reply-item'+(x.parentReplyId?' nested-reply':'');item.dataset.replyId=d.id;item.innerHTML=`<div class="reply-meta"><b class="private-member-name">${esc(x.displayName||'Member')}</b> • ${esc(timeText(x.createdAt))}</div><div class="reply-text">${esc(x.text)}</div><div class="reply-actions"><button type="button" class="reply-react-btn" title="React">😊</button><button type="button" class="reply-to-reply">↩ Reply</button></div><div class="reply-reaction-bar"></div>`;item.querySelector('.reply-to-reply').onclick=e=>{e.stopPropagation();setReplyTarget(root,x.displayName||'Member',String(x.text||'').slice(0,100),d.id)};item.querySelector('.reply-react-btn').onclick=e=>{e.stopPropagation();openReplyReactionMenu(e.currentTarget,d.id)};renderReplyReactions(item,d.id);box.appendChild(item)});},err=>console.error('Reply error',err))}
 function messageMillisReal(data){
   return data?.createdAt?.toMillis?.()
     ?? data?.createdAt?.toDate?.()?.getTime?.()
