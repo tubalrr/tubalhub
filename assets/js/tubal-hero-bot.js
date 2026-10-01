@@ -38,10 +38,10 @@
         margin:0!important;
       }
       .th-bot-duo .th-welcome-bot{
-        left:calc(50% - 235px);
+        left:0;
       }
       .th-bot-duo .th-announcer-bot{
-        right:calc(50% - 235px);
+        right:0;
         --blue:#a879ff;--blue2:#6733c8;--cyan:#d0b6ff;
         filter:drop-shadow(0 24px 25px rgba(84,45,170,.34));
       }
@@ -64,8 +64,8 @@
           width:190px;height:285px;transform:scale(.57);
           top:42px;margin:0!important;
         }
-        .th-bot-duo .th-welcome-bot{left:calc(50% - 165px)}
-        .th-bot-duo .th-announcer-bot{right:calc(50% - 165px)}
+        .th-bot-duo .th-welcome-bot{left:0}
+        .th-bot-duo .th-announcer-bot{right:0}
       }
       .th-code-bot{
         --blue:#48a9ff;--blue2:#126bdb;--cyan:#79d7ff;
