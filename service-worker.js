@@ -1,4 +1,4 @@
-const CACHE_NAME = "tubal-hub-shell-v1.3.29";
+const CACHE_NAME = "tubal-hub-shell-v1.3.29-chatfix";
 const DYNAMIC_CACHE = "tubal-hub-content-v1";
 const CONTENT_TTL = 5 * 60 * 1000;
 const APP_SHELL = [
@@ -31,6 +31,10 @@ function isContentPage(url){
   return /\/pages\/(feeds|events)\.html$/i.test(url.pathname);
 }
 
+function isLiveChatPage(url){
+  return /\/pages\/chat\.html$/i.test(url.pathname);
+}
+
 async function cachedContent(request){
   const cache=await caches.open(DYNAMIC_CACHE);
   const hit=await cache.match(request);
@@ -57,6 +61,14 @@ self.addEventListener("fetch", event => {
   if(request.method!=="GET")return;
   const url=new URL(request.url);
   if(url.origin!==self.location.origin)return;
+
+  if(isLiveChatPage(url)){
+    event.respondWith(
+      fetch(new Request(request,{cache:"no-store"}))
+        .catch(()=>caches.match(request).then(cached=>cached || caches.match("./index.html")))
+    );
+    return;
+  }
 
   if(isContentPage(url)){
     event.respondWith(
