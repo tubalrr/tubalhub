@@ -201,14 +201,14 @@
     const showWelcome = (release) => {
       message = buildWelcomeGuide(release);
       if (title) title.textContent = "Welcome to TUBAL HUB";
-      if (text) text.textContent = `Current release · v${release.version}. Welcome guide ready.`;
+      if (text) text.textContent = message;
       speakOnce(message);
     };
 
     const showUpdate = (release, items) => {
       message = buildUpdateMessage(release, items);
       if (title) title.textContent = "New update detected";
-      if (text) text.textContent = `New update · v${release.version}. I will explain what changed.`;
+      if (text) text.textContent = message;
       welcomeSpokenForState = true;
       speak(message);
     };
