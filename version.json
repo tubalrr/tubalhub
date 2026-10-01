@@ -1,11 +1,12 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.3.11",
-  "build": "2026-10-01_product-realtime",
+  "version": "1.3.12",
+  "build": "2026-10-01_presence-perf",
   "releasedAtReal": "2026-10-01T03:40:00.000Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.3.12 PERF — Removed the redundant second presence collection read. Feed now uses the 50-record presence snapshot loaded by loadPeople() instead of fetching another 200-record presence snapshot later.",
     "v1.3.11 FEAT — Feed products now subscribe to the Firestore products collection in realtime; new, edited, or removed products in Shop are reflected in the Feed without waiting for reload or the next cursor page.",
     "v1.3.10 UI — Switched the main Feeds containers to a distinct warm cream palette with lighter inner controls, replacing the previous blue-gray container surfaces.",
     "v1.3.09 UI — Changed the Feeds container surfaces from plain white to a distinct soft blue-gray palette while keeping inner controls lighter for hierarchy and readability.",
@@ -825,5 +826,5 @@
     }
   ],
   "date": "2026-10-01",
-  "changes": "v1.3.11 FEAT — Shop products now update in the Feed through a realtime Firestore listener."
+  "changes": "v1.3.12 PERF — Removed duplicate presence loading from Feeds."
 }
