@@ -181,9 +181,9 @@ const TUBAL_VERSION_REAL='1.2.16';
 const lock=document.getElementById('chatLock'),content=document.getElementById('chatContent'),messages=document.getElementById('messages'),form=document.getElementById('chatForm'),input=document.getElementById('messageInput'),sendButton=document.getElementById('sendButton'),statusEl=document.getElementById('chatStatus'),memberList=document.getElementById('memberList'),onlineCount=document.getElementById('onlineCount'),onlineMembers=document.getElementById('onlineMembers'),globalMessageCount=document.getElementById('globalMessageCount'),replyingBar=document.getElementById('replyingBar'),replyingName=document.getElementById('replyingName'),cancelReply=document.getElementById('cancelReply'),emojiPicker=document.getElementById('emojiPicker');
 let currentUser=null,stopMessages=null,heartbeatTimer=null,stopPresence=null,stopUsersPresence=null,heartbeatPresenceRefresh=null,stopBanStatus=null,stopReactions=null,stopReplies=null,stopDmList=null,replyTarget=null,lastMessageTime=0,reactionState={};
 let activeChannelReal="general";
-let olderChannelMessagesReal=[],channelCursorReal=null,channelHasOlderReal=false,loadingOlderChannelMessagesReal=false,currentChannelMessageIdsReal=[];
+let latestChannelMessagesReal=[],olderChannelMessagesReal=[],channelCursorReal=null,channelHasOlderReal=false,loadingOlderChannelMessagesReal=false,currentChannelMessageIdsReal=[];
 let scopedReplyStopsReal=[],scopedReactionStopsReal=[],scopedReplyStateReal=new Map(),scopedReactionDocsReal=new Map(),scopedReactionListenerDocsReal=new Map();
-let privateConversationIdReal="",privateOlderMessagesReal=[],privateCursorReal=null,privateHasOlderReal=false,privateLoadingOlderReal=false;
+let privateConversationIdReal="",latestPrivateMessagesReal=[],privateOlderMessagesReal=[],privateCursorReal=null,privateHasOlderReal=false,privateLoadingOlderReal=false;
 let privateTarget=null,stopPrivateMessages=null,stopPrivateTyping=null,privateLastMessageTime=0,privateReplyTarget=null,privateTypingTimer=null,privateTypingOffTimer=null;
 let pendingExternalImageUrlReal="";
 const emojis=['😀','😂','😍','🥰','😎','😭','😡','😮','👍','👎','❤️','🔥','💯','🎮','🎉','👏','🤣','🤔','😅','🙌','💚','✨','👀','🙏','🥳','😴','🤝','🚀','💀','😇','😱','🤩','💪','🌿','⭐','🎯','🏆','❤️‍🔥','🫶','😊'];
@@ -440,7 +440,7 @@ function renderLoadedChannelMessagesReal(options={}){
   const preserveTop=options.preserveTop===true;
   const wasNearBottom=Math.abs(messages.scrollHeight-messages.scrollTop-messages.clientHeight)<80;
 
-  const latestDocs=Array.isArray(options.latestDocs)?options.latestDocs:[];
+  const latestDocs=Array.isArray(options.latestDocs)?options.latestDocs:latestChannelMessagesReal;
   const docs=mergedChannelMessagesReal(latestDocs);
   currentChannelMessageIdsReal=docs.map(x=>x.id);
 
@@ -482,6 +482,7 @@ function renderLoadedChannelMessagesReal(options={}){
 
 function renderChatSnapshotReal(snap, channelValue, sourceReal){
   const latestDocs=snap.docs.map(d=>({id:d.id,data:d.data()}));
+  latestChannelMessagesReal=latestDocs;
   if(!olderChannelMessagesReal.length && snap.docs.length){
     channelCursorReal=snap.docs[snap.docs.length-1];
     channelHasOlderReal=snap.size===100;
@@ -514,7 +515,7 @@ async function loadOlderMessagesReal(){
     if(snap.docs.length)channelCursorReal=snap.docs[snap.docs.length-1];
     channelHasOlderReal=snap.size===100;
     renderLoadedChannelMessagesReal({
-      latestDocs:Array.from(document.querySelectorAll('.msg')).map(()=>null).filter(Boolean),
+      latestDocs:latestChannelMessagesReal,
       preserveTop:true,
       previousHeight,
       previousTop,
@@ -659,6 +660,7 @@ function subscribeMessages(){
   if(stopMessages)stopMessages();
   stopScopedReplyListenersReal();
   stopScopedReactionListenersReal();
+  latestChannelMessagesReal=[];
   olderChannelMessagesReal=[];
   channelCursorReal=null;
   channelHasOlderReal=false;
@@ -964,8 +966,9 @@ function subscribePrivateTyping(){if(stopPrivateTyping)stopPrivateTyping();if(!p
 function renderPrivateMessagesReal(latestList,options={}){
   const previousHeight=Number(options.previousHeight||0),previousTop=Number(options.previousTop||0);
   const preserveTop=options.preserveTop===true;
+  const baseLatest=Array.isArray(latestList)&&latestList.length?latestList:latestPrivateMessagesReal;
   const mergedMap=new Map();
-  [...latestList,...privateOlderMessagesReal].forEach(x=>{if(x&&!mergedMap.has(x.id))mergedMap.set(x.id,x)});
+  [...baseLatest,...privateOlderMessagesReal].forEach(x=>{if(x&&!mergedMap.has(x.id))mergedMap.set(x.id,x)});
   const list=[...mergedMap.values()].sort((a,b)=>privateMs(a.data)-privateMs(b.data)||a.id.localeCompare(b.id));
   const box=document.getElementById('privateMessages');
   if(!box)return;
@@ -1005,6 +1008,7 @@ function subscribePrivateMessages(){
   );
   stopPrivateMessages=onSnapshot(q,snap=>{
     const list=snap.docs.map(s=>({id:s.id,data:s.data()}));
+    latestPrivateMessagesReal=list;
     privateCursorReal=snap.docs[snap.docs.length-1]||privateCursorReal;
     if(privateOlderMessagesReal.length===0)privateHasOlderReal=snap.size===100;
     renderPrivateMessagesReal(list,{initial:true});
@@ -1015,7 +1019,7 @@ function subscribePrivateMessages(){
   subscribePrivateTyping();
 }
 function conversationIdForReal(a,b){return [String(a||''),String(b||'')].sort().join('_');}
-function openPrivateChat(target){if(!isRealUser()||!target?.uid||target.uid===currentUser.uid)return;privateTarget={uid:target.uid,displayName:target.displayName||'Member',photoURL:target.photoURL||''};privateConversationIdReal=conversationIdForReal(currentUser.uid,privateTarget.uid);privateOlderMessagesReal=[];privateCursorReal=null;privateHasOlderReal=false;privateLoadingOlderReal=false;clearPrivateReply();const panel=document.getElementById('privateChatPanel'),name=document.getElementById('privateChatName'),avatar=document.getElementById('privateChatAvatar'),status=document.getElementById('privateChatStatus'),box=document.getElementById('privateMessages');name.textContent=privateTarget.displayName;avatar.innerHTML=privateAvatarHtml(privateTarget);status.textContent='● Online';panel.hidden=false;box.innerHTML='<div class="private-empty">Loading messages…</div>';requestAnimationFrame(()=>{document.getElementById('privateInput')?.focus();subscribePrivateMessages()})}
+function openPrivateChat(target){if(!isRealUser()||!target?.uid||target.uid===currentUser.uid)return;privateTarget={uid:target.uid,displayName:target.displayName||'Member',photoURL:target.photoURL||''};privateConversationIdReal=conversationIdForReal(currentUser.uid,privateTarget.uid);latestPrivateMessagesReal=[];privateOlderMessagesReal=[];privateCursorReal=null;privateHasOlderReal=false;privateLoadingOlderReal=false;clearPrivateReply();const panel=document.getElementById('privateChatPanel'),name=document.getElementById('privateChatName'),avatar=document.getElementById('privateChatAvatar'),status=document.getElementById('privateChatStatus'),box=document.getElementById('privateMessages');name.textContent=privateTarget.displayName;avatar.innerHTML=privateAvatarHtml(privateTarget);status.textContent='● Online';panel.hidden=false;box.innerHTML='<div class="private-empty">Loading messages…</div>';requestAnimationFrame(()=>{document.getElementById('privateInput')?.focus();subscribePrivateMessages()})}
 async function loadOlderPrivateMessagesReal(){
   if(privateLoadingOlderReal||!privateHasOlderReal||!privateCursorReal||!privateTarget)return;
   privateLoadingOlderReal=true;
@@ -1034,9 +1038,8 @@ async function loadOlderPrivateMessagesReal(){
     snap.docs.forEach(s=>{if(!known.has(s.id))privateOlderMessagesReal.push({id:s.id,data:s.data()})});
     if(snap.docs.length)privateCursorReal=snap.docs[snap.docs.length-1];
     privateHasOlderReal=snap.size===100;
-    const current=[...document.querySelectorAll('#privateMessages .private-msg')].map(el=>el.dataset.id).filter(Boolean);
     // Latest 100 remain in the realtime listener; older pages are retained in memory.
-    renderPrivateMessagesReal(privateOlderMessagesReal.concat(current.map(id=>({id,data:{}})).filter(x=>x.data&&Object.keys(x.data).length)),{preserveTop:true,previousHeight,previousTop});
+    renderPrivateMessagesReal(latestPrivateMessagesReal,{preserveTop:true,previousHeight,previousTop});
   }catch(e){
     console.error('[TUBAL HUB private pagination]',e);
   }finally{
@@ -1046,7 +1049,7 @@ async function loadOlderPrivateMessagesReal(){
   }
 }
 
-function closePrivateChat(){setPrivateTyping(false);privateTarget=null;privateConversationIdReal='';privateOlderMessagesReal=[];privateCursorReal=null;privateHasOlderReal=false;if(stopPrivateMessages){stopPrivateMessages();stopPrivateMessages=null}if(stopPrivateTyping){stopPrivateTyping();stopPrivateTyping=null}clearPrivateReply();document.getElementById('privateChatPanel').hidden=true}
+function closePrivateChat(){setPrivateTyping(false);privateTarget=null;privateConversationIdReal='';latestPrivateMessagesReal=[];privateOlderMessagesReal=[];privateCursorReal=null;privateHasOlderReal=false;if(stopPrivateMessages){stopPrivateMessages();stopPrivateMessages=null}if(stopPrivateTyping){stopPrivateTyping();stopPrivateTyping=null}clearPrivateReply();document.getElementById('privateChatPanel').hidden=true}
 async function sendPrivateMessage(text){
   if(!privateTarget||!isRealUser())return;
   const cleanText=String(text||'').trim();
