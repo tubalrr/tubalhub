@@ -1074,6 +1074,9 @@ async function loadOlderPrivateMessagesReal(){
     privateHasOlderReal=snap.size===100;
     // Latest 100 remain in the realtime listener; older pages are retained in memory.
     renderPrivateMessagesReal(latestPrivateMessagesReal,{preserveTop:true,previousHeight,previousTop});
+    if(snap.size<100&&!privateLegacyFallbackLoadedReal){
+      await loadLegacyPrivateFallbackReal(latestPrivateMessagesReal);
+    }
   }catch(e){
     console.error('[TUBAL HUB private pagination]',e);
   }finally{
