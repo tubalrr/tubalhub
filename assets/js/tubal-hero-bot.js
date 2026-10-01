@@ -456,14 +456,15 @@
 
     async function loadLatestWebsiteUpdate(){
       try{
-        const res = await fetch("/tubalhub/version.json?bot=" + Date.now(), {cache:"no-store"});
+        const manifestUrl = new URL("version.json", document.baseURI).href;
+        const res = await fetch(manifestUrl + "?bot=" + Date.now(), {cache:"no-store"});
         if (!res.ok) throw new Error("version.json unavailable");
         const data = await res.json();
         const version = data.version || "unknown";
         const updates = Array.isArray(data.updatesReal) ? data.updatesReal : [];
         const clean = value => String(value || "")
-          .replace(/^v?\\d+(?:\\.\\d+){1,3}\\s*/i, "")
-          .replace(/^(FEAT|FIX|ADMIN|SECURITY|UI|BUILD|AUDIT|CLEANUP|REMOVE|REFACTOR)\\s*[—:-]?\\s*/i, "")
+          .replace(/^v?\d+(?:\.\d+){1,3}\s*/i, "")
+          .replace(/^(FEAT|FIX|ADMIN|SECURITY|UI|BUILD|AUDIT|CLEANUP|REMOVE|REFACTOR)\s*[—:-]?\s*/i, "")
           .trim();
         const latest = updates.slice(0, 4).map(clean).filter(Boolean);
         const latestText = latest.length
@@ -574,7 +575,7 @@
         }
       }catch(_){}
       if(!updates.length){
-        updates = String(latest || "").split(/(?=\\d+\\.\\d+)/).map(cleanUpdateForSpeech).filter(Boolean);
+        updates = String(latest || "").split(/(?=\d+\.\d+)/).map(cleanUpdateForSpeech).filter(Boolean);
       }
       return {version,updates,siteTour};
     }
@@ -631,7 +632,7 @@
       await speak(convo.update, announcerBot, {presenting:true, pitch:1.04, rate:.88});
       if (muted) return;
       await new Promise(r => setTimeout(r, 420));
-      if (convo.follow.replace(/\\s+/g," ").trim().length > 45) {
+      if (convo.follow.replace(/\s+/g," ").trim().length > 45) {
         await speak(convo.follow, announcerBot, {presenting:true, pitch:1.04, rate:.88});
         if (muted) return;
         await new Promise(r => setTimeout(r, 420));
