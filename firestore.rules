@@ -87,7 +87,7 @@ service cloud.firestore {
         && request.resource.data.textReal is string
         && request.resource.data.textReal == request.resource.data.text
         && request.resource.data.type == 'text'
-        && request.resource.data.channel in ['global-chat','gaming','wellness','shop','news']
+        && request.resource.data.channel in ['global-chat','payapang-isip','ctrlzone','shop-talk','announcements']
         && request.resource.data.createdAt == request.time
         && (
           (adminUser() && request.resource.data.roleReal == 'admin')
