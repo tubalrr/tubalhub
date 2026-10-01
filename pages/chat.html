@@ -570,14 +570,14 @@ async function loadOlderMessagesReal(){
     const snap=await getDocsFromServer(query(
       collection(db,'globalChats'),
       where('channel','==',channelValue),
-      orderBy('createdAt','desc'),
-      startAfter(channelCursorReal),
-      limit(100)
+      orderBy('createdAt','asc'),
+      endBefore(channelCursorReal),
+      limitToLast(100)
     ));
     const page=snap.docs.map(d=>({id:d.id,data:d.data()}));
     const known=new Set([...latestChannelMessagesReal,...olderChannelMessagesReal].map(x=>x.id));
-    page.forEach(item=>{if(!known.has(item.id))olderChannelMessagesReal.push(item)});
-    if(snap.docs.length)channelCursorReal=snap.docs[snap.docs.length-1];
+    page.forEach(item=>{if(!known.has(item.id))olderChannelMessagesReal.unshift(item)});
+    if(snap.docs.length)channelCursorReal=snap.docs[0];
     channelHasOlderReal=snap.size===100;
     renderLoadedChannelMessagesReal({preserveTop:true,previousHeight,previousTop,sourceReal:'pagination'});
   }catch(e){
@@ -600,14 +600,14 @@ function subscribeMessages(){
   const channelValue=activeChannelReal==='general'?'global-chat':activeChannelReal;
 
   // Bound the realtime read at the Firestore query level.
-  // The repo already declares the required composite index:
-  // channel ASC + createdAt DESC.
-  // The snapshot is then sorted ascending for display.
+  // Use the existing chronological index path:
+  // channel ASC + createdAt ASC, limited to the latest 100.
+  // This avoids depending on a separately deployed DESC index.
   const qReal=query(
     collection(db,'globalChats'),
     where('channel','==',channelValue),
-    orderBy('createdAt','desc'),
-    limit(100)
+    orderBy('createdAt','asc'),
+    limitToLast(100)
   );
 
   stopMessages=onSnapshot(qReal,snap=>{
