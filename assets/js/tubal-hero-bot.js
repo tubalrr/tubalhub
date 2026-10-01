@@ -332,6 +332,10 @@
         position:relative;
         width:140px;height:300px;
         overflow:visible;
+        border:0!important;
+        outline:0!important;
+        box-shadow:none!important;
+        background:transparent!important;
       }
       .th-bot-slot .th-code-bot{
         position:absolute;
@@ -349,6 +353,16 @@
       }
       .th-bot-slot .th-code-bot.is-speaking{
         animation:thCodeDuoTalkBody .85s ease-in-out infinite alternate;
+      }
+      /* Remove any visual slot/container borders around either bot */
+      .th-bot-duo,
+      .th-bot-slot,
+      .th-welcome-bot,
+      .th-announcer-bot{
+        border:0!important;
+        outline:0!important;
+        box-shadow:none!important;
+        background:transparent!important;
       }
       @keyframes thCodeDuoIdle{
         0%,100%{transform:scale(.66) translateY(3px) rotate(0)}
