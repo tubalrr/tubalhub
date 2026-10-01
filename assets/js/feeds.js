@@ -861,13 +861,12 @@ function setupHubContent(){
     });
   }catch(e){console.warn("[Feeds] hub content unavailable",e)}
 }
-async function setupPresence(){
-  try{
-    const snap=await getDocs(query(collection(db,"presence"),limit(200)));
-    state.presence.clear();
-    snap.forEach(s=>{const x=s.data();if(x.uid)state.presence.set(x.uid,{uid:x.uid,...x})});
-    renderContacts();updateAvatarStatus();renderActiveGames();renderSuggested();
-  }catch(e){console.warn("[Feeds] presence unavailable",e)}
+function setupPresence(){
+  // Presence is already loaded by loadPeople(); avoid a second Firestore read.
+  renderContacts();
+  updateAvatarStatus();
+  renderActiveGames();
+  renderSuggested();
 }
 function setupUI(){
   if(uiReady)return;uiReady=true;
@@ -940,6 +939,7 @@ onAuthStateChanged(auth,async user=>{
   state.auth=user&&!user.isAnonymous?user:null;
   setupUI();updateAvatarStatus();renderStories();buildFeed();
   await loadPeople();
+  setupPresence();
   setupHubContent();
   setupProductsRealtime();
   loadRemoteComments();loadRemoteReactions();
