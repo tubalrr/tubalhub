@@ -1,11 +1,12 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.3.25",
-  "build": "2026-10-01_global-chat-cors-index-fix",
+  "version": "1.3.27",
+  "build": "2026-10-01_global-chat-audit-final",
   "releasedAtReal": "2026-10-01T03:40:00.000Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.3.27 AUDIT — Final repository alignment: the Global Chat frontend marker/cache is synchronized with the current backend CORS fix and query architecture; live Firebase deployment remains the only external state not verifiable from GitHub.",
     "v1.3.26 AUDIT — Aligns the visible Global Chat diagnostics with the deployed-state reality: Cloud Function CORS and Firestore Rules are reported as deployment-dependent, while the existing enabled Global Chat index remains the primary query path.",
     "v1.3.25 FIX — Global Chat callable endpoints now explicitly allow the GitHub Pages origin, and the latest-100 channel query uses the conventional createdAt DESC + limit(100) path with its matching composite index manifest.",
     "v1.3.24 FIX — Global Chat send failures now expose the exact Firebase callable error in the UI instead of the generic connection message, making undeployed/misconfigured Cloud Functions immediately identifiable.",
