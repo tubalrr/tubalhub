@@ -2902,3 +2902,215 @@ body.feeds-page *{
     flex:0 0 auto;
   }
 }
+
+
+/* =========================================================
+   FEEDS EYE-COMFORT PASS
+   Softer contrast, larger type, calmer density.
+   ========================================================= */
+body.feeds-page{
+  background:#F4F5F7!important;
+  color:#2B2F33!important;
+}
+.feeds-header{
+  min-height:70px!important;
+  padding:9px 20px!important;
+  box-shadow:0 1px 3px rgba(25,32,38,.06)!important;
+}
+.feeds-header .brand span{font-size:14px!important}
+.feeds-header .brand small{font-size:9px!important;color:#727980!important}
+.feeds-header nav{gap:7px!important}
+.feeds-header nav a{
+  font-size:10px!important;
+  padding:11px 12px!important;
+  color:#5F666D!important;
+}
+.feeds-shell{
+  width:min(1460px,calc(100% - 36px))!important;
+  padding:26px 0 90px!important;
+}
+.feeds-layout{
+  grid-template-columns:minmax(235px,260px) minmax(0,740px) minmax(275px,320px)!important;
+  gap:22px!important;
+}
+.feeds-panel,
+.post-card,
+.feed-toolbar,
+.feeds-stories-wrap,
+.feed-featured{
+  border-color:#E0E3E7!important;
+  box-shadow:0 1px 3px rgba(25,32,38,.055)!important;
+  background:#FFFFFF!important;
+}
+.feeds-panel:before,
+.post-card:before,
+.feed-toolbar:before{
+  display:none!important;
+}
+.feeds-intro{
+  margin-bottom:16px!important;
+}
+.feeds-intro-kicker,
+.feeds-eyebrow,
+.section-kicker,
+.feeds-strip-title span,
+.feeds-side-title{
+  color:#747B82!important;
+}
+.feeds-intro h1{
+  font-size:30px!important;
+  letter-spacing:-.025em!important;
+}
+.feeds-intro p{
+  color:#687078!important;
+  font-size:12px!important;
+}
+.intro-chip{
+  min-height:35px!important;
+  padding:0 13px!important;
+  font-size:10px!important;
+  color:#626970!important;
+}
+.feeds-menu h3{
+  color:#343A40!important;
+  font-size:16px!important;
+}
+.feed-menu-item{
+  height:46px!important;
+  font-size:10px!important;
+  color:#4F575E!important;
+}
+.feed-menu-icon{
+  width:31px!important;
+  height:31px!important;
+  color:#687077!important;
+}
+.feed-side-meta{
+  color:#70777D!important;
+  font-size:10px!important;
+  line-height:1.7!important;
+}
+.feeds-strip-title{
+  padding:2px 3px 10px!important;
+}
+.feeds-strip-title small{
+  color:#838A90!important;
+  font-size:9px!important;
+}
+.story-card{
+  flex-basis:126px!important;
+  height:168px!important;
+}
+.create-post{
+  padding:17px!important;
+}
+.create-trigger{
+  height:44px!important;
+  font-size:11px!important;
+  color:#6D747B!important;
+}
+.create-action{
+  height:41px!important;
+  font-size:10px!important;
+  color:#616971!important;
+}
+.feed-featured{
+  margin-top:15px!important;
+  padding:17px!important;
+}
+.feed-featured-head h2{
+  font-size:18px!important;
+}
+.feed-mini-link{
+  font-size:10px!important;
+}
+.featured-item{
+  min-height:58px!important;
+  background:#FAFBFC!important;
+}
+.featured-copy b{font-size:10px!important}
+.featured-copy small{font-size:9px!important;color:#747B82!important}
+.feed-toolbar{
+  margin:15px 0 13px!important;
+  padding:8px!important;
+}
+.feed-filter,
+.feed-search,
+.feed-sort{
+  height:36px!important;
+  font-size:10px!important;
+}
+.feed-filter{
+  padding:0 12px!important;
+}
+.feed-search{
+  padding:0 13px!important;
+}
+.post-card{
+  margin:13px 0!important;
+}
+.post-head{
+  padding:16px 17px 12px!important;
+}
+.post-meta b{
+  font-size:12px!important;
+  color:#24292E!important;
+}
+.post-meta span{
+  font-size:9px!important;
+  color:#737A81!important;
+}
+.post-body{
+  padding:0 17px 13px!important;
+  font-size:12px!important;
+  line-height:1.75!important;
+}
+.post-caption{
+  line-height:1.72!important;
+}
+.feed-article-content h3,
+.product-info h3,
+.game-info h3{
+  font-size:16px!important;
+}
+.feed-article-content p,
+.game-info p{
+  font-size:11px!important;
+  line-height:1.6!important;
+}
+.post-stats{
+  font-size:9px!important;
+  color:#737A81!important;
+}
+.post-action{
+  height:39px!important;
+  font-size:9px!important;
+}
+.right-rail .feeds-panel{
+  padding:14px!important;
+}
+.trending-item,
+.active-game-row,
+.suggested-row,
+.recent-item{
+  min-height:48px!important;
+}
+.side-promo-copy strong{font-size:13px!important}
+.side-promo-copy p{font-size:10.5px!important;line-height:1.5!important}
+@media(max-width:1180px){
+  .feeds-layout{
+    grid-template-columns:225px minmax(0,1fr)!important;
+  }
+}
+@media(max-width:820px){
+  .feeds-shell{
+    width:min(100% - 22px,740px)!important;
+    padding-top:18px!important;
+  }
+  .feeds-intro h1{font-size:27px!important}
+}
+@media(max-width:560px){
+  .feeds-shell{width:calc(100% - 14px)!important}
+  .feeds-intro h1{font-size:24px!important}
+  .post-body{font-size:11.5px!important}
+}
