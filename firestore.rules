@@ -402,13 +402,16 @@ service cloud.firestore {
     match /newsReactions/{reactionId} {
       allow read: if true;
 
-      allow create, update: if realUser()
+      allow create: if realUser()
         && request.resource.data.uid == request.auth.uid
         && request.resource.data.newsId is string
-        && request.resource.data.reaction in ['haha','love']
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
-          'newsId','uid','reaction','updatedAt'
-        ]);
+        && request.resource.data.reaction in ['haha','love'];
+
+      allow update: if realUser()
+        && resource.data.uid == request.auth.uid
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.newsId == resource.data.newsId
+        && request.resource.data.reaction in ['haha','love'];
 
       allow delete: if realUser()
         && resource.data.uid == request.auth.uid;
