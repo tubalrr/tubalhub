@@ -623,7 +623,7 @@ exports.sendGlobalMediaMessageReal = onCall(async request => {
 exports.sendReplyReal = onCall(async request => {
   requireChatAccessReal(request);
 
-  const textReal = String((request.data && (request.data.text || request.data.textReal)) || "").trim();
+  const textReal = secureChatTextReal((request.data && (request.data.text || request.data.textReal)) || "");
   const messageId = String((request.data && request.data.messageId) || "");
   const parentReplyId = request.data && request.data.parentReplyId ? String(request.data.parentReplyId) : null;
 
