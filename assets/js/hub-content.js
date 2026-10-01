@@ -34,7 +34,8 @@ export function subscribeHubPosts(callback){
   const postsQuery=query(
     collection(db,"hubPosts"),
     orderBy("createdAt","desc"),
-    limit(200)
+    // Keep the realtime window intentionally small; Feed pagination can grow independently.
+    limit(60)
   );
 
   return onSnapshot(
