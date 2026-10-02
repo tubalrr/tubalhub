@@ -233,3 +233,18 @@ body.theme-light .source-strip{background:rgba(255,255,255,.66)}
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.001ms!important;transition-duration:.001ms!important}
 }
+
+/* Payapang Isip — Animated Forest Atmosphere v1.3.32 */
+.forest-scene{position:fixed;inset:0;z-index:-3;overflow:hidden;pointer-events:none;background:linear-gradient(180deg,rgba(8,35,18,.22),rgba(2,12,7,.72));}
+.forest-scene:before{content:"";position:absolute;inset:42% 0 0;background:linear-gradient(180deg,transparent,rgba(4,18,9,.72)),radial-gradient(ellipse at 50% 100%,rgba(38,100,49,.32),transparent 65%);}
+.forest-sun{position:absolute;width:38vw;height:38vw;max-width:520px;max-height:520px;left:50%;top:8%;transform:translateX(-50%);border-radius:50%;background:radial-gradient(circle,rgba(190,235,158,.18),rgba(128,210,116,.06) 35%,transparent 70%);filter:blur(8px);animation:forestSun 12s ease-in-out infinite;}
+.forest-mist{position:absolute;left:-15%;width:130%;height:18%;border-radius:50%;background:rgba(190,225,192,.055);filter:blur(25px);animation:forestMist 18s ease-in-out infinite alternate;}
+.mist-one{bottom:25%}.mist-two{bottom:38%;animation-duration:24s;animation-delay:-8s;opacity:.65}
+.forest-tree{position:absolute;bottom:0;width:18vw;height:58vh;max-width:240px;background:linear-gradient(90deg,rgba(3,14,7,.92),rgba(16,48,24,.72),rgba(2,13,6,.94));clip-path:polygon(50% 0,72% 24%,61% 24%,88% 48%,70% 48%,100% 76%,76% 76%,90% 100%,10% 100%,24% 76%,0 76%,30% 48%,12% 48%,39% 24%,28% 24%);opacity:.72;animation:treeSway 9s ease-in-out infinite;transform-origin:50% 100%;}
+.tree-back{opacity:.34;filter:blur(1px);height:48vh}.tree-mid{opacity:.5}.tree-a{left:-3%;animation-delay:-2s}.tree-b{right:-4%;animation-delay:-5s}.tree-c{left:17%;height:42vh;animation-delay:-7s}.tree-d{right:14%;height:44vh;animation-delay:-4s}
+.forest-fireflies,.forest-leaves{position:absolute;inset:0;opacity:.55;}
+.forest-fireflies{background-image:radial-gradient(circle,rgba(195,240,157,.65) 0 1px,transparent 2px);background-size:150px 120px;animation:fireflyDrift 14s linear infinite;}
+.forest-leaves{background-image:radial-gradient(ellipse at 15% 20%,rgba(126,194,105,.28) 0 2px,transparent 3px),radial-gradient(ellipse at 75% 35%,rgba(126,194,105,.22) 0 2px,transparent 3px);background-size:230px 190px,310px 240px;animation:leafDrift 16s ease-in-out infinite alternate;}
+@keyframes forestSun{0%,100%{opacity:.7;transform:translateX(-50%) scale(1)}50%{opacity:1;transform:translateX(-50%) scale(1.08)}}
+@keyframes forestMist{from{transform:translateX(-4%)}to{transform:translateX(5%)}}@keyframes treeSway{0%,100%{transform:rotate(-.6deg)}50%{transform:rotate(.6deg)}}@keyframes fireflyDrift{0%{transform:translate3d(-1%,1%,0)}50%{transform:translate3d(2%,-1%,0)}100%{transform:translate3d(-1%,1%,0)}}@keyframes leafDrift{from{transform:translate3d(-1%,0,0)}to{transform:translate3d(2%,2%,0)}}
+@media(prefers-reduced-motion:reduce){.forest-sun,.forest-mist,.forest-tree,.forest-fireflies,.forest-leaves{animation:none!important}}
