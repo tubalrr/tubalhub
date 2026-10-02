@@ -1,8 +1,8 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.3.40",
-  "build": "2026-10-02_payapang-natural-forest",
+  "version": "1.3.41",
+  "build": "2026-10-02_payapang-natural-wind",
   "releasedAtReal": "2026-10-02T09:05:00.000Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
@@ -852,8 +852,13 @@
     }
   ],
   "date": "2026-10-02",
-  "changes": "v1.3.40 UI — Replaced the geometric Payapang Isip forest with a more natural-material 3D forest.",
+  "changes": "v1.3.41 UI — Added natural wind-force motion to the Payapang Isip 3D forest.",
   "updates": [
+    {
+      "version": "1.3.41",
+      "date": "2026-10-02",
+      "changes": "Added subtle wind-force animation across tree crowns and trunks, with independent sway timing and tiny lateral movement while preserving reduced-motion and mobile limits."
+    },
     {
       "version": "1.3.40",
       "date": "2026-10-02",
