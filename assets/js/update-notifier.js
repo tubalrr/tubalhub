@@ -476,8 +476,18 @@
       if (bootReleaseKey === null) {
         bootReleaseKey = key;
         currentData = data;
-        setBellState(false);
         setVersionBadge(data.version);
+
+        // A release may have gone live while this tab was closed. Persisted
+        // last-seen state must therefore participate in the first check too.
+        // This makes a newly opened page catch up automatically without F5.
+        const lastSeen = localStorage.getItem(LAST_SEEN_KEY) || "";
+        if (lastSeen && lastSeen !== data.version) {
+          showUpdate(data);
+          scheduleFreshReload(data.version, data);
+        } else {
+          setBellState(false);
+        }
         return;
       }
 
