@@ -149,7 +149,27 @@
   function renderProgress(){ const entries=safeRead(storage.journal,[]); const moods=safeRead("peace-of-mind-moods-v1",[]); const days=new Set([...wellness.sessions,...entries.map(x=>x.createdAt),...moods.map(x=>x.createdAt)].map(x=>String(x).slice(0,10))); if(w("progressSessions"))w("progressSessions").textContent=wellness.sessions.length; if(w("progressJournal"))w("progressJournal").textContent=Array.isArray(entries)?entries.length:0; if(w("progressMoods"))w("progressMood").textContent=Array.isArray(moods)?moods.length:0; if(w("progressDays"))w("progressDays").textContent=days.size; }
   function renderMoods(){ const list=safeRead("peace-of-mind-moods-v1",[]); const el=w("moodHistory"); if(!el)return; el.innerHTML=(Array.isArray(list)?list:[]).slice(0,8).map(x=>'<div class="history-row"><strong>'+escapeHtml(x.mood)+'</strong><small>'+formatDate(x.createdAt)+'</small></div>').join("")||'<div class="saved-empty">No mood check-ins yet.</div>'; }
   function initWellness(){
-    $("[data-mindful]").forEach(btn=>btn.addEventListener("click",()=>{clearInterval(wellness.mindfulTimer);let left=Number(btn.dataset.mindful);const out=w("mindfulStatus");out.textContent="Mindfulness session • "+formatClock(left);wellness.mindfulTimer=setInterval(()=>{left--;out.textContent=left>0?"Mindfulness session • "+formatClock(left):"Session complete. Take a moment before moving on.";if(left<=0){clearInterval(wellness.mindfulTimer);bumpSession();}},1000);}));
+    if (initWellness.done) return;
+    initWellness.done = true;
+    $("[data-mindful]").forEach(btn=>btn.addEventListener("click",()=>{
+      clearInterval(wellness.mindfulTimer);
+      const leftStart = Number(btn.dataset.mindful);
+      if (!Number.isFinite(leftStart) || leftStart <= 0) return;
+      let left = leftStart;
+      const out = w("mindfulStatus");
+      $("[data-mindful]").forEach(item=>item.classList.toggle("active", item === btn));
+      out.textContent = "Mindfulness session • " + formatClock(left);
+      wellness.mindfulTimer = setInterval(()=>{
+        left--;
+        out.textContent = left > 0 ? "Mindfulness session • " + formatClock(left) : "Session complete. Take a moment before moving on.";
+        if (left <= 0) {
+          clearInterval(wellness.mindfulTimer);
+          wellness.mindfulTimer = null;
+          $("[data-mindful]").forEach(item=>item.classList.remove("active"));
+          bumpSession();
+        }
+      },1000);
+    }));
     $(".mood-btn").forEach(btn=>btn.addEventListener("click",()=>{const list=safeRead("peace-of-mind-moods-v1",[]);list.unshift({mood:btn.dataset.mood,createdAt:new Date().toISOString()});safeWrite("peace-of-mind-moods-v1",list.slice(0,100));renderMoods();renderProgress();showToast("Mood check-in saved privately.");}));
     $(".sound-btn[data-sound]").forEach(btn=>btn.addEventListener("click",()=>{if(wellness.audio)wellness.audio.stop(); wellness.audio=null; const AudioCtx=window.AudioContext||window.webkitAudioContext; if(!AudioCtx){w("soundStatus").textContent="Your browser does not provide audio controls.";return;} const ctx=new AudioCtx(), gain=ctx.createGain(), filter=ctx.createBiquadFilter(), noise=ctx.createBufferSource(); const buffer=ctx.createBuffer(1,ctx.sampleRate*2,ctx.sampleRate),data=buffer.getChannelData(0); for(let i=0;i<data.length;i++)data[i]=(Math.random()*2-1); noise.buffer=buffer;noise.loop=true;filter.type=btn.dataset.sound==="ocean"?"lowpass":"bandpass";filter.frequency.value=btn.dataset.sound==="rain"?1800:btn.dataset.sound==="wind"?700:450;gain.gain.value=.025;noise.connect(filter).connect(gain).connect(ctx.destination);noise.start();wellness.audio={stop:()=>{try{noise.stop()}catch{};ctx.close()}};w("soundStatus").textContent=btn.dataset.sound+" ambience on. Volume is intentionally subtle."; }));
     w("soundStop")?.addEventListener("click",()=>{wellness.audio?.stop();wellness.audio=null;w("soundStatus").textContent="Ambient sounds are off.";});
@@ -506,6 +526,7 @@
 
   function init() {
     initThemes();
+    initWellness();
     renderGrounding();
     loadJournal();
     renderJournal();
