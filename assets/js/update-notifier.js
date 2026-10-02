@@ -16,9 +16,9 @@
   const EVENT_KEY = "tubalhub_update_event";
   const NATIVE_EVENT_KEY = "tubalhub_last_native_update";
   const UPDATES_ENABLED_KEY = "tubalhub_notif_website_updates";
-  const POLL_MS = 60000;
+  const POLL_MS = 30000;
   const TOAST_MS = 6000;
-  const RELOAD_FALLBACK_MS = 90000;
+  const RELOAD_FALLBACK_MS = 12000;
 
   let loadedUi = false;
   let pollTimer = null;
@@ -414,9 +414,9 @@
 
     clearTimeout(autoReloadTimer);
     // The News Announcer gets first chance to finish the full explanation.
-    // Only after the bot sends tubalhub:update-announce-complete does the
-    // normal reload happen. This timeout is only a safety fallback for cases
-    // where the bot script or browser speech engine never reports completion.
+    // The bot can finish its announcement first via tubalhub:update-announce-complete;
+    // otherwise the site refreshes automatically after a short safety window so
+    // every published version is applied without requiring F5.
     autoReloadTimer = setTimeout(() => {
       waitingForBotAnnouncement = false;
       performFreshReload(String(version));
