@@ -137,7 +137,7 @@ function animate(){
   px+=(tx-px)*.018*m;py+=(ty-py)*.018*m;
   camera.position.set(px,2.45-py,10.5+Math.sin(t*.08)*.06*m);
   camera.lookAt(px*.22,2.75+py*.12,-8);
-  trees.forEach((tr,i)=>{tr.rotation.z=Math.sin(t*.22+i*.7)*.004*m;});
+  trees.forEach((tr,i)=>{const wind=Math.sin(t*.65+i*.9)*.006*m;tr.rotation.z=wind;tr.position.x+=Math.sin(t*.42+i*1.7)*.0007*m;});
   fireflies.rotation.y=t*.008*m;fireflies.position.y=Math.sin(t*.4)*.045*m;
   mist.position.x=Math.sin(t*.045)*1.8*m;
   renderer.render(scene,camera);
