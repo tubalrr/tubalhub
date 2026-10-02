@@ -169,3 +169,7 @@ body.theme-light.payapang-page::before{background-image:radial-gradient(circle,r
 .hero-inner{z-index:5;}
 @media(max-width:680px){.pi-3d-forest{background:#173b25;}.pi-3d-forest::after{background:linear-gradient(180deg,rgba(4,20,10,.06),rgba(2,13,7,.5));}}
 @media(prefers-reduced-motion:reduce){.pi-3d-forest canvas{opacity:.96;}}
+
+/* Payapang Isip — Optimized Natural Wood Finish v1.3.39 */
+.pi-3d-forest{contain:paint;will-change:transform;}
+.pi-3d-forest canvas{image-rendering:auto;}
