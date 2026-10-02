@@ -43,3 +43,29 @@ body.theme-light.payapang-page::before{background-image:radial-gradient(circle,r
 .forest-fireflies,.forest-leaves{position:absolute;inset:0;opacity:.72}.forest-fireflies{background-image:radial-gradient(circle,rgba(220,255,180,.85) 0 1.5px,transparent 2.5px);background-size:150px 120px;animation:fireflyDrift 14s linear infinite}.forest-leaves{background-image:radial-gradient(ellipse at 15% 20%,rgba(126,194,105,.34) 0 2px,transparent 3px),radial-gradient(ellipse at 75% 35%,rgba(126,194,105,.28) 0 2px,transparent 3px);background-size:230px 190px,310px 240px;animation:leafDrift 16s ease-in-out infinite alternate}
 @keyframes forestSun{0%,100%{opacity:.7;transform:translateX(-50%) scale(1)}50%{opacity:1;transform:translateX(-50%) scale(1.08)}}@keyframes forestMist{from{transform:translateX(-4%)}to{transform:translateX(5%)}}@keyframes treeSway{0%,100%{transform:rotate(-.6deg)}50%{transform:rotate(.6deg)}}@keyframes fireflyDrift{0%{transform:translate3d(-1%,1%,0)}50%{transform:translate3d(2%,-1%,0)}100%{transform:translate3d(-1%,1%,0)}}@keyframes leafDrift{from{transform:translate3d(-1%,0,0)}to{transform:translate3d(2%,2%,0)}}
 @media(prefers-reduced-motion:reduce){.forest-sun,.forest-mist,.forest-tree,.forest-fireflies,.forest-leaves{animation:none!important}}
+
+/* Payapang Isip — Hero Forest Experience v1.3.34 */
+.forest-scene{display:none!important;}
+.hero{position:relative;isolation:isolate;overflow:hidden;background:rgba(7,28,15,.48);}
+.hero::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:radial-gradient(circle at 50% 36%,rgba(150,230,130,.12),transparent 38%),linear-gradient(180deg,rgba(5,25,13,.08),rgba(2,13,7,.58));}
+.hero-inner{position:relative;z-index:3;}
+.hero-forest-scene{position:absolute;inset:0;z-index:1;overflow:hidden;pointer-events:none;}
+.hero-forest-sun{position:absolute;width:42%;aspect-ratio:1;left:50%;top:-12%;transform:translateX(-50%);border-radius:50%;background:radial-gradient(circle,rgba(215,248,170,.28) 0,rgba(145,222,125,.13) 32%,transparent 70%);filter:blur(7px);animation:heroSunPulse 9s ease-in-out infinite;}
+.hero-forest-mist{position:absolute;left:-15%;width:130%;height:22%;border-radius:50%;filter:blur(22px);background:rgba(205,239,211,.12);animation:heroMistMove 17s ease-in-out infinite alternate;}
+.hero-mist-one{bottom:13%}.hero-mist-two{bottom:29%;opacity:.65;animation-duration:23s;animation-delay:-7s;}
+.hero-forest-tree{position:absolute;bottom:-9%;width:30%;height:72%;opacity:.68;background:linear-gradient(90deg,rgba(2,13,6,.98),rgba(19,58,28,.80),rgba(2,12,6,.98));clip-path:polygon(50% 0,70% 23%,60% 23%,88% 48%,70% 48%,100% 76%,76% 76%,91% 100%,9% 100%,24% 76%,0 76%,30% 48%,12% 48%,40% 23%,30% 23%);transform-origin:50% 100%;animation:heroTreeSway 8s ease-in-out infinite;}
+.hero-tree-left{left:-8%;opacity:.58;animation-delay:-2s}.hero-tree-right{right:-8%;opacity:.52;animation-delay:-5s;}
+.hero-forest-canopy{position:absolute;width:48%;height:36%;top:-11%;border-radius:50%;background:radial-gradient(ellipse at center,rgba(24,75,37,.72),rgba(5,26,13,.35) 58%,transparent 72%);filter:blur(2px);animation:heroCanopyFloat 11s ease-in-out infinite;}
+.hero-canopy-one{left:-12%;transform:rotate(-10deg)}.hero-canopy-two{right:-12%;transform:rotate(10deg);animation-delay:-5s;}
+.hero-fireflies,.hero-leaves{position:absolute;inset:0;opacity:.8;}
+.hero-fireflies{background-image:radial-gradient(circle,rgba(225,255,181,.95) 0 1.5px,transparent 2.7px);background-size:92px 78px;animation:heroFireflyDrift 13s linear infinite;}
+.hero-leaves{background-image:radial-gradient(ellipse at 12% 18%,rgba(142,207,117,.40) 0 2px,transparent 3px),radial-gradient(ellipse at 82% 30%,rgba(142,207,117,.32) 0 2px,transparent 3px);background-size:190px 150px,240px 180px;animation:heroLeafDrift 15s ease-in-out infinite alternate;}
+.hero-breathing{z-index:4;box-shadow:0 0 60px rgba(142,214,109,.20),0 0 120px rgba(29,255,145,.08),inset 0 0 42px rgba(142,214,109,.09);}
+@keyframes heroSunPulse{0%,100%{opacity:.72;transform:translateX(-50%) scale(1)}50%{opacity:1;transform:translateX(-50%) scale(1.08)}}
+@keyframes heroMistMove{from{transform:translateX(-4%)}to{transform:translateX(5%)}}
+@keyframes heroTreeSway{0%,100%{transform:rotate(-.7deg)}50%{transform:rotate(.7deg)}}
+@keyframes heroCanopyFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(10px)}}
+@keyframes heroFireflyDrift{0%{transform:translate3d(-2%,1%,0)}50%{transform:translate3d(3%,-2%,0)}100%{transform:translate3d(-2%,1%,0)}}
+@keyframes heroLeafDrift{from{transform:translate3d(-1%,0,0)}to{transform:translate3d(3%,3%,0)}}
+@media(max-width:680px){.hero-forest-tree{height:55%;width:38%}.hero-forest-canopy{height:27%;width:60%}.hero-fireflies{background-size:125px 105px}.hero-leaves{opacity:.5}.hero-forest-sun{width:70%;top:-8%;}}
+@media(prefers-reduced-motion:reduce){.hero-forest-sun,.hero-forest-mist,.hero-forest-tree,.hero-forest-canopy,.hero-fireflies,.hero-leaves{animation:none!important}}
