@@ -19,6 +19,7 @@
   const POLL_MS = 30000;
   const TOAST_MS = 6000;
   const RELOAD_FALLBACK_MS = 12000;
+  const FIRST_SEEN_KEY = "tubalhub_update_baseline_version";
 
   let loadedUi = false;
   let pollTimer = null;
@@ -482,7 +483,15 @@
         // last-seen state must therefore participate in the first check too.
         // This makes a newly opened page catch up automatically without F5.
         const lastSeen = localStorage.getItem(LAST_SEEN_KEY) || "";
-        if (lastSeen && lastSeen !== data.version) {
+        const baseline = localStorage.getItem(FIRST_SEEN_KEY) || "";
+
+        // Fresh installs establish a silent baseline. They must never reload
+        // simply because the first version check sees the current release.
+        if (!baseline) {
+          localStorage.setItem(FIRST_SEEN_KEY, data.version);
+          localStorage.setItem(LAST_SEEN_KEY, data.version);
+          setBellState(false);
+        } else if (lastSeen && lastSeen !== data.version) {
           showUpdate(data);
           scheduleFreshReload(data.version, data);
         } else {
