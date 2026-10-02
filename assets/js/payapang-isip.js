@@ -142,6 +142,25 @@
     });
   }
 
+
+  const wellness = { timer:null, seconds:0, selectedMinutes:5, mindfulTimer:null, audio:null, sessions:safeRead("peace-of-mind-sessions-v1",[]), moods:safeRead("peace-of-mind-moods-v1",[]), resets:safeRead("peace-of-mind-resets-v1",[]) };
+  const w = id => document.getElementById(id);
+  function bumpSession(){ wellness.sessions.push(new Date().toISOString()); wellness.sessions=wellness.sessions.slice(-200); safeWrite("peace-of-mind-sessions-v1",wellness.sessions); renderProgress(); }
+  function renderProgress(){ const entries=safeRead(storage.journal,[]); const moods=safeRead("peace-of-mind-moods-v1",[]); const days=new Set([...wellness.sessions,...entries.map(x=>x.createdAt),...moods.map(x=>x.createdAt)].map(x=>String(x).slice(0,10))); if(w("progressSessions"))w("progressSessions").textContent=wellness.sessions.length; if(w("progressJournal"))w("progressJournal").textContent=Array.isArray(entries)?entries.length:0; if(w("progressMood"))w("progressMood").textContent=Array.isArray(moods)?moods.length:0; if(w("progressDays"))w("progressDays").textContent=days.size; }
+  function renderMoods(){ const list=safeRead("peace-of-mind-moods-v1",[]); const el=w("moodHistory"); if(!el)return; el.innerHTML=(Array.isArray(list)?list:[]).slice(0,8).map(x=>'<div class="history-row"><strong>'+escapeHtml(x.mood)+'</strong><small>'+formatDate(x.createdAt)+'</small></div>').join("")||'<div class="saved-empty">No mood check-ins yet.</div>'; }
+  function initWellness(){
+    $("[data-mindful]").forEach(btn=>btn.addEventListener("click",()=>{clearInterval(wellness.mindfulTimer);let left=Number(btn.dataset.mindful);const out=w("mindfulStatus");out.textContent="Mindfulness session • "+formatClock(left);wellness.mindfulTimer=setInterval(()=>{left--;out.textContent=left>0?"Mindfulness session • "+formatClock(left):"Session complete. Take a moment before moving on.";if(left<=0){clearInterval(wellness.mindfulTimer);bumpSession();}},1000);}));
+    $(".mood-btn").forEach(btn=>btn.addEventListener("click",()=>{const list=safeRead("peace-of-mind-moods-v1",[]);list.unshift({mood:btn.dataset.mood,createdAt:new Date().toISOString()});safeWrite("peace-of-mind-moods-v1",list.slice(0,100));renderMoods();renderProgress();showToast("Mood check-in saved privately.");}));
+    $(".sound-btn[data-sound]").forEach(btn=>btn.addEventListener("click",()=>{if(wellness.audio)wellness.audio.stop(); wellness.audio=null; const AudioCtx=window.AudioContext||window.webkitAudioContext; if(!AudioCtx){w("soundStatus").textContent="Your browser does not provide audio controls.";return;} const ctx=new AudioCtx(), gain=ctx.createGain(), filter=ctx.createBiquadFilter(), noise=ctx.createBufferSource(); const buffer=ctx.createBuffer(1,ctx.sampleRate*2,ctx.sampleRate),data=buffer.getChannelData(0); for(let i=0;i<data.length;i++)data[i]=(Math.random()*2-1); noise.buffer=buffer;noise.loop=true;filter.type=btn.dataset.sound==="ocean"?"lowpass":"bandpass";filter.frequency.value=btn.dataset.sound==="rain"?1800:btn.dataset.sound==="wind"?700:450;gain.gain.value=.025;noise.connect(filter).connect(gain).connect(ctx.destination);noise.start();wellness.audio={stop:()=>{try{noise.stop()}catch{};ctx.close()}};w("soundStatus").textContent=btn.dataset.sound+" ambience on. Volume is intentionally subtle."; }));
+    w("soundStop")?.addEventListener("click",()=>{wellness.audio?.stop();wellness.audio=null;w("soundStatus").textContent="Ambient sounds are off.";});
+    $(".timer-choice-btn").forEach(btn=>btn.addEventListener("click",()=>{wellness.selectedMinutes=Number(btn.dataset.minutes);w("calmTimerDisplay").textContent=formatClock(wellness.selectedMinutes*60);}));
+    w("calmStart")?.addEventListener("click",()=>{if(wellness.timer){clearInterval(wellness.timer);wellness.timer=null;w("calmStart").textContent="Start";return;} if(!wellness.seconds)wellness.seconds=wellness.selectedMinutes*60;w("calmStart").textContent="Pause";wellness.timer=setInterval(()=>{wellness.seconds--;w("calmTimerDisplay").textContent=formatClock(wellness.seconds);if(wellness.seconds<=0){clearInterval(wellness.timer);wellness.timer=null;wellness.seconds=0;w("calmStart").textContent="Start";bumpSession();showToast("Quiet timer complete.");}},1000);});
+    w("calmReset")?.addEventListener("click",()=>{clearInterval(wellness.timer);wellness.timer=null;wellness.seconds=0;w("calmStart").textContent="Start";w("calmTimerDisplay").textContent=formatClock(wellness.selectedMinutes*60);});
+    w("thoughtSave")?.addEventListener("click",()=>{const item={createdAt:new Date().toISOString(),now:w("thoughtNow").value.trim(),facts:w("thoughtFacts").value.trim(),next:w("thoughtNext").value.trim()};const list=safeRead("peace-of-mind-resets-v1",[]);list.unshift(item);safeWrite("peace-of-mind-resets-v1",list.slice(0,30));w("thoughtSaved").innerHTML='<div class="saved-empty">Thought reset saved privately in this browser.</div>';bumpSession();});
+    const messages=["You do not have to solve everything at once.","A slower moment can still be a productive moment.","Notice one thing you can control today.","Give yourself permission to pause.","Small steady steps count."]; const day=Math.floor(Date.now()/86400000); if(w("dailyMessage"))w("dailyMessage").textContent=messages[day%messages.length];
+    w("focusMode")?.addEventListener("click",()=>{document.body.classList.add("pi-focus-mode");w("focusMode").hidden=true;w("focusExit").hidden=false;}); w("focusExit")?.addEventListener("click",()=>{document.body.classList.remove("pi-focus-mode");w("focusMode").hidden=false;w("focusExit").hidden=true;}); renderMoods();renderProgress();
+  }
+
   function initThemes() {
     const stored = localStorage.getItem("tubalhub-theme") || "forest";
     applyTheme(stored);
@@ -494,4 +513,6 @@
   }
 
   init();
+
+  document.addEventListener("DOMContentLoaded", initWellness);
 })();
