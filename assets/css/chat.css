@@ -83,3 +83,30 @@
   .chat-panel .msg{padding:9px!important;border-radius:14px}
   .chat-panel .msg-body{max-width:90%}
 }
+
+/* GLOBAL CHAT — Compact Card Grid Matrix v2026-10-02 */
+.chat-panel .messages{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  align-content:start;
+  gap:10px;
+  padding:14px 16px 18px!important;
+}
+.chat-panel .msg{
+  width:100%;
+  min-width:0;
+  margin:0!important;
+  box-sizing:border-box;
+  padding:10px!important;
+}
+.chat-panel .msg-body{max-width:100%;min-width:0}
+.chat-panel .message-content{max-width:100%}
+.chat-panel .bubble{max-width:100%;box-sizing:border-box}
+.chat-panel .reply-box{max-height:190px;overflow:auto}
+@media(max-width:900px){
+  .chat-panel .messages{grid-template-columns:1fr}
+}
+@media(max-width:760px){
+  .chat-panel .messages{display:block;padding:10px 12px 14px!important}
+  .chat-panel .msg{margin-bottom:8px!important}
+}
