@@ -42,25 +42,29 @@ service cloud.firestore {
     // =========================================================
 
     function chatAllowed() {
-      let u = get(
-        /databases/$(database)/documents/users/$(request.auth.uid)
-      ).data;
-
       return realUser()
         && (
-          !('chatStatus' in u)
-          || u.chatStatus == 'active'
+          !exists(/databases/$(database)/documents/users/$(request.auth.uid))
           || (
-            u.chatStatus == 'banned'
-            && 'banUntil' in u
-            && u.banUntil != null
-            && u.banUntil <= request.time
+            let u = get(
+              /databases/$(database)/documents/users/$(request.auth.uid)
+            ).data;
+            (
+              !('chatStatus' in u)
+              || u.chatStatus == 'active'
+              || (
+                u.chatStatus == 'banned'
+                && 'banUntil' in u
+                && u.banUntil != null
+                && u.banUntil <= request.time
+              )
+            )
+            && (
+              !('mutedUntil' in u)
+              || u.mutedUntil == null
+              || u.mutedUntil <= request.time
+            )
           )
-        )
-        && (
-          !('mutedUntil' in u)
-          || u.mutedUntil == null
-          || u.mutedUntil <= request.time
         );
     }
 
