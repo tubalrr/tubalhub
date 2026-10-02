@@ -69,3 +69,25 @@ body.theme-light.payapang-page::before{background-image:radial-gradient(circle,r
 @keyframes heroLeafDrift{from{transform:translate3d(-1%,0,0)}to{transform:translate3d(3%,3%,0)}}
 @media(max-width:680px){.hero-forest-tree{height:55%;width:38%}.hero-forest-canopy{height:27%;width:60%}.hero-fireflies{background-size:125px 105px}.hero-leaves{opacity:.5}.hero-forest-sun{width:70%;top:-8%;}}
 @media(prefers-reduced-motion:reduce){.hero-forest-sun,.hero-forest-mist,.hero-forest-tree,.hero-forest-canopy,.hero-fireflies,.hero-leaves{animation:none!important}}
+
+/* Payapang Isip — 3D Hero Depth v1.3.35 */
+.hero{perspective:1100px;perspective-origin:50% 42%;}
+.hero-forest-scene{transform-style:preserve-3d;transform:translateZ(0);animation:heroCameraDrift 14s ease-in-out infinite;}
+.hero-forest-scene::before{content:"";position:absolute;inset:-12%;z-index:8;pointer-events:none;background:linear-gradient(112deg,transparent 34%,rgba(224,255,196,.07) 48%,transparent 61%);transform:translateZ(120px) rotate(-2deg);animation:heroLightSweep 12s ease-in-out infinite;}
+.hero-forest-scene::after{content:"";position:absolute;inset:0;z-index:9;pointer-events:none;background:radial-gradient(ellipse at 50% 48%,transparent 28%,rgba(1,10,5,.38) 100%);transform:translateZ(160px);}
+.hero-forest-tree{transform-style:preserve-3d;filter:drop-shadow(0 18px 20px rgba(0,0,0,.22));}
+.hero-tree-left{transform:translate3d(-2%,0,90px) rotateY(10deg);animation:heroTreeDepthLeft 9s ease-in-out infinite;}
+.hero-tree-right{transform:translate3d(2%,0,55px) rotateY(-10deg);animation:heroTreeDepthRight 11s ease-in-out infinite;}
+.hero-forest-canopy{transform-style:preserve-3d;box-shadow:0 30px 55px rgba(0,0,0,.18);filter:blur(1px) drop-shadow(0 20px 30px rgba(0,0,0,.16));}
+.hero-canopy-one{transform:translate3d(-3%,0,140px) rotateY(12deg) rotateZ(-10deg);}
+.hero-canopy-two{transform:translate3d(3%,0,115px) rotateY(-12deg) rotateZ(10deg);}
+.hero-forest-mist{transform:translate3d(0,0,70px);filter:blur(22px) saturate(110%);}
+.hero-fireflies{transform:translateZ(180px) scale(1.02);filter:drop-shadow(0 0 5px rgba(220,255,180,.35));}
+.hero-leaves{transform:translateZ(220px) scale(1.03);filter:blur(.1px);}
+.hero-forest-sun{transform:translate3d(-50%,0,20px);box-shadow:0 0 80px rgba(170,235,140,.08);}
+@keyframes heroCameraDrift{0%,100%{transform:translate3d(0,0,0) rotateX(.35deg) rotateY(-.45deg) scale(1)}50%{transform:translate3d(0,-1%,0) rotateX(-.35deg) rotateY(.45deg) scale(1.025)}}
+@keyframes heroLightSweep{0%,100%{transform:translate3d(-18%,0,120px) rotate(-2deg);opacity:0}25%{opacity:.7}55%{transform:translate3d(18%,1%,120px) rotate(1deg);opacity:.28}75%{opacity:0}}
+@keyframes heroTreeDepthLeft{0%,100%{transform:translate3d(-2%,0,90px) rotateY(10deg) rotateZ(-.4deg)}50%{transform:translate3d(-1%,1%,125px) rotateY(13deg) rotateZ(.4deg)}}
+@keyframes heroTreeDepthRight{0%,100%{transform:translate3d(2%,0,55px) rotateY(-10deg) rotateZ(.4deg)}50%{transform:translate3d(1%,1%,90px) rotateY(-13deg) rotateZ(-.4deg)}}
+@media(max-width:680px){.hero{perspective:850px}.hero-forest-scene{animation-duration:18s}.hero-tree-left{transform:translate3d(-2%,0,55px) rotateY(7deg)}.hero-tree-right{transform:translate3d(2%,0,45px) rotateY(-7deg)}.hero-fireflies{transform:translateZ(110px)}.hero-leaves{transform:translateZ(130px)}.hero-forest-scene::before{display:none}}
+@media(prefers-reduced-motion:reduce){.hero-forest-scene,.hero-forest-scene::before,.hero-tree-left,.hero-tree-right{animation:none!important}}
