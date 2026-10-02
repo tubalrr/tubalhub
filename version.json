@@ -1,11 +1,12 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.3.38",
-  "build": "2026-10-02_payapang-webgl-forest",
+  "version": "1.3.39",
+  "build": "2026-10-02_payapang-optimized-3d-wood",
   "releasedAtReal": "2026-10-02T09:05:00.000Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.3.39 UI — Optimized Payapang Isip 3D forest with richer branch/trunk detail, shared geometry, distance-aware tree density, mobile reduction, capped pixel ratio, fog, and lightweight lighting.",
     "v1.3.38 UI — Added a real WebGL/Three.js 3D forest to the Payapang Isip Hero with low-poly trees, depth fog, warm directional light, fireflies, sun rays, camera drift, responsive rendering, and a non-WebGL fallback.",
     "v1.3.37 UI — Reworked Payapang Isip into a peaceful storybook forest atmosphere with painterly color depth, soft sunlight rays, layered mist, glowing fireflies, drifting leaves, and a warmer breathing focal point.",
     "v1.3.36 UI — Stronger Payapang Isip 3D Hero depth, larger foreground layers, stronger particles, and refreshed CSS cache.",
@@ -851,5 +852,5 @@
     }
   ],
   "date": "2026-10-02",
-  "changes": "v1.3.38 UI — Real WebGL 3D forest background for Payapang Isip Hero."
+  "changes": "v1.3.39 UI — Optimized natural-wood 3D forest rendering."
 }
