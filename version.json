@@ -1,8 +1,8 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.3.39",
-  "build": "2026-10-02_payapang-optimized-3d-wood",
+  "version": "1.3.40",
+  "build": "2026-10-02_payapang-natural-forest",
   "releasedAtReal": "2026-10-02T09:05:00.000Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
@@ -852,5 +852,12 @@
     }
   ],
   "date": "2026-10-02",
-  "changes": "v1.3.39 UI — Optimized natural-wood 3D forest rendering."
+  "changes": "v1.3.40 UI — Replaced the geometric Payapang Isip forest with a more natural-material 3D forest.",
+  "updates": [
+    {
+      "version": "1.3.40",
+      "date": "2026-10-02",
+      "changes": "Replaced the geometric Payapang Isip 3D forest with procedural bark texture, irregular branches, layered foliage, natural ground texture, depth fog, softer light rays, responsive density, and mobile performance limits."
+    }
+  ]
 }
