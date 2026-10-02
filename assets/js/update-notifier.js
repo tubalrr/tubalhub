@@ -11,6 +11,7 @@
   const cssUrl = new URL("assets/css/update-notifier.css", rootUrl).href;
 
   const LAST_SEEN_KEY = "tubalhub_last_seen_version";
+  const LAST_SEEN_RELEASE_KEY = "tubalhub_last_seen_release_key";
   const LEGACY_VERSION_KEY = "tubalhub_version";
   const UPDATE_KEY = "tubalhub_has_update";
   const EVENT_KEY = "tubalhub_update_event";
@@ -316,6 +317,7 @@
   function markSeen(options={}) {
     if (!currentData) return;
     localStorage.setItem(LAST_SEEN_KEY, currentData.version);
+    localStorage.setItem(LAST_SEEN_RELEASE_KEY, releaseKey(currentData));
     localStorage.setItem(LEGACY_VERSION_KEY, currentData.version);
     localStorage.removeItem(UPDATE_KEY);
     setBellState(false);
@@ -402,10 +404,11 @@
   }
 
   function scheduleFreshReload(version, data=null) {
-    const reloadKey = "tubalhub_auto_reload_version";
+    const reloadKey = "tubalhub_auto_reload_release";
+    const releaseToken = data ? releaseKey(data) : String(version);
     try {
-      if (localStorage.getItem(reloadKey) === String(version)) return;
-      localStorage.setItem(reloadKey, String(version));
+      if (localStorage.getItem(reloadKey) === releaseToken) return;
+      localStorage.setItem(reloadKey, releaseToken);
     } catch (_) {}
 
     waitingForBotAnnouncement = true;
@@ -483,6 +486,7 @@
         // last-seen state must therefore participate in the first check too.
         // This makes a newly opened page catch up automatically without F5.
         const lastSeen = localStorage.getItem(LAST_SEEN_KEY) || "";
+        const lastSeenRelease = localStorage.getItem(LAST_SEEN_RELEASE_KEY) || "";
         const baseline = localStorage.getItem(FIRST_SEEN_KEY) || "";
 
         // Fresh installs establish a silent baseline. They must never reload
@@ -490,8 +494,9 @@
         if (!baseline) {
           localStorage.setItem(FIRST_SEEN_KEY, data.version);
           localStorage.setItem(LAST_SEEN_KEY, data.version);
+          localStorage.setItem(LAST_SEEN_RELEASE_KEY, key);
           setBellState(false);
-        } else if (lastSeen && lastSeen !== data.version) {
+        } else if (lastSeen && (lastSeen !== data.version || (lastSeenRelease && lastSeenRelease !== key))) {
           showUpdate(data);
           scheduleFreshReload(data.version, data);
         } else {
