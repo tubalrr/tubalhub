@@ -1,7 +1,7 @@
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.181.1/build/three.module.js";
 
 const root=document.getElementById("pi3dForest"),canvas=document.getElementById("pi3dCanvas");
-if(!root||!canvas) throw new Error("Payapang Isip 3D canvas not found");
+if(!root||!canvas) throw new Error("Peace of Mind 3D canvas not found");
 
 const reduced=matchMedia("(prefers-reduced-motion: reduce)").matches;
 const mobile=matchMedia("(max-width:680px)").matches;
@@ -142,4 +142,4 @@ function animate(){
   mist.position.x=Math.sin(t*.045)*1.8*m;
   renderer.render(scene,camera);
 }
-try{root.classList.add("is-webgl");animate();}catch(e){console.warn("Payapang Isip natural 3D scene unavailable:",e);root.classList.remove("is-webgl");}
+try{root.classList.add("is-webgl");animate();}catch(e){console.warn("Peace of Mind natural 3D scene unavailable:",e);root.classList.remove("is-webgl");}
