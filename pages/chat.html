@@ -552,7 +552,9 @@ function renderLoadedChannelMessagesReal(options={}){
 }
 
 function renderChatSnapshotReal(snap, channelValue, sourceReal){
-  latestChannelMessagesReal=snap.docs.map(d=>({id:d.id,data:d.data()}));
+  latestChannelMessagesReal=snap.docs
+    .filter(d=>String(d.data()?.channel||'')===channelValue)
+    .map(d=>({id:d.id,data:d.data()}));
   if(!olderChannelMessagesReal.length){
     channelCursorReal=snap.docs[snap.docs.length-1]||null;
     channelHasOlderReal=snap.size===500;
@@ -575,7 +577,6 @@ async function loadOlderMessagesReal(){
     ));
     const page=snap.docs
       .filter(d=>String(d.data()?.channel||'')===channelValue)
-      .slice(0,100)
       .map(d=>({id:d.id,data:d.data()}));
     const known=new Set([...latestChannelMessagesReal,...olderChannelMessagesReal].map(x=>x.id));
     page.forEach(item=>{if(!known.has(item.id))olderChannelMessagesReal.unshift(item)});
