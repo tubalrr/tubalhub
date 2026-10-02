@@ -1,8 +1,8 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.3.41",
-  "build": "2026-10-02_payapang-natural-wind",
+  "version": "1.3.42",
+  "build": "2026-10-02_peace-of-mind-branding",
   "releasedAtReal": "2026-10-02T09:05:00.000Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
@@ -852,8 +852,13 @@
     }
   ],
   "date": "2026-10-02",
-  "changes": "v1.3.41 UI — Added natural wind-force motion to the Payapang Isip 3D forest.",
+  "changes": "v1.3.42 UI — Renamed the Payapang Isip experience to Peace of Mind.",
   "updates": [
+    {
+      "version": "1.3.42",
+      "date": "2026-10-02",
+      "changes": "Renamed the Payapang Isip page branding to Peace of Mind while preserving existing asset and route paths."
+    },
     {
       "version": "1.3.41",
       "date": "2026-10-02",
