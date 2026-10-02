@@ -555,7 +555,7 @@ function renderChatSnapshotReal(snap, channelValue, sourceReal){
   latestChannelMessagesReal=snap.docs.map(d=>({id:d.id,data:d.data()}));
   if(!olderChannelMessagesReal.length){
     channelCursorReal=snap.docs[snap.docs.length-1]||null;
-    channelHasOlderReal=snap.size===100;
+    channelHasOlderReal=snap.size===500;
   }
   renderLoadedChannelMessagesReal({sourceReal});
 }
@@ -569,16 +569,18 @@ async function loadOlderMessagesReal(){
   try{
     const snap=await getDocsFromServer(query(
       collection(db,'globalChats'),
-      where('channel','==',channelValue),
-      orderBy('createdAt','asc'),
-      endBefore(channelCursorReal),
-      limitToLast(100)
+      orderBy('createdAt','desc'),
+      startAfter(channelCursorReal),
+      limit(500)
     ));
-    const page=snap.docs.map(d=>({id:d.id,data:d.data()}));
+    const page=snap.docs
+      .filter(d=>String(d.data()?.channel||'')===channelValue)
+      .slice(0,100)
+      .map(d=>({id:d.id,data:d.data()}));
     const known=new Set([...latestChannelMessagesReal,...olderChannelMessagesReal].map(x=>x.id));
     page.forEach(item=>{if(!known.has(item.id))olderChannelMessagesReal.unshift(item)});
-    if(snap.docs.length)channelCursorReal=snap.docs[0];
-    channelHasOlderReal=snap.size===100;
+    if(snap.docs.length)channelCursorReal=snap.docs[snap.docs.length-1];
+    channelHasOlderReal=snap.size===500;
     renderLoadedChannelMessagesReal({preserveTop:true,previousHeight,previousTop,sourceReal:'pagination'});
   }catch(e){
     console.error('[TUBAL HUB chat pagination]',e);
@@ -600,18 +602,24 @@ function subscribeMessages(){
   const channelValue=activeChannelReal==='general'?'global-chat':activeChannelReal;
 
   // Bound the realtime read at the Firestore query level.
-  // Use the existing chronological index path:
-  // channel ASC + createdAt ASC, limited to the latest 100.
-  // This avoids depending on a separately deployed DESC index.
+  // Spark-safe fallback: query only by createdAt so no composite
+  // channel + createdAt index is required. The active channel is filtered
+  // client-side, and only a bounded recent window is downloaded.
   const qReal=query(
     collection(db,'globalChats'),
-    where('channel','==',channelValue),
-    orderBy('createdAt','asc'),
-    limitToLast(100)
+    orderBy('createdAt','desc'),
+    limit(500)
   );
 
   stopMessages=onSnapshot(qReal,snap=>{
-    renderChatSnapshotReal(snap,channelValue,'realtime');
+    const channelDocs=snap.docs
+      .filter(d=>String(d.data()?.channel||'')===channelValue)
+      .slice(0,100);
+    renderChatSnapshotReal(
+      {docs:channelDocs,size:channelDocs.length},
+      channelValue,
+      'realtime-spark'
+    );
   },err=>{
     console.error('[TUBAL HUB chat query]',err);
     messages.innerHTML='<div class="empty-chat"><strong>Chat temporarily unavailable.</strong><span>Firestore could not load the real messages for this channel.</span></div>';
