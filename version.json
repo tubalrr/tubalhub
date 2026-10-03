@@ -853,7 +853,7 @@
     }
   ],
   "date": "2026-10-02",
-  "changes": "v1.3.44 FIX — Site-wide automatic updater now detects release/build changes and refreshes updated pages without manual F5.",,
+  "changes": "v1.3.44 FIX — Site-wide automatic updater now detects release/build changes and refreshes updated pages without manual F5.",
   "updates": [
     {
       "version": "1.3.44",
