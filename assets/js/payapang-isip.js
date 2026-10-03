@@ -481,6 +481,7 @@
     safeWrite(storage.journal, state.journal.entries);
     resetJournalEditor();
     renderJournal();
+    renderProgress();
   }
 
   function editJournal(id) {
@@ -502,6 +503,7 @@
     if (!window.confirm("Delete this journal entry?")) return;
     state.journal.entries = state.journal.entries.filter(item => item.id !== id);
     safeWrite(storage.journal, state.journal.entries);
+    renderProgress();
     if (state.journal.editingId === id) resetJournalEditor();
     renderJournal();
     showToast("Journal entry deleted.");
