@@ -613,8 +613,8 @@
 
   function init() {
     initThemes();
-    initPeaceSideMenu();
     initSectionNavigation();
+    initPeaceSideMenu();
     initWellness();
     renderGrounding();
     loadJournal();
