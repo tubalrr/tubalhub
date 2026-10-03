@@ -515,6 +515,61 @@
     showToast("Journal entry deleted.");
   }
 
+  function initSectionNavigation() {
+    const links = $("[data-peace-section]");
+    const sections = $(".pi-content .pi-section");
+    if (!links.length || !sections.length) return;
+
+    const validIds = new Set(sections.map(section => section.id));
+
+    function selectSection(id, options = {}) {
+      const { updateHash = true, scroll = true } = options;
+      const valid = id && validIds.has(id);
+
+      document.body.classList.toggle("pi-section-view", Boolean(valid));
+
+      sections.forEach(section => {
+        section.classList.toggle("is-selected", Boolean(valid) && section.id === id);
+      });
+
+      links.forEach(link => {
+        const isOverview = link.dataset.peaceSection === "overview";
+        const active = valid
+          ? link.dataset.peaceSection === id
+          : isOverview;
+        link.classList.toggle("active", active);
+        if (active) link.setAttribute("aria-current", "page");
+        else link.removeAttribute("aria-current");
+      });
+
+      if (updateHash) {
+        const nextHash = valid ? "#" + id : "";
+        if (window.location.hash !== nextHash) {
+          history.replaceState(null, "", window.location.pathname + window.location.search + nextHash);
+        }
+      }
+
+      if (scroll) {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    }
+
+    links.forEach(link => {
+      link.addEventListener("click", event => {
+        event.preventDefault();
+        selectSection(link.dataset.peaceSection === "overview" ? null : link.dataset.peaceSection);
+      });
+    });
+
+    window.addEventListener("hashchange", () => {
+      const id = window.location.hash.slice(1);
+      selectSection(validIds.has(id) ? id : null, { updateHash: false, scroll: true });
+    });
+
+    const initialId = window.location.hash.slice(1);
+    selectSection(validIds.has(initialId) ? initialId : null, { updateHash: false, scroll: false });
+  }
+
   function bind() {
     els.boxStart.addEventListener("click", startBox);
     els.diaphragmStart.addEventListener("click", startDiaphragm);
@@ -534,6 +589,7 @@
 
   function init() {
     initThemes();
+    initSectionNavigation();
     initWellness();
     renderGrounding();
     loadJournal();
