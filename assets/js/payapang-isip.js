@@ -211,6 +211,7 @@
     els.boxProgress.style.width = "100%";
     els.boxStatus.textContent = "Nice work. Let your breathing return to a comfortable pace.";
     els.boxStart.textContent = "Start 4 Rounds Again";
+    bumpSession();
   }
 
   function renderBox() {
@@ -282,6 +283,7 @@
     els.diaphragmPhase.textContent = "Done";
     els.diaphragmStatus.textContent = "Two minutes complete. Notice how your chest, belly, and breathing feel now.";
     els.diaphragmStart.textContent = "Start 2 Minutes Again";
+    bumpSession();
   }
 
   function startDiaphragm() {
@@ -323,6 +325,7 @@
     els.weilProgress.style.width = "100%";
     els.weilStatus.textContent = "Done. Breathe normally and let the exercise settle.";
     els.weilStart.textContent = "Start 4 Breaths Again";
+    bumpSession();
   }
 
   function renderWeil() {
@@ -411,6 +414,7 @@
     list.unshift(session);
     if (safeWrite(storage.grounding, list.slice(0, 20))) {
       renderGrounding();
+      bumpSession();
       showToast("Grounding session saved in this browser.");
     }
   }
@@ -460,6 +464,7 @@
       return;
     }
 
+    const isNewEntry = !state.journal.editingId;
     if (state.journal.editingId) {
       const entry = state.journal.entries.find(item => item.id === state.journal.editingId);
       if (!entry) return;
@@ -478,7 +483,8 @@
     }
 
     state.journal.entries = state.journal.entries.slice(0, 50);
-    safeWrite(storage.journal, state.journal.entries);
+    const journalSaved = safeWrite(storage.journal, state.journal.entries);
+    if (journalSaved && isNewEntry) bumpSession();
     resetJournalEditor();
     renderJournal();
     renderProgress();
