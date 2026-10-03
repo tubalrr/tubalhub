@@ -276,10 +276,13 @@ body.theme-light .quiet-timer-core{background:radial-gradient(circle at 50% 36%,
 .pi-side-links a.active::before{content:"";position:absolute;left:-1px;top:8px;bottom:8px;width:3px;border-radius:999px;background:linear-gradient(180deg,var(--pi-sage),var(--pi-neon))}
 .pi-side-links a.active>span{color:#0b2111;background:linear-gradient(135deg,var(--pi-sage),var(--pi-neon));border-color:transparent}
 .pi-content{min-width:0}
-.pi-section-view .pi-content .pi-section{display:none}
-.pi-section-view .pi-content .pi-section.is-selected{display:block;margin-top:4px}
-.pi-section-view .hero{display:none}
-body.pi-section-view .pi-workspace{margin-top:10px}
+.pi-section-view .pi-content{min-height:0}
+body.pi-section-view .pi-content>.pi-section{display:none!important;margin:0!important}
+body.pi-section-view .pi-content>.pi-section.is-selected{display:block!important;margin-top:4px!important}
+body.pi-section-view .hero{display:none!important}
+body.pi-section-view .pi-workspace{margin-top:10px;align-items:start}
+body.pi-section-view .pi-content{overflow:visible}
+body.pi-section-view .pi-content>.pi-section.is-selected+.pi-section{display:none!important}
 body.pi-section-view .pi-side-nav-head small{color:#7f9486}
 @media(max-width:900px){
   .pi-workspace{grid-template-columns:190px minmax(0,1fr);gap:16px}
