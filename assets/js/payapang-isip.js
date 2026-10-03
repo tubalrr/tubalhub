@@ -516,8 +516,8 @@
   }
 
   function initSectionNavigation() {
-    const links = $("[data-peace-section]");
-    const sections = $(".pi-content .pi-section");
+    const links = $$("[data-peace-section]");
+    const sections = $$(".pi-content .pi-section");
     if (!links.length || !sections.length) return;
 
     const validIds = new Set(sections.map(section => section.id));
