@@ -151,13 +151,13 @@
   function initWellness(){
     if (initWellness.done) return;
     initWellness.done = true;
-    $("[data-mindful]").forEach(btn=>btn.addEventListener("click",()=>{
+    $$("[data-mindful]").forEach(btn=>btn.addEventListener("click",()=>{
       clearInterval(wellness.mindfulTimer);
       const leftStart = Number(btn.dataset.mindful);
       if (!Number.isFinite(leftStart) || leftStart <= 0) return;
       let left = leftStart;
       const out = w("mindfulStatus");
-      $("[data-mindful]").forEach(item=>item.classList.toggle("active", item === btn));
+      $$("[data-mindful]").forEach(item=>item.classList.toggle("active", item === btn));
       out.textContent = "Mindfulness session • " + formatClock(left);
       wellness.mindfulTimer = setInterval(()=>{
         left--;
@@ -165,15 +165,15 @@
         if (left <= 0) {
           clearInterval(wellness.mindfulTimer);
           wellness.mindfulTimer = null;
-          $("[data-mindful]").forEach(item=>item.classList.remove("active"));
+          $$("[data-mindful]").forEach(item=>item.classList.remove("active"));
           bumpSession();
         }
       },1000);
     }));
-    $(".mood-btn").forEach(btn=>btn.addEventListener("click",()=>{const list=safeRead("peace-of-mind-moods-v1",[]);list.unshift({mood:btn.dataset.mood,createdAt:new Date().toISOString()});safeWrite("peace-of-mind-moods-v1",list.slice(0,100));renderMoods();renderProgress();showToast("Mood check-in saved privately.");}));
-    $(".sound-btn[data-sound]").forEach(btn=>btn.addEventListener("click",()=>{if(wellness.audio)wellness.audio.stop(); wellness.audio=null; const AudioCtx=window.AudioContext||window.webkitAudioContext; if(!AudioCtx){w("soundStatus").textContent="Your browser does not provide audio controls.";return;} const ctx=new AudioCtx(), gain=ctx.createGain(), filter=ctx.createBiquadFilter(), noise=ctx.createBufferSource(); const buffer=ctx.createBuffer(1,ctx.sampleRate*2,ctx.sampleRate),data=buffer.getChannelData(0); for(let i=0;i<data.length;i++)data[i]=(Math.random()*2-1); noise.buffer=buffer;noise.loop=true;filter.type=btn.dataset.sound==="ocean"?"lowpass":"bandpass";filter.frequency.value=btn.dataset.sound==="rain"?1800:btn.dataset.sound==="wind"?700:450;gain.gain.value=.025;noise.connect(filter).connect(gain).connect(ctx.destination);noise.start();wellness.audio={stop:()=>{try{noise.stop()}catch{};ctx.close()}};w("soundStatus").textContent=btn.dataset.sound+" ambience on. Volume is intentionally subtle."; }));
+    $$(".mood-btn").forEach(btn=>btn.addEventListener("click",()=>{const list=safeRead("peace-of-mind-moods-v1",[]);list.unshift({mood:btn.dataset.mood,createdAt:new Date().toISOString()});safeWrite("peace-of-mind-moods-v1",list.slice(0,100));renderMoods();renderProgress();showToast("Mood check-in saved privately.");}));
+    $$(".sound-btn[data-sound]").forEach(btn=>btn.addEventListener("click",()=>{if(wellness.audio)wellness.audio.stop(); wellness.audio=null; const AudioCtx=window.AudioContext||window.webkitAudioContext; if(!AudioCtx){w("soundStatus").textContent="Your browser does not provide audio controls.";return;} const ctx=new AudioCtx(), gain=ctx.createGain(), filter=ctx.createBiquadFilter(), noise=ctx.createBufferSource(); const buffer=ctx.createBuffer(1,ctx.sampleRate*2,ctx.sampleRate),data=buffer.getChannelData(0); for(let i=0;i<data.length;i++)data[i]=(Math.random()*2-1); noise.buffer=buffer;noise.loop=true;filter.type=btn.dataset.sound==="ocean"?"lowpass":"bandpass";filter.frequency.value=btn.dataset.sound==="rain"?1800:btn.dataset.sound==="wind"?700:450;gain.gain.value=.025;noise.connect(filter).connect(gain).connect(ctx.destination);noise.start();wellness.audio={stop:()=>{try{noise.stop()}catch{};ctx.close()}};w("soundStatus").textContent=btn.dataset.sound+" ambience on. Volume is intentionally subtle."; }));
     w("soundStop")?.addEventListener("click",()=>{wellness.audio?.stop();wellness.audio=null;w("soundStatus").textContent="Ambient sounds are off.";});
-    $(".timer-choice-btn").forEach(btn=>btn.addEventListener("click",()=>{wellness.selectedMinutes=Number(btn.dataset.minutes);w("calmTimerDisplay").textContent=formatClock(wellness.selectedMinutes*60);}));
+    $$(".timer-choice-btn").forEach(btn=>btn.addEventListener("click",()=>{wellness.selectedMinutes=Number(btn.dataset.minutes);w("calmTimerDisplay").textContent=formatClock(wellness.selectedMinutes*60);}));
     w("calmStart")?.addEventListener("click",()=>{if(wellness.timer){clearInterval(wellness.timer);wellness.timer=null;w("calmStart").textContent="Start";return;} if(!wellness.seconds)wellness.seconds=wellness.selectedMinutes*60;w("calmStart").textContent="Pause";wellness.timer=setInterval(()=>{wellness.seconds--;w("calmTimerDisplay").textContent=formatClock(wellness.seconds);if(wellness.seconds<=0){clearInterval(wellness.timer);wellness.timer=null;wellness.seconds=0;w("calmStart").textContent="Start";bumpSession();showToast("Quiet timer complete.");}},1000);});
     w("calmReset")?.addEventListener("click",()=>{clearInterval(wellness.timer);wellness.timer=null;wellness.seconds=0;w("calmStart").textContent="Start";w("calmTimerDisplay").textContent=formatClock(wellness.selectedMinutes*60);});
     w("thoughtSave")?.addEventListener("click",()=>{const item={createdAt:new Date().toISOString(),now:w("thoughtNow").value.trim(),facts:w("thoughtFacts").value.trim(),next:w("thoughtNext").value.trim()};const list=safeRead("peace-of-mind-resets-v1",[]);list.unshift(item);safeWrite("peace-of-mind-resets-v1",list.slice(0,30));w("thoughtSaved").innerHTML='<div class="saved-empty">Thought reset saved privately in this browser.</div>';bumpSession();});
