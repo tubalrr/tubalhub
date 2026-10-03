@@ -515,6 +515,30 @@
     showToast("Journal entry deleted.");
   }
 
+  function initPeaceSideMenu() {
+    const nav = document.querySelector(".pi-side-nav");
+    const toggle = document.getElementById("peaceSectionMenu");
+    if (!nav || !toggle) return;
+
+    const setExpanded = expanded => {
+      nav.classList.toggle("is-focus-collapsed", !expanded);
+      toggle.setAttribute("aria-expanded", String(expanded));
+      toggle.setAttribute("aria-label", expanded ? "Hide other Peace of Mind sections" : "Show Peace of Mind sections");
+      toggle.textContent = expanded ? "×" : "☰";
+    };
+
+    toggle.addEventListener("click", () => {
+      setExpanded(nav.classList.contains("is-focus-collapsed"));
+    });
+
+    window.addEventListener("hashchange", () => {
+      if (document.body.classList.contains("pi-section-view")) setExpanded(false);
+      else setExpanded(true);
+    });
+
+    setExpanded(false);
+  }
+
   function initSectionNavigation() {
     const links = $$("[data-peace-section]");
     const sections = $$(".pi-content .pi-section");
@@ -589,6 +613,7 @@
 
   function init() {
     initThemes();
+    initPeaceSideMenu();
     initSectionNavigation();
     initWellness();
     renderGrounding();
