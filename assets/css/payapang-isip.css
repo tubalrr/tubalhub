@@ -231,3 +231,31 @@ body.theme-light .nature-sound-card .sound-btn.is-playing{background:linear-grad
 body.theme-light .sound-footer{background:rgba(255,255,255,.58);border-color:rgba(31,68,42,.08)}
 body.theme-light .sound-now strong{color:#31513b}
 @media(max-width:760px){.nature-sound-card .sound-grid{grid-template-columns:1fr}.sound-footer{align-items:stretch;flex-direction:column}.sound-stop{width:100%}}
+
+/* Peace of Mind — Quiet Time premium timer UI v1.3.47 */
+.quiet-time-card{padding:26px}
+.quiet-time-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:20px}
+.quiet-time-kicker{display:block;color:#86a793;font-size:7px;font-weight:900;letter-spacing:2px}
+.quiet-time-head h3{margin:7px 0 5px;font-size:17px;letter-spacing:-.4px}
+.quiet-time-head p{margin:0;color:#789084;font-size:9px;line-height:1.6}
+.quiet-time-badge{padding:8px 11px;border:1px solid rgba(142,214,109,.15);border-radius:999px;background:rgba(142,214,109,.06);color:#a8d99b;font-size:8px;font-weight:900;white-space:nowrap}
+.quiet-time-card .timer-choices{grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:24px}
+.quiet-time-card .timer-choice-btn{min-height:72px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:12px;border-radius:18px;text-align:center;border:1px solid rgba(120,255,170,.10);background:rgba(255,255,255,.03);color:inherit;transition:transform .2s ease,border-color .2s ease,background .2s ease,box-shadow .2s ease}
+.quiet-time-card .timer-choice-btn strong{font-size:21px;line-height:1;font-weight:900}
+.quiet-time-card .timer-choice-btn small{color:#71857a;font-size:7px;font-weight:800;letter-spacing:1px;text-transform:uppercase}
+.quiet-time-card .timer-choice-btn:hover{transform:translateY(-2px);border-color:rgba(142,214,109,.24);background:rgba(142,214,109,.055)}
+.quiet-time-card .timer-choice-btn.active{border-color:rgba(142,214,109,.44);background:linear-gradient(135deg,rgba(142,214,109,.10),rgba(29,255,145,.055));box-shadow:0 12px 30px rgba(29,255,145,.06),inset 0 0 20px rgba(142,214,109,.035)}
+.wellness-timer{display:flex;flex-direction:column;align-items:center;gap:18px;text-align:center;padding:10px 0 6px}
+.quiet-timer-ring{width:250px;height:250px;padding:9px;display:grid;place-items:center;border-radius:50%;background:conic-gradient(var(--pi-neon) var(--quiet-progress,0deg),rgba(120,255,170,.08) var(--quiet-progress,0deg) 360deg);box-shadow:0 0 55px rgba(29,255,145,.07),inset 0 0 0 1px rgba(142,214,109,.08);position:relative;transform:translateZ(0)}
+.quiet-timer-ring::before{content:"";position:absolute;inset:3px;border-radius:50%;border:1px solid rgba(142,214,109,.10);pointer-events:none}
+.quiet-timer-core{width:100%;height:100%;display:grid;place-items:center;align-content:center;gap:7px;border-radius:50%;background:radial-gradient(circle at 50% 36%,rgba(142,214,109,.11),rgba(5,21,11,.96) 58%);border:1px solid rgba(120,255,170,.10);box-shadow:inset 0 0 35px rgba(0,0,0,.22)}
+.quiet-timer-core span{color:#769185;font-size:7px;font-weight:900;letter-spacing:2px}
+.quiet-timer-core strong{font-size:clamp(2.7rem,7vw,4.4rem);line-height:.95;letter-spacing:-3px;font-weight:800;font-variant-numeric:tabular-nums}
+.quiet-timer-core small{color:#6f8377;font-size:7px;font-weight:700;letter-spacing:.4px}
+.quiet-time-controls{display:flex;justify-content:center;gap:9px;flex-wrap:wrap}
+.quiet-time-controls .primary-btn,.quiet-time-controls .glass-btn{min-width:110px}
+body.theme-light .quiet-time-head p,body.theme-light .quiet-timer-core small,body.theme-light .quiet-time-card .timer-choice-btn small{color:#6e7f75}
+body.theme-light .quiet-time-badge{color:#52755e;background:rgba(142,214,109,.08)}
+body.theme-light .quiet-timer-core{background:radial-gradient(circle at 50% 36%,rgba(193,239,194,.48),rgba(255,255,255,.92) 60%)}
+@media(max-width:760px){.quiet-time-head{flex-direction:column}.quiet-time-badge{align-self:flex-start}.quiet-time-card .timer-choices{grid-template-columns:repeat(2,minmax(0,1fr))}.quiet-timer-ring{width:220px;height:220px}}
+@media(max-width:420px){.quiet-time-card{padding:19px}.quiet-timer-ring{width:198px;height:198px}.quiet-timer-core strong{font-size:2.7rem}}
