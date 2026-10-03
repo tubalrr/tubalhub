@@ -301,3 +301,16 @@ body.pi-section-view .pi-side-nav-head small{color:#7f9486}
   .pi-side-links a strong{font-size:7px}
   .pi-section-view .pi-content .pi-section.is-selected{margin-top:8px}
 }
+
+/* Peace of Mind — single-title focus navigation v1.3.49 */
+.pi-side-nav-title{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.pi-side-menu-toggle{width:30px;height:30px;flex:0 0 30px;margin-top:1px;border:1px solid rgba(120,255,170,.10);border-radius:10px;background:rgba(255,255,255,.035);color:#8fa195;cursor:pointer;font:900 11px/1 Inter,ui-sans-serif,sans-serif;transition:transform .18s ease,background .18s ease,color .18s ease,border-color .18s ease}
+.pi-side-menu-toggle:hover{transform:translateY(-1px);background:rgba(142,214,109,.08);color:#d4efcc;border-color:rgba(142,214,109,.18)}
+.pi-side-nav.is-focus-collapsed .pi-side-links a:not(.active){display:none}
+.pi-side-nav.is-focus-collapsed .pi-side-nav-head{padding-bottom:9px;border-bottom:0;margin-bottom:2px}
+.pi-side-nav.is-focus-collapsed .pi-side-menu-toggle{transform:rotate(180deg);color:#bfeab4;background:rgba(142,214,109,.07)}
+@media(max-width:680px){
+  .pi-side-nav.is-focus-collapsed .pi-side-links a:not(.active){display:none}
+  .pi-side-nav.is-focus-collapsed .pi-side-links{overflow:visible}
+  .pi-side-nav.is-focus-collapsed .pi-side-links a.active{min-width:100%;width:100%}
+}
