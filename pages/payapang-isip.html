@@ -34,11 +34,16 @@
 <div class="pi-workspace">
   <aside class="pi-side-nav glass" aria-label="Peace of Mind sections">
     <div class="pi-side-nav-head">
-      <span class="eyebrow">PEACE OF MIND</span>
-      <strong>Explore tools</strong>
-      <small>Choose a section to focus on it.</small>
+      <div class="pi-side-nav-title">
+        <span>
+          <span class="eyebrow">PEACE OF MIND</span>
+          <strong>Explore tools</strong>
+          <small>Choose a section to focus on it.</small>
+        </span>
+        <button class="pi-side-menu-toggle" id="peaceSectionMenu" type="button" aria-expanded="false" aria-label="Show Peace of Mind sections">☰</button>
+      </div>
     </div>
-    <nav class="pi-side-links">
+    <nav class="pi-side-links" id="peaceSideLinks">
       <a href="#" data-peace-section="overview" class="active"><span>✦</span><strong>Overview</strong></a>
       <a href="#box-breathing" data-peace-section="box-breathing"><span>01</span><strong>Box Breathing</strong></a>
       <a href="#diaphragmatic" data-peace-section="diaphragmatic"><span>02</span><strong>Tiyan Hinga</strong></a>
