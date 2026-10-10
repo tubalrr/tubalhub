@@ -1,0 +1,135 @@
+/* TUBAL HUB — HERO BOT V2
+   Premium armored-guide characters. Kept separate from speech/conversation logic. */
+html body.hub-home #bentoHero .th-hero-bot-visual{
+ width:348px!important;height:320px!important;padding:0!important;
+ border:0!important;border-radius:0!important;background:transparent!important;
+ box-shadow:none!important;overflow:visible!important;isolation:isolate!important;
+}
+html body.hub-home #bentoHero .th-bot-duo{
+ display:grid!important;grid-template-columns:140px 140px!important;gap:20px!important;
+ align-items:end!important;justify-content:center!important;width:100%!important;height:100%!important;overflow:visible!important;
+}
+html body.hub-home #bentoHero .th-bot-slot{width:140px!important;height:300px!important;overflow:visible!important}
+html body.hub-home #bentoHero .th-bot-slot .th-code-bot{
+ width:190px!important;height:300px!important;left:50%!important;top:4px!important;margin-left:-95px!important;
+ transform-origin:50% 86%!important;filter:drop-shadow(0 19px 19px rgba(0,0,0,.48)) drop-shadow(0 0 14px rgba(57,147,255,.11))!important;
+}
+html body.hub-home #bentoHero .th-bot-slot .th-code-bot.is-idle{animation:thBotV2Float 3.7s ease-in-out infinite!important}
+html body.hub-home #bentoHero .th-bot-slot .th-code-bot.is-speaking{animation:thBotV2Talk .78s ease-in-out infinite alternate!important}
+html body.hub-home #bentoHero .th-welcome-bot{--blue:#42baff!important;--blue2:#0878e8!important;--cyan:#9ce8ff!important}
+html body.hub-home #bentoHero .th-announcer-bot{--blue:#ad91ff!important;--blue2:#7548e8!important;--cyan:#eadfff!important;filter:drop-shadow(0 19px 20px rgba(0,0,0,.48)) drop-shadow(0 0 16px rgba(158,103,255,.17))!important}
+html body.hub-home #bentoHero .th-code-bot .th-code-head{
+ left:26px!important;top:25px!important;width:138px!important;height:98px!important;box-sizing:border-box!important;overflow:hidden!important;
+ border-radius:34px 34px 26px 26px!important;border:2px solid #536d82!important;
+ background:radial-gradient(ellipse at 27% 12%,rgba(255,255,255,.27),transparent 28%),linear-gradient(145deg,#3b5367 0%,#1b2937 28%,#080e16 68%,#202e3d 100%)!important;
+ box-shadow:inset 0 2px 0 rgba(255,255,255,.13),inset 0 -13px 18px rgba(0,0,0,.38),0 14px 28px rgba(0,0,0,.48)!important;
+}
+html body.hub-home #bentoHero .th-code-bot .th-code-head:before{
+ inset:7px!important;border-radius:27px 27px 20px 20px!important;border:1px solid rgba(255,255,255,.11)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.08)!important;
+}
+html body.hub-home #bentoHero .th-code-bot .th-code-head:after{
+ left:16px!important;right:16px!important;top:6px!important;height:17px!important;border-radius:99px!important;
+ background:linear-gradient(90deg,transparent,rgba(255,255,255,.17),transparent)!important;transform:skewX(-24deg)!important;
+}
+html body.hub-home #bentoHero .th-code-bot .th-code-face{
+ left:12px!important;right:12px!important;top:26px!important;height:54px!important;overflow:hidden!important;border-radius:20px!important;
+ background:radial-gradient(ellipse at 50% 0%,rgba(61,158,255,.19),transparent 76%),linear-gradient(180deg,#03070c,#070d15)!important;
+ border:1px solid rgba(120,177,221,.34)!important;box-shadow:inset 0 4px 12px rgba(0,0,0,.65),0 0 0 2px rgba(0,0,0,.18)!important;
+}
+html body.hub-home #bentoHero .th-code-bot .th-code-eye{
+ top:17px!important;width:30px!important;height:10px!important;border-radius:99px!important;
+ background:linear-gradient(180deg,#e9fbff 0%,var(--cyan) 15%,var(--blue) 49%,var(--blue2) 100%)!important;
+ border:1px solid rgba(223,247,255,.6)!important;box-shadow:0 0 5px var(--cyan),0 0 14px var(--blue),0 0 27px var(--blue)!important;
+}
+html body.hub-home #bentoHero .th-code-bot .th-code-eye.left{left:15px!important}
+html body.hub-home #bentoHero .th-code-bot .th-code-eye.right{right:15px!important}
+html body.hub-home #bentoHero .th-code-bot .th-code-mouth{bottom:6px!important;width:25px!important;height:4px!important;border:0!important;border-radius:99px!important;transform:translateX(-50%)!important;background:var(--cyan)!important;box-shadow:0 0 9px var(--blue)!important}
+html body.hub-home #bentoHero .th-code-bot.is-speaking .th-code-mouth{height:9px!important;width:19px!important;border-radius:5px 5px 8px 8px!important;border:1px solid rgba(255,255,255,.25)!important}
+html body.hub-home #bentoHero .th-code-bot .th-code-badge{top:7px!important;right:9px!important;color:var(--cyan)!important;font:900 6px/1 Inter,Arial,sans-serif!important;letter-spacing:1px!important;text-shadow:0 0 8px var(--blue)!important;opacity:.95!important}
+html body.hub-home #bentoHero .th-code-bot .th-code-neck{
+ left:78px!important;top:116px!important;width:34px!important;height:19px!important;border:1px solid #51697d!important;border-radius:7px!important;
+ background:linear-gradient(90deg,#111a24,#405568 45%,#101822)!important;box-shadow:0 4px 7px rgba(0,0,0,.35)!important;
+}
+html body.hub-home #bentoHero .th-code-bot .th-code-body{
+ left:17px!important;top:128px!important;width:156px!important;height:112px!important;box-sizing:border-box!important;border-radius:29px 29px 24px 24px!important;
+ border:2px solid #435d72!important;
+ background:radial-gradient(ellipse at 50% 3%,rgba(255,255,255,.18),transparent 28%),linear-gradient(115deg,rgba(255,255,255,.05),transparent 25%,transparent 73%,rgba(255,255,255,.035)),linear-gradient(145deg,#32485b 0%,#182633 27%,#080d14 63%,#253849 100%)!important;
+ box-shadow:inset 0 2px 0 rgba(255,255,255,.13),inset 0 -14px 18px rgba(0,0,0,.42),0 15px 27px rgba(0,0,0,.42)!important;
+}
+html body.hub-home #bentoHero .th-code-bot .th-code-chest{
+ left:34px!important;top:14px!important;width:84px!important;height:74px!important;border-radius:17px!important;border:1px solid #536a7c!important;
+ background:linear-gradient(145deg,#152535,#080e16 67%,#172432)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.13),0 5px 10px rgba(0,0,0,.24)!important;
+}
+html body.hub-home #bentoHero .th-code-bot .th-code-logo{
+ top:7px!important;width:35px!important;height:31px!important;padding:3px!important;box-sizing:border-box!important;display:grid!important;place-items:center!important;
+ border-radius:8px!important;border:1px solid rgba(135,190,229,.5)!important;background:linear-gradient(145deg,#263c50,#060c14)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 0 13px rgba(66,186,255,.13)!important;color:#fff!important;
+}
+html body.hub-home #bentoHero .th-code-logo img{display:block!important;width:100%!important;height:100%!important;object-fit:cover!important;border-radius:5px!important}
+html body.hub-home #bentoHero .th-news-logo{font:900 8px/1 Inter,Arial,sans-serif!important;letter-spacing:-.5px!important;color:#f5efff!important}
+html body.hub-home #bentoHero .th-code-bot .th-code-panel{
+ bottom:7px!important;width:42px!important;height:19px!important;border-radius:7px!important;border:1px solid rgba(120,174,219,.34)!important;
+ background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(0,0,0,.13))!important;
+}
+html body.hub-home #bentoHero .th-code-bot .th-code-core{
+ bottom:10px!important;width:24px!important;height:4px!important;border-radius:99px!important;
+ background:linear-gradient(90deg,var(--blue2),var(--cyan),var(--blue2))!important;box-shadow:0 0 7px var(--blue),0 0 16px var(--blue)!important;
+}
+html body.hub-home #bentoHero .th-code-bot .th-code-arm{
+ top:134px!important;width:26px!important;height:86px!important;box-sizing:border-box!important;border-radius:15px!important;border:2px solid #465f73!important;
+ background:linear-gradient(100deg,#0a1017,#263a4d 48%,#101924)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.11),0 7px 13px rgba(0,0,0,.25)!important;
+}
+html body.hub-home #bentoHero .th-code-bot .th-code-arm.left{left:2px!important}
+html body.hub-home #bentoHero .th-code-bot .th-code-arm.right{right:2px!important}
+html body.hub-home #bentoHero .th-code-bot .th-code-arm:before{
+ top:31px!important;width:19px!important;height:19px!important;border-radius:50%!important;
+ background:radial-gradient(circle at 38% 33%,#546d80 0 15%,#101924 48%,#070c12 73%)!important;border:1px solid #536b7d!important;box-shadow:0 0 0 3px rgba(0,0,0,.2)!important;
+}
+html body.hub-home #bentoHero .th-code-bot .th-code-hand{
+ bottom:-13px!important;width:29px!important;height:25px!important;border-radius:10px 10px 14px 14px!important;border:2px solid #4a6579!important;
+ background:linear-gradient(145deg,#253b4d,#080d14)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.12)!important;
+}
+html body.hub-home #bentoHero .th-code-bot .th-code-hand:after{left:6px!important;right:6px!important;top:6px!important;height:3px!important;background:var(--blue)!important;box-shadow:0 7px var(--blue)!important;opacity:.95!important}
+html body.hub-home #bentoHero .th-code-bot .th-code-leg{
+ top:226px!important;width:37px!important;height:49px!important;box-sizing:border-box!important;border-radius:10px 10px 15px 15px!important;border:2px solid #40596e!important;
+ background:linear-gradient(100deg,#0a1017,#263b4e 49%,#0c121b)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 6px 12px rgba(0,0,0,.25)!important;
+}
+html body.hub-home #bentoHero .th-code-bot .th-code-leg.left{left:52px!important}
+html body.hub-home #bentoHero .th-code-bot .th-code-leg.right{right:52px!important}
+html body.hub-home #bentoHero .th-code-bot .th-code-foot{
+ bottom:-8px!important;width:48px!important;height:17px!important;border-radius:9px 13px 7px 7px!important;border:2px solid #40586c!important;
+ background:linear-gradient(145deg,#1c2b39,#060a10)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.1)!important;
+}
+html body.hub-home #bentoHero .th-code-bot .th-code-foot:after{
+ left:7px!important;right:7px!important;bottom:3px!important;height:3px!important;border-radius:99px!important;background:var(--blue)!important;box-shadow:0 0 9px var(--blue)!important;
+}
+html body.hub-home #bentoHero .th-announcer-bot .th-code-eye{
+ background:linear-gradient(180deg,#fff3ff,#dfc8ff 25%,#a98aff 55%,#6537d2)!important;box-shadow:0 0 6px #b18bff,0 0 18px rgba(163,119,255,.8)!important;
+}
+html body.hub-home #bentoHero .th-announcer-bot .th-code-mouth,
+html body.hub-home #bentoHero .th-announcer-bot .th-code-core,
+html body.hub-home #bentoHero .th-announcer-bot .th-code-hand:after,
+html body.hub-home #bentoHero .th-announcer-bot .th-code-foot:after{background:#b18bff!important;box-shadow:0 0 10px rgba(177,139,255,.8)!important}
+html body.hub-home #bentoHero .th-announcer-bot .th-code-antenna:before{background:#ffd36b!important;box-shadow:0 0 9px #ffd36b,0 0 19px rgba(255,211,107,.56)!important}
+html body.hub-home #bentoHero .th-code-bot .th-code-antenna{width:4px!important;height:26px!important;background:linear-gradient(180deg,#bcc6d2,#2a3542)!important;box-shadow:0 0 4px rgba(255,255,255,.15)!important}
+html body.hub-home #bentoHero .th-code-bot .th-code-antenna:before{width:12px!important;height:12px!important;top:-7px!important}
+html body.hub-home #bentoHero .th-code-bot:after{
+ width:116px!important;height:19px!important;bottom:0!important;filter:blur(8px)!important;
+ background:radial-gradient(ellipse,rgba(66,157,255,.28),transparent 72%)!important;
+}
+html body.hub-home #bentoHero .th-announcer-bot:after{background:radial-gradient(ellipse,rgba(177,139,255,.34),transparent 72%)!important}
+@keyframes thBotV2Float{0%,100%{transform:scale(.69) translateY(2px) rotate(0)}50%{transform:scale(.69) translateY(-7px) rotate(-.8deg)}}
+@keyframes thBotV2Talk{0%,100%{transform:scale(.69) translateY(0) rotate(0)}50%{transform:scale(.69) translateY(-3px) rotate(-.5deg)}}
+@media(max-width:760px){
+ html body.hub-home #bentoHero .th-hero-bot-visual{width:292px!important;height:270px!important}
+ html body.hub-home #bentoHero .th-bot-duo{grid-template-columns:116px 116px!important;gap:12px!important}
+ html body.hub-home #bentoHero .th-bot-slot{width:116px!important;height:260px!important}
+ html body.hub-home #bentoHero .th-bot-slot .th-code-bot{top:15px!important}
+ html body.hub-home #bentoHero .th-bot-slot .th-code-bot.is-idle{animation:thBotV2FloatMobile 3.7s ease-in-out infinite!important}
+ html body.hub-home #bentoHero .th-bot-slot .th-code-bot.is-speaking{animation:thBotV2TalkMobile .78s ease-in-out infinite alternate!important}
+}
+@keyframes thBotV2FloatMobile{0%,100%{transform:scale(.49) translateY(2px) rotate(0)}50%{transform:scale(.49) translateY(-5px) rotate(-.8deg)}}
+@keyframes thBotV2TalkMobile{0%,100%{transform:scale(.49) translateY(0) rotate(0)}50%{transform:scale(.49) translateY(-2px) rotate(-.5deg)}}
+@media(prefers-reduced-motion:reduce){
+ html body.hub-home #bentoHero .th-code-bot,html body.hub-home #bentoHero .th-code-bot *{animation:none!important;transition:none!important}
+}
