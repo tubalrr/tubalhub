@@ -1,20 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#07150d"/>
-      <stop offset="1" stop-color="#123c25"/>
-    </linearGradient>
-    <linearGradient id="mark" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#1dff91"/>
-      <stop offset="1" stop-color="#7d5aff"/>
-    </linearGradient>
-  </defs>
-  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
-  <rect x="64" y="64" width="384" height="384" rx="92" fill="none" stroke="#1dff91" stroke-opacity=".22" stroke-width="8"/>
-  <circle cx="256" cy="256" r="126" fill="#020604" stroke="url(#mark)" stroke-width="18"/>
-  <path d="M172 286c0-70 34-116 84-116s84 46 84 116" fill="none" stroke="#fff" stroke-width="22" stroke-linecap="round"/>
-  <path d="M194 286h124" stroke="#1dff91" stroke-width="22" stroke-linecap="round"/>
-  <circle cx="194" cy="286" r="18" fill="#1dff91"/>
-  <circle cx="318" cy="286" r="18" fill="#7d5aff"/>
-  <text x="256" y="355" text-anchor="middle" fill="#fff" font-family="Arial,Helvetica,sans-serif" font-size="48" font-weight="800" letter-spacing="4">TH</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+<title id="title">TUBAL HUB</title><desc id="desc">A bold TH monogram in an obsidian square with a red signal accent.</desc>
+<defs>
+ <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#191a20"/><stop offset="1" stop-color="#07080b"/></linearGradient>
+ <linearGradient id="red" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ff8178"/><stop offset="1" stop-color="#f0443d"/></linearGradient>
+ <linearGradient id="white" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fff"/><stop offset="1" stop-color="#cfd1d8"/></linearGradient>
+ <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="13"/></filter>
+</defs>
+<rect width="512" height="512" rx="116" fill="url(#bg)"/>
+<rect x="18" y="18" width="476" height="476" rx="101" fill="none" stroke="#fff" stroke-opacity=".09" stroke-width="2"/>
+<path d="M70 112V88Q70 66 92 66H420Q442 66 442 88V112" fill="none" stroke="url(#red)" stroke-width="8" stroke-linecap="round" opacity=".95"/>
+<circle cx="389" cy="124" r="22" fill="#ff514a" opacity=".28" filter="url(#glow)"/>
+<circle cx="389" cy="124" r="8" fill="url(#red)"/>
+<path d="M99 184H272V229H210V361H160V229H99Z" fill="url(#red)"/>
+<path d="M260 184H309V251H374V184H423V361H374V295H309V361H260Z" fill="url(#white)"/>
+<path d="M104 402H408" stroke="#fff" stroke-opacity=".14" stroke-width="3" stroke-linecap="round"/>
+<text x="256" y="448" text-anchor="middle" fill="#aeb0b9" font-family="Inter,Arial,sans-serif" font-size="22" font-weight="800" letter-spacing="9">TUBAL HUB</text>
 </svg>
