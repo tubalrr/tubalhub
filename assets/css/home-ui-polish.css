@@ -975,3 +975,28 @@ body.hub-home a:focus-visible,body.hub-home button:focus-visible,body.hub-home i
 @media(prefers-reduced-motion:reduce){
  body.hub-home *,body.hub-home *:before,body.hub-home *:after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
+
+/* Fix: remove the oversized white hero panel; keep the showcase in the dark brand system. */
+body.hub-home .th-hero-showcase{
+ background:linear-gradient(145deg,rgba(29,30,39,.98),rgba(15,16,22,.98))!important;
+ color:#f4f4f8!important;border:1px solid rgba(255,255,255,.12)!important;
+ box-shadow:0 28px 80px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.045)!important;
+ transform:none!important;
+}
+body.hub-home .th-hero-showcase:hover{transform:translateY(-3px)!important;border-color:rgba(255,81,74,.38)!important;box-shadow:0 34px 90px rgba(0,0,0,.5)!important}
+body.hub-home .th-showcase-topline,body.hub-home .th-showcase-bottom{color:#999ba9!important}
+body.hub-home .th-showcase-brand strong{color:#f7f7fa!important}
+body.hub-home .th-showcase-brand small{color:#a3a5b2!important}
+body.hub-home .th-showcase-divider,body.hub-home .th-showcase-bottom{border-color:rgba(255,255,255,.1)!important}
+body.hub-home .th-showcase-divider{background:rgba(255,255,255,.1)!important}
+body.hub-home .th-showcase-section-label{color:#858794!important}
+body.hub-home .th-showcase-item{color:#f4f4f7!important}
+body.hub-home .th-showcase-item:hover{background:rgba(255,255,255,.06)!important}
+body.hub-home .th-showcase-item strong{color:#f4f4f7!important}
+body.hub-home .th-showcase-item small{color:#9da0ad!important}
+body.hub-home .th-showcase-item>b{color:#ff827b!important}
+body.hub-home .th-showcase-wellness{background:rgba(74,171,101,.15)!important;color:#8be2a1!important}
+body.hub-home .th-showcase-shop{background:rgba(255,183,75,.14)!important;color:#ffd18a!important}
+body.hub-home .th-showcase-community{background:rgba(113,133,255,.16)!important;color:#b4c0ff!important}
+body.hub-home .th-showcase-live{background:rgba(53,177,103,.14)!important;color:#79dfa0!important}
+body.hub-home .th-showcase-mark{background:#090a0e!important;border:1px solid rgba(255,81,74,.32)!important}
