@@ -156,3 +156,54 @@ html body.hub-home #bentoHero .th-code-bot .th-code-arm.left{transform:rotate(2d
 html body.hub-home #bentoHero .th-code-bot .th-code-arm.right{transform:rotate(-2deg)!important}
 html body.hub-home #bentoHero .th-code-bot .th-code-leg.left,
 html body.hub-home #bentoHero .th-code-bot .th-code-leg.right{transform:none!important}
+
+/* Grounded pose: lock each bot to the same baseline and add a separate contact shadow. */
+html body.hub-home #bentoHero .th-hero-welcome-bot,
+html body.hub-home #bentoHero .th-hero-bot-visual,
+html body.hub-home #bentoHero .th-bot-duo,
+html body.hub-home #bentoHero .th-bot-slot{animation:none!important}
+html body.hub-home #bentoHero .th-hero-welcome-bot{bottom:10px!important}
+html body.hub-home #bentoHero .th-hero-bot-visual{align-items:end!important;align-self:end!important}
+html body.hub-home #bentoHero .th-bot-duo{align-items:end!important}
+html body.hub-home #bentoHero .th-bot-slot{
+ position:relative!important;align-self:end!important;isolation:isolate!important;height:300px!important;
+}
+html body.hub-home #bentoHero .th-bot-slot:after{
+ content:"";position:absolute;left:50%;bottom:2px;z-index:0;pointer-events:none;
+ width:108px;height:16px;transform:translateX(-50%);border-radius:50%;
+ background:radial-gradient(ellipse,rgba(0,0,0,.78) 0%,rgba(0,0,0,.46) 42%,transparent 73%);
+ filter:blur(3px);opacity:.95;
+}
+html body.hub-home #bentoHero .th-bot-slot .th-code-bot{
+ position:absolute!important;left:50%!important;top:auto!important;bottom:0!important;
+ width:190px!important;height:300px!important;margin-left:-95px!important;
+ transform:scale(.69) translateY(7px)!important;transform-origin:50% 100%!important;
+ animation:none!important;z-index:1!important;
+}
+html body.hub-home #bentoHero .th-bot-slot .th-code-bot.is-idle,
+html body.hub-home #bentoHero .th-bot-slot .th-code-bot.is-speaking,
+html body.hub-home #bentoHero .th-bot-slot .th-code-bot.is-greeting,
+html body.hub-home #bentoHero .th-bot-slot .th-code-bot.is-presenting{
+ top:auto!important;bottom:0!important;animation:none!important;
+ transform:scale(.69) translateY(7px)!important;transform-origin:50% 100%!important;
+}
+html body.hub-home #bentoHero .th-code-bot .th-code-arm.left{transform:rotate(2deg)!important}
+html body.hub-home #bentoHero .th-code-bot .th-code-arm.right{transform:rotate(-2deg)!important}
+html body.hub-home #bentoHero .th-code-bot .th-code-leg.left,
+html body.hub-home #bentoHero .th-code-bot .th-code-leg.right{transform:none!important}
+html body.hub-home #bentoHero .th-code-bot .th-code-mouth{transform:translateX(-50%)!important;animation:none!important}
+html body.hub-home #bentoHero .th-code-bot .th-code-eye{animation:none!important;transform:none!important;opacity:1!important}
+html body.hub-home #bentoHero .th-code-bot .th-code-antenna:before{animation:none!important;transform:translateX(-50%)!important;opacity:1!important}
+html body.hub-home #bentoHero .th-bot-slot .th-code-bot-shadow{display:none!important}
+@media(max-width:760px){
+ html body.hub-home #bentoHero .th-hero-bot-visual{height:270px!important}
+ html body.hub-home #bentoHero .th-bot-slot{height:260px!important}
+ html body.hub-home #bentoHero .th-bot-slot:after{width:84px;height:13px;bottom:1px}
+ html body.hub-home #bentoHero .th-bot-slot .th-code-bot,
+ html body.hub-home #bentoHero .th-bot-slot .th-code-bot.is-idle,
+ html body.hub-home #bentoHero .th-bot-slot .th-code-bot.is-speaking,
+ html body.hub-home #bentoHero .th-bot-slot .th-code-bot.is-greeting,
+ html body.hub-home #bentoHero .th-bot-slot .th-code-bot.is-presenting{
+  top:auto!important;bottom:0!important;transform:scale(.49) translateY(6px)!important;transform-origin:50% 100%!important;animation:none!important;
+ }
+}
