@@ -206,3 +206,338 @@ body.hub-home .sidebar-menu-trigger {
     transition-duration: .01ms !important;
   }
 }
+
+
+/* =========================================================
+   TUBAL HUB — VISIBLE HOMEPAGE REDESIGN v2
+   A stronger visual pass: editorial hero, glass navigation,
+   spacious section rhythm, and premium branch cards.
+   ========================================================= */
+body.hub-home {
+  --th-ui-bg: #08090d;
+  --th-ui-panel: #101218;
+  --th-ui-panel-raised: #151821;
+  --th-ui-border: rgba(255,255,255,.105);
+  --th-ui-red: #ff4d45;
+  --th-ui-muted: #969dac;
+  background:
+    radial-gradient(ellipse at 78% 0%, rgba(255,65,57,.095), transparent 31rem),
+    radial-gradient(ellipse at 22% 42%, rgba(67,94,160,.075), transparent 36rem),
+    #08090d !important;
+}
+body.hub-home .hub-main { background: transparent !important; }
+body.hub-home .hub-topbar {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 100 !important;
+  min-height: 76px !important;
+  padding: 12px clamp(16px,2.5vw,38px) !important;
+  background: rgba(8,9,13,.82) !important;
+  border-bottom: 1px solid rgba(255,255,255,.075) !important;
+  box-shadow: 0 12px 34px rgba(0,0,0,.18) !important;
+  backdrop-filter: blur(22px) saturate(145%) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(145%) !important;
+}
+body.hub-home .home-page {
+  width: min(100% - 48px, 1500px) !important;
+  max-width: 1500px !important;
+  margin-inline: auto !important;
+  padding-top: clamp(22px,3vw,42px) !important;
+  padding-bottom: 70px !important;
+}
+body.hub-home .home-page > .grid:first-child {
+  max-width: none !important;
+  margin-bottom: 24px !important;
+  gap: 22px !important;
+}
+
+/* Hero: deeper contrast, more breathing room, and a clear visual anchor. */
+body.hub-home #bentoHero.th-corp-hero {
+  min-height: 490px !important;
+  height: 490px !important;
+  border-radius: 28px !important;
+  border: 1px solid rgba(255,77,69,.34) !important;
+  background:
+    radial-gradient(ellipse at 82% 48%, rgba(255,77,69,.13), transparent 27%),
+    radial-gradient(ellipse at 54% 70%, rgba(91,119,201,.12), transparent 34%),
+    linear-gradient(118deg,#0d0f15 0%,#12141c 48%,#0b0c11 100%) !important;
+  box-shadow: 0 34px 90px rgba(0,0,0,.42), inset 0 1px rgba(255,255,255,.055) !important;
+}
+body.hub-home #bentoHero.th-corp-hero:before {
+  inset: 10px !important;
+  border-radius: 21px !important;
+  border-color: rgba(255,255,255,.055) !important;
+}
+body.hub-home #bentoHero.th-corp-hero .th-corp-hero-copy {
+  left: clamp(26px,4vw,64px) !important;
+  width: 42% !important;
+  max-width: 560px !important;
+}
+body.hub-home #bentoHero.th-corp-hero .th-corp-eyebrow {
+  padding: 8px 11px !important;
+  border: 1px solid rgba(125,157,255,.22) !important;
+  border-radius: 999px !important;
+  background: rgba(83,113,205,.09) !important;
+  font-size: 10px !important;
+  letter-spacing: 1.6px !important;
+}
+body.hub-home #bentoHero.th-corp-hero h1 {
+  font-size: clamp(56px,6.5vw,94px) !important;
+  line-height: .86 !important;
+  letter-spacing: -.075em !important;
+  text-shadow: 0 8px 38px rgba(255,255,255,.08) !important;
+}
+body.hub-home #bentoHero.th-corp-hero h2 {
+  max-width: 460px !important;
+  font-size: clamp(26px,3vw,42px) !important;
+  line-height: 1.02 !important;
+  letter-spacing: -.05em !important;
+}
+body.hub-home #bentoHero.th-corp-hero p {
+  max-width: 440px !important;
+  color: #b1b5c1 !important;
+  font-size: 15px !important;
+  line-height: 1.8 !important;
+}
+body.hub-home #bentoHero.th-corp-hero .bento-cta-row { gap: 12px !important; margin-top: 28px !important; }
+body.hub-home #bentoHero.th-corp-hero .th-corp-primary {
+  min-height: 48px !important;
+  padding: 0 19px !important;
+  border-radius: 13px !important;
+  background: linear-gradient(135deg,#ff655c,#ed302a) !important;
+  box-shadow: 0 12px 30px rgba(255,65,57,.25) !important;
+}
+body.hub-home #bentoHero.th-corp-hero .th-corp-secondary {
+  min-height: 48px !important;
+  padding: 0 18px !important;
+  border-radius: 13px !important;
+  background: rgba(255,255,255,.045) !important;
+  border-color: rgba(255,255,255,.14) !important;
+}
+
+/* Stronger surface hierarchy for every major section. */
+body.hub-home .th-corp-section,
+body.hub-home #mainContent > section,
+body.hub-home #mainContent > .bento-row > section {
+  border-radius: 24px !important;
+}
+body.hub-home .th-value-section {
+  padding: clamp(26px,3vw,42px) !important;
+  background:
+    radial-gradient(ellipse at 100% 0%, rgba(255,77,69,.09), transparent 34%),
+    linear-gradient(145deg,#12141a,#0e1015) !important;
+  border: 1px solid rgba(255,255,255,.09) !important;
+  box-shadow: 0 24px 65px rgba(0,0,0,.24), inset 0 1px rgba(255,255,255,.035) !important;
+}
+body.hub-home .th-section-head { margin-bottom: 28px !important; }
+body.hub-home .th-section-head h2 {
+  font-size: clamp(27px,3.2vw,40px) !important;
+  line-height: 1.08 !important;
+  letter-spacing: -.055em !important;
+}
+body.hub-home .th-value-grid { gap: 14px !important; }
+body.hub-home .th-value-grid article,
+body.hub-home .th-value-grid article + article {
+  min-height: 170px !important;
+  padding: 23px !important;
+  border: 1px solid rgba(255,255,255,.085) !important;
+  border-radius: 18px !important;
+  background: linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.015)) !important;
+  transition: transform .24s ease, border-color .24s ease, background .24s ease !important;
+}
+body.hub-home .th-value-grid article:hover {
+  transform: translateY(-4px) !important;
+  border-color: rgba(255,77,69,.3) !important;
+  background: linear-gradient(145deg,rgba(255,77,69,.075),rgba(255,255,255,.02)) !important;
+}
+body.hub-home .th-value-grid article > .th-value-footer span {
+  display: inline-flex !important;
+  width: 34px !important;
+  height: 34px !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 10px !important;
+  background: rgba(255,77,69,.11) !important;
+  color: #ff716a !important;
+}
+body.hub-home .th-branch-subsection { margin-top: 38px !important; }
+body.hub-home .th-branch-head { margin-bottom: 17px !important; }
+body.hub-home .th-branch-head h3 {
+  font-size: clamp(22px,2.5vw,30px) !important;
+  letter-spacing: -.045em !important;
+}
+body.hub-home .th-branch-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3,minmax(0,1fr)) !important;
+  gap: 14px !important;
+}
+body.hub-home .th-branch-card {
+  min-height: 170px !important;
+  padding: 22px !important;
+  border-radius: 18px !important;
+  background: linear-gradient(145deg,#191c25,#11131a) !important;
+  border: 1px solid rgba(255,255,255,.085) !important;
+  box-shadow: 0 14px 30px rgba(0,0,0,.15) !important;
+  transition: transform .24s ease, border-color .24s ease, box-shadow .24s ease !important;
+}
+body.hub-home .th-branch-card:hover {
+  transform: translateY(-5px) !important;
+  border-color: rgba(255,77,69,.38) !important;
+  box-shadow: 0 20px 42px rgba(0,0,0,.27),0 0 24px rgba(255,77,69,.06) !important;
+}
+body.hub-home .th-branch-icon {
+  width: 44px !important;
+  height: 44px !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 13px !important;
+  background: rgba(255,255,255,.055) !important;
+  border: 1px solid rgba(255,255,255,.07) !important;
+  font-size: 21px !important;
+}
+body.hub-home .th-branch-copy small { color: #9da5b5 !important; letter-spacing: 1.25px !important; }
+body.hub-home .th-branch-copy strong { color: #f5f6fa !important; font-size: 18px !important; letter-spacing: -.025em !important; }
+body.hub-home .th-branch-copy em { color: #9da3b1 !important; line-height: 1.65 !important; }
+body.hub-home .th-branch-arrow {
+  width: 32px !important; height: 32px !important;
+  display: grid !important; place-items: center !important;
+  border: 1px solid rgba(255,255,255,.1) !important;
+  border-radius: 50% !important; background: rgba(255,255,255,.035) !important;
+}
+body.hub-home .th-kapeng-highlight {
+  margin-top: 15px !important;
+  min-height: 100px !important;
+  border-radius: 18px !important;
+  border: 1px solid rgba(214,171,91,.22) !important;
+  background: linear-gradient(100deg,rgba(214,171,91,.09),rgba(255,255,255,.02) 70%) !important;
+}
+
+/* Three-brand cards become larger, less flat, and easier to scan. */
+body.hub-home #thBrandPillars {
+  padding: clamp(26px,3vw,42px) !important;
+  background: linear-gradient(145deg,rgba(18,20,27,.96),rgba(11,12,17,.96)) !important;
+  border: 1px solid rgba(255,255,255,.085) !important;
+  box-shadow: 0 24px 70px rgba(0,0,0,.23) !important;
+}
+body.hub-home .th-pillar-grid { gap: 16px !important; }
+body.hub-home .th-pillar {
+  min-height: 325px !important;
+  padding: 27px !important;
+  border-radius: 21px !important;
+  background:
+    radial-gradient(ellipse at 100% 0%,rgba(255,255,255,.045),transparent 46%),
+    linear-gradient(150deg,#171a22,#101218) !important;
+  border-color: rgba(255,255,255,.09) !important;
+  box-shadow: 0 18px 42px rgba(0,0,0,.2) !important;
+}
+body.hub-home .th-pillar:hover {
+  transform: translateY(-7px) !important;
+  border-color: rgba(255,77,69,.35) !important;
+  box-shadow: 0 25px 55px rgba(0,0,0,.32),0 0 30px rgba(255,77,69,.055) !important;
+}
+body.hub-home .th-pillar-icon {
+  width: 58px !important; height: 58px !important;
+  border-radius: 17px !important; font-size: 25px !important;
+  margin-bottom: 30px !important;
+  background: rgba(255,255,255,.055) !important;
+}
+body.hub-home .th-pillar h3 {
+  font-size: clamp(22px,2.2vw,28px) !important;
+  line-height: 1.1 !important; margin-top: 10px !important;
+}
+body.hub-home .th-pillar p { font-size: 13px !important; line-height: 1.8 !important; }
+body.hub-home .th-pillar-action {
+  min-height: 42px !important;
+  padding: 0 13px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+  border-radius: 11px !important;
+  border: 1px solid rgba(255,255,255,.09) !important;
+  background: rgba(255,255,255,.035) !important;
+}
+body.hub-home .th-pillar-action:hover { background: rgba(255,77,69,.1) !important; }
+
+/* Align the rest of the live dashboard modules with the new system. */
+body.hub-home #mainContent { gap: 22px !important; }
+body.hub-home .bento-row-real,
+body.hub-home #featuredGameReal { gap: 18px !important; }
+body.hub-home :is(.bento-real-card,.ctrlzone-featured-real,.glass-card-real,.bento-card-real,.featured-game-sponsored-grid-real) {
+  border-radius: 22px !important;
+  border-color: rgba(255,255,255,.085) !important;
+  box-shadow: 0 20px 48px rgba(0,0,0,.23), inset 0 1px rgba(255,255,255,.025) !important;
+}
+body.hub-home :is(.bento-real-card,.ctrlzone-featured-real,.glass-card-real):hover {
+  border-color: rgba(255,77,69,.24) !important;
+}
+body.hub-home :is(.bento-real-header h2,.ctrlzone-featured-header h3) {
+  letter-spacing: -.04em !important;
+}
+body.hub-home .search-box {
+  min-height: 42px !important;
+  border-radius: 13px !important;
+  background: rgba(255,255,255,.045) !important;
+  border: 1px solid rgba(255,255,255,.1) !important;
+}
+body.hub-home .auth-actions :is(.login-btn,.signup-btn) {
+  min-height: 40px !important;
+  border-radius: 11px !important;
+}
+body.hub-home .auth-actions .signup-btn {
+  background: linear-gradient(135deg,#ff655c,#e9322b) !important;
+  box-shadow: 0 8px 22px rgba(255,65,57,.18) !important;
+}
+
+/* Tablet and mobile: stack intentionally, not by shrinking desktop columns. */
+@media (max-width: 1050px) {
+  body.hub-home .home-page { width: min(100% - 32px,1500px) !important; }
+  body.hub-home #bentoHero.th-corp-hero { height: 680px !important; min-height: 680px !important; }
+  body.hub-home #bentoHero.th-corp-hero .th-corp-hero-copy {
+    top: 34px !important; left: 30px !important; transform: none !important;
+    width: calc(100% - 60px) !important; max-width: 620px !important;
+  }
+  body.hub-home #bentoHero.th-corp-hero .th-hero-bot-experience {
+    left: 5% !important; right: 5% !important; bottom: 10px !important; top: auto !important;
+    width: 90% !important; height: 330px !important;
+    grid-template-columns: minmax(110px,.55fr) minmax(0,1fr) !important;
+    transform: none !important;
+  }
+  body.hub-home .th-branch-grid { grid-template-columns: 1fr !important; }
+  body.hub-home .th-branch-card { min-height: 132px !important; }
+}
+@media (max-width: 700px) {
+  body.hub-home .home-page { width: calc(100% - 24px) !important; padding-top: 14px !important; }
+  body.hub-home .hub-topbar { min-height: 64px !important; padding: 9px 12px !important; }
+  body.hub-home #bentoHero.th-corp-hero {
+    height: 700px !important; min-height: 700px !important; border-radius: 22px !important;
+  }
+  body.hub-home #bentoHero.th-corp-hero .th-corp-hero-copy {
+    top: 28px !important; left: 20px !important; width: calc(100% - 40px) !important;
+  }
+  body.hub-home #bentoHero.th-corp-hero h1 { font-size: clamp(43px,12vw,64px) !important; }
+  body.hub-home #bentoHero.th-corp-hero h2 { font-size: clamp(24px,6.5vw,32px) !important; }
+  body.hub-home #bentoHero.th-corp-hero p { font-size: 13px !important; max-width: 420px !important; }
+  body.hub-home #bentoHero.th-corp-hero .bento-cta-row { gap: 9px !important; flex-wrap: wrap !important; }
+  body.hub-home #bentoHero.th-corp-hero .bento-cta-row > * { flex: 1 1 145px !important; }
+  body.hub-home #bentoHero.th-corp-hero .th-hero-bot-experience {
+    left: 10px !important; right: 10px !important; bottom: 8px !important; width: calc(100% - 20px) !important;
+    height: 285px !important; grid-template-columns: 86px minmax(0,1fr) !important; gap: 7px !important;
+  }
+  body.hub-home #bentoHero.th-corp-hero .th-bot-stage { min-height: 240px !important; height: 260px !important; }
+  body.hub-home #bentoHero.th-corp-hero .th-bot-showcase { height: 220px !important; padding: 11px !important; }
+  body.hub-home #bentoHero.th-corp-hero .th-bot-screen { min-height: 85px !important; height: 85px !important; }
+  body.hub-home .th-value-section,
+  body.hub-home #thBrandPillars { padding: 22px 16px !important; border-radius: 20px !important; }
+  body.hub-home .th-value-grid { grid-template-columns: 1fr !important; }
+  body.hub-home .th-value-grid article,
+  body.hub-home .th-value-grid article + article { min-height: 130px !important; padding: 19px !important; }
+  body.hub-home .th-pillar-grid { grid-template-columns: 1fr !important; }
+  body.hub-home .th-pillar { min-height: 275px !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body.hub-home #bentoHero.th-corp-hero:before,
+  body.hub-home .th-branch-card,
+  body.hub-home .th-pillar,
+  body.hub-home .th-value-grid article { transition: none !important; }
+}
