@@ -1,11 +1,12 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.3.48",
-  "build": "2026-10-10_grounded-welcome-bots",
-  "releasedAtReal": "2026-10-10T13:39:12.491Z",
+  "version": "1.3.49",
+  "build": "2026-10-10_homepage-redesign-v5",
+  "releasedAtReal": "2026-10-10T13:51:44.429Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.3.49 UI — Homepage redesign with direct-access navigation, cleaner section rhythm, differentiated brand cards, refined gaming and live-content panels, and duplicate branch section removal.",
     "v1.3.48 FIX — Welcome Bot and News Announcer are bottom-anchored to a fixed baseline with separate contact shadows; idle bobbing and limb motion are disabled.",
     "v1.3.47 UI — Welcome Bot and News Announcer now stay stationary: idle bobbing, blinking, antenna pulsing, arm gestures, and mouth motion are disabled.",
     "v1.3.46 UI — Refined the homepage Welcome Bot and News Announcer with premium armored shells, glass visors, brighter role-based lighting, an updated TUBAL HUB chest insignia, and improved speaking/idle motion.",
