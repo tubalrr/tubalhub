@@ -9,12 +9,15 @@
   };
 
   const apply = (theme)=>{
-    if(!THEMES.includes(theme)) theme = 'midnight';
+    const isHomepage = document.body?.classList.contains('hub-home');
+    // Keep the redesigned homepage on its fixed obsidian/crimson brand theme.
+    // Preserve a saved preference for other pages that still provide a theme selector.
+    if(isHomepage || !THEMES.includes(theme)) theme = 'midnight';
     const root = document.documentElement;
     root.setAttribute('data-theme', theme);
     document.body?.classList.remove('theme-midnight','theme-forest','theme-light');
     document.body?.classList.add('theme-' + theme);
-    localStorage.setItem(STORAGE_KEY, theme);
+    if(!isHomepage) localStorage.setItem(STORAGE_KEY, theme);
     document.querySelectorAll('[data-theme-btn]').forEach(btn=>{
       btn.classList.toggle('active', btn.dataset.themeBtn === theme);
       btn.setAttribute('aria-pressed', btn.dataset.themeBtn === theme ? 'true' : 'false');
