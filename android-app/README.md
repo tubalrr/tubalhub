@@ -13,7 +13,7 @@ This folder contains the first Android app shell for TUBAL HUB. Version 1 loads 
 5. Let Gradle Sync complete, then select the `app` run configuration and a connected Android device or emulator.
 6. Press **Run** to test the app.
 
-Android SDK Platform 35 is required by this initial project configuration.
+Android SDK Platform 36 is required by this initial project configuration.
 
 ## Current scope
 
