@@ -1,4 +1,4 @@
-const CACHE_NAME = "tubal-hub-shell-v1.3.29-chatfix";
+const CACHE_NAME = "tubal-hub-shell-v1.3.30-auditfix";
 const DYNAMIC_CACHE = "tubal-hub-content-v1";
 const CONTENT_TTL = 5 * 60 * 1000;
 const APP_SHELL = [
@@ -41,7 +41,7 @@ async function cachedContent(request){
   if(!hit)return null;
   const savedAt=Number(hit.headers.get("x-tubal-cached-at")||0);
   if(savedAt && Date.now()-savedAt <= CONTENT_TTL)return hit;
-  return hit;
+  return null;
 }
 
 async function networkContent(request){
