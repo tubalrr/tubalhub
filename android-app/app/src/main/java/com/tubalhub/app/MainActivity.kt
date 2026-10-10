@@ -242,12 +242,12 @@ class MainActivity : Activity() {
                 webView.loadUrl(lastUrl.ifBlank { HOME_URL })
             }
         }
+        retry.minWidth = dp(150)
         panel.addView(retry, LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT,
             dp(48)
         ).apply {
             gravity = Gravity.CENTER
-            minWidth = dp(150)
         })
 
         return panel
