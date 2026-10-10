@@ -1,0 +1,208 @@
+/* TUBAL HUB — UI Polish v1
+   Scoped homepage enhancement. Visual-only: preserves markup and application logic. */
+
+:root {
+  --th-ui-bg: #0a0b0f;
+  --th-ui-panel: rgba(20, 22, 29, .88);
+  --th-ui-line: rgba(255, 255, 255, .09);
+  --th-ui-muted: #a1a7b4;
+  --th-ui-red: #ff4942;
+  --th-ui-blue: #7aa2ff;
+}
+
+body.hub-home {
+  color: #f6f7fb;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+body.hub-home ::selection {
+  color: #fff;
+  background: rgba(255, 73, 66, .34);
+}
+
+body.hub-home a,
+body.hub-home button,
+body.hub-home input,
+body.hub-home select,
+body.hub-home textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+body.hub-home :is(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--th-ui-blue) !important;
+  outline-offset: 3px !important;
+}
+
+body.hub-home .hub-main,
+body.hub-home #mainContent,
+body.hub-home main {
+  min-width: 0;
+}
+
+body.hub-home .th-corp-hero {
+  isolation: isolate;
+  box-shadow:
+    0 26px 72px rgba(0, 0, 0, .38),
+    0 0 0 1px rgba(255, 255, 255, .025),
+    inset 0 1px rgba(255, 255, 255, .035) !important;
+}
+
+body.hub-home .th-corp-hero h1,
+body.hub-home .th-corp-hero h2 {
+  text-wrap: balance;
+}
+
+body.hub-home .th-corp-hero p,
+body.hub-home .th-section-head p,
+body.hub-home .th-pillar p {
+  text-wrap: pretty;
+}
+
+body.hub-home :is(.th-corp-primary, .th-corp-secondary, .bento-cta-row a, .bento-cta-row button) {
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 750;
+  transition:
+    transform .18s ease,
+    box-shadow .18s ease,
+    border-color .18s ease,
+    background-color .18s ease !important;
+}
+
+body.hub-home :is(.th-corp-primary, .th-corp-secondary, .bento-cta-row a, .bento-cta-row button):active {
+  transform: translateY(1px) scale(.99);
+}
+
+body.hub-home :is(.bento-card, .home-glass, .real-data-card, .game-feature-card, .feed-update-card, .music-real-card, .bento-real-card, .featured-website, .th-pillar) {
+  min-width: 0;
+  border: 1px solid var(--th-ui-line);
+  box-shadow: 0 12px 34px rgba(0, 0, 0, .18);
+}
+
+body.hub-home :is(.bento-card, .home-glass, .real-data-card, .game-feature-card, .feed-update-card, .music-real-card, .bento-real-card, .featured-website, .th-pillar):hover {
+  border-color: rgba(122, 162, 255, .24);
+}
+
+body.hub-home img {
+  max-width: 100%;
+}
+
+body.hub-home :is(.th-section-head, .bento-section-head) {
+  gap: 12px;
+}
+
+body.hub-home :is(.th-section-head h2, .bento-section-head h2) {
+  letter-spacing: -.035em;
+}
+
+body.hub-home .side-nav a,
+body.hub-home .tubal-branch-link {
+  min-height: 42px;
+}
+
+body.hub-home .sidebar-menu-trigger {
+  touch-action: manipulation;
+}
+
+@media (max-width: 900px) {
+  body.hub-home .th-corp-hero {
+    min-height: 0 !important;
+    padding: clamp(28px, 6vw, 48px) !important;
+  }
+
+  body.hub-home .th-corp-hero-copy {
+    max-width: 100%;
+    padding: 0 !important;
+  }
+
+  body.hub-home .th-corp-hero h1 {
+    font-size: clamp(42px, 9vw, 68px) !important;
+    line-height: .96 !important;
+  }
+
+  body.hub-home .th-hero-bot-experience {
+    position: relative !important;
+    inset: auto !important;
+    width: 100% !important;
+    max-width: 680px;
+    height: auto !important;
+    margin: 26px auto 0;
+    grid-template-columns: minmax(90px, .55fr) minmax(0, 1fr) !important;
+    transform: none !important;
+  }
+
+  body.hub-home .th-bot-stage {
+    height: auto !important;
+    min-height: 220px;
+  }
+
+  body.hub-home .th-bot-showcase {
+    height: auto !important;
+    min-height: 240px;
+    transform: none !important;
+  }
+}
+
+@media (max-width: 560px) {
+  body.hub-home .th-corp-hero {
+    padding: 24px 18px !important;
+    border-radius: 20px !important;
+  }
+
+  body.hub-home .th-corp-hero h1 {
+    font-size: clamp(38px, 12vw, 54px) !important;
+    letter-spacing: -.055em !important;
+  }
+
+  body.hub-home .th-corp-hero h2 {
+    font-size: clamp(23px, 7vw, 31px) !important;
+  }
+
+  body.hub-home .th-corp-hero p {
+    font-size: 14px !important;
+    line-height: 1.6 !important;
+  }
+
+  body.hub-home .bento-cta-row {
+    display: flex !important;
+    flex-wrap: wrap;
+    gap: 9px !important;
+  }
+
+  body.hub-home .bento-cta-row > * {
+    flex: 1 1 145px;
+  }
+
+  body.hub-home .th-hero-bot-experience {
+    grid-template-columns: minmax(76px, .42fr) minmax(0, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  body.hub-home .th-bot-stage {
+    min-height: 180px;
+  }
+
+  body.hub-home .th-bot-showcase {
+    min-height: 210px;
+    padding: 12px !important;
+  }
+
+  body.hub-home .th-bot-screen {
+    max-height: 118px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.hub-home *,
+  body.hub-home *::before,
+  body.hub-home *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+  }
+}
