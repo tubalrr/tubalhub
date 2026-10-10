@@ -427,7 +427,7 @@
         <div class="th-code-arm right"><span class="th-code-hand"></span></div>
         <div class="th-code-body">
           <div class="th-code-chest">
-            <div class="th-code-logo">${badge}</div>
+            <div class="th-code-logo">${role === "welcome" ? '<img src="assets/icons/tubal-hub-512.svg" alt="" loading="eager" decoding="async">' : '<span class="th-news-logo">NEWS</span>'}</div>
             <div class="th-code-panel"></div>
             <div class="th-code-core"></div>
           </div>
