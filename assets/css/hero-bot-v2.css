@@ -133,3 +133,26 @@ html body.hub-home #bentoHero .th-announcer-bot:after{background:radial-gradient
 @media(prefers-reduced-motion:reduce){
  html body.hub-home #bentoHero .th-code-bot,html body.hub-home #bentoHero .th-code-bot *{animation:none!important;transition:none!important}
 }
+
+/* Static character mode: no idle bobbing, blinking, limb gestures, mouth animation, or antenna pulsing. */
+html body.hub-home #bentoHero .th-code-bot,
+html body.hub-home #bentoHero .th-code-bot *,
+html body.hub-home #bentoHero .th-code-bot::before,
+html body.hub-home #bentoHero .th-code-bot::after,
+html body.hub-home #bentoHero .th-code-bot *::before,
+html body.hub-home #bentoHero .th-code-bot *::after{
+ animation:none!important;
+ transition:none!important;
+}
+html body.hub-home #bentoHero .th-bot-slot .th-code-bot.is-idle,
+html body.hub-home #bentoHero .th-bot-slot .th-code-bot.is-speaking,
+html body.hub-home #bentoHero .th-bot-slot .th-code-bot.is-greeting,
+html body.hub-home #bentoHero .th-bot-slot .th-code-bot.is-presenting{
+ animation:none!important;
+}
+html body.hub-home #bentoHero .th-code-bot .th-code-eye{opacity:1!important;transform:none!important}
+html body.hub-home #bentoHero .th-code-bot .th-code-mouth{height:4px!important;width:25px!important;border:0!important;transform:translateX(-50%)!important}
+html body.hub-home #bentoHero .th-code-bot .th-code-arm.left{transform:rotate(2deg)!important}
+html body.hub-home #bentoHero .th-code-bot .th-code-arm.right{transform:rotate(-2deg)!important}
+html body.hub-home #bentoHero .th-code-bot .th-code-leg.left,
+html body.hub-home #bentoHero .th-code-bot .th-code-leg.right{transform:none!important}
