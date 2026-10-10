@@ -7,10 +7,14 @@
   "id": "./",
   "display": "standalone",
   "orientation": "portrait-primary",
-  "background_color": "#06100a",
-  "theme_color": "#0a1f12",
+  "background_color": "#08090c",
+  "theme_color": "#08090c",
   "lang": "en-PH",
-  "categories": ["social", "games", "entertainment"],
+  "categories": [
+    "social",
+    "games",
+    "entertainment"
+  ],
   "icons": [
     {
       "src": "./assets/icons/tubal-hub-512.svg",
