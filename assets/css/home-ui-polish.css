@@ -1023,3 +1023,75 @@ body.hub-home #bentoHero .th-hero-bot-dialog{max-width:220px!important}
  body.hub-home #bentoHero .th-hero-welcome-bot{position:relative!important;right:auto!important;bottom:auto!important;align-self:center!important;margin-top:10px!important}
  body.hub-home #bentoHero .th-hero-bot-dialog{max-width:220px!important}
 }
+
+/* TUBAL HUB • Theme v2 — unified obsidian / crimson / soft-lilac system */
+body.hub-home{
+ --th-bg:#08090d;--th-panel:#101116;--th-panel-raised:#171820;--th-border:rgba(255,255,255,.085);
+ --th-text:#f6f6fa;--th-muted:#a2a4b2;--th-red:#ff514a;--th-lilac:#aaa4ff;
+ color:var(--th-text)!important;background-color:var(--th-bg)!important;
+ background-image:radial-gradient(ellipse at 80% -5%,rgba(255,81,74,.11),transparent 32%),radial-gradient(ellipse at 15% 30%,rgba(126,116,255,.065),transparent 28%),linear-gradient(180deg,#090a0e,#08090d 55%,#0b0c11)!important;
+}
+body.hub-home .hub-main{background:transparent!important}
+body.hub-home .hub-topbar{
+ background:rgba(15,16,22,.88)!important;border:1px solid var(--th-border)!important;
+ box-shadow:0 16px 48px rgba(0,0,0,.28),inset 0 1px rgba(255,255,255,.025)!important;
+}
+body.hub-home .hub-sidebar{
+ background:rgba(9,10,14,.96)!important;border-right:1px solid rgba(255,255,255,.075)!important;
+}
+body.hub-home .side-brand-copy strong{color:#fafaff!important;letter-spacing:.055em!important}
+body.hub-home .side-brand-copy small{color:#8e90a0!important;letter-spacing:.11em!important}
+body.hub-home .side-divider{background:rgba(255,255,255,.08)!important}
+body.hub-home .hub-sidebar .side-group-label{color:#858797!important;letter-spacing:.15em!important}
+body.hub-home .hub-sidebar .side-nav a{border-radius:12px!important;transition:background .18s,color .18s,transform .18s!important}
+body.hub-home .hub-sidebar .side-nav a.active{background:linear-gradient(100deg,rgba(255,81,74,.18),rgba(255,81,74,.035))!important;box-shadow:inset 0 0 0 1px rgba(255,81,74,.13)!important}
+body.hub-home .hub-sidebar .side-nav a.active .side-icon{color:#ff807a!important}
+body.hub-home .hub-sidebar .tubal-branch-link{border:1px solid transparent!important}
+body.hub-home .hub-sidebar .tubal-branch-link:hover{border-color:rgba(255,255,255,.075)!important;background:rgba(255,255,255,.035)!important}
+body.hub-home .home-page.bento-home-page{max-width:1560px!important}
+body.hub-home .th-corp-hero{
+ border-color:rgba(255,81,74,.45)!important;
+ background:radial-gradient(ellipse at 78% 72%,rgba(105,84,188,.15),transparent 32%),radial-gradient(ellipse at 20% 0%,rgba(255,81,74,.09),transparent 37%),linear-gradient(135deg,#121319 0%,#0c0d12 60%,#101016 100%)!important;
+ box-shadow:0 34px 95px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.04)!important;
+}
+body.hub-home .th-corp-hero-glow{opacity:.55!important}
+body.hub-home .th-corp-eyebrow{color:#ff827b!important}
+body.hub-home .th-corp-hero-copy h1{background:linear-gradient(100deg,#fff 8%,#e7e5f0 62%,#ffaaa5 100%);-webkit-background-clip:text;background-clip:text;color:transparent!important}
+body.hub-home .th-corp-hero-copy h2{color:#d9d9e5!important}
+body.hub-home .bento-primary-btn{background:linear-gradient(120deg,#ff6d64,#e63f39)!important;box-shadow:0 10px 28px rgba(255,65,57,.21)!important}
+body.hub-home .bento-secondary-btn{background:rgba(255,255,255,.045)!important;border-color:rgba(255,255,255,.13)!important}
+body.hub-home .th-corp-section,body.hub-home .glass-section,body.hub-home .glass-card-real{
+ background:linear-gradient(145deg,rgba(19,20,27,.97),rgba(12,13,18,.97))!important;
+ border-color:rgba(255,255,255,.075)!important;box-shadow:0 20px 60px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.025)!important;
+}
+body.hub-home .th-section-head h2,body.hub-home .featured-website-title-row h2{color:#f7f7fb!important}
+body.hub-home .th-section-head p,body.hub-home .th-branch-note{color:#a1a3b1!important}
+body.hub-home .th-target-grid-card,body.hub-home .th-pillar,body.hub-home .bento-real-card,body.hub-home .ctrlzone-featured-real{
+ background:linear-gradient(145deg,#191a22,#111218)!important;border-color:rgba(255,255,255,.085)!important;
+ box-shadow:0 12px 35px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.025)!important;
+}
+body.hub-home .th-target-grid-card:hover,body.hub-home .th-pillar:hover,body.hub-home .bento-real-card:hover,body.hub-home .ctrlzone-featured-real:hover{
+ border-color:rgba(255,81,74,.42)!important;box-shadow:0 22px 48px rgba(0,0,0,.27)!important;
+}
+body.hub-home .th-branch-card{background:linear-gradient(140deg,#191a21,#111218)!important;border-color:rgba(255,255,255,.09)!important}
+body.hub-home .th-branch-card:hover{border-color:rgba(255,81,74,.48)!important}
+body.hub-home .th-pillar-blue .th-pillar-icon{background:rgba(87,183,124,.13)!important}
+body.hub-home .th-pillar-gold .th-pillar-icon{background:rgba(255,186,76,.13)!important}
+body.hub-home .th-pillar-charcoal .th-pillar-icon{background:rgba(139,129,255,.14)!important}
+body.hub-home .featured-website,body.hub-home .featured-track-wrapper{border-color:rgba(255,255,255,.085)!important}
+body.hub-home .featured-viewall,body.hub-home .bento-real-viewall{color:#e9e9f0!important;background:#1a1b23!important}
+body.hub-home .glass-footer{background:linear-gradient(145deg,#111218,#090a0e)!important;border-color:rgba(255,255,255,.08)!important}
+body.hub-home .footer-subscribe-real{border-color:rgba(255,255,255,.08)!important}
+body.hub-home .footer-subscribe-real input{background:#0b0c11!important;border-color:rgba(255,255,255,.12)!important;color:#f6f6fa!important}
+body.hub-home .footer-subscribe-real button{background:linear-gradient(120deg,#ff6d64,#e63f39)!important;color:#fff!important}
+body.hub-home .side-logo-wrap{border-radius:13px!important;overflow:hidden!important}
+body.hub-home .side-logo-wrap img{object-fit:cover!important}
+body.hub-home .th-hero-bot-dialog{background:rgba(18,19,27,.96)!important;border-color:rgba(255,255,255,.1)!important;color:#f5f5f8!important;box-shadow:0 18px 48px rgba(0,0,0,.32)!important}
+body.hub-home .th-hero-bot-dialog p,body.hub-home .th-hero-bot-dialog small{color:#a7a9b6!important}
+body.hub-home .notification-btn .notification-badge{background:#ff514a!important}
+body.hub-home ::selection{background:rgba(255,81,74,.35)!important;color:#fff!important}
+body.hub-home :focus-visible{outline-color:#ff827b!important}
+@media(max-width:760px){
+ body.hub-home .th-corp-hero{background:radial-gradient(ellipse at 100% 100%,rgba(111,85,200,.12),transparent 40%),linear-gradient(145deg,#121319,#0b0c10)!important}
+ body.hub-home .th-corp-section,body.hub-home .glass-section,body.hub-home .glass-footer{box-shadow:0 12px 35px rgba(0,0,0,.2)!important}
+}
