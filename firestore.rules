@@ -404,7 +404,7 @@ service cloud.firestore {
         && request.resource.data.text is string
         && request.resource.data.text.size() <= 1000
         && request.resource.data.edited is bool
-        && request.resource.data.deleted is bool;
+        && (!('deleted' in request.resource.data) || request.resource.data.deleted is bool);
 
       allow delete: if realUser() && resource.data.uid == request.auth.uid;
     }

@@ -781,6 +781,8 @@ async function addComment(){
     await setDoc(commentRef,{postId,uid:item.uid,authorName:item.authorName,authorPhotoURL:item.authorPhotoURL,text:item.text,
       parentId:item.parentId,photoURL,edited:false,deleted:false,createdAt:serverTimestamp()});
     item.photoURL=photoURL;item.photoData="";item._pending=false;
+    const committed=(state.comments[postId]||[]).find(c=>c.id===item.id);
+    if(committed)Object.assign(committed,{photoURL,photoData:"",_pending:false});
     writeLocal("tubalhub-feed-comments",state.comments);
     state.commentCounts[postId]=Math.max(state.commentCounts[postId]||0,(state.comments[postId]||[]).length);
     writeLocal("tubalhub-feed-comment-counts",state.commentCounts);renderComments(postId);
@@ -806,11 +808,13 @@ function subscribeRemoteComments(postId){
   try{
     stopRemoteComments=onSnapshot(query(collection(db,"feedComments"),where("postId","==",postId),limit(200)),snap=>{
       const previous=state.comments[postId]||[],pending=previous.filter(c=>c._pending===true);
+      const pendingIds=new Set(pending.map(c=>c.id));
       const remote=snap.docs.map(s=>{
         const x=s.data();
         return {id:s.id,remoteId:s.id,postId,uid:x.uid||"",authorName:x.authorName||"Member",authorPhotoURL:x.authorPhotoURL||"",
           text:x.text||"",parentId:x.parentId||null,photoURL:x.photoURL||"",photoData:x.photoData||"",
-          edited:x.edited===true,deleted:x.deleted===true,createdAt:x.createdAt||Date.now(),_pending:false};
+          edited:x.edited===true,deleted:x.deleted===true,createdAt:x.createdAt||Date.now(),
+          _pending:s.metadata.hasPendingWrites||pendingIds.has(s.id)};
       });
       const remoteIds=new Set(remote.map(c=>c.id));
       state.comments[postId]=[...remote,...pending.filter(c=>!remoteIds.has(c.id))];
@@ -1072,7 +1076,11 @@ function setupUI(){
   document.getElementById("closeComments")?.addEventListener("click",closeComments);
   document.getElementById("commentInput")?.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();addComment()}});
   document.getElementById("commentComposer")?.addEventListener("submit",e=>{e.preventDefault();addComment()});
-  document.getElementById("sendComment")?.addEventListener("click",e=>{e.preventDefault();document.getElementById("commentComposer")?.requestSubmit?.()||addComment()});
+  document.getElementById("sendComment")?.addEventListener("click",e=>{
+    e.preventDefault();
+    const form=document.getElementById("commentComposer");
+    if(form?.requestSubmit)form.requestSubmit();else addComment();
+  });
   document.getElementById("emojiButton")?.addEventListener("click",()=>toggleEmoji(true));
   document.getElementById("emojiSearch")?.addEventListener("input",()=>{state.emojiOffset=0;renderEmojiGrid()});
   document.getElementById("emojiMore")?.addEventListener("click",()=>{state.emojiOffset+=240;renderEmojiGrid()});
