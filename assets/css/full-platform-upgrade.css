@@ -171,3 +171,9 @@ body:not(.hub-home):not(.feeds-page) .panel,
 body:not(.hub-home):not(.feeds-page) .profile-card {
   transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease;
 }
+
+
+/* Upgrade 28 — form labels and readable placeholders */
+label { line-height: 1.45; }
+input::placeholder, textarea::placeholder { opacity: .78; }
+input[type="checkbox"], input[type="radio"] { accent-color: var(--thx-red); }
