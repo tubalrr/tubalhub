@@ -142,3 +142,8 @@ body.feeds-page .feed-card img, body.feeds-page .post-media img {
 body.feeds-page .stories-row, body.feeds-page .stories-list {
   max-width: 100%; overscroll-behavior-x: contain; scrollbar-width: thin;
 }
+
+
+/* Upgrade 23 — post composer ergonomics */
+body.feeds-page .composer, body.feeds-page .feed-composer { min-width: 0; }
+body.feeds-page .composer textarea, body.feeds-page .feed-composer textarea { width: 100%; }
