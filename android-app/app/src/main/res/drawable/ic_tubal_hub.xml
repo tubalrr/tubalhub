@@ -1,16 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="48dp"
-    android:height="48dp"
-    android:viewportWidth="48"
-    android:viewportHeight="48">
+    android:width="512dp"
+    android:height="512dp"
+    android:viewportWidth="512"
+    android:viewportHeight="512">
+
+    <!-- Official TUBAL HUB mark: obsidian tile, red signal and TH monogram. -->
     <path
-        android:fillColor="#151620"
-        android:pathData="M4,4h40v40h-40z" />
+        android:fillColor="#0B0D17"
+        android:pathData="M116,0 H396 C460,0 512,52 512,116 V396 C512,460 460,512 396,512 H116 C52,512 0,460 0,396 V116 C0,52 52,0 116,0 Z" />
+
     <path
-        android:fillColor="#E0445D"
-        android:pathData="M9,10h30v6h-12v22h-6v-22h-12z" />
+        android:fillColor="#00000000"
+        android:strokeColor="#24FFFFFF"
+        android:strokeWidth="2"
+        android:pathData="M119,18 H393 C449,18 494,63 494,119 V393 C494,449 449,494 393,494 H119 C63,494 18,449 18,393 V119 C18,63 63,18 119,18 Z" />
+
     <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M31,26h8v6h-8z" />
+        android:fillColor="#00000000"
+        android:strokeColor="#FFF36C63"
+        android:strokeWidth="8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M70,112 V88 C70,76 80,66 92,66 H420 C432,66 442,76 442,88 V112" />
+
+    <path
+        android:fillColor="#FFF0443D"
+        android:pathData="M397,124 A8,8 0,1 0,381 124 A8,8 0,1 0,397 124 Z" />
+
+    <path
+        android:fillColor="#FFF36C63"
+        android:pathData="M99,184 H272 V229 H210 V361 H160 V229 H99 Z" />
+
+    <path
+        android:fillColor="#FFF5F5F8"
+        android:pathData="M260,184 H309 V251 H374 V184 H423 V361 H374 V295 H309 V361 H260 Z" />
+
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#24FFFFFF"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:pathData="M104,402 H408" />
 </vector>
