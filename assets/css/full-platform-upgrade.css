@@ -163,3 +163,11 @@ body.feeds-page .feed-card .media-wrap { overflow: hidden; border-radius: 16px; 
 /* Upgrade 26 — platform page content alignment */
 body:not(.hub-home):not(.feeds-page) main { min-width: 0; }
 body:not(.hub-home):not(.feeds-page) main img { height: auto; }
+
+
+/* Upgrade 27 — platform card interaction */
+body:not(.hub-home):not(.feeds-page) .card,
+body:not(.hub-home):not(.feeds-page) .panel,
+body:not(.hub-home):not(.feeds-page) .profile-card {
+  transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+}
