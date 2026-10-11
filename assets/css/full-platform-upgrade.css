@@ -1,0 +1,256 @@
+/* TUBAL HUB FULL PLATFORM UPGRADE — 50-step UI foundation.
+   Additive, responsive and accessible. Keep page-specific functionality intact. */
+:root {
+  --thx-bg: #09090d;
+  --thx-surface: #121219;
+  --thx-surface-raised: #191922;
+  --thx-line: rgba(255,255,255,.10);
+  --thx-text: #f6f6fa;
+  --thx-muted: #a4a4b3;
+  --thx-red: #ff4655;
+  --thx-red-soft: rgba(255,70,85,.13);
+  --thx-cyan: #46d9f5;
+  --thx-radius: 18px;
+  --thx-shadow: 0 18px 48px rgba(0,0,0,.24);
+}
+html { color-scheme: dark; scroll-behavior: smooth; }
+body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+img, video, canvas, svg { max-width: 100%; }
+button, input, textarea, select { font: inherit; }
+button, a, input, textarea, select { -webkit-tap-highlight-color: transparent; }
+a { text-underline-offset: .18em; }
+:focus-visible { outline: 3px solid var(--thx-cyan) !important; outline-offset: 3px !important; }
+::selection { background: rgba(255,70,85,.32); color: #fff; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
+
+
+/* Upgrade 02 — stable global page gutters */
+body.hub-home main, body.hub-home .main-content, body.feeds-page .feeds-shell { min-width: 0; }
+body.hub-home section, body.feeds-page section { scroll-margin-top: 90px; }
+
+
+/* Upgrade 03 — unified keyboard and pointer buttons */
+button, [role="button"], .btn, .button { touch-action: manipulation; }
+button:disabled, [aria-disabled="true"] { cursor: not-allowed !important; opacity: .55; }
+
+
+/* Upgrade 04 — safer long content */
+p, li, .description, .feed-content, .post-content { overflow-wrap: anywhere; }
+pre, code { max-width: 100%; overflow-x: auto; }
+
+
+/* Upgrade 05 — consistent form control sizing */
+input, textarea, select { max-width: 100%; box-sizing: border-box; }
+textarea { resize: vertical; min-height: 96px; }
+
+
+/* Upgrade 06 — visible hover feedback */
+@media (hover:hover) {
+  button:not(:disabled), [role="button"], .btn, .button { transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease; }
+  button:not(:disabled):hover, .btn:hover, .button:hover { filter: brightness(1.06); }
+}
+
+
+/* Upgrade 07 — shared premium panel edges */
+body.hub-home .card, body.hub-home .panel, body.feeds-page .feeds-panel,
+body.feeds-page .feed-card, body.feeds-page .story-card {
+  border-radius: var(--thx-radius);
+}
+
+
+/* Upgrade 08 — clear muted text contrast */
+body.hub-home .muted, body.hub-home .text-muted,
+body.feeds-page .muted, body.feeds-page .section-kicker { color: var(--thx-muted); }
+
+
+/* Upgrade 09 — accessible status labels */
+[role="status"], [role="alert"], .status-message, .toast { max-width: min(92vw, 520px); overflow-wrap: anywhere; }
+
+
+/* Upgrade 10 — responsive embeds */
+iframe, embed, object { max-width: 100%; }
+.video-container, .embed-container { width: 100%; min-width: 0; }
+
+
+/* Upgrade 11 — stable mobile viewport and safe areas */
+body.hub-home, body.feeds-page { min-height: 100vh; min-height: 100dvh; }
+body.hub-home footer, body.feeds-page footer { padding-bottom: max(18px, env(safe-area-inset-bottom)); }
+
+
+/* Upgrade 12 — homepage content width rhythm */
+body.hub-home .section, body.hub-home .content-section { min-width: 0; }
+body.hub-home .section-heading { text-wrap: balance; }
+
+
+/* Upgrade 13 — premium homepage surfaces */
+body.hub-home .card, body.hub-home .panel, body.hub-home .feature-card {
+  background-image: linear-gradient(145deg, rgba(255,255,255,.035), transparent 58%);
+  border-color: var(--thx-line);
+  box-shadow: 0 12px 34px rgba(0,0,0,.16);
+}
+
+
+/* Upgrade 14 — homepage headings */
+body.hub-home h1, body.hub-home h2, body.hub-home h3 { text-wrap: balance; }
+body.hub-home h1 { line-height: 1.04; }
+
+
+/* Upgrade 15 — homepage link affordance */
+body.hub-home main a:not(.btn):not(.button) { text-decoration-thickness: .08em; }
+body.hub-home main a:not(.btn):not(.button):hover { color: var(--thx-cyan); }
+
+
+/* Upgrade 16 — homepage action buttons */
+body.hub-home .btn, body.hub-home .button, body.hub-home button {
+  border-radius: 12px;
+  min-height: 40px;
+}
+
+
+/* Upgrade 17 — feeds card width safety */
+body.feeds-page .feeds-layout, body.feeds-page .feed-list,
+body.feeds-page .feeds-main, body.feeds-page .feeds-rail { min-width: 0; }
+
+
+/* Upgrade 18 — feeds typography hierarchy */
+body.feeds-page .feeds-shell h1 { letter-spacing: -.035em; line-height: 1.06; }
+body.feeds-page .feeds-shell h2, body.feeds-page .feeds-shell h3 { line-height: 1.2; }
+
+
+/* Upgrade 19 — feeds interaction consistency */
+body.feeds-page button, body.feeds-page .feed-action,
+body.feeds-page .feed-filter button { cursor: pointer; }
+body.feeds-page button:focus-visible, body.feeds-page a:focus-visible { border-radius: 10px; }
+
+
+/* Upgrade 20 — feed search field */
+body.feeds-page input[type="search"], body.feeds-page input[type="text"] {
+  min-width: 0; border-radius: 14px; transition: border-color .18s ease, box-shadow .18s ease;
+}
+body.feeds-page input:focus-visible { border-color: var(--thx-cyan); }
+
+
+/* Upgrade 21 — feed image rendering */
+body.feeds-page .feed-card img, body.feeds-page .post-media img {
+  display: block; max-width: 100%; height: auto; object-fit: cover;
+}
+
+
+/* Upgrade 22 — story rail scrolling */
+body.feeds-page .stories-row, body.feeds-page .stories-list {
+  max-width: 100%; overscroll-behavior-x: contain; scrollbar-width: thin;
+}
+
+
+/* Upgrade 23 — post composer ergonomics */
+body.feeds-page .composer, body.feeds-page .feed-composer { min-width: 0; }
+body.feeds-page .composer textarea, body.feeds-page .feed-composer textarea { width: 100%; }
+
+
+/* Upgrade 24 — filter chips wrap safely on small screens */
+body.feeds-page .feed-filters, body.feeds-page .filter-row, body.feeds-page .feed-toolbar {
+  min-width: 0; max-width: 100%;
+}
+
+
+/* Upgrade 25 — feed media corners */
+body.feeds-page .post-media, body.feeds-page .feed-media,
+body.feeds-page .feed-card .media-wrap { overflow: hidden; border-radius: 16px; }
+
+
+/* Upgrade 26 — platform page content alignment */
+body:not(.hub-home):not(.feeds-page) main { min-width: 0; }
+body:not(.hub-home):not(.feeds-page) main img { height: auto; }
+
+
+/* Upgrade 27 — platform card interaction */
+body:not(.hub-home):not(.feeds-page) .card,
+body:not(.hub-home):not(.feeds-page) .panel,
+body:not(.hub-home):not(.feeds-page) .profile-card {
+  transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+}
+
+
+/* Upgrade 28 — form labels and readable placeholders */
+label { line-height: 1.45; }
+input::placeholder, textarea::placeholder { opacity: .78; }
+input[type="checkbox"], input[type="radio"] { accent-color: var(--thx-red); }
+
+
+/* Upgrade 29 — tables do not break mobile layouts */
+.table-wrap, .table-responsive { max-width: 100%; overflow-x: auto; overscroll-behavior-x: contain; }
+table { border-collapse: collapse; }
+
+
+/* Upgrade 30 — consistent separators */
+hr { border: 0; border-top: 1px solid var(--thx-line); }
+body.hub-home hr, body.feeds-page hr { border-color: var(--thx-line); }
+
+
+/* Upgrade 31 — compact mobile rhythm */
+@media (max-width: 600px) {
+  body.hub-home h1 { letter-spacing: -.035em; }
+  body.hub-home .card, body.hub-home .panel { border-radius: 16px; }
+  body.feeds-page .feeds-shell { padding-left: 12px; padding-right: 12px; }
+}
+
+
+/* Upgrade 32 — mobile tap targets */
+@media (max-width: 700px) {
+  body.hub-home nav a, body.feeds-page nav a { min-height: 40px; }
+  body.hub-home button, body.feeds-page button { min-height: 40px; }
+}
+
+
+/* Upgrade 33 — prevent horizontal page overflow */
+body.hub-home, body.feeds-page { overflow-x: clip; }
+body.hub-home .hub-sidebar, body.hub-home .hub-topbar { min-width: 0; }
+
+
+/* Upgrade 34 — small-screen navigation wrapping */
+@media (max-width: 480px) {
+  body:not(.feeds-page) header nav { max-width: 100%; }
+  body:not(.feeds-page) header nav a { white-space: nowrap; }
+}
+
+
+/* Upgrade 35 — avoid card content overflow */
+body.hub-home .card > *, body.hub-home .panel > *,
+body.feeds-page .feeds-panel > * { min-width: 0; }
+
+
+/* Upgrade 36 — readable empty states */
+.empty-state, .no-results, [data-empty-state] { text-align: center; padding: clamp(22px, 5vw, 48px); }
+.empty-state p, .no-results p { color: var(--thx-muted); line-height: 1.65; }
+
+
+/* Upgrade 37 — dialogs respect small screens */
+[role="dialog"], dialog, .modal-content { max-width: min(94vw, 760px); max-height: min(88dvh, 900px); overflow: auto; }
+
+
+/* Upgrade 38 — toast layer safe positioning */
+.toast, .th-toast, .notification-toast { z-index: 10000; }
+@media (max-width: 600px) {
+  .toast, .th-toast, .notification-toast { left: 12px; right: 12px; max-width: none; }
+}
+
+
+/* Upgrade 39 — skeleton shimmer reduced motion compatible */
+.skeleton, .loading-skeleton { border-radius: 10px; background-color: rgba(255,255,255,.06); }
+@media (prefers-reduced-motion: no-preference) {
+  .skeleton, .loading-skeleton { background-image: linear-gradient(100deg, transparent 25%, rgba(255,255,255,.07) 45%, transparent 65%); background-size: 220% 100%; animation: thx-shimmer 1.6s linear infinite; }
+}
+@keyframes thx-shimmer { to { background-position-x: -220%; } }
+
+
+/* Upgrade 40 — scrollbars for dark platform surfaces */
+body.hub-home, body.feeds-page { scrollbar-color: rgba(255,70,85,.55) rgba(255,255,255,.05); scrollbar-width: thin; }
+
+
+/* Upgrade 41 — final mobile overflow guard */
+@media (max-width: 380px) {
+  body.hub-home .container, body.hub-home .content, body.feeds-page .feeds-shell { max-width: 100%; }
+  body.hub-home h1, body.feeds-page h1 { overflow-wrap: anywhere; }
+}
