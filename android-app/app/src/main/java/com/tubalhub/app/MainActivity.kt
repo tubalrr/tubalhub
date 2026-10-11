@@ -53,6 +53,7 @@ class MainActivity : Activity() {
 
     private lateinit var contentColumn: LinearLayout
     private lateinit var bottomNavigation: LinearLayout
+    private lateinit var dashboardScroll: ScrollView
     private var activeTab: String = "Home"
     private var exploreFilter: String = ""
 
@@ -122,17 +123,19 @@ class MainActivity : Activity() {
             setBackgroundColor(COLOR_BG)
         }
 
-        val scroll = ScrollView(this).apply {
+        dashboardScroll = ScrollView(this).apply {
             isFillViewport = true
             clipToPadding = false
             overScrollMode = View.OVER_SCROLL_NEVER
+            isVerticalScrollBarEnabled = false
+            contentDescription = "TUBAL HUB dashboard content"
         }
 
         contentColumn = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(dp(20), dp(12), dp(20), dp(28))
         }
-        scroll.addView(contentColumn, FrameLayout.LayoutParams(
+        dashboardScroll.addView(contentColumn, FrameLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         ))
@@ -145,7 +148,7 @@ class MainActivity : Activity() {
             elevation = dp(14).toFloat()
         }
 
-        root.addView(scroll, LinearLayout.LayoutParams(
+        root.addView(dashboardScroll, LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f
         ))
         root.addView(bottomNavigation, LinearLayout.LayoutParams(
@@ -155,8 +158,7 @@ class MainActivity : Activity() {
 
         renderTab(activeTab)
 
-        // The launcher now opens Community Feeds directly from SplashActivity.
-        // Keep this native dashboard available for explicit future navigation only.
+        // The splash screen opens this native dashboard after its short animation.
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -183,6 +185,16 @@ class MainActivity : Activity() {
             else -> buildExplore(contentColumn)
         }
         renderBottomNavigation()
+        dashboardScroll.post { dashboardScroll.scrollTo(0, 0) }
+    }
+
+    @Deprecated("Use AndroidX OnBackPressedDispatcher when migrating to AndroidX")
+    override fun onBackPressed() {
+        if (activeTab != "Home") {
+            renderTab("Home")
+        } else {
+            super.onBackPressed()
+        }
     }
 
     private fun addBrandHeader(parent: LinearLayout) {
