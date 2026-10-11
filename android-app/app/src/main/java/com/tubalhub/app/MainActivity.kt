@@ -651,9 +651,15 @@ class MainActivity : Activity() {
         }
     }
 
+    private fun currentAppVersion(): String =
+        runCatching { packageManager.getPackageInfo(packageName, 0).versionName }
+            .getOrNull()
+            ?.takeIf { it.isNotBlank() }
+            ?: "1.0.0"
+
     private fun openPage(title: String, route: String) {
         if (route == "UPDATE_CHECK") {
-            AppUpdateChecker.check(this, "1.2.8")
+            AppUpdateChecker.check(this, currentAppVersion())
             return
         }
         val cleanRoute = route.trimStart('/')
