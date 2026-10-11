@@ -372,3 +372,56 @@ body.theme-light .tubal-msg-close{background:rgba(39,74,51,.04)!important;border
 .tubal-msg-row-meta{display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:5px;min-width:28px}.tubal-msg-row-meta time{font-size:9px;color:#63766e;white-space:nowrap}.tubal-msg-unread{min-width:19px;height:19px;display:grid;place-items:center;padding:0 5px;border-radius:999px;background:linear-gradient(135deg,#1dff91,#7d5aff);color:#07130c;font:900 9px/1 Inter,system-ui,sans-serif;box-shadow:0 0 14px rgba(29,255,145,.22)}.tubal-msg-user.has-unread{border-left:3px solid #1dff91!important;background:linear-gradient(90deg,rgba(29,255,145,.13),rgba(125,90,255,.07))!important;box-shadow:0 10px 28px rgba(29,255,145,.08)!important}.tubal-msg-user.has-unread .tubal-msg-user-copy b{color:#fff!important}.tubal-msg-mini-status{position:absolute;right:-1px;bottom:-1px;width:10px;height:10px;border:2px solid #06100b;border-radius:50%;background:#000}.tubal-msg-user.is-online .tubal-msg-mini-status{background:#ff1a1a;border-color:#fff;box-shadow:0 0 9px rgba(255,26,26,.68)}.tubal-msg-preview{display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.tubal-msg-empty span{display:block}.tubal-msg-user-copy{min-width:0;flex:1}
 
 .tubal-msg-open-loading{display:grid;place-items:center;min-height:120px;color:#81948b;font-size:11px}.tubal-msg-user{cursor:pointer!important;touch-action:manipulation;-webkit-user-select:none;user-select:none}.tubal-msg-user *{cursor:pointer!important}.tubal-msg-user.has-unread{border-left:3px solid #1dff91!important}
+
+
+/* TUBAL HUB OFFICIAL BRAND MARK — 2026-10-11
+   Retire the legacy green/cyan launcher. Keep unread and presence indicators.
+*/
+.tubal-msg-launcher{
+  width:60px!important;
+  height:60px!important;
+  padding:5px!important;
+  border:1px solid rgba(255,255,255,.18)!important;
+  border-radius:18px!important;
+  background:linear-gradient(145deg,#20202A 0%,#0B0D17 68%,#27121B 100%)!important;
+  box-shadow:0 10px 30px rgba(0,0,0,.30),0 0 0 1px rgba(224,68,93,.13),0 8px 24px rgba(224,68,93,.15)!important;
+  color:#fff!important;
+}
+.tubal-msg-launcher:hover{
+  border-color:rgba(255,132,151,.65)!important;
+  box-shadow:0 14px 36px rgba(0,0,0,.36),0 0 28px rgba(224,68,93,.22)!important;
+}
+.tubal-msg-brand-mark{
+  display:block!important;
+  width:48px!important;
+  height:48px!important;
+  flex:0 0 48px!important;
+  object-fit:contain!important;
+  border-radius:13px!important;
+  pointer-events:none!important;
+  user-select:none!important;
+  filter:drop-shadow(0 2px 5px rgba(0,0,0,.28))!important;
+}
+.tubal-msg-launcher .tubal-msg-icon{display:none!important}
+.tubal-msg-launcher .tubal-msg-status{
+  right:-4px!important;
+  bottom:-4px!important;
+  border:2px solid #0B0D17!important;
+}
+.tubal-msg-launcher .tubal-msg-badge{
+  border-color:#0B0D17!important;
+}
+@media(max-width:760px){
+  .tubal-msg-launcher{
+    width:56px!important;
+    height:56px!important;
+    padding:4px!important;
+    border-radius:16px!important;
+  }
+  .tubal-msg-brand-mark{
+    width:46px!important;
+    height:46px!important;
+    flex-basis:46px!important;
+    border-radius:12px!important;
+  }
+}
