@@ -852,10 +852,20 @@ async function loadRemoteReactions(){
   }catch(e){console.warn(e)}
 }
 function setupHubContent(){
+  // Auth state can fire more than once. Keep a single live listener for the page.
+  if(stopHub)return;
   try{
     stopHub=subscribeHubPosts((items,snap)=>{
+      const hadOlderPages=state.hubOlderPosts.length>0;
+      const latestIds=new Set(items.map(item=>item.id));
       state.hubPosts=items;
-      if(!state.hubPageCursor&&snap?.docs?.length)state.hubPageCursor=snap.docs.at(-1);
+      // The live window can roll forward; remove rows now covered by that window.
+      state.hubOlderPosts=state.hubOlderPosts.filter(item=>!latestIds.has(item.id));
+      // Before older pages are loaded, keep the paging cursor aligned to the newest
+      // live window. Once older pages exist, preserve the older-page cursor.
+      if(!hadOlderPages&&snap?.docs?.length){
+        state.hubPageCursor=snap.docs.at(-1)||null;
+      }
       if(snap?.docs)state.hubHasMore=snap.docs.length===FEED_LOAD_LIMITS.hubPosts;
       buildFeed(true);
     });
