@@ -37,7 +37,22 @@ jobs:
         with:
           gradle-version: "8.13"
 
-      - name: Build release APK
+      - name: Configure release signing
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          if [ -z "$KEYSTORE_BASE64" ]; then
+            echo "::error::Add ANDROID_KEYSTORE_BASE64 and the matching signing secrets before publishing installable updates."
+            exit 1
+          fi
+          echo "$KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/tubalhub-release.jks"
+
+      - name: Build signed release APK
+        env:
+          ANDROID_KEYSTORE_PATH: ${{ runner.temp }}/tubalhub-release.jks
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: gradle --no-daemon --stacktrace -p android-app clean assembleRelease
 
       - name: Resolve release tag
@@ -55,7 +70,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           TAG_NAME: ${{ steps.release.outputs.tag }}
         run: |
-          APK="android-app/app/build/outputs/apk/release/app-release-unsigned.apk"
+          APK="android-app/app/build/outputs/apk/release/app-release.apk"
           test -f "$APK"
           if gh release view "$TAG_NAME" >/dev/null 2>&1; then
             gh release upload "$TAG_NAME" "$APK" --clobber
