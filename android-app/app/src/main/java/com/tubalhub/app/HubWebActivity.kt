@@ -56,6 +56,18 @@ class HubWebActivity : Activity() {
         val root = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             setBackgroundColor(Color.WHITE)
+            // Android 15+ enforces edge-to-edge for newer target SDKs.
+            // Keep the native toolbar below the status bar and the WebView above
+            // the system navigation area instead of drawing content underneath them.
+            setOnApplyWindowInsetsListener { view, insets ->
+                view.setPadding(
+                    0,
+                    insets.systemWindowInsetTop,
+                    0,
+                    insets.systemWindowInsetBottom
+                )
+                insets
+            }
         }
 
         val toolbar = LinearLayout(this).apply {
