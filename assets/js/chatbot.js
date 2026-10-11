@@ -4,13 +4,13 @@
 */
 (function(){
   if(document.getElementById('tubalAiBot')) return;
-  const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('/tubalhub/assets/css/chatbot.css',window.location.origin).href;document.head.appendChild(css);
+  const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('/tubalhub/assets/css/chatbot.css?v=20261011-brandmark1',window.location.origin).href;document.head.appendChild(css);
   const panel=document.createElement('div');panel.id='tubalAiBot';panel.className='tubal-bot-panel';panel.innerHTML=
     '<div class="tubal-bot-head"><div class="tubal-bot-avatar">🤖</div><div><div class="tubal-bot-title">TUBAL HUB AI</div><div class="tubal-bot-status">● Online assistant</div></div><button class="tubal-bot-close" aria-label="Close">×</button></div>'+
     '<div class="tubal-bot-messages" id="tubalBotMessages"></div>'+
     '<div class="tubal-bot-quick"><button data-q="What is TUBAL HUB?">What is TUBAL HUB?</button><button data-q="What is CTRLZONE?">CTRLZONE</button><button data-q="What is Payapang Isip?">Payapang Isip</button><button data-q="How do I register?">Register</button></div>'+
     '<form class="tubal-bot-form"><input id="tubalBotInput" autocomplete="off" placeholder="Ask TUBAL HUB AI..."><button aria-label="Send">➤</button></form>';
-  const launch=document.createElement('button');launch.className='tubal-bot-launch';launch.id='tubalBotLaunch';launch.setAttribute('aria-label','Open TUBAL HUB AI');launch.textContent='🤖';
+  const launch=document.createElement('button');launch.className='tubal-bot-launch';launch.id='tubalBotLaunch';launch.setAttribute('aria-label','Open TUBAL HUB AI');launch.innerHTML='<img class="tubal-bot-brand-mark" src="/tubalhub/assets/icons/tubal-hub-512.svg" alt="" draggable="false" aria-hidden="true">';
   document.body.append(panel,launch);
   const messages=panel.querySelector('#tubalBotMessages'),input=panel.querySelector('#tubalBotInput');
   /* ADMIN MODERATION ACCESS — visible only to the configured admin account. */
