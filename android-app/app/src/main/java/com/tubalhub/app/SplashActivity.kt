@@ -177,7 +177,7 @@ class SplashActivity : Activity() {
             contentDescription = "Check for TUBAL HUB Android updates"
             setPadding(dp(16), dp(12), dp(16), dp(12))
             setOnClickListener {
-                AppUpdateChecker.check(this@SplashActivity, "1.2.8")
+                AppUpdateChecker.check(this@SplashActivity, currentAppVersion())
             }
         }
         root.addView(updateLink, FrameLayout.LayoutParams(
@@ -225,6 +225,12 @@ class SplashActivity : Activity() {
 
         handler.postDelayed(launchDashboard, SPLASH_DURATION_MS)
     }
+
+    private fun currentAppVersion(): String =
+        runCatching { packageManager.getPackageInfo(packageName, 0).versionName }
+            .getOrNull()
+            ?.takeIf { it.isNotBlank() }
+            ?: "1.0.0"
 
     private fun buildTopBar(): View {
         val bar = LinearLayout(this).apply {
