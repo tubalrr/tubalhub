@@ -3,7 +3,7 @@ name: Android Build Check
 on:
   workflow_dispatch:
   push:
-    branches: [main]
+    branches: [main, android-upgrade-100-commits]
     paths:
       - "android-app/**"
       - ".github/workflows/android-build.yml"
