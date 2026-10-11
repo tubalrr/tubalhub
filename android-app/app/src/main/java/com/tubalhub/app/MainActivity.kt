@@ -70,7 +70,7 @@ class MainActivity : Activity() {
 
     private val spaces = listOf(
         Feature("✦", "LifeHub", "Plan your day", "lifehub/index.html", COLOR_SOFT_PURPLE),
-        Feature("☁", "Payapang Isip", "Pause and reset", "pages/payapang-isip.html", COLOR_SOFT_GREEN),
+        Feature("☁", "Peace of Mind", "Breathing & wellness tools", "pages/payapang-isip.html", COLOR_SOFT_GREEN),
         Feature("▣", "CTRLZONE", "Gaming & creator tools", "pages/ctrlzone.html", COLOR_SOFT_BLUE),
         Feature("☕", "Kapeng Barako", "Coffee shop", "pages/kapeng-barako.html", COLOR_SOFT_GOLD),
         Feature("◎", "Community", "People & conversations", "pages/community.html", COLOR_SOFT_RED),

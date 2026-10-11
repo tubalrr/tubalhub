@@ -1,10 +1,10 @@
 # TUBAL HUB Android
 
-## Current Android version — v1.3.1
+## Current Android version — v1.3.2
 
-- Adds a persistent Light/Dark appearance control to the native dashboard.
-- Remembers each dashboard tab's scroll position and restores it after switching tabs or recreating the Activity.
-- Adds a native Share TUBAL HUB action using Android's system share sheet.
+- Uses the current **Peace of Mind** brand name on the native dashboard.
+- Keeps the existing page path for compatibility with the deployed website.
+- Includes the persistent Light/Dark appearance control, per-tab scroll restoration, and native Share TUBAL HUB action.
 - Fixes the dashboard root reference in the native Activity layout setup.
 
 
