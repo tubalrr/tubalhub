@@ -29,3 +29,8 @@ a { text-underline-offset: .18em; }
 /* Upgrade 02 — stable global page gutters */
 body.hub-home main, body.hub-home .main-content, body.feeds-page .feeds-shell { min-width: 0; }
 body.hub-home section, body.feeds-page section { scroll-margin-top: 90px; }
+
+
+/* Upgrade 03 — unified keyboard and pointer buttons */
+button, [role="button"], .btn, .button { touch-action: manipulation; }
+button:disabled, [aria-disabled="true"] { cursor: not-allowed !important; opacity: .55; }
