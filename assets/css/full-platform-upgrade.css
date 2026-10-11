@@ -107,3 +107,8 @@ body.hub-home .btn, body.hub-home .button, body.hub-home button {
   border-radius: 12px;
   min-height: 40px;
 }
+
+
+/* Upgrade 17 — feeds card width safety */
+body.feeds-page .feeds-layout, body.feeds-page .feed-list,
+body.feeds-page .feeds-main, body.feeds-page .feeds-rail { min-width: 0; }
