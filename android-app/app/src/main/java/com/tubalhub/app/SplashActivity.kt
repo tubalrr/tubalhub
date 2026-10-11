@@ -44,7 +44,10 @@ class SplashActivity : Activity() {
     private val launchDashboard = Runnable {
         if (!isFinishing && !isDestroyed && !navigationStarted) {
             navigationStarted = true
-            startActivity(Intent(this, MainActivity::class.java))
+            startActivity(Intent(this, HubWebActivity::class.java).apply {
+                putExtra(HubWebActivity.EXTRA_TITLE, "Community Feeds")
+                putExtra(HubWebActivity.EXTRA_URL, "https://tubalrr.github.io/tubalhub/pages/feeds.html")
+            })
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
             finish()
         }
