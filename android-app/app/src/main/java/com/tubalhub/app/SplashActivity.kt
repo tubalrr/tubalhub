@@ -30,7 +30,7 @@ import kotlin.random.Random
 class SplashActivity : Activity() {
 
     companion object {
-        private const val SPLASH_DURATION_MS = 6_200L
+        private const val SPLASH_DURATION_MS = 1_800L
         private const val COLOR_INK = 0xFF0B0D17.toInt()
         private const val COLOR_ACCENT = 0xFFE0445D.toInt()
         private const val COLOR_ACCENT_LIGHT = 0xFFFF91A2.toInt()
@@ -44,10 +44,7 @@ class SplashActivity : Activity() {
     private val launchDashboard = Runnable {
         if (!isFinishing && !isDestroyed && !navigationStarted) {
             navigationStarted = true
-            startActivity(Intent(this, HubWebActivity::class.java).apply {
-                putExtra(HubWebActivity.EXTRA_TITLE, "Community Feeds")
-                putExtra(HubWebActivity.EXTRA_URL, "https://tubalrr.github.io/tubalhub/pages/feeds.html")
-            })
+            startActivity(Intent(this, MainActivity::class.java))
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
             finish()
         }
