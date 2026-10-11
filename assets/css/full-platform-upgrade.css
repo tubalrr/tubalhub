@@ -39,3 +39,8 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed !important; opacit
 /* Upgrade 04 — safer long content */
 p, li, .description, .feed-content, .post-content { overflow-wrap: anywhere; }
 pre, code { max-width: 100%; overflow-x: auto; }
+
+
+/* Upgrade 05 — consistent form control sizing */
+input, textarea, select { max-width: 100%; box-sizing: border-box; }
+textarea { resize: vertical; min-height: 96px; }
