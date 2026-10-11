@@ -738,3 +738,41 @@ body.feeds-page::before { display: none !important; }
     border-radius:9px!important;
   }
 }
+
+
+/* MOBILE HEADER HOTFIX — prevent inherited fixed-height clipping. */
+.feeds-header{
+  height:auto!important;
+  min-height:0!important;
+  max-height:none!important;
+  box-sizing:border-box!important;
+  overflow:visible!important;
+  align-content:initial!important;
+}
+.feeds-header .brand,
+.feeds-header nav{
+  position:relative!important;
+  inset:auto!important;
+  transform:none!important;
+}
+.feeds-header nav{
+  height:auto!important;
+  min-height:36px!important;
+  max-height:none!important;
+  overflow-x:auto!important;
+  overflow-y:hidden!important;
+  align-self:stretch!important;
+}
+.feeds-header nav a{
+  height:auto!important;
+  min-height:36px!important;
+  max-height:none!important;
+  line-height:1.2!important;
+  padding-top:10px!important;
+  padding-bottom:10px!important;
+}
+@media(max-width:560px){
+  .feeds-header{row-gap:10px!important;padding:10px 12px!important}
+  .feeds-header nav{min-height:38px!important;padding:0 0 3px!important}
+  .feeds-header nav a{min-height:35px!important;padding:9px 10px!important;line-height:1.2!important}
+}
