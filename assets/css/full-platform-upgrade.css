@@ -82,3 +82,11 @@ body.hub-home footer, body.feeds-page footer { padding-bottom: max(18px, env(saf
 /* Upgrade 12 — homepage content width rhythm */
 body.hub-home .section, body.hub-home .content-section { min-width: 0; }
 body.hub-home .section-heading { text-wrap: balance; }
+
+
+/* Upgrade 13 — premium homepage surfaces */
+body.hub-home .card, body.hub-home .panel, body.hub-home .feature-card {
+  background-image: linear-gradient(145deg, rgba(255,255,255,.035), transparent 58%);
+  border-color: var(--thx-line);
+  box-shadow: 0 12px 34px rgba(0,0,0,.16);
+}
