@@ -24,3 +24,8 @@ a { text-underline-offset: .18em; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
+
+
+/* Upgrade 02 — stable global page gutters */
+body.hub-home main, body.hub-home .main-content, body.feeds-page .feeds-shell { min-width: 0; }
+body.hub-home section, body.feeds-page section { scroll-margin-top: 90px; }
