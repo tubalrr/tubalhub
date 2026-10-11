@@ -104,3 +104,94 @@ body.feeds-page .feed-notice {
     scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important;
   }
 }
+
+
+/* POST SOCIAL AREA — keep reaction summary and Like/Comment/Share controls
+   visibly inside the same card as the post. This block is loaded last. */
+body.feeds-page .post-card {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  overflow: hidden !important;
+  isolation: isolate !important;
+  padding: 0 !important;
+}
+body.feeds-page .post-card > .post-head,
+body.feeds-page .post-card > .post-body,
+body.feeds-page .post-card > .post-social-container {
+  position: relative !important;
+  inset: auto !important;
+  flex: 0 0 auto !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+  transform: none !important;
+}
+body.feeds-page .post-card > .post-social-container {
+  display: flex !important;
+  flex-direction: column !important;
+  align-self: stretch !important;
+  gap: 0 !important;
+  background: inherit !important;
+  border-top: 1px solid rgba(120, 120, 130, .18) !important;
+  border-radius: 0 0 inherit inherit !important;
+  overflow: hidden !important;
+}
+body.feeds-page .post-card > .post-social-container > .reaction-zone {
+  display: block !important;
+  position: static !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 10px 17px 7px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  box-sizing: border-box !important;
+}
+body.feeds-page .post-card > .post-social-container > .post-footer {
+  display: block !important;
+  position: static !important;
+  inset: auto !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 7px 17px 13px !important;
+  border: 0 !important;
+  border-top: 1px solid rgba(120, 120, 130, .12) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  transform: none !important;
+  box-sizing: border-box !important;
+}
+body.feeds-page .post-card > .post-social-container .post-stats {
+  margin: 0 !important;
+}
+body.feeds-page .post-card > .post-social-container .post-actions {
+  display: grid !important;
+  position: static !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding-top: 8px !important;
+  border-top: 0 !important;
+  background: transparent !important;
+  box-sizing: border-box !important;
+}
+body.feeds-page .post-card > .post-social-container .post-action {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+}
+@media (max-width: 600px) {
+  body.feeds-page .post-card > .post-social-container > .reaction-zone {
+    padding: 9px 12px 6px !important;
+  }
+  body.feeds-page .post-card > .post-social-container > .post-footer {
+    padding: 6px 12px 10px !important;
+  }
+}
