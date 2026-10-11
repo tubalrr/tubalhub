@@ -66,6 +66,7 @@ class MainActivity : Activity() {
     private var activeTab: String = "Home"
     private var exploreFilter: String = ""
     private var lastHomeBackPressAt: Long = 0L
+    private val tabScrollPositions = mutableMapOf<String, Int>()
 
     private val spaces = listOf(
         Feature("✦", "LifeHub", "Plan your day", "lifehub/index.html", COLOR_SOFT_PURPLE),
@@ -124,6 +125,12 @@ class MainActivity : Activity() {
         super.onCreate(savedInstanceState)
         darkModeEnabled = prefs.getBoolean("dark_mode", false)
         activeTab = savedInstanceState?.getString("active_tab") ?: "Home"
+        listOf("Home", "Explore", "Community", "Profile", "Feeds").forEach { tab ->
+            val key = "scroll_$tab"
+            if (savedInstanceState?.containsKey(key) == true) {
+                tabScrollPositions[tab] = savedInstanceState.getInt(key, 0)
+            }
+        }
 
         window.statusBarColor = COLOR_INK
         window.navigationBarColor = COLOR_INK
@@ -165,7 +172,7 @@ class MainActivity : Activity() {
         dashboardRoot.addView(bottomNavigation, LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT, dp(72)
         ))
-        setContentView(root)
+        setContentView(dashboardRoot)
 
         renderTab(activeTab)
 
@@ -174,11 +181,21 @@ class MainActivity : Activity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putString("active_tab", activeTab)
+        if (::dashboardScroll.isInitialized) {
+            tabScrollPositions[activeTab] = dashboardScroll.scrollY
+        }
+        tabScrollPositions.forEach { (tab, scrollY) ->
+            outState.putInt("scroll_$tab", scrollY)
+        }
         super.onSaveInstanceState(outState)
     }
 
     private fun renderTab(tab: String) {
+        if (::dashboardScroll.isInitialized) {
+            tabScrollPositions[activeTab] = dashboardScroll.scrollY
+        }
         activeTab = tab
+        val restoreScrollY = tabScrollPositions[tab] ?: 0
         contentColumn.removeAllViews()
         addBrandHeader(contentColumn)
 
@@ -196,7 +213,7 @@ class MainActivity : Activity() {
             else -> buildExplore(contentColumn)
         }
         renderBottomNavigation()
-        dashboardScroll.post { dashboardScroll.scrollTo(0, 0) }
+        dashboardScroll.post { dashboardScroll.scrollTo(0, restoreScrollY) }
     }
 
     @Deprecated("Use AndroidX OnBackPressedDispatcher when migrating to AndroidX")
@@ -512,6 +529,9 @@ class MainActivity : Activity() {
             }
         }
 
+        addSectionHeader(parent, "Invite someone", "Share the hub with a friend")
+        addQuickAction(parent, "↗", "Share TUBAL HUB", "Send the hub link using your apps", "SHARE_HUB", COLOR_SOFT_BLUE)
+
         addSectionHeader(parent, "Appearance", "Personalize the native dashboard")
         addAppearanceCard(parent)
 
@@ -747,6 +767,15 @@ class MainActivity : Activity() {
     private fun openPage(title: String, route: String) {
         if (route == "UPDATE_CHECK") {
             AppUpdateChecker.check(this, currentAppVersion())
+            return
+        }
+        if (route == "SHARE_HUB") {
+            val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                type = "text/plain"
+                putExtra(Intent.EXTRA_SUBJECT, "TUBAL HUB — One space. Many possibilities.")
+                putExtra(Intent.EXTRA_TEXT, "Explore TUBAL HUB: $BASE_URL")
+            }
+            startActivity(Intent.createChooser(shareIntent, "Share TUBAL HUB"))
             return
         }
         val cleanRoute = route.trimStart('/')

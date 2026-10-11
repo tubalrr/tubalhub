@@ -1,10 +1,11 @@
 # TUBAL HUB Android
 
-## Current Android version — v1.3.0
+## Current Android version — v1.3.1
 
 - Adds a persistent Light/Dark appearance control to the native dashboard.
-- Dark mode updates dashboard surfaces, text, borders and accent contrast without changing web pages.
-- Keeps pinned spaces, recent destinations and the selected appearance saved locally on the device.
+- Remembers each dashboard tab's scroll position and restores it after switching tabs or recreating the Activity.
+- Adds a native Share TUBAL HUB action using Android's system share sheet.
+- Fixes the dashboard root reference in the native Activity layout setup.
 
 
 TUBAL HUB for Android has its own **native mobile dashboard** built with Android Views. It is deliberately different from the desktop website: the Home, Explore, Community and Profile tabs are native app screens, with mobile-first cards and bottom navigation. Existing website pages are opened only when a destination is tapped.
