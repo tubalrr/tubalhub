@@ -56,6 +56,7 @@ class MainActivity : Activity() {
     private lateinit var dashboardScroll: ScrollView
     private var activeTab: String = "Home"
     private var exploreFilter: String = ""
+    private var lastHomeBackPressAt: Long = 0L
 
     private val spaces = listOf(
         Feature("✦", "LifeHub", "Plan your day", "lifehub/index.html", COLOR_SOFT_PURPLE),
@@ -192,8 +193,20 @@ class MainActivity : Activity() {
     override fun onBackPressed() {
         if (activeTab != "Home") {
             renderTab("Home")
-        } else {
+            return
+        }
+
+        // Avoid leaving the dashboard on a single accidental edge-swipe/back gesture.
+        val now = System.currentTimeMillis()
+        if (now - lastHomeBackPressAt < 2_000L) {
             super.onBackPressed()
+        } else {
+            lastHomeBackPressAt = now
+            android.widget.Toast.makeText(
+                this,
+                "Press Back again to exit TUBAL HUB",
+                android.widget.Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
