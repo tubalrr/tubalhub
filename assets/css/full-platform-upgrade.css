@@ -235,3 +235,11 @@ body.feeds-page .feeds-panel > * { min-width: 0; }
 @media (max-width: 600px) {
   .toast, .th-toast, .notification-toast { left: 12px; right: 12px; max-width: none; }
 }
+
+
+/* Upgrade 39 — skeleton shimmer reduced motion compatible */
+.skeleton, .loading-skeleton { border-radius: 10px; background-color: rgba(255,255,255,.06); }
+@media (prefers-reduced-motion: no-preference) {
+  .skeleton, .loading-skeleton { background-image: linear-gradient(100deg, transparent 25%, rgba(255,255,255,.07) 45%, transparent 65%); background-size: 220% 100%; animation: thx-shimmer 1.6s linear infinite; }
+}
+@keyframes thx-shimmer { to { background-position-x: -220%; } }
