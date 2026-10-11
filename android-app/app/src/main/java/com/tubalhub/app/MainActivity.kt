@@ -64,6 +64,50 @@ class MainActivity : Activity() {
         Feature("⌑", "Shop", "Browse digital goods", "pages/shop.html", COLOR_SOFT_PURPLE)
     )
 
+    private val moreSpaces = listOf(
+        Feature("▤", "News & updates", "Stories and announcements", "pages/news.html", COLOR_SOFT_BLUE),
+        Feature("✉", "Messages", "Open hub conversations", "pages/chat.html", COLOR_SOFT_GREEN),
+        Feature("▣", "Gaming Zone", "Find games and highlights", "pages/gaming-zone.html", COLOR_SOFT_RED),
+        Feature("◷", "Events", "What's happening in the hub", "pages/events.html", COLOR_SOFT_GOLD),
+        Feature("?", "Help & guides", "Get help and learn the platform", "pages/help.html", COLOR_SOFT_PURPLE),
+        Feature("♙", "About TUBAL HUB", "Learn about the platform", "pages/about.html", COLOR_SOFT_BLUE),
+        Feature("⚙", "Settings", "Account and experience preferences", "pages/settings.html", COLOR_SOFT_PURPLE),
+        Feature("♙", "My Profile", "Your profile and account", "pages/profile-tubal.html", COLOR_SOFT_GREEN)
+    )
+
+    private val allFeatures: List<Feature>
+        get() = spaces + moreSpaces
+
+    private val prefs by lazy {
+        getSharedPreferences("tubal_hub_mobile", MODE_PRIVATE)
+    }
+
+    private fun favoriteRoutes(): Set<String> =
+        prefs.getStringSet("favorite_routes", emptySet())?.toSet() ?: emptySet()
+
+    private fun recentFeatures(): List<Feature> {
+        val routes = prefs.getString("recent_routes", "").orEmpty()
+            .split('\n')
+            .filter { it.isNotBlank() }
+        return routes.mapNotNull { route -> allFeatures.firstOrNull { it.route == route } }
+            .distinctBy { it.route }
+            .take(4)
+    }
+
+    private fun toggleFavorite(feature: Feature) {
+        val updated = favoriteRoutes().toMutableSet()
+        if (!updated.add(feature.route)) updated.remove(feature.route)
+        prefs.edit().putStringSet("favorite_routes", updated).apply()
+    }
+
+    private fun rememberFeature(route: String) {
+        val updated = (listOf(route) + prefs.getString("recent_routes", "").orEmpty()
+            .split('\n')
+            .filter { it.isNotBlank() && it != route })
+            .take(4)
+        prefs.edit().putString("recent_routes", updated.joinToString("\n")).apply()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activeTab = savedInstanceState?.getString("active_tab") ?: "Home"
