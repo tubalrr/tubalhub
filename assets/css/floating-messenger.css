@@ -24,3 +24,56 @@
 #tubalMsgCall{display:grid !important;place-items:center;width:36px !important;height:36px !important;flex:0 0 36px !important;padding:0 !important;border:1px solid #247a4e !important;background:#082218 !important;color:#baffca !important;border-radius:10px !important;font-size:18px !important;line-height:1 !important;cursor:pointer !important;pointer-events:auto !important;visibility:visible !important;opacity:1 !important;position:relative !important;z-index:100 !important;touch-action:manipulation !important}
 #tubalMsgCall:hover{background:#0d6236 !important;border-color:#54ff8a !important}
 @media(max-width:760px){#tubalMsgCall{width:38px !important;height:38px !important;flex-basis:38px !important;font-size:19px !important}}
+
+
+/* TUBAL HUB OFFICIAL BRAND MARK — 2026-10-11
+   Retire the legacy green/cyan launcher. Keep unread and presence indicators.
+*/
+.tubal-msg-launcher{
+  width:60px!important;
+  height:60px!important;
+  padding:5px!important;
+  border:1px solid rgba(255,255,255,.18)!important;
+  border-radius:18px!important;
+  background:linear-gradient(145deg,#20202A 0%,#0B0D17 68%,#27121B 100%)!important;
+  box-shadow:0 10px 30px rgba(0,0,0,.30),0 0 0 1px rgba(224,68,93,.13),0 8px 24px rgba(224,68,93,.15)!important;
+  color:#fff!important;
+}
+.tubal-msg-launcher:hover{
+  border-color:rgba(255,132,151,.65)!important;
+  box-shadow:0 14px 36px rgba(0,0,0,.36),0 0 28px rgba(224,68,93,.22)!important;
+}
+.tubal-msg-brand-mark{
+  display:block!important;
+  width:48px!important;
+  height:48px!important;
+  flex:0 0 48px!important;
+  object-fit:contain!important;
+  border-radius:13px!important;
+  pointer-events:none!important;
+  user-select:none!important;
+  filter:drop-shadow(0 2px 5px rgba(0,0,0,.28))!important;
+}
+.tubal-msg-launcher .tubal-msg-icon{display:none!important}
+.tubal-msg-launcher .tubal-msg-status{
+  right:-4px!important;
+  bottom:-4px!important;
+  border:2px solid #0B0D17!important;
+}
+.tubal-msg-launcher .tubal-msg-badge{
+  border-color:#0B0D17!important;
+}
+@media(max-width:760px){
+  .tubal-msg-launcher{
+    width:56px!important;
+    height:56px!important;
+    padding:4px!important;
+    border-radius:16px!important;
+  }
+  .tubal-msg-brand-mark{
+    width:46px!important;
+    height:46px!important;
+    flex-basis:46px!important;
+    border-radius:12px!important;
+  }
+}
