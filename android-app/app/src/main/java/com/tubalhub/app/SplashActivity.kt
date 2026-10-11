@@ -168,6 +168,31 @@ class SplashActivity : Activity() {
             bottomMargin = dp(25)
         })
 
+        val updateLink = TextView(this).apply {
+            text = "CHECK FOR UPDATES"
+            textSize = 10f
+            letterSpacing = 0.12f
+            typeface = Typeface.create("sans-serif-medium", Typeface.BOLD)
+            gravity = Gravity.CENTER
+            setTextColor(0xFFFF91A2.toInt())
+            isClickable = true
+            isFocusable = true
+            contentDescription = "Check for TUBAL HUB Android updates"
+            setPadding(dp(16), dp(12), dp(16), dp(12))
+            setOnClickListener {
+                AppUpdateChecker.check(this@SplashActivity, "1.2.7")
+            }
+        }
+        root.addView(updateLink, FrameLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            Gravity.BOTTOM
+        ).apply {
+            leftMargin = dp(28)
+            rightMargin = dp(28)
+            bottomMargin = dp(54)
+        })
+
         setContentView(root)
 
         // Staggered entrances make the first launch feel intentional, not static.
