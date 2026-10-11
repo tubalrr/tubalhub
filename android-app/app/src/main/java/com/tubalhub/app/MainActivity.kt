@@ -227,7 +227,23 @@ class MainActivity : Activity() {
 
         addHero(parent)
 
-        addSectionHeader(parent, "Your spaces", "Six ways to get started")
+        val favorites = allFeatures.filter { it.route in favoriteRoutes() }
+        if (favorites.isNotEmpty()) {
+            addSectionHeader(parent, "Pinned spaces", "Your personal quick-launch shelf")
+            favorites.forEach { feature ->
+                addQuickAction(parent, feature.icon, feature.title, feature.caption, feature.route, feature.accent)
+            }
+        }
+
+        val recent = recentFeatures()
+        if (recent.isNotEmpty()) {
+            addSectionHeader(parent, "Pick up where you left off", "Recently opened spaces")
+            recent.take(3).forEach { feature ->
+                addQuickAction(parent, feature.icon, feature.title, feature.caption, feature.route, feature.accent)
+            }
+        }
+
+        addSectionHeader(parent, "Your spaces", "Tap the star to pin your essentials")
         addFeatureGrid(parent, spaces)
 
         addSectionHeader(parent, "Made for your flow", "Go straight to what you need")
@@ -328,15 +344,6 @@ class MainActivity : Activity() {
 
         val results = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
         parent.addView(results, fullWidth())
-        val allFeatures = spaces + listOf(
-            Feature("▤", "News & updates", "Stories and announcements", "pages/news.html", COLOR_SOFT_BLUE),
-            Feature("✉", "Messages", "Open hub conversations", "pages/chat.html", COLOR_SOFT_GREEN),
-            Feature("▣", "Gaming Zone", "Find games and highlights", "pages/gaming-zone.html", COLOR_SOFT_RED),
-            Feature("◷", "Events", "What's happening in the hub", "pages/events.html", COLOR_SOFT_GOLD),
-            Feature("?", "Help & guides", "Get help and learn the platform", "pages/help.html", COLOR_SOFT_PURPLE),
-            Feature("♙", "About TUBAL HUB", "Learn about the platform", "pages/about.html", COLOR_SOFT_BLUE)
-        )
-
         fun drawResults(query: String) {
             results.removeAllViews()
             val matches = allFeatures.filter {
@@ -346,9 +353,7 @@ class MainActivity : Activity() {
             if (matches.isEmpty()) {
                 addText(results, "No spaces match that search yet.", 14f, COLOR_MUTED, top = 10, bottom = 10)
             } else {
-                matches.forEach { feature ->
-                    addQuickAction(results, feature.icon, feature.title, feature.caption, feature.route, feature.accent)
-                }
+                matches.forEach { feature -> addExploreRow(results, feature) }
             }
         }
         drawResults(exploreFilter)
@@ -433,6 +438,22 @@ class MainActivity : Activity() {
         profileCard.addView(accountButton, fullWidth())
         parent.addView(profileCard, fullWidth().apply { bottomMargin = dp(23) })
 
+        val favorites = allFeatures.filter { it.route in favoriteRoutes() }
+        addSectionHeader(parent, "Pinned spaces", "Saved on this device")
+        if (favorites.isEmpty()) {
+            addEmptyState(parent, "Nothing pinned yet", "Open Explore and tap the star beside a space to save it here.")
+        } else {
+            favorites.forEach { feature -> addExploreRow(parent, feature) }
+        }
+
+        val recent = recentFeatures()
+        if (recent.isNotEmpty()) {
+            addSectionHeader(parent, "Recently opened", "Fast access to your last spaces")
+            recent.forEach { feature ->
+                addQuickAction(parent, feature.icon, feature.title, feature.caption, feature.route, feature.accent)
+            }
+        }
+
         addSectionHeader(parent, "Settings & support", "Manage your experience")
         addQuickAction(parent, "⚙", "Settings", "Account and experience preferences", "pages/settings.html", COLOR_SOFT_PURPLE)
         addQuickAction(parent, "?", "Help center", "Guides and common questions", "pages/help.html", COLOR_SOFT_BLUE)
@@ -483,14 +504,25 @@ class MainActivity : Activity() {
             background = rounded(feature.accent, 13)
         }
         top.addView(icon, LinearLayout.LayoutParams(dp(42), dp(42)))
-        val arrow = TextView(this).apply {
-            text = "↗"
-            textSize = 17f
-            setTextColor(COLOR_MUTED)
+        val pin = TextView(this).apply {
+            text = if (feature.route in favoriteRoutes()) "★" else "☆"
+            textSize = 22f
+            setTextColor(if (feature.route in favoriteRoutes()) 0xFFFFB547.toInt() else COLOR_MUTED)
             gravity = Gravity.CENTER
+            contentDescription = if (feature.route in favoriteRoutes()) {
+                "Unpin " + feature.title
+            } else {
+                "Pin " + feature.title
+            }
+            isClickable = true
+            isFocusable = true
+            setOnClickListener {
+                toggleFavorite(feature)
+                renderTab(activeTab)
+            }
         }
         top.addView(View(this), LinearLayout.LayoutParams(0, 1, 1f))
-        top.addView(arrow, LinearLayout.LayoutParams(dp(22), dp(30)))
+        top.addView(pin, LinearLayout.LayoutParams(dp(30), dp(30)))
         card.addView(top, fullWidth().apply { bottomMargin = dp(14) })
 
         addText(card, feature.title, 14f, COLOR_TEXT, bold = true, bottom = 5)
@@ -601,11 +633,74 @@ class MainActivity : Activity() {
 
     private fun openPage(title: String, route: String) {
         val cleanRoute = route.trimStart('/')
+        rememberFeature(cleanRoute)
         val intent = Intent(this, HubWebActivity::class.java).apply {
             putExtra(HubWebActivity.EXTRA_TITLE, title)
             putExtra(HubWebActivity.EXTRA_URL, BASE_URL + cleanRoute)
         }
         startActivity(intent)
+    }
+
+    private fun addExploreRow(parent: LinearLayout, feature: Feature) {
+        val row = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+            setPadding(dp(13), dp(12), dp(9), dp(12))
+            background = rounded(Color.WHITE, 18, COLOR_LINE)
+        }
+        val icon = TextView(this).apply {
+            text = feature.icon
+            textSize = 20f
+            gravity = Gravity.CENTER
+            setTextColor(COLOR_TEXT)
+            background = rounded(feature.accent, 13)
+        }
+        row.addView(icon, LinearLayout.LayoutParams(dp(44), dp(44)))
+
+        val copy = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(dp(12), 0, dp(4), 0)
+            isClickable = true
+            isFocusable = true
+            setOnClickListener { openPage(feature.title, feature.route) }
+        }
+        addText(copy, feature.title, 14f, COLOR_TEXT, bold = true, bottom = 3)
+        addText(copy, feature.caption, 11f, COLOR_MUTED)
+        row.addView(copy, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
+
+        val pin = TextView(this).apply {
+            text = if (feature.route in favoriteRoutes()) "★" else "☆"
+            textSize = 23f
+            gravity = Gravity.CENTER
+            setTextColor(if (feature.route in favoriteRoutes()) 0xFFFFB547.toInt() else COLOR_MUTED)
+            contentDescription = if (feature.route in favoriteRoutes()) {
+                "Unpin " + feature.title
+            } else {
+                "Pin " + feature.title
+            }
+            isClickable = true
+            isFocusable = true
+            setOnClickListener {
+                toggleFavorite(feature)
+                renderTab(activeTab)
+            }
+        }
+        row.addView(pin, LinearLayout.LayoutParams(dp(38), dp(44)))
+        row.isClickable = true
+        row.isFocusable = true
+        row.setOnClickListener { openPage(feature.title, feature.route) }
+        parent.addView(row, fullWidth().apply { bottomMargin = dp(9) })
+    }
+
+    private fun addEmptyState(parent: LinearLayout, title: String, message: String) {
+        val card = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(dp(17), dp(17), dp(17), dp(17))
+            background = rounded(Color.WHITE, 18, COLOR_LINE)
+        }
+        addText(card, title, 14f, COLOR_TEXT, bold = true, bottom = 6)
+        addText(card, message, 12f, COLOR_MUTED)
+        parent.addView(card, fullWidth().apply { bottomMargin = dp(12) })
     }
 
     private fun actionButton(
