@@ -83,7 +83,7 @@ class MainActivity : Activity() {
     }
 
     private fun favoriteRoutes(): Set<String> =
-        prefs.getStringSet("favorite_routes", emptySet())?.toSet() ?: emptySet()
+        prefs.getStringSet("favorite_routes", mutableSetOf<String>())?.toSet() ?: emptySet()
 
     private fun recentFeatures(): List<Feature> {
         val routes = prefs.getString("recent_routes", "").orEmpty()
