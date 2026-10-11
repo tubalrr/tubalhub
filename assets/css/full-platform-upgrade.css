@@ -123,3 +123,10 @@ body.feeds-page .feeds-shell h2, body.feeds-page .feeds-shell h3 { line-height: 
 body.feeds-page button, body.feeds-page .feed-action,
 body.feeds-page .feed-filter button { cursor: pointer; }
 body.feeds-page button:focus-visible, body.feeds-page a:focus-visible { border-radius: 10px; }
+
+
+/* Upgrade 20 — feed search field */
+body.feeds-page input[type="search"], body.feeds-page input[type="text"] {
+  min-width: 0; border-radius: 14px; transition: border-color .18s ease, box-shadow .18s ease;
+}
+body.feeds-page input:focus-visible { border-color: var(--thx-cyan); }
