@@ -1,10 +1,11 @@
 # TUBAL HUB Android
 
-## Current Android version — v1.3.3
+## Current Android version — v1.3.4
 
 - Places **Home, Explore, Feeds, Community, and Profile** side by side in one bottom navigation bar.
-- Uses compact, single-line labels so all five tabs fit better on mobile screens.
-- Keeps the current **Peace of Mind** branding, saved appearance preference, tab scroll restoration, and native Share TUBAL HUB action.
+- Shows the actual **Feeds** page directly inside its tab; there is no extra “Open Community Feeds” button.
+- Keeps native bottom navigation visible while browsing the feed and opens off-site links externally.
+- Preserves **Peace of Mind** branding, saved appearance preference, tab scroll restoration, and native Share TUBAL HUB action.
 
 
 TUBAL HUB for Android has its own **native mobile dashboard** built with Android Views. It is deliberately different from the desktop website: the Home, Explore, Community and Profile tabs are native app screens, with mobile-first cards and bottom navigation. Existing website pages are opened only when a destination is tapped.

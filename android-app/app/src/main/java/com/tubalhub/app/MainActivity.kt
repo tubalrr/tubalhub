@@ -11,6 +11,10 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.webkit.WebResourceRequest
+import android.webkit.WebSettings
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageView
@@ -49,6 +53,8 @@ class MainActivity : Activity() {
     private lateinit var contentColumn: LinearLayout
     private lateinit var bottomNavigation: LinearLayout
     private lateinit var dashboardScroll: ScrollView
+    private lateinit var feedWebView: WebView
+    private var feedPageRequested: Boolean = false
     private var darkModeEnabled: Boolean = false
 
     private val COLOR_BG: Int
@@ -158,6 +164,44 @@ class MainActivity : Activity() {
             ViewGroup.LayoutParams.WRAP_CONTENT
         ))
 
+        // Show the actual website feed directly inside the Feeds tab.
+        // Native bottom navigation stays visible while this WebView fills the main content area.
+        feedWebView = WebView(this).apply {
+            visibility = View.GONE
+            setBackgroundColor(Color.WHITE)
+            isVerticalScrollBarEnabled = false
+            isHorizontalScrollBarEnabled = false
+            settings.javaScriptEnabled = true
+            settings.domStorageEnabled = true
+            settings.databaseEnabled = true
+            settings.loadsImagesAutomatically = true
+            settings.cacheMode = WebSettings.LOAD_DEFAULT
+            settings.mixedContentMode = WebSettings.MIXED_CONTENT_NEVER_ALLOW
+            settings.javaScriptCanOpenWindowsAutomatically = false
+            settings.setSupportMultipleWindows(false)
+            settings.mediaPlaybackRequiresUserGesture = true
+            webViewClient = object : WebViewClient() {
+                override fun shouldOverrideUrlLoading(
+                    view: WebView?,
+                    request: WebResourceRequest?
+                ): Boolean {
+                    val uri = request?.url ?: return false
+                    val scheme = uri.scheme?.lowercase()
+                    val internalHost = Uri.parse(BASE_URL).host
+                    if ((scheme == "https" || scheme == "http") &&
+                        uri.host.equals(internalHost, ignoreCase = true)
+                    ) return false
+
+                    return try {
+                        startActivity(Intent(Intent.ACTION_VIEW, uri))
+                        true
+                    } catch (_: Exception) {
+                        true
+                    }
+                }
+            }
+        }
+
         bottomNavigation = LinearLayout(this).apply {
             orientation = LinearLayout.HORIZONTAL
             gravity = Gravity.CENTER
@@ -167,6 +211,9 @@ class MainActivity : Activity() {
         }
 
         dashboardRoot.addView(dashboardScroll, LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f
+        ))
+        dashboardRoot.addView(feedWebView, LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f
         ))
         dashboardRoot.addView(bottomNavigation, LinearLayout.LayoutParams(
@@ -181,7 +228,7 @@ class MainActivity : Activity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putString("active_tab", activeTab)
-        if (::dashboardScroll.isInitialized) {
+        if (::dashboardScroll.isInitialized && activeTab != "Feeds") {
             tabScrollPositions[activeTab] = dashboardScroll.scrollY
         }
         tabScrollPositions.forEach { (tab, scrollY) ->
@@ -191,22 +238,30 @@ class MainActivity : Activity() {
     }
 
     private fun renderTab(tab: String) {
-        if (::dashboardScroll.isInitialized) {
+        if (::dashboardScroll.isInitialized && activeTab != "Feeds") {
             tabScrollPositions[activeTab] = dashboardScroll.scrollY
         }
         activeTab = tab
+
+        if (tab == "Feeds") {
+            dashboardScroll.visibility = View.GONE
+            feedWebView.visibility = View.VISIBLE
+            renderBottomNavigation()
+            if (!feedPageRequested) {
+                feedPageRequested = true
+                feedWebView.loadUrl(BASE_URL + "pages/feeds.html")
+            }
+            return
+        }
+
+        feedWebView.visibility = View.GONE
+        dashboardScroll.visibility = View.VISIBLE
         val restoreScrollY = tabScrollPositions[tab] ?: 0
         contentColumn.removeAllViews()
         addBrandHeader(contentColumn)
 
         when (tab) {
             "Home" -> buildHome(contentColumn)
-            "Feeds" -> {
-                addText(contentColumn, "COMMUNITY FEEDS", 10f, COLOR_ACCENT, bold = true, bottom = 6)
-                addText(contentColumn, "Your community,\nyour home.", 29f, COLOR_TEXT, bold = true, bottom = 8)
-                addText(contentColumn, "Posts, stories, games and updates in one live stream.", 14f, COLOR_MUTED, bottom = 18)
-                addQuickAction(contentColumn, "◎", "Open Community Feeds", "View the live community stream", "pages/feeds.html", COLOR_SOFT_RED)
-            }
             "Explore" -> buildExplore(contentColumn)
             "Community" -> buildCommunity(contentColumn)
             "Profile" -> buildProfile(contentColumn)
