@@ -51,3 +51,10 @@ textarea { resize: vertical; min-height: 96px; }
   button:not(:disabled), [role="button"], .btn, .button { transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease; }
   button:not(:disabled):hover, .btn:hover, .button:hover { filter: brightness(1.06); }
 }
+
+
+/* Upgrade 07 — shared premium panel edges */
+body.hub-home .card, body.hub-home .panel, body.feeds-page .feeds-panel,
+body.feeds-page .feed-card, body.feeds-page .story-card {
+  border-radius: var(--thx-radius);
+}
