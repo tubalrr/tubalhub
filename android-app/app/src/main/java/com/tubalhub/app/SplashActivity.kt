@@ -30,7 +30,7 @@ import kotlin.random.Random
 class SplashActivity : Activity() {
 
     companion object {
-        private const val SPLASH_DURATION_MS = 4_500L
+        private const val SPLASH_DURATION_MS = 6_200L
         private const val COLOR_INK = 0xFF0B0D17.toInt()
         private const val COLOR_ACCENT = 0xFFE0445D.toInt()
         private const val COLOR_ACCENT_LIGHT = 0xFFFF91A2.toInt()
@@ -360,6 +360,19 @@ class SplashActivity : Activity() {
             setTextColor(COLOR_MUTED)
         }
         card.addView(hint)
+
+        listOf(
+            1_350L to "Connecting your community feed",
+            2_850L to "Preparing your hub spaces",
+            4_350L to "Syncing the latest updates",
+            5_450L to "Almost ready"
+        ).forEach { (delay, message) ->
+            handler.postDelayed({
+                if (!isFinishing && !isDestroyed && hint.isAttachedToWindow) {
+                    hint.text = message
+                }
+            }, delay)
+        }
 
         ObjectAnimator.ofInt(progress, "progress", 0, 100).apply {
             duration = SPLASH_DURATION_MS - 160L
