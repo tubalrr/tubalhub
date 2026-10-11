@@ -207,3 +207,10 @@ body.hub-home hr, body.feeds-page hr { border-color: var(--thx-line); }
 /* Upgrade 33 — prevent horizontal page overflow */
 body.hub-home, body.feeds-page { overflow-x: clip; }
 body.hub-home .hub-sidebar, body.hub-home .hub-topbar { min-width: 0; }
+
+
+/* Upgrade 34 — small-screen navigation wrapping */
+@media (max-width: 480px) {
+  body:not(.feeds-page) header nav { max-width: 100%; }
+  body:not(.feeds-page) header nav a { white-space: nowrap; }
+}
