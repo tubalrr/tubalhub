@@ -9,6 +9,7 @@ import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.net.Uri
 import android.os.Bundle
+import android.os.Message
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -21,6 +22,7 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.webkit.ValueCallback
 import android.net.http.SslError
 import android.widget.Button
 import android.widget.FrameLayout
@@ -37,12 +39,15 @@ class MainActivity : Activity() {
         private const val COLOR_ACCENT = 0xFFE0445D.toInt()
         private const val COLOR_TEXT = 0xFF20212B.toInt()
         private const val COLOR_MUTED = 0xFF656775.toInt()
+        private const val FILE_CHOOSER_REQUEST_CODE = 1101
     }
 
+    private lateinit var rootContainer: FrameLayout
     private lateinit var webView: WebView
     private lateinit var progressBar: ProgressBar
     private lateinit var errorPanel: LinearLayout
     private var lastUrl: String = HOME_URL
+    private var filePathCallback: ValueCallback<Array<Uri>>? = null
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,7 +57,7 @@ class MainActivity : Activity() {
         window.navigationBarColor = COLOR_INK
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
 
-        val root = FrameLayout(this).apply {
+        rootContainer = FrameLayout(this).apply {
             setBackgroundColor(Color.WHITE)
         }
 
@@ -113,7 +118,11 @@ class MainActivity : Activity() {
 
             override fun onReceivedSslError(view: WebView?, handler: SslErrorHandler?, error: SslError?) {
                 handler?.cancel()
-                showLoadError()
+                val failedHost = error?.url?.let { Uri.parse(it).host }
+                val activeHost = Uri.parse(lastUrl).host
+                if (!failedHost.isNullOrBlank() && failedHost == activeHost) {
+                    showLoadError()
+                }
             }
 
             override fun shouldOverrideUrlLoading(
@@ -125,7 +134,7 @@ class MainActivity : Activity() {
                 if (scheme == "http" || scheme == "https") return false
 
                 return try {
-                    startActivity(Intent(Intent.ACTION_VIEW, uri))
+                    openExternalUri(uri)
                     true
                 } catch (_: ActivityNotFoundException) {
                     true
@@ -135,21 +144,96 @@ class MainActivity : Activity() {
             }
         }
 
+        webView.settings.setSupportMultipleWindows(true)
         webView.webChromeClient = object : WebChromeClient() {
             override fun onProgressChanged(view: WebView?, newProgress: Int) {
                 progressBar.progress = newProgress
                 progressBar.visibility = if (newProgress >= 100) View.GONE else View.VISIBLE
             }
+
+            override fun onShowFileChooser(
+                webView: WebView?,
+                filePathCallback: ValueCallback<Array<Uri>>?,
+                fileChooserParams: FileChooserParams?
+            ): Boolean {
+                this@MainActivity.filePathCallback?.onReceiveValue(null)
+                this@MainActivity.filePathCallback = filePathCallback
+
+                return try {
+                    val chooserIntent = fileChooserParams?.createIntent()
+                        ?: throw ActivityNotFoundException("No file chooser available")
+                    startActivityForResult(chooserIntent, FILE_CHOOSER_REQUEST_CODE)
+                    true
+                } catch (_: ActivityNotFoundException) {
+                    this@MainActivity.filePathCallback?.onReceiveValue(null)
+                    this@MainActivity.filePathCallback = null
+                    false
+                } catch (_: SecurityException) {
+                    this@MainActivity.filePathCallback?.onReceiveValue(null)
+                    this@MainActivity.filePathCallback = null
+                    false
+                }
+            }
+
+            override fun onCreateWindow(
+                view: WebView?,
+                isDialog: Boolean,
+                isUserGesture: Boolean,
+                resultMsg: Message?
+            ): Boolean {
+                if (!isUserGesture || resultMsg == null) return false
+
+                val popup = WebView(this@MainActivity).apply {
+                    settings.javaScriptEnabled = true
+                    settings.domStorageEnabled = true
+                    settings.setSupportMultipleWindows(false)
+                    visibility = View.INVISIBLE
+                }
+
+                popup.webViewClient = object : WebViewClient() {
+                    override fun shouldOverrideUrlLoading(
+                        view: WebView?,
+                        request: WebResourceRequest?
+                    ): Boolean {
+                        val uri = request?.url ?: return false
+                        val scheme = uri.scheme?.lowercase()
+
+                        if (scheme == "http" || scheme == "https") {
+                            this@MainActivity.webView.loadUrl(uri.toString())
+                        } else {
+                            openExternalUri(uri)
+                        }
+
+                        discardPopup(popup)
+                        return true
+                    }
+                }
+
+                rootContainer.addView(
+                    popup,
+                    FrameLayout.LayoutParams(dp(1), dp(1), Gravity.TOP or Gravity.START)
+                )
+
+                val transport = resultMsg.obj as? WebView.WebViewTransport
+                if (transport == null) {
+                    discardPopup(popup)
+                    return false
+                }
+
+                transport.webView = popup
+                resultMsg.sendToTarget()
+                return true
+            }
         }
 
-        root.addView(
+        rootContainer.addView(
             webView,
             FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT
             )
         )
-        root.addView(
+        rootContainer.addView(
             progressBar,
             FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
@@ -157,7 +241,7 @@ class MainActivity : Activity() {
                 Gravity.TOP
             )
         )
-        root.addView(
+        rootContainer.addView(
             errorPanel,
             FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
@@ -165,7 +249,7 @@ class MainActivity : Activity() {
             )
         )
 
-        setContentView(root)
+        setContentView(rootContainer)
 
         if (savedInstanceState != null) {
             val webState = savedInstanceState.getBundle(STATE_WEBVIEW)
@@ -174,6 +258,40 @@ class MainActivity : Activity() {
         } else {
             webView.loadUrl(HOME_URL)
         }
+    }
+
+    private fun openExternalUri(uri: Uri) {
+        try {
+            startActivity(Intent(Intent.ACTION_VIEW, uri))
+        } catch (_: ActivityNotFoundException) {
+            // No installed app can handle this link.
+        } catch (_: SecurityException) {
+            // Android denied this external intent.
+        }
+    }
+
+    private fun discardPopup(popup: WebView) {
+        popup.post {
+            val parent = popup.parent as? ViewGroup
+            parent?.removeView(popup)
+            popup.stopLoading()
+            popup.webChromeClient = null
+            popup.webViewClient = WebViewClient()
+            popup.destroy()
+        }
+    }
+
+    @Deprecated("Handled by the WebView file chooser.")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == FILE_CHOOSER_REQUEST_CODE) {
+            val callback = filePathCallback
+            filePathCallback = null
+            callback?.onReceiveValue(
+                WebChromeClient.FileChooserParams.parseResult(resultCode, data)
+            )
+            return
+        }
+        super.onActivityResult(requestCode, resultCode, data)
     }
 
     private fun buildErrorPanel(): LinearLayout {
@@ -280,6 +398,8 @@ class MainActivity : Activity() {
     }
 
     override fun onDestroy() {
+        filePathCallback?.onReceiveValue(null)
+        filePathCallback = null
         if (::webView.isInitialized) {
             webView.stopLoading()
             webView.webChromeClient = null
