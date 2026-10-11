@@ -225,7 +225,7 @@ class MainActivity : Activity() {
             letterSpacing = 0.08f
             setTextColor(0xFFFFD9E0.toInt())
             setPadding(dp(10), dp(7), dp(10), dp(7))
-            background = rounded(0x335FFFFFF.toInt(), 10)
+            background = rounded(0x33FFFFFF, 10)
         }
         card.addView(pill, wrapWidth().apply { bottomMargin = dp(17) })
 
@@ -523,7 +523,7 @@ class MainActivity : Activity() {
                 orientation = LinearLayout.VERTICAL
                 gravity = Gravity.CENTER
                 setPadding(dp(2), dp(3), dp(2), dp(3))
-                background = if (selected) rounded(0x332CFFFFFF.toInt(), 16) else rounded(COLOR_INK, 16)
+                background = if (selected) rounded(0x33E0445D, 16) else rounded(COLOR_INK, 16)
                 isClickable = true
                 isFocusable = true
                 contentDescription = item.third
