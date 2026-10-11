@@ -114,3 +114,22 @@
 @media(prefers-reduced-motion:reduce){
   .tubal-main-bot-face i,.tubal-main-bot-pulse,.tubal-main-bot-toggle.is-speaking{animation:none!important}
 }
+
+
+/* Official brand replacement for the legacy green floating bot mark. */
+.tubal-main-bot-toggle{
+  border:1px solid rgba(255,132,151,.40)!important;
+  border-radius:20px!important;
+  background-color:#0B0D17!important;
+  background-image:url("/tubalhub/assets/icons/tubal-hub-512.svg")!important;
+  background-position:center!important;
+  background-repeat:no-repeat!important;
+  background-size:48px 48px!important;
+  box-shadow:0 14px 36px rgba(0,0,0,.38),0 0 24px rgba(224,68,93,.16)!important;
+}
+.tubal-main-bot-toggle:hover{
+  border-color:rgba(255,132,151,.72)!important;
+  box-shadow:0 18px 42px rgba(0,0,0,.44),0 0 32px rgba(224,68,93,.25)!important;
+}
+.tubal-main-bot-face{display:none!important}
+.tubal-main-bot-pulse{border-color:rgba(224,68,93,.20)!important}
