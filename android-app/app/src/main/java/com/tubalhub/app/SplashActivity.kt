@@ -20,6 +20,7 @@ import android.view.animation.DecelerateInterpolator
 import android.view.animation.LinearInterpolator
 import android.view.animation.OvershootInterpolator
 import android.widget.FrameLayout
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -206,20 +207,11 @@ class SplashActivity : Activity() {
             gravity = Gravity.CENTER_VERTICAL
         }
 
-        val miniMark = TextView(this).apply {
-            text = "T"
-            textSize = 19f
-            typeface = Typeface.create("sans-serif", Typeface.BOLD)
-            gravity = Gravity.CENTER
-            setTextColor(Color.WHITE)
-            background = GradientDrawable(
-                GradientDrawable.Orientation.TL_BR,
-                intArrayOf(0xFFFF7189.toInt(), 0xFFB92D53.toInt())
-            ).apply {
-                cornerRadius = dp(12).toFloat()
-                setStroke(dp(1), 0x55FFFFFF)
-            }
-            elevation = dp(5).toFloat()
+        val miniMark = ImageView(this).apply {
+            setImageResource(R.drawable.ic_tubal_hub)
+            scaleType = ImageView.ScaleType.FIT_CENTER
+            contentDescription = "TUBAL HUB logo"
+            elevation = dp(3).toFloat()
         }
         bar.addView(miniMark, LinearLayout.LayoutParams(dp(38), dp(38)).apply {
             rightMargin = dp(10)
@@ -249,7 +241,7 @@ class SplashActivity : Activity() {
         bar.addView(nameStack, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
 
         val edition = TextView(this).apply {
-            text = "MOBILE  •  v1.2.1"
+            text = "MOBILE  •  v1.2.4"
             textSize = 8f
             letterSpacing = 0.06f
             typeface = Typeface.DEFAULT_BOLD
@@ -380,67 +372,28 @@ class SplashActivity : Activity() {
         val frame = FrameLayout(this).apply {
             clipChildren = false
             clipToPadding = false
+            contentDescription = "TUBAL HUB official logo"
         }
 
+        // Keep the brand mark itself authentic; only the surrounding atmosphere animates.
         val halo = View(this).apply {
             background = GradientDrawable().apply {
                 shape = GradientDrawable.OVAL
-                setColor(0x22FF536F)
+                setColor(0x19F0443D)
             }
         }
         frame.addView(halo, FrameLayout.LayoutParams(dp(120), dp(120), Gravity.CENTER))
 
-        val rim = View(this).apply {
-            background = GradientDrawable(
-                GradientDrawable.Orientation.TL_BR,
-                intArrayOf(0xFFFFC0C9.toInt(), 0xFFE0445D.toInt(), 0xFF70213F.toInt())
-            ).apply {
-                cornerRadius = dp(34).toFloat()
-                setStroke(dp(1), 0x88FFFFFF.toInt())
-            }
-            elevation = dp(10).toFloat()
+        val brandMark = ImageView(this).apply {
+            setImageResource(R.drawable.ic_tubal_hub)
+            scaleType = ImageView.ScaleType.FIT_CENTER
+            contentDescription = "TUBAL HUB TH monogram with red signal accent"
+            elevation = dp(8).toFloat()
         }
-        frame.addView(rim, FrameLayout.LayoutParams(dp(104), dp(104), Gravity.CENTER))
-
-        val tile = View(this).apply {
-            background = GradientDrawable(
-                GradientDrawable.Orientation.TL_BR,
-                intArrayOf(0xFFFF758D.toInt(), 0xFFE0445D.toInt(), 0xFF9F2449.toInt())
-            ).apply {
-                cornerRadius = dp(30).toFloat()
-                setStroke(dp(1), 0x66FFFFFF)
-            }
-            elevation = dp(12).toFloat()
-        }
-        frame.addView(tile, FrameLayout.LayoutParams(dp(96), dp(96), Gravity.CENTER))
-
-        val letter = TextView(this).apply {
-            text = "T"
-            textSize = 68f
-            typeface = Typeface.create("sans-serif", Typeface.BOLD)
-            gravity = Gravity.CENTER
-            setTextColor(Color.WHITE)
-            includeFontPadding = false
-            setShadowLayer(dp(13).toFloat(), 0f, dp(3).toFloat(), 0x77310E1F)
-        }
-        frame.addView(letter, FrameLayout.LayoutParams(dp(96), dp(96), Gravity.CENTER))
-
-        val badge = TextView(this).apply {
-            text = "H"
-            textSize = 14f
-            typeface = Typeface.DEFAULT_BOLD
-            gravity = Gravity.CENTER
-            setTextColor(Color.WHITE)
-            background = GradientDrawable(
-                GradientDrawable.Orientation.TL_BR,
-                intArrayOf(0xFF242333.toInt(), 0xFF10111A.toInt())
-            ).apply {
-                cornerRadius = dp(13).toFloat()
-                setStroke(dp(1), 0xFFFF91A2.toInt())
-            }
-            elevation = dp(15).toFloat()
-        }
-        frame.addView(badge, FrameLayout.LayoutParams(dp(37), dp(37), Gravity.BOTTOM or Gravity.END))
+        frame.addView(
+            brandMark,
+            FrameLayout.LayoutParams(dp(116), dp(116), Gravity.CENTER)
+        )
         return frame
     }
 
