@@ -230,6 +230,24 @@ class MainActivity : Activity() {
             setOnClickListener { renderTab("Explore") }
         }
         row.addView(search, LinearLayout.LayoutParams(dp(44), dp(44)))
+
+        val profile = TextView(this).apply {
+            text = "♙"
+            textSize = 21f
+            gravity = Gravity.CENTER
+            setTextColor(Color.WHITE)
+            background = GradientDrawable(
+                GradientDrawable.Orientation.TL_BR,
+                intArrayOf(COLOR_ACCENT, 0xFF8D2347.toInt())
+            ).apply { cornerRadius = dp(16).toFloat() }
+            isClickable = true
+            isFocusable = true
+            contentDescription = "Open profile and app settings"
+            setOnClickListener { renderTab("Profile") }
+        }
+        row.addView(profile, LinearLayout.LayoutParams(dp(44), dp(44)).apply {
+            leftMargin = dp(8)
+        })
         parent.addView(row, fullWidth().apply { bottomMargin = dp(20) })
     }
 
