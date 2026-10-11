@@ -224,3 +224,7 @@ body.feeds-page .feeds-panel > * { min-width: 0; }
 /* Upgrade 36 — readable empty states */
 .empty-state, .no-results, [data-empty-state] { text-align: center; padding: clamp(22px, 5vw, 48px); }
 .empty-state p, .no-results p { color: var(--thx-muted); line-height: 1.65; }
+
+
+/* Upgrade 37 — dialogs respect small screens */
+[role="dialog"], dialog, .modal-content { max-width: min(94vw, 760px); max-height: min(88dvh, 900px); overflow: auto; }
