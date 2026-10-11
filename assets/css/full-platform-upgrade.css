@@ -58,3 +58,8 @@ body.hub-home .card, body.hub-home .panel, body.feeds-page .feeds-panel,
 body.feeds-page .feed-card, body.feeds-page .story-card {
   border-radius: var(--thx-radius);
 }
+
+
+/* Upgrade 08 — clear muted text contrast */
+body.hub-home .muted, body.hub-home .text-muted,
+body.feeds-page .muted, body.feeds-page .section-kicker { color: var(--thx-muted); }
