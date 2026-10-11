@@ -787,7 +787,7 @@ async function addComment(){
     showNotice(parent?"Reply posted.":"Comment posted.",true);
   }catch(e){
     state.comments[postId]=(state.comments[postId]||[]).filter(c=>c.id!==item.id);
-    state.commentCounts[postId]=Math.max(0,(state.commentCounts[postId]||0)-1);
+    // The cached remote count was never optimistically incremented, so keep it unchanged.
     writeLocal("tubalhub-feed-comments",state.comments);writeLocal("tubalhub-feed-comment-counts",state.commentCounts);
     input.value=text;state.commentPhotoData=photoData;
     if(photoData){
