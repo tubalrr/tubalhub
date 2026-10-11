@@ -34,3 +34,8 @@ body.hub-home section, body.feeds-page section { scroll-margin-top: 90px; }
 /* Upgrade 03 — unified keyboard and pointer buttons */
 button, [role="button"], .btn, .button { touch-action: manipulation; }
 button:disabled, [aria-disabled="true"] { cursor: not-allowed !important; opacity: .55; }
+
+
+/* Upgrade 04 — safer long content */
+p, li, .description, .feed-content, .post-content { overflow-wrap: anywhere; }
+pre, code { max-width: 100%; overflow-x: auto; }
