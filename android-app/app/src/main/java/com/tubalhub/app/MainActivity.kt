@@ -9,7 +9,6 @@ import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.net.Uri
 import android.os.Bundle
-import android.os.Message
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -70,6 +69,7 @@ class MainActivity : Activity() {
             settings.cacheMode = WebSettings.LOAD_DEFAULT
             settings.mixedContentMode = WebSettings.MIXED_CONTENT_NEVER_ALLOW
             settings.javaScriptCanOpenWindowsAutomatically = false
+            // Keep new-window links in this WebView instead of creating hidden popup WebViews.
             settings.setSupportMultipleWindows(false)
             settings.mediaPlaybackRequiresUserGesture = true
             isVerticalScrollBarEnabled = false
@@ -131,20 +131,23 @@ class MainActivity : Activity() {
             ): Boolean {
                 val uri = request?.url ?: return false
                 val scheme = uri.scheme?.lowercase()
-                if (scheme == "http" || scheme == "https") return false
 
-                return try {
-                    openExternalUri(uri)
-                    true
-                } catch (_: ActivityNotFoundException) {
-                    true
-                } catch (_: SecurityException) {
-                    true
+                // Keep TUBAL HUB pages inside the app. Open other sites and app links
+                // externally so OAuth, downloads and third-party navigation behave normally.
+                if (scheme == "https" || scheme == "http") {
+                    val internalHost = Uri.parse(HOME_URL).host
+                    if (!uri.host.isNullOrBlank() &&
+                        uri.host.equals(internalHost, ignoreCase = true)
+                    ) {
+                        return false
+                    }
                 }
+
+                openExternalUri(uri)
+                return true
             }
         }
 
-        webView.settings.setSupportMultipleWindows(true)
         webView.webChromeClient = object : WebChromeClient() {
             override fun onProgressChanged(view: WebView?, newProgress: Int) {
                 progressBar.progress = newProgress
@@ -175,55 +178,6 @@ class MainActivity : Activity() {
                 }
             }
 
-            override fun onCreateWindow(
-                view: WebView?,
-                isDialog: Boolean,
-                isUserGesture: Boolean,
-                resultMsg: Message?
-            ): Boolean {
-                if (!isUserGesture || resultMsg == null) return false
-
-                val popup = WebView(this@MainActivity).apply {
-                    settings.javaScriptEnabled = true
-                    settings.domStorageEnabled = true
-                    settings.setSupportMultipleWindows(false)
-                    visibility = View.INVISIBLE
-                }
-
-                popup.webViewClient = object : WebViewClient() {
-                    override fun shouldOverrideUrlLoading(
-                        view: WebView?,
-                        request: WebResourceRequest?
-                    ): Boolean {
-                        val uri = request?.url ?: return false
-                        val scheme = uri.scheme?.lowercase()
-
-                        if (scheme == "http" || scheme == "https") {
-                            this@MainActivity.webView.loadUrl(uri.toString())
-                        } else {
-                            openExternalUri(uri)
-                        }
-
-                        discardPopup(popup)
-                        return true
-                    }
-                }
-
-                rootContainer.addView(
-                    popup,
-                    FrameLayout.LayoutParams(dp(1), dp(1), Gravity.TOP or Gravity.START)
-                )
-
-                val transport = resultMsg.obj as? WebView.WebViewTransport
-                if (transport == null) {
-                    discardPopup(popup)
-                    return false
-                }
-
-                transport.webView = popup
-                resultMsg.sendToTarget()
-                return true
-            }
         }
 
         rootContainer.addView(
@@ -267,17 +221,6 @@ class MainActivity : Activity() {
             // No installed app can handle this link.
         } catch (_: SecurityException) {
             // Android denied this external intent.
-        }
-    }
-
-    private fun discardPopup(popup: WebView) {
-        popup.post {
-            val parent = popup.parent as? ViewGroup
-            parent?.removeView(popup)
-            popup.stopLoading()
-            popup.webChromeClient = null
-            popup.webViewClient = WebViewClient()
-            popup.destroy()
         }
     }
 
