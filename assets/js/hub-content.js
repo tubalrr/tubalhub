@@ -45,8 +45,9 @@ export function subscribeHubPosts(callback){
       callback(items,snap);
     },
     err=>{
-      console.warn("[TUBAL HUB] realtime hubPosts listener unavailable",err);
-      callback([]);
+      // Keep the last successful snapshot rendered on transient permission/network
+      // failures. An error is not evidence that the collection has no posts.
+      console.warn("[TUBAL HUB] realtime hubPosts listener unavailable; retaining last data",err);
     }
   );
 }
