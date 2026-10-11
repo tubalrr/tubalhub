@@ -29,7 +29,7 @@ import kotlin.random.Random
 class SplashActivity : Activity() {
 
     companion object {
-        private const val SPLASH_DURATION_MS = 1_950L
+        private const val SPLASH_DURATION_MS = 4_500L
         private const val COLOR_INK = 0xFF0B0D17.toInt()
         private const val COLOR_ACCENT = 0xFFE0445D.toInt()
         private const val COLOR_ACCENT_LIGHT = 0xFFFF91A2.toInt()
