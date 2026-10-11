@@ -2,9 +2,12 @@
 (function(){
   const THEMES = ['midnight','forest','light'];
   const STORAGE_KEY = 'tubalhub-theme';
+  // Storage can be blocked by browser privacy settings; theme loading must never break the page.
+  const safeGet = key => { try { return window.localStorage.getItem(key); } catch (_) { return null; } };
+  const safeSet = (key, value) => { try { window.localStorage.setItem(key, value); } catch (_) { /* use this session's in-memory theme */ } };
 
   const getSaved = ()=>{
-    const saved = localStorage.getItem(STORAGE_KEY);
+    const saved = safeGet(STORAGE_KEY);
     return THEMES.includes(saved) ? saved : 'midnight';
   };
 
@@ -17,7 +20,7 @@
     root.setAttribute('data-theme', theme);
     document.body?.classList.remove('theme-midnight','theme-forest','theme-light');
     document.body?.classList.add('theme-' + theme);
-    if(!isHomepage) localStorage.setItem(STORAGE_KEY, theme);
+    if(!isHomepage) safeSet(STORAGE_KEY, theme);
     document.querySelectorAll('[data-theme-btn]').forEach(btn=>{
       btn.classList.toggle('active', btn.dataset.themeBtn === theme);
       btn.setAttribute('aria-pressed', btn.dataset.themeBtn === theme ? 'true' : 'false');
