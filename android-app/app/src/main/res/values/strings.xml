@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">TUBAL HUB</string>
-    <string name="offline_title">You're offline</string>
-    <string name="offline_message">TUBAL HUB couldn't load right now. Check your connection and try again.</string>
+    <string name="offline_title">No internet connection</string>
+    <string name="offline_message">TUBAL HUB could not load right now. Check your connection and try again.</string>
     <string name="retry">Try again</string>
 </resources>
