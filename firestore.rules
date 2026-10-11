@@ -362,6 +362,75 @@ service cloud.firestore {
     }
 
     // =========================================================
+    // FEED COMMENTS / THREADED REPLIES
+    // =========================================================
+
+    match /feedComments/{commentId} {
+      allow read: if true;
+
+      allow create: if realUser()
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.postId is string
+        && request.resource.data.postId.size() > 0
+        && request.resource.data.postId.size() <= 180
+        && request.resource.data.authorName is string
+        && request.resource.data.authorName.size() > 0
+        && request.resource.data.authorName.size() <= 120
+        && request.resource.data.authorPhotoURL is string
+        && request.resource.data.authorPhotoURL.size() <= 3000
+        && request.resource.data.text is string
+        && request.resource.data.text.size() > 0
+        && request.resource.data.text.size() <= 1000
+        && (
+          request.resource.data.parentId == null
+          || (
+            request.resource.data.parentId is string
+            && request.resource.data.parentId.size() > 0
+            && exists(/databases/$(database)/documents/feedComments/$(request.resource.data.parentId))
+            && get(/databases/$(database)/documents/feedComments/$(request.resource.data.parentId)).data.postId == request.resource.data.postId
+          )
+        )
+        && request.resource.data.edited == false
+        && request.resource.data.deleted == false
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.photoURL is string
+        && request.resource.data.photoURL.size() <= 3000;
+
+      allow update: if realUser()
+        && resource.data.uid == request.auth.uid
+        && request.resource.data.uid == resource.data.uid
+        && request.resource.data.postId == resource.data.postId
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['text','edited','deleted','updatedAt'])
+        && request.resource.data.text is string
+        && request.resource.data.text.size() <= 1000
+        && request.resource.data.edited is bool
+        && request.resource.data.deleted is bool;
+
+      allow delete: if realUser() && resource.data.uid == request.auth.uid;
+    }
+
+    // =========================================================
+    // COMMENT REACTIONS — ONE REACTION PER USER / COMMENT
+    // =========================================================
+
+    match /feedCommentReactions/{reactionId} {
+      allow read: if true;
+
+      allow create, update: if realUser()
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.commentId is string
+        && request.resource.data.postId is string
+        && request.resource.data.reaction in ['like','love','haha','wow','sad','angry']
+        && reactionId == request.resource.data.commentId + '_' + request.auth.uid
+        && exists(/databases/$(database)/documents/feedComments/$(request.resource.data.commentId))
+        && get(/databases/$(database)/documents/feedComments/$(request.resource.data.commentId)).data.postId == request.resource.data.postId;
+
+      allow delete: if realUser()
+        && resource.data.uid == request.auth.uid
+        && reactionId == resource.data.commentId + '_' + request.auth.uid;
+    }
+
+    // =========================================================
     // FEED REACTIONS — ONE REACTION PER USER / POST
     // =========================================================
 

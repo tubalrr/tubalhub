@@ -17,6 +17,18 @@ service firebase.storage {
         );
     }
 
+    // Publicly accessible media attached to published feed posts/comments.
+    // Uploaders are confined to the folder named for their own UID.
+    match /feeds/{userId}/{allPaths=**} {
+      allow read: if true;
+      allow create: if realUser()
+        && request.auth.uid == userId
+        && request.resource.size <= 25 * 1024 * 1024
+        && request.resource.contentType.matches('(image/(jpeg|png|webp|gif)|video/(mp4|webm))');
+      allow update: if false;
+      allow delete: if realUser() && request.auth.uid == userId;
+    }
+
     // Existing Global Chat media uploads: max 8 MB and image-only MIME types.
     // Paid digital products are server-delivered through short-lived signed URLs.
     // Direct client reads/writes are blocked on this prefix.

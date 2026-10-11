@@ -1,6 +1,6 @@
 import {app,auth} from "./firebase-config.js";
 import {onAuthStateChanged} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
-import {getFirestore,collection,getDocs,getDoc,doc,addDoc,setDoc,updateDoc,deleteDoc,query,orderBy,limit,startAfter,onSnapshot,serverTimestamp} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+import {getFirestore,collection,getDocs,getDoc,doc,addDoc,setDoc,updateDoc,deleteDoc,query,where,orderBy,limit,startAfter,onSnapshot,serverTimestamp} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 import {getStorage,ref as storageRef,uploadBytes,getDownloadURL} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-storage.js";
 import {publishHubPost,subscribeHubPosts} from "./hub-content.js?v=20261001-pagination1";
 import {saveItem,removeSaved,getSavedItems,sharedUrl} from "./retention.js";
@@ -17,6 +17,7 @@ const QUICK_REACTIONS=REACTION_KEYS;
 const state={
   auth:null,items:[],products:[],productOlderProducts:[],hubPosts:[],hubOlderPosts:[],users:[],presence:new Map(),userMap:new Map(),
   reactions:readLocal("tubalhub-feed-reactions",{}),comments:readLocal("tubalhub-feed-comments",{}),
+  commentCounts:readLocal("tubalhub-feed-comment-counts",{}),
   commentReactions:readLocal("tubalhub-feed-comment-reactions",{}),shareCounts:readLocal("tubalhub-feed-shares",{}),
   saved:new Set([...readLocal("tubalhub-feed-saved",[]),...getSavedItems().map(x=>x.id)]),filter:"all",query:"",sort:"latest",
   page:0,pageSize:5,loading:false,liveRefreshQueued:false,savedMode:false,currentCommentId:null,commentLimit:6,
@@ -25,6 +26,7 @@ const state={
   postFile:null,commentPhotoData:""
 };
 let stopHub=null,stopProducts=null,stopRemoteComments=null,stopRemoteReactions=null,uiReady=false;
+const postReactionStops=new Map();
 let pickerTimer=null,pickerCloseTimer=null,pickerState={postId:null,targetType:"post",commentId:null,button:null,longPressTriggered:false};
 let typingTimer=null;
 
@@ -250,6 +252,10 @@ function reactionUsers(postId){
   return rows;
 }
 function shareTotal(item){return Number(item?.shares||0)+Number(state.shareCounts[item?.id]||0)}
+function postCommentCount(item){
+  const id=item?.id||"";
+  return Math.max(Number(item?.comments)||0,Number(state.commentCounts[id])||0,(state.comments[id]||[]).length);
+}
 function reactionLabel(postId){const k=currentReaction(postId);return k?REACTIONS[k].label:"Like"}
 function reactionIcon(postId){const k=currentReaction(postId);return k?REACTIONS[k].emoji:"👍"}
 
@@ -339,7 +345,7 @@ function postMarkup(x){
   else if(x.type==="audio"&&x.mediaUrl)body="<audio class='post-audio' controls preload='metadata' src='"+esc(x.mediaUrl)+"'></audio>";
   else if(x.image)body="<img class='post-media' src='"+esc(x.image)+"' alt='' loading='lazy'>";
   else if(x.title)body="<div class='feed-article-content'><h3>"+esc(x.title)+"</h3><p>"+esc(x.description||x.text||"")+"</p></div>";
-  return "<article class='post-card' data-id='"+esc(x.id)+"'><div class='post-head'>"+avatarMarkup({uid:x.uid,displayName:x.author,photoURL:x.photo})+"<div class='post-meta'><b>"+esc(x.author||"Member")+"</b><span>"+esc(timeLabel(x.createdAt))+" · Everyone</span></div>"+(x.sponsored?"<span class='post-sponsor'>Sponsored</span>":"")+"<span class='post-status "+(onlineOf(x.uid)?"online":"")+"' aria-label='"+(onlineOf(x.uid)?"Online":"Offline")+"'></span></div><div class='post-body'>"+(caption?"<p class='post-caption'>"+esc(caption)+"</p>":"")+body+"</div>"+renderReactionZone(x)+"<div class='post-footer'><div class='post-stats'><span class='like-stat' data-react-total>"+(totalPostReactions(x.id,x)||"No reactions yet")+(totalPostReactions(x.id,x)?" reactions":"")+"</span><span>"+(x.comments?esc(x.comments)+" comments":"")+(shares?" · <span class='share-count-pop' data-share-count>"+shares+" shares</span>":"")+"</span></div><div class='post-actions'><button class='post-action save-action "+(isSaved(x.id)?"saved":"")+"' data-action='save' type='button'>"+(isSaved(x.id)?"Saved":"Save")+"</button><button class='post-action react-icon "+(reacted?"reacted":"")+"' data-action='react' type='button'><span class='reaction-main-icon'>"+reactionIcon(x.id)+"</span><span data-reaction-label>"+reactionLabel(x.id)+"</span></button><button class='post-action' data-action='comment' type='button'>Comment</button><button class='post-action' data-action='share' type='button'>Share</button></div></div></article>";
+  return "<article class='post-card' data-id='"+esc(x.id)+"'><div class='post-head'>"+avatarMarkup({uid:x.uid,displayName:x.author,photoURL:x.photo})+"<div class='post-meta'><b>"+esc(x.author||"Member")+"</b><span>"+esc(timeLabel(x.createdAt))+" · Everyone</span></div>"+(x.sponsored?"<span class='post-sponsor'>Sponsored</span>":"")+"<span class='post-status "+(onlineOf(x.uid)?"online":"")+"' aria-label='"+(onlineOf(x.uid)?"Online":"Offline")+"'></span></div><div class='post-body'>"+(caption?"<p class='post-caption'>"+esc(caption)+"</p>":"")+body+"</div>"+renderReactionZone(x)+"<div class='post-footer'><div class='post-stats'><span class='like-stat' data-react-total>"+(totalPostReactions(x.id,x)||"No reactions yet")+(totalPostReactions(x.id,x)?" reactions":"")+"</span><span>"+(postCommentCount(x)?esc(postCommentCount(x))+" comments":"")+(shares?" · <span class='share-count-pop' data-share-count>"+shares+" shares</span>":"")+"</span></div><div class='post-actions'><button class='post-action save-action "+(isSaved(x.id)?"saved":"")+"' data-action='save' type='button'>"+(isSaved(x.id)?"Saved":"Save")+"</button><button class='post-action react-icon "+(reacted?"reacted":"")+"' data-action='react' type='button'><span class='reaction-main-icon'>"+reactionIcon(x.id)+"</span><span data-reaction-label>"+reactionLabel(x.id)+"</span></button><button class='post-action' data-action='comment' type='button'>Comment</button><button class='post-action' data-action='share' type='button'>Share</button></div></div></article>";
 }
 function openSharedTarget(){
   const id=new URLSearchParams(location.search).get("id");
@@ -367,7 +373,7 @@ function renderStories(){
 function postSignature(x){
   return [
     x.title,x.text,x.description,x.image,x.mediaUrl,x.productUrl,x.price,x.stock,
-    x.author,x.photo,x.likes,x.comments,x.shares,x.sponsored,x.createdAt
+    x.author,x.photo,x.likes,postCommentCount(x),totalPostReactions(x.id,x),currentReaction(x.id),x.shares,x.sponsored,x.createdAt
   ].map(v=>String(v??"")).join("|");
 }
 function makePostNode(x){
@@ -407,6 +413,7 @@ function renderFeedLive(){
     }else{
       box.innerHTML="<div class='feed-empty'><strong>No matching content</strong><span>Try another filter or search.</span></div>";
     }
+    syncPostReactionListeners();
     return;
   }
 
@@ -429,6 +436,7 @@ function renderFeedLive(){
   box.querySelectorAll(".post-card").forEach(node=>{
     if(!node.dataset.bound) bindPost(node);
   });
+  syncPostReactionListeners();
 
   // Keep the same visible post anchored when a new realtime item arrives.
   if(anchor){
@@ -590,32 +598,65 @@ function bindPost(card){
   });
   card.querySelector("[data-action='comment']")?.addEventListener("click",()=>openComments(card.dataset.id));
   card.querySelector("[data-action='share']")?.addEventListener("click",()=>openShareModal(card.dataset.id));
-  card.querySelector("[data-open-reactors]")?.addEventListener("click",()=>openReactors(card.dataset.id));
   card.querySelectorAll("[data-open-reactors]").forEach(b=>b.addEventListener("click",()=>openReactors(card.dataset.id)));
   card.querySelector("[data-buy]")?.addEventListener("click",()=>{rememberViewed(card.dataset.id);const item=state.items.find(x=>x.id===card.dataset.id);location.href=item?.productUrl||item?.url||"shop.html"});
   card.querySelector("[data-action='save']")?.addEventListener("click",()=>toggleSaved(card.dataset.id));
   card.querySelector("[data-quick-view]")?.addEventListener("click",()=>quickProduct(card.dataset.id));
   if(totalPostReactions(card.dataset.id,state.items.find(x=>x.id===card.dataset.id))>=10)card.classList.add("high-reaction");
 }
-function bindPosts(){document.querySelectorAll(".post-card").forEach(bindPost)}
+function bindPosts(){
+  document.querySelectorAll(".post-card").forEach(bindPost);
+  syncPostReactionListeners();
+}
+function syncPostReactionListeners(){
+  const ids=new Set([...document.querySelectorAll(".post-card")].map(card=>card.dataset.id).filter(Boolean));
+  for(const [id,stop] of postReactionStops){if(!ids.has(id)){stop();postReactionStops.delete(id)}}
+  ids.forEach(postId=>{
+    if(postReactionStops.has(postId))return;
+    const stop=onSnapshot(query(collection(db,"feedReactions"),where("postId","==",postId),limit(200)),snap=>{
+      const next={};for(const k of REACTION_KEYS)next[k]=[];
+      snap.forEach(s=>{const x=s.data();if(x.uid&&REACTIONS[x.reaction]&&!next[x.reaction].includes(x.uid))next[x.reaction].push(x.uid)});
+      state.reactions[postId]=next;writeLocal("tubalhub-feed-reactions",state.reactions);renderTrending();
+      if(state.sort==="popular")renderFeedLive();else refreshPost(postId);
+    },error=>{if(error?.code!=="permission-denied")console.warn("[Feeds] realtime post reactions unavailable",error)});
+    postReactionStops.set(postId,stop);
+  });
+}
 async function addReact(postId,reaction){
   if(!state.auth){showNotice("Sign in to react.");return}
-  const d=reactionData(postId),before=totalPostReactions(postId,state.items.find(x=>x.id===postId));
-  for(const k of REACTION_KEYS)d[k]=d[k].filter(uid=>uid!==state.auth.uid);
-  d[reaction].push(state.auth.uid);writeLocal("tubalhub-feed-reactions",state.reactions);
-  const card=document.querySelector(".post-card[data-id='"+CSS.escape(postId)+"']"),btn=card?.querySelector("[data-action='react']");
-  if(btn){btn.classList.remove("reacted");void btn.offsetWidth;btn.classList.add("reacted");burst(btn,8);btn.querySelector(".reaction-main-icon")?.classList.add("pop")}
+  if(!REACTIONS[reaction])return;
+  const uid=state.auth.uid,d=reactionData(postId),before=totalPostReactions(postId,state.items.find(x=>x.id===postId));
+  const removeReaction=currentReaction(postId)===reaction;
+  for(const k of REACTION_KEYS)d[k]=d[k].filter(id=>id!==uid);
+  if(!removeReaction)d[reaction].push(uid);
+  writeLocal("tubalhub-feed-reactions",state.reactions);
+  const btn=document.querySelector(".post-card[data-id='"+CSS.escape(postId)+"'] [data-action='react']");
+  if(btn){btn.classList.remove("reacted");void btn.offsetWidth;if(!removeReaction)btn.classList.add("reacted");burst(btn,8)}
   refreshPost(postId,before);renderTrending();
-  const after=totalPostReactions(postId,state.items.find(x=>x.id===postId));if(after>=10&&before<10){const c=document.querySelector(".post-card[data-id='"+CSS.escape(postId)+"']");if(c)burst(c.querySelector("[data-action='react']"),16)}
-  try{await setDoc(doc(db,"feedReactions",postId+"_"+state.auth.uid),{postId,uid:state.auth.uid,reaction,updatedAt:serverTimestamp()},{merge:true})}
-  catch(e){if(e?.code!=="permission-denied")console.warn("[Feeds] remote reaction unavailable",e)}
+  const after=totalPostReactions(postId,state.items.find(x=>x.id===postId));
+  if(after>=10&&before<10){const c=document.querySelector(".post-card[data-id='"+CSS.escape(postId)+"']");if(c)burst(c.querySelector("[data-action='react']"),16)}
+  try{
+    const reactionRef=doc(db,"feedReactions",postId+"_"+uid);
+    if(removeReaction)await deleteDoc(reactionRef);
+    else await setDoc(reactionRef,{postId,uid,reaction,updatedAt:serverTimestamp()},{merge:true});
+  }catch(e){console.warn("[Feeds] post reaction could not be saved",e);showNotice(e?.code==="permission-denied"?"You do not have permission to react.":"Reaction could not sync. Check your connection.")}
 }
-function toggleCommentReaction(id,reaction){
-  const all=state.commentReactions[id]||(state.commentReactions[id]={});for(const k of REACTION_KEYS){if(!Array.isArray(all[k]))all[k]=[];all[k]=all[k].filter(x=>x!==state.auth?.uid)}
-  all[reaction].push(state.auth?.uid||"local");writeLocal("tubalhub-feed-comment-reactions",state.commentReactions);
-  renderComments(state.currentCommentId);showNotice("Reaction added.",true);
+async function toggleCommentReaction(id,reaction){
+  if(!id||!state.auth){showNotice("Sign in to react.");return}
+  if(!REACTIONS[reaction]||String(id).startsWith("local-")){showNotice("Wait for the comment to finish posting, then react.");return}
+  const uid=state.auth.uid,all=state.commentReactions[id]||(state.commentReactions[id]={});
+  for(const k of REACTION_KEYS)if(!Array.isArray(all[k]))all[k]=[];
+  const removeReaction=all[reaction].includes(uid);
+  for(const k of REACTION_KEYS)all[k]=all[k].filter(x=>x!==uid);
+  if(!removeReaction)all[reaction].push(uid);
+  writeLocal("tubalhub-feed-comment-reactions",state.commentReactions);renderComments(state.currentCommentId);
+  try{
+    const reactionRef=doc(db,"feedCommentReactions",id+"_"+uid);
+    if(removeReaction)await deleteDoc(reactionRef);
+    else await setDoc(reactionRef,{commentId:id,postId:state.currentCommentId,uid,reaction,updatedAt:serverTimestamp()},{merge:true});
+  }catch(e){console.warn("[Feeds] comment reaction could not be saved",e);showNotice(e?.code==="permission-denied"?"You do not have permission to react.":"Comment reaction could not sync. Check your connection.")}
 }
-function addCommentReact(id,reaction){if(!id||!state.auth)return showNotice("Sign in to react.");toggleCommentReaction(id,reaction)}
+function addCommentReact(id,reaction){return toggleCommentReaction(id,reaction)}
 function commentReactionMarkup(id){
   const all=state.commentReactions[id]||{},parts=REACTION_KEYS.map(k=>({k,n:all[k]?.length||0})).filter(x=>x.n).slice(0,3);
   return parts.length?parts.map(x=>"<button class='comment-reaction-pill' type='button' data-comment-react='"+id+"' data-comment-reaction='"+x.k+"'>"+REACTIONS[x.k].emoji+" "+x.n+"</button>").join(""):"";
@@ -626,28 +667,48 @@ function renderCommentText(text){
   return esc(text).replace(/(^|\s)(@[A-Za-z0-9_.-]+)/g,'$1<span class="mention">$2</span>');
 }
 function commentMarkup(c,depth=0){
-  const me=state.auth?.uid===c.uid,isReply=depth>0;
-  const replies=commentsFor(state.currentCommentId).filter(x=>x.parentId===c.id);
-  return "<div class='comment-item "+(c._new?"new":"")+"' data-comment-id='"+esc(c.id)+"'><div class='comment-row'>"+avatarMarkup({uid:c.uid,displayName:c.authorName,photoURL:c.authorPhotoURL})+"<div class='comment-bubble-wrap'><div class='comment-bubble'><div class='comment-author-line'><span class='comment-author'>"+esc(c.authorName||"Member")+"</span>"+(me?"<span class='you-badge'>YOU</span>":"")+"<span class='comment-time'>"+esc(timeLabel(c.createdAt))+"</span>"+(c.edited?"<span class='comment-edited'>(edited)</span>":"")+"</div><div class='comment-text'>"+renderCommentText(c.text||"")+"</div>"+(c.photoData?"<img class='comment-inline-photo' src='"+esc(c.photoData)+"' alt='Attached photo' loading='lazy'>":"")+"</div><div class='comment-actions'><button type='button' data-comment-react='"+esc(c.id)+"' data-comment-reaction='like'>"+REACTIONS.like.emoji+" React</button><button type='button' data-reply='"+esc(c.id)+"' data-reply-name='"+esc(c.authorName||"Member")+"'>Reply</button>"+commentReactionMarkup(c.id)+"</div></div>"+(me?"<div class='comment-menu'><button type='button' data-menu-comment='"+esc(c.id)+"'>•••</button><div class='comment-menu-pop'><button type='button' data-edit-comment='"+esc(c.id)+"'>Edit</button><button type='button' data-delete-comment='"+esc(c.id)+"'>Delete</button></div></div>":"")+"</div>"+((replies.length)?("<div class='comment-replies'>"+replies.map(r=>commentMarkup(r,depth+1)).join("")+"</div>"):"")+"</div>";
+  const me=state.auth?.uid===c.uid,replies=commentsFor(state.currentCommentId).filter(x=>x.parentId===c.id);
+  const bodyText=c.deleted?"This comment was deleted.":renderCommentText(c.text||"");
+  const photo=c.deleted?"":(c.photoURL||c.photoData||"");
+  const controls="<div class='comment-actions'><button type='button' data-comment-react='"+esc(c.id)+"' data-comment-reaction='like'>"+REACTIONS.like.emoji+" React</button><button type='button' data-reply='"+esc(c.id)+"' data-reply-name='"+esc(c.authorName||"Member")+"'>Reply</button>"+commentReactionMarkup(c.id)+"</div>";
+  const menu=me&&!c.deleted?"<div class='comment-menu'><button type='button' data-menu-comment='"+esc(c.id)+"'>•••</button><div class='comment-menu-pop'><button type='button' data-edit-comment='"+esc(c.id)+"'>Edit</button><button type='button' data-delete-comment='"+esc(c.id)+"'>Delete</button></div></div>":"";
+  return "<div class='comment-item "+(c._new?"new":"")+"' data-comment-id='"+esc(c.id)+"'><div class='comment-row'>"+avatarMarkup({uid:c.uid,displayName:c.authorName,photoURL:c.authorPhotoURL})+"<div class='comment-bubble-wrap'><div class='comment-bubble'><div class='comment-author-line'><span class='comment-author'>"+esc(c.authorName||"Member")+"</span>"+(me?"<span class='you-badge'>YOU</span>":"")+"<span class='comment-time'>"+esc(timeLabel(c.createdAt))+"</span>"+(c.edited?"<span class='comment-edited'>(edited)</span>":"")+"</div><div class='comment-text"+(c.deleted?" deleted":"")+"'>"+bodyText+"</div>"+(photo?"<img class='comment-inline-photo' src='"+esc(photo)+"' alt='Attached photo' loading='lazy'>":"")+"</div>"+controls+"</div>"+menu+"</div>"+((replies.length)?("<div class='comment-replies'>"+replies.map(r=>commentMarkup(r,depth+1)).join("")+"</div>"):"")+"</div>";
 }
 function renderComments(postId){
   const box=document.getElementById("commentList"),bar=document.getElementById("commentReactionBar");if(!box||!bar)return;
   const post=state.items.find(x=>x.id===postId);bar.innerHTML=reactionSummaryMarkup(postId);
-  const all=commentsFor(postId).filter(c=>!c.parentId),slice=all.slice(0,state.commentLimit);
+  const allComments=commentsFor(postId),ids=new Set(allComments.map(c=>c.id));
+  const all=allComments.filter(c=>!c.parentId||!ids.has(c.parentId)),slice=all.slice(0,state.commentLimit);
   if(!all.length)box.innerHTML="<div class='empty-comments'><span class='empty-icon'>💬</span><strong>No comments yet</strong><span>Be the first to say something.</span></div>";
   else{
     box.innerHTML=slice.map(c=>commentMarkup(c,0)).join("");
     if(all.length>slice.length)box.insertAdjacentHTML("beforeend","<button class='view-more-comments' id='viewMoreComments' type='button'>View "+(all.length-slice.length)+" more</button>");
   }
-  bindCommentUI();document.getElementById("commentInput")?.focus({preventScroll:true});
+  bindCommentUI();
 }
 function bindCommentUI(){
-  document.querySelectorAll("[data-reply]").forEach(b=>b.onclick=()=>{state.replyingTo=b.dataset.reply;const input=document.getElementById("commentInput");input.value="@"+b.dataset.replyName+" "+input.value;input.focus()});
+  document.querySelectorAll("[data-reply]").forEach(b=>b.onclick=()=>{
+    const target=(state.comments[state.currentCommentId]||[]).find(c=>c.id===b.dataset.reply);
+    if(target?._pending){showNotice("Wait for the comment to finish posting before replying.");return}
+    state.replyingTo=b.dataset.reply;
+    const input=document.getElementById("commentInput");input.value="@"+b.dataset.replyName+" "+input.value;input.focus({preventScroll:true});
+  });
   document.querySelectorAll("[data-menu-comment]").forEach(b=>b.onclick=()=>b.parentElement.classList.toggle("open"));
   document.querySelectorAll("[data-edit-comment]").forEach(b=>b.onclick=()=>startEditComment(b.dataset.editComment));
   document.querySelectorAll("[data-delete-comment]").forEach(b=>b.onclick=()=>askDeleteComment(b.dataset.deleteComment));
   document.querySelectorAll("[data-comment-react]").forEach(b=>{
-    b.onclick=()=>{const id=b.dataset.commentReact,kind=b.dataset.commentReaction||"like";toggleCommentReaction(id,kind);if(b.closest(".comment-item"))burst(b,8)}
+    let pressTimer=null;
+    b.addEventListener("pointerdown",e=>{
+      if(e.pointerType!=="touch")return;
+      clearTimeout(pressTimer);
+      pressTimer=setTimeout(()=>{pickerState.longPressTriggered=true;openReactionPicker({targetType:"comment",commentId:b.dataset.commentReact,button:b});navigator.vibrate?.(10)},460);
+    });
+    ["pointerup","pointercancel","pointerleave"].forEach(type=>b.addEventListener(type,()=>clearTimeout(pressTimer)));
+    b.onclick=e=>{
+      if(pickerState.longPressTriggered){e.preventDefault();pickerState.longPressTriggered=false;return}
+      const id=b.dataset.commentReact,kind=b.dataset.commentReaction||"like";
+      addCommentReact(id,kind);if(b.closest(".comment-item"))burst(b,8);
+    };
     if(b.dataset.commentReaction==="like")b.oncontextmenu=e=>{e.preventDefault();openReactionPicker({targetType:"comment",commentId:b.dataset.commentReact,button:b})}
   });
   document.getElementById("viewMoreComments")?.addEventListener("click",()=>{state.commentLimit+=8;renderComments(state.currentCommentId)});
@@ -660,40 +721,132 @@ function startEditComment(id){
   document.querySelector("[data-save-edit='"+CSS.escape(id)+"']")?.addEventListener("click",saveEditComment);
 }
 async function saveEditComment(){
-  const id=state.editingCommentId,wrap=document.querySelector("[data-edit-wrap='"+CSS.escape(id)+"']"),input=wrap?.querySelector("input"),text=input?.value.trim();if(!id||!text)return;
-  const arr=state.comments[state.currentCommentId]||[],c=arr.find(x=>x.id===id);if(!c)return;c.text=text;c.edited=true;c.updatedAt=Date.now();writeLocal("tubalhub-feed-comments",state.comments);
-  try{if(!String(id).startsWith("local-"))await updateDoc(doc(db,"feedComments",id),{text,edited:true,updatedAt:serverTimestamp()})}catch(e){if(e?.code!=="permission-denied")console.warn(e)}
-  state.editingCommentId=null;renderComments(state.currentCommentId);showNotice("Comment updated.",true);
+  const id=state.editingCommentId,postId=state.currentCommentId;
+  const wrap=document.querySelector("[data-edit-wrap='"+CSS.escape(id)+"']"),input=wrap?.querySelector("input"),text=input?.value.trim();
+  if(!id||!text){showNotice("Comment cannot be empty.");return}
+  const arr=state.comments[postId]||[],c=arr.find(x=>x.id===id);if(!c||c._pending||c.deleted)return;
+  try{
+    await updateDoc(doc(db,"feedComments",id),{text,edited:true,updatedAt:serverTimestamp()});
+    c.text=text;c.edited=true;c.updatedAt=Date.now();writeLocal("tubalhub-feed-comments",state.comments);
+    state.editingCommentId=null;renderComments(postId);showNotice("Comment updated.",true);
+  }catch(e){console.warn("[Feeds] comment edit failed",e);showNotice(e?.code==="permission-denied"?"You can edit only your own comments.":"Comment edit failed. Check your connection.")}
 }
 function askDeleteComment(id){state.deleteCommentId=id;document.getElementById("deleteModal").hidden=false}
 async function deleteComment(){
-  const id=state.deleteCommentId;if(!id)return;const postId=state.currentCommentId;
-  state.comments[postId]=(state.comments[postId]||[]).filter(c=>c.id!==id&&c.parentId!==id);writeLocal("tubalhub-feed-comments",state.comments);
-  try{if(!String(id).startsWith("local-"))await deleteDoc(doc(db,"feedComments",id))}catch(e){if(e?.code!=="permission-denied")console.warn(e)}
-  document.getElementById("deleteModal").hidden=true;state.deleteCommentId=null;renderComments(postId);showNotice("Comment deleted.",true);
+  const id=state.deleteCommentId;if(!id)return;
+  const postId=state.currentCommentId,comments=state.comments[postId]||[];
+  const item=comments.find(c=>c.id===id);
+  if(!item||item._pending){showNotice("This comment has not finished posting yet.");return}
+  const hasReplies=comments.some(c=>c.parentId===id);
+  try{
+    if(hasReplies){
+      await updateDoc(doc(db,"feedComments",id),{text:"",deleted:true,updatedAt:serverTimestamp()});
+      item.text="";item.deleted=true;item.photoURL="";item.photoData="";
+    }else{
+      await deleteDoc(doc(db,"feedComments",id));
+      state.comments[postId]=comments.filter(c=>c.id!==id);
+      delete state.commentReactions[id];
+    }
+    writeLocal("tubalhub-feed-comments",state.comments);writeLocal("tubalhub-feed-comment-reactions",state.commentReactions);
+    document.getElementById("deleteModal").hidden=true;state.deleteCommentId=null;
+    renderComments(postId);showNotice("Comment deleted.",true);
+  }catch(e){console.warn("[Feeds] comment deletion failed",e);showNotice(e?.code==="permission-denied"?"You can delete only your own comments.":"Comment deletion failed. Check your connection.")}
+}
+async function uploadCommentPhoto(dataUrl){
+  if(!dataUrl)return "";
+  storage??=getStorage(app);
+  const blob=await (await fetch(dataUrl)).blob();
+  const ext=blob.type==="image/png"?"png":blob.type==="image/webp"?"webp":blob.type==="image/gif"?"gif":"jpg";
+  const path="feeds/"+state.auth.uid+"/comments/"+Date.now()+"-"+Math.random().toString(36).slice(2,8)+"."+ext;
+  const ref=storageRef(storage,path);await uploadBytes(ref,blob,{contentType:blob.type||"image/jpeg"});
+  return getDownloadURL(ref);
 }
 async function addComment(){
-  const input=document.getElementById("commentInput"),text=input?.value.trim();
-  if(!state.currentCommentId){showNotice("Open a post's comments first.");return}
-  if(!text){input?.focus();return}
+  const input=document.getElementById("commentInput"),text=input?.value.trim(),postId=state.currentCommentId;
+  if(!postId){showNotice("Open a post's comments first.");return}
+  if(!text){input?.focus({preventScroll:true});return}
   if(!state.auth){showNotice("Sign in to comment.");return}
-  const id="local-"+Date.now()+"-"+Math.random().toString(36).slice(2,8);
-  const item={id,postId:state.currentCommentId,uid:state.auth.uid,authorName:displayName(state.auth),authorPhotoURL:photoOf(state.auth),
-    text,parentId:state.replyingTo||null,createdAt:Date.now(),edited:false,photoData:state.commentPhotoData||""};
-  if(!Array.isArray(state.comments[state.currentCommentId]))state.comments[state.currentCommentId]=[];
-  state.comments[state.currentCommentId].push(item);writeLocal("tubalhub-feed-comments",state.comments);
-  input.value="";state.replyingTo=null;state.commentPhotoData="";clearCommentPhotoPreview();renderComments(state.currentCommentId);
-  const send=document.getElementById("sendComment");send?.classList.remove("pop");void send?.offsetWidth;send?.classList.add("pop");
+  const parent=state.replyingTo?(state.comments[postId]||[]).find(c=>c.id===state.replyingTo):null;
+  if(state.replyingTo&&(!parent||parent._pending)){showNotice("Wait until the comment finishes posting before replying.");return}
+  const photoData=state.commentPhotoData||"",commentRef=doc(collection(db,"feedComments"));
+  const item={id:commentRef.id,postId,uid:state.auth.uid,authorName:displayName(state.auth),authorPhotoURL:photoOf(state.auth),
+    text,parentId:parent?.id||null,createdAt:Date.now(),edited:false,photoData,photoURL:"",_pending:true};
+  if(!Array.isArray(state.comments[postId]))state.comments[postId]=[];
+  state.comments[postId].push(item);writeLocal("tubalhub-feed-comments",state.comments);
+  input.value="";state.replyingTo=null;clearCommentPhotoPreview();renderComments(postId);
+  const send=document.getElementById("sendComment");if(send)send.disabled=true;
+  send?.classList.remove("pop");void send?.offsetWidth;send?.classList.add("pop");
   try{
-    const remote=await addDoc(collection(db,"feedComments"),{postId:item.postId,uid:item.uid,authorName:item.authorName,authorPhotoURL:item.authorPhotoURL,text:item.text,parentId:item.parentId,photoData:item.photoData,edited:false,createdAt:serverTimestamp()});
-    const arr=state.comments[state.currentCommentId];const local=arr.find(x=>x.id===id);if(local)local.remoteId=remote.id;
-  }catch(e){if(e?.code!=="permission-denied")console.warn("[Feeds] remote comment unavailable",e)}
+    const photoURL=photoData?await uploadCommentPhoto(photoData):"";
+    await setDoc(commentRef,{postId,uid:item.uid,authorName:item.authorName,authorPhotoURL:item.authorPhotoURL,text:item.text,
+      parentId:item.parentId,photoURL,edited:false,deleted:false,createdAt:serverTimestamp()});
+    item.photoURL=photoURL;item.photoData="";item._pending=false;
+    writeLocal("tubalhub-feed-comments",state.comments);
+    state.commentCounts[postId]=Math.max(state.commentCounts[postId]||0,(state.comments[postId]||[]).length);
+    writeLocal("tubalhub-feed-comment-counts",state.commentCounts);renderComments(postId);
+    showNotice(parent?"Reply posted.":"Comment posted.",true);
+  }catch(e){
+    state.comments[postId]=(state.comments[postId]||[]).filter(c=>c.id!==item.id);
+    state.commentCounts[postId]=Math.max(0,(state.commentCounts[postId]||0)-1);
+    writeLocal("tubalhub-feed-comments",state.comments);writeLocal("tubalhub-feed-comment-counts",state.commentCounts);
+    input.value=text;state.commentPhotoData=photoData;
+    if(photoData){
+      const preview=document.getElementById("commentPhotoPreview");
+      if(preview){preview.hidden=false;preview.innerHTML="<button type='button' id='clearCommentPhoto'>×</button><img src='"+esc(photoData)+"' alt='Attached photo'>";document.getElementById("clearCommentPhoto").onclick=clearCommentPhotoPreview}
+    }
+    renderComments(postId);console.warn("[Feeds] comment create failed",e);
+    showNotice(e?.code==="permission-denied"?"Comment blocked by Firestore Rules.":"Comment could not post. Check your connection.");
+  }finally{if(send)send.disabled=false}
+}
+function stopCommentSubscriptions(){
+  stopRemoteComments?.();stopRemoteReactions?.();stopRemoteComments=null;stopRemoteReactions=null;
+}
+function subscribeRemoteComments(postId){
+  stopCommentSubscriptions();
+  try{
+    stopRemoteComments=onSnapshot(query(collection(db,"feedComments"),where("postId","==",postId),limit(200)),snap=>{
+      const previous=state.comments[postId]||[],pending=previous.filter(c=>c._pending===true);
+      const remote=snap.docs.map(s=>{
+        const x=s.data();
+        return {id:s.id,remoteId:s.id,postId,uid:x.uid||"",authorName:x.authorName||"Member",authorPhotoURL:x.authorPhotoURL||"",
+          text:x.text||"",parentId:x.parentId||null,photoURL:x.photoURL||"",photoData:x.photoData||"",
+          edited:x.edited===true,deleted:x.deleted===true,createdAt:x.createdAt||Date.now(),_pending:false};
+      });
+      const remoteIds=new Set(remote.map(c=>c.id));
+      state.comments[postId]=[...remote,...pending.filter(c=>!remoteIds.has(c.id))];
+      state.commentCounts[postId]=snap.size;
+      writeLocal("tubalhub-feed-comments",state.comments);writeLocal("tubalhub-feed-comment-counts",state.commentCounts);
+      if(state.currentCommentId===postId)renderComments(postId);
+      refreshPost(postId);
+    },error=>{
+      console.warn("[Feeds] realtime comments unavailable",error);
+      if(error?.code==="permission-denied")showNotice("Comments are read-only until Firestore Rules are deployed.");
+    });
+    stopRemoteReactions=onSnapshot(query(collection(db,"feedCommentReactions"),where("postId","==",postId),limit(500)),snap=>{
+      const next={};
+      snap.forEach(s=>{
+        const x=s.data();if(!x.commentId||!x.uid||!REACTIONS[x.reaction])return;
+        if(!next[x.commentId]){next[x.commentId]={};for(const k of REACTION_KEYS)next[x.commentId][k]=[]}
+        if(!next[x.commentId][x.reaction].includes(x.uid))next[x.commentId][x.reaction].push(x.uid);
+      });
+      state.commentReactions={...state.commentReactions,...next};
+      const known=new Set((state.comments[postId]||[]).map(c=>c.id));
+      Object.keys(state.commentReactions).forEach(id=>{if(known.has(id)&&!next[id])delete state.commentReactions[id]});
+      writeLocal("tubalhub-feed-comment-reactions",state.commentReactions);
+      if(state.currentCommentId===postId)renderComments(postId);
+    },error=>console.warn("[Feeds] realtime comment reactions unavailable",error));
+  }catch(error){console.warn("[Feeds] could not subscribe to comments",error)}
 }
 function openComments(postId){
+  stopCommentSubscriptions();
   state.currentCommentId=postId;state.commentLimit=6;state.replyingTo=null;state.commentPhotoData="";
   document.getElementById("commentModal").hidden=false;updateAvatarStatus();renderComments(postId);toggleEmoji(false);showTyping(false);
+  subscribeRemoteComments(postId);
 }
-function closeComments(){document.getElementById("commentModal").hidden=true;toggleEmoji(false);state.currentCommentId=null}
+function closeComments(){
+  document.getElementById("commentModal").hidden=true;toggleEmoji(false);stopCommentSubscriptions();
+  state.currentCommentId=null;state.replyingTo=null;
+}
 function updateAvatarStatus(){
   const a=document.getElementById("commentAvatar"),c=document.getElementById("createAvatar"),u=state.auth||{};
   [a,c].forEach(el=>{if(!el)return;el.innerHTML=(photoOf(u)?"<img src='"+esc(photoOf(u))+"' alt=''>":esc(initials(displayName(u))))+"<span class='avatar-status "+(u.uid&&onlineOf(u.uid)?"online":"")+"' aria-hidden='true'></span>"});
@@ -773,8 +926,8 @@ async function uploadPostMedia(file){
     storage??=getStorage(app);
     const data=file.type.startsWith("image/")?await (await fetch(await compressImage(file))).blob():file;
     const path="feeds/"+state.auth.uid+"/"+Date.now()+"-"+file.name.replace(/[^a-zA-Z0-9._-]/g,"_");
-    const ref=storageRef(storage,path);await uploadBytes(ref,data,{contentType:file.type});return await getDownloadURL(ref);
-  }catch(e){console.warn("[Feeds] storage upload unavailable",e);showNotice("Media upload is unavailable; publishing text only.");return ""}
+    const ref=storageRef(storage,path);await uploadBytes(ref,data,{contentType:data.type||file.type});return await getDownloadURL(ref);
+  }catch(e){console.warn("[Feeds] storage upload unavailable",e);showNotice("Media upload failed. Check the file type, size, and Storage Rules.");throw e}
 }
 async function publishPost(e){
   e.preventDefault();if(!state.auth){showNotice("Sign in to create a post.");return}
@@ -834,23 +987,7 @@ function insertEmoji(emoji){
   input.value=input.value.slice(0,a)+emoji+input.value.slice(b);input.focus();input.selectionStart=input.selectionEnd=a+emoji.length;toggleEmoji(false);
 }
 
-async function loadRemoteComments(){
-  try{
-    const snap=await getDocs(query(collection(db,"feedComments"),orderBy("createdAt","asc"),limit(500)));
-    snap.forEach(s=>{const x=s.data(),post=x.postId;if(!post)return;if(!Array.isArray(state.comments[post]))state.comments[post]=[];const found=state.comments[post].find(c=>c.id===s.id||c.remoteId===s.id);const normalized={id:s.id,remoteId:s.id,postId:post,uid:x.uid||"",authorName:x.authorName||"Member",authorPhotoURL:x.authorPhotoURL||"",text:x.text||"",parentId:x.parentId||null,photoData:x.photoData||"",edited:x.edited===true,createdAt:x.createdAt||0};if(found)Object.assign(found,normalized);else state.comments[post].push(normalized)});
-    if(state.currentCommentId)renderComments(state.currentCommentId);
-  }catch(e){console.warn(e)}
-}
-async function loadRemoteReactions(){
-  try{
-    const snap=await getDocs(query(collection(db,"feedReactions"),limit(1000)));
-    const remoteTouched=new Set();
-    snap.forEach(s=>{const x=s.data();if(x.postId)remoteTouched.add(x.postId)});
-    remoteTouched.forEach(postId=>{state.reactions[postId]={};for(const k of REACTION_KEYS)state.reactions[postId][k]=[]});
-    snap.forEach(s=>{const x=s.data();if(!x.postId||!x.uid||!REACTIONS[x.reaction])return;const d=reactionData(x.postId);if(!d[x.reaction].includes(x.uid))d[x.reaction].push(x.uid)});
-    writeLocal("tubalhub-feed-reactions",state.reactions);renderFeed(true);
-  }catch(e){console.warn(e)}
-}
+
 function setupHubContent(){
   // Auth state can fire more than once. Keep a single live listener for the page.
   if(stopHub)return;
@@ -880,7 +1017,19 @@ function setupPresence(){
 }
 function setupUI(){
   if(uiReady)return;uiReady=true;
-  document.body.addEventListener("pointermove",e=>{document.body.style.setProperty("--mx",e.clientX+"px");document.body.style.setProperty("--my",e.clientY+"px");const card=e.target.closest(".post-card,.feeds-panel,.feed-toolbar");if(card){const r=card.getBoundingClientRect();card.style.setProperty("--card-mx",((e.clientX-r.left)/Math.max(1,r.width)*100)+"%");card.style.setProperty("--card-my",((e.clientY-r.top)/Math.max(1,r.height)*100)+"%")}}, {passive:true});
+  // Skip decorative pointer effects on phones and throttle geometry reads on desktop.
+  if(window.matchMedia?.("(hover: hover) and (pointer: fine)").matches){
+    let pointerFrame=0,lastPointerEvent=null;
+    document.body.addEventListener("pointermove",e=>{
+      lastPointerEvent=e;if(pointerFrame)return;
+      pointerFrame=requestAnimationFrame(()=>{
+        pointerFrame=0;const event=lastPointerEvent;if(!event)return;
+        document.body.style.setProperty("--mx",event.clientX+"px");document.body.style.setProperty("--my",event.clientY+"px");
+        const card=event.target.closest(".post-card,.feeds-panel,.feed-toolbar");
+        if(card){const r=card.getBoundingClientRect();card.style.setProperty("--card-mx",((event.clientX-r.left)/Math.max(1,r.width)*100)+"%");card.style.setProperty("--card-my",((event.clientY-r.top)/Math.max(1,r.height)*100)+"%")}
+      });
+    },{passive:true});
+  }
   const freeFilter=document.querySelector('.feed-filter[data-filter="free"]');
   if(freeFilter){
     freeFilter.title="Free = content explicitly marked free or priced at ₱0.";
@@ -952,6 +1101,5 @@ onAuthStateChanged(auth,async user=>{
   setupPresence();
   setupHubContent();
   setupProductsRealtime();
-  loadRemoteComments();loadRemoteReactions();
   buildFeed();updateAvatarStatus();
 });
