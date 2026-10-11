@@ -182,3 +182,8 @@ input[type="checkbox"], input[type="radio"] { accent-color: var(--thx-red); }
 /* Upgrade 29 — tables do not break mobile layouts */
 .table-wrap, .table-responsive { max-width: 100%; overflow-x: auto; overscroll-behavior-x: contain; }
 table { border-collapse: collapse; }
+
+
+/* Upgrade 30 — consistent separators */
+hr { border: 0; border-top: 1px solid var(--thx-line); }
+body.hub-home hr, body.feeds-page hr { border-color: var(--thx-line); }
