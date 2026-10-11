@@ -158,3 +158,8 @@ body.feeds-page .feed-filters, body.feeds-page .filter-row, body.feeds-page .fee
 /* Upgrade 25 — feed media corners */
 body.feeds-page .post-media, body.feeds-page .feed-media,
 body.feeds-page .feed-card .media-wrap { overflow: hidden; border-radius: 16px; }
+
+
+/* Upgrade 26 — platform page content alignment */
+body:not(.hub-home):not(.feeds-page) main { min-width: 0; }
+body:not(.hub-home):not(.feeds-page) main img { height: auto; }
