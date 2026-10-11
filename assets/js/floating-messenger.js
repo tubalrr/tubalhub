@@ -12,7 +12,7 @@ function loadPremiumCss(){
   if(document.querySelector('link[data-tubal-floating-premium]'))return;
   const css=document.createElement("link");
   css.rel="stylesheet";css.dataset.tubalFloatingPremium="";
-  css.href=new URL("/tubalhub/assets/css/floating-messenger-premium.css?v=20260924-msg2",window.location.origin).href;
+  css.href=new URL("/tubalhub/assets/css/floating-messenger-premium.css?v=20261011-brandmark1",window.location.origin).href;
   document.head.appendChild(css);
 }
 function setLauncherOnline(online){
@@ -33,7 +33,7 @@ function ui(){
   if(document.getElementById("tubalMessenger"))return;
   const markup = [
     '<button id="tubalMsgLauncher" class="tubal-msg-launcher offline" data-online="false" aria-label="Messages">',
-      '<svg class="tubal-msg-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h4l4 3 4-3h4c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 10H4V6h16v8z"/></svg>',
+      '<img class="tubal-msg-brand-mark" src="/tubalhub/assets/icons/tubal-hub-512.svg" alt="" draggable="false" aria-hidden="true">',
       '<span id="tubalMsgStatus" class="tubal-msg-status" aria-hidden="true"></span>',
       '<span id="tubalMsgTooltip" class="tubal-msg-tooltip">Messages (0)</span>',
       '<span id="tubalMsgBadge" class="tubal-msg-badge" hidden>0</span>',
