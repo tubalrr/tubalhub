@@ -32,3 +32,22 @@ The destinations still use the site's existing web implementations, so this is n
 ## Build check
 
 Every push changing `android-app/**` runs a clean debug APK build on GitHub Actions. When the build succeeds, the `tubal-hub-android-debug` APK artifact is available for seven days from the workflow run.
+
+
+## Android update checker and releases
+
+The splash screen includes **CHECK FOR UPDATES**. It checks the GitHub Releases API and compares the latest release tag (for example `v1.2.8`) with the installed app version. A published release should include an APK asset; the app opens the official GitHub download link after the user confirms. Android still controls APK installation.
+
+### Publishing an installable update
+
+1. Create and securely back up one Android release keystore. **Never commit the keystore or passwords to Git.**
+2. In repository Settings → Secrets and variables → Actions, add:
+   - `ANDROID_KEYSTORE_BASE64` — base64-encoded keystore file
+   - `ANDROID_KEYSTORE_PASSWORD`
+   - `ANDROID_KEY_ALIAS`
+   - `ANDROID_KEY_PASSWORD`
+3. Increment `versionCode` and `versionName` in `app/build.gradle.kts` before each release.
+4. Push a tag such as `android-v1.2.8` to start the Android Release workflow, or run it manually with the tag input.
+5. Confirm the workflow succeeds and the release contains `app-release.apk`.
+
+**Important:** Android only installs an update over an existing installation when the application ID and signing certificate match. If the app currently installed on your phone was signed with a different debug key, it may require one uninstall/reinstall to move to the stable release key. Back up any local app data first. The update checker cannot publish a release by itself; a release must exist before it can report an update.

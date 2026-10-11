@@ -53,7 +53,8 @@ class MainActivity : Activity() {
 
     private lateinit var contentColumn: LinearLayout
     private lateinit var bottomNavigation: LinearLayout
-    private var activeTab: String = "Feeds"
+    private lateinit var dashboardScroll: ScrollView
+    private var activeTab: String = "Home"
     private var exploreFilter: String = ""
 
     private val spaces = listOf(
@@ -111,7 +112,7 @@ class MainActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        activeTab = savedInstanceState?.getString("active_tab") ?: "Feeds"
+        activeTab = savedInstanceState?.getString("active_tab") ?: "Home"
 
         window.statusBarColor = COLOR_INK
         window.navigationBarColor = COLOR_INK
@@ -122,17 +123,19 @@ class MainActivity : Activity() {
             setBackgroundColor(COLOR_BG)
         }
 
-        val scroll = ScrollView(this).apply {
+        dashboardScroll = ScrollView(this).apply {
             isFillViewport = true
             clipToPadding = false
             overScrollMode = View.OVER_SCROLL_NEVER
+            isVerticalScrollBarEnabled = false
+            contentDescription = "TUBAL HUB dashboard content"
         }
 
         contentColumn = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(dp(20), dp(12), dp(20), dp(28))
         }
-        scroll.addView(contentColumn, FrameLayout.LayoutParams(
+        dashboardScroll.addView(contentColumn, FrameLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         ))
@@ -145,7 +148,7 @@ class MainActivity : Activity() {
             elevation = dp(14).toFloat()
         }
 
-        root.addView(scroll, LinearLayout.LayoutParams(
+        root.addView(dashboardScroll, LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f
         ))
         root.addView(bottomNavigation, LinearLayout.LayoutParams(
@@ -155,8 +158,7 @@ class MainActivity : Activity() {
 
         renderTab(activeTab)
 
-        // The launcher now opens Community Feeds directly from SplashActivity.
-        // Keep this native dashboard available for explicit future navigation only.
+        // The splash screen opens this native dashboard after its short animation.
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -170,6 +172,7 @@ class MainActivity : Activity() {
         addBrandHeader(contentColumn)
 
         when (tab) {
+            "Home" -> buildHome(contentColumn)
             "Feeds" -> {
                 addText(contentColumn, "COMMUNITY FEEDS", 10f, COLOR_ACCENT, bold = true, bottom = 6)
                 addText(contentColumn, "Your community,\nyour home.", 29f, COLOR_TEXT, bold = true, bottom = 8)
@@ -182,6 +185,16 @@ class MainActivity : Activity() {
             else -> buildExplore(contentColumn)
         }
         renderBottomNavigation()
+        dashboardScroll.post { dashboardScroll.scrollTo(0, 0) }
+    }
+
+    @Deprecated("Use AndroidX OnBackPressedDispatcher when migrating to AndroidX")
+    override fun onBackPressed() {
+        if (activeTab != "Home") {
+            renderTab("Home")
+        } else {
+            super.onBackPressed()
+        }
     }
 
     private fun addBrandHeader(parent: LinearLayout) {
@@ -217,6 +230,24 @@ class MainActivity : Activity() {
             setOnClickListener { renderTab("Explore") }
         }
         row.addView(search, LinearLayout.LayoutParams(dp(44), dp(44)))
+
+        val profile = TextView(this).apply {
+            text = "♙"
+            textSize = 21f
+            gravity = Gravity.CENTER
+            setTextColor(Color.WHITE)
+            background = GradientDrawable(
+                GradientDrawable.Orientation.TL_BR,
+                intArrayOf(COLOR_ACCENT, 0xFF8D2347.toInt())
+            ).apply { cornerRadius = dp(16).toFloat() }
+            isClickable = true
+            isFocusable = true
+            contentDescription = "Open profile and app settings"
+            setOnClickListener { renderTab("Profile") }
+        }
+        row.addView(profile, LinearLayout.LayoutParams(dp(44), dp(44)).apply {
+            leftMargin = dp(8)
+        })
         parent.addView(row, fullWidth().apply { bottomMargin = dp(20) })
     }
 
@@ -458,6 +489,9 @@ class MainActivity : Activity() {
             }
         }
 
+        addSectionHeader(parent, "App updates", "Check for the latest Android version")
+        addQuickAction(parent, "↻", "Check for updates", "Find the latest published TUBAL HUB APK", "UPDATE_CHECK", COLOR_SOFT_RED)
+
         addSectionHeader(parent, "Settings & support", "Manage your experience")
         addQuickAction(parent, "⚙", "Settings", "Account and experience preferences", "pages/settings.html", COLOR_SOFT_PURPLE)
         addQuickAction(parent, "?", "Help center", "Guides and common questions", "pages/help.html", COLOR_SOFT_BLUE)
@@ -593,7 +627,7 @@ class MainActivity : Activity() {
     private fun renderBottomNavigation() {
         bottomNavigation.removeAllViews()
         listOf(
-            Triple("Feeds", "◎", "Feeds"),
+            Triple("Home", "⌂", "Home"),
             Triple("Explore", "✦", "Explore"),
             Triple("Community", "◉", "Community"),
             Triple("Profile", "♙", "Profile")
@@ -607,7 +641,7 @@ class MainActivity : Activity() {
                 isClickable = true
                 isFocusable = true
                 contentDescription = item.third
-                setOnClickListener { if (item.first == "Feeds") openPage("Community Feeds", "pages/feeds.html") else renderTab(item.first) }
+                setOnClickListener { renderTab(item.first) }
             }
             val icon = TextView(this).apply {
                 text = item.second
@@ -635,7 +669,17 @@ class MainActivity : Activity() {
         }
     }
 
+    private fun currentAppVersion(): String =
+        runCatching { packageManager.getPackageInfo(packageName, 0).versionName }
+            .getOrNull()
+            ?.takeIf { it.isNotBlank() }
+            ?: "1.0.0"
+
     private fun openPage(title: String, route: String) {
+        if (route == "UPDATE_CHECK") {
+            AppUpdateChecker.check(this, currentAppVersion())
+            return
+        }
         val cleanRoute = route.trimStart('/')
         rememberFeature(cleanRoute)
         val intent = Intent(this, HubWebActivity::class.java).apply {

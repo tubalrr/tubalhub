@@ -30,7 +30,7 @@ import kotlin.random.Random
 class SplashActivity : Activity() {
 
     companion object {
-        private const val SPLASH_DURATION_MS = 6_200L
+        private const val SPLASH_DURATION_MS = 1_800L
         private const val COLOR_INK = 0xFF0B0D17.toInt()
         private const val COLOR_ACCENT = 0xFFE0445D.toInt()
         private const val COLOR_ACCENT_LIGHT = 0xFFFF91A2.toInt()
@@ -44,10 +44,7 @@ class SplashActivity : Activity() {
     private val launchDashboard = Runnable {
         if (!isFinishing && !isDestroyed && !navigationStarted) {
             navigationStarted = true
-            startActivity(Intent(this, HubWebActivity::class.java).apply {
-                putExtra(HubWebActivity.EXTRA_TITLE, "Community Feeds")
-                putExtra(HubWebActivity.EXTRA_URL, "https://tubalrr.github.io/tubalhub/pages/feeds.html")
-            })
+            startActivity(Intent(this, MainActivity::class.java))
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
             finish()
         }
@@ -168,6 +165,31 @@ class SplashActivity : Activity() {
             bottomMargin = dp(25)
         })
 
+        val updateLink = TextView(this).apply {
+            text = "CHECK FOR UPDATES"
+            textSize = 10f
+            letterSpacing = 0.12f
+            typeface = Typeface.create("sans-serif-medium", Typeface.BOLD)
+            gravity = Gravity.CENTER
+            setTextColor(0xFFFF91A2.toInt())
+            isClickable = true
+            isFocusable = true
+            contentDescription = "Check for TUBAL HUB Android updates"
+            setPadding(dp(16), dp(12), dp(16), dp(12))
+            setOnClickListener {
+                AppUpdateChecker.check(this@SplashActivity, currentAppVersion())
+            }
+        }
+        root.addView(updateLink, FrameLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            Gravity.BOTTOM
+        ).apply {
+            leftMargin = dp(28)
+            rightMargin = dp(28)
+            bottomMargin = dp(54)
+        })
+
         setContentView(root)
 
         // Staggered entrances make the first launch feel intentional, not static.
@@ -203,6 +225,12 @@ class SplashActivity : Activity() {
 
         handler.postDelayed(launchDashboard, SPLASH_DURATION_MS)
     }
+
+    private fun currentAppVersion(): String =
+        runCatching { packageManager.getPackageInfo(packageName, 0).versionName }
+            .getOrNull()
+            ?.takeIf { it.isNotBlank() }
+            ?: "1.0.0"
 
     private fun buildTopBar(): View {
         val bar = LinearLayout(this).apply {
