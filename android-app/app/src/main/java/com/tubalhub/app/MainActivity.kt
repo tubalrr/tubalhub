@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.EditText
 import android.widget.FrameLayout
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
@@ -189,16 +190,10 @@ class MainActivity : Activity() {
             gravity = Gravity.CENTER_VERTICAL
         }
 
-        val mark = TextView(this).apply {
-            text = "TH"
-            textSize = 14f
-            typeface = Typeface.DEFAULT_BOLD
-            gravity = Gravity.CENTER
-            setTextColor(Color.WHITE)
-            background = GradientDrawable(
-                GradientDrawable.Orientation.TL_BR,
-                intArrayOf(COLOR_ACCENT, 0xFF9D2349.toInt())
-            ).apply { cornerRadius = dp(14).toFloat() }
+        val mark = ImageView(this).apply {
+            setImageResource(R.drawable.ic_tubal_hub)
+            scaleType = ImageView.ScaleType.FIT_CENTER
+            contentDescription = "TUBAL HUB official logo"
         }
         row.addView(mark, LinearLayout.LayoutParams(dp(44), dp(44)))
 
