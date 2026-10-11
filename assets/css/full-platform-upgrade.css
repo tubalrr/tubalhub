@@ -228,3 +228,10 @@ body.feeds-page .feeds-panel > * { min-width: 0; }
 
 /* Upgrade 37 — dialogs respect small screens */
 [role="dialog"], dialog, .modal-content { max-width: min(94vw, 760px); max-height: min(88dvh, 900px); overflow: auto; }
+
+
+/* Upgrade 38 — toast layer safe positioning */
+.toast, .th-toast, .notification-toast { z-index: 10000; }
+@media (max-width: 600px) {
+  .toast, .th-toast, .notification-toast { left: 12px; right: 12px; max-width: none; }
+}
