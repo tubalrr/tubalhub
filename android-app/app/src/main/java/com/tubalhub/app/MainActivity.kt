@@ -155,14 +155,8 @@ class MainActivity : Activity() {
 
         renderTab(activeTab)
 
-        // Bring the real, realtime community feed to the front on a fresh app launch.
-        // Keep the native dashboard underneath so users can return to it with Back/Home.
-        if (savedInstanceState == null) {
-            startActivity(Intent(this, HubWebActivity::class.java).apply {
-                putExtra(HubWebActivity.EXTRA_TITLE, "Community Feeds")
-                putExtra(HubWebActivity.EXTRA_URL, BASE_URL + "pages/feeds.html")
-            })
-        }
+        // The launcher now opens Community Feeds directly from SplashActivity.
+        // Keep this native dashboard available for explicit future navigation only.
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
