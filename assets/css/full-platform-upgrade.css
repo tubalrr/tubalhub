@@ -219,3 +219,8 @@ body.hub-home .hub-sidebar, body.hub-home .hub-topbar { min-width: 0; }
 /* Upgrade 35 — avoid card content overflow */
 body.hub-home .card > *, body.hub-home .panel > *,
 body.feeds-page .feeds-panel > * { min-width: 0; }
+
+
+/* Upgrade 36 — readable empty states */
+.empty-state, .no-results, [data-empty-state] { text-align: center; padding: clamp(22px, 5vw, 48px); }
+.empty-state p, .no-results p { color: var(--thx-muted); line-height: 1.65; }
