@@ -871,3 +871,75 @@ body.feeds-page::before { display: none !important; }
     line-height:1.2!important;
   }
 }
+
+
+/* FINAL MOBILE HEADER FIX — compact rows; prevent nav clipping at the header edge. */
+@media (max-width: 700px) {
+  body.feeds-page > header.feeds-header {
+    position: relative !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
+    gap: 8px !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    padding: 10px 12px 9px !important;
+    margin: 0 !important;
+    overflow: visible !important;
+    box-sizing: border-box !important;
+  }
+  body.feeds-page > header.feeds-header > a.brand {
+    display: flex !important;
+    flex: 0 0 auto !important;
+    align-self: flex-start !important;
+    height: 42px !important;
+    min-height: 42px !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1.2 !important;
+  }
+  body.feeds-page > header.feeds-header > a.brand img {
+    width: 42px !important;
+    height: 42px !important;
+    flex: 0 0 42px !important;
+  }
+  body.feeds-page > header.feeds-header > nav {
+    display: flex !important;
+    position: static !important;
+    flex: 0 0 auto !important;
+    align-self: stretch !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 5px !important;
+    width: 100% !important;
+    height: 38px !important;
+    min-height: 38px !important;
+    max-height: 38px !important;
+    margin: 0 !important;
+    padding: 0 0 2px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    transform: none !important;
+    box-sizing: border-box !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  body.feeds-page > header.feeds-header > nav a {
+    display: inline-flex !important;
+    flex: 0 0 auto !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 32px !important;
+    min-height: 32px !important;
+    max-height: 32px !important;
+    padding: 0 10px !important;
+    margin: 0 !important;
+    line-height: 1 !important;
+    font-size: 10px !important;
+    white-space: nowrap !important;
+    box-sizing: border-box !important;
+  }
+}
