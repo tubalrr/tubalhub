@@ -90,3 +90,8 @@ body.hub-home .card, body.hub-home .panel, body.hub-home .feature-card {
   border-color: var(--thx-line);
   box-shadow: 0 12px 34px rgba(0,0,0,.16);
 }
+
+
+/* Upgrade 14 — homepage headings */
+body.hub-home h1, body.hub-home h2, body.hub-home h3 { text-wrap: balance; }
+body.hub-home h1 { line-height: 1.04; }
