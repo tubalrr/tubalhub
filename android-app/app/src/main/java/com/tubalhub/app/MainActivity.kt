@@ -53,7 +53,7 @@ class MainActivity : Activity() {
 
     private lateinit var contentColumn: LinearLayout
     private lateinit var bottomNavigation: LinearLayout
-    private var activeTab: String = "Feeds"
+    private var activeTab: String = "Home"
     private var exploreFilter: String = ""
 
     private val spaces = listOf(
@@ -111,7 +111,7 @@ class MainActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        activeTab = savedInstanceState?.getString("active_tab") ?: "Feeds"
+        activeTab = savedInstanceState?.getString("active_tab") ?: "Home"
 
         window.statusBarColor = COLOR_INK
         window.navigationBarColor = COLOR_INK
@@ -170,6 +170,7 @@ class MainActivity : Activity() {
         addBrandHeader(contentColumn)
 
         when (tab) {
+            "Home" -> buildHome(contentColumn)
             "Feeds" -> {
                 addText(contentColumn, "COMMUNITY FEEDS", 10f, COLOR_ACCENT, bold = true, bottom = 6)
                 addText(contentColumn, "Your community,\nyour home.", 29f, COLOR_TEXT, bold = true, bottom = 8)
@@ -596,7 +597,7 @@ class MainActivity : Activity() {
     private fun renderBottomNavigation() {
         bottomNavigation.removeAllViews()
         listOf(
-            Triple("Feeds", "◎", "Feeds"),
+            Triple("Home", "⌂", "Home"),
             Triple("Explore", "✦", "Explore"),
             Triple("Community", "◉", "Community"),
             Triple("Profile", "♙", "Profile")
@@ -610,7 +611,7 @@ class MainActivity : Activity() {
                 isClickable = true
                 isFocusable = true
                 contentDescription = item.third
-                setOnClickListener { if (item.first == "Feeds") openPage("Community Feeds", "pages/feeds.html") else renderTab(item.first) }
+                setOnClickListener { renderTab(item.first) }
             }
             val icon = TextView(this).apply {
                 text = item.second
