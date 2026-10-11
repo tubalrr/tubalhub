@@ -1,0 +1,70 @@
+name: Android Release
+
+on:
+  push:
+    tags:
+      - "android-v*"
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: "Release tag (for example android-v1.2.8)"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          packages: "platform-tools platforms;android-36 build-tools;36.0.0"
+
+      - name: Set up Gradle 8.13
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.13"
+
+      - name: Build release APK
+        run: gradle --no-daemon --stacktrace -p android-app clean assembleRelease
+
+      - name: Resolve release tag
+        id: release
+        shell: bash
+        run: |
+          if [ "${GITHUB_EVENT_NAME}" = "workflow_dispatch" ]; then
+            echo "tag=${{ inputs.tag_name }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Publish APK to GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG_NAME: ${{ steps.release.outputs.tag }}
+        run: |
+          APK="android-app/app/build/outputs/apk/release/app-release-unsigned.apk"
+          test -f "$APK"
+          if gh release view "$TAG_NAME" >/dev/null 2>&1; then
+            gh release upload "$TAG_NAME" "$APK" --clobber
+          else
+            gh release create "$TAG_NAME" "$APK" --title "TUBAL HUB Android $TAG_NAME" --notes "Android APK built by GitHub Actions. Review permissions and install only if you trust this release."
+          fi
+      - name: Upload release APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tubal-hub-android-release
+          path: android-app/app/build/outputs/apk/release/app-release-unsigned.apk
+          retention-days: 30
