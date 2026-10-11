@@ -1,0 +1,26 @@
+/* TUBAL HUB FULL PLATFORM UPGRADE — 50-step UI foundation.
+   Additive, responsive and accessible. Keep page-specific functionality intact. */
+:root {
+  --thx-bg: #09090d;
+  --thx-surface: #121219;
+  --thx-surface-raised: #191922;
+  --thx-line: rgba(255,255,255,.10);
+  --thx-text: #f6f6fa;
+  --thx-muted: #a4a4b3;
+  --thx-red: #ff4655;
+  --thx-red-soft: rgba(255,70,85,.13);
+  --thx-cyan: #46d9f5;
+  --thx-radius: 18px;
+  --thx-shadow: 0 18px 48px rgba(0,0,0,.24);
+}
+html { color-scheme: dark; scroll-behavior: smooth; }
+body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+img, video, canvas, svg { max-width: 100%; }
+button, input, textarea, select { font: inherit; }
+button, a, input, textarea, select { -webkit-tap-highlight-color: transparent; }
+a { text-underline-offset: .18em; }
+:focus-visible { outline: 3px solid var(--thx-cyan) !important; outline-offset: 3px !important; }
+::selection { background: rgba(255,70,85,.32); color: #fff; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
