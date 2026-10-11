@@ -95,3 +95,8 @@ body.hub-home .card, body.hub-home .panel, body.hub-home .feature-card {
 /* Upgrade 14 — homepage headings */
 body.hub-home h1, body.hub-home h2, body.hub-home h3 { text-wrap: balance; }
 body.hub-home h1 { line-height: 1.04; }
+
+
+/* Upgrade 15 — homepage link affordance */
+body.hub-home main a:not(.btn):not(.button) { text-decoration-thickness: .08em; }
+body.hub-home main a:not(.btn):not(.button):hover { color: var(--thx-cyan); }
