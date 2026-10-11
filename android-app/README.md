@@ -1,11 +1,10 @@
 # TUBAL HUB Android
 
-## Current Android version — v1.3.2
+## Current Android version — v1.3.3
 
-- Uses the current **Peace of Mind** brand name on the native dashboard.
-- Keeps the existing page path for compatibility with the deployed website.
-- Includes the persistent Light/Dark appearance control, per-tab scroll restoration, and native Share TUBAL HUB action.
-- Fixes the dashboard root reference in the native Activity layout setup.
+- Places **Home, Explore, Feeds, Community, and Profile** side by side in one bottom navigation bar.
+- Uses compact, single-line labels so all five tabs fit better on mobile screens.
+- Keeps the current **Peace of Mind** branding, saved appearance preference, tab scroll restoration, and native Share TUBAL HUB action.
 
 
 TUBAL HUB for Android has its own **native mobile dashboard** built with Android Views. It is deliberately different from the desktop website: the Home, Explore, Community and Profile tabs are native app screens, with mobile-first cards and bottom navigation. Existing website pages are opened only when a destination is tapped.

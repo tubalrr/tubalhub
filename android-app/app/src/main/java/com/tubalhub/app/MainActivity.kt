@@ -718,6 +718,7 @@ class MainActivity : Activity() {
         listOf(
             Triple("Home", "⌂", "Home"),
             Triple("Explore", "✦", "Explore"),
+            Triple("Feeds", "▤", "Feeds"),
             Triple("Community", "◉", "Community"),
             Triple("Profile", "♙", "Profile")
         ).forEach { item ->
@@ -734,7 +735,7 @@ class MainActivity : Activity() {
             }
             val icon = TextView(this).apply {
                 text = item.second
-                textSize = 21f
+                textSize = 20f
                 gravity = Gravity.CENTER
                 setTextColor(if (selected) 0xFFFF8D9F.toInt() else 0xFFB8B7C1.toInt())
             }
@@ -743,9 +744,11 @@ class MainActivity : Activity() {
             ))
             val label = TextView(this).apply {
                 text = item.third
-                textSize = 10f
+                textSize = 9f
                 typeface = if (selected) Typeface.DEFAULT_BOLD else Typeface.DEFAULT
                 gravity = Gravity.CENTER
+                maxLines = 1
+                ellipsize = android.text.TextUtils.TruncateAt.END
                 setTextColor(if (selected) Color.WHITE else 0xFFB8B7C1.toInt())
             }
             navItem.addView(label, LinearLayout.LayoutParams(
