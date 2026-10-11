@@ -44,3 +44,10 @@ pre, code { max-width: 100%; overflow-x: auto; }
 /* Upgrade 05 — consistent form control sizing */
 input, textarea, select { max-width: 100%; box-sizing: border-box; }
 textarea { resize: vertical; min-height: 96px; }
+
+
+/* Upgrade 06 — visible hover feedback */
+@media (hover:hover) {
+  button:not(:disabled), [role="button"], .btn, .button { transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease; }
+  button:not(:disabled):hover, .btn:hover, .button:hover { filter: brightness(1.06); }
+}
