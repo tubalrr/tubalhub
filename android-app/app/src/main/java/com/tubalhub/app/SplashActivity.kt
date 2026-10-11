@@ -177,7 +177,7 @@ class SplashActivity : Activity() {
             contentDescription = "Check for TUBAL HUB Android updates"
             setPadding(dp(16), dp(12), dp(16), dp(12))
             setOnClickListener {
-                AppUpdateChecker.check(this@SplashActivity, "1.2.7")
+                AppUpdateChecker.check(this@SplashActivity, "1.2.8")
             }
         }
         root.addView(updateLink, FrameLayout.LayoutParams(
