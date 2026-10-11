@@ -243,3 +243,7 @@ body.feeds-page .feeds-panel > * { min-width: 0; }
   .skeleton, .loading-skeleton { background-image: linear-gradient(100deg, transparent 25%, rgba(255,255,255,.07) 45%, transparent 65%); background-size: 220% 100%; animation: thx-shimmer 1.6s linear infinite; }
 }
 @keyframes thx-shimmer { to { background-position-x: -220%; } }
+
+
+/* Upgrade 40 — scrollbars for dark platform surfaces */
+body.hub-home, body.feeds-page { scrollbar-color: rgba(255,70,85,.55) rgba(255,255,255,.05); scrollbar-width: thin; }
