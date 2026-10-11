@@ -112,3 +112,8 @@ body.hub-home .btn, body.hub-home .button, body.hub-home button {
 /* Upgrade 17 — feeds card width safety */
 body.feeds-page .feeds-layout, body.feeds-page .feed-list,
 body.feeds-page .feeds-main, body.feeds-page .feeds-rail { min-width: 0; }
+
+
+/* Upgrade 18 — feeds typography hierarchy */
+body.feeds-page .feeds-shell h1 { letter-spacing: -.035em; line-height: 1.06; }
+body.feeds-page .feeds-shell h2, body.feeds-page .feeds-shell h3 { line-height: 1.2; }
