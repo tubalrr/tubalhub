@@ -187,3 +187,11 @@ table { border-collapse: collapse; }
 /* Upgrade 30 — consistent separators */
 hr { border: 0; border-top: 1px solid var(--thx-line); }
 body.hub-home hr, body.feeds-page hr { border-color: var(--thx-line); }
+
+
+/* Upgrade 31 — compact mobile rhythm */
+@media (max-width: 600px) {
+  body.hub-home h1 { letter-spacing: -.035em; }
+  body.hub-home .card, body.hub-home .panel { border-radius: 16px; }
+  body.feeds-page .feeds-shell { padding-left: 12px; padding-right: 12px; }
+}
