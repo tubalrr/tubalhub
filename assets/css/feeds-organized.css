@@ -610,3 +610,131 @@ body.feeds-page::before { display: none !important; }
   .feed-featured { padding: 12px !important; }
   .feed-featured-track { grid-template-columns: repeat(2,minmax(0,1fr)) !important; }
 }
+
+
+/* FEEDS HEADER REPAIR — stable brand/navigation grid across desktop and mobile. */
+.feeds-header{
+  box-sizing:border-box!important;
+  width:100%!important;
+  min-width:0!important;
+  display:grid!important;
+  grid-template-columns:max-content minmax(0,1fr)!important;
+  align-items:center!important;
+  justify-content:initial!important;
+  gap:clamp(12px,2vw,24px)!important;
+  overflow:visible!important;
+}
+.feeds-header .brand{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-self:start!important;
+  width:max-content!important;
+  max-width:100%!important;
+  min-width:0!important;
+  margin:0!important;
+  text-decoration:none!important;
+}
+.feeds-header .brand img{
+  display:block!important;
+  flex:0 0 46px!important;
+  width:46px!important;
+  height:46px!important;
+  aspect-ratio:1 / 1!important;
+  object-fit:contain!important;
+}
+.feeds-header .brand span{
+  display:block!important;
+  min-width:0!important;
+  white-space:nowrap!important;
+  line-height:1.2!important;
+}
+.feeds-header .brand small{
+  display:block!important;
+  margin-top:4px!important;
+  white-space:nowrap!important;
+  line-height:1.2!important;
+}
+.feeds-header nav{
+  display:flex!important;
+  flex-direction:row!important;
+  flex-wrap:nowrap!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  margin:0!important;
+  padding:0!important;
+  overflow-x:auto!important;
+  overflow-y:hidden!important;
+  overscroll-behavior-x:contain!important;
+  scrollbar-width:none!important;
+  white-space:nowrap!important;
+}
+.feeds-header nav a{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  flex:0 0 auto!important;
+  min-height:36px!important;
+  margin:0!important;
+  line-height:1!important;
+  white-space:nowrap!important;
+}
+
+/* At tablet widths, navigation gets its own full-width row, not a squeezed slot. */
+@media(max-width:900px){
+  .feeds-header{
+    grid-template-columns:minmax(0,1fr)!important;
+    gap:9px!important;
+    padding:10px 16px!important;
+  }
+  .feeds-header .brand{grid-column:1!important;}
+  .feeds-header nav{
+    grid-column:1!important;
+    justify-content:flex-start!important;
+    margin:0!important;
+    padding:0 0 2px!important;
+  }
+}
+
+/* Phone header: logo and title together above a clean, horizontally scrollable menu. */
+@media(max-width:560px){
+  .feeds-header{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    row-gap:8px!important;
+    padding:10px 12px!important;
+    min-height:0!important;
+  }
+  .feeds-header .brand{
+    gap:9px!important;
+    min-height:40px!important;
+  }
+  .feeds-header .brand img{
+    width:40px!important;
+    height:40px!important;
+    flex-basis:40px!important;
+  }
+  .feeds-header .brand span{
+    font-size:12px!important;
+    letter-spacing:.05em!important;
+  }
+  .feeds-header .brand small{
+    font-size:7px!important;
+    letter-spacing:.09em!important;
+  }
+  .feeds-header nav{
+    width:100%!important;
+    justify-content:flex-start!important;
+    gap:4px!important;
+    padding-bottom:3px!important;
+    -webkit-overflow-scrolling:touch!important;
+  }
+  .feeds-header nav a{
+    min-height:33px!important;
+    padding:8px 10px!important;
+    font-size:10px!important;
+    border-radius:9px!important;
+  }
+}
