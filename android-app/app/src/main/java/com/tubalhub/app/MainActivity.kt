@@ -458,6 +458,9 @@ class MainActivity : Activity() {
             }
         }
 
+        addSectionHeader(parent, "App updates", "Check for the latest Android version")
+        addQuickAction(parent, "↻", "Check for updates", "Find the latest published TUBAL HUB APK", "UPDATE_CHECK", COLOR_SOFT_RED)
+
         addSectionHeader(parent, "Settings & support", "Manage your experience")
         addQuickAction(parent, "⚙", "Settings", "Account and experience preferences", "pages/settings.html", COLOR_SOFT_PURPLE)
         addQuickAction(parent, "?", "Help center", "Guides and common questions", "pages/help.html", COLOR_SOFT_BLUE)
@@ -636,6 +639,10 @@ class MainActivity : Activity() {
     }
 
     private fun openPage(title: String, route: String) {
+        if (route == "UPDATE_CHECK") {
+            AppUpdateChecker.check(this, "1.2.7")
+            return
+        }
         val cleanRoute = route.trimStart('/')
         rememberFeature(cleanRoute)
         val intent = Intent(this, HubWebActivity::class.java).apply {
