@@ -641,7 +641,7 @@ class MainActivity : Activity() {
 
     private fun openPage(title: String, route: String) {
         if (route == "UPDATE_CHECK") {
-            AppUpdateChecker.check(this, "1.2.7")
+            AppUpdateChecker.check(this, "1.2.8")
             return
         }
         val cleanRoute = route.trimStart('/')
