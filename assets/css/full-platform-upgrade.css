@@ -136,3 +136,9 @@ body.feeds-page input:focus-visible { border-color: var(--thx-cyan); }
 body.feeds-page .feed-card img, body.feeds-page .post-media img {
   display: block; max-width: 100%; height: auto; object-fit: cover;
 }
+
+
+/* Upgrade 22 — story rail scrolling */
+body.feeds-page .stories-row, body.feeds-page .stories-list {
+  max-width: 100%; overscroll-behavior-x: contain; scrollbar-width: thin;
+}
