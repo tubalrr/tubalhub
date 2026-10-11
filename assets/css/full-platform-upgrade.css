@@ -153,3 +153,8 @@ body.feeds-page .composer textarea, body.feeds-page .feed-composer textarea { wi
 body.feeds-page .feed-filters, body.feeds-page .filter-row, body.feeds-page .feed-toolbar {
   min-width: 0; max-width: 100%;
 }
+
+
+/* Upgrade 25 — feed media corners */
+body.feeds-page .post-media, body.feeds-page .feed-media,
+body.feeds-page .feed-card .media-wrap { overflow: hidden; border-radius: 16px; }
