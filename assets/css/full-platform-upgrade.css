@@ -63,3 +63,7 @@ body.feeds-page .feed-card, body.feeds-page .story-card {
 /* Upgrade 08 — clear muted text contrast */
 body.hub-home .muted, body.hub-home .text-muted,
 body.feeds-page .muted, body.feeds-page .section-kicker { color: var(--thx-muted); }
+
+
+/* Upgrade 09 — accessible status labels */
+[role="status"], [role="alert"], .status-message, .toast { max-width: min(92vw, 520px); overflow-wrap: anywhere; }
