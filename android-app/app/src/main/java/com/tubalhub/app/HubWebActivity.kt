@@ -104,6 +104,10 @@ class HubWebActivity : Activity() {
             setOnClickListener { finish() }
         }
         toolbar.addView(home, LinearLayout.LayoutParams(dp(40), dp(54)))
+        val isCommunityFeed = targetUrl.substringBefore("?").endsWith("/pages/feeds.html")
+        // Community Feeds is the app's Home screen: don't stack a second title bar
+        // over the page's own responsive header.
+        if (isCommunityFeed) toolbar.visibility = View.GONE
         root.addView(toolbar, LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT, dp(58)
         ))
