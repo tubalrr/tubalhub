@@ -1,0 +1,209 @@
+/* TUBAL HUB Homepage V7 — clearer hierarchy, less repetition, tighter spacing. */
+html,body.hub-home{max-width:100%;overflow-x:clip}
+html body.hub-home main.home-page.bento-home-page{
+  display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:0!important;
+  width:min(100% - 56px,1380px)!important;max-width:1380px!important;
+  margin:0 auto!important;padding:24px 0 64px!important;box-sizing:border-box!important;
+}
+html body.hub-home main.home-page.bento-home-page>*{min-width:0!important;max-width:100%!important;box-sizing:border-box!important}
+
+/* 1 — One confident hero; reduce the oversized poster-like space. */
+html body.hub-home main.home-page.bento-home-page>#bentoHero.th-corp-hero{
+  order:0!important;grid-template-columns:minmax(0,1.08fr) minmax(300px,.82fr)!important;
+  width:100%!important;min-height:430px!important;height:auto!important;
+  margin:0 0 22px!important;padding:clamp(32px,4.2vw,56px)!important;
+  gap:26px!important;border-radius:26px!important;
+}
+html body.hub-home #bentoHero .th-corp-hero-copy{max-width:640px!important;min-width:0!important}
+html body.hub-home #bentoHero .th-corp-eyebrow{margin-bottom:14px!important;font-size:10px!important;letter-spacing:.15em!important}
+html body.hub-home #bentoHero .th-corp-hero-copy h1{font-size:clamp(40px,5.2vw,68px)!important;line-height:.98!important;letter-spacing:-.075em!important;margin:0 0 10px!important}
+html body.hub-home #bentoHero .th-corp-hero-copy h2{font-size:clamp(21px,2.6vw,32px)!important;line-height:1.15!important;letter-spacing:-.045em!important;margin:0 0 13px!important}
+html body.hub-home #bentoHero .th-corp-hero-copy>p{max-width:48ch!important;font-size:14px!important;line-height:1.7!important;margin:0!important}
+html body.hub-home #bentoHero .bento-cta-row{margin:22px 0 0!important;gap:10px!important}
+html body.hub-home #bentoHero .bento-cta-row>a{min-height:44px!important;padding:0 16px!important;border-radius:11px!important;font-size:12px!important}
+html body.hub-home #bentoHero .th-hero-proof-row{margin-top:20px!important;gap:8px 14px!important;font-size:10px!important}
+html body.hub-home #bentoHero .th-hero-welcome-bot{right:clamp(18px,3vw,42px)!important;bottom:16px!important;max-width:44%!important}
+html body.hub-home #bentoHero .th-hero-bot-dialog{max-width:200px!important}
+
+/* 2 — Quick navigation becomes a single quiet row, not another big section. */
+html body.hub-home main.home-page.bento-home-page>.home-quicknav{
+  order:1!important;display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;
+  align-items:stretch!important;gap:8px!important;width:100%!important;
+  margin:0 0 28px!important;padding:8px!important;border:1px solid rgba(255,255,255,.075)!important;
+  border-radius:18px!important;background:rgba(18,19,27,.72)!important;
+  box-shadow:0 12px 32px rgba(0,0,0,.12)!important;overflow:visible!important;
+}
+html body.hub-home .home-quicknav-link,
+html body.hub-home .home-quicknav-link:first-child,
+html body.hub-home .home-quicknav-link:last-child{
+  display:flex!important;align-items:center!important;gap:10px!important;min-width:0!important;
+  padding:12px 11px!important;border:1px solid transparent!important;border-radius:12px!important;
+  text-decoration:none!important;background:transparent!important;transition:background .18s ease,border-color .18s ease,transform .18s ease!important;
+}
+html body.hub-home .home-quicknav-link:hover{background:rgba(255,255,255,.045)!important;border-color:rgba(255,255,255,.06)!important;transform:translateY(-1px)!important}
+html body.hub-home .home-quicknav-icon{display:grid!important;place-items:center!important;flex:0 0 34px!important;width:34px!important;height:34px!important;border:1px solid rgba(255,129,120,.14)!important;border-radius:11px!important;background:rgba(240,68,61,.075)!important;font-size:16px!important}
+html body.hub-home .home-quicknav-link>span:nth-child(2){display:grid!important;gap:4px!important;min-width:0!important}
+html body.hub-home .home-quicknav-link small{font-size:8px!important;letter-spacing:.11em!important;color:#858795!important}
+html body.hub-home .home-quicknav-link strong{font-size:11px!important;line-height:1.3!important;color:#eeeeF4!important;white-space:normal!important}
+html body.hub-home .home-quicknav-link>b{margin-left:auto!important;flex:0 0 auto!important;color:#777987!important;font-size:12px!important}
+
+/* 3 — The live feed gets its own clear section after the brand introduction. */
+html body.hub-home main.home-page.bento-home-page>.bento-feed-real{
+  order:2!important;width:100%!important;margin:0 0 30px!important;padding:clamp(18px,2.2vw,28px)!important;
+  border-radius:22px!important;
+}
+html body.hub-home .bento-feed-real .bento-real-header{margin-bottom:15px!important}
+html body.hub-home .bento-feed-real .bento-real-header h2{font-size:clamp(21px,2.4vw,28px)!important}
+html body.hub-home .bento-feed-real .bento-real-viewall{min-height:38px!important;padding:0 13px!important;font-size:11px!important}
+html body.hub-home .bento-feed-real .bento-feed-real-toolbar{margin-bottom:11px!important;padding:9px 12px!important}
+html body.hub-home #bentoFeedsList{gap:12px!important;grid-template-columns:minmax(0,1.12fr) minmax(260px,.88fr)!important}
+html body.hub-home #bentoFeedsList .bento-feed-featured{padding:18px!important;border-radius:16px!important}
+html body.hub-home #bentoFeedsList .bento-feed-featured-text{margin:13px 0!important;font-size:14px!important;line-height:1.65!important}
+html body.hub-home #bentoFeedsList .bento-feed-image{max-height:260px!important;aspect-ratio:16/8!important}
+html body.hub-home #bentoFeedsList .bento-feed-compact{padding:12px!important;border-radius:14px!important}
+html body.hub-home .bento-feed-real .bento-feed-ticker-real{margin-top:12px!important;padding:9px 12px!important}
+
+/* The trust/value cards repeat the three brand cards directly below. Remove this duplicate block from the visual flow. */
+html body.hub-home main.home-page.bento-home-page>.th-value-section{display:none!important}
+
+/* 4 — Consistent section rhythm and a tidy three-branch grid. */
+html body.hub-home #mainContent.bento-grid{
+  order:3!important;display:flex!important;flex-direction:column!important;align-items:stretch!important;
+  gap:28px!important;width:100%!important;max-width:none!important;min-width:0!important;margin:0!important;padding:0!important;
+}
+html body.hub-home #mainContent>#thBrandPillars.th-corp-section,
+html body.hub-home #mainContent>#featuredWebsite.featured-website{
+  width:100%!important;margin:0!important;padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important;
+}
+html body.hub-home #mainContent>#thBrandPillars .th-section-head{margin:0 0 17px!important;padding:0!important}
+html body.hub-home #mainContent>#thBrandPillars .th-section-head h2{font-size:clamp(25px,3vw,36px)!important;letter-spacing:-.055em!important;line-height:1.08!important}
+html body.hub-home #mainContent>#thBrandPillars .th-section-head p{max-width:58ch!important;margin-top:9px!important;color:#a1a3b0!important;font-size:13px!important;line-height:1.65!important}
+html body.hub-home #mainContent>#thBrandPillars .th-pillar-grid{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:14px!important}
+html body.hub-home #mainContent>#thBrandPillars .th-pillar{
+  display:flex!important;flex-direction:column!important;gap:15px!important;min-width:0!important;min-height:245px!important;
+  padding:22px!important;border-radius:19px!important;background:linear-gradient(150deg,rgba(25,26,35,.98),rgba(15,16,23,.98))!important;
+  border:1px solid rgba(255,255,255,.075)!important;box-shadow:0 12px 32px rgba(0,0,0,.10)!important;
+}
+html body.hub-home #mainContent>#thBrandPillars .th-pillar-head{display:grid!important;grid-template-columns:36px minmax(0,1fr)!important;align-items:center!important;gap:9px 12px!important}
+html body.hub-home #mainContent>#thBrandPillars .th-pillar-number{grid-column:1!important;grid-row:1!important;color:#ff8c85!important;font-size:10px!important}
+html body.hub-home #mainContent>#thBrandPillars .th-pillar-icon{grid-column:2!important;grid-row:1!important;justify-self:start!important;width:36px!important;height:36px!important;display:grid!important;place-items:center!important;border-radius:11px!important;background:rgba(255,255,255,.045)!important;font-size:18px!important}
+html body.hub-home #mainContent>#thBrandPillars .th-pillar-kicker{grid-column:1/-1!important;grid-row:2!important;margin-top:3px!important;font-size:8px!important;letter-spacing:.12em!important;color:#ff918b!important}
+html body.hub-home #mainContent>#thBrandPillars .th-pillar h3{margin:0!important;font-size:clamp(17px,1.8vw,22px)!important;line-height:1.15!important;letter-spacing:-.04em!important;color:#f5f5f9!important}
+html body.hub-home #mainContent>#thBrandPillars .th-pillar-description{font-size:12px!important;line-height:1.7!important;color:#a8a9b6!important}
+html body.hub-home #mainContent>#thBrandPillars .th-pillar-action{margin-top:auto!important;font-size:11px!important;color:#ff9b95!important}
+html body.hub-home #mainContent>#sponsoredContainerReal,
+html body.hub-home #mainContent>#sponsoredContainerReal2{
+  width:100%!important;max-width:100%!important;margin:0!important;padding:12px 16px!important;
+  border:1px solid rgba(255,255,255,.055)!important;border-radius:15px!important;background:rgba(255,255,255,.018)!important;
+  box-shadow:none!important;
+}
+html body.hub-home .sponsored-container-head-real{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:10px!important;margin:0 0 8px!important;color:#9495a3!important;font-size:9px!important;letter-spacing:.13em!important}
+html body.hub-home #sponsoredContentReal:empty,
+html body.hub-home #sponsoredContentReal2:empty{display:none!important}
+html body.hub-home #sponsoredContainerReal:has(#sponsoredContentReal:empty),
+html body.hub-home #sponsoredContainerReal2:has(#sponsoredContentReal2:empty){display:none!important}
+
+/* Featured games and activity cards share one spacing and one height language. */
+html body.hub-home #mainContent #ctrlzoneCard{
+  width:100%!important;min-width:0!important;margin:0!important;padding:clamp(20px,2.5vw,28px)!important;
+  border-radius:21px!important;background:linear-gradient(145deg,#181923,#101118)!important;border:1px solid rgba(255,255,255,.08)!important;
+  box-shadow:0 16px 40px rgba(0,0,0,.13)!important;
+}
+html body.hub-home #mainContent .ctrlzone-featured-header{align-items:center!important;gap:14px!important;margin-bottom:15px!important}
+html body.hub-home #mainContent .ctrlzone-featured-header h3{font-size:clamp(19px,2.2vw,27px)!important;line-height:1.15!important}
+html body.hub-home #mainContent .bento-row-real{
+  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;align-items:stretch!important;
+  gap:14px!important;width:100%!important;margin:0!important;padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important;
+}
+html body.hub-home #mainContent .bento-row-real>.bento-real-card{
+  display:flex!important;flex-direction:column!important;min-width:0!important;min-height:245px!important;
+  margin:0!important;padding:21px!important;border:1px solid rgba(255,255,255,.08)!important;border-radius:19px!important;
+  background:linear-gradient(145deg,rgba(25,26,35,.98),rgba(15,16,23,.98))!important;box-shadow:0 12px 32px rgba(0,0,0,.1)!important;
+}
+html body.hub-home #mainContent .bento-real-header{align-items:center!important;gap:12px!important;margin-bottom:15px!important}
+html body.hub-home #mainContent .bento-real-brand{align-items:center!important;gap:11px!important;min-width:0!important}
+html body.hub-home #mainContent .bento-real-icon{flex:0 0 40px!important;width:40px!important;height:40px!important;border-radius:12px!important;font-size:18px!important}
+html body.hub-home #mainContent .bento-real-header h2{font-size:clamp(16px,1.65vw,20px)!important;line-height:1.15!important;letter-spacing:-.04em!important}
+html body.hub-home #mainContent .bento-real-header small{display:block!important;font-size:11px!important;line-height:1.45!important;margin-top:5px!important}
+html body.hub-home #mainContent .bento-real-viewall{flex:0 0 auto!important;white-space:nowrap!important;padding:9px 11px!important;font-size:10px!important}
+html body.hub-home #mainContent .bento-real-list-head{margin:0 0 10px!important}
+html body.hub-home #mainContent>#featuredWebsite .featured-website-head{align-items:flex-end!important;gap:16px!important;margin:0 0 16px!important}
+html body.hub-home #mainContent>#featuredWebsite .featured-website-title-row h2{font-size:clamp(25px,3vw,34px)!important;line-height:1.05!important;letter-spacing:-.055em!important}
+html body.hub-home #mainContent>#featuredWebsite .featured-website-head p{max-width:54ch!important;font-size:12px!important;line-height:1.65!important;margin-top:8px!important}
+html body.hub-home #mainContent>#featuredWebsite .featured-sliding-badge,
+html body.hub-home #mainContent>#featuredWebsite .featured-autoplay{font-size:8px!important}
+html body.hub-home #mainContent>#featuredWebsite .featured-track-wrapper{border-radius:20px!important;overflow:hidden!important}
+html body.hub-home #mainContent>#featuredWebsite .featured-slide{min-width:0!important}
+html body.hub-home #mainContent>#featuredWebsite .featured-preview-card{border-radius:15px!important}
+html body.hub-home #mainContent>#featuredWebsite .featured-track-control{opacity:.88!important}
+html body.hub-home #mainContent .featured-game-sponsored-grid-real{width:100%!important;margin:0!important;padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important}
+html body.hub-home #mainFooter.glass-footer{margin:0!important;padding:clamp(22px,3vw,34px)!important;border-radius:22px!important}
+
+/* Keep the footer information readable without oversized columns. */
+html body.hub-home #mainFooter .bento-footer-row-1{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:20px!important}
+html body.hub-home #mainFooter .footer-column{min-width:0!important}
+html body.hub-home #mainFooter .footer-link-list a{line-height:1.55!important}
+
+/* Responsive layout: avoid compressed cards and horizontal page overflow. */
+@media(max-width:1050px){
+ html body.hub-home main.home-page.bento-home-page{width:min(100% - 36px,900px)!important}
+ html body.hub-home main.home-page.bento-home-page>#bentoHero.th-corp-hero{min-height:400px!important;padding:32px!important}
+ html body.hub-home .home-quicknav{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+ html body.hub-home #bentoFeedsList{grid-template-columns:minmax(0,1fr)!important}
+ html body.hub-home #bentoFeedsList .bento-feed-more-list{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ html body.hub-home #mainContent>#thBrandPillars .th-pillar-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+ html body.hub-home #mainContent .bento-row-real>.bento-real-card{min-height:220px!important}
+ html body.hub-home #mainFooter .bento-footer-row-1{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+@media(max-width:760px){
+ html body.hub-home main.home-page.bento-home-page{width:calc(100% - 24px)!important;padding:14px 0 42px!important}
+ html body.hub-home main.home-page.bento-home-page>#bentoHero.th-corp-hero{
+  display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:20px!important;
+  min-height:unset!important;margin-bottom:17px!important;padding:25px 19px 21px!important;border-radius:21px!important;
+ }
+ html body.hub-home #bentoHero .th-corp-hero-copy h1{font-size:clamp(38px,11vw,56px)!important}
+ html body.hub-home #bentoHero .th-corp-hero-copy h2{font-size:clamp(21px,6vw,28px)!important}
+ html body.hub-home #bentoHero .th-hero-proof-row{flex-direction:column!important;align-items:flex-start!important;gap:9px!important}
+ html body.hub-home #bentoHero .th-hero-welcome-bot{position:relative!important;right:auto!important;bottom:auto!important;max-width:100%!important;margin:2px auto 0!important;align-self:center!important}
+ html body.hub-home .home-quicknav{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:5px!important;margin-bottom:18px!important;padding:6px!important;border-radius:15px!important}
+ html body.hub-home .home-quicknav-link,
+ html body.hub-home .home-quicknav-link:first-child,
+ html body.hub-home .home-quicknav-link:last-child{padding:10px 8px!important;gap:8px!important}
+ html body.hub-home .home-quicknav-icon{flex-basis:31px!important;width:31px!important;height:31px!important}
+ html body.hub-home main.home-page.bento-home-page>.bento-feed-real{padding:15px!important;margin-bottom:23px!important;border-radius:18px!important}
+ html body.hub-home .bento-feed-real .bento-real-header{align-items:flex-start!important;gap:12px!important}
+ html body.hub-home .bento-feed-real .bento-real-brand{align-items:flex-start!important;gap:10px!important}
+ html body.hub-home .bento-feed-real .bento-real-icon{flex-basis:38px!important;width:38px!important;height:38px!important;border-radius:11px!important;font-size:17px!important}
+ html body.hub-home .bento-feed-real .bento-real-header small{font-size:11px!important}
+ html body.hub-home .bento-feed-real .bento-real-viewall{min-height:34px!important;padding:0 10px!important;font-size:10px!important}
+ html body.hub-home #bentoFeedsList{grid-template-columns:minmax(0,1fr)!important}
+ html body.hub-home #bentoFeedsList .bento-feed-featured{padding:13px!important}
+ html body.hub-home #bentoFeedsList .bento-feed-image{max-height:230px!important;aspect-ratio:16/9!important}
+ html body.hub-home #bentoFeedsList .bento-feed-more-list{grid-template-columns:minmax(0,1fr)!important}
+ html body.hub-home #mainContent.bento-grid{gap:22px!important}
+ html body.hub-home #mainContent>#thBrandPillars .th-pillar-grid{grid-template-columns:minmax(0,1fr)!important;gap:10px!important}
+ html body.hub-home #mainContent>#thBrandPillars .th-pillar{min-height:unset!important;padding:18px!important;gap:12px!important}
+ html body.hub-home #mainContent>#thBrandPillars .th-pillar h3{font-size:21px!important}
+ html body.hub-home #mainContent #ctrlzoneCard{padding:17px!important;border-radius:17px!important}
+ html body.hub-home #mainContent .ctrlzone-featured-header{align-items:flex-start!important;flex-direction:column!important}
+ html body.hub-home #mainContent .bento-row-real{grid-template-columns:minmax(0,1fr)!important;gap:10px!important}
+ html body.hub-home #mainContent .bento-row-real>.bento-real-card{min-height:unset!important;padding:16px!important;border-radius:17px!important}
+ html body.hub-home #mainContent .bento-real-header{align-items:flex-start!important}
+ html body.hub-home #mainContent .bento-real-header h2{font-size:17px!important}
+ html body.hub-home #mainContent>#featuredWebsite .featured-website-head{display:block!important}
+ html body.hub-home #mainContent>#featuredWebsite .featured-website-actions{margin-top:12px!important}
+ html body.hub-home #mainContent>#featuredWebsite .featured-website-title-row{flex-wrap:wrap!important;gap:8px!important}
+ html body.hub-home #mainFooter.glass-footer{padding:18px!important;border-radius:18px!important}
+ html body.hub-home #mainFooter .bento-footer-row-1{grid-template-columns:minmax(0,1fr)!important;gap:18px!important}
+}
+@media(max-width:420px){
+ html body.hub-home .home-quicknav{grid-template-columns:minmax(0,1fr)!important}
+ html body.hub-home .home-quicknav-link{padding:9px 10px!important}
+ html body.hub-home #bentoHero .bento-cta-row>a{min-height:42px!important;padding:0 12px!important;font-size:11px!important}
+ html body.hub-home #mainContent .bento-real-header{flex-wrap:wrap!important}
+ html body.hub-home #mainContent .bento-real-viewall{font-size:10px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ html body.hub-home .home-quicknav-link,html body.hub-home #mainContent .th-pillar,
+ html body.hub-home #mainContent .bento-real-card{transition:none!important}
+}
