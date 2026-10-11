@@ -226,3 +226,30 @@ html body.hub-home .hub-topbar .auth-profile-btn:focus-visible{
 @media(max-width:520px){
   html body.hub-home .hub-topbar .auth-profile-btn{min-width:34px!important;min-height:34px!important;padding:0 9px!important;font-size:11px!important}
 }
+
+/* V7.2 — profile access must never depend on login state. */
+html body.hub-home .hub-topbar>a.auth-profile-btn{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:7px!important;
+  min-width:38px!important;min-height:36px!important;padding:0 12px!important;box-sizing:border-box!important;
+  border:1px solid rgba(255,129,120,.28)!important;border-radius:999px!important;
+  background:rgba(240,68,61,.11)!important;color:#ffe5e3!important;
+  font-size:12px!important;font-weight:850!important;line-height:1!important;
+  text-decoration:none!important;white-space:nowrap!important;flex:0 0 auto!important;
+  visibility:visible!important;opacity:1!important;position:relative!important;z-index:5!important;
+  transition:background .18s ease,border-color .18s ease,transform .18s ease!important;
+}
+html body.hub-home .hub-topbar>a.auth-profile-btn svg{
+  display:block!important;width:16px!important;height:16px!important;flex:0 0 16px!important;
+  fill:none!important;stroke:currentColor!important;stroke-width:1.8!important;stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+html body.hub-home .hub-topbar>a.auth-profile-btn span{display:inline!important}
+html body.hub-home .hub-topbar>a.auth-profile-btn:hover,
+html body.hub-home .hub-topbar>a.auth-profile-btn:focus-visible{
+  background:rgba(240,68,61,.2)!important;border-color:rgba(255,129,120,.55)!important;
+  color:#fff!important;transform:translateY(-1px)!important;outline:none!important;
+}
+@media(max-width:520px){
+  html body.hub-home .hub-topbar>a.auth-profile-btn{width:34px!important;min-width:34px!important;height:34px!important;min-height:34px!important;padding:0!important;gap:0!important}
+  html body.hub-home .hub-topbar>a.auth-profile-btn span{display:none!important}
+  html body.hub-home .hub-topbar>a.auth-profile-btn svg{width:16px!important;height:16px!important}
+}
