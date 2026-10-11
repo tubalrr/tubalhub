@@ -53,7 +53,7 @@ class MainActivity : Activity() {
 
     private lateinit var contentColumn: LinearLayout
     private lateinit var bottomNavigation: LinearLayout
-    private var activeTab: String = "Home"
+    private var activeTab: String = "Feeds"
     private var exploreFilter: String = ""
 
     private val spaces = listOf(
@@ -111,7 +111,7 @@ class MainActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        activeTab = savedInstanceState?.getString("active_tab") ?: "Home"
+        activeTab = savedInstanceState?.getString("active_tab") ?: "Feeds"
 
         window.statusBarColor = COLOR_INK
         window.navigationBarColor = COLOR_INK
@@ -170,10 +170,16 @@ class MainActivity : Activity() {
         addBrandHeader(contentColumn)
 
         when (tab) {
+            "Feeds" -> {
+                addText(contentColumn, "COMMUNITY FEEDS", 10f, COLOR_ACCENT, bold = true, bottom = 6)
+                addText(contentColumn, "Your community,\nyour home.", 29f, COLOR_TEXT, bold = true, bottom = 8)
+                addText(contentColumn, "Posts, stories, games and updates in one live stream.", 14f, COLOR_MUTED, bottom = 18)
+                addQuickAction(contentColumn, "◎", "Open Community Feeds", "View the live community stream", "pages/feeds.html", COLOR_SOFT_RED)
+            }
             "Explore" -> buildExplore(contentColumn)
             "Community" -> buildCommunity(contentColumn)
             "Profile" -> buildProfile(contentColumn)
-            else -> buildHome(contentColumn)
+            else -> buildExplore(contentColumn)
         }
         renderBottomNavigation()
     }
@@ -587,9 +593,9 @@ class MainActivity : Activity() {
     private fun renderBottomNavigation() {
         bottomNavigation.removeAllViews()
         listOf(
-            Triple("Home", "⌂", "Home"),
+            Triple("Feeds", "◎", "Feeds"),
             Triple("Explore", "✦", "Explore"),
-            Triple("Community", "◎", "Community"),
+            Triple("Community", "◉", "Community"),
             Triple("Profile", "♙", "Profile")
         ).forEach { item ->
             val selected = item.first == activeTab
@@ -601,7 +607,7 @@ class MainActivity : Activity() {
                 isClickable = true
                 isFocusable = true
                 contentDescription = item.third
-                setOnClickListener { renderTab(item.first) }
+                setOnClickListener { if (item.first == "Feeds") openPage("Community Feeds", "pages/feeds.html") else renderTab(item.first) }
             }
             val icon = TextView(this).apply {
                 text = item.second
