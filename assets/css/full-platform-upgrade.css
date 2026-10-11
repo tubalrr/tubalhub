@@ -72,3 +72,8 @@ body.feeds-page .muted, body.feeds-page .section-kicker { color: var(--thx-muted
 /* Upgrade 10 — responsive embeds */
 iframe, embed, object { max-width: 100%; }
 .video-container, .embed-container { width: 100%; min-width: 0; }
+
+
+/* Upgrade 11 — stable mobile viewport and safe areas */
+body.hub-home, body.feeds-page { min-height: 100vh; min-height: 100dvh; }
+body.hub-home footer, body.feeds-page footer { padding-bottom: max(18px, env(safe-area-inset-bottom)); }
