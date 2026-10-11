@@ -214,3 +214,8 @@ body.hub-home .hub-sidebar, body.hub-home .hub-topbar { min-width: 0; }
   body:not(.feeds-page) header nav { max-width: 100%; }
   body:not(.feeds-page) header nav a { white-space: nowrap; }
 }
+
+
+/* Upgrade 35 — avoid card content overflow */
+body.hub-home .card > *, body.hub-home .panel > *,
+body.feeds-page .feeds-panel > * { min-width: 0; }
