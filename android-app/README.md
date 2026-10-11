@@ -19,6 +19,8 @@ TUBAL HUB for Android has its own **native mobile dashboard** built with Android
 - Native Home dashboard with a distinct mobile visual design.
 - Bottom navigation for Home, Explore, Community and Profile.
 - Search/filter within the Explore tab.
+- Pin/unpin spaces from dashboard cards and Explore; favorites persist on the device.
+- Recently opened destinations appear as quick-resume items on Home and Profile.
 - Native cards and quick actions for LifeHub, Payapang Isip, CTRLZONE, Kapeng Barako, Community, Shop, News and Events.
 - Destination pages open in a separate in-app screen with a native toolbar and loading/retry states.
 - Android Back navigates page history before leaving a destination.
