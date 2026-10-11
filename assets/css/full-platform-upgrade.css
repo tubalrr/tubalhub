@@ -117,3 +117,9 @@ body.feeds-page .feeds-main, body.feeds-page .feeds-rail { min-width: 0; }
 /* Upgrade 18 — feeds typography hierarchy */
 body.feeds-page .feeds-shell h1 { letter-spacing: -.035em; line-height: 1.06; }
 body.feeds-page .feeds-shell h2, body.feeds-page .feeds-shell h3 { line-height: 1.2; }
+
+
+/* Upgrade 19 — feeds interaction consistency */
+body.feeds-page button, body.feeds-page .feed-action,
+body.feeds-page .feed-filter button { cursor: pointer; }
+body.feeds-page button:focus-visible, body.feeds-page a:focus-visible { border-radius: 10px; }
