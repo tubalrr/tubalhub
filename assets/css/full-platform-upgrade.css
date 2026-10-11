@@ -247,3 +247,10 @@ body.feeds-page .feeds-panel > * { min-width: 0; }
 
 /* Upgrade 40 — scrollbars for dark platform surfaces */
 body.hub-home, body.feeds-page { scrollbar-color: rgba(255,70,85,.55) rgba(255,255,255,.05); scrollbar-width: thin; }
+
+
+/* Upgrade 41 — final mobile overflow guard */
+@media (max-width: 380px) {
+  body.hub-home .container, body.hub-home .content, body.feeds-page .feeds-shell { max-width: 100%; }
+  body.hub-home h1, body.feeds-page h1 { overflow-wrap: anywhere; }
+}
