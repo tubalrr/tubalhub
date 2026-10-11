@@ -130,3 +130,9 @@ body.feeds-page input[type="search"], body.feeds-page input[type="text"] {
   min-width: 0; border-radius: 14px; transition: border-color .18s ease, box-shadow .18s ease;
 }
 body.feeds-page input:focus-visible { border-color: var(--thx-cyan); }
+
+
+/* Upgrade 21 — feed image rendering */
+body.feeds-page .feed-card img, body.feeds-page .post-media img {
+  display: block; max-width: 100%; height: auto; object-fit: cover;
+}
