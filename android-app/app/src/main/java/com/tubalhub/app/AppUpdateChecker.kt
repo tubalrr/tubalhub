@@ -44,7 +44,7 @@ object AppUpdateChecker {
                 }
                 val payload = connection.inputStream.bufferedReader().use { it.readText() }
                 val json = JSONObject(payload)
-                val tag = json.optString("tag_name").removePrefix("v").removePrefix("V")
+                val tag = json.optString("tag_name").removePrefix("android-").removePrefix("v").removePrefix("V")
                 val page = json.optString("html_url").ifBlank { RELEASES_PAGE }
                 val notes = json.optString("body").take(600)
                 val apk = json.optJSONArray("assets")
