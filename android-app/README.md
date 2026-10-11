@@ -1,5 +1,12 @@
 # TUBAL HUB Android
 
+## Current Android version — v1.3.0
+
+- Adds a persistent Light/Dark appearance control to the native dashboard.
+- Dark mode updates dashboard surfaces, text, borders and accent contrast without changing web pages.
+- Keeps pinned spaces, recent destinations and the selected appearance saved locally on the device.
+
+
 TUBAL HUB for Android has its own **native mobile dashboard** built with Android Views. It is deliberately different from the desktop website: the Home, Explore, Community and Profile tabs are native app screens, with mobile-first cards and bottom navigation. Existing website pages are opened only when a destination is tapped.
 
 **Web destinations:** https://tubalrr.github.io/tubalhub/
@@ -36,7 +43,7 @@ Every push changing `android-app/**` runs a clean debug APK build on GitHub Acti
 
 ## Android update checker and releases
 
-The splash screen includes **CHECK FOR UPDATES**. It checks the GitHub Releases API and compares the latest release tag (for example `v1.2.8`) with the installed app version. A published release should include an APK asset; the app opens the official GitHub download link after the user confirms. Android still controls APK installation.
+The splash screen includes **CHECK FOR UPDATES**. It checks the GitHub Releases API and compares the latest release tag (for example `v1.3.0`) with the installed app version. A published release should include an APK asset; the app opens the official GitHub download link after the user confirms. Android still controls APK installation.
 
 ### Publishing an installable update
 
@@ -47,7 +54,7 @@ The splash screen includes **CHECK FOR UPDATES**. It checks the GitHub Releases 
    - `ANDROID_KEY_ALIAS`
    - `ANDROID_KEY_PASSWORD`
 3. Increment `versionCode` and `versionName` in `app/build.gradle.kts` before each release.
-4. Push a tag such as `android-v1.2.8` to start the Android Release workflow, or run it manually with the tag input.
+4. Push a tag such as `android-v1.3.0` to start the Android Release workflow, or run it manually with the tag input.
 5. Confirm the workflow succeeds and the release contains `app-release.apk`.
 
 **Important:** Android only installs an update over an existing installation when the application ID and signing certificate match. If the app currently installed on your phone was signed with a different debug key, it may require one uninstall/reinstall to move to the stable release key. Back up any local app data first. The update checker cannot publish a release by itself; a release must exist before it can report an update.

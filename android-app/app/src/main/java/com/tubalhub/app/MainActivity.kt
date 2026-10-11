@@ -37,13 +37,7 @@ class MainActivity : Activity() {
 
     companion object {
         private const val BASE_URL = "https://tubalrr.github.io/tubalhub/"
-        private const val COLOR_BG = 0xFFF5F3F7.toInt()
-        private const val COLOR_CARD = 0xFFFFFFFF.toInt()
         private const val COLOR_INK = 0xFF171821.toInt()
-        private const val COLOR_TEXT = 0xFF20212B.toInt()
-        private const val COLOR_MUTED = 0xFF777783.toInt()
-        private const val COLOR_ACCENT = 0xFFE0445D.toInt()
-        private const val COLOR_LINE = 0xFFE9E5EC.toInt()
         private const val COLOR_SOFT_RED = 0xFFFFE8ED.toInt()
         private const val COLOR_SOFT_PURPLE = 0xFFF0EAFE.toInt()
         private const val COLOR_SOFT_BLUE = 0xFFE5F0FF.toInt()
@@ -51,9 +45,24 @@ class MainActivity : Activity() {
         private const val COLOR_SOFT_GOLD = 0xFFFFF1D7.toInt()
     }
 
+    private lateinit var dashboardRoot: LinearLayout
     private lateinit var contentColumn: LinearLayout
     private lateinit var bottomNavigation: LinearLayout
     private lateinit var dashboardScroll: ScrollView
+    private var darkModeEnabled: Boolean = false
+
+    private val COLOR_BG: Int
+        get() = if (darkModeEnabled) 0xFF101119.toInt() else 0xFFF5F3F7.toInt()
+    private val COLOR_CARD: Int
+        get() = if (darkModeEnabled) 0xFF1C1E28.toInt() else 0xFFFFFFFF.toInt()
+    private val COLOR_TEXT: Int
+        get() = if (darkModeEnabled) 0xFFF3F1F7.toInt() else 0xFF20212B.toInt()
+    private val COLOR_MUTED: Int
+        get() = if (darkModeEnabled) 0xFFA7A8B7.toInt() else 0xFF777783.toInt()
+    private val COLOR_ACCENT: Int
+        get() = if (darkModeEnabled) 0xFFFF6B82.toInt() else 0xFFE0445D.toInt()
+    private val COLOR_LINE: Int
+        get() = if (darkModeEnabled) 0xFF343643.toInt() else 0xFFE9E5EC.toInt()
     private var activeTab: String = "Home"
     private var exploreFilter: String = ""
     private var lastHomeBackPressAt: Long = 0L
@@ -113,13 +122,14 @@ class MainActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        darkModeEnabled = prefs.getBoolean("dark_mode", false)
         activeTab = savedInstanceState?.getString("active_tab") ?: "Home"
 
         window.statusBarColor = COLOR_INK
         window.navigationBarColor = COLOR_INK
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
 
-        val root = LinearLayout(this).apply {
+        dashboardRoot = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             setBackgroundColor(COLOR_BG)
         }
@@ -149,10 +159,10 @@ class MainActivity : Activity() {
             elevation = dp(14).toFloat()
         }
 
-        root.addView(dashboardScroll, LinearLayout.LayoutParams(
+        dashboardRoot.addView(dashboardScroll, LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f
         ))
-        root.addView(bottomNavigation, LinearLayout.LayoutParams(
+        dashboardRoot.addView(bottomNavigation, LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT, dp(72)
         ))
         setContentView(root)
@@ -369,7 +379,7 @@ class MainActivity : Activity() {
             orientation = LinearLayout.HORIZONTAL
             gravity = Gravity.CENTER_VERTICAL
             setPadding(dp(14), 0, dp(14), 0)
-            background = rounded(Color.WHITE, 16, COLOR_LINE)
+            background = rounded(COLOR_CARD, 16, COLOR_LINE)
         }
         val searchIcon = TextView(this).apply {
             text = "⌕"
@@ -464,7 +474,7 @@ class MainActivity : Activity() {
             orientation = LinearLayout.VERTICAL
             gravity = Gravity.CENTER_HORIZONTAL
             setPadding(dp(22), dp(24), dp(22), dp(24))
-            background = rounded(Color.WHITE, 24, COLOR_LINE)
+            background = rounded(COLOR_CARD, 24, COLOR_LINE)
         }
         val initials = TextView(this).apply {
             text = "TH"
@@ -502,6 +512,9 @@ class MainActivity : Activity() {
             }
         }
 
+        addSectionHeader(parent, "Appearance", "Personalize the native dashboard")
+        addAppearanceCard(parent)
+
         addSectionHeader(parent, "App updates", "Check for the latest Android version")
         addQuickAction(parent, "↻", "Check for updates", "Find the latest published TUBAL HUB APK", "UPDATE_CHECK", COLOR_SOFT_RED)
 
@@ -509,6 +522,49 @@ class MainActivity : Activity() {
         addQuickAction(parent, "⚙", "Settings", "Account and experience preferences", "pages/settings.html", COLOR_SOFT_PURPLE)
         addQuickAction(parent, "?", "Help center", "Guides and common questions", "pages/help.html", COLOR_SOFT_BLUE)
         addQuickAction(parent, "ⓘ", "About TUBAL HUB", "What brings the spaces together", "pages/about.html", COLOR_SOFT_GREEN)
+    }
+
+    private fun addAppearanceCard(parent: LinearLayout) {
+        val row = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+            setPadding(dp(16), dp(15), dp(13), dp(15))
+            background = rounded(COLOR_CARD, 18, COLOR_LINE)
+        }
+
+        val copy = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+        }
+        addText(
+            copy,
+            if (darkModeEnabled) "Dark mode is on" else "Light mode is on",
+            14f, COLOR_TEXT, bold = true, bottom = 4
+        )
+        addText(
+            copy,
+            "Changes the native dashboard and stays saved on this device.",
+            11f, COLOR_MUTED
+        )
+        row.addView(copy, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
+
+        val toggle = actionButton(
+            if (darkModeEnabled) "Use light" else "Use dark",
+            COLOR_ACCENT,
+            Color.WHITE
+        ) {
+            val previousScroll = dashboardScroll.scrollY
+            darkModeEnabled = !darkModeEnabled
+            prefs.edit().putBoolean("dark_mode", darkModeEnabled).apply()
+            dashboardRoot.setBackgroundColor(COLOR_BG)
+            dashboardScroll.setBackgroundColor(COLOR_BG)
+            window.statusBarColor = COLOR_INK
+            window.navigationBarColor = COLOR_INK
+            renderTab("Profile")
+            dashboardScroll.post { dashboardScroll.scrollTo(0, previousScroll) }
+        }
+        row.addView(toggle, wrapWidth().apply { leftMargin = dp(10) })
+
+        parent.addView(row, fullWidth().apply { bottomMargin = dp(22) })
     }
 
     private fun addFeatureGrid(parent: LinearLayout, features: List<Feature>) {
@@ -551,7 +607,7 @@ class MainActivity : Activity() {
             text = feature.icon
             textSize = 21f
             gravity = Gravity.CENTER
-            setTextColor(COLOR_TEXT)
+            setTextColor(COLOR_INK)
             background = rounded(feature.accent, 13)
         }
         top.addView(icon, LinearLayout.LayoutParams(dp(42), dp(42)))
@@ -593,7 +649,7 @@ class MainActivity : Activity() {
             orientation = LinearLayout.HORIZONTAL
             gravity = Gravity.CENTER_VERTICAL
             setPadding(dp(13), dp(13), dp(13), dp(13))
-            background = rounded(Color.WHITE, 18, COLOR_LINE)
+            background = rounded(COLOR_CARD, 18, COLOR_LINE)
             isClickable = true
             isFocusable = true
             setOnClickListener { openPage(title, route) }
@@ -602,7 +658,7 @@ class MainActivity : Activity() {
             text = icon
             textSize = 21f
             gravity = Gravity.CENTER
-            setTextColor(COLOR_TEXT)
+            setTextColor(COLOR_INK)
             background = rounded(tint, 13)
         }
         row.addView(iconTile, LinearLayout.LayoutParams(dp(45), dp(45)))
@@ -707,13 +763,13 @@ class MainActivity : Activity() {
             orientation = LinearLayout.HORIZONTAL
             gravity = Gravity.CENTER_VERTICAL
             setPadding(dp(13), dp(12), dp(9), dp(12))
-            background = rounded(Color.WHITE, 18, COLOR_LINE)
+            background = rounded(COLOR_CARD, 18, COLOR_LINE)
         }
         val icon = TextView(this).apply {
             text = feature.icon
             textSize = 20f
             gravity = Gravity.CENTER
-            setTextColor(COLOR_TEXT)
+            setTextColor(COLOR_INK)
             background = rounded(feature.accent, 13)
         }
         row.addView(icon, LinearLayout.LayoutParams(dp(44), dp(44)))
@@ -757,7 +813,7 @@ class MainActivity : Activity() {
         val card = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(dp(17), dp(17), dp(17), dp(17))
-            background = rounded(Color.WHITE, 18, COLOR_LINE)
+            background = rounded(COLOR_CARD, 18, COLOR_LINE)
         }
         addText(card, title, 14f, COLOR_TEXT, bold = true, bottom = 6)
         addText(card, message, 12f, COLOR_MUTED)
