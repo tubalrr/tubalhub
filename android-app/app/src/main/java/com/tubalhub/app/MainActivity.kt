@@ -87,7 +87,7 @@ class MainActivity : Activity() {
             orientation = LinearLayout.VERTICAL
             setPadding(dp(20), dp(12), dp(20), dp(28))
         }
-        scroll.addView(contentColumn, ScrollView.LayoutParams(
+        scroll.addView(contentColumn, FrameLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         ))
@@ -275,7 +275,7 @@ class MainActivity : Activity() {
             setTextColor(COLOR_TEXT)
             setHintTextColor(COLOR_MUTED)
             background = null
-            singleLine = true
+            setSingleLine(true)
             setPadding(0, 0, 0, 0)
             setText(exploreFilter)
         }
