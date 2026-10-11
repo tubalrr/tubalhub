@@ -16,6 +16,7 @@ TUBAL HUB for Android has its own **native mobile dashboard** built with Android
 
 ## Native app features
 
+- Animated branded loading screen with a TUBAL HUB monogram, orbit rings, pulsing glow and progress indicator.
 - Native Home dashboard with a distinct mobile visual design.
 - Bottom navigation for Home, Explore, Community and Profile.
 - Search/filter within the Explore tab.
