@@ -67,3 +67,8 @@ body.feeds-page .muted, body.feeds-page .section-kicker { color: var(--thx-muted
 
 /* Upgrade 09 — accessible status labels */
 [role="status"], [role="alert"], .status-message, .toast { max-width: min(92vw, 520px); overflow-wrap: anywhere; }
+
+
+/* Upgrade 10 — responsive embeds */
+iframe, embed, object { max-width: 100%; }
+.video-container, .embed-container { width: 100%; min-width: 0; }
