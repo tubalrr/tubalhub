@@ -100,3 +100,10 @@ body.hub-home h1 { line-height: 1.04; }
 /* Upgrade 15 — homepage link affordance */
 body.hub-home main a:not(.btn):not(.button) { text-decoration-thickness: .08em; }
 body.hub-home main a:not(.btn):not(.button):hover { color: var(--thx-cyan); }
+
+
+/* Upgrade 16 — homepage action buttons */
+body.hub-home .btn, body.hub-home .button, body.hub-home button {
+  border-radius: 12px;
+  min-height: 40px;
+}
