@@ -147,3 +147,9 @@ body.feeds-page .stories-row, body.feeds-page .stories-list {
 /* Upgrade 23 — post composer ergonomics */
 body.feeds-page .composer, body.feeds-page .feed-composer { min-width: 0; }
 body.feeds-page .composer textarea, body.feeds-page .feed-composer textarea { width: 100%; }
+
+
+/* Upgrade 24 — filter chips wrap safely on small screens */
+body.feeds-page .feed-filters, body.feeds-page .filter-row, body.feeds-page .feed-toolbar {
+  min-width: 0; max-width: 100%;
+}
