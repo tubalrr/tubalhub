@@ -1,11 +1,13 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.3.50",
-  "build": "2026-10-10_remove-home-theme-switcher",
-  "releasedAtReal": "2026-10-10T13:58:14.865Z",
+  "version": "1.3.51",
+  "build": "2026-10-14_cinematic-home-v2",
+  "releasedAtReal": "2026-10-14T13:48:54.186Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.3.51 UI — Strong cinematic homepage refresh with an expanded obsidian hero, cyan-to-coral lighting, gradient headline, responsive destination tiles, and more distinct brand pillars.",
+    "v1.3.51 FIX — Bumped the release version and service-worker cache keys so browsers can detect the published visual update and load fresh homepage assets.",
     "v1.3.50 UI — Removed the Midnight / Forest / Light selector from the homepage and locked the homepage to the obsidian/crimson brand theme without overwriting saved preferences on other pages.",
     "v1.3.49 UI — Homepage redesign with direct-access navigation, cleaner section rhythm, differentiated brand cards, refined gaming and live-content panels, and duplicate branch section removal.",
     "v1.3.48 FIX — Welcome Bot and News Announcer are bottom-anchored to a fixed baseline with separate contact shadows; idle bobbing and limb motion are disabled.",
@@ -307,6 +309,18 @@
   ],
   "breakingReal": false,
   "changelog": [
+    {
+      "type": "Improved",
+      "icon": "🎬",
+      "title": "Cinematic homepage refresh",
+      "desc": "A more expressive obsidian hero, gradient headline, layered cyan and coral lighting, and more defined section styling."
+    },
+    {
+      "type": "Fixed",
+      "icon": "⚡",
+      "title": "Update and cache refresh",
+      "desc": "The website version and service-worker cache keys are bumped so the new homepage assets can be detected and loaded."
+    },
     {
       "type": "FEAT",
       "icon": "🔊",
@@ -858,9 +872,14 @@
       "desc": "version.json is the single version/build source: v1.2.16 • build 2026-09-25_1216."
     }
   ],
-  "date": "2026-10-02",
-  "changes": "v1.3.44 FIX — Site-wide automatic updater now detects release/build changes and refreshes updated pages without manual F5.",
+  "date": "2026-10-14",
+  "changes": "v1.3.51 UI — Strong cinematic homepage refresh with a more expressive hero, stronger brand cards, responsive destination tiles, and refreshed service-worker/cache keys.",
   "updates": [
+    {
+      "version": "1.3.51",
+      "date": "2026-10-14",
+      "changes": "A stronger cinematic homepage refresh and cache/version updates so visitors can load the new design."
+    },
     {
       "version": "1.3.44",
       "date": "2026-10-02",
