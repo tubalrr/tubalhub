@@ -1,5 +1,5 @@
-const CACHE_NAME = "tubal-hub-shell-v1.3.55-api-discovery";
-const DYNAMIC_CACHE = "tubal-hub-content-v4";
+const CACHE_NAME = "tubal-hub-shell-v1.3.56-live-api-tools";
+const DYNAMIC_CACHE = "tubal-hub-content-v5";
 const CONTENT_TTL = 5 * 60 * 1000;
 const APP_SHELL = [
   "./",
