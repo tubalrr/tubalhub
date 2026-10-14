@@ -223,3 +223,302 @@ html body.hub-home .th-cinematic-reveal { will-change: opacity, transform; }
   }
   html body.hub-home #mainContent > #thBrandPillars .th-pillar { transition: none !important; }
 }
+
+
+/* CINEMATIC V2 — visibly stronger hierarchy and lighting, while retaining TUBAL HUB identity. */
+html body.hub-home {
+  background:
+    radial-gradient(ellipse at 72% 8%, rgba(43, 155, 180, .10), transparent 35%),
+    radial-gradient(ellipse at 6% 28%, rgba(190, 68, 78, .09), transparent 32%),
+    #08090d !important;
+  color: #f4f6fb;
+}
+html body.hub-home .hub-main {
+  background: transparent;
+}
+html body.hub-home .hub-topbar {
+  border-bottom: 1px solid rgba(151, 223, 236, .12);
+  backdrop-filter: blur(18px);
+}
+html body.hub-home main.home-page.bento-home-page {
+  width: min(100% - 32px, 1440px);
+  margin-inline: auto;
+  padding-top: clamp(18px, 3vw, 36px);
+  padding-bottom: clamp(42px, 6vw, 80px);
+  gap: clamp(18px, 2.3vw, 30px);
+}
+/* Main cinematic frame */
+html body.hub-home #bentoHero.th-corp-hero {
+  min-height: clamp(480px, 56vw, 680px);
+  padding: clamp(32px, 6.5vw, 88px) clamp(24px, 6.4vw, 86px) !important;
+  border-radius: clamp(24px, 3vw, 38px) !important;
+  border: 1px solid rgba(119, 221, 239, .26) !important;
+  background:
+    radial-gradient(ellipse at 83% 22%, rgba(72,216,237,.24), transparent 30%),
+    radial-gradient(ellipse at 96% 84%, rgba(255,105,113,.22), transparent 34%),
+    linear-gradient(118deg, #171923 0%, #0d1019 48%, #11101a 100%) !important;
+  box-shadow:
+    0 35px 100px rgba(0,0,0,.42),
+    0 0 0 1px rgba(255,255,255,.025) inset,
+    0 1px 0 rgba(255,255,255,.09) inset !important;
+}
+html body.hub-home #bentoHero::before {
+  opacity: .65;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 43px, rgba(255,255,255,.055) 44px),
+    repeating-linear-gradient(90deg, transparent 0 43px, rgba(255,255,255,.05) 44px);
+  mask-image: linear-gradient(90deg, transparent 0%, #000 25%, #000 100%);
+}
+html body.hub-home #bentoHero::after {
+  width: clamp(300px, 43vw, 650px);
+  right: -7%;
+  top: -25%;
+  border-color: rgba(72,216,237,.32);
+  box-shadow:
+    0 0 0 34px rgba(72,216,237,.045),
+    0 0 0 76px rgba(72,216,237,.033),
+    0 0 0 124px rgba(255,129,120,.035),
+    0 0 90px rgba(72,216,237,.08);
+}
+html body.hub-home #bentoHero .bento-hero-copy {
+  width: min(100%, 900px);
+  position: relative;
+  z-index: 2;
+}
+html body.hub-home #bentoHero .th-corp-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  padding: 9px 13px;
+  border: 1px solid rgba(118,225,241,.28);
+  border-radius: 999px;
+  background: rgba(6,12,18,.55);
+  color: #a2f0fa;
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .19em;
+  box-shadow: 0 5px 28px rgba(72,216,237,.08);
+}
+html body.hub-home #bentoHero .th-corp-hero-copy h1,
+html body.hub-home #bentoHero #bentoHeroTitle {
+  margin: 24px 0 10px;
+  max-width: 100%;
+  font-size: clamp(3.2rem, 9.5vw, 8.5rem) !important;
+  line-height: .88 !important;
+  font-weight: 950 !important;
+  letter-spacing: -.085em !important;
+  text-transform: uppercase;
+  color: #f8fbff;
+  background: linear-gradient(105deg, #ffffff 2%, #baf5ff 45%, #ffb4ad 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: none !important;
+}
+html body.hub-home #bentoHero .th-corp-hero-copy h2 {
+  margin: 18px 0 12px;
+  color: #fafbff;
+  font-size: clamp(1.35rem, 2.8vw, 2.35rem) !important;
+  font-weight: 760;
+  letter-spacing: -.045em;
+}
+html body.hub-home #bentoHero .th-corp-hero-copy p {
+  max-width: 620px;
+  color: #c3c7d4;
+  font-size: clamp(1rem, 1.35vw, 1.16rem);
+  line-height: 1.8;
+}
+html body.hub-home #bentoHero .bento-cta-row {
+  gap: 12px;
+  margin-top: 26px;
+}
+html body.hub-home #bentoHero .th-corp-primary,
+html body.hub-home #bentoHero .bento-primary-btn {
+  min-height: 52px;
+  border: 1px solid rgba(255,255,255,.2) !important;
+  border-radius: 13px !important;
+  background: linear-gradient(110deg, #8be8f3, #ffd0c8) !important;
+  color: #11121a !important;
+  font-weight: 850;
+  box-shadow: 0 12px 35px rgba(72,216,237,.17), 0 1px 0 rgba(255,255,255,.65) inset !important;
+}
+html body.hub-home #bentoHero .th-corp-secondary,
+html body.hub-home #bentoHero .bento-secondary-btn {
+  min-height: 52px;
+  border: 1px solid rgba(255,255,255,.17) !important;
+  border-radius: 13px !important;
+  background: rgba(255,255,255,.055) !important;
+  color: #f5f7fc !important;
+}
+html body.hub-home #bentoHero .th-hero-proof-row {
+  gap: 12px 24px;
+  margin-top: 30px;
+  color: #c5cad8;
+  font-size: .78rem;
+}
+html body.hub-home #bentoHero .th-hero-proof-row > span:first-child i {
+  background: #7ce5ef;
+  box-shadow: 0 0 0 5px rgba(124,229,239,.1), 0 0 20px rgba(124,229,239,.65);
+}
+/* Quick links read as individual destination tiles rather than a single strip. */
+html body.hub-home main.home-page.bento-home-page > .home-quicknav {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid rgba(255,255,255,.11) !important;
+  border-radius: 22px;
+  background: rgba(14,16,23,.9) !important;
+  box-shadow: 0 18px 50px rgba(0,0,0,.2);
+}
+html body.hub-home .home-quicknav-link {
+  min-width: 0;
+  min-height: 76px;
+  padding: 14px 13px;
+  border: 1px solid rgba(255,255,255,.075);
+  border-radius: 14px;
+  background: linear-gradient(145deg, rgba(255,255,255,.055), rgba(255,255,255,.018));
+  transition: transform .22s ease, border-color .22s ease, background .22s ease;
+}
+html body.hub-home .home-quicknav-link:hover {
+  transform: translateY(-3px);
+  border-color: rgba(117,222,239,.4);
+  background: linear-gradient(145deg, rgba(72,216,237,.1), rgba(255,129,120,.06));
+}
+html body.hub-home .home-quicknav-link > span strong {
+  color: #f4f6fb;
+  font-size: .88rem;
+}
+html body.hub-home .home-quicknav-link > span small {
+  color: #9ea7b8;
+  letter-spacing: .13em;
+}
+html body.hub-home .home-quicknav-icon {
+  color: #9cecf5;
+  background: rgba(72,216,237,.09);
+  border: 1px solid rgba(72,216,237,.12);
+  border-radius: 11px;
+}
+/* Editorial section titles gain a clear signal line. */
+html body.hub-home #thValueTitle,
+html body.hub-home #thBrandPillarsTitle,
+html body.hub-home #bentoFeedsTitle,
+html body.hub-home #featuredWebsiteTitle {
+  position: relative;
+  letter-spacing: -.055em;
+}
+html body.hub-home #thValueTitle::after,
+html body.hub-home #thBrandPillarsTitle::after,
+html body.hub-home #bentoFeedsTitle::after,
+html body.hub-home #featuredWebsiteTitle::after {
+  content: "";
+  display: block;
+  width: clamp(54px, 8vw, 92px);
+  height: 3px;
+  margin-top: 13px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--th-cinema-cyan), var(--th-cinema-coral));
+  box-shadow: 0 0 24px rgba(72,216,237,.2);
+}
+/* Three brand pillars: richer surfaces, clear hierarchy, individual identity. */
+html body.hub-home #mainContent > #thBrandPillars .th-pillar {
+  min-height: 280px;
+  padding: clamp(22px, 3vw, 34px);
+  border: 1px solid rgba(255,255,255,.14) !important;
+  border-radius: 23px !important;
+  background:
+    radial-gradient(ellipse at 100% 0%, rgba(255,255,255,.065), transparent 42%),
+    linear-gradient(148deg, #171a24 0%, #0e1018 100%) !important;
+  box-shadow: 0 18px 48px rgba(0,0,0,.22), 0 1px 0 rgba(255,255,255,.04) inset !important;
+}
+html body.hub-home #mainContent > #thBrandPillars .th-pillar h3 {
+  color: #f7f9ff;
+  font-size: clamp(1.35rem, 2.2vw, 1.85rem);
+  letter-spacing: -.045em;
+}
+html body.hub-home #mainContent > #thBrandPillars .th-pillar p {
+  color: #adb4c5;
+  line-height: 1.75;
+}
+html body.hub-home #mainContent > #thBrandPillars .th-pillar-blue {
+  background:
+    radial-gradient(ellipse at 95% 0%, rgba(104,217,181,.14), transparent 44%),
+    linear-gradient(148deg, #171d25, #0e1018) !important;
+}
+html body.hub-home #mainContent > #thBrandPillars .th-pillar-gold {
+  background:
+    radial-gradient(ellipse at 95% 0%, rgba(243,200,120,.13), transparent 44%),
+    linear-gradient(148deg, #211e19, #101016) !important;
+}
+html body.hub-home #mainContent > #thBrandPillars .th-pillar-charcoal {
+  background:
+    radial-gradient(ellipse at 95% 0%, rgba(142,163,255,.13), transparent 44%),
+    linear-gradient(148deg, #191b28, #0e1018) !important;
+}
+html body.hub-home .bento-feed-real,
+html body.hub-home #featuredWebsite,
+html body.hub-home #ctrlzoneCard {
+  border: 1px solid rgba(255,255,255,.115) !important;
+  border-radius: 24px !important;
+  background-color: #10121a !important;
+}
+html body.hub-home .bento-feed-real {
+  padding: clamp(20px, 3vw, 34px);
+  background:
+    radial-gradient(ellipse at 100% 0%, rgba(72,216,237,.10), transparent 34%),
+    linear-gradient(145deg, #151822, #0e1017) !important;
+}
+html body.hub-home #featuredWebsite {
+  padding: clamp(20px, 3vw, 36px);
+  background:
+    radial-gradient(ellipse at 0% 100%, rgba(255,129,120,.10), transparent 35%),
+    linear-gradient(145deg, #151720, #0e1017) !important;
+}
+html body.hub-home #mainFooter {
+  border-radius: 26px 26px 0 0;
+}
+html body.hub-home .th-cinematic-reveal { will-change: auto; }
+@media (max-width: 1100px) {
+  html body.hub-home main.home-page.bento-home-page > .home-quicknav {
+    grid-template-columns: repeat(3, minmax(0,1fr));
+  }
+}
+@media (max-width: 700px) {
+  html body.hub-home main.home-page.bento-home-page {
+    width: min(100% - 22px, 1440px);
+    padding-top: 12px;
+    gap: 16px;
+  }
+  html body.hub-home #bentoHero.th-corp-hero {
+    min-height: 500px;
+    padding: 34px 24px 42px !important;
+    border-radius: 24px !important;
+  }
+  html body.hub-home #bentoHero .th-corp-hero-copy h1,
+  html body.hub-home #bentoHero #bentoHeroTitle {
+    font-size: clamp(3.15rem, 16vw, 5.8rem) !important;
+    letter-spacing: -.075em !important;
+  }
+  html body.hub-home #bentoHero::after {
+    width: 330px;
+    right: -43%;
+    top: -5%;
+    opacity: .8;
+  }
+  html body.hub-home #bentoHero .th-hero-proof-row {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  html body.hub-home main.home-page.bento-home-page > .home-quicknav {
+    grid-template-columns: repeat(2, minmax(0,1fr));
+    gap: 8px;
+    padding: 8px;
+  }
+  html body.hub-home .home-quicknav-link { min-height: 70px; padding: 12px 10px; }
+  html body.hub-home #mainContent > #thBrandPillars .th-pillar {
+    min-height: 0;
+    padding: 24px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html body.hub-home .home-quicknav-link { transition: none !important; }
+}
