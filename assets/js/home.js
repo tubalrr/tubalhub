@@ -95,7 +95,7 @@ function normalizeRealGmail(value){
 }
 
 function isRealGmail(value){
-  return /^[^\\s@]+@gmail\\.com$/i.test(String(value||"").trim());
+  return /^[^\s@]+@gmail\.com$/i.test(String(value||"").trim());
 }
 
 function setSubscribeStatusReal(text,type=""){
