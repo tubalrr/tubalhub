@@ -147,7 +147,7 @@ for (const file of jsFiles) {
     const detail = (result.stderr || result.stdout || result.error?.message || "Unknown syntax error")
       .trim()
       .split("\n")
-      .slice(-5)
+      .slice(0, 10)
       .join("\n");
     errors.push("JavaScript syntax error: " + file + (detail ? "\n  " + detail.replace(/\n/g, "\n  ") : ""));
   }
