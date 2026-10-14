@@ -1,9 +1,10 @@
-const CACHE_NAME = "tubal-hub-shell-v1.3.53-toolbox-saved";
+const CACHE_NAME = "tubal-hub-shell-v1.3.54-system-dashboard";
 const DYNAMIC_CACHE = "tubal-hub-content-v3";
 const CONTENT_TTL = 5 * 60 * 1000;
 const APP_SHELL = [
   "./",
   "./index.html",
+  "./pages/system-dashboard.html",
   "./manifest.json",
   "./tubal-hub-logo.png",
   "./assets/icons/tubal-hub-512.svg"
