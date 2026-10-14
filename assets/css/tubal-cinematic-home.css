@@ -1,0 +1,225 @@
+/* TUBAL HUB — Cinematic Digital Ecosystem (original brand adaptation)
+   Inspired by layered editorial motion, rebuilt around TUBAL HUB's own branches and palette. */
+:root {
+  --th-cinema-bg: #090a0f;
+  --th-cinema-panel: #11131b;
+  --th-cinema-line: rgba(255,255,255,.09);
+  --th-cinema-coral: #ff8178;
+  --th-cinema-cyan: #48d8ed;
+  --th-cinema-muted: #a7a9b8;
+}
+html, body.hub-home { background-color: var(--th-cinema-bg); }
+body.hub-home main.home-page.bento-home-page { isolation: isolate; }
+body.hub-home main.home-page.bento-home-page > * { position: relative; }
+body.hub-home .th-corp-eyebrow,
+body.hub-home .bento-real-kicker,
+body.hub-home .ctrlzone-featured-kicker {
+  text-transform: uppercase;
+  letter-spacing: .16em;
+}
+/* Hero: abstract digital topography, not a racing-site copy. */
+html body.hub-home #bentoHero.th-corp-hero {
+  isolation: isolate;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid rgba(255,255,255,.105) !important;
+  background:
+    radial-gradient(ellipse at 78% 16%, rgba(72,216,237,.13), transparent 33%),
+    radial-gradient(ellipse at 92% 86%, rgba(255,129,120,.12), transparent 34%),
+    linear-gradient(125deg, #151722 0%, #0d0e15 54%, #12121a 100%) !important;
+  box-shadow: 0 28px 90px rgba(0,0,0,.27), inset 0 1px rgba(255,255,255,.035) !important;
+}
+html body.hub-home #bentoHero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  opacity: .45;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 39px, rgba(255,255,255,.045) 40px),
+    repeating-linear-gradient(90deg, transparent 0 39px, rgba(255,255,255,.04) 40px);
+  mask-image: linear-gradient(90deg, transparent, #000 55%, #000);
+}
+html body.hub-home #bentoHero::after {
+  content: "";
+  position: absolute;
+  width: clamp(250px, 37vw, 520px);
+  aspect-ratio: 1;
+  right: -9%;
+  top: -32%;
+  border: 1px solid rgba(72,216,237,.19);
+  border-radius: 50%;
+  box-shadow: 0 0 0 28px rgba(72,216,237,.025), 0 0 0 64px rgba(72,216,237,.022), 0 0 0 110px rgba(255,129,120,.018);
+  pointer-events: none;
+  z-index: -1;
+}
+html body.hub-home #bentoHero .th-corp-hero-copy h1 {
+  text-wrap: balance;
+  text-shadow: 0 5px 36px rgba(72,216,237,.09);
+}
+html body.hub-home #bentoHero .th-corp-eyebrow::before {
+  content: "";
+  display: inline-block;
+  width: 22px;
+  height: 2px;
+  margin: 0 9px 3px 0;
+  background: linear-gradient(90deg, var(--th-cinema-cyan), var(--th-cinema-coral));
+}
+html body.hub-home #bentoHero .th-corp-primary {
+  box-shadow: 0 8px 28px rgba(255,129,120,.15);
+}
+html body.hub-home #bentoHero .th-corp-secondary {
+  backdrop-filter: blur(12px);
+}
+/* Quiet index rail with a small cyan-to-coral signal. */
+html body.hub-home main.home-page.bento-home-page > .home-quicknav {
+  position: relative;
+  border-color: var(--th-cinema-line) !important;
+  background: linear-gradient(100deg, rgba(17,19,27,.94), rgba(12,14,21,.94)) !important;
+}
+html body.hub-home main.home-page.bento-home-page > .home-quicknav::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 6%;
+  width: 26%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--th-cinema-cyan), var(--th-cinema-coral), transparent);
+}
+/* Feed: editorial surface with an active signal, no fake live data. */
+html body.hub-home .bento-feed-real,
+html body.hub-home #featuredWebsite,
+html body.hub-home #ctrlzoneCard {
+  border-color: var(--th-cinema-line) !important;
+  box-shadow: 0 20px 54px rgba(0,0,0,.16) !important;
+}
+html body.hub-home .bento-feed-real {
+  background:
+    radial-gradient(ellipse at 100% 0, rgba(72,216,237,.055), transparent 40%),
+    linear-gradient(145deg, rgba(20,22,31,.98), rgba(13,14,21,.98)) !important;
+}
+html body.hub-home .bento-feed-real .bento-real-header h2,
+html body.hub-home #featuredWebsiteTitle,
+html body.hub-home #thBrandPillarsTitle {
+  letter-spacing: -.045em;
+  text-wrap: balance;
+}
+html body.hub-home .bento-feed-ticker-real {
+  border-color: rgba(72,216,237,.14) !important;
+  background: rgba(72,216,237,.035) !important;
+}
+html body.hub-home .bento-feed-real-toolbar > span i,
+html body.hub-home .ticker-live-dot {
+  box-shadow: 0 0 0 4px rgba(72,216,237,.08), 0 0 16px rgba(72,216,237,.32);
+}
+/* Three pillars become three distinct destinations, each with its own accent. */
+html body.hub-home #mainContent > #thBrandPillars .th-pillar {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  transition: transform .28s ease, border-color .28s ease, background .28s ease, box-shadow .28s ease !important;
+}
+html body.hub-home #mainContent > #thBrandPillars .th-pillar::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 2px;
+  opacity: .85;
+  background: linear-gradient(90deg, transparent, var(--pillar-accent, var(--th-cinema-cyan)), transparent);
+}
+html body.hub-home #mainContent > #thBrandPillars .th-pillar-blue { --pillar-accent: #68d9b5; }
+html body.hub-home #mainContent > #thBrandPillars .th-pillar-gold { --pillar-accent: #f3c878; }
+html body.hub-home #mainContent > #thBrandPillars .th-pillar-charcoal { --pillar-accent: #8ea3ff; }
+html body.hub-home #mainContent > #thBrandPillars .th-pillar::after {
+  content: "";
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  right: -110px;
+  bottom: -115px;
+  border: 1px solid color-mix(in srgb, var(--pillar-accent, var(--th-cinema-cyan)) 24%, transparent);
+  border-radius: 50%;
+  box-shadow: 0 0 0 18px color-mix(in srgb, var(--pillar-accent, var(--th-cinema-cyan)) 3%, transparent),
+              0 0 0 42px color-mix(in srgb, var(--pillar-accent, var(--th-cinema-cyan)) 2%, transparent);
+  pointer-events: none;
+}
+@media (hover: hover) and (pointer: fine) {
+  html body.hub-home #mainContent > #thBrandPillars .th-pillar:hover {
+    transform: translateY(-5px);
+    border-color: color-mix(in srgb, var(--pillar-accent, var(--th-cinema-cyan)) 36%, rgba(255,255,255,.08)) !important;
+    box-shadow: 0 22px 48px rgba(0,0,0,.24) !important;
+  }
+}
+html body.hub-home #mainContent > #thBrandPillars .th-pillar-kicker,
+html body.hub-home #mainContent > #thBrandPillars .th-pillar-action {
+  color: var(--pillar-accent, var(--th-cinema-cyan)) !important;
+}
+html body.hub-home #mainContent > #thBrandPillars .th-pillar-number {
+  font-variant-numeric: tabular-nums;
+}
+/* Featured experiences: clearer cinematic frame and refined slider controls. */
+html body.hub-home #featuredWebsite {
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 5% 100%, rgba(255,129,120,.06), transparent 36%),
+    linear-gradient(145deg, rgba(19,20,29,.98), rgba(12,13,19,.98)) !important;
+}
+html body.hub-home #featuredWebsite .featured-track-wrapper {
+  border-radius: 18px;
+}
+html body.hub-home #featuredWebsite .featured-slide {
+  border: 1px solid rgba(255,255,255,.065);
+}
+html body.hub-home #featuredWebsite .featured-circle-control,
+html body.hub-home #featuredWebsite .featured-track-control {
+  backdrop-filter: blur(14px);
+  box-shadow: 0 8px 24px rgba(0,0,0,.2);
+}
+/* End frame: the footer feels like a deliberate closing chapter. */
+html body.hub-home #mainFooter {
+  position: relative;
+  overflow: hidden;
+  border-color: rgba(255,255,255,.09) !important;
+  background:
+    radial-gradient(ellipse at 0 0, rgba(72,216,237,.065), transparent 36%),
+    linear-gradient(145deg, #11131a, #0b0c12) !important;
+}
+html body.hub-home #mainFooter::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--th-cinema-cyan), var(--th-cinema-coral), transparent);
+  opacity: .8;
+}
+html body.hub-home #mainFooter .footer-subscribe-real {
+  border-color: rgba(72,216,237,.14);
+  background: rgba(72,216,237,.025);
+}
+/* Progressive reveal: content stays visible if JS or IntersectionObserver is unavailable. */
+html.th-cinematic-ready body.hub-home .th-cinematic-reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1);
+}
+html.th-cinematic-ready body.hub-home .th-cinematic-reveal.th-cinematic-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+html body.hub-home .th-cinematic-reveal { will-change: opacity, transform; }
+@media (max-width: 760px) {
+  html body.hub-home #bentoHero::after { right: -35%; top: -12%; opacity: .6; }
+  html body.hub-home #bentoHero::before { opacity: .22; }
+  html body.hub-home #mainContent > #thBrandPillars .th-pillar { min-height: 0 !important; }
+  html body.hub-home .th-cinematic-reveal { will-change: auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html.th-cinematic-ready body.hub-home .th-cinematic-reveal,
+  html.th-cinematic-ready body.hub-home .th-cinematic-reveal.th-cinematic-visible {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  html body.hub-home #mainContent > #thBrandPillars .th-pillar { transition: none !important; }
+}
