@@ -79,7 +79,7 @@ function resolveLocalReference(sourceFile, rawValue) {
     value.startsWith("#") ||
     value.startsWith("//") ||
     /^(?:[a-z][a-z0-9+.-]*:)/i.test(value) ||
-    value.includes("\${") ||
+    value.includes("$" + "{") ||
     value.includes("{{") ||
     value.includes("<%")
   ) {
