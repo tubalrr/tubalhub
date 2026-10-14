@@ -1,11 +1,12 @@
 {
   "product": "TUBAL HUB Website",
   "manifestType": "website",
-  "version": "1.3.54",
-  "build": "2026-10-14_system-dashboard",
-  "releasedAtReal": "2026-10-14T14:10:00.000Z",
+  "version": "1.3.55",
+  "build": "2026-10-14_api-discovery-center",
+  "releasedAtReal": "2026-10-14T14:32:42.700Z",
   "releasedByReal": "tubalrr@gmail.com",
   "updatesReal": [
+    "v1.3.55 FEAT — Added API Discovery Center with searchable API Mega List categories, project-fit guidance, local favorites, export, and integration safety checklist.",
     "v1.3.54 FEAT — Added System Dashboard with live clock, quick launch links, local notes, task list, focus timer, and browser connectivity status.",
     "v1.3.53 FEAT — Open-source Toolbox now supports saving favorite tools in this browser and filtering to saved tools; preferences stay local to the device.",
     "v1.3.52 FEAT — Added a searchable Open-source Toolbox directory with category filters and official project links.",
