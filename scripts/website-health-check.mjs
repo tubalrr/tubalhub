@@ -10,7 +10,6 @@
 import fs from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
-import { fileURLToPath } from "node:url";
 
 const ROOT = process.cwd();
 const REQUIRED_FILES = [
@@ -99,18 +98,19 @@ function resolveLocalReference(sourceFile, rawValue) {
 
   if (!(base === ROOT || base.startsWith(ROOT + path.sep))) return null;
 
-  const candidates = [base];
-  if (value.endsWith("/")) candidates.push(path.join(base, "index.html"));
-  if (fs.existsSync(base) && fs.statSync(base).isDirectory()) {
-    candidates.push(path.join(base, "index.html"));
+  if (fs.existsSync(base)) {
+    if (!fs.statSync(base).isDirectory()) return null;
+    const indexPath = path.join(base, "index.html");
+    return fs.existsSync(indexPath)
+      ? null
+      : path.relative(ROOT, indexPath).split(path.sep).join("/");
   }
-  return candidates.some((candidate) =>
-    candidate === ROOT || candidate.startsWith(ROOT + path.sep)
-      ? fs.existsSync(candidate)
-      : false
-  )
-    ? null
-    : path.relative(ROOT, base).split(path.sep).join("/");
+
+  if (value.endsWith("/")) {
+    const indexPath = path.join(base, "index.html");
+    return path.relative(ROOT, indexPath).split(path.sep).join("/");
+  }
+  return path.relative(ROOT, base).split(path.sep).join("/");
 }
 
 for (const required of REQUIRED_FILES) {
