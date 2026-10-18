@@ -16,8 +16,6 @@ const legacyPaths = [
   "js",
   "components",
   "data",
-  "v2",
-  "v4.1",
   "embed.js",
   "lifehub-calendar.html",
   "tubal-dark.html",
