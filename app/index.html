@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<base href="../">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="author" content="TUBAL HUB">
+<meta name="copyright" content="© 2026 TUBAL HUB — All Rights Reserved.">
+<link rel="canonical" href="https://tubalrr.github.io/tubalhub/index.html">
+<link rel="alternate" type="application/json" href="version.json" data-tubal-version-json>
+<title>TUBAL HUB — Three Brands. One Hub.</title>
+<link rel="icon" type="image/png" href="assets/icons/tubal-hub-512.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0A0A0B">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TUBAL HUB">
+<link rel="apple-touch-icon" href="assets/icons/tubal-hub-512.svg">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script src="assets/js/home-config.js?v=20260930-branches1"></script>
+
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdn.simpleicons.org" crossorigin>
+<link rel="stylesheet" href="assets/css/style.css?v=1.2.55">
+<link rel="stylesheet" href="assets/css/global-theme.css?v=1.2.55">
+  <link rel="stylesheet" href="assets/css/premium-logos.css?v=1.2.55" data-tubal-premium-logos>
+<link rel="stylesheet" href="assets/css/home-premium.css?v=1.2.55">
+<link rel="stylesheet" href="assets/css/sidebar-premium.css?v=1.2.55">
+<link rel="stylesheet" href="assets/css/home-agency.css?v=1.2.55">
+<link rel="stylesheet" href="assets/css/home.css?v=20261014-cinematic2" data-tubal-home-css>
+<link rel="stylesheet" href="assets/css/home-corporate.css?v=1.2.94">
+<link rel="stylesheet" href="assets/css/home-obsidian-polish.css?v=1.2.55">
+<link rel="stylesheet" href="assets/css/home-tailwind-alignment.css?v=20260930-sidebar-branches2">
+<link rel="stylesheet" href="assets/css/notification-search.css?v=1.2.55">
+<link rel="stylesheet" href="assets/css/mobile-browser-fix.css?v=1.2.55">
+<link rel="stylesheet" href="assets/css/home-overrides.css?v=20260930-tubaldark1" data-tubal-home-overrides>
+<link rel="stylesheet" href="assets/css/hero-reference.css?v=20261001-hero8" data-tubal-hero-reference>
+<link rel="stylesheet" href="assets/css/home-ui-polish.css?v=20261010-themev2" data-tubal-ui-polish>
+<link rel="stylesheet" href="assets/css/maintenance.css?v=1.2.55">
+<link rel="stylesheet" href="assets/css/tubal-main-bot.css?v=20261011-brandmark1">
+<link rel="stylesheet" href="assets/css/tubal-welcome-bot.css?v=20260930-welcome3">
+    
+
+<!-- Final site-wide homepage theme override; must remain after every other stylesheet. -->
+<link rel="stylesheet" href="assets/css/website-theme-v3.css?v=20261010-finaltheme3" data-tubal-final-theme>
+<link rel="stylesheet" href="assets/css/website-layout-v4.css?v=20261010-structural4" data-tubal-layout-v4>
+<link rel="stylesheet" href="assets/css/hero-bot-v2.css?v=20261010-bot-grounded4" data-tubal-bot-skin-v2>
+<link rel="stylesheet" href="assets/css/homepage-v5.css?v=20261010-homepage-v5" data-tubal-homepage-v5>
+  <link rel="stylesheet" href="assets/css/homepage-v6.css?v=20261011-homepage-v6" data-tubal-homepage-v6>
+  <link rel="stylesheet" href="assets/css/homepage-v7.css?v=20261011-homepage-v7.2-profilealways" data-tubal-homepage-v7>
+  <link rel="stylesheet" href="assets/css/full-platform-upgrade.css?v=20261011-full50">
+<link rel="stylesheet" href="assets/css/tubal-cinematic-home.css?v=20261014-cinematic2" data-tubal-cinematic-home>
+</head>
+<body class="hub-home">
+
+<button class="sidebar-menu-trigger" id="sidebarMenuTrigger" type="button" aria-controls="tubalSidebar" aria-expanded="false" aria-label="Open navigation" title="Open navigation">
+  <span class="menu-lines" aria-hidden="true"><i></i><i></i><i></i></span>
+  <span class="menu-close" aria-hidden="true">×</span>
+</button>
+<div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
+
+<aside class="hub-sidebar" id="tubalSidebar" aria-label="TUBAL HUB navigation" aria-hidden="true">
+  <div class="sidebar-shell">
+    <div class="side-drawer-header">
+      <a class="side-brand" href="index.html" aria-label="TUBAL HUB Home">
+        <span class="side-logo-wrap">
+          <img src="assets/icons/tubal-hub-512.svg" loading="eager" decoding="async" width="48" height="48" alt="TUBAL HUB">
+          <i class="side-status-dot" aria-hidden="true"></i>
+        </span>
+        <span class="side-brand-copy"><strong>TUBAL HUB</strong><small>THREE BRANDS • ONE HUB</small></span>
+      </a>
+      <button class="side-close" id="sidebarClose" type="button" aria-label="Close navigation">×</button>
+    </div>
+    <div class="side-divider"></div>
+
+    <nav class="side-nav" aria-label="Main navigation">
+      <div class="side-group">
+        <div class="side-group-label">Explore</div>
+        <a class="active" href="index.html" data-label="Home" title="Home" aria-label="Home"><b class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V21h13V9.5"/><path d="M9.5 21v-6h5v6"/></svg></b><span>Home</span></a>
+        <a href="pages/feeds.html" data-label="Feeds" title="Feeds" aria-label="Feeds"><b class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16M4 12h16M4 19h10"/><circle cx="18" cy="19" r="2"/></svg></b><span>Feeds</span></a>
+        <a href="pages/news.html" data-label="News" title="News" aria-label="News"><b class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v16H5z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></b><span>News</span></a>
+        <a href="tubal-dark.html" data-label="TUBAL DARK" title="TUBAL DARK" aria-label="TUBAL DARK"><b class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 7v6c0 4.5 3.1 7.2 8 8 4.9-.8 8-3.5 8-8V7z"/><path d="m8.5 12 2 2 5-5"/></svg></b><span>TUBAL DARK</span></a>
+        <a href="pages/chat.html" data-label="Global Chat" title="Global Chat" aria-label="Global Chat"><b class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A3.5 3.5 0 0 1 7.5 2h9A3.5 3.5 0 0 1 20 5.5v6A3.5 3.5 0 0 1 16.5 15H11l-4.5 4v-4.3A3.5 3.5 0 0 1 4 11.5z"/><path d="M8 8h8M8 11h5"/></svg></b><span>Global Chat</span></a>
+        <a href="pages/open-source-toolbox.html" data-label="Open-source Toolbox" title="Open-source Toolbox" aria-label="Open-source Toolbox"><b class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7.5h16v12H4z"/><path d="M8 7.5V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2.5M8 12h8M8 16h5"/></svg></b><span>Open-source Toolbox</span></a>
+        <a href="pages/api-mega-hub.html" data-label="API Discovery Center" title="API Discovery Center" aria-label="API Discovery Center"><b class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M8 9h8M8 12h5M8 15h8"/><path d="m17 4 3 3"/></svg></b><span>API Discovery Center</span></a>
+        <a href="pages/system-dashboard.html" data-label="System Dashboard" title="System Dashboard" aria-label="System Dashboard"><b class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 4v5M8 13h3M8 16h7"/></svg></b><span>System Dashboard</span></a>
+                      </div>
+      <div class="side-group tubal-branch-group" aria-label="TUBAL HUB Branches">
+        <div class="side-group-label">Branches</div>
+        <a href="pages/payapang-isip.html" class="tubal-branch-link" data-label="Peace of Mind" title="Peace of Mind Branch" aria-label="Peace of Mind Branch">
+          <b class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4C12 4 6 7.7 6 14.2 6 17.7 8.4 20 12 20c6.3 0 8-7.1 8-16Z"/><path d="M5 20c2.6-4.2 6.1-6.9 10.5-9.5"/></svg></b>
+          <span><strong>Peace of Mind</strong><small class="side-branch-meta">Wellness Branch</small></span>
+          <em class="side-branch-arrow">→</em>
+        </a>
+        <a href="pages/shop.html" class="tubal-branch-link" data-label="TUBAL HUB Shop" title="TUBAL HUB Shop Branch" aria-label="TUBAL HUB Shop Branch">
+          <b class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h16l-1.2 11H5.2z"/><path d="M8 9a4 4 0 0 1 8 0"/><path d="M8 13h.01M12 13h.01M16 13h.01"/></svg></b>
+          <span><strong>TUBAL HUB Shop</strong><small class="side-branch-meta">Commerce Branch</small></span>
+          <em class="side-branch-arrow">→</em>
+        </a>
+        <a href="pages/gaming-zone.html" class="tubal-branch-link" data-label="Gaming Zone" title="Gaming Zone Branch" aria-label="Gaming Zone Branch">
+          <b class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 9.5h11a4 4 0 0 1 3.8 5.2l-1.2 3.4a2.6 2.6 0 0 1-4.8.4L10 16H6.5a4 4 0 0 1-3.8-5.2l1.2-3.4A2.6 2.6 0 0 1 6.5 5.5h11a2.6 2.6 0 0 1 2.4 1.7"/><path d="M7 8v3M5.5 9.5h3"/><circle cx="17" cy="9" r="1"/><circle cx="19" cy="11" r="1"/></svg></b>
+          <span><strong>Gaming Zone</strong><small class="side-branch-meta">Gaming Branch</small></span>
+          <em class="side-branch-arrow">→</em>
+        </a>      </div>
+      <div class="side-group">
+        <div class="side-group-label">Brands</div>        <a href="pages/profiles.html" data-label="Profiles" title="Profiles" aria-label="Profiles"><b class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.8-4 3.1-6 7-6s6.2 2 7 6"/></svg></b><span>Profiles</span></a>
+        <a href="pages/ai-music.html" data-label="AI Music" title="AI Music" aria-label="AI Music"><b class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg></b><span>AI Music</span></a>
+      </div>
+      <div class="side-group">
+        <div class="side-group-label">Community</div>
+        <a href="pages/community.html" data-label="Community" title="Community" aria-label="Community"><b class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="10" r="2.5"/><path d="M3 20c.7-4 2.7-6 6-6s5.3 2 6 6M14 16c.6-.4 1.5-.6 2.4-.6 2.6 0 4 1.6 4.6 4.6"/></svg></b><span>Community</span></a>
+        <a href="pages/events.html" data-label="Events" title="Events" aria-label="Events"><b class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16M8 14h3M8 17h6"/></svg></b><span>Events</span></a>
+        <a href="pages/shop.html" data-label="Shop" title="Shop" aria-label="Shop"><b class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h16l-1.2 11H5.2z"/><path d="M8 9a4 4 0 0 1 8 0"/><path d="M8 13h.01M12 13h.01M16 13h.01"/></svg></b><span>Shop</span></a>
+      </div>
+      <div class="side-group">
+        <div class="side-group-label">Personal</div>
+        <a href="https://tubalrr.github.io/tubalhub/lifehub/index.html" data-label="LifeHub" title="LifeHub" aria-label="LifeHub" onclick="window.location.href=this.href; return false;"><b class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v13A2.5 2.5 0 0 1 17.5 21h-11A2.5 2.5 0 0 1 4 18.5z"/><path d="M8 3v18M11 8h5M11 12h5M11 16h3"/></svg></b><span>LifeHub</span></a>
+        <a href="https://tubalrr.github.io/tubalhub/v4.1/index.html" data-label="Personal OS" title="TUBAL HUB v4.1 Personal OS" aria-label="TUBAL HUB v4.1 Personal OS" onclick="window.location.href=this.href; return false;"><b class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M8 9h8M8 13h5M8 17h7"/></svg></b><span>Personal OS</span></a>
+      </div>
+      <div class="side-group">
+        <div class="side-group-label">System</div>
+        <a href="pages/about.html" data-label="About" title="About" aria-label="About"><b class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 10v6M12 7h.01"/></svg></b><span>About</span></a>
+        <a href="pages/contact.html" data-label="Contact" title="Contact" aria-label="Contact"><b class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="14" rx="2"/><path d="m5 7 7 5 7-5"/></svg></b><span>Contact</span></a>
+        <a href="pages/settings.html" data-label="Settings" title="Settings" aria-label="Settings"><b class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2.2M12 18.8V21M3 12h2.2M18.8 12H21M5.6 5.6l1.6 1.6M16.8 16.8l1.6 1.6M18.4 5.6l-1.6 1.6M7.2 16.8l-1.6 1.6"/><circle cx="12" cy="12" r="4.2"/></svg></b><span>Settings</span></a>
+      </div>
+    </nav>
+
+    <div class="side-footer">
+      <a class="fan-btn" href="pages/community.html" aria-label="Join Fan Club"><b aria-hidden="true">♛</b><span>Join Fan Club</span></a>
+      <div class="side-connect">
+        <strong>Stay Connected</strong>
+        <div class="social-mini social-links-pending" aria-label="Social accounts">
+          <span aria-hidden="true">◌</span>
+          <small>Social accounts coming soon</small>
+          <a href="pages/chat.html" aria-label="Community" title="Community"><span aria-hidden="true">◉</span></a>
+        </div>
+      </div>
+      <a class="sidebar-user" id="sidebarUser" href="pages/profiles.html" hidden>
+        <span class="sidebar-user-avatar" id="sidebarUserAvatar">U</span>
+        <span class="sidebar-user-copy"><strong id="sidebarUserName">Member</strong><small>Logged in</small></span>
+      </a>
+    </div>
+  </div>
+</aside>
+
+<div class="hub-main">
+  <header class="hub-topbar">
+    <a class="tubal-mode-switch" href="tubal-dark.html" aria-label="Switch to TUBAL DARK" title="Switch to TUBAL DARK">
+      <span class="tubal-mode-switch-dot" aria-hidden="true"></span>
+      <span class="tubal-mode-switch-label">TUBAL DARK</span>
+      <span class="tubal-mode-switch-arrow" aria-hidden="true">↗</span>
+    </a>
+    
+    <div class="search-box" id="tubalGlobalSearch" aria-label="Global search"><span>⌕</span><input id="searchInputReal" aria-label="Search TUBAL HUB" placeholder="Hanapin..." type="search" autocomplete="off" spellcheck="false"><kbd class="search-shortcut">⌘K</kbd></div>
+    <div class="top-actions">
+      <button id="videoBtnReal" class="tubal-video-btn-real" type="button" aria-label="Open TUBAL HUB Videos" aria-expanded="false" title="Tubal Hub Videos Real">📹</button>
+      <button class="icon-btn notification-btn" type="button" aria-label="Notifications" title="Notifications">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg>
+  <span class="notification-badge" hidden>0</span>
+</button>
+      <a id="authProfileLink" class="auth-profile-btn" href="pages/profiles.html" aria-label="Open your profile" title="Open your profile">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.8-4 3.1-6 7-6s6.2 2 7 6"/></svg><span>Profile</span>
+      </a>
+      <div id="authGuestActions" class="auth-actions">
+        <a class="login-btn" href="pages/login.html">Login</a>
+        <a class="signup-btn" href="pages/signup.html">Sign Up</a>
+      </div>
+      <div id="authUserActions" class="auth-user-actions" hidden>
+        <span id="authUserName" class="auth-user-name"></span>
+        <button id="logoutBtn" class="logout-btn" type="button">Logout</button>
+      </div>
+    </div>
+  </header>
+
+
+  <main class="home-page bento-home-page">
+
+
+    <section id="bentoHero" class="bento-card bento-hero th-corp-hero" aria-labelledby="bentoHeroTitle">
+  <div class="th-corp-hero-glow" aria-hidden="true"></div>
+  <div class="bento-hero-copy th-corp-hero-copy">
+    <span class="th-corp-eyebrow">TUBAL HUB · DIGITAL ECOSYSTEM</span>
+    <h1 id="bentoHeroTitle">TUBAL HUB</h1>
+    <h2>Three Brands. One Hub.</h2>
+    <p>A unified digital ecosystem built for e-commerce, quality local enterprise, and innovative solutions.</p>
+    <div class="bento-cta-row">
+      <a class="bento-primary-btn th-corp-primary" href="#thBrandPillars">Explore the Brands <span>→</span></a>
+      <a class="bento-secondary-btn th-corp-secondary" href="pages/contact.html">Contact Us <span>↗</span></a>
+    </div>
+    <div class="th-hero-proof-row" aria-label="TUBAL HUB highlights">
+      <span><i aria-hidden="true"></i> One connected ecosystem</span>
+      <span>Wellness <b>·</b> Commerce <b>·</b> Community</span>
+    </div>
+  </div>
+
+  
+  <div class="th-hero-welcome-bot" id="tubalMainBot" aria-label="TUBAL HUB Welcome Bot">
+    <button class="th-hero-bot-visual" id="tubalMainBotToggle" type="button" aria-expanded="true" aria-controls="tubalMainBotBubble" title="TUBAL HUB Welcome Bot">
+      <span class="th-hero-bot-image" aria-hidden="true"></span>
+      <span class="th-hero-bot-status" aria-hidden="true"></span>
+    </button>
+
+    <div class="th-hero-bot-dialog" id="tubalMainBotBubble" role="status" aria-live="polite">
+      <span class="th-hero-bot-kicker">TUBAL HUB GUIDE</span>
+      <strong id="tubalMainBotTitle">Welcome to TUBAL HUB</strong>
+      <p id="tubalMainBotText">Your guide to the Hub, branches, rules, and latest updates.</p>
+      <small id="tubalMainBotLatest" aria-live="polite">LATEST · —</small>
+    </div>
+
+    <button class="th-hero-bot-sound tubal-welcome-sound" id="tubalMainBotSound" type="button" aria-label="Mute Welcome Bot voice" title="Mute Welcome Bot voice" aria-pressed="false">
+      <span class="tubal-speaker-on" aria-hidden="true">🔊</span>
+      <span class="tubal-speaker-off" aria-hidden="true">🔇</span>
+    </button>
+  </div>
+
+
+  </section>
+
+
+
+<nav class="home-quicknav" aria-label="Quick access">
+  <a class="home-quicknav-link" href="#thBrandPillars"><span class="home-quicknav-icon" aria-hidden="true">✳</span><span><small>EXPLORE</small><strong>Our Brands</strong></span><b aria-hidden="true">↗</b></a>
+  <a class="home-quicknav-link" href="pages/shop.html"><span class="home-quicknav-icon" aria-hidden="true">◇</span><span><small>DISCOVER</small><strong>Shop the Hub</strong></span><b aria-hidden="true">↗</b></a>
+  <a class="home-quicknav-link" href="pages/gaming-zone.html"><span class="home-quicknav-icon" aria-hidden="true">⌘</span><span><small>PLAY</small><strong>Gaming Zone</strong></span><b aria-hidden="true">↗</b></a>
+  <a class="home-quicknav-link" href="pages/kapeng-barako.html"><span class="home-quicknav-icon" aria-hidden="true">☕</span><span><small>FEATURED</small><strong>Kapeng Barako</strong></span><b aria-hidden="true">↗</b></a>
+  <a class="home-quicknav-link" href="#bentoFeedsTitle"><span class="home-quicknav-icon" aria-hidden="true">◎</span><span><small>STAY UPDATED</small><strong>Community Feeds</strong></span><b aria-hidden="true">↗</b></a>
+  <a class="home-quicknav-link" href="pages/open-source-toolbox.html"><span class="home-quicknav-icon" aria-hidden="true">⌘</span><span><small>DISCOVER</small><strong>Open-source Tools</strong></span><b aria-hidden="true">↗</b></a>
+  <a class="home-quicknav-link" href="pages/system-dashboard.html"><span class="home-quicknav-icon" aria-hidden="true">▦</span><span><small>WORKSPACE</small><strong>System Dashboard</strong></span><b aria-hidden="true">↗</b></a>
+</nav>
+
+  <section class="glass-card-real bento-real-card bento-feed-real" aria-labelledby="bentoFeedsTitle">
+    <header class="bento-real-header">
+      <div class="bento-real-brand">
+        <span class="bento-real-icon bento-real-icon--purple">📱</span>
+        <div>
+          <span class="bento-real-kicker">TUBAL HUB FEEDS</span>
+          <h2 id="bentoFeedsTitle">Community Feed</h2>
+          <small>Live community posts from across TUBAL HUB</small>
+        </div>
+      </div>
+      <a class="bento-real-viewall" href="pages/feeds.html">Open Feeds →</a>
+    </header>
+    <div class="bento-feed-real-toolbar"><span><i></i> LATEST</span><strong id="bentoFeedsLiveCount">0 posts</strong></div>
+    <div id="bentoFeedsList" class="bento-real-feed-list" aria-live="polite"></div>
+    <div class="bento-feed-ticker-real" aria-label="Live TUBAL HUB Feeds updates"><span class="ticker-live-dot" aria-hidden="true"></span><div class="ticker-window"><div class="ticker-track" id="bentoFeedTickerTrack"><span>TUBAL HUB • LIVE UPDATES</span><span>Community Feed • Gaming Zone • Peace of Mind • Shop</span><span>Real site activity and latest updates</span><span>TUBAL HUB • LIVE UPDATES</span><span>Community Feed • Gaming Zone • Peace of Mind • Shop</span><span>Real site activity and latest updates</span></div></div></div>
+  </section>
+<section class="th-corp-section th-value-section bento-span-12" aria-labelledby="thValueTitle">
+  <div class="th-section-head">
+    <div><span class="th-corp-eyebrow">WHY TUBAL HUB</span><h2 id="thValueTitle">One standard across every branch.</h2></div>
+  </div>
+
+  <div class="th-value-grid grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch h-full">
+    <article class="th-target-grid-card flex flex-col justify-between h-full bg-[#151517] border border-white/[0.08] rounded-xl p-6">
+      <div class="th-value-head">
+        <h3>Uncompromised Quality</h3>
+      </div>
+      <div class="th-value-content flex-grow">
+        <p>Rigorous standards across every product, service, and experience.</p>
+      </div>
+      <div class="th-value-footer mt-auto"><span>01</span></div>
+    </article>
+
+    <article class="th-target-grid-card flex flex-col justify-between h-full bg-[#151517] border border-white/[0.08] rounded-xl p-6">
+      <div class="th-value-head">
+        <h3>Unified Trust</h3>
+      </div>
+      <div class="th-value-content flex-grow">
+        <p>One reliable name connecting multiple specialized needs under one roof.</p>
+      </div>
+      <div class="th-value-footer mt-auto"><span>02</span></div>
+    </article>
+
+    <article class="th-target-grid-card flex flex-col justify-between h-full bg-[#151517] border border-white/[0.08] rounded-xl p-6">
+      <div class="th-value-head">
+        <h3>Community-Driven</h3>
+      </div>
+      <div class="th-value-content flex-grow">
+        <p>Built with local care, dedication, and a mindset shaped by global standards.</p>
+      </div>
+      <div class="th-value-footer mt-auto"><span>03</span></div>
+    </article>
+  </div>
+
+</section>
+    <div id="mainContent" class="bento-grid home-content-layout">
+
+<section id="thBrandPillars" class="th-corp-section bento-span-12" aria-labelledby="thBrandPillarsTitle">
+  <div class="th-section-head">
+    <div><span class="th-corp-eyebrow">THE THREE BRANDS</span><h2 id="thBrandPillarsTitle">Find your part of the Hub.</h2><p>Three distinct experiences. One seamless place to explore, create, shop, and connect.</p></div>
+  </div>
+
+  <div class="th-pillar-grid grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
+    <article class="th-pillar th-pillar-blue flex flex-col justify-between h-full bg-[#151517] border border-white/[0.08] rounded-xl p-6">
+      <div class="th-pillar-head">
+        <span class="th-pillar-number">01</span>
+        <div class="th-pillar-icon animate-float">🌿</div>
+        <span class="th-pillar-kicker">WELLNESS · COMMUNITY</span>
+        <h3>Peace of Mind</h3>
+      </div>
+      <div class="th-pillar-content flex-grow">
+        <p class="th-pillar-description">A calm digital space for journals, wellness tools, AI music, and a more peaceful everyday experience.</p>
+      </div>
+      <a class="th-pillar-action mt-auto" href="pages/payapang-isip.html">Explore Peace of Mind <span>→</span></a>
+    </article>
+
+    <article class="th-pillar th-pillar-gold flex flex-col justify-between h-full bg-[#151517] border border-white/[0.08] rounded-xl p-6">
+      <div class="th-pillar-head">
+        <span class="th-pillar-number">02</span>
+        <div class="th-pillar-icon animate-pulse-gold">🛒</div>
+        <span class="th-pillar-kicker">E-COMMERCE · DIGITAL PRODUCTS</span>
+        <h3>TUBAL HUB Shop</h3>
+      </div>
+      <div class="th-pillar-content flex-grow">
+        <p class="th-pillar-description">A connected shop for games, digital products, and other real offerings published inside the TUBAL HUB ecosystem.</p>
+      </div>
+      <a class="th-pillar-action mt-auto" href="pages/shop.html">Visit the Shop <span>→</span></a>
+    </article>
+
+    <article class="th-pillar th-pillar-charcoal flex flex-col justify-between h-full bg-[#151517] border border-white/[0.08] rounded-xl p-6">
+      <div class="th-pillar-head">
+        <span class="th-pillar-number">03</span>
+        <div class="th-pillar-icon animate-float">🎮</div>
+        <span class="th-pillar-kicker">GAMING · DIGITAL ENTERTAINMENT</span>
+        <h3>Gaming Zone</h3>
+      </div>
+      <div class="th-pillar-content flex-grow">
+        <p class="th-pillar-description">The gaming branch of TUBAL HUB, with the live game catalog and gaming-focused experiences.</p>
+      </div>
+      <a class="th-pillar-action mt-auto" href="pages/gaming-zone.html">Open Gaming Zone <span>→</span></a>
+    </article>
+  </div>
+</section>
+
+
+
+<aside id="sponsoredContainerReal" class="w-full" aria-label="Sponsored 1">
+  <div class="sponsored-container-head-real"><span>SPONSORED</span><span id="sponsoredStatusReal">LOADING...</span></div>
+  <div id="sponsoredContentReal"></div>
+</aside>
+
+ <div id="featuredGameReal" class="featured-game-sponsored-grid-real">
+  <section id="ctrlzoneCard" class="glass-card-real bento-card-real ctrlzone-featured-real" aria-labelledby="ctrlzoneFeaturedTitle">
+  <header class="ctrlzone-featured-header">
+    <div class="ctrlzone-featured-brand">
+      <span class="ctrlzone-featured-logo-real" aria-hidden="true">🎮</span>
+      <div><span class="ctrlzone-featured-kicker">GAMING ZONE</span><h3 id="ctrlzoneFeaturedTitle">Gaming Zone · Featured Games</h3></div>
+      <span class="ctrlzone-live-catalog">● LIVE CATALOG</span>
+    </div>
+    <a href="pages/gaming-zone.html" class="ctrlzone-open-link">Open Gaming Zone →</a>
+  </header>
+  <div id="featuredGamesTrackReal" class="featured-games-track-real" aria-live="polite"></div>
+  <div id="currentCatalogCount" class="current-catalog-count">0 games real</div>
+</section>
+
+</div>
+
+     <div class="bento-row bento-row-real" aria-label="Real TUBAL HUB Bento">
+  <section class="glass-card-real bento-real-card bento-journal-real" aria-labelledby="bentoJournalTitle">
+    <header class="bento-real-header">
+      <div class="bento-real-brand">
+        <span class="bento-real-icon bento-real-icon--green">🌿</span>
+        <div>
+          <span class="bento-real-kicker">PEACE OF MIND</span>
+          <h2 id="bentoJournalTitle">A quiet place for your thoughts</h2>
+          <small>Saved journal entries from your browser</small>
+        </div>
+      </div>
+      <a class="bento-real-viewall" href="pages/payapang-isip.html">Open Journal →</a>
+    </header>
+    <div class="bento-real-list-head"><span>RECENT ENTRIES</span><span>REAL DATA</span></div>
+    <div id="bentoJournalList" class="bento-real-list" aria-live="polite"></div>
+  </section>
+
+  <section class="glass-card-real bento-real-card bento-shop-real" aria-labelledby="bentoShopTitle">
+    <header class="bento-real-header">
+      <div class="bento-real-brand">
+        <span class="bento-real-icon bento-real-icon--violet">🛒</span>
+        <div>
+          <span class="bento-real-kicker">TUBAL HUB SHOP</span>
+          <h2 id="bentoShopTitle">Shop the Hub</h2>
+          <small>Real collections from the official storefront</small>
+        </div>
+      </div>
+      <a class="bento-real-viewall" href="pages/shop.html">Open Shop →</a>
+    </header>
+    <div id="bentoShopList" class="shop-collections-real" aria-live="polite"></div>
+    <div id="liveCartReal" class="live-cart-real"><span>🛒 Live cart</span><span id="cartCountReal">0 items</span></div>
+  </section>
+
+
+</div>
+
+
+
+
+      <section id="featuredWebsite" class="glass-section bento-span-12 featured-website" aria-labelledby="featuredWebsiteTitle">
+        <div class="featured-website-head">
+          <div>
+            <div class="featured-website-title-row">
+              <h2 id="featuredWebsiteTitle"><span class="home-emoji" aria-hidden="true">✳</span> Inside TUBAL HUB</h2>
+              <span class="featured-sliding-badge">SLIDING</span>
+              <span class="featured-autoplay" aria-label="Autoplay active"><i></i> Auto-play</span>
+            </div>
+            <p>A closer look at the experiences, tools, and community spaces available across the Hub.</p>
+          </div>
+          <div class="featured-website-actions">
+            <a href="#mainContent" class="featured-viewall">View All →</a>
+            <button id="featuredPrev" class="featured-circle-control" type="button" aria-label="Previous featured website">‹</button>
+            <button id="featuredNext" class="featured-circle-control" type="button" aria-label="Next featured website">›</button>
+          </div>
+        </div>
+
+        <div class="featured-track-wrapper" id="featuredTrackWrapper" tabindex="0" aria-label="Featured website slider">
+          <div class="featured-track" id="featuredTrack">
+            <article class="featured-slide featured-slide--peace" aria-label="Peace of Mind">
+              <div class="featured-slide-copy">
+                <span class="featured-kicker"><span class="home-emoji">🌿</span> REAL DATA</span>
+                <h3 id="featuredPeaceTitle">Peace of Mind</h3>
+                <p id="featuredPeaceSummary">Real features and journal data from Peace of Mind.</p>
+                <div class="featured-slide-stat"><strong id="featuredJournalCount">—</strong><span>saved entries</span></div>
+                <a class="featured-primary-btn featured-pop-btn" href="pages/payapang-isip.html">Open Now <span>→</span></a>
+              </div>
+              <div class="featured-preview-card">
+                <div class="featured-preview-head"><strong>Live Peace of Mind</strong><span>REAL PAGE</span></div>
+                <div id="featuredJournalPreview" class="featured-preview-list"></div>
+              </div>
+            </article>
+
+            <article class="featured-slide featured-slide--music" aria-label="AI Music Studio">
+              <div class="featured-slide-copy">
+                <span class="featured-kicker"><span class="home-emoji">🎵</span> REAL AUDIO</span>
+                <h3 id="featuredMusicTitle">AI Music Studio</h3>
+                <p>Saved tracks from your browser, with real playback.</p>
+                <div class="featured-vinyl" aria-hidden="true"><div class="featured-vinyl-center">♪</div></div>
+              </div>
+              <div class="featured-preview-card featured-music-preview">
+                <div class="featured-preview-head"><strong>Saved tracks</strong><span id="featuredMusicCount">0</span></div>
+                <div id="featuredMusicWave" class="featured-waveform" aria-hidden="true"></div>
+                <div id="featuredMusicTracks" class="featured-preview-list"></div>
+              </div>
+            </article>
+
+            <article class="featured-slide featured-slide--games" aria-label="Gaming Zone Games">
+              <div class="featured-slide-copy">
+                <span class="featured-kicker"><span class="home-emoji">🎮</span> REAL CATALOG</span>
+                <h3 id="featuredGamesTitle">Gaming Zone Games</h3>
+                <p>Real games from the current TUBAL HUB Gaming Zone catalog.</p><div class="featured-slide-stat"><strong id="featuredGamesCount">0</strong><span>games in catalog</span></div>
+                <a class="featured-primary-btn featured-pop-btn" href="pages/gaming-zone.html">Play Hub <span>→</span></a>
+              </div>
+              <div id="featuredGamesPreview" class="featured-game-floating-grid"></div>
+            </article>
+
+            <article class="featured-slide featured-slide--feeds" aria-label="Feeds Inside">
+              <div class="featured-slide-copy">
+                <span class="featured-kicker"><span class="home-emoji">📱</span> REAL POSTS</span>
+                <h3 id="featuredFeedsTitle">Feeds Inside</h3>
+                <p>Published posts saved in this browser.</p><div class="featured-slide-stat"><strong id="featuredFeedsCount">0</strong><span>saved posts</span></div>
+                <a class="featured-primary-btn featured-pop-btn" href="pages/feeds.html">Open Feeds <span>→</span></a>
+              </div>
+              <div id="featuredFeedPreview" class="featured-feed-preview"></div>
+            </article>
+
+            <article class="featured-slide featured-slide--shop-profile" aria-label="TUBAL Shop and Profile">
+              <div class="featured-shop-profile-grid">
+                <a class="featured-feature-card" href="pages/shop.html">
+                  <span class="home-emoji">🛒</span>
+                  <strong>TUBAL SHOP</strong>
+                  <small>Browse the current web shop</small>
+                  <span class="featured-card-arrow">Open →</span>
+                </a>
+                <a class="featured-feature-card" href="pages/profiles.html">
+                  <span class="home-emoji">👤</span>
+                  <strong>PROFILE</strong>
+                  <small>Manage your account and saved settings</small>
+                  <span class="featured-card-arrow">Open →</span>
+                </a>
+              </div>
+            </article>
+          </div>
+
+          <button id="featuredTrackPrev" class="featured-track-control featured-track-control--prev" type="button" aria-label="Previous slide">‹</button>
+          <button id="featuredTrackNext" class="featured-track-control featured-track-control--next" type="button" aria-label="Next slide">›</button>
+          <div id="featuredDots" class="featured-dots" role="tablist" aria-label="Featured website slides"></div>
+        </div>
+      </section>
+
+
+      <!-- TUBAL HUB SPONSORED 2 — real Firestore sponsor slot -->
+<section id="sponsoredContainerReal2" class="w-full" aria-label="Sponsored 2">
+  <div class="sponsored-container-head-real"><span>SPONSORED 2</span><span id="sponsoredStatusReal2">LOADING...</span></div>
+  <div id="sponsoredContentReal2"></div>
+</section>
+
+
+
+
+      
+
+      <footer id="mainFooter" class="glass-footer bento-footer" aria-label="TUBAL HUB footer">
+        <div class="bento-footer-row bento-footer-row-1">
+          <section class="footer-column"><h3>Customer Care</h3><nav class="footer-link-list"><a href="pages/help.html">Help Center</a><a href="pages/guide.html">How to Use</a><a href="pages/community-guidelines.html">Community Guidelines</a><a href="pages/guide.html#delete-post">How to Delete Post</a><a href="pages/faq.html">FAQ</a><a href="pages/contact.html">Contact Us</a></nav></section>
+          <section class="footer-column"><h3>TUBAL HUB</h3><nav class="footer-link-list"><a href="pages/about.html">About</a><a href="pages/tubal-academy.html">Academy</a><a href="pages/careers.html">Careers</a><a href="pages/terms.html">Terms &amp; Conditions</a><a href="pages/privacy.html">Privacy Policy</a><a href="pages/press.html">Press &amp; Media</a><a href="pages/ip.html">Intellectual Property Protection</a></nav></section>
+          <section class="footer-column"><h3>Web Access</h3><p class="footer-service-note">TUBAL HUB is currently available through the web. No unverified public app-store listing is shown here.</p><div class="footer-access-links"><a class="app-badge" href="index.html">Open TUBAL HUB</a><a class="app-badge" href="pages/feeds.html">Open Feeds</a><a class="app-badge" href="pages/shop.html">Open Shop</a></div></section>
+          <section class="footer-column"><h3>Access</h3><div class="footer-access-cards"><a href="pages/feeds.html"><span>◉</span> Feeds</a><a href="pages/payapang-isip.html"><span>🌿</span> Peace of Mind</a><a href="pages/ai-music.html"><span>🎵</span> AI Music</a><a href="pages/gaming-zone.html"><span>🎮</span> Gaming Zone</a></div></section>
+        </div>
+        <div class="bento-footer-row bento-footer-row-2">
+          <section class="footer-service-column footer-status-panel"><h3>Site Status</h3><div class="footer-service-note">Current TUBAL HUB project status and real website access.</div><div class="footer-site-status-grid"><span><b>REAL</b>Project links</span><span><b>LOCAL</b>Browser data</span><span><b>LIVE</b>Website access</span><span class="verification-qr" id="footerQrCode" aria-label="TUBAL HUB website QR code"></span></div></section>
+        </div>
+
+        <section id="subscribeUpdateReal" class="footer-subscribe-real" aria-labelledby="subscribeUpdateTitleReal">
+          <div class="footer-subscribe-head-real">
+            <div>
+              <span class="footer-subscribe-kicker">SYSTEM UPDATES</span>
+              <b id="subscribeUpdateTitleReal">📧 Get System Updates sa Gmail mo</b>
+              <p>Mag-sign up gamit ang sarili mong Gmail para makatanggap ng real TUBAL HUB release updates.</p><small id="notifyEmailConfigNoteReal" class="footer-email-config-note-real" data-state="missing">Email notifications are not configured yet.</small>
+            </div>
+            <span id="notifySubscribeStatusReal" class="footer-subscribe-status-real is-config-missing" aria-live="polite">NOT CONFIGURED</span>
+          </div>
+          <div class="footer-subscribe-fields-real">
+            <input id="notifyEmailReal" type="email" inputmode="email" autocomplete="email" placeholder="Gmail mo" aria-label="Gmail address">
+            <input id="notifyPhoneReal" type="tel" inputmode="tel" autocomplete="tel" placeholder="Phone # (optional)" aria-label="Phone number (optional)">
+            <button id="subscribeNotifyRealBtn" type="button" disabled title="Email notifications are not configured yet." aria-disabled="true">Email Not Configured</button>
+          </div>
+          <label class="footer-consent-real">
+            <input id="notifyConsentReal" type="checkbox">
+            <span>Pinapayagan ko ang TUBAL HUB na gamitin ang email na ito para sa system-update notifications. Consent is optional and can be removed from this browser.</span>
+          </label>
+          <div class="footer-subscribe-meta-real">
+            <small>Current release: <b id="notifyCurrentVersionReal">v1.2.99</b> • Saved locally in this browser • Email notifications are not configured yet.</small>
+            <button id="unsubscribeNotifyRealBtn" type="button">Unsubscribe</button>
+          </div>
+        </section>
+
+        <div class="bento-footer-row bento-footer-row-3">
+          <div class="footer-country"><span class="footer-ph-circle" aria-label="Philippines">🇵🇭</span><span>Philippines</span></div>
+          <div class="footer-follow social-links-pending" aria-label="Social accounts">
+            <strong>Social Accounts</strong>
+            <span>Official social links will appear here when configured.</span>
+          </div>
+          <div class="footer-copyright"><span>© 2026 TUBAL HUB</span><span>Version <b id="liveVersion">v1.2.99</b></span><span>Build <b id="liveBuild">2026-10-01_1025</b></span><span class="footer-online"><span id="homeOnlineDot" class="footer-status-dot"></span><span id="homeOnlineText">Online</span></span><span>Local data: <b id="localDataStatus">0 journals • 0 posts • 0 cart • real</b></span></div>
+        </div>
+      </footer>
+    </div>
+    <audio id="homeMusicAudio" preload="metadata"></audio>
+    <div id="homeToast" class="home-toast" role="status" aria-live="polite"></div>
+  </main>
+
+
+
+<div id="update-banner"></div>
+<!-- TUBAL HUB — REAL SYSTEM UPDATE -->
+<div id="systemUpdateContainer" class="system-update-container-real" role="status" aria-live="polite" aria-atomic="true">
+  <div class="system-update-head-real">
+    <div class="system-update-brand-real">
+      <div class="system-update-icon-real" aria-hidden="true">🚀</div>
+      <div>
+        <b>SYSTEM UPDATE</b>
+        <small>May bagong build na-detect sa GitHub</small>
+      </div>
+    </div>
+    <span id="updateVersionBadgeReal" class="system-update-version-real">v1.2.99</span>
+  </div>
+  <div class="system-update-body-real">
+    <div class="system-update-meta-real">
+      <small>ANONG NA-UPDATE</small>
+      <small id="updateTimeReal">just now</small>
+    </div>
+    <div id="updateListReal" class="system-update-list-real"></div>
+    <div class="system-update-actions-real">
+      <button id="updateNowRealBtn" type="button">I-Load ang Latest Version →</button>
+      <button id="updateLaterRealBtn" type="button">Mamaya</button>
+    </div>
+    <small class="system-update-foot-real">May bagong build na-detect sa GitHub • I-clear cache at i-load ang latest files</small>
+  </div>
+</div>
+
+<div class="cookie" id="cookieBox"><div><b>🍪 Cookies</b><span>We use cookies to improve your experience.</span></div><button id="acceptCookie">Accept</button></div>
+
+<script src="assets/js/home-runtime.js?v=20261014-cinematic2"></script>
+<script src="assets/js/app.js?v=1.2.50"></script>
+<script type="module" src="assets/js/maintenance.js?v=1.2.50"></script>
+<script src="assets/js/update-notifier.js?v=20261014-cinematic2"></script>
+<script src="assets/js/main.js?v=1.2.50"></script>
+<script src="assets/js/theme.js?v=20261010-no-theme-switcher"></script>
+<script type="module" src="assets/js/notifications.js?v=1.2.50"></script>
+<script type="module" src="assets/js/search.js?v=1.2.50"></script>
+<script src="assets/js/sidebar-premium.js?v=1.2.50"></script>
+<script src="js/global-chat.js?v=1.2.50" defer></script>
+<script src="assets/js/home-agency.js?v=1.2.50"></script>
+<script type="module" src="assets/js/auth-ui.js?v=20260930-logout1"></script>
+<script type="module" src="assets/js/home.js?v=1.2.88"></script>
+<script src="assets/js/tubal-cinematic-home.js?v=20261014-cinematic2" defer></script>
+
+<script src="assets/js/tubal-main-bot.js?v=20261001-hero-bot1"></script>
+<script src="assets/js/tubal-hero-bot.js?v=20261010-bot-static3"></script>
+</body>
+<!-- pages-refresh -->
+</html>
