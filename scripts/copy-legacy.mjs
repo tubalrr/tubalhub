@@ -1,102 +1,69 @@
 import { cpSync, existsSync, mkdirSync, statSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
-import { resolve, basename, dirname, relative, sep } from "node:path";
+import { resolve, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const projectRoot = resolve(fileURLToPath(new URL("..", import.meta.url)));
 const outputDir = resolve(projectRoot, "dist");
 mkdirSync(outputDir, { recursive: true });
 
-// Preserve the existing front-end routes and the folders their HTML pages depend on.
+// Source files stay in Git, while public legacy URLs now render the new React experience.
 const legacyPaths = [
-  "app",
-  "pages",
-  "assets",
-  "lifehub",
-  "css",
-  "js",
-  "components",
-  "data",
-  "embed.js",
-  "lifehub-calendar.html",
-  "tubal-dark.html",
-  "messenger-apk-design.html",
-  "license.html",
-  "tubal-hub-logo.png",
-  "tubalhub-hero-bg.jpg",
-  "manifest.json",
-  "version.json",
-  "robots.txt",
-  "sitemap.xml",
-  "404.html",
-  "service-worker.js",
-  "sw.js",
-  "firebase-messaging-sw.js",
+  "admin", "app", "pages", "assets", "lifehub", "css", "js", "components",
+  "data", "v2", "v4.1", "embed.js", "lifehub-calendar.html", "tubal-dark.html",
+  "messenger-apk-design.html", "license.html", "manifest.json", "version.json",
+  "robots.txt", "sitemap.xml", "404.html", "service-worker.js", "sw.js",
+  "firebase-messaging-sw.js"
 ];
 
 for (const relativePath of legacyPaths) {
   const source = resolve(projectRoot, relativePath);
   if (!existsSync(source)) continue;
   const destination = resolve(outputDir, relativePath);
-  if (statSync(source).isDirectory()) {
-    cpSync(source, destination, { recursive: true, force: true });
-  } else {
-    cpSync(source, destination, { force: true });
-  }
+  if (statSync(source).isDirectory()) cpSync(source, destination, { recursive: true, force: true });
+  else cpSync(source, destination, { force: true });
 }
 
-// Apply one shared design layer to every legacy HTML page copied into the deployment.
-// The new root React homepage is intentionally excluded because it has its own stylesheet.
-const unifiedThemePath = resolve(outputDir, "assets/css/tubal-hub-unified-theme.css");
 const rootHomepage = resolve(outputDir, "index.html");
-const themeVersion = "20261018-unified1";
+const baseHref = "/tubalhub/";
+let shell = readFileSync(rootHomepage, "utf8");
+if (!/<base\b/i.test(shell)) {
+  shell = shell.replace(/<head\b[^>]*>/i, (headTag) => headTag + '\n    <base href="' + baseHref + '">');
+}
+writeFileSync(rootHomepage, shell, "utf8");
 
 function collectHtmlFiles(directory) {
-  const entries = readdirSync(directory, { withFileTypes: true });
-  return entries.flatMap((entry) => {
+  return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
     const fullPath = resolve(directory, entry.name);
     if (entry.isDirectory()) return collectHtmlFiles(fullPath);
     return entry.isFile() && /\.html?$/i.test(entry.name) ? [fullPath] : [];
   });
 }
 
-function unifiedThemeHref(filePath, html) {
-  const baseTag = html.match(/<base\b[^>]*href\s*=\s*["']([^"']+)["']/i);
-  let effectiveBase = dirname(filePath);
-
-  if (baseTag) {
-    const rawBase = baseTag[1].split(/[?#]/, 1)[0];
-    if (/^https?:\/\//i.test(rawBase)) {
-      try {
-        return new URL("assets/css/tubal-hub-unified-theme.css?v=" + themeVersion, rawBase).href;
-      } catch {
-        // Fall through to a relative link if the base URL is malformed.
-      }
-    } else if (rawBase.startsWith("/")) {
-      // GitHub Pages is hosted beneath a project path; the document's root
-      // directory is the correct reference point for project-relative assets.
-      effectiveBase = outputDir;
-    } else if (rawBase) {
-      effectiveBase = resolve(dirname(filePath), rawBase);
-    }
-  }
-
-  let href = relative(effectiveBase, unifiedThemePath).split(sep).join("/");
-  if (!href) href = basename(unifiedThemePath);
-  return href + "?v=" + themeVersion;
+function titleFromPath(relativePath) {
+  const filename = relativePath.split("/").pop() || "index.html";
+  return filename.replace(/\.html?$/i, "").replace(/[-_]+/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
-let themedPages = 0;
-for (const htmlPath of collectHtmlFiles(outputDir)) {
+function makeRouteShell(relativePath) {
+  const routeTitle = titleFromPath(relativePath).replace(/[<&>"]/g, "");
+  const canonical = "https://tubalrr.github.io/tubalhub/" + relativePath;
+  let page = shell;
+  page = page.replace(/<title>[\s\S]*?<\/title>/i, "<title>TUBAL HUB — " + routeTitle + "</title>");
+  page = page.replace(/<link\b[^>]*rel=["']canonical["'][^>]*>/i, '<link rel="canonical" href="' + canonical + '">');
+  page = page.replace(/<meta\b[^>]*property=["']og:url["'][^>]*>/i, '<meta property="og:url" content="' + canonical + '">');
+  page = page.replace(/<meta\b[^>]*name=["']description["'][^>]*>/i, '<meta name="description" content="Explore ' + routeTitle + ' in the redesigned TUBAL HUB ecosystem.">');
+  return page;
+}
+
+const htmlPages = collectHtmlFiles(outputDir);
+let convertedPages = 0;
+for (const htmlPath of htmlPages) {
   if (htmlPath === rootHomepage) continue;
-  const html = readFileSync(htmlPath, "utf8");
-  if (!/<\/head\s*>/i.test(html)) continue;
-  if (html.includes("tubal-hub-unified-theme.css")) continue;
-
-  const href = unifiedThemeHref(htmlPath, html);
-  const linkTag = '\n<link rel="stylesheet" href="' + href + '" data-tubal-unified-theme>\n';
-  const updatedHtml = html.replace(/<\/head\s*>/i, linkTag + "</head>");
-  writeFileSync(htmlPath, updatedHtml, "utf8");
-  themedPages += 1;
+  const relativePath = relative(outputDir, htmlPath).split(sep).join("/");
+  // Component fragments are not standalone public routes; keep their source intact.
+  if (relativePath.startsWith("components/")) continue;
+  writeFileSync(htmlPath, makeRouteShell(relativePath), "utf8");
+  convertedPages += 1;
 }
 
-console.log("Preserved existing TUBAL HUB routes and applied the unified theme to " + themedPages + " legacy HTML pages.");
+console.log("Replaced the old page markup at " + convertedPages + " public legacy URLs with the new React page shell.");

@@ -395,3 +395,89 @@ h1, h2, h3, .brand-logo__wordmark, .stat-item strong { font-family: "Sora", sans
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
   .reveal { opacity: 1; transform: none; }
 }
+
+
+/* Full redesigned route pages: these replace legacy page content at deployment. */
+.legacy-app-root { min-height: 100vh; }
+.legacy-main { padding-top: 86px; }
+.legacy-hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(340px, .9fr); align-items: center; gap: clamp(40px, 6vw, 90px); min-height: 500px; padding-top: 52px; padding-bottom: 35px; }
+.legacy-hero__copy { min-width: 0; padding-block: 40px; }
+.legacy-breadcrumb { display: flex; align-items: center; gap: 10px; margin-bottom: 23px; color: #72869b; font-size: 9px; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
+.legacy-breadcrumb a { color: var(--blue); }
+.legacy-breadcrumb span:last-child { color: var(--amber); }
+.legacy-hero h1 { max-width: 760px; margin: 23px 0 18px; font-size: clamp(44px, 6.1vw, 75px); line-height: 1.05; font-weight: 650; letter-spacing: -.08em; }
+.legacy-hero .hero-title__gradient { display: inline; }
+.legacy-hero .hero-lede { max-width: 610px; }
+.legacy-hero__actions { flex-wrap: wrap; }
+.legacy-hero__visual { position: relative; display: grid; place-items: center; min-height: 390px; overflow: hidden; border: 1px solid rgba(191,215,241,.12); border-radius: 32px; background: radial-gradient(ellipse at 50% 45%, rgba(30,105,172,.22), transparent 55%), linear-gradient(145deg, rgba(15,31,49,.8), rgba(6,15,25,.8)); box-shadow: 0 35px 90px rgba(0,0,0,.18), inset 0 1px rgba(255,255,255,.035); }
+.legacy-hero__visual::before { content: ""; position: absolute; inset: 22px; border: 1px solid rgba(191,215,241,.085); border-radius: 25px; }
+.legacy-hero__glow { position: absolute; width: 260px; height: 260px; border-radius: 50%; background: #167ad3; filter: blur(80px); opacity: .2; }
+.legacy-hero__orb { position: absolute; border-radius: 50%; border: 1px solid rgba(102,182,255,.23); aspect-ratio: 1; }
+.legacy-hero__orb--one { width: 84%; animation: legacy-orbit 28s linear infinite; }
+.legacy-hero__orb--two { width: 60%; border-color: rgba(243,189,99,.25); animation: legacy-orbit 22s linear infinite reverse; }
+.legacy-hero__monogram { position: relative; z-index: 1; width: 170px; height: 190px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; border: 1px solid rgba(102,182,255,.25); border-radius: 90px 90px 24px 24px; background: linear-gradient(145deg, rgba(16,42,64,.88), rgba(6,16,27,.93)); color: var(--blue); box-shadow: 0 0 65px rgba(35,136,232,.11), inset 0 1px rgba(255,255,255,.07); }
+.legacy-hero__monogram span { color: #9aacbf; font-size: 9px; font-weight: 800; letter-spacing: .18em; }
+.legacy-float { position: absolute; z-index: 2; display: flex; align-items: center; gap: 10px; min-width: 150px; padding: 12px 14px; border: 1px solid rgba(191,215,241,.16); border-radius: 13px; background: rgba(6,16,27,.9); box-shadow: 0 16px 35px rgba(0,0,0,.22); backdrop-filter: blur(18px); }
+.legacy-float > svg { color: var(--blue); flex: 0 0 auto; }
+.legacy-float span { display: grid; gap: 3px; }
+.legacy-float b { color: #edf5fc; font: 700 10px "Sora", sans-serif; }
+.legacy-float small { color: #8da1b6; font-size: 8px; }
+.legacy-float--top { top: 45px; right: 20px; }
+.legacy-float--bottom { bottom: 47px; left: 20px; }
+.legacy-float--side { right: 14px; bottom: 120px; }
+.legacy-highlights { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 14px; padding-top: 24px; padding-bottom: 22px; }
+.legacy-highlight { min-width: 0; padding: 20px 21px; border: 1px solid var(--line); border-radius: 18px; background: linear-gradient(150deg, rgba(17,34,52,.6), rgba(8,18,29,.65)); }
+.legacy-highlight__number { display: inline-flex; margin-bottom: 15px; color: var(--amber); font-size: 9px; font-weight: 800; letter-spacing: .15em; }
+.legacy-highlight h2 { margin: 0 0 10px; font-size: 17px; line-height: 1.4; letter-spacing: -.05em; }
+.legacy-highlight p { margin: 0; color: #91a4b8; font-size: 10px; line-height: 1.85; }
+.legacy-directory { padding-top: 80px; }
+.legacy-search { display: flex; align-items: center; gap: 13px; max-width: 760px; margin: 0 0 28px; padding: 10px 14px; border: 1px solid rgba(191,215,241,.16); border-radius: 14px; background: rgba(8,19,31,.82); color: var(--blue); }
+.legacy-search input { width: 100%; min-width: 0; border: 0 !important; outline: 0; background: transparent !important; box-shadow: none !important; color: var(--text) !important; font: 500 12px "Inter", sans-serif; }
+.legacy-search input::placeholder { color: #788da3; }
+.legacy-search > span { flex: 0 0 auto; color: #72879c; font-size: 9px; white-space: nowrap; }
+.legacy-directory-grid { grid-template-columns: repeat(3, minmax(0,1fr)); }
+.legacy-empty { color: var(--muted); font-size: 12px; }
+.legacy-details { padding-top: 80px; }
+.legacy-detail-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 15px; }
+.legacy-detail-card { min-width: 0; padding: 25px; border: 1px solid var(--line); border-radius: 20px; background: linear-gradient(155deg, rgba(17,34,52,.8), rgba(9,20,32,.84)); }
+.legacy-detail-card__icon { display: grid; place-items: center; width: 44px; height: 44px; margin-bottom: 22px; border: 1px solid rgba(102,182,255,.25); border-radius: 13px; background: rgba(102,182,255,.08); color: var(--blue); }
+.legacy-detail-card__icon--gold { color: var(--amber); border-color: rgba(243,189,99,.27); background: rgba(243,189,99,.075); }
+.legacy-detail-card__icon--sea { color: var(--sea); border-color: rgba(131,212,195,.27); background: rgba(131,212,195,.075); }
+.legacy-detail-card h3 { margin: 0 0 9px; font-size: 17px; }
+.legacy-detail-card p { margin: 0; color: #91a4b8; font-size: 11px; line-height: 1.85; }
+.legacy-next-panel { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-top: 24px; padding: 25px 27px; border: 1px solid rgba(102,182,255,.19); border-radius: 20px; background: radial-gradient(ellipse at 5% 0%, rgba(35,136,232,.10), transparent 50%), rgba(12,25,39,.65); }
+.legacy-next-panel h3 { margin: 10px 0 5px; font-size: 21px; }
+.legacy-next-panel p { margin: 0; color: var(--muted); font-size: 11px; }
+.legacy-related { padding-top: 5px; }
+.legacy-related-grid { grid-template-columns: repeat(4, minmax(0,1fr)); }
+@keyframes legacy-orbit { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@media (max-width: 1000px) {
+  .legacy-hero { grid-template-columns: minmax(0,1fr) minmax(280px,.8fr); gap: 25px; }
+  .legacy-hero__visual { min-height: 360px; }
+  .legacy-directory-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .legacy-related-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+}
+@media (max-width: 760px) {
+  .legacy-main { padding-top: 70px; }
+  .legacy-hero { grid-template-columns: 1fr; gap: 6px; min-height: 0; padding-top: 35px; }
+  .legacy-hero__copy { padding-block: 20px; }
+  .legacy-hero h1 { font-size: clamp(42px, 11vw, 62px); }
+  .legacy-hero__visual { min-height: 340px; margin-bottom: 10px; }
+  .legacy-float--top { top: 34px; right: 12px; }
+  .legacy-float--bottom { bottom: 30px; left: 12px; }
+  .legacy-float--side { right: 12px; bottom: 104px; }
+  .legacy-highlights { grid-template-columns: 1fr; gap: 10px; padding-top: 12px; }
+  .legacy-highlight { padding: 17px; }
+  .legacy-highlight__number { margin-bottom: 9px; }
+  .legacy-detail-grid { grid-template-columns: 1fr; gap: 10px; }
+  .legacy-detail-card { padding: 19px; }
+  .legacy-next-panel { align-items: flex-start; flex-direction: column; padding: 20px; }
+  .legacy-search { gap: 8px; padding-inline: 10px; }
+  .legacy-search > span { font-size: 8px; }
+  .legacy-directory-grid, .legacy-related-grid { grid-template-columns: 1fr; }
+  .legacy-directory { padding-top: 60px; }
+  .legacy-details { padding-top: 60px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .legacy-hero__orb--one, .legacy-hero__orb--two { animation: none; }
+}
