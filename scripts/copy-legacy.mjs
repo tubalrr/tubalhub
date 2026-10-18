@@ -60,8 +60,6 @@ let convertedPages = 0;
 for (const htmlPath of htmlPages) {
   if (htmlPath === rootHomepage) continue;
   const relativePath = relative(outputDir, htmlPath).split(sep).join("/");
-  // Component fragments are not standalone public routes; keep their source intact.
-  if (relativePath.startsWith("components/")) continue;
   writeFileSync(htmlPath, makeRouteShell(relativePath), "utf8");
   convertedPages += 1;
 }
