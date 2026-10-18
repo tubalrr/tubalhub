@@ -8,7 +8,6 @@ import {
   Gamepad2,
   Code2,
   Hexagon,
-  AtSign,
   Mail,
   MapPin,
   Menu,
@@ -34,6 +33,10 @@ type Brand = {
   accent: "blue" | "amber" | "sea";
   icon: LucideIcon;
   features: string[];
+  id: string;
+  href: string;
+  ctaLabel: string;
+  contactTopic?: string;
 };
 
 const brands: Brand[] = [
@@ -50,6 +53,9 @@ const brands: Brand[] = [
     accent: "blue",
     icon: Gamepad2,
     features: ["Gaming culture & discovery", "Creator-led communities", "A place to share the play"],
+    id: "ctrlzone",
+    href: "./pages/gaming-zone.html",
+    ctaLabel: "Explore gaming",
   },
   {
     number: "02",
@@ -64,6 +70,10 @@ const brands: Brand[] = [
     accent: "amber",
     icon: PanelsTopLeft,
     features: ["Personal organization", "Projects & daily planning", "Tools designed for real life"],
+    id: "lifehub",
+    href: "#connect",
+    ctaLabel: "Ask about LifeHub",
+    contactTopic: "LifeHub",
   },
   {
     number: "03",
@@ -78,6 +88,10 @@ const brands: Brand[] = [
     accent: "sea",
     icon: Waves,
     features: ["Mindful moments", "Reflection & gentle routines", "A softer pace for busy days"],
+    id: "payapang-isip",
+    href: "#connect",
+    ctaLabel: "Explore Payapang Isip",
+    contactTopic: "Payapang Isip",
   },
 ];
 
@@ -240,7 +254,7 @@ function Hero() {
 function BrandCard({ brand }: { brand: Brand }) {
   const Icon = brand.icon;
   return (
-    <article className={`brand-card brand-card--${brand.accent} reveal`}>
+    <article id={`brand-${brand.id}`} className={`brand-card brand-card--${brand.accent} reveal`}>
       <div className="brand-card__image-wrap">
         <img src={brand.image} alt={brand.imageAlt} loading="lazy" />
         <div className="brand-card__image-shade" />
@@ -257,8 +271,16 @@ function BrandCard({ brand }: { brand: Brand }) {
             <li key={feature}><Check size={14} /> {feature}</li>
           ))}
         </ul>
-        <a className="brand-card__link" href="#connect">
-          Discover this brand <ArrowUpRight size={16} />
+        <a
+          className="brand-card__link"
+          href={brand.href}
+          onClick={() => {
+            if (brand.contactTopic) {
+              window.dispatchEvent(new CustomEvent("tubalhub:select-topic", { detail: brand.contactTopic }));
+            }
+          }}
+        >
+          {brand.ctaLabel} <ArrowUpRight size={16} />
         </a>
       </div>
       <div className="brand-card__edge" aria-hidden="true" />
@@ -336,12 +358,23 @@ function Story() {
 
 function Connect() {
   const [status, setStatus] = useState("");
+  const [selectedTopic, setSelectedTopic] = useState("General enquiry");
+
+  useEffect(() => {
+    const selectTopic = (event: Event) => {
+      const topicEvent = event as CustomEvent<string>;
+      if (topicEvent.detail) setSelectedTopic(topicEvent.detail);
+    };
+    window.addEventListener("tubalhub:select-topic", selectTopic);
+    return () => window.removeEventListener("tubalhub:select-topic", selectTopic);
+  }, []);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
     const name = String(form.get("name") ?? "").trim();
     const email = String(form.get("email") ?? "").trim();
+    const topic = String(form.get("topic") ?? "General enquiry").trim();
     const message = String(form.get("message") ?? "").trim();
 
     if (!name || !email || !message) {
@@ -349,9 +382,9 @@ function Connect() {
       return;
     }
 
-    const subject = encodeURIComponent("TUBAL HUB enquiry from " + name);
+    const subject = encodeURIComponent("TUBAL HUB — " + topic + " (" + name + ")");
     const body = encodeURIComponent(
-      "Name: " + name + "\nEmail: " + email + "\n\nMessage:\n" + message,
+      "Name: " + name + "\nEmail: " + email + "\nTopic: " + topic + "\n\nMessage:\n" + message,
     );
     setStatus("Your email app should open with the message ready to send. This static page does not store submissions.");
     window.location.href = "mailto:tubalrr@gmail.com?subject=" + subject + "&body=" + body;
@@ -380,7 +413,7 @@ function Connect() {
           <div className="social-row" aria-label="Social and project links">
             <a href="https://github.com/tubalrr/tubalhub" target="_blank" rel="noreferrer" aria-label="TUBAL HUB on GitHub"><Code2 size={17} /></a>
             <a href="https://www.facebook.com/search/top?q=TUBAL%20HUB" target="_blank" rel="noreferrer" aria-label="Search TUBAL HUB on Facebook"><UsersRound size={17} /></a>
-            <a href="https://www.instagram.com/" target="_blank" rel="noreferrer" aria-label="Instagram"><AtSign size={17} /></a>
+            <a href="https://discord.gg/EnR4KWSum" target="_blank" rel="noreferrer" aria-label="Join TUBAL HUB on Discord"><MessageCircle size={17} /></a>
             <a href="https://www.youtube.com/results?search_query=TUBAL+HUB" target="_blank" rel="noreferrer" aria-label="Search TUBAL HUB on YouTube"><Play size={17} /></a>
           </div>
           <p className="social-note">Social profile links can be swapped for official brand handles before launch.</p>
@@ -399,6 +432,20 @@ function Connect() {
           <input id="contact-name" name="name" type="text" autoComplete="name" placeholder="How should we call you?" maxLength={100} required />
           <label htmlFor="contact-email">Email address</label>
           <input id="contact-email" name="email" type="email" autoComplete="email" placeholder="you@example.com" maxLength={254} required />
+          <label htmlFor="contact-topic">What are you reaching out about?</label>
+          <select
+            id="contact-topic"
+            name="topic"
+            value={selectedTopic}
+            onChange={(event) => setSelectedTopic(event.target.value)}
+          >
+            <option>General enquiry</option>
+            <option>CTRLZONE</option>
+            <option>LifeHub</option>
+            <option>Payapang Isip</option>
+            <option>Partnership</option>
+            <option>Feedback</option>
+          </select>
           <label htmlFor="contact-message">What’s on your mind?</label>
           <textarea id="contact-message" name="message" rows={5} placeholder="Tell us a little about your idea..." maxLength={4000} required />
           <button className="button button--primary contact-submit" type="submit">
@@ -430,9 +477,9 @@ function Footer() {
         </div>
         <div className="footer-column">
           <strong>The brands</strong>
-          <a href="#brands">CTRLZONE <ArrowUpRight size={12} /></a>
-          <a href="#brands">LifeHub <ArrowUpRight size={12} /></a>
-          <a href="#brands">Payapang Isip <ArrowUpRight size={12} /></a>
+          <a href="#brand-ctrlzone">CTRLZONE <ArrowUpRight size={12} /></a>
+          <a href="#brand-lifehub">LifeHub <ArrowUpRight size={12} /></a>
+          <a href="#brand-payapang-isip">Payapang Isip <ArrowUpRight size={12} /></a>
         </div>
         <div className="footer-column footer-column--note">
           <strong>Stay in the loop</strong>
