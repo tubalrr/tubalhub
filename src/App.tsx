@@ -71,9 +71,8 @@ const brands: Brand[] = [
     icon: PanelsTopLeft,
     features: ["Personal organization", "Projects & daily planning", "Tools designed for real life"],
     id: "lifehub",
-    href: "#connect",
-    ctaLabel: "Ask about LifeHub",
-    contactTopic: "LifeHub",
+    href: "./lifehub/index.html",
+    ctaLabel: "Open LifeHub",
   },
   {
     number: "03",
@@ -89,9 +88,8 @@ const brands: Brand[] = [
     icon: Waves,
     features: ["Mindful moments", "Reflection & gentle routines", "A softer pace for busy days"],
     id: "payapang-isip",
-    href: "#connect",
+    href: "./pages/payapang-isip.html",
     ctaLabel: "Explore Payapang Isip",
-    contactTopic: "Payapang Isip",
   },
 ];
 
@@ -111,6 +109,7 @@ const platformLinks: {
   icon: LucideIcon;
 }[] = [
   { title: "Gaming Zone", category: "PLAY", description: "Game discovery, gaming culture, and CTRLZONE community.", href: "./pages/gaming-zone.html", icon: Gamepad2 },
+  { title: "LifeHub — Personal OS", category: "EVERYDAY TOOLS", description: "Open the existing personal organizer for everyday planning and routines.", href: "./lifehub/index.html", icon: PanelsTopLeft },
   { title: "Shop the Hub", category: "DISCOVER", description: "Browse the existing TUBAL HUB shop and featured items.", href: "./pages/shop.html", icon: PanelsTopLeft },
   { title: "Community & Fan Club", category: "COMMUNITY", description: "Connect with people and join the community spaces.", href: "./pages/community.html", icon: UsersRound },
   { title: "Feeds & News", category: "UPDATES", description: "Catch up with community feeds and hub announcements.", href: "./pages/feeds.html", icon: Waves },
