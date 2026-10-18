@@ -98,8 +98,30 @@ const brands: Brand[] = [
 const navItems = [
   { label: "Hub", href: "#hub" },
   { label: "Brands", href: "#brands" },
+  { label: "Platform", href: "#platform" },
   { label: "Story", href: "#story" },
   { label: "Connect", href: "#connect" },
+];
+
+const platformLinks: {
+  title: string;
+  category: string;
+  description: string;
+  href: string;
+  icon: LucideIcon;
+}[] = [
+  { title: "Gaming Zone", category: "PLAY", description: "Game discovery, gaming culture, and CTRLZONE community.", href: "./pages/gaming-zone.html", icon: Gamepad2 },
+  { title: "Shop the Hub", category: "DISCOVER", description: "Browse the existing TUBAL HUB shop and featured items.", href: "./pages/shop.html", icon: PanelsTopLeft },
+  { title: "Community & Fan Club", category: "COMMUNITY", description: "Connect with people and join the community spaces.", href: "./pages/community.html", icon: UsersRound },
+  { title: "Feeds & News", category: "UPDATES", description: "Catch up with community feeds and hub announcements.", href: "./pages/feeds.html", icon: Waves },
+  { title: "API Discovery Hub", category: "DEVELOPER TOOLS", description: "Explore APIs and resources from the existing discovery hub.", href: "./pages/api-mega-hub.html", icon: Code2 },
+  { title: "Open-source Toolbox", category: "OPEN SOURCE", description: "Find open-source tools and useful developer resources.", href: "./pages/open-source-toolbox.html", icon: Code2 },
+  { title: "System Dashboard", category: "WORKSPACE", description: "Open the existing system dashboard and workspace entry.", href: "./pages/system-dashboard.html", icon: PanelsTopLeft },
+  { title: "Kapeng Barako", category: "FEATURED BRAND", description: "Visit the Kapeng Barako coffee project page.", href: "./pages/kapeng-barako.html", icon: Sparkles },
+  { title: "Payapang Isip", category: "WELLBEING", description: "Open the wellness and reflection space.", href: "./pages/payapang-isip.html", icon: Waves },
+  { title: "Calendar & Planning", category: "PLANNING", description: "Access the calendar and planning tools.", href: "./pages/calendar.html", icon: PanelsTopLeft },
+  { title: "Tubal Academy", category: "LEARN", description: "Discover learning resources and guides.", href: "./pages/tubal-academy.html", icon: Code2 },
+  { title: "Help Center", category: "SUPPORT", description: "Find help, usage guides, and answers to common questions.", href: "./pages/help.html", icon: MessageCircle },
 ];
 
 function Logo({ compact = false }: { compact?: boolean }) {
@@ -150,8 +172,8 @@ function Header() {
             </a>
           ))}
         </div>
-        <a className="button button--nav" href="#connect">
-          Get in touch <ArrowUpRight size={15} />
+        <a className="button button--nav" href="./app/index.html">
+          Open Hub <ArrowUpRight size={15} />
         </a>
         <button
           className="menu-toggle"
@@ -170,8 +192,8 @@ function Header() {
             {item.label} <ArrowUpRight size={15} />
           </a>
         ))}
-        <a className="mobile-nav__cta" href="#connect" onClick={closeMenu}>
-          Get in touch <ArrowRight size={16} />
+        <a className="mobile-nav__cta" href="./app/index.html" onClick={closeMenu}>
+          Open the full Hub <ArrowRight size={16} />
         </a>
       </div>
     </header>
@@ -198,8 +220,8 @@ function Hero() {
           <a className="button button--primary" href="#brands">
             Explore the brands <ArrowRight size={17} />
           </a>
-          <a className="button button--ghost" href="#story">
-            Our story <ArrowUpRight size={16} />
+          <a className="button button--ghost" href="./app/index.html">
+            Open the Hub <ArrowUpRight size={16} />
           </a>
         </div>
         <div className="hero-proof">
@@ -303,6 +325,38 @@ function Brands() {
         <span className="brands-bottom__rule" />
         <p>Different by design. Connected by intention.</p>
         <span className="brands-bottom__rule" />
+      </div>
+    </section>
+  );
+}
+
+function Platform() {
+  return (
+    <section className="platform-section section-shell section-spacing" id="platform" aria-labelledby="platform-title">
+      <div className="section-heading reveal">
+        <div className="section-eyebrow"><span>THE TOOLKIT</span> Existing features, one place</div>
+        <h2 id="platform-title">Your hub is still here.<br /><span className="text-gradient">Now easier to explore.</span></h2>
+        <p>The new homepage is connected to the tools and pages already in TUBAL HUB. Open a feature directly below, or enter the full existing hub for the broader navigation.</p>
+      </div>
+      <div className="platform-grid">
+        {platformLinks.map((item) => {
+          const Icon = item.icon;
+          return (
+            <a className="platform-card reveal" href={item.href} key={item.title}>
+              <div className="platform-card__top">
+                <span className="platform-card__icon"><Icon size={20} /></span>
+                <span className="platform-card__category">{item.category}</span>
+              </div>
+              <h3>{item.title}</h3>
+              <p>{item.description}</p>
+              <span className="platform-card__link">Open feature <ArrowUpRight size={15} /></span>
+            </a>
+          );
+        })}
+      </div>
+      <div className="platform-footer reveal">
+        <span><PanelsTopLeft size={18} /> The legacy hub, existing pages, and tools are being kept in place.</span>
+        <a className="button button--primary" href="./app/index.html">Enter full Hub <ArrowRight size={16} /></a>
       </div>
     </section>
   );
@@ -474,6 +528,7 @@ function Footer() {
           <a href="#brands">Our brands</a>
           <a href="#story">Our story</a>
           <a href="#connect">Get in touch</a>
+          <a href="./app/index.html">Open full Hub <ArrowUpRight size={12} /></a>
         </div>
         <div className="footer-column">
           <strong>The brands</strong>
@@ -531,6 +586,7 @@ export default function App() {
       <main>
         <Hero />
         <Brands />
+        <Platform />
         <Story />
         <Connect />
       </main>
