@@ -6,11 +6,25 @@ const projectRoot = resolve(fileURLToPath(new URL("..", import.meta.url)));
 const outputDir = resolve(projectRoot, "dist");
 mkdirSync(outputDir, { recursive: true });
 
-// Keep existing, non-landing TUBAL HUB routes available when Pages deploys the new root.
+// Preserve the existing front-end routes and the folders their HTML pages depend on.
 const legacyPaths = [
   "app",
   "pages",
   "assets",
+  "lifehub",
+  "css",
+  "js",
+  "components",
+  "data",
+  "v2",
+  "v4.1",
+  "embed.js",
+  "lifehub-calendar.html",
+  "tubal-dark.html",
+  "messenger-apk-design.html",
+  "license.html",
+  "tubal-hub-logo.png",
+  "tubalhub-hero-bg.jpg",
   "manifest.json",
   "version.json",
   "robots.txt",
