@@ -4,11 +4,11 @@ import {
   ArrowUpRight,
   Check,
   Eye,
-  Facebook,
+  UsersRound,
   Gamepad2,
-  Github,
+  Code2,
   Hexagon,
-  Instagram,
+  AtSign,
   Mail,
   MapPin,
   Menu,
@@ -19,7 +19,7 @@ import {
   Target,
   Waves,
   X,
-  Youtube,
+  Play,
   type LucideIcon,
 } from "lucide-react";
 
@@ -378,10 +378,10 @@ function Connect() {
             </div>
           </div>
           <div className="social-row" aria-label="Social and project links">
-            <a href="https://github.com/tubalrr/tubalhub" target="_blank" rel="noreferrer" aria-label="TUBAL HUB on GitHub"><Github size={17} /></a>
-            <a href="https://www.facebook.com/search/top?q=TUBAL%20HUB" target="_blank" rel="noreferrer" aria-label="Search TUBAL HUB on Facebook"><Facebook size={17} /></a>
-            <a href="https://www.instagram.com/" target="_blank" rel="noreferrer" aria-label="Instagram"><Instagram size={17} /></a>
-            <a href="https://www.youtube.com/results?search_query=TUBAL+HUB" target="_blank" rel="noreferrer" aria-label="Search TUBAL HUB on YouTube"><Youtube size={17} /></a>
+            <a href="https://github.com/tubalrr/tubalhub" target="_blank" rel="noreferrer" aria-label="TUBAL HUB on GitHub"><Code2 size={17} /></a>
+            <a href="https://www.facebook.com/search/top?q=TUBAL%20HUB" target="_blank" rel="noreferrer" aria-label="Search TUBAL HUB on Facebook"><UsersRound size={17} /></a>
+            <a href="https://www.instagram.com/" target="_blank" rel="noreferrer" aria-label="Instagram"><AtSign size={17} /></a>
+            <a href="https://www.youtube.com/results?search_query=TUBAL+HUB" target="_blank" rel="noreferrer" aria-label="Search TUBAL HUB on YouTube"><Play size={17} /></a>
           </div>
           <p className="social-note">Social profile links can be swapped for official brand handles before launch.</p>
         </div>
