@@ -237,13 +237,13 @@ function Hero() {
         <div className="hero-photo hero-photo--main">
           <img
             src="https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=1400"
-            alt="Creative team sharing ideas around a work table"
+            alt="Illustrative stock photograph of people sharing ideas around a work table"
             loading="eager"
             fetchPriority="high"
           />
           <div className="hero-photo__caption">
-            <span className="live-dot" />
-            <span><strong>One shared space</strong><small>For what moves you</small></span>
+            <span className="hero-caption-mark" aria-hidden="true"><Sparkles size={14} /></span>
+            <span><strong>Three brands. One hub.</strong><small>Illustrative photography</small></span>
           </div>
         </div>
         <div className="orbit-label orbit-label--top">
@@ -258,14 +258,24 @@ function Hero() {
           <span className="orbit-label__icon orbit-label__icon--sea"><Waves size={17} /></span>
           <span><b>Payapang Isip</b><small>Mindful living</small></span>
         </div>
-        <div className="hero-visual__index">TH / 001</div>
       </div>
 
-      <div className="stats-strip reveal" aria-label="TUBAL HUB at a glance">
-        <div className="stat-item"><strong>03</strong><span>Distinct brands</span></div>
-        <div className="stat-item"><strong>01</strong><span>Connected platform</span></div>
-        <div className="stat-item"><strong>07</strong><span>LifeHub tools</span></div>
-        <div className="stat-item"><strong>13</strong><span>Featured destinations</span></div>
+      <div className="fact-strip reveal" aria-label="How TUBAL HUB features use data">
+        <article className="fact-card">
+          <span className="fact-card__kicker">THE SHOP</span>
+          <h2>Catalog-backed</h2>
+          <p>Products come from the configured Firebase catalog. Records with missing or invalid names or prices are not shown.</p>
+        </article>
+        <article className="fact-card">
+          <span className="fact-card__kicker">LIFEHUB TOOLS</span>
+          <h2>Browser-local</h2>
+          <p>Quick-tool entries stay in this browser on this device. They are not presented as cloud-synced data.</p>
+        </article>
+        <article className="fact-card">
+          <span className="fact-card__kicker">API DISCOVERY</span>
+          <h2>Source-linked</h2>
+          <p>Categories link to the referenced open-source directory. They are discovery links, not pre-connected integrations.</p>
+        </article>
       </div>
     </section>
   );
@@ -383,7 +393,7 @@ function Story() {
       <div className="story-visual reveal">
         <img
           src="https://images.pexels.com/photos/3184339/pexels-photo-3184339.jpeg?auto=compress&cs=tinysrgb&w=1400"
-          alt="People collaborating at a table in a bright, modern studio"
+          alt="Illustrative stock photograph representing a collaborative workspace"
           loading="lazy"
         />
         <div className="story-visual__frame" />
@@ -770,7 +780,6 @@ type StoreProduct = {
   description: string;
   image: string;
   price: number;
-  priceLabel: string;
   brandKey: string;
   category: string;
   stock: number | null;
@@ -790,6 +799,7 @@ function ShopFeature({ kapengOnly = false }: { kapengOnly?: boolean }) {
   });
   const [loading, setLoading] = useState(true);
   const [catalogError, setCatalogError] = useState("");
+  const [catalogNotice, setCatalogNotice] = useState("");
   const [notice, setNotice] = useState("");
   const [runtime, setRuntime] = useState<FirebaseBrowserRuntime | null>(null);
   const [currentUser, setCurrentUser] = useState<any>(null);
@@ -808,42 +818,51 @@ function ShopFeature({ kapengOnly = false }: { kapengOnly?: boolean }) {
       const productsCleanup = sdk.firestoreSdk.onSnapshot(
         sdk.firestoreSdk.collection(sdk.db, "products"),
         (snapshot: any) => {
-          const all = snapshot.docs.map((doc: any) => {
+          const records = snapshot.docs.map((doc: any) => {
             const data = doc.data();
-            const rawPrice = String(data.price ?? "");
-            const price = Number(rawPrice.replace(/[^0-9.]/g, "")) || 0;
+            const rawPrice = data.price;
+            const normalizedPrice = String(rawPrice ?? "").replace(/[₱$ ,]/g, "");
+            const price = normalizedPrice !== "" ? Number(normalizedPrice) : Number.NaN;
+            const hasValidPrice = normalizedPrice !== "" && /^\d+(\.\d{1,2})?$/.test(normalizedPrice) && Number.isFinite(price) && price >= 0;
+            const name = String(data.name ?? "").trim();
+            const stockRaw = data.stock;
+            const stockNumber = stockRaw !== null && stockRaw !== undefined && String(stockRaw).trim() !== "" ? Number(stockRaw) : Number.NaN;
             return {
               id: doc.id,
-              name: String(data.name || "Unnamed Product"),
+              name,
               description: String(data.description || data.details || ""),
               image: String(data.imageUrl || data.image || ""),
               price,
-              priceLabel: rawPrice || (price === 0 ? "Free" : String(price)),
+              hasValidPrice,
               brandKey: String(data.brandKey || data.brandId || data.collection || data.brandName || "").toLowerCase(),
               category: String(data.category || "Other"),
-              stock: Number.isFinite(Number(data.stock)) ? Number(data.stock) : null,
+              stock: Number.isFinite(stockNumber) && stockNumber >= 0 ? stockNumber : null,
               externalUrl: String(data.externalUrl || ""),
               productUrl: String(data.productUrl || ""),
               sourceType: String(data.sourceType || "admin-managed").toLowerCase(),
               catalogStatus: String(data.catalogStatus || "live").toLowerCase(),
               isDemo: data.isDemo === true,
               isVisible: data.isVisible !== false,
-              productType: String(data.productType || "physical"),
             };
           }).filter((item: any) => item.isVisible && !item.isDemo && item.sourceType !== "demo" && item.sourceType !== "external" && item.catalogStatus !== "archived" && item.catalogStatus !== "hidden")
             .filter((item: any) => !kapengOnly || item.brandKey.includes("kapeng"));
-          setProducts(all as StoreProduct[]);
+          const invalidCount = records.filter((item: any) => !item.name || !item.hasValidPrice).length;
+          const validRecords = records.filter((item: any) => item.name && item.hasValidPrice);
+          setProducts(validRecords as StoreProduct[]);
+          setCatalogNotice(invalidCount > 0 ? String(invalidCount) + " catalog record(s) hidden because the product name or price is missing or invalid. Please correct the catalog data in Admin." : "");
           setLoading(false);
           setCatalogError("");
         },
         (error: any) => {
           setLoading(false);
+          setCatalogNotice("");
           setCatalogError(error?.message || "The live catalog is not available right now.");
         }
       );
       cleanups.push(productsCleanup);
     }).catch((error: any) => {
       setLoading(false);
+      setCatalogNotice("");
       setCatalogError(error?.message || "Could not connect to the live product catalog.");
     });
     return () => {
@@ -897,13 +916,14 @@ function ShopFeature({ kapengOnly = false }: { kapengOnly?: boolean }) {
       <div className="feature-toolbar"><input type="search" value={query} onChange={(e)=>setQuery(e.target.value)} placeholder="Search products…" aria-label="Search products"/><div className="feature-filter-row">{(kapengOnly?[["kapeng","Kapeng Barako"]]:[["all","All products"],["kapeng","Kapeng Barako"],["th","TUBAL HUB"]]).map(([value,label])=><button key={value} type="button" className={"feature-chip"+(collection===value?" is-active":"")} onClick={()=>setCollection(value)}>{label}</button>)}</div></div>
       <div className="feature-meta-row"><span>{loading?"Loading live catalog…":visibleProducts.length+" products found"}</span><span>{cartCount} in cart · ₱{cartTotal.toLocaleString("en-PH",{maximumFractionDigits:2})}</span></div>
       {catalogError && <div className="feature-warning" role="status"><b>Live catalog unavailable</b><p>{catalogError}</p><p>No sample inventory is shown as if it were real stock. The store’s product data and checkout depend on Firebase and Cloud Functions being available.</p></div>}
+      {!catalogError && catalogNotice && <div className="feature-warning" role="status"><b>Some catalog records were not displayed</b><p>{catalogNotice}</p></div>}
       {!loading && !catalogError && visibleProducts.length===0 && <div className="feature-empty">No published products match this search yet. Check back after products are published from Admin.</div>}
       {loading && <div className="feature-empty">Connecting to the live catalog…</div>}
       <div className="feature-card-grid feature-card-grid--three">{visibleProducts.map((product)=>(
         <article className="feature-card feature-product" key={product.id}>
           {product.image ? <img className="feature-product__image" src={product.image} alt={product.name} loading="lazy"/> : <div className="feature-product__placeholder"><Sparkles size={28}/></div>}
           <span className="feature-card__eyebrow">{product.category}</span><h3>{product.name}</h3><p>{product.description || "Published product from the TUBAL HUB catalog."}</p>
-          <div className="feature-product__meta"><strong>₱{product.price.toLocaleString("en-PH",{maximumFractionDigits:2})}</strong><span>{product.stock===null?"Stock status from catalog":product.stock+" in stock"}</span></div>
+          <div className="feature-product__meta"><strong>{product.price === 0 ? "Free" : "₱" + product.price.toLocaleString("en-PH",{maximumFractionDigits:2})}</strong><span>{product.stock===null?"Stock status not provided":product.stock+" in stock"}</span></div>
           <div className="feature-product__actions"><button type="button" className="button button--primary" onClick={()=>updateCart(product.id,(cart[product.id]||0)+1)} disabled={product.stock!==null&&product.stock===0}>Add to cart +</button>{(product.productUrl||product.externalUrl)&&<a className="button button--ghost" href={product.productUrl||product.externalUrl} target="_blank" rel="noreferrer">More details ↗</a>}</div>
           {(cart[product.id]||0)>0 && <div className="feature-quantity"><button type="button" onClick={()=>updateCart(product.id,(cart[product.id]||0)-1)} aria-label={"Remove one "+product.name}>−</button><span>{cart[product.id]} selected</span><button type="button" onClick={()=>updateCart(product.id,(cart[product.id]||0)+1)} aria-label={"Add one "+product.name}>+</button><button type="button" className="feature-text-button" onClick={()=>updateCart(product.id,0)}>Remove</button></div>}
         </article>
