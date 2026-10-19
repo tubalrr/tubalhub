@@ -60,6 +60,9 @@ let convertedPages = 0;
 for (const htmlPath of htmlPages) {
   if (htmlPath === rootHomepage) continue;
   const relativePath = relative(outputDir, htmlPath).split(sep).join("/");
+  // Global Chat is a working Firebase-backed application, not a generic React landing shell.
+  // Preserve its source HTML and module scripts so its real-time listeners, rules, and callables run.
+  if (relativePath === "pages/chat.html") continue;
   writeFileSync(htmlPath, makeRouteShell(relativePath), "utf8");
   convertedPages += 1;
 }

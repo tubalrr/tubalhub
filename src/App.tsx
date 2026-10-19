@@ -112,6 +112,7 @@ const platformLinks: {
   { title: "LifeHub — Personal OS", category: "EVERYDAY TOOLS", description: "Open the existing personal organizer for everyday planning and routines.", href: "/tubalhub/lifehub/index.html", icon: PanelsTopLeft },
   { title: "Shop the Hub", category: "DISCOVER", description: "Browse the existing TUBAL HUB shop and featured items.", href: "/tubalhub/pages/shop.html", icon: PanelsTopLeft },
   { title: "Community & Fan Club", category: "COMMUNITY", description: "Connect with people and join the community spaces.", href: "/tubalhub/pages/community.html", icon: UsersRound },
+  { title: "Global Chat", category: "REAL-TIME COMMUNITY", description: "Open the existing Firebase-backed Global Chat. Messages and online presence come from the live service; an empty room stays empty.", href: "/tubalhub/pages/chat.html", icon: MessageCircle },
   { title: "Feeds & News", category: "UPDATES", description: "Catch up with community feeds and hub announcements.", href: "/tubalhub/pages/feeds.html", icon: Waves },
   { title: "API Discovery Hub", category: "DEVELOPER TOOLS", description: "Explore APIs and resources from the existing discovery hub.", href: "/tubalhub/pages/api-mega-hub.html", icon: Code2 },
   { title: "Open-source Toolbox", category: "OPEN SOURCE", description: "Find open-source tools and useful developer resources.", href: "/tubalhub/pages/open-source-toolbox.html", icon: Code2 },
@@ -1096,6 +1097,8 @@ function AccountFeature({routePath}:{routePath:string}) {
           const token=await credential.user.getIdTokenResult();
           const isAdmin=token.claims?.admin===true||(String(credential.user.email||"").toLowerCase()==="tubalrr@gmail.com"&&credential.user.emailVerified===true);
           setNotice(isAdmin?"Signed in with an admin-eligible account. Open the admin workspace to continue.":"Signed in, but this account does not have the required admin authorization. No admin access was granted.");
+        }else if(new URLSearchParams(window.location.search).get("returnTo")==="chat.html"){
+          window.location.href="/tubalhub/pages/chat.html";
         }else if(window.location.search.includes("return=shop")){
           window.location.href="/tubalhub/pages/shop.html";
         }else{
