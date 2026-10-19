@@ -878,7 +878,7 @@ function ShopFeature({ kapengOnly = false }: { kapengOnly?: boolean }) {
   const visibleProducts = products.filter((product) => {
     const matchesQuery = (product.name + " " + product.description + " " + product.category + " " + product.brandKey).toLowerCase().includes(query.trim().toLowerCase());
     const isHubBrand = product.brandKey === "th" || product.brandKey.includes("tubal");
-    return matchesQuery && (collection === "all" || (collection === "kapeng" && product.brandKey.includes("kapeng")) || (collection === "th" && isHubBrand) || (Boolean(product.category) && product.category.toLowerCase().includes(collection));
+    return matchesQuery && (collection === "all" || (collection === "kapeng" && product.brandKey.includes("kapeng")) || (collection === "th" && isHubBrand));
   });
   const selected = Object.entries(cart).map(([id,qty]) => ({product:products.find((p)=>p.id===id),qty:Number(qty)||0})).filter((entry)=>entry.product && entry.qty>0) as {product:StoreProduct;qty:number}[];
   const cartCount = selected.reduce((sum,entry)=>sum+entry.qty,0);
