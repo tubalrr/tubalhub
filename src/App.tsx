@@ -1060,6 +1060,7 @@ function ContactFeature({page}:{page:RoutePageInfo}) {
 
 function CommunityFeature({page}:{page:RoutePageInfo}) {
   const links=[
+    {title:"TUBAL HUB Global Chat",type:"LIVE / FIREBASE",description:"Open the actual real-time chat. Messages and online users load from Firebase; empty activity is not replaced with samples.",href:"/tubalhub/pages/chat.html"},
     {title:"Discord Community",type:"COMMUNITY",description:"Join the existing TUBAL HUB Discord space.",href:"https://discord.gg/EnR4KWSum",external:true},
     {title:"Community Guidelines",type:"SAFETY",description:"Understand expectations for respectful participation.",href:"/tubalhub/pages/community-guidelines.html"},
     {title:"Events",type:"ACTIVITIES",description:"Explore event information and community activities.",href:"/tubalhub/pages/events.html"},

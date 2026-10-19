@@ -9,7 +9,7 @@ mkdirSync(outputDir, { recursive: true });
 // Source files stay in Git, while public legacy URLs now render the new React experience.
 const legacyPaths = [
   "admin", "app", "pages", "assets", "lifehub", "css", "js", "components",
-  "data", "v2", "v4.1", "embed.js", "lifehub-calendar.html", "tubal-dark.html",
+  "data", "v2", "v4.1", "embed.js", "tubal-hub-logo.png", "lifehub-calendar.html", "tubal-dark.html",
   "messenger-apk-design.html", "license.html", "manifest.json", "version.json",
   "robots.txt", "sitemap.xml", "404.html", "service-worker.js", "sw.js",
   "firebase-messaging-sw.js"
