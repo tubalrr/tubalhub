@@ -108,19 +108,19 @@ const platformLinks: {
   href: string;
   icon: LucideIcon;
 }[] = [
-  { title: "Gaming Zone", category: "PLAY", description: "Game discovery, gaming culture, and CTRLZONE community.", href: "./pages/gaming-zone.html", icon: Gamepad2 },
-  { title: "LifeHub — Personal OS", category: "EVERYDAY TOOLS", description: "Open the existing personal organizer for everyday planning and routines.", href: "./lifehub/index.html", icon: PanelsTopLeft },
-  { title: "Shop the Hub", category: "DISCOVER", description: "Browse the existing TUBAL HUB shop and featured items.", href: "./pages/shop.html", icon: PanelsTopLeft },
-  { title: "Community & Fan Club", category: "COMMUNITY", description: "Connect with people and join the community spaces.", href: "./pages/community.html", icon: UsersRound },
-  { title: "Feeds & News", category: "UPDATES", description: "Catch up with community feeds and hub announcements.", href: "./pages/feeds.html", icon: Waves },
-  { title: "API Discovery Hub", category: "DEVELOPER TOOLS", description: "Explore APIs and resources from the existing discovery hub.", href: "./pages/api-mega-hub.html", icon: Code2 },
-  { title: "Open-source Toolbox", category: "OPEN SOURCE", description: "Find open-source tools and useful developer resources.", href: "./pages/open-source-toolbox.html", icon: Code2 },
-  { title: "System Dashboard", category: "WORKSPACE", description: "Open the existing system dashboard and workspace entry.", href: "./pages/system-dashboard.html", icon: PanelsTopLeft },
-  { title: "Kapeng Barako", category: "FEATURED BRAND", description: "Visit the Kapeng Barako coffee project page.", href: "./pages/kapeng-barako.html", icon: Sparkles },
-  { title: "Payapang Isip", category: "WELLBEING", description: "Open the wellness and reflection space.", href: "./pages/payapang-isip.html", icon: Waves },
-  { title: "Calendar & Planning", category: "PLANNING", description: "Access the calendar and planning tools.", href: "./pages/calendar.html", icon: PanelsTopLeft },
-  { title: "Tubal Academy", category: "LEARN", description: "Discover learning resources and guides.", href: "./pages/tubal-academy.html", icon: Code2 },
-  { title: "Help Center", category: "SUPPORT", description: "Find help, usage guides, and answers to common questions.", href: "./pages/help.html", icon: MessageCircle },
+  { title: "Gaming Zone", category: "PLAY", description: "Game discovery, gaming culture, and CTRLZONE community.", href: "/tubalhub/pages/gaming-zone.html", icon: Gamepad2 },
+  { title: "LifeHub — Personal OS", category: "EVERYDAY TOOLS", description: "Open the existing personal organizer for everyday planning and routines.", href: "/tubalhub/lifehub/index.html", icon: PanelsTopLeft },
+  { title: "Shop the Hub", category: "DISCOVER", description: "Browse the existing TUBAL HUB shop and featured items.", href: "/tubalhub/pages/shop.html", icon: PanelsTopLeft },
+  { title: "Community & Fan Club", category: "COMMUNITY", description: "Connect with people and join the community spaces.", href: "/tubalhub/pages/community.html", icon: UsersRound },
+  { title: "Feeds & News", category: "UPDATES", description: "Catch up with community feeds and hub announcements.", href: "/tubalhub/pages/feeds.html", icon: Waves },
+  { title: "API Discovery Hub", category: "DEVELOPER TOOLS", description: "Explore APIs and resources from the existing discovery hub.", href: "/tubalhub/pages/api-mega-hub.html", icon: Code2 },
+  { title: "Open-source Toolbox", category: "OPEN SOURCE", description: "Find open-source tools and useful developer resources.", href: "/tubalhub/pages/open-source-toolbox.html", icon: Code2 },
+  { title: "System Dashboard", category: "WORKSPACE", description: "Open the existing system dashboard and workspace entry.", href: "/tubalhub/pages/system-dashboard.html", icon: PanelsTopLeft },
+  { title: "Kapeng Barako", category: "FEATURED BRAND", description: "Visit the Kapeng Barako coffee project page.", href: "/tubalhub/pages/kapeng-barako.html", icon: Sparkles },
+  { title: "Payapang Isip", category: "WELLBEING", description: "Open the wellness and reflection space.", href: "/tubalhub/pages/payapang-isip.html", icon: Waves },
+  { title: "Calendar & Planning", category: "PLANNING", description: "Access the calendar and planning tools.", href: "/tubalhub/pages/calendar.html", icon: PanelsTopLeft },
+  { title: "Tubal Academy", category: "LEARN", description: "Discover learning resources and guides.", href: "/tubalhub/pages/tubal-academy.html", icon: Code2 },
+  { title: "Help Center", category: "SUPPORT", description: "Find help, usage guides, and answers to common questions.", href: "/tubalhub/pages/help.html", icon: MessageCircle },
 ];
 
 function Logo({ compact = false, homeHref = "#hub" }: { compact?: boolean; homeHref?: string }) {
@@ -643,6 +643,456 @@ function getPageIcon(category: string): LucideIcon {
   return Hexagon;
 }
 
+
+type FirebaseBrowserRuntime = {
+  app: any;
+  auth: any;
+  authSdk: any;
+  firestoreSdk: any;
+  functionsSdk: any;
+  db: any;
+};
+
+async function loadFirebaseBrowserRuntime(): Promise<FirebaseBrowserRuntime> {
+  const configUrl = new URL("assets/js/firebase-config.js", document.baseURI).href;
+  const authUrl = "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+  const firestoreUrl = "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+  const functionsUrl = "https://www.gstatic.com/firebasejs/12.19.0/firebase-functions.js";
+  const [configModule, authSdk, firestoreSdk, functionsSdk]: any[] = await Promise.all([
+    import(/* @vite-ignore */ configUrl),
+    import(/* @vite-ignore */ authUrl),
+    import(/* @vite-ignore */ firestoreUrl),
+    import(/* @vite-ignore */ functionsUrl),
+  ]);
+  return {
+    app: configModule.app,
+    auth: configModule.auth,
+    authSdk,
+    firestoreSdk,
+    functionsSdk,
+    db: firestoreSdk.getFirestore(configModule.app),
+  };
+}
+
+const apiCategories = [
+  {id:"agents",name:"AI Agents",group:"hub",slug:"agents-apis-623",description:"Agent-style services, research helpers and multi-step automation."},
+  {id:"ai",name:"AI APIs",group:"hub",slug:"ai-apis-1555",description:"Text, image, classification, generation and analysis services."},
+  {id:"automation",name:"Automation",group:"hub",slug:"automation-apis-5653",description:"Workflow-oriented services. Check pricing and access conditions."},
+  {id:"business",name:"Business",group:"business",slug:"business-apis-514",description:"Business data, reporting and service integrations."},
+  {id:"dev",name:"Developer Tools",group:"hub",slug:"developer-tools-apis-4065",description:"Developer APIs and technical utilities."},
+  {id:"ecommerce",name:"E-commerce",group:"business",slug:"ecommerce-apis-2245",description:"Product, store and commerce-related services."},
+  {id:"education",name:"Education",group:"hub",slug:"education-apis-46",description:"Education, training and study-related API listings."},
+  {id:"creators",name:"Creator Tools",group:"content",slug:"for-creators-apis-16",description:"Tools aimed at creators and publishing workflows."},
+  {id:"games",name:"Games",group:"content",slug:"games-apis-6",description:"Game-related API listings and gaming utilities."},
+  {id:"integrations",name:"Integrations",group:"hub",slug:"integrations-apis-841",description:"Connectors and integration-oriented services."},
+  {id:"jobs",name:"Jobs",group:"business",slug:"jobs-apis-1149",description:"Job and career-related data services."},
+  {id:"leads",name:"Lead Generation",group:"business",slug:"lead-generation-apis-4431",description:"Lead-discovery services; review privacy and terms closely."},
+  {id:"marketing",name:"Marketing",group:"business",slug:"marketing-apis-290",description:"Campaign, research and growth tooling."},
+  {id:"mcp",name:"MCP Servers",group:"hub",slug:"mcp-servers-apis-289",description:"Model Context Protocol server listings for compatible clients."},
+  {id:"news",name:"News",group:"content",slug:"news-apis-537",description:"News and current-information services."},
+  {id:"opensource",name:"Open Source",group:"hub",slug:"open-source-apis-84",description:"Open-source projects and API resources."},
+  {id:"other",name:"Other APIs",group:"all",slug:"other-apis-1944",description:"Miscellaneous entries that sit outside other categories."},
+  {id:"realestate",name:"Real Estate",group:"business",slug:"real-estate-apis-1089",description:"Property and real-estate data services."},
+  {id:"seo",name:"SEO Tools",group:"business",slug:"seo-tools-apis-903",description:"Search visibility and website optimization services."},
+  {id:"social",name:"Social Media",group:"content",slug:"social-media-apis-2786",description:"Social-platform integrations; rules and access vary by platform."},
+  {id:"sports",name:"Sports",group:"content",slug:"sports-apis-21",description:"Sports data and related services."},
+  {id:"travel",name:"Travel",group:"content",slug:"travel-apis-493",description:"Travel data and destination-related services."},
+  {id:"videos",name:"Videos",group:"content",slug:"videos-apis-705",description:"Video discovery, metadata and creator workflow services."},
+];
+
+function ApiDiscoveryFeature() {
+  const [query, setQuery] = useState("");
+  const [filter, setFilter] = useState("all");
+  const [saved, setSaved] = useState<string[]>(() => {
+    try {
+      const parsed = JSON.parse(localStorage.getItem("tubalhub_api_discovery_saved_v1") || "[]");
+      return Array.isArray(parsed) ? parsed.filter((x: unknown): x is string => typeof x === "string") : [];
+    } catch { return []; }
+  });
+  const [message, setMessage] = useState("");
+  useEffect(() => {
+    try { localStorage.setItem("tubalhub_api_discovery_saved_v1", JSON.stringify(saved)); } catch { /* storage is optional */ }
+  }, [saved]);
+  const visible = apiCategories.filter((item) => {
+    const matchesQuery = (item.name + " " + item.description + " " + item.slug).toLowerCase().includes(query.trim().toLowerCase());
+    return matchesQuery && (filter === "all" || item.group === filter);
+  });
+  const toggleSave = (id: string) => setSaved((current) => current.includes(id) ? current.filter((value) => value !== id) : [...current, id]);
+  const exportSaved = () => {
+    const list = apiCategories.filter((item) => saved.includes(item.id)).map((item) => ({
+      name: item.name,
+      url: "https://github.com/cporter202/API-mega-list/tree/main/" + item.slug,
+      description: item.description,
+    }));
+    const blob = new Blob([JSON.stringify({exportedAt:new Date().toISOString(),source:"cporter202/API-mega-list",categories:list},null,2)], {type:"application/json"});
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = "tubalhub-saved-api-categories.json";
+    anchor.click();
+    URL.revokeObjectURL(url);
+    setMessage("Exported " + list.length + " saved categories.");
+  };
+  return (
+    <section className="feature-section section-shell section-spacing">
+      <div className="feature-heading"><div><span className="section-eyebrow">DISCOVER / EVALUATE / INTEGRATE</span><h2>Find the right API.<br/><span className="text-gradient">Build with intention.</span></h2><p>This is a discovery directory, not an auto-installer. Review each provider’s official documentation, pricing, privacy terms, and rate limits before connecting it.</p></div><a className="button button--ghost" href="https://github.com/cporter202/API-mega-list" target="_blank" rel="noreferrer">Open source list <ArrowUpRight size={15}/></a></div>
+      <div className="feature-toolbar"><input type="search" value={query} onChange={(e)=>setQuery(e.target.value)} placeholder="Search AI, gaming, news, developer tools…" aria-label="Search API categories"/><div className="feature-filter-row">{[["all","All"],["hub","AI & developer"],["business","Business"],["content","Content"]].map(([value,label])=><button type="button" key={value} className={"feature-chip"+(filter===value?" is-active":"")} onClick={()=>setFilter(value)}>{label}</button>)}</div></div>
+      <div className="feature-meta-row"><span>{visible.length} categories shown</span><span>{saved.length} saved in this browser</span><button className="feature-text-button" type="button" onClick={exportSaved}>Export saved list ↓</button></div>
+      {message && <p className="feature-status" role="status">{message}</p>}
+      <div className="feature-card-grid feature-card-grid--three">{visible.map((item)=>(
+        <article className="feature-card" key={item.id}><div className="feature-card__top"><span className="feature-card__icon"><Code2 size={19}/></span><button type="button" className={"feature-save"+(saved.includes(item.id)?" is-saved":"")} onClick={()=>toggleSave(item.id)} aria-pressed={saved.includes(item.id)}>{saved.includes(item.id)?"★ Saved":"☆ Save"}</button></div><span className="feature-card__eyebrow">{item.group==="hub"?"PLATFORM & DEVELOPER":item.group==="business"?"BUSINESS":item.group==="content"?"CONTENT":"MISCELLANEOUS"}</span><h3>{item.name}</h3><p>{item.description}</p><a className="feature-card__link" href={"https://github.com/cporter202/API-mega-list/tree/main/"+item.slug} target="_blank" rel="noreferrer">Explore category <ArrowUpRight size={15}/></a></article>
+      ))}</div>
+      {visible.length===0 && <div className="feature-empty">No categories match that search. Try a broader term.</div>}
+      <div className="feature-note-panel"><div><span className="section-eyebrow">BEFORE YOU INTEGRATE</span><h3>Quick safety checklist</h3><p>Keep secrets server-side, verify permissions, and add timeouts and fallback behavior.</p></div><ul><li>Official docs and endpoints checked</li><li>Pricing, free tier and quota understood</li><li>Terms and data-permission reviewed</li><li>API secrets are never committed to frontend code</li><li>Rate limits and provider failures are handled</li></ul></div>
+    </section>
+  );
+}
+
+type StoreProduct = {
+  id: string;
+  name: string;
+  description: string;
+  image: string;
+  price: number;
+  priceLabel: string;
+  brandKey: string;
+  category: string;
+  stock: number | null;
+  externalUrl: string;
+  productUrl: string;
+};
+
+function ShopFeature({ kapengOnly = false }: { kapengOnly?: boolean }) {
+  const [products, setProducts] = useState<StoreProduct[]>([]);
+  const [query, setQuery] = useState("");
+  const [collection, setCollection] = useState(kapengOnly ? "kapeng" : "all");
+  const [cart, setCart] = useState<Record<string, number>>(() => {
+    try {
+      const parsed = JSON.parse(localStorage.getItem("tubalhub-shop-cart-v2") || "{}");
+      return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
+    } catch { return {}; }
+  });
+  const [loading, setLoading] = useState(true);
+  const [catalogError, setCatalogError] = useState("");
+  const [notice, setNotice] = useState("");
+  const [runtime, setRuntime] = useState<FirebaseBrowserRuntime | null>(null);
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [paymentMethod, setPaymentMethod] = useState<"bank"|"paypal">("bank");
+  const [paymentReference, setPaymentReference] = useState("");
+  const [placingOrder, setPlacingOrder] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    const cleanups: Array<() => void> = [];
+    loadFirebaseBrowserRuntime().then((sdk) => {
+      if (cancelled) return;
+      setRuntime(sdk);
+      const authCleanup = sdk.authSdk.onAuthStateChanged(sdk.auth, (user: any) => setCurrentUser(user && !user.isAnonymous ? user : null));
+      cleanups.push(authCleanup);
+      const productsCleanup = sdk.firestoreSdk.onSnapshot(
+        sdk.firestoreSdk.collection(sdk.db, "products"),
+        (snapshot: any) => {
+          const all = snapshot.docs.map((doc: any) => {
+            const data = doc.data();
+            const rawPrice = String(data.price ?? "");
+            const price = Number(rawPrice.replace(/[^0-9.]/g, "")) || 0;
+            return {
+              id: doc.id,
+              name: String(data.name || "Unnamed Product"),
+              description: String(data.description || data.details || ""),
+              image: String(data.imageUrl || data.image || ""),
+              price,
+              priceLabel: rawPrice || (price === 0 ? "Free" : String(price)),
+              brandKey: String(data.brandKey || data.brandId || data.collection || data.brandName || "").toLowerCase(),
+              category: String(data.category || "Other"),
+              stock: Number.isFinite(Number(data.stock)) ? Number(data.stock) : null,
+              externalUrl: String(data.externalUrl || ""),
+              productUrl: String(data.productUrl || ""),
+              sourceType: String(data.sourceType || "admin-managed").toLowerCase(),
+              catalogStatus: String(data.catalogStatus || "live").toLowerCase(),
+              isDemo: data.isDemo === true,
+              isVisible: data.isVisible !== false,
+              productType: String(data.productType || "physical"),
+            };
+          }).filter((item: any) => item.isVisible && !item.isDemo && item.sourceType !== "demo" && item.sourceType !== "external" && item.catalogStatus !== "archived" && item.catalogStatus !== "hidden")
+            .filter((item: any) => !kapengOnly || item.brandKey.includes("kapeng"));
+          setProducts(all as StoreProduct[]);
+          setLoading(false);
+          setCatalogError("");
+        },
+        (error: any) => {
+          setLoading(false);
+          setCatalogError(error?.message || "The live catalog is not available right now.");
+        }
+      );
+      cleanups.push(productsCleanup);
+    }).catch((error: any) => {
+      setLoading(false);
+      setCatalogError(error?.message || "Could not connect to the live product catalog.");
+    });
+    return () => {
+      cancelled = true;
+      cleanups.forEach((cleanup) => cleanup());
+    };
+  }, [kapengOnly]);
+
+  useEffect(() => {
+    try { localStorage.setItem("tubalhub-shop-cart-v2", JSON.stringify(cart)); } catch { /* local cart is optional */ }
+  }, [cart]);
+
+  const visibleProducts = products.filter((product) => {
+    const matchesQuery = (product.name + " " + product.description + " " + product.category + " " + product.brandKey).toLowerCase().includes(query.trim().toLowerCase());
+    return matchesQuery && (collection === "all" || product.brandKey.includes(collection) || product.category.toLowerCase().includes(collection));
+  });
+  const selected = Object.entries(cart).map(([id,qty]) => ({product:products.find((p)=>p.id===id),qty:Number(qty)||0})).filter((entry)=>entry.product && entry.qty>0) as {product:StoreProduct;qty:number}[];
+  const cartCount = selected.reduce((sum,entry)=>sum+entry.qty,0);
+  const cartTotal = selected.reduce((sum,entry)=>sum+(entry.product.price*entry.qty),0);
+  const updateCart = (id:string, qty:number) => setCart((current)=>{const next={...current};if(qty<=0)delete next[id];else next[id]=Math.min(99,Math.max(1,qty));return next;});
+
+  const placeOrder = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!runtime) { setNotice("Store services are still initializing. Try again in a moment."); return; }
+    if (!currentUser) { window.location.href="/tubalhub/pages/login.html?return=shop"; return; }
+    if (!selected.length) { setNotice("Add at least one product before placing an order."); return; }
+    if (!paymentReference.trim()) { setNotice("Enter the payment reference provided for your order. No payment is collected by this page."); return; }
+    setPlacingOrder(true);
+    setNotice("");
+    try {
+      const createShopOrderReal = runtime.functionsSdk.httpsCallable(runtime.functionsSdk.getFunctions(runtime.app), "createShopOrderReal");
+      const result = await createShopOrderReal({
+        items:selected.map((entry)=>({productId:entry.product.id,qty:entry.qty})),
+        paymentMethod,
+        paymentReference:paymentReference.trim(),
+      });
+      const data = (result as any)?.data || {};
+      setCart({});
+      setPaymentReference("");
+      setNotice("Order " + String(data.orderId || "") + " was recorded as pending payment. This page does not process a charge; an administrator must verify the reference.");
+    } catch (error: any) {
+      setNotice(error?.message || "The secure order service could not create this order. Check the sign-in state and deployed Cloud Function.");
+    } finally {
+      setPlacingOrder(false);
+    }
+  };
+
+  return (
+    <section className="feature-section section-shell section-spacing">
+      <div className="feature-heading"><div><span className="section-eyebrow">{kapengOnly?"KAPENG BARAKO / STORE":"TUBAL HUB / MARKETPLACE"}</span><h2>{kapengOnly?<>Coffee, curated.<br/><span className="text-gradient">Barako with character.</span></>:<>Discover the collection.<br/><span className="text-gradient">Built around your interests.</span></>}</h2><p>Products come from the live Firestore catalog managed through TUBAL HUB Admin. The cart is saved in this browser; final pricing and stock are verified by the secure order function.</p></div><a className="button button--ghost" href="/tubalhub/pages/system-dashboard.html">Explore the Hub <ArrowUpRight size={15}/></a></div>
+      <div className="feature-toolbar"><input type="search" value={query} onChange={(e)=>setQuery(e.target.value)} placeholder="Search products…" aria-label="Search products"/><div className="feature-filter-row">{(kapengOnly?[["kapeng","Kapeng Barako"]]:[["all","All products"],["kapeng","Kapeng Barako"],["th","TUBAL HUB"]]).map(([value,label])=><button key={value} type="button" className={"feature-chip"+(collection===value?" is-active":"")} onClick={()=>setCollection(value)}>{label}</button>)}</div></div>
+      <div className="feature-meta-row"><span>{loading?"Loading live catalog…":visibleProducts.length+" products found"}</span><span>{cartCount} in cart · ₱{cartTotal.toLocaleString("en-PH",{maximumFractionDigits:2})}</span></div>
+      {catalogError && <div className="feature-warning" role="status"><b>Live catalog unavailable</b><p>{catalogError}</p><p>No sample inventory is shown as if it were real stock. The store’s product data and checkout depend on Firebase and Cloud Functions being available.</p></div>}
+      {!loading && !catalogError && visibleProducts.length===0 && <div className="feature-empty">No published products match this search yet. Check back after products are published from Admin.</div>}
+      {loading && <div className="feature-empty">Connecting to the live catalog…</div>}
+      <div className="feature-card-grid feature-card-grid--three">{visibleProducts.map((product)=>(
+        <article className="feature-card feature-product" key={product.id}>
+          {product.image ? <img className="feature-product__image" src={product.image} alt={product.name} loading="lazy"/> : <div className="feature-product__placeholder"><Sparkles size={28}/></div>}
+          <span className="feature-card__eyebrow">{product.category}</span><h3>{product.name}</h3><p>{product.description || "Published product from the TUBAL HUB catalog."}</p>
+          <div className="feature-product__meta"><strong>₱{product.price.toLocaleString("en-PH",{maximumFractionDigits:2})}</strong><span>{product.stock===null?"Stock status from catalog":product.stock+" in stock"}</span></div>
+          <div className="feature-product__actions"><button type="button" className="button button--primary" onClick={()=>updateCart(product.id,(cart[product.id]||0)+1)} disabled={product.stock!==null&&product.stock===0}>Add to cart +</button>{(product.productUrl||product.externalUrl)&&<a className="button button--ghost" href={product.productUrl||product.externalUrl} target="_blank" rel="noreferrer">More details ↗</a>}</div>
+          {(cart[product.id]||0)>0 && <div className="feature-quantity"><button type="button" onClick={()=>updateCart(product.id,(cart[product.id]||0)-1)} aria-label={"Remove one "+product.name}>−</button><span>{cart[product.id]} selected</span><button type="button" onClick={()=>updateCart(product.id,(cart[product.id]||0)+1)} aria-label={"Add one "+product.name}>+</button><button type="button" className="feature-text-button" onClick={()=>updateCart(product.id,0)}>Remove</button></div>}
+        </article>
+      ))}</div>
+      <div className="feature-checkout-panel">
+        <div><span className="section-eyebrow">YOUR CART</span><h3>{cartCount} item{cartCount===1?"":"s"} · ₱{cartTotal.toLocaleString("en-PH",{maximumFractionDigits:2})}</h3><p>Order pricing and available stock are checked again on the server. This creates a pending order for payment verification; it does not charge a card or wallet.</p>{selected.map((entry)=><div key={entry.product.id} className="feature-cart-row"><span>{entry.product.name} × {entry.qty}</span><b>₱{(entry.product.price*entry.qty).toLocaleString("en-PH",{maximumFractionDigits:2})}</b></div>)}</div>
+        <form className="feature-checkout-form" onSubmit={placeOrder}><label>Payment method<select value={paymentMethod} onChange={(e)=>setPaymentMethod(e.target.value as "bank"|"paypal")}><option value="bank">Bank / E-Wallet reference</option><option value="paypal">PayPal reference</option></select></label><label>Payment reference<input value={paymentReference} onChange={(e)=>setPaymentReference(e.target.value)} placeholder="Reference given for this order" /></label><button type="submit" className="button button--primary" disabled={placingOrder||!cartCount}>{placingOrder?"Submitting order…":currentUser?"Create pending order →":"Sign in to order →"}</button><small>{currentUser?"Signed in as "+String(currentUser.email||"account"):"Sign in with your account before placing an order."}</small></form>
+      </div>
+      {notice && <p className="feature-status" role="status">{notice}</p>}
+    </section>
+  );
+}
+
+type LifeHubItem = {id:string;title:string;detail?:string;date?:string;amount?:number;done?:boolean;completedOn?:string;createdAt?:string};
+
+function LocalLifeHubFeature({kind}:{kind:"tasks"|"notes"|"goals"|"habits"|"budget"|"library"}) {
+  const key = "tubalhub_lifehub_"+kind+"_v1";
+  const [items,setItems] = useState<LifeHubItem[]>(()=>{
+    try { const data=JSON.parse(localStorage.getItem(key)||"[]"); return Array.isArray(data)?data:[]; } catch { return []; }
+  });
+  const [title,setTitle]=useState("");
+  const [detail,setDetail]=useState("");
+  const [date,setDate]=useState("");
+  const [amount,setAmount]=useState("");
+  const [notice,setNotice]=useState("");
+  useEffect(()=>{try{localStorage.setItem(key,JSON.stringify(items));}catch{setNotice("Browser storage is unavailable; changes may not persist.");}},[key,items]);
+  const today = new Date().toISOString().slice(0,10);
+  const config = {
+    tasks:{eyebrow:"LIFEHUB / TODAY",title:"Turn plans into progress.",intro:"Add small, clear tasks and mark each one complete. Your list is saved locally in this browser.",submit:"Add task",placeholder:"What needs doing?",detailLabel:"Notes (optional)",amountLabel:"",dateLabel:"Due date"},
+    notes:{eyebrow:"LIFEHUB / NOTES",title:"Give your ideas a place.",intro:"Capture notes, reminders, and ideas. Notes stay in this browser unless you export or back them up.",submit:"Save note",placeholder:"Note title",detailLabel:"Note content",amountLabel:"",dateLabel:""},
+    goals:{eyebrow:"LIFEHUB / GOALS",title:"Make the next step visible.",intro:"Record a goal, its next step, and a target date. Mark it complete when you’re done.",submit:"Add goal",placeholder:"Goal title",detailLabel:"Next step or notes",amountLabel:"",dateLabel:"Target date"},
+    habits:{eyebrow:"LIFEHUB / HABITS",title:"Build routines one day at a time.",intro:"Track useful habits with a simple daily check-in, saved locally on this device.",submit:"Add habit",placeholder:"Habit to practice",detailLabel:"Why it matters (optional)",amountLabel:"",dateLabel:""},
+    budget:{eyebrow:"LIFEHUB / BUDGET",title:"See where your money goes.",intro:"Log planned amounts or expenses. These entries are local notes, not a bank connection or accounting record.",submit:"Add entry",placeholder:"Budget item or category",detailLabel:"Category / details",amountLabel:"Amount (₱)",dateLabel:"Date"},
+    library:{eyebrow:"LIFEHUB / LIBRARY",title:"Keep useful things within reach.",intro:"Save a resource title and a link or short note for future reference.",submit:"Save resource",placeholder:"Resource title",detailLabel:"URL or notes",amountLabel:"",dateLabel:""},
+  }[kind];
+  const submit = (event:FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if(!title.trim()) return;
+    const newItem:LifeHubItem={id:String(Date.now())+"-"+Math.random().toString(36).slice(2,7),title:title.trim(),detail:detail.trim(),date:date||undefined,amount:kind==="budget"?(Number(amount)||0):undefined,done:false,createdAt:new Date().toISOString()};
+    setItems((current)=>[newItem,...current]);setTitle("");setDetail("");setDate("");setAmount("");setNotice(kind==="notes"?"Note saved in this browser.":"Saved in this browser.");
+  };
+  const toggle = (id:string) => setItems((current)=>current.map((item)=>item.id!==id?item:kind==="habits"?{...item,completedOn:item.completedOn===today?"":today}:{...item,done:!item.done}));
+  const remove = (id:string) => { setItems((current)=>current.filter((item)=>item.id!==id));setNotice("Item removed."); };
+  const exportData = () => {
+    const blob=new Blob([JSON.stringify({kind,exportedAt:new Date().toISOString(),items},null,2)],{type:"application/json"});
+    const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="lifehub-"+kind+"-backup.json";a.click();URL.revokeObjectURL(url);
+  };
+  const total=items.reduce((sum,item)=>sum+(Number(item.amount)||0),0);
+  if(kind==="tasks" && items.length===0) {
+    // The dashboard uses the same task tool but also provides shortcuts to the individual personal tools.
+  }
+  return (
+    <section className="feature-section section-shell section-spacing">
+      <div className="feature-heading"><div><span className="section-eyebrow">{config.eyebrow}</span><h2>{config.title.split(". ")[0]}<br/><span className="text-gradient">{config.title.split(". ").slice(1).join(". ")}</span></h2><p>{config.intro}</p></div><button className="button button--ghost" type="button" onClick={exportData}>Export backup ↓</button></div>
+      {kind==="tasks" && <div className="lifehub-quicklinks"><a href="/tubalhub/lifehub/notes/index.html">Notes ↗</a><a href="/tubalhub/lifehub/goals/index.html">Goals ↗</a><a href="/tubalhub/lifehub/habits/index.html">Habits ↗</a><a href="/tubalhub/lifehub/budget/index.html">Budget ↗</a><a href="/tubalhub/lifehub/library/index.html">Library ↗</a><a href="/tubalhub/lifehub-calendar.html">Calendar ↗</a></div>}
+      {kind==="budget" && <div className="feature-stat-strip"><div><span>Saved entries</span><strong>{items.length}</strong></div><div><span>Total logged</span><strong>₱{total.toLocaleString("en-PH",{maximumFractionDigits:2})}</strong></div></div>}
+      {kind==="tasks" && <div className="feature-stat-strip"><div><span>Open tasks</span><strong>{items.filter((item)=>!item.done).length}</strong></div><div><span>Completed</span><strong>{items.filter((item)=>item.done).length}</strong></div></div>}
+      <form className="feature-form feature-form--wide" onSubmit={submit}>
+        <div className="feature-form__heading"><span className="section-eyebrow">QUICK CAPTURE</span><h3>{config.submit}</h3></div>
+        <label>{kind==="budget"?"Item / category":kind==="notes"?"Title":kind==="library"?"Resource name":"Title"}<input required value={title} onChange={(e)=>setTitle(e.target.value)} placeholder={config.placeholder}/></label>
+        {config.detailLabel && <label>{config.detailLabel}<textarea rows={kind==="notes"?4:2} value={detail} onChange={(e)=>setDetail(e.target.value)} placeholder={kind==="library"?"https://… or a short note":"Add extra context…"} /></label>}
+        {config.dateLabel && <label>{config.dateLabel}<input type="date" value={date} onChange={(e)=>setDate(e.target.value)} /></label>}
+        {kind==="budget" && <label>Amount in Philippine pesos<input required type="number" min="0" step="0.01" value={amount} onChange={(e)=>setAmount(e.target.value)} placeholder="0.00"/></label>}
+        <button type="submit" className="button button--primary">{config.submit} <ArrowRight size={15}/></button>
+      </form>
+      {notice && <p className="feature-status" role="status">{notice}</p>}
+      <div className="feature-list-heading"><div><span className="section-eyebrow">YOUR {kind.toUpperCase()}</span><h3>{kind==="tasks"?"Task list":kind==="notes"?"Saved notes":kind==="goals"?"Goal list":kind==="habits"?"Habit tracker":kind==="budget"?"Budget entries":"Saved resources"}</h3></div><span>{items.length} items</span></div>
+      <div className="feature-record-list">
+        {items.map((item)=> {
+          const isDone=kind==="habits"?item.completedOn===today:!!item.done;
+          return <article className={"feature-record"+(isDone?" is-complete":"")} key={item.id}>
+            {(kind==="tasks"||kind==="goals"||kind==="habits")&&<button className={"feature-record__check"+(isDone?" is-checked":"")} type="button" onClick={()=>toggle(item.id)} aria-pressed={isDone}>{isDone?"✓":"○"}</button>}
+            <div className="feature-record__body"><h4>{item.title}</h4>{item.detail&&<p>{item.detail}</p>}{item.date&&<small>{kind==="goals"?"Target date":"Date"}: {item.date}</small>}{kind==="budget"&&<strong>₱{(Number(item.amount)||0).toLocaleString("en-PH",{maximumFractionDigits:2})}</strong>}{kind==="habits"&&<small>{isDone?"Checked today":"Not checked today"}</small>}</div>
+            <button type="button" className="feature-delete" onClick={()=>remove(item.id)} aria-label={"Remove "+item.title}>Remove</button>
+          </article>;
+        })}
+        {items.length===0&&<div className="feature-empty">Wala pang saved items. Add your first one above.</div>}
+      </div>
+      <p className="feature-storage-note">Local-first storage: items are saved in this browser only. Use Export backup to make a JSON copy before clearing browser data.</p>
+    </section>
+  );
+}
+
+type CalendarEvent = {id:string;title:string;date:string;detail:string};
+
+function CalendarFeature() {
+  const [events,setEvents]=useState<CalendarEvent[]>(()=>{
+    try{const parsed=JSON.parse(localStorage.getItem("tubalhub_calendar_events_v1")||"[]");return Array.isArray(parsed)?parsed:[];}catch{return [];}
+  });
+  const [title,setTitle]=useState("");
+  const [date,setDate]=useState(new Date().toISOString().slice(0,10));
+  const [detail,setDetail]=useState("");
+  const [notice,setNotice]=useState("");
+  useEffect(()=>{try{localStorage.setItem("tubalhub_calendar_events_v1",JSON.stringify(events));}catch{setNotice("Browser storage is unavailable; event changes may not persist.");}},[events]);
+  const addEvent=(event:FormEvent<HTMLFormElement>)=>{event.preventDefault();if(!title.trim()||!date)return;setEvents((current)=>[...current,{id:String(Date.now())+"-"+Math.random().toString(36).slice(2,6),title:title.trim(),date,detail:detail.trim()}].sort((a,b)=>a.date.localeCompare(b.date)));setTitle("");setDetail("");setNotice("Event saved in this browser.");};
+  const exportEvents=()=>{const blob=new Blob([JSON.stringify({exportedAt:new Date().toISOString(),events},null,2)],{type:"application/json"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="tubalhub-calendar.json";a.click();URL.revokeObjectURL(url);};
+  return <section className="feature-section section-shell section-spacing"><div className="feature-heading"><div><span className="section-eyebrow">LIFEHUB / CALENDAR</span><h2>Make time visible.<br/><span className="text-gradient">Plan the next step.</span></h2><p>Add personal events, dates, and reminders. Entries are stored locally in this browser; this is not synced with an external calendar.</p></div><button className="button button--ghost" type="button" onClick={exportEvents}>Export events ↓</button></div><form className="feature-form feature-form--wide" onSubmit={addEvent}><div className="feature-form__heading"><span className="section-eyebrow">NEW EVENT</span><h3>Add to your calendar</h3></div><label>Event title<input required value={title} onChange={(e)=>setTitle(e.target.value)} placeholder="e.g. Project deadline"/></label><label>Date<input required type="date" value={date} onChange={(e)=>setDate(e.target.value)}/></label><label>Notes (optional)<textarea rows={2} value={detail} onChange={(e)=>setDetail(e.target.value)} placeholder="Location, details, or reminder"/></label><button className="button button--primary" type="submit">Save event <ArrowRight size={15}/></button></form>{notice&&<p className="feature-status" role="status">{notice}</p>}<div className="feature-list-heading"><div><span className="section-eyebrow">YOUR SCHEDULE</span><h3>Upcoming and saved events</h3></div><span>{events.length} events</span></div><div className="feature-record-list">{events.map((event)=><article className="feature-record" key={event.id}><span className="feature-record__date">{new Date(event.date+"T12:00:00").toLocaleDateString("en-PH",{month:"short",day:"2-digit"})}</span><div className="feature-record__body"><h4>{event.title}</h4><small>{new Date(event.date+"T12:00:00").toLocaleDateString("en-PH",{weekday:"long",year:"numeric",month:"long",day:"numeric"})}</small>{event.detail&&<p>{event.detail}</p>}</div><button type="button" className="feature-delete" onClick={()=>setEvents((current)=>current.filter((item)=>item.id!==event.id))}>Remove</button></article>)}{events.length===0&&<div className="feature-empty">No events yet. Add a date above.</div>}</div><p className="feature-storage-note">Tip: export a backup before clearing browser storage.</p></section>;
+}
+
+const faqItems = [
+  {q:"What is TUBAL HUB?",a:"TUBAL HUB is the connected home for projects and destinations such as CTRLZONE, LifeHub, Payapang Isip, developer tools, community pages and the shop."},
+  {q:"Are all the features connected to a cloud database?",a:"No. Some existing destinations use Firebase, while the rebuilt LifeHub quick tools and calendar currently store entries in this browser only. The interface indicates where data is local."},
+  {q:"Can I use the Shop without signing in?",a:"You can browse published catalog items and save a local cart. Creating an order requires a signed-in Firebase account, and the server re-checks product availability and pricing."},
+  {q:"Does placing an order charge me automatically?",a:"No. The current callable function records a pending order with a payment reference. It does not charge a card or wallet; payment verification is a separate administrative step."},
+  {q:"What happens to my LifeHub notes and tasks?",a:"The rebuilt quick tools save to local browser storage on the current device. Export a JSON backup before clearing browser data or moving to another browser."},
+  {q:"How do I contact the TUBAL HUB team?",a:"Use the contact page to compose an email to tubalrr@gmail.com, or use the linked community destination for general discussion."},
+  {q:"Can I connect an API from the API Discovery Center automatically?",a:"No. The directory helps you discover categories and save links. Each provider must be evaluated and integrated separately with its own permission, quota, security and data-handling checks."},
+  {q:"Where do I report a community concern?",a:"Start with the Community Guidelines and Help Center pages, then contact the team with the relevant context. Do not post private account or payment information publicly."},
+];
+
+function FaqFeature() {
+  const [query,setQuery]=useState("");
+  const visible=faqItems.filter((item)=>(item.q+" "+item.a).toLowerCase().includes(query.trim().toLowerCase()));
+  return <section className="feature-section section-shell section-spacing"><div className="feature-heading"><div><span className="section-eyebrow">HELP / ANSWERS</span><h2>Questions, answered.<br/><span className="text-gradient">Find your way.</span></h2><p>Search common questions about the redesigned TUBAL HUB, feature status, and where data is stored.</p></div><a className="button button--ghost" href="/tubalhub/pages/contact.html">Contact support <ArrowUpRight size={15}/></a></div><div className="feature-toolbar"><input type="search" value={query} onChange={(e)=>setQuery(e.target.value)} placeholder="Search questions…" aria-label="Search frequently asked questions"/></div><div className="feature-faq-list">{visible.map((item)=> <details className="feature-faq-item" key={item.q}><summary>{item.q}<span>+</span></summary><p>{item.a}</p></details>)}{visible.length===0&&<div className="feature-empty">No answer matched that search.</div>}</div></section>;
+}
+
+function ContactFeature({page}:{page:RoutePageInfo}) {
+  const [name,setName]=useState("");
+  const [email,setEmail]=useState("");
+  const [topic,setTopic]=useState(page.title);
+  const [message,setMessage]=useState("");
+  const [notice,setNotice]=useState("");
+  const submit=(event:FormEvent<HTMLFormElement>)=> {
+    event.preventDefault();
+    const subject=encodeURIComponent("[TUBAL HUB] "+topic);
+    const body=encodeURIComponent("Name: "+name+"\nEmail: "+email+"\nTopic: "+topic+"\n\n"+message);
+    setNotice("Opening your email app with the message prefilled. If it does not open, email tubalrr@gmail.com directly.");
+    window.location.href="mailto:tubalrr@gmail.com?subject="+subject+"&body="+body;
+  };
+  return <section className="feature-section section-shell section-spacing"><div className="feature-heading"><div><span className="section-eyebrow">{page.category}</span><h2>{page.title}.<br/><span className="text-gradient">Let’s make it clear.</span></h2><p>{page.description} This form opens your email app; it does not send or store the message on this website.</p></div><div className="feature-contact-links"><a href="mailto:tubalrr@gmail.com"><Mail size={17}/> tubalrr@gmail.com</a><a href="https://discord.gg/EnR4KWSum" target="_blank" rel="noreferrer"><MessageCircle size={17}/> TUBAL HUB Discord <ArrowUpRight size={13}/></a></div></div><form className="feature-form" onSubmit={submit}><div className="feature-form__heading"><span className="section-eyebrow">SEND A MESSAGE</span><h3>What can we help with?</h3></div><label>Your name<input required autoComplete="name" value={name} onChange={(e)=>setName(e.target.value)} placeholder="Name"/></label><label>Your email<input required type="email" autoComplete="email" value={email} onChange={(e)=>setEmail(e.target.value)} placeholder="you@example.com"/></label><label>Topic<select value={topic} onChange={(e)=>setTopic(e.target.value)}><option>General question</option><option>Partnership</option><option>Shop or order inquiry</option><option>Technical issue</option><option>Feedback</option><option>LifeHub</option><option>CTRLZONE</option><option>Payapang Isip</option></select></label><label>Message<textarea required rows={6} value={message} onChange={(e)=>setMessage(e.target.value)} placeholder="Give us enough context to help…"/></label><button className="button button--primary" type="submit">Prepare email <Send size={15}/></button>{notice&&<p className="feature-status" role="status">{notice}</p>}</form></section>;
+}
+
+function CommunityFeature({page}:{page:RoutePageInfo}) {
+  const links=[
+    {title:"Discord Community",type:"COMMUNITY",description:"Join the existing TUBAL HUB Discord space.",href:"https://discord.gg/EnR4KWSum",external:true},
+    {title:"Community Guidelines",type:"SAFETY",description:"Understand expectations for respectful participation.",href:"/tubalhub/pages/community-guidelines.html"},
+    {title:"Events",type:"ACTIVITIES",description:"Explore event information and community activities.",href:"/tubalhub/pages/events.html"},
+    {title:"Feeds & Updates",type:"UPDATES",description:"Find community and product announcements.",href:"/tubalhub/pages/feeds.html"},
+    {title:"Contact the Team",type:"SUPPORT",description:"Send questions, feedback, or collaboration ideas.",href:"/tubalhub/pages/contact.html"},
+  ];
+  return <section className="feature-section section-shell section-spacing"><div className="feature-heading"><div><span className="section-eyebrow">{page.category}</span><h2>Find your people.<br/><span className="text-gradient">Make space to connect.</span></h2><p>{page.description} Choose the right destination below to join the discussion, follow updates, or contact the team.</p></div></div><div className="feature-card-grid feature-card-grid--three">{links.map((item)=><article className="feature-card" key={item.title}><span className="feature-card__eyebrow">{item.type}</span><h3>{item.title}</h3><p>{item.description}</p><a className="feature-card__link" href={item.href} target={item.external?"_blank":undefined} rel={item.external?"noreferrer":undefined}>Open destination <ArrowUpRight size={15}/></a></article>)}</div></section>;
+}
+
+function AccountFeature({routePath}:{routePath:string}) {
+  const adminMode=routePath==="admin/login.html";
+  const signupMode=routePath==="pages/signup.html";
+  const [runtime,setRuntime]=useState<FirebaseBrowserRuntime|null>(null);
+  const [email,setEmail]=useState("");
+  const [password,setPassword]=useState("");
+  const [busy,setBusy]=useState(false);
+  const [forgot,setForgot]=useState(false);
+  const [notice,setNotice]=useState("");
+  useEffect(()=>{let cancelled=false;loadFirebaseBrowserRuntime().then((sdk)=>{if(!cancelled)setRuntime(sdk);}).catch((error:any)=>{if(!cancelled)setNotice("Firebase could not be initialized: "+(error?.message||"Unknown error"));});return()=>{cancelled=true;};},[]);
+  const submit=async(event:FormEvent<HTMLFormElement>)=>{
+    event.preventDefault();
+    if(!runtime){setNotice("Account service is still initializing. Please try again.");return;}
+    setBusy(true);setNotice("");
+    try{
+      if(forgot){
+        await runtime.authSdk.sendPasswordResetEmail(runtime.auth,email.trim());
+        setNotice("Password-reset email requested. Check your inbox and spam folder.");
+      }else if(signupMode){
+        const credential=await runtime.authSdk.createUserWithEmailAndPassword(runtime.auth,email.trim(),password);
+        try{await runtime.authSdk.sendEmailVerification(credential.user);}catch{/* account may still be created if email delivery is unavailable */}
+        setNotice("Account created. Check your email for verification. You can sign in after registration.");
+      }else{
+        const credential=await runtime.authSdk.signInWithEmailAndPassword(runtime.auth,email.trim(),password);
+        if(adminMode){
+          const token=await credential.user.getIdTokenResult();
+          const isAdmin=token.claims?.admin===true||(String(credential.user.email||"").toLowerCase()==="tubalrr@gmail.com"&&credential.user.emailVerified===true);
+          setNotice(isAdmin?"Signed in with an admin-eligible account. Open the admin workspace to continue.":"Signed in, but this account does not have the required admin authorization. No admin access was granted.");
+        }else if(window.location.search.includes("return=shop")){
+          window.location.href="/tubalhub/pages/shop.html";
+        }else{
+          setNotice("Signed in successfully as "+String(credential.user.email||"account")+".");
+        }
+      }
+    }catch(error:any){
+      const code=String(error?.code||"");
+      const friendly=code.includes("auth/invalid-credential")||code.includes("auth/wrong-password")?"Email or password was not accepted.":code.includes("auth/email-already-in-use")?"An account already uses this email. Try signing in.":code.includes("auth/weak-password")?"Use a stronger password (at least 6 characters).":code.includes("auth/invalid-email")?"Enter a valid email address.":error?.message||"The account request could not be completed.";
+      setNotice(friendly);
+    }finally{setBusy(false);}
+  };
+  return <section className="feature-section section-shell section-spacing"><div className="feature-heading"><div><span className="section-eyebrow">{adminMode?"ADMINISTRATION":signupMode?"JOIN THE HUB":"ACCOUNT ACCESS"}</span><h2>{adminMode?"Administrator access.":signupMode?"Create your account.":"Welcome back."}<br/><span className="text-gradient">{adminMode?"Verified identity only.":signupMode?"One account, more ways to connect.":"Pick up where you left off."}</span></h2><p>{adminMode?"Sign-in uses Firebase Authentication. Admin access is only acknowledged for a verified authorized account; the actual management interface still needs its own permission checks.":signupMode?"Create an account with Firebase Authentication. Never share your password with anyone.":"Sign in with your email and password, or request a password-reset email."}</p></div></div><form className="feature-form feature-account-form" onSubmit={submit}><div className="feature-form__heading"><span className="section-eyebrow">{forgot?"PASSWORD RECOVERY":signupMode?"NEW ACCOUNT":"SECURE SIGN-IN"}</span><h3>{forgot?"Reset password":signupMode?"Register with email":"Sign in"}</h3></div><label>Email address<input required type="email" autoComplete="email" value={email} onChange={(e)=>setEmail(e.target.value)} placeholder="you@example.com"/></label>{!forgot&&<label>Password<input required type="password" minLength={6} autoComplete={signupMode?"new-password":"current-password"} value={password} onChange={(e)=>setPassword(e.target.value)} placeholder="At least 6 characters"/></label>}<button type="submit" className="button button--primary" disabled={busy}>{busy?"Please wait…":forgot?"Send reset email":signupMode?"Create account":"Sign in"} <ArrowRight size={15}/></button>{!signupMode&&!adminMode&&<button type="button" className="feature-text-button" onClick={()=>setForgot((value)=>!value)}>{forgot?"Back to sign-in":"Forgot password?"}</button>}{notice&&<p className="feature-status" role="status">{notice}</p>}{adminMode&&<p className="feature-storage-note">Authentication alone is not proof of administrator privileges. This page does not expose or bypass Firestore security rules.</p>}</form><div className="feature-auth-links"><a href="/tubalhub/pages/signup.html">Create an account ↗</a><a href="/tubalhub/pages/login.html">Sign in ↗</a><a href="/tubalhub/pages/help.html">Help Center ↗</a></div></section>;
+}
+
+function RouteSpecificContent({routePath,page}:{routePath:string;page:RoutePageInfo}) {
+  if(routePath==="pages/api-mega-hub.html") return <ApiDiscoveryFeature/>;
+  if(routePath==="pages/shop.html") return <ShopFeature/>;
+  if(routePath==="pages/kapeng-barako.html") return <ShopFeature kapengOnly/>;
+  if(routePath==="pages/contact.html"||routePath==="pages/affiliate.html"||routePath==="pages/careers.html"||routePath==="pages/press.html") return <ContactFeature page={page}/>;
+  if(routePath==="pages/faq.html"||routePath==="pages/community-guidelines.html") return <FaqFeature/>;
+  if(routePath==="pages/community.html"||routePath==="pages/chat.html"||routePath==="pages/events.html"||routePath==="pages/feeds.html") return <CommunityFeature page={page}/>;
+  if(routePath==="pages/login.html"||routePath==="pages/signup.html"||routePath==="admin/login.html") return <AccountFeature routePath={routePath}/>;
+  if(routePath==="pages/calendar.html"||routePath==="lifehub-calendar.html") return <CalendarFeature/>;
+  if(routePath==="lifehub/index.html") return <LocalLifeHubFeature kind="tasks"/>;
+  if(routePath==="lifehub/notes/index.html") return <LocalLifeHubFeature kind="notes"/>;
+  if(routePath==="lifehub/goals/index.html") return <LocalLifeHubFeature kind="goals"/>;
+  if(routePath==="lifehub/habits/index.html") return <LocalLifeHubFeature kind="habits"/>;
+  if(routePath==="lifehub/budget/index.html") return <LocalLifeHubFeature kind="budget"/>;
+  if(routePath==="lifehub/library/index.html") return <LocalLifeHubFeature kind="library"/>;
+  if(routePath==="lifehub/landing.html") return <section className="feature-section section-shell section-spacing"><div className="feature-heading"><div><span className="section-eyebrow">LIFEHUB / PERSONAL ORGANIZATION</span><h2>A calmer way to organize.<br/><span className="text-gradient">One small step at a time.</span></h2><p>LifeHub brings quick capture tools for tasks, notes, goals, habits, budgets, a library and calendar into one consistent experience.</p></div></div><div className="platform-grid legacy-directory-grid">{[{title:"Tasks & daily planning",href:"/tubalhub/lifehub/index.html"},{title:"Notes",href:"/tubalhub/lifehub/notes/index.html"},{title:"Goals",href:"/tubalhub/lifehub/goals/index.html"},{title:"Habits",href:"/tubalhub/lifehub/habits/index.html"},{title:"Budget",href:"/tubalhub/lifehub/budget/index.html"},{title:"Library",href:"/tubalhub/lifehub/library/index.html"},{title:"Calendar",href:"/tubalhub/lifehub-calendar.html"}].map((item)=><a key={item.title} className="platform-card" href={item.href}><h3>{item.title}</h3><p>Open the tool and keep your entries in this browser.</p><span className="platform-card__link">Open tool <ArrowUpRight size={15}/></span></a>)}</div></section>;
+  return <section className="legacy-details section-shell section-spacing"><div className="section-heading reveal"><div className="section-eyebrow"><span>01</span> {page.category}</div><h2>{page.title}<br/><span className="text-gradient">A clearer way forward.</span></h2><p>{page.description}</p></div><div className="legacy-detail-grid">{page.highlights.map((highlight,index)=><article className="legacy-detail-card" key={highlight}><span className={"legacy-detail-card__icon"+(index===1?" legacy-detail-card__icon--gold":index===2?" legacy-detail-card__icon--sea":"")}>{index===0?<Check size={21}/>:index===1?<Target size={21}/>:<ArrowRight size={21}/>}</span><h3>{highlight}</h3><p>{index===0?"Clear information and navigation help you understand this destination.":index===1?"This destination follows the same responsive TUBAL HUB visual language.":"Use the connected navigation to continue to another relevant feature."}</p></article>)}</div><div className="legacy-next-panel"><div><div className="section-eyebrow"><span>02</span> CONTINUE EXPLORING</div><h3>Keep moving through the Hub.</h3><p>Browse the available destinations or contact the team if something is missing.</p></div><a className="button button--primary" href="/tubalhub/app/index.html">Open platform directory <ArrowRight size={15}/></a></div></section>;
+}
+
 function LegacyRoutePage({ routePath }: { routePath: string }) {
   const [query, setQuery] = useState("");
   const normalizedPath = routePath.replace(/^\/+/, "").toLowerCase() || "app/index.html";
@@ -659,7 +1109,7 @@ function LegacyRoutePage({ routePath }: { routePath: string }) {
     return !term || [item.title, item.category, item.description].some((value) => value.toLowerCase().includes(term));
   });
   const currentLinkPath = normalizedPath.replace(/^\.\//, "");
-  const relatedLinks = platformLinks.filter((item) => item.href.replace(/^\.\//, "").toLowerCase() !== currentLinkPath).slice(0, 4);
+  const relatedLinks = platformLinks.filter((item) => item.href.replace(/^\/tubalhub\//, "").replace(/^\.\//, "").toLowerCase() !== currentLinkPath).slice(0, 4);
   const basePrefix = "/tubalhub/";
 
   useEffect(() => {
@@ -737,22 +1187,7 @@ function LegacyRoutePage({ routePath }: { routePath: string }) {
             {filteredLinks.length === 0 && <p className="legacy-empty">No destinations match that search. Try another term.</p>}
           </section>
         ) : (
-          <section className="legacy-details section-shell section-spacing">
-            <div className="section-heading reveal">
-              <div className="section-eyebrow"><span>01</span> The new experience</div>
-              <h2>Made clearer.<br /><span className="text-gradient">Connected by design.</span></h2>
-              <p>{page.description}</p>
-            </div>
-            <div className="legacy-detail-grid">
-              <article className="legacy-detail-card reveal"><span className="legacy-detail-card__icon"><Icon size={21} /></span><h3>Purposeful layout</h3><p>{page.highlights[0]}.</p></article>
-              <article className="legacy-detail-card reveal"><span className="legacy-detail-card__icon legacy-detail-card__icon--gold"><Target size={21} /></span><h3>Clear next steps</h3><p>{page.highlights[1]}.</p></article>
-              <article className="legacy-detail-card reveal"><span className="legacy-detail-card__icon legacy-detail-card__icon--sea"><Check size={21} /></span><h3>Connected destinations</h3><p>{page.highlights[2]}.</p></article>
-            </div>
-            <div className="legacy-next-panel reveal">
-              <div><div className="section-eyebrow"><span>02</span> Keep exploring</div><h3>Where would you like to go next?</h3><p>Continue to another part of the connected TUBAL HUB ecosystem.</p></div>
-              <a className="button button--primary" href={basePrefix + "app/index.html"}>Open Hub directory <ArrowRight size={16} /></a>
-            </div>
-          </section>
+          <RouteSpecificContent routePath={normalizedPath} page={page} />
         )}
 
         {!dashboard && (
