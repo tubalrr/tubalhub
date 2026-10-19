@@ -172,7 +172,10 @@ function Header({ homePrefix = "" }: { homePrefix?: string }) {
             </a>
           ))}
         </div>
-        <a className="button button--nav" href="./app/index.html">
+        <a className="button button--chat" href="/tubalhub/pages/chat.html">
+          <MessageCircle size={16} /> Global Chat
+        </a>
+        <a className="button button--nav" href="/tubalhub/app/index.html">
           {homePrefix ? "Hub Home" : "Open Hub"} <ArrowUpRight size={15} />
         </a>
         <button
@@ -192,7 +195,10 @@ function Header({ homePrefix = "" }: { homePrefix?: string }) {
             {item.label} <ArrowUpRight size={15} />
           </a>
         ))}
-        <a className="mobile-nav__cta" href="./app/index.html" onClick={closeMenu}>
+        <a className="mobile-nav__chat" href="/tubalhub/pages/chat.html" onClick={closeMenu}>
+          <MessageCircle size={16} /> Open Global Chat <ArrowUpRight size={15} />
+        </a>
+        <a className="mobile-nav__cta" href="/tubalhub/app/index.html" onClick={closeMenu}>
           Open the full Hub <ArrowRight size={16} />
         </a>
       </div>
@@ -220,8 +226,11 @@ function Hero() {
           <a className="button button--primary" href="#brands">
             Explore the brands <ArrowRight size={17} />
           </a>
-          <a className="button button--ghost" href="./app/index.html">
+          <a className="button button--ghost" href="/tubalhub/app/index.html">
             Open the Hub <ArrowUpRight size={16} />
+          </a>
+          <a className="button button--chat hero-chat-button" href="/tubalhub/pages/chat.html">
+            Join Global Chat <MessageCircle size={16} />
           </a>
         </div>
         <div className="hero-proof">
@@ -554,7 +563,8 @@ function Footer({ homePrefix = "" }: { homePrefix?: string }) {
           <a href={`${homePrefix}#brands`}>Our brands</a>
           <a href={`${homePrefix}#story`}>Our story</a>
           <a href={`${homePrefix}#connect`}>Get in touch</a>
-          <a href="./app/index.html">Open full Hub <ArrowUpRight size={12} /></a>
+          <a href="/tubalhub/pages/chat.html">Global Chat <MessageCircle size={12} /></a>
+          <a href="/tubalhub/app/index.html">Open full Hub <ArrowUpRight size={12} /></a>
         </div>
         <div className="footer-column">
           <strong>The brands</strong>
