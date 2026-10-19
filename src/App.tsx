@@ -842,7 +842,7 @@ function ShopFeature({ kapengOnly = false }: { kapengOnly?: boolean }) {
 
   const visibleProducts = products.filter((product) => {
     const matchesQuery = (product.name + " " + product.description + " " + product.category + " " + product.brandKey).toLowerCase().includes(query.trim().toLowerCase());
-    return matchesQuery && (collection === "all" || product.brandKey.includes(collection) || product.category.toLowerCase().includes(collection));
+    return matchesQuery && (collection === "all" || (collection === "kapeng" && product.brandKey.includes("kapeng")) || (collection === "th" && !product.brandKey.includes("kapeng")) || product.category.toLowerCase().includes(collection));
   });
   const selected = Object.entries(cart).map(([id,qty]) => ({product:products.find((p)=>p.id===id),qty:Number(qty)||0})).filter((entry)=>entry.product && entry.qty>0) as {product:StoreProduct;qty:number}[];
   const cartCount = selected.reduce((sum,entry)=>sum+entry.qty,0);
@@ -941,7 +941,7 @@ function LocalLifeHubFeature({kind}:{kind:"tasks"|"notes"|"goals"|"habits"|"budg
   }
   return (
     <section className="feature-section section-shell section-spacing">
-      <div className="feature-heading"><div><span className="section-eyebrow">{config.eyebrow}</span><h2>{config.title.split(". ")[0]}<br/><span className="text-gradient">{config.title.split(". ").slice(1).join(". ")}</span></h2><p>{config.intro}</p></div><button className="button button--ghost" type="button" onClick={exportData}>Export backup ↓</button></div>
+      <div className="feature-heading"><div><span className="section-eyebrow">{config.eyebrow}</span><h2>{config.title.replace(/\.$/, "")}<br/><span className="text-gradient">{kind==="tasks"?"One clear next step.":kind==="notes"?"Capture ideas as they come.":kind==="goals"?"Turn intention into progress.":kind==="habits"?"Consistency beats intensity.":kind==="budget"?"Make every peso visible.":"Keep your next discovery close."}</span></h2><p>{config.intro}</p></div><button className="button button--ghost" type="button" onClick={exportData}>Export backup ↓</button></div>
       {kind==="tasks" && <div className="lifehub-quicklinks"><a href="/tubalhub/lifehub/notes/index.html">Notes ↗</a><a href="/tubalhub/lifehub/goals/index.html">Goals ↗</a><a href="/tubalhub/lifehub/habits/index.html">Habits ↗</a><a href="/tubalhub/lifehub/budget/index.html">Budget ↗</a><a href="/tubalhub/lifehub/library/index.html">Library ↗</a><a href="/tubalhub/lifehub-calendar.html">Calendar ↗</a></div>}
       {kind==="budget" && <div className="feature-stat-strip"><div><span>Saved entries</span><strong>{items.length}</strong></div><div><span>Total logged</span><strong>₱{total.toLocaleString("en-PH",{maximumFractionDigits:2})}</strong></div></div>}
       {kind==="tasks" && <div className="feature-stat-strip"><div><span>Open tasks</span><strong>{items.filter((item)=>!item.done).length}</strong></div><div><span>Completed</span><strong>{items.filter((item)=>item.done).length}</strong></div></div>}
@@ -1007,7 +1007,7 @@ function FaqFeature() {
 function ContactFeature({page}:{page:RoutePageInfo}) {
   const [name,setName]=useState("");
   const [email,setEmail]=useState("");
-  const [topic,setTopic]=useState(page.title);
+  const [topic,setTopic]=useState("General question");
   const [message,setMessage]=useState("");
   const [notice,setNotice]=useState("");
   const submit=(event:FormEvent<HTMLFormElement>)=> {

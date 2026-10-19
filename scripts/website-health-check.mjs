@@ -28,6 +28,8 @@ const IGNORED_DIRS = new Set([
   "android-app",
 ]);
 const IGNORED_JS_PARTS = new Set(["vendor", "vendors", "third_party", "third-party"]);
+// v2 is an archived frontend source; the public v2 route is rewritten to the React shell during build.
+const RETIRED_JS_FILES = new Set(["v2/js/app.js"]);
 const errors = [];
 const warnings = [];
 const allFiles = [];
@@ -135,6 +137,7 @@ const jsFiles = allFiles.filter((file) => {
   return (
     file.toLowerCase().endsWith(".js") &&
     !file.toLowerCase().endsWith(".min.js") &&
+    !RETIRED_JS_FILES.has(file) &&
     !parts.some((part) => IGNORED_JS_PARTS.has(part))
   );
 });
