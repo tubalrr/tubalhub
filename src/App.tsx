@@ -835,7 +835,7 @@ function ShopFeature({ kapengOnly = false }: { kapengOnly?: boolean }) {
               price,
               hasValidPrice,
               brandKey: String(data.brandKey || data.brandId || data.collection || data.brandName || "").toLowerCase(),
-              category: String(data.category || "Other"),
+              category: String(data.category ?? "").trim(),
               stock: Number.isFinite(stockNumber) && stockNumber >= 0 ? stockNumber : null,
               externalUrl: String(data.externalUrl || ""),
               productUrl: String(data.productUrl || ""),
@@ -877,7 +877,8 @@ function ShopFeature({ kapengOnly = false }: { kapengOnly?: boolean }) {
 
   const visibleProducts = products.filter((product) => {
     const matchesQuery = (product.name + " " + product.description + " " + product.category + " " + product.brandKey).toLowerCase().includes(query.trim().toLowerCase());
-    return matchesQuery && (collection === "all" || (collection === "kapeng" && product.brandKey.includes("kapeng")) || (collection === "th" && !product.brandKey.includes("kapeng")) || product.category.toLowerCase().includes(collection));
+    const isHubBrand = product.brandKey === "th" || product.brandKey.includes("tubal");
+    return matchesQuery && (collection === "all" || (collection === "kapeng" && product.brandKey.includes("kapeng")) || (collection === "th" && isHubBrand) || (Boolean(product.category) && product.category.toLowerCase().includes(collection));
   });
   const selected = Object.entries(cart).map(([id,qty]) => ({product:products.find((p)=>p.id===id),qty:Number(qty)||0})).filter((entry)=>entry.product && entry.qty>0) as {product:StoreProduct;qty:number}[];
   const cartCount = selected.reduce((sum,entry)=>sum+entry.qty,0);
@@ -922,7 +923,7 @@ function ShopFeature({ kapengOnly = false }: { kapengOnly?: boolean }) {
       <div className="feature-card-grid feature-card-grid--three">{visibleProducts.map((product)=>(
         <article className="feature-card feature-product" key={product.id}>
           {product.image ? <img className="feature-product__image" src={product.image} alt={product.name} loading="lazy"/> : <div className="feature-product__placeholder"><Sparkles size={28}/></div>}
-          <span className="feature-card__eyebrow">{product.category}</span><h3>{product.name}</h3><p>{product.description || "Published product from the TUBAL HUB catalog."}</p>
+          <span className="feature-card__eyebrow">{product.category || "Category not provided"}</span><h3>{product.name}</h3><p>{product.description || "No product description was provided in the catalog."}</p>
           <div className="feature-product__meta"><strong>{product.price === 0 ? "Free" : "₱" + product.price.toLocaleString("en-PH",{maximumFractionDigits:2})}</strong><span>{product.stock===null?"Stock status not provided":product.stock+" in stock"}</span></div>
           <div className="feature-product__actions"><button type="button" className="button button--primary" onClick={()=>updateCart(product.id,(cart[product.id]||0)+1)} disabled={product.stock!==null&&product.stock===0}>Add to cart +</button>{(product.productUrl||product.externalUrl)&&<a className="button button--ghost" href={product.productUrl||product.externalUrl} target="_blank" rel="noreferrer">More details ↗</a>}</div>
           {(cart[product.id]||0)>0 && <div className="feature-quantity"><button type="button" onClick={()=>updateCart(product.id,(cart[product.id]||0)-1)} aria-label={"Remove one "+product.name}>−</button><span>{cart[product.id]} selected</span><button type="button" onClick={()=>updateCart(product.id,(cart[product.id]||0)+1)} aria-label={"Add one "+product.name}>+</button><button type="button" className="feature-text-button" onClick={()=>updateCart(product.id,0)}>Remove</button></div>}
