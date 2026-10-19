@@ -264,11 +264,27 @@ function Hero() {
       <div className="stats-strip reveal" aria-label="TUBAL HUB at a glance">
         <div className="stat-item"><strong>03</strong><span>Distinct brands</span></div>
         <div className="stat-item"><strong>01</strong><span>Connected platform</span></div>
-        <div className="stat-item"><strong>12k<span className="stat-plus">+</span></strong><span>Members</span></div>
-        <div className="stat-item"><strong>09</strong><span>Cities reached</span></div>
+        <div className="stat-item"><strong>07</strong><span>LifeHub tools</span></div>
+        <div className="stat-item"><strong>13</strong><span>Featured destinations</span></div>
       </div>
-      <p className="stats-note">Community figures are provided project targets and should be verified before public launch.</p>
     </section>
+  );
+}
+
+
+function SignalRibbon() {
+  const phrases = ["PLAY WITH PURPOSE", "PLAN WITH CLARITY", "PAUSE WITHOUT PRESSURE", "CREATE YOUR OWN WAY"];
+  return (
+    <div className="signal-ribbon" aria-label="The TUBAL HUB experience">
+      <div className="signal-ribbon__track">
+        {[...phrases, ...phrases].map((phrase, index) => (
+          <span className="signal-ribbon__item" key={phrase + index}>
+            <span className="signal-ribbon__star" aria-hidden="true">✳</span>
+            {phrase}
+          </span>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -450,7 +466,7 @@ function Connect() {
         <div className="connect-orb connect-orb--gold" />
         <div className="connect-intro reveal">
           <div className="section-eyebrow"><span>03</span> Start a conversation</div>
-          <h2 id="connect-title">Let's make<br /><span className="text-gradient">something connect.</span></h2>
+          <h2 id="connect-title">Let's make<br /><span className="text-gradient">something meaningful.</span></h2>
           <p>Have a partnership idea, a question about one of our brands, or a vision that fits the ecosystem? We'd love to hear about it.</p>
           <div className="contact-details">
             <a href="mailto:tubalrr@gmail.com" className="contact-detail">
@@ -1250,6 +1266,7 @@ export default function App() {
       <Header />
       <main>
         <Hero />
+        <SignalRibbon />
         <Brands />
         <Platform />
         <Story />
